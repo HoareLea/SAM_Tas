@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamo", "Dynamo", "{41EDF7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grasshopper", "Grasshopper", "{06F63504-B0DA-4C13-8883-4F1906D72216}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM_TasCoreDynamo", "Dynamo\SAM_TasCoreDynamo\SAM_TasCoreDynamo.csproj", "{1A127700-0F5D-4381-904B-F9446574B85F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,12 +23,17 @@ Global
 		{86DE2672-4961-4D74-A337-0933FDDAE79B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86DE2672-4961-4D74-A337-0933FDDAE79B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86DE2672-4961-4D74-A337-0933FDDAE79B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A127700-0F5D-4381-904B-F9446574B85F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A127700-0F5D-4381-904B-F9446574B85F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A127700-0F5D-4381-904B-F9446574B85F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A127700-0F5D-4381-904B-F9446574B85F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{86DE2672-4961-4D74-A337-0933FDDAE79B} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
+		{1A127700-0F5D-4381-904B-F9446574B85F} = {41EDF772-7CE9-4F51-A0EC-3D326A7D8621}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B2CDD0F-8494-4D69-8DE1-E534BE47B358}
