@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM_Tas", "SAM_Tas\SAM_Tas.csproj", "{86DE2672-4961-4D74-A337-0933FDDAE79B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SAM_Tas", "SAM_Tas", "{24011B5A-B3AF-4632-AB18-E8DB0F450C24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Core.Tas", "SAM_Tas\SAM.Core.Tas\SAM.Core.Tas.csproj", "{86DE2672-4961-4D74-A337-0933FDDAE79B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamo", "Dynamo", "{41EDF772-7CE9-4F51-A0EC-3D326A7D8621}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grasshopper", "Grasshopper", "{06F63504-B0DA-4C13-8883-4F1906D72216}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,6 +24,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{86DE2672-4961-4D74-A337-0933FDDAE79B} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B2CDD0F-8494-4D69-8DE1-E534BE47B358}
