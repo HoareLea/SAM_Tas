@@ -12,9 +12,10 @@ namespace SAM.Core.Tas
         {
             bool result = false;
             
-            using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument())
+            using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
             {
                 result = sAMT3DDocument.ImportgbXML(path_gbXML, @override, fixNormals, zonesFromSpaces);
+                sAMT3DDocument.Save();
             }
 
             return result;
