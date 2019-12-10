@@ -36,11 +36,22 @@ namespace SAM.Core.Grasshopper
     /// </summary>
     protected override void RegisterInputParams(GH_InputParamManager inputParamManager)
         {
-            inputParamManager.AddGenericParameter("_path_TasT3D", "pathTasT3D", "string path to TasT3D file", GH_ParamAccess.item);
-            inputParamManager.AddGenericParameter("_path_gbXML", "pathgbXML", "string path to gbXML file", GH_ParamAccess.item);
-            inputParamManager.AddGenericParameter("_override_", "override", "bool override import setting for gbXML file", GH_ParamAccess.item);
-            inputParamManager.AddGenericParameter("_fixNormals_", "fixNormals", "bool Reverse wrong normals using Tas internal engine", GH_ParamAccess.item);
-            inputParamManager.AddGenericParameter("_zonesFromSpaces_", "zonesFromSpaces", "bool transforms Spaces for internal Tas Zones using Tas internal engine", GH_ParamAccess.item);
+            int aIndex = -1;
+            
+            inputParamManager.AddTextParameter("_path_TasT3D", "pathTasT3D", "string path to TasT3D file", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_path_gbXML", "pathgbXML", "string path to gbXML file", GH_ParamAccess.item);
+            
+            aIndex = inputParamManager.AddBooleanParameter("_override_", "override", "bool override import setting for gbXML file", GH_ParamAccess.item, true);
+            inputParamManager[aIndex].Optional = true;
+
+            aIndex = inputParamManager.AddBooleanParameter("_fixNormals_", "fixNormals", "bool Reverse wrong normals using Tas internal engine", GH_ParamAccess.item, true);
+            inputParamManager[aIndex].Optional = true;
+
+            aIndex = inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "zonesFromSpaces", "bool transforms Spaces for internal Tas Zones using Tas internal engine", GH_ParamAccess.item, true);
+            inputParamManager[aIndex].Optional = true;
+
+            aIndex = inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager[aIndex].Optional = true;
         }
 
         /// <summary>
@@ -58,6 +69,15 @@ namespace SAM.Core.Grasshopper
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
             GH_ObjectWrapper objectWrapper = null;
+
+            if (!dataAccess.GetData(5, ref objectWrapper) || objectWrapper.Value == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
+            if (!(objectWrapper.Value as GH_Boolean).Value)
+                return;
 
             if (!dataAccess.GetData(0, ref objectWrapper) || objectWrapper.Value == null)
             {

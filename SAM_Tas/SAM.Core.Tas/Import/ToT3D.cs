@@ -8,7 +8,7 @@ namespace SAM.Core.Tas
 {
     public static class Import
     {
-        public static bool ToT3D(string path_T3D, string path_gbXML, bool @override, bool fixNormals, bool zonesFromSpaces)
+        public static bool ToT3D(string path_T3D, string path_gbXML, bool @override, bool fixNormals = true, bool zonesFromSpaces = true)
         {
             bool result = false;
             
