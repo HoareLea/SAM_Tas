@@ -37,27 +37,34 @@ namespace SAM.Core.Grasshopper
     /// </summary>
     protected override void RegisterInputParams(GH_InputParamManager inputParamManager)
         {
-            int aIndex = -1;
-            Param_Boolean booleanParameter = null;
+            //int aIndex = -1;
+            //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_path_TasT3D", "pathTasT3D", "string path to TasT3D file", GH_ParamAccess.item);
             inputParamManager.AddTextParameter("_path_gbXML", "pathgbXML", "string path to gbXML file", GH_ParamAccess.item);
-            
-            aIndex = inputParamManager.AddBooleanParameter("_override_", "override", "bool override import setting for gbXML file", GH_ParamAccess.item, true);
-            booleanParameter = (Param_Boolean)inputParamManager[aIndex];
-            booleanParameter.PersistentData.Append(new GH_Boolean(true));
+            inputParamManager.AddBooleanParameter("_override_", "override", "bool override import setting for gbXML file", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_fixNormals_", "fixNormals", "bool Reverse wrong normals using Tas internal engine", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "zonesFromSpaces", "bool transforms Spaces for internal Tas Zones using Tas internal engine", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
 
-            aIndex = inputParamManager.AddBooleanParameter("_fixNormals_", "fixNormals", "bool Reverse wrong normals using Tas internal engine", GH_ParamAccess.item, true);
-            booleanParameter = (Param_Boolean)inputParamManager[aIndex];
-            booleanParameter.PersistentData.Append(new GH_Boolean(true));
+            //aIndex = inputParamManager.AddBooleanParameter("_override_", "override", "bool override import setting for gbXML file", GH_ParamAccess.item, true);
+            //booleanParameter = (Param_Boolean)inputParamManager[aIndex];
+            // booleanParameter.PersistentData.Append(new GH_Boolean(true));
 
-            aIndex = inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "zonesFromSpaces", "bool transforms Spaces for internal Tas Zones using Tas internal engine", GH_ParamAccess.item, true);
-            booleanParameter = (Param_Boolean)inputParamManager[aIndex];
-            booleanParameter.PersistentData.Append(new GH_Boolean(true));
+            //aIndex = inputParamManager.AddBooleanParameter("_fixNormals_", "fixNormals", "bool Reverse wrong normals using Tas internal engine", GH_ParamAccess.item);
+            //booleanParameter = (Param_Boolean)inputParamManager[aIndex];
+            //booleanParameter.Optional = true;
+            //booleanParameter.PersistentData.Append(new GH_Boolean(true));
 
-            aIndex = inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
-            booleanParameter = (Param_Boolean)inputParamManager[aIndex];
-            booleanParameter.PersistentData.Append(new GH_Boolean(true));
+            //aIndex = inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "zonesFromSpaces", "bool transforms Spaces for internal Tas Zones using Tas internal engine", GH_ParamAccess.item);
+            //booleanParameter = (Param_Boolean)inputParamManager[aIndex];
+            //booleanParameter.Optional = true;
+            //booleanParameter.PersistentData.Append(new GH_Boolean(true));
+
+            //aIndex = inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item);
+            //booleanParameter = (Param_Boolean)inputParamManager[aIndex];
+            //booleanParameter.Optional = true;
+            //booleanParameter.PersistentData.Append(new GH_Boolean(false));
         }
 
         /// <summary>
