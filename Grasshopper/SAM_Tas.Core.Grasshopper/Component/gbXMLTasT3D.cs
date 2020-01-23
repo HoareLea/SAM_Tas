@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Grasshopper.Kernel.Parameters;
 using SAM.Core.Grasshopper.Properties;
 
 namespace SAM.Core.Grasshopper
 {
-    public class BygbXML : GH_Component
+    public class gbXMLTasT3D : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public BygbXML()
-          : base("TasT3DBygbXML", "TasT3D",
-              "Import gbXML To T3D",
+        public gbXMLTasT3D()
+          : base("gbXML.TasT3D", "TasT3D",
+              "Import gbXML To Tas T3D",
               "SAM", "Tas")
         {
         }
