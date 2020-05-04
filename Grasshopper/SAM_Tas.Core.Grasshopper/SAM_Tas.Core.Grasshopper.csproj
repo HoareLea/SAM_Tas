@@ -148,5 +148,6 @@ erase "$(TargetPath)"</PostBuildEvent>
     <StartArguments>
     </StartArguments>
     <StartAction>Program</StartAction>
+    <DocumentationFile>..\..\build\SAM_Tas.Core.Grasshopper.xml</DocumentationFile>
   </PropertyGroup>
 </Project>

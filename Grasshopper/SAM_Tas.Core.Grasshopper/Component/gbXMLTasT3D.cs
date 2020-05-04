@@ -1,8 +1,7 @@
-﻿using System;
-
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using SAM.Core.Grasshopper.Properties;
+using System;
 
 namespace SAM.Core.Grasshopper
 {
@@ -18,22 +17,22 @@ namespace SAM.Core.Grasshopper
         {
         }
 
-    //    namespace SAM_TasCoreDynamo
-    //{
-    //    public static class T3D
-    //    {
-    //        public static bool BygbXML(string path_T3D, string path_gbXML, bool @override = true, bool fixNormals = true, bool zonesFromSpaces = true)
-    //        {
-    //            return SAM.Core.Tas.Import.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);
-    //        }
+        //    namespace SAM_TasCoreDynamo
+        //{
+        //    public static class T3D
+        //    {
+        //        public static bool BygbXML(string path_T3D, string path_gbXML, bool @override = true, bool fixNormals = true, bool zonesFromSpaces = true)
+        //        {
+        //            return SAM.Core.Tas.Import.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);
+        //        }
 
-    //    }
-    //}
+        //    }
+        //}
 
-    /// <summary>
-    /// Registers all the input parameters for this component.
-    /// </summary>
-    protected override void RegisterInputParams(GH_InputParamManager inputParamManager)
+        /// <summary>
+        /// Registers all the input parameters for this component.
+        /// </summary>
+        protected override void RegisterInputParams(GH_InputParamManager inputParamManager)
         {
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;

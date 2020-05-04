@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SAM.Core.Tas
 {
@@ -105,7 +101,7 @@ namespace SAM.Core.Tas
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
-             GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
     }
 }
