@@ -5,7 +5,7 @@ using System;
 
 namespace SAM.Core.Grasshopper
 {
-    public class gbXMLTasT3D : GH_Component
+    public class gbXMLTasT3D : GH_SAMComponent
     {
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
