@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace SAM.Core.Tas
 {
@@ -10,30 +9,24 @@ namespace SAM.Core.Tas
 
         public SAMT3DDocument()
         {
-            t3DDocument = GetT3DDocument();
+            t3DDocument = Query.T3DDocument();
         }
 
         public SAMT3DDocument(string path)
         {
-            t3DDocument = GetT3DDocument();
+            t3DDocument = Query.T3DDocument();
             t3DDocument.Open(path);
         }
 
-        public bool ImportgbXML(string path, bool @override, bool fixNormals, bool zonesFromSpaces)
+        public TAS3D.T3DDocument T3DDocument
         {
-            int overrideInt = 0;
-            if (@override)
-                overrideInt = 1;
+            get
+            {
+                if (t3DDocument == null)
+                    t3DDocument = Query.T3DDocument();
 
-            int fixNormalsInt = 0;
-            if (fixNormals)
-                fixNormalsInt = 1;
-
-            int zonesFromSpacesInt = 0;
-            if (zonesFromSpaces)
-                zonesFromSpacesInt = 1;
-
-            return t3DDocument.ImportGBXML(path, overrideInt, fixNormalsInt, zonesFromSpacesInt);
+                return t3DDocument;
+            }
         }
 
         public bool Save(string path = null)
@@ -49,31 +42,6 @@ namespace SAM.Core.Tas
             t3DDocument.Close();
         }
 
-        public static TAS3D.T3DDocument GetT3DDocument()
-        {
-            TAS3D.T3DDocument t3DDocument = null;
-
-            try
-            {
-                object aObject = Marshal.GetActiveObject("T3D.Document");
-
-                if (aObject != null)
-                {
-                    t3DDocument = aObject as TAS3D.T3DDocument;
-                    ObjectUtils.ClearCOMObject(aObject);
-                    t3DDocument = null;
-                }
-            }
-            catch
-            {
-
-            }
-
-            t3DDocument = new TAS3D.T3DDocument();
-
-            return t3DDocument;
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposed)
@@ -83,7 +51,7 @@ namespace SAM.Core.Tas
                     // TODO: dispose managed state (managed objects).
                     if (t3DDocument != null)
                     {
-                        ObjectUtils.ClearCOMObject(t3DDocument);
+                        Modify.ReleaseCOMObject(t3DDocument);
                         t3DDocument = null;
                     }
                 }

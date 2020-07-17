@@ -132,7 +132,7 @@ namespace SAM.Core.Grasshopper
             bool zonesFromSpaces = (objectWrapper.Value as GH_Boolean).Value;
 
 
-            bool result = Tas.Import.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);
+            bool result = Tas.Convert.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);
 
 
             //SAM.Core.Tas.Import.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);
