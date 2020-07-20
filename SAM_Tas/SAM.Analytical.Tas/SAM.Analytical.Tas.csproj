@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{86DE2672-4961-4D74-A337-0933FDDAE79B}</ProjectGuid>
+    <ProjectGuid>{BF2443B1-0709-4E8C-B9FF-B8785D9253E4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAM.Core.Tas</RootNamespace>
-    <AssemblyName>SAM.Core.Tas</AssemblyName>
+    <RootNamespace>SAM.Analytical.Tas</RootNamespace>
+    <AssemblyName>SAM.Analytical.Tas</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>false</Deterministic>
@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\build\SAM.Core.Tas.xml</DocumentationFile>
+    <DocumentationFile>..\..\build\SAM.Analytical.Tas.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,12 +47,20 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Analytical">
+      <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Core, Version=1.0.7488.22264, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Geometry, Version=1.0.7503.29265, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,13 +69,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Convert\TogbXML\gbXML.cs" />
-    <Compile Include="Convert\ToT3D\T3D.cs" />
-    <Compile Include="Create\ParameterSet.cs" />
+    <Compile Include="Convert\ToSAM\RelationCluster.cs" />
+    <Compile Include="Convert\ToSAM\Aperture.cs" />
+    <Compile Include="Convert\ToSAM\Element.cs" />
+    <Compile Include="Convert\ToSAM\Space.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
+    <Compile Include="Modify\RemoveUnusedZones.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Classes\SAMT3DDocument.cs" />
-    <Compile Include="Query\T3DDocument.cs" />
+    <Compile Include="Create\ParameterSet.cs" />
+    <Compile Include="Query\Elements.cs" />
+    <Compile Include="Query\PanelType.cs" />
+    <Compile Include="Query\ShadeGroups.cs" />
+    <Compile Include="Query\Windows.cs" />
+    <Compile Include="Query\WindowGroups.cs" />
+    <Compile Include="Query\ZoneSets.cs" />
+    <Compile Include="Query\Zones.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
@@ -108,11 +124,17 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Convert\ToSAM\" />
-    <Folder Include="Modify\" />
+    <Folder Include="Classes\" />
+    <Folder Include="Convert\ToT3D\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">
+      <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
+      <Name>SAM.Core.Tas</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
