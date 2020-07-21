@@ -61,12 +61,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\SAMTBDDocument.cs" />
+    <Compile Include="Classes\SAMTSDDocument.cs" />
     <Compile Include="Convert\TogbXML\gbXML.cs" />
     <Compile Include="Convert\ToT3D\T3D.cs" />
     <Compile Include="Create\ParameterSet.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\SAMT3DDocument.cs" />
+    <Compile Include="Query\TBDDocument.cs" />
+    <Compile Include="Query\TSDDocument.cs" />
     <Compile Include="Query\T3DDocument.cs" />
   </ItemGroup>
   <ItemGroup>

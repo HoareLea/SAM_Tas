@@ -1,4 +1,5 @@
 ﻿using SAM.Core;
+using System;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
@@ -10,7 +11,13 @@ namespace SAM.Analytical.Tas
             if (building == null)
                 return null;
 
+            Setting setting = ActiveSetting.Setting;
+
+            Dictionary<string, ISAMObject> dictionary = null;
+
             RelationCluster result = new RelationCluster();
+
+            dictionary = new Dictionary<string, ISAMObject>();
 
             List<TAS3D.Zone> zones = Query.Zones(building);
             if(zones != null)
@@ -19,20 +26,27 @@ namespace SAM.Analytical.Tas
                 {
                     Space space = zone.ToSAM();
                     if (space != null)
+                    {
                         result.AddObject(space);
+                        dictionary[zone.GUID] = space;
+                    }
+                        
                 }
             }
 
-            List<TAS3D.Element> elements = Query.Elements(building);
-            if(elements != null)
+            List<TAS3D.zoneSet> zoneSets = Query.ZoneSets(building);
+            if(zoneSets != null)
             {
-                foreach (TAS3D.Element element in elements)
+                foreach (TAS3D.zoneSet zoneSet in zoneSets)
                 {
-                    Panel panel = element.ToSAM();
-                    if (panel != null)
-                        result.AddObject(panel);
+                    List<ISAMObject> sAMObjects = zoneSet?.Zones()?.ConvertAll(x => dictionary[x.GUID]);
+                    ParameterSet parameterSet_Temp = Create.ParameterSet(setting, zoneSet);
+
+                    result.AddGroup(sAMObjects, zoneSet.name, parameterSet_Temp);
                 }
             }
+
+            dictionary = new Dictionary<string, ISAMObject>();
 
             List<TAS3D.window> windows = Query.Windows(building);
             if (windows != null)
@@ -42,6 +56,31 @@ namespace SAM.Analytical.Tas
                     Aperture aperture = widnow.ToSAM();
                     if (aperture != null)
                         result.AddObject(aperture);
+                }
+            }
+
+            List<TAS3D.Element> elements = Query.Elements(building);
+            if (elements != null)
+            {
+                foreach (TAS3D.Element element in elements)
+                {
+                    Panel panel = element.ToSAM();
+                    if (panel != null)
+                    {
+                        result.AddObject(panel);
+                        dictionary[element.GUID] = panel;
+                    }
+                }
+            }
+
+            List<TAS3D.shade> shades = Query.Shades(building);
+            if(shades != null)
+            {
+                foreach (TAS3D.shade shade in shades)
+                {
+                    Panel panel = shade.ToSAM();
+                    if (panel != null)
+                        result.AddObject(panel);
                 }
             }
 

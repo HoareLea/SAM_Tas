@@ -71,17 +71,25 @@
   <ItemGroup>
     <Compile Include="Convert\ToSAM\RelationCluster.cs" />
     <Compile Include="Convert\ToSAM\Aperture.cs" />
-    <Compile Include="Convert\ToSAM\Element.cs" />
+    <Compile Include="Convert\ToSAM\Panel.cs" />
     <Compile Include="Convert\ToSAM\Space.cs" />
+    <Compile Include="Convert\ToT3D\Window.cs" />
+    <Compile Include="Convert\ToT3D\Shade.cs" />
+    <Compile Include="Convert\ToT3D\Element.cs" />
+    <Compile Include="Convert\ToT3D\Building.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
     <Compile Include="Modify\RemoveUnusedZones.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Create\ParameterSet.cs" />
+    <Compile Include="Query\OpeningType.cs" />
     <Compile Include="Query\Elements.cs" />
+    <Compile Include="Query\ApertureType.cs" />
     <Compile Include="Query\PanelType.cs" />
     <Compile Include="Query\ShadeGroups.cs" />
     <Compile Include="Query\Windows.cs" />
     <Compile Include="Query\WindowGroups.cs" />
+    <Compile Include="Query\Shades.cs" />
+    <Compile Include="Query\ZoneDatas.cs" />
     <Compile Include="Query\ZoneSets.cs" />
     <Compile Include="Query\Zones.cs" />
   </ItemGroup>
@@ -125,7 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
-    <Folder Include="Convert\ToT3D\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

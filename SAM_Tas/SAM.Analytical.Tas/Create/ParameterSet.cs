@@ -24,5 +24,15 @@ namespace SAM.Analytical.Tas
         {
             return Core.Tas.Create.ParameterSet(setting, building, typeof(RelationCluster));
         }
+
+        public static ParameterSet ParameterSet(this Setting setting, zoneSet zoneSet)
+        {
+            return Core.Tas.Create.ParameterSet(setting, zoneSet, typeof(GuidCollection));
+        }
+
+        public static ParameterSet ParameterSet(this Setting setting, shade shade)
+        {
+            return Core.Tas.Create.ParameterSet(setting, shade, typeof(Panel));
+        }
     }
 }

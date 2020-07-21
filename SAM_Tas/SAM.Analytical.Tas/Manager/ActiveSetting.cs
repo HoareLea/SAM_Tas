@@ -71,6 +71,26 @@ namespace SAM.Analytical.Tas
             mapCluster.Add(typeof(RelationCluster), typeof(TAS3D.Building), "GUID", "GUID");
             mapCluster.Add(typeof(RelationCluster), typeof(TAS3D.Building), "Year", "year");
 
+            mapCluster.Add(typeof(GuidCollection), typeof(TAS3D.zoneSet), "Description", "description");
+
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "Colour", "colour");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "Description", "description");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "CentreOffset", "centreOffset");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "FrameDepth", "frameDepth");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "FrameOffset", "frameOffset");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "FrameWidth", "frameWidth");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "Height", "height");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "InternalShadows", "internalShadows");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "Level", "level");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "Transparent", "transparent");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "Width", "width");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "FrameGUID", "frameGUID");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "HorizfinsGUID", "horizfinsGUID");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "VertfinsGUID", "vertfinsGUID");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "hasFrame", "HasFrame");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "HasHorizFins", "hasHorizFins");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "HasVertFins", "hasVertFins");
+
             result.Add(Core.Tas.ActiveSetting.Name.ParameterMap, mapCluster);
 
             return setting;

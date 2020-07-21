@@ -2,43 +2,40 @@
 
 namespace SAM.Core.Tas
 {
-    public class SAMT3DDocument : IDisposable
+    public class SAMTSDDocument : IDisposable
     {
         private bool disposed = false;
-        private TAS3D.T3DDocument t3DDocument;
+        private TSD.TSDDocument tSDDocument;
 
-        public SAMT3DDocument()
+        public SAMTSDDocument()
         {
 
         }
 
-        public SAMT3DDocument(string path)
+        public SAMTSDDocument(string path)
         {
-            T3DDocument.Open(path);
+            TSDDocument.open(path);
         }
 
-        public TAS3D.T3DDocument T3DDocument
+        public TSD.TSDDocument TSDDocument
         {
             get
             {
-                if (t3DDocument == null)
-                    t3DDocument = Query.T3DDocument();
+                if (tSDDocument == null)
+                    tSDDocument = Query.TSDDocument();
 
-                return t3DDocument;
+                return tSDDocument;
             }
         }
 
-        public bool Save(string path = null)
+        public bool Save()
         {
-            if (path == null)
-                path = t3DDocument.filePath;
-
-            return t3DDocument.Save(path);
+            return tSDDocument.save();
         }
 
         public void Close()
         {
-            t3DDocument.Close();
+            tSDDocument.close();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -48,10 +45,10 @@ namespace SAM.Core.Tas
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    if (t3DDocument != null)
+                    if (tSDDocument != null)
                     {
-                        Core.Modify.ReleaseCOMObject(t3DDocument);
-                        t3DDocument = null;
+                        Modify.ReleaseCOMObject(tSDDocument);
+                        tSDDocument = null;
                     }
                 }
 
