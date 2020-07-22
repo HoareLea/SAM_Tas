@@ -41,16 +41,38 @@ namespace SAM.Analytical.Tas
             mapCluster.Add(typeof(Space), typeof(TAS3D.Zone), "FloorArea", "floorArea");
             mapCluster.Add(typeof(Space), typeof(TAS3D.Zone), "Volume", "volume");
 
-            mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "Colour", "colour");
-            mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "Description", "description");
-            mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "InternalShadows", "internalShadows");
+            //mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "Colour", "colour");
+            //mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "Description", "description");
+            //mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "InternalShadows", "internalShadows");
             mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "SecondaryProportion", "secondaryProportion");
-            mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "Transparent", "transparent");
+            //mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "Transparent", "transparent");
             mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "Width", "width");
-            mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "GHost", "ghost");
+            //mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "GHost", "ghost");
             mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "FloorArea", "zoneFloorArea");
-            mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "GUID", "GUID");
+            //mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "GUID", "GUID");
             mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "IsPreset", "isPreset");
+
+            //new Revit Type added by MD
+            mapCluster.Add(typeof(Construction), typeof(TAS3D.Element), "SAM_BuildingElementColor", "colour");
+            mapCluster.Add(typeof(Construction), typeof(TAS3D.Element), "SAM_BuildingElementDescription", "description");
+            mapCluster.Add(typeof(Panel), typeof(TAS3D.Element), "SAM_BuildingElementGUID", "GUID");
+            mapCluster.Add(typeof(Construction), typeof(TAS3D.Element), "SAM_BuildingElementInternalShadows", "internalShadows");
+            mapCluster.Add(typeof(Construction), typeof(TAS3D.Element), "SAM_BuildingElementTransparent", "transparent");
+            mapCluster.Add(typeof(Construction), typeof(TAS3D.Element), "SAM_BuildingElementThickness", "width");
+            mapCluster.Add(typeof(Construction), typeof(TAS3D.Element), "SAM_BuildingElementAir", "ghost");
+            /*
+            SAM_BuildingElementAir
+            SAM_BuildingElementDescription
+            SAM_BuildingElementGround
+            SAM_BuildingElementGUID
+            SAM_BuildingElementInternalShadows
+            SAM_BuildingElementThickness
+            SAM_BuildingElementTransparent
+            SAM_BuildingElementType
+            */
+
+
+
 
             mapCluster.Add(typeof(Aperture), typeof(TAS3D.window), "Colour", "colour");
             mapCluster.Add(typeof(Aperture), typeof(TAS3D.window), "Description", "description");
