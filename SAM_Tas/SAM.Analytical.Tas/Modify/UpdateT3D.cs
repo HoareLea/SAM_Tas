@@ -1,5 +1,6 @@
 ﻿
 using SAM.Core.Tas;
+using System;
 using TAS3D;
 
 namespace SAM.Analytical.Tas
@@ -36,7 +37,7 @@ namespace SAM.Analytical.Tas
 
             RemoveUnsusedZones(building);
 
-
+            throw new NotImplementedException();
         }
     }
 }
