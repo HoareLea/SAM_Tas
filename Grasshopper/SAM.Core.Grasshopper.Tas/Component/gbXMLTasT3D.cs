@@ -68,52 +68,41 @@ namespace SAM.Core.Grasshopper.Tas
             if (!run)
                 return;
 
-            GH_ObjectWrapper objectWrapper = null;
 
-            if (!(objectWrapper.Value as GH_Boolean).Value)
-                return;
-
-            if (!dataAccess.GetData(0, ref objectWrapper) || objectWrapper.Value == null)
+            string path_T3D = null;
+            if (!dataAccess.GetData(0, ref path_T3D) || string.IsNullOrWhiteSpace(path_T3D))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-
-            string path_T3D = (objectWrapper.Value as GH_String).Value;
-
-            if (!dataAccess.GetData(1, ref objectWrapper) || objectWrapper.Value == null)
+            string path_gbXML = null;
+            if (!dataAccess.GetData(1, ref path_gbXML) || string.IsNullOrWhiteSpace(path_gbXML))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            string path_gbXML = (objectWrapper.Value as GH_String).Value;
-
-
-            if (!dataAccess.GetData(2, ref objectWrapper) || objectWrapper.Value == null)
+            bool @override = false;
+            if (!dataAccess.GetData(2, ref @override))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            bool @override = (objectWrapper.Value as GH_Boolean).Value;
-
-            if (!dataAccess.GetData(3, ref objectWrapper) || objectWrapper.Value == null)
+            bool fixNormals = true;
+            if (!dataAccess.GetData(3, ref fixNormals))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            bool fixNormals = (objectWrapper.Value as GH_Boolean).Value;
-
-            if (!dataAccess.GetData(4, ref objectWrapper) || objectWrapper.Value == null)
+            bool zonesFromSpaces = true;
+            if (!dataAccess.GetData(4, ref zonesFromSpaces))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
-
-            bool zonesFromSpaces = (objectWrapper.Value as GH_Boolean).Value;
 
 
             bool result = Core.Tas.Convert.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);

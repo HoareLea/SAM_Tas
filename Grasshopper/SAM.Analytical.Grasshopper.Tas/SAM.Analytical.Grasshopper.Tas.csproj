@@ -166,7 +166,7 @@ erase "$(TargetPath)"</PostBuildEvent>
     <StartArguments>
     </StartArguments>
     <StartAction>Program</StartAction>
-    <DocumentationFile>..\..\build\SAM_Tas.Core.Grasshopper.xml</DocumentationFile>
+    <DocumentationFile>..\..\build\SAM.Analytical.Grasshopper.Tas.xml</DocumentationFile>
   </PropertyGroup>
   <Import Project="..\..\packages\RhinoCommon.7.0.20189.15345-wip\build\net45\RhinoCommon.targets" Condition="Exists('..\..\packages\RhinoCommon.7.0.20189.15345-wip\build\net45\RhinoCommon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

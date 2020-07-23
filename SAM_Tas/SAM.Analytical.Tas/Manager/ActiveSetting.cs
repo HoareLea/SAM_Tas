@@ -153,7 +153,7 @@ namespace SAM.Analytical.Tas
 
             result.Add(Core.Tas.ActiveSetting.Name.ParameterMap, mapCluster);
 
-            return setting;
+            return result;
         }
     }
 }

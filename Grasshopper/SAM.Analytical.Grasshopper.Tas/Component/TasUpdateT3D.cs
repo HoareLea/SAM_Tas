@@ -55,7 +55,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            dataAccess.SetData(0, false);
+            dataAccess.SetData(1, false);
 
             bool run = false;
             if (!dataAccess.GetData(2, ref run))
@@ -74,7 +74,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             AnalyticalModel analyticalModel = null;
-            if (!dataAccess.GetData(0, ref analyticalModel) || analyticalModel == null)
+            if (!dataAccess.GetData(1, ref analyticalModel) || analyticalModel == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -87,7 +87,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             //IGeometry geometry = objectWrapper.Value as IGeometry;
 
-            dataAccess.SetData(0, analyticalModel_New);
+            dataAccess.SetData(0, new GooAnalyticalModel(analyticalModel_New));
             dataAccess.SetData(1, analyticalModel_New != null);
         }
     }
