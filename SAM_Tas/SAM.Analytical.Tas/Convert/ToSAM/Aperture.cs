@@ -10,7 +10,6 @@ namespace SAM.Analytical.Tas
                 return null;
 
             ParameterSet parameterSet = Create.ParameterSet(ActiveSetting.Setting, window);
-            parameterSet.Add("IsUsed", window.isUsed == 1);
 
             Aperture aperture = new Aperture(new ApertureConstruction(window.name, ApertureType.Window), null);
             aperture.Add(parameterSet);

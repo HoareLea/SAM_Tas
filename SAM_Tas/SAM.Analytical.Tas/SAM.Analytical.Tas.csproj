@@ -86,11 +86,14 @@
     <Compile Include="Modify\RemoveUnusedZones.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Create\ParameterSet.cs" />
+    <Compile Include="Query\Name.cs" />
     <Compile Include="Query\OpeningType.cs" />
     <Compile Include="Query\Elements.cs" />
     <Compile Include="Query\ApertureType.cs" />
+    <Compile Include="Query\BEType.cs" />
     <Compile Include="Query\PanelType.cs" />
     <Compile Include="Query\ShadeGroups.cs" />
+    <Compile Include="Query\Match.cs" />
     <Compile Include="Query\Windows.cs" />
     <Compile Include="Query\WindowGroups.cs" />
     <Compile Include="Query\Shades.cs" />

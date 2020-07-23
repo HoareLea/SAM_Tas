@@ -1,9 +1,9 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using SAM.Core.Grasshopper.Properties;
+using SAM.Core.Grasshopper.Tas.Properties;
 using System;
 
-namespace SAM.Core.Grasshopper
+namespace SAM.Core.Grasshopper.Tas
 {
     public class gbXMLTasT3D : GH_SAMComponent
     {
@@ -116,7 +116,7 @@ namespace SAM.Core.Grasshopper
             bool zonesFromSpaces = (objectWrapper.Value as GH_Boolean).Value;
 
 
-            bool result = Tas.Convert.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);
+            bool result = Core.Tas.Convert.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);
 
 
             //SAM.Core.Tas.Import.ToT3D(path_T3D, path_gbXML, @override, fixNormals, zonesFromSpaces);

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SAM.Core.Grasshopper.Properties {
+namespace SAM.Core.Grasshopper.Tas.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SAM.Core.Grasshopper.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SAM_Tas.Core.Grasshopper.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SAM.Core.Grasshopper.Tas.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

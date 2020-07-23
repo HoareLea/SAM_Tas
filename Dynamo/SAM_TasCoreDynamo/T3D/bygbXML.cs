@@ -1,4 +1,4 @@
-﻿namespace SAM_TasCoreDynamo
+﻿namespace SAMCoreDynamoTas
 {
     public static class T3D
     {

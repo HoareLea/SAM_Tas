@@ -10,11 +10,11 @@ namespace SAM.Analytical.Tas
                 return null;
 
             ParameterSet parameterSet = Create.ParameterSet(ActiveSetting.Setting, element);
-            parameterSet.Add("IsUsed", element.isUsed == 1);
 
             PlanarBoundary3D planarBoundary3D = null;
 
             Panel panel = new Panel(new Construction(element.name), Query.PanelType(element.BEType), planarBoundary3D);
+            panel.Add(parameterSet);
 
             return panel;
         }
@@ -25,8 +25,7 @@ namespace SAM.Analytical.Tas
                 return null;
 
             ParameterSet parameterSet = Create.ParameterSet(ActiveSetting.Setting, shade);
-            parameterSet.Add("IsUsed", shade.isUsed == 1);
-
+            
             PlanarBoundary3D planarBoundary3D = null;
 
             Panel panel = new Panel(new Construction(shade.name), PanelType.Shade, planarBoundary3D);

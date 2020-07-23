@@ -10,7 +10,6 @@ namespace SAM.Analytical.Tas
                 return null;
 
             ParameterSet parameterSet = Create.ParameterSet(ActiveSetting.Setting, zone);
-            parameterSet.Add("IsUsed", zone.isUsed == 1);
 
             Space space = new Space(zone.name, null);
             space.Add(parameterSet);

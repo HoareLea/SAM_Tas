@@ -18,8 +18,8 @@
     <ProjectGuid>{B8F0EE34-A776-4518-ADA2-E047E468B47B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAM_Tas.Core.Grasshopper</RootNamespace>
-    <AssemblyName>SAM_Tas.Core.Grasshopper</AssemblyName>
+    <RootNamespace>SAM.Core.Grasshopper.Tas</RootNamespace>
+    <AssemblyName>SAM.Core.Grasshopper.Tas</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -156,7 +156,7 @@ erase "$(TargetPath)"</PostBuildEvent>
     <StartArguments>
     </StartArguments>
     <StartAction>Program</StartAction>
-    <DocumentationFile>..\..\build\SAM_Tas.Core.Grasshopper.xml</DocumentationFile>
+    <DocumentationFile>..\..\build\SAM.Core.Grasshopper.Tas.xml</DocumentationFile>
   </PropertyGroup>
   <Import Project="..\..\packages\RhinoCommon.7.0.20189.15345-wip\build\net45\RhinoCommon.targets" Condition="Exists('..\..\packages\RhinoCommon.7.0.20189.15345-wip\build\net45\RhinoCommon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

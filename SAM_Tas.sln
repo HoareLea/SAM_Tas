@@ -11,11 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamo", "Dynamo", "{41EDF7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grasshopper", "Grasshopper", "{06F63504-B0DA-4C13-8883-4F1906D72216}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM_TasCoreDynamo", "Dynamo\SAM_TasCoreDynamo\SAM_TasCoreDynamo.csproj", "{1A127700-0F5D-4381-904B-F9446574B85F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAMCoreDynamoTas", "Dynamo\SAM_TasCoreDynamo\SAMCoreDynamoTas.csproj", "{1A127700-0F5D-4381-904B-F9446574B85F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM_Tas.Core.Grasshopper", "Grasshopper\SAM_Tas.Core.Grasshopper\SAM_Tas.Core.Grasshopper.csproj", "{B8F0EE34-A776-4518-ADA2-E047E468B47B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Core.Grasshopper.Tas", "Grasshopper\SAM.Core.Grasshopper.Tas\SAM.Core.Grasshopper.Tas.csproj", "{B8F0EE34-A776-4518-ADA2-E047E468B47B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas", "SAM_Tas\SAM.Analytical.Tas\SAM.Analytical.Tas.csproj", "{BF2443B1-0709-4E8C-B9FF-B8785D9253E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Grasshopper.Tas", "Grasshopper\SAM.Analytical.Grasshopper.Tas\SAM.Analytical.Grasshopper.Tas.csproj", "{F0881D8C-68B0-4F9C-AFCE-61C0A7C1F293}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{BF2443B1-0709-4E8C-B9FF-B8785D9253E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF2443B1-0709-4E8C-B9FF-B8785D9253E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF2443B1-0709-4E8C-B9FF-B8785D9253E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0881D8C-68B0-4F9C-AFCE-61C0A7C1F293}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0881D8C-68B0-4F9C-AFCE-61C0A7C1F293}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0881D8C-68B0-4F9C-AFCE-61C0A7C1F293}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0881D8C-68B0-4F9C-AFCE-61C0A7C1F293}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{1A127700-0F5D-4381-904B-F9446574B85F} = {41EDF772-7CE9-4F51-A0EC-3D326A7D8621}
 		{B8F0EE34-A776-4518-ADA2-E047E468B47B} = {06F63504-B0DA-4C13-8883-4F1906D72216}
 		{BF2443B1-0709-4E8C-B9FF-B8785D9253E4} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
+		{F0881D8C-68B0-4F9C-AFCE-61C0A7C1F293} = {06F63504-B0DA-4C13-8883-4F1906D72216}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B2CDD0F-8494-4D69-8DE1-E534BE47B358}

@@ -1,9 +1,9 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper;
 
-using SAM.Core.Grasshopper.Properties;
+using SAM.Core.Grasshopper.Tas.Properties;
 
-namespace SAM.Core.Grasshopper
+namespace SAM.Core.Grasshopper.Tas
 {
     public class AssemblyPriority : GH_AssemblyPriority
     {
