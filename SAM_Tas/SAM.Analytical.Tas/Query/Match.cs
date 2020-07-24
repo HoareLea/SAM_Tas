@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
@@ -29,12 +30,18 @@ namespace SAM.Analytical.Tas
             if (string.IsNullOrWhiteSpace(name))
                 return null;
 
-            foreach (Construction construction in constructions)
-            {
-                if (construction == null)
-                    continue;
+            List<Construction> constructions_Temp = constructions.ToList();
+            constructions_Temp.RemoveAll(x => x == null || string.IsNullOrWhiteSpace(x.Name));
 
+            foreach (Construction construction in constructions_Temp)
+            {
                 if (name.Equals(construction.Name))
+                    return construction;
+            }
+
+            foreach(Construction construction in constructions_Temp)
+            {
+                if (name.EndsWith(string.Format(": {0}", construction.Name)))
                     return construction;
             }
 
