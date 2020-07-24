@@ -14,6 +14,8 @@ namespace SAM.Analytical.Tas
             if (string.IsNullOrWhiteSpace(name))
                 return null;
 
+            name = name.Trim();
+
             name = name.Replace(" : ", ": ");
             if (name.EndsWith("-ground"))
                 name = name.Substring(0, name.Length - 7);
@@ -35,6 +37,8 @@ namespace SAM.Analytical.Tas
             string name = window.name;
             if (string.IsNullOrWhiteSpace(name))
                 return null;
+
+            name = name.Trim();
 
             return name;
         }

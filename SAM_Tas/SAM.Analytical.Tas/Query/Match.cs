@@ -35,13 +35,13 @@ namespace SAM.Analytical.Tas
 
             foreach (Construction construction in constructions_Temp)
             {
-                if (name.Equals(construction.Name))
+                if (name.Equals(construction.Name.Trim()))
                     return construction;
             }
 
             foreach(Construction construction in constructions_Temp)
             {
-                if (name.EndsWith(string.Format(": {0}", construction.Name)))
+                if (name.EndsWith(string.Format(": {0}", construction.Name.Trim())))
                     return construction;
             }
 
@@ -62,13 +62,13 @@ namespace SAM.Analytical.Tas
 
             foreach (ApertureConstruction apertureConstruction in apertureConstructions_Temp)
             {
-                if (name.Equals(apertureConstruction.Name))
+                if (name.Equals(apertureConstruction.Name.Trim()))
                     return apertureConstruction;
             }
 
             foreach (ApertureConstruction apertureConstruction in apertureConstructions_Temp)
             {
-                if (name.EndsWith(string.Format(": {0}", apertureConstruction.Name)))
+                if (name.EndsWith(string.Format(": {0}", apertureConstruction.Name.Trim())))
                     return apertureConstruction;
             }
 
