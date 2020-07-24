@@ -105,7 +105,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             bool autoAssignConstructions = true;
-            if (!dataAccess.GetData(4, ref autoAssignConstructions))
+            if (!dataAccess.GetData(5, ref autoAssignConstructions))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
