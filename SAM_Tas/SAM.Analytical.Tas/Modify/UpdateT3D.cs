@@ -44,6 +44,7 @@ namespace SAM.Analytical.Tas
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
             if(adjacencyCluster != null)
             {
+                //Zones -> Spaces
                 List<Space> spaces = adjacencyCluster.GetSpaces();
                 if (spaces != null)
                 {
@@ -64,6 +65,7 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
+                //Elements -> Constructions
                 List<Construction> constructions = adjacencyCluster.GetConstructions();
                 if(constructions != null)
                 {
@@ -75,8 +77,6 @@ namespace SAM.Analytical.Tas
                             Construction construction = element.Match(constructions);
                             if (construction == null)
                                 continue;
-
-                            object @object = null;
 
                             //Update Element
 
@@ -134,6 +134,48 @@ namespace SAM.Analytical.Tas
                         }
                     }
                 }
+
+                //Windows -> ApertureConstruction
+                List<ApertureConstruction> apertureConstructions = adjacencyCluster.GetApertureConstructions();
+                if(apertureConstructions != null)
+                {
+                    List<window> windows = building.Windows();
+                    if (windows != null)
+                    {
+                        foreach(window window in windows)
+                        {
+                            if (window == null)
+                                continue;
+
+                            ApertureConstruction apertureConstruction = window.Match(apertureConstructions);
+                            if (apertureConstruction == null)
+                                continue;
+
+                            //Colour
+                            uint color = uint.MinValue;
+                            if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_Color(), out color, true))
+                                window.colour = color;
+
+                            //Transparent
+                            bool transparent = false;
+                            if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
+                                window.transparent = transparent;
+
+                            //InternalShadows
+                            bool internalShadows = false;
+                            if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_InternalShadows(), out internalShadows, true))
+                                window.internalShadows = internalShadows;
+
+                            //FrameWidth
+                            double frameWidth = double.NaN;
+                            if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_FrameWidth(), out frameWidth, true))
+                                window.frameWidth = frameWidth;
+
+                        }
+                    }
+                }
+
+
             }
 
             AnalyticalModel result = new AnalyticalModel(analyticalModel, adjacencyCluster);

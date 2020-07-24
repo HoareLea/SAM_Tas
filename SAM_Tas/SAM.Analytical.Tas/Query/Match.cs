@@ -47,5 +47,32 @@ namespace SAM.Analytical.Tas
 
             return null;
         }
+
+        public static ApertureConstruction Match(this TAS3D.window window, IEnumerable<ApertureConstruction> apertureConstructions)
+        {
+            if (apertureConstructions == null || window == null)
+                return null;
+
+            string name = Query.Name(window);
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+
+            List<ApertureConstruction> apertureConstructions_Temp = apertureConstructions.ToList();
+            apertureConstructions_Temp.RemoveAll(x => x == null || string.IsNullOrWhiteSpace(x.Name));
+
+            foreach (ApertureConstruction apertureConstruction in apertureConstructions_Temp)
+            {
+                if (name.Equals(apertureConstruction.Name))
+                    return apertureConstruction;
+            }
+
+            foreach (ApertureConstruction apertureConstruction in apertureConstructions_Temp)
+            {
+                if (name.EndsWith(string.Format(": {0}", apertureConstruction.Name)))
+                    return apertureConstruction;
+            }
+
+            return null;
+        }
     }
 }

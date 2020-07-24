@@ -26,5 +26,17 @@ namespace SAM.Analytical.Tas
 
             return name;
         }
+
+        public static string Name(this TAS3D.window window)
+        {
+            if (window == null)
+                return null;
+
+            string name = window.name;
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+
+            return name;
+        }
     }
 }
