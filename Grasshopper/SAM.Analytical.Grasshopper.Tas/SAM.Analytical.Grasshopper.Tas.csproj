@@ -91,6 +91,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Component\TasT3DtoTBD.cs" />
     <Compile Include="Component\TasUpdateT3D.cs" />
     <Compile Include="Kernel\AssemblyPriority.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

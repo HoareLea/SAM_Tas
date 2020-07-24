@@ -77,6 +77,7 @@
     <Compile Include="Convert\ToSAM\Aperture.cs" />
     <Compile Include="Convert\ToSAM\Panel.cs" />
     <Compile Include="Convert\ToSAM\Space.cs" />
+    <Compile Include="Convert\ToTBD\TBD.cs" />
     <Compile Include="Modify\UpdateT3D.cs" />
     <Compile Include="Convert\ToT3D\Window.cs" />
     <Compile Include="Convert\ToT3D\Shade.cs" />
