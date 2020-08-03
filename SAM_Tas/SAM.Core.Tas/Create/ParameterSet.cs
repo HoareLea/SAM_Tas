@@ -17,7 +17,7 @@ namespace SAM.Core.Tas
             if (mapCluster == null)
                 return null;
 
-            return Core.Create.ParameterSet(@object, type_destination, mapCluster);
+            return Core.Create.ParameterSet(@object, type_destination.Assembly, type_destination, mapCluster);
         }
     }
 }

@@ -5,7 +5,7 @@ using TAS3D;
 
 namespace SAM.Analytical.Tas
 {
-    public static partial class Modify
+    public static partial class Query
     {
         public static AnalyticalModel UpdateT3D(this AnalyticalModel analyticalModel, string path_T3D)
         {
@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas
             if (building == null)
                 return null;
 
-            RemoveUnsusedZones(building);
+            Modify.RemoveUnsusedZones(building);
             
             double northAngle = double.NaN;
             if (Core.Query.TryGetValue(analyticalModel, Analytical.Query.ParameterName_NorthAngle(), out northAngle))

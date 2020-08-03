@@ -14,10 +14,10 @@ namespace SAM.Core.Tas
 
         public SAMTBDDocument(string path)
         {
-            TSDDocument.open(path);
+            TBDDocument.open(path);
         }
 
-        public TBD.TBDDocument TSDDocument
+        public TBD.TBDDocument TBDDocument
         {
             get
             {
