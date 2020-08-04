@@ -1,7 +1,4 @@
-﻿using SAM.Analytical;
-using System.Collections.Generic;
-
-namespace SAM.Analytical.Tas
+﻿namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
@@ -12,6 +9,8 @@ namespace SAM.Analytical.Tas
                 case 14:
                     return Analytical.ApertureType.Door;
                 case 12:
+                    return Analytical.ApertureType.Window;
+                case 13:
                     return Analytical.ApertureType.Window;
             }
 

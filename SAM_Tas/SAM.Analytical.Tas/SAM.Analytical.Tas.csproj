@@ -78,6 +78,8 @@
     <Compile Include="Convert\ToSAM\Panel.cs" />
     <Compile Include="Convert\ToSAM\Space.cs" />
     <Compile Include="Convert\ToTBD\TBD.cs" />
+    <Compile Include="Modify\AssignBuildingElementType.cs" />
+    <Compile Include="Modify\AssignRooflightBuilidingElementType.cs" />
     <Compile Include="Modify\AssignAdiabaticConstruction.cs" />
     <Compile Include="Query\Construction.cs" />
     <Compile Include="Query\BuildingElements.cs" />
