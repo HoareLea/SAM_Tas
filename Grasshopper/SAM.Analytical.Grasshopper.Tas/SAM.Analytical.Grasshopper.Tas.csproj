@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Component\TasT3DtoTBD.cs" />
+    <Compile Include="Component\TasAssignAdiabaticConstruction.cs" />
     <Compile Include="Component\TasUpdateFacingExternal.cs" />
     <Compile Include="Component\TasUpdateT3D.cs" />
     <Compile Include="Kernel\AssemblyPriority.cs" />

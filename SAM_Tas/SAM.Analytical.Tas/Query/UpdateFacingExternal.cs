@@ -21,7 +21,6 @@ namespace SAM.Analytical.Tas
             }
 
             return result;
-
         }
 
         public static AnalyticalModel UpdateFacingExternal(this AnalyticalModel analyticalModel, SAMTBDDocument sAMTBDDocument)
