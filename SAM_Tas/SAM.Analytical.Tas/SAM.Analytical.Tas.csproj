@@ -81,7 +81,10 @@
     <Compile Include="Create\IZAMs.cs" />
     <Compile Include="Create\IZAM.cs" />
     <Compile Include="Create\Schedule.cs" />
+    <Compile Include="Modify\RemoveApertureTypes.cs" />
+    <Compile Include="Modify\AssignApertureTypes.cs" />
     <Compile Include="Modify\RemoveIZAMs.cs" />
+    <Compile Include="Modify\UpdateApertureControl.cs" />
     <Compile Include="Modify\UpdateIZAMs.cs" />
     <Compile Include="Modify\RemoveSchedules.cs" />
     <Compile Include="Modify\AssignBuildingElementType.cs" />
