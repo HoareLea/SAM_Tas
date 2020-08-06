@@ -100,6 +100,7 @@
     <Compile Include="Component\TasT3DtoTBD.cs" />
     <Compile Include="Component\TasAssignAdiabaticConstruction.cs" />
     <Compile Include="Component\TasUpdateApertureControl.cs" />
+    <Compile Include="Component\TasSimulate.cs" />
     <Compile Include="Component\TasUpdateIZAMs.cs" />
     <Compile Include="Component\TasUpdateFacingExternal.cs" />
     <Compile Include="Component\TasUpdateT3D.cs" />
