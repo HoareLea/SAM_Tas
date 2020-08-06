@@ -74,7 +74,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            List<ApertureConstruction> apertureConstructions = null;
+            List<ApertureConstruction> apertureConstructions = new List<ApertureConstruction>();
             if (!dataAccess.GetDataList(1, apertureConstructions) || apertureConstructions == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
