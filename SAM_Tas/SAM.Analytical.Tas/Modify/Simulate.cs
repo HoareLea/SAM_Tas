@@ -29,7 +29,9 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || string.IsNullOrWhiteSpace(path_TSD))
                 return false;
 
-            return tBDDocument.simulate(day_First, day_Last, 0, 1, 0, 1, path_TSD, 1, 0) == 1;
+            tBDDocument.simulate(day_First, day_Last, 0, 1, 0, 1, path_TSD, 1, 0);
+
+            return true;
         }
     }
 }
