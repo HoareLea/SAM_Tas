@@ -74,8 +74,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            List<Space> spaces = null;
-            if (!dataAccess.GetDataList(1, spaces) || spaces == null)
+            List<Space> spaces = new List<Space>();
+            if (!dataAccess.GetDataList(1, spaces))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
