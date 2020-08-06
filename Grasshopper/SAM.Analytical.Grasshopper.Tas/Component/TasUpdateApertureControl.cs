@@ -37,7 +37,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
-            inputParamManager.AddParameter(new GooApertureConstructionParam(), "_apertureConstructions", "_apertureConstructions", "SAM Analytical Aperture Constructions", GH_ParamAccess.list);
+            inputParamManager.AddParameter(new GooApertureConstructionParam(), "_apertureConstructions_", "_apertureConstructions_", "SAM Analytical Aperture Constructions", GH_ParamAccess.list);
             inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
         }
 
