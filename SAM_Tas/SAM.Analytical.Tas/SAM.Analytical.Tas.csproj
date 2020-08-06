@@ -117,6 +117,7 @@
     <Compile Include="Query\Windows.cs" />
     <Compile Include="Query\WindowGroups.cs" />
     <Compile Include="Query\Shades.cs" />
+    <Compile Include="Query\SurfaceDatas.cs" />
     <Compile Include="Query\ZoneDatas.cs" />
     <Compile Include="Query\Constructions.cs" />
     <Compile Include="Query\Zone.cs" />

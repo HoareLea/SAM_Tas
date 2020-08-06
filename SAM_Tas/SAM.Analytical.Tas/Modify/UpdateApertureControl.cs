@@ -52,8 +52,9 @@ namespace SAM.Analytical.Tas
                 return result;
 
             List<dayType> dayTypes = builidng.DayTypes();
+            dayTypes.RemoveAll(x => x.name.Equals("CDD") || x.name.Equals("HDD"));
 
-            foreach(ApertureConstruction apertureConstruction in apertureConstructions)
+            foreach (ApertureConstruction apertureConstruction in apertureConstructions)
             {
                 buildingElement buildingElement = buildingElements.Find(x => x.name == apertureConstruction.Name + " -pane");
                 if (buildingElement == null)

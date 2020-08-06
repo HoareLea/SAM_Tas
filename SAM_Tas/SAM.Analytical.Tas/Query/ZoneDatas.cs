@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static List<TSD.ZoneData> ZoneDatas(this BuildingData buildingData)
+        public static List<ZoneData> ZoneDatas(this BuildingData buildingData)
         {
             if (buildingData == null)
                 return null;

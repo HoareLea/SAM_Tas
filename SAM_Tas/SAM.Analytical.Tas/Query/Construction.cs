@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TSD;
 
 namespace SAM.Analytical.Tas
 {
@@ -35,9 +36,48 @@ namespace SAM.Analytical.Tas
                     return construction;
 
 
-                    index++;
+                index++;
 
                 construction = building.GetConstruction(index);
+            }
+
+            return null;
+        }
+
+        public static Construction Construction(this SurfaceData surfaceData, IEnumerable<Construction> constructions, bool caseSesitive = true, bool trim = false)
+        {
+            if (surfaceData == null || constructions == null)
+                return null;
+
+            string name_SurfaceData = surfaceData.BEName;
+            if (string.IsNullOrEmpty(name_SurfaceData))
+                return null;
+
+            if (trim)
+                name_SurfaceData = name_SurfaceData.Trim();
+
+            if (!caseSesitive)
+                name_SurfaceData = name_SurfaceData.ToUpper();
+
+
+            foreach (Construction construction in constructions)
+            {
+                if (construction == null)
+                    continue;
+
+                string name_Construction = construction.Name;
+
+                if (string.IsNullOrEmpty(name_Construction))
+                    continue;
+
+                if (trim)
+                    name_Construction = name_Construction.Trim();
+
+                if (!caseSesitive)
+                    name_Construction = name_Construction.ToUpper();
+
+                if (name_Construction.Equals(name_SurfaceData))
+                    return construction;
             }
 
             return null;
