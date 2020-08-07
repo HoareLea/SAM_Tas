@@ -27,7 +27,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public SAMAnalyticalTasPanelDataType()
           : base("SAMAnalytical.PanelDataType", "SAMAnalytical.PanelDataType",
-              "Select Result Type",
+              "Select Panel Data Type",
               "SAM", "Tas")
         {
         }

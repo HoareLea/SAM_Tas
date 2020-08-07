@@ -95,7 +95,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component\SAMAnalyticalTasResultType.cs" />
+    <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
+    <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\TasTSDCreateAdjacencyCluster.cs" />
     <Compile Include="Component\TasRemoveSchedules.cs" />
     <Compile Include="Component\TasAssignRooflightBuilidingElementType.cs" />

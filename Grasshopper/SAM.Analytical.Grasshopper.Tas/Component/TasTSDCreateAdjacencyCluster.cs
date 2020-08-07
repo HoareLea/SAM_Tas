@@ -43,6 +43,9 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = inputParamManager.AddGenericParameter("panelDataType_", "panelDataType_", "SAM Analytical Panel Data Type", GH_ParamAccess.list);
             inputParamManager[index].Optional = true;
 
+            index = inputParamManager.AddGenericParameter("spaceDataType_", "spaceDataType_", "SAM Analytical Space Data Type", GH_ParamAccess.list);
+            inputParamManager[index].Optional = true;
+
             inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
         }
 
@@ -64,7 +67,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(1, false);
 
             bool run = false;
-            if (!dataAccess.GetData(2, ref run))
+            if (!dataAccess.GetData(3, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -79,9 +82,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
+            List<GH_ObjectWrapper> objectWrappers;
+
             List<PanelDataType> panelDataTypes = null;
 
-            List<GH_ObjectWrapper> objectWrappers = new List<GH_ObjectWrapper>();
+            objectWrappers = new List<GH_ObjectWrapper>();
             if(dataAccess.GetDataList(1, objectWrappers))
             {
                 panelDataTypes = new List<PanelDataType>();
@@ -98,7 +103,26 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            AdjacencyCluster adjacencyCluster = path_TSD.ToSAM_AdjacencyCluster(panelDataTypes);
+            List<SpaceDataType> spaceDataTypes = null;
+
+            objectWrappers = new List<GH_ObjectWrapper>();
+            if (dataAccess.GetDataList(2, objectWrappers))
+            {
+                spaceDataTypes = new List<SpaceDataType>();
+                foreach (GH_ObjectWrapper objectWrapper in objectWrappers)
+                {
+                    SpaceDataType spaceDataType = SpaceDataType.Undefined;
+                    if (objectWrapper.Value is GH_String)
+                        spaceDataType = Analytical.Tas.Query.SpaceDataType(((GH_String)objectWrapper.Value).Value);
+                    else
+                        spaceDataType = Analytical.Tas.Query.SpaceDataType(objectWrapper.Value);
+
+                    if (spaceDataType != SpaceDataType.Undefined)
+                        spaceDataTypes.Add(spaceDataType);
+                }
+            }
+
+            AdjacencyCluster adjacencyCluster = path_TSD.ToSAM_AdjacencyCluster(spaceDataTypes, panelDataTypes);
 
             dataAccess.SetData(0, adjacencyCluster);
             dataAccess.SetData(1, adjacencyCluster != null);
