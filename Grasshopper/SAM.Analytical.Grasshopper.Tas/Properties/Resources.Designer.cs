@@ -93,9 +93,39 @@ namespace SAM.Analytical.Grasshopper.Tas.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap SAM_TasTCD {
+            get {
+                object obj = ResourceManager.GetObject("SAM_TasTCD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SAM_TasTPD {
+            get {
+                object obj = ResourceManager.GetObject("SAM_TasTPD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SAM_TasTSD {
             get {
                 object obj = ResourceManager.GetObject("SAM_TasTSD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SAM_TasTWD {
+            get {
+                object obj = ResourceManager.GetObject("SAM_TasTWD", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
