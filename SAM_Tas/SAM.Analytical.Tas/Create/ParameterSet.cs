@@ -1,5 +1,6 @@
 ﻿using SAM.Core;
 using TAS3D;
+using TSD;
 
 namespace SAM.Analytical.Tas
 {
@@ -43,6 +44,20 @@ namespace SAM.Analytical.Tas
         {
             ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, shade, typeof(Panel));
             parameterSet.Add("IsUsed", shade.isUsed == 1);
+
+            return parameterSet;
+        }
+
+        public static ParameterSet ParameterSet(this Setting setting, ZoneData zoneData)
+        {
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, zoneData, typeof(Space));
+
+            return parameterSet;
+        }
+
+        public static ParameterSet ParameterSet(this Setting setting, SurfaceData surfaceData)
+        {
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, surfaceData, typeof(Panel));
 
             return parameterSet;
         }

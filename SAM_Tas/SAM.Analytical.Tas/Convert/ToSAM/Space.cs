@@ -16,5 +16,15 @@ namespace SAM.Analytical.Tas
 
             return space;
         }
+
+        public static Space ToSAM(this TSD.ZoneData zoneData)
+        {
+            ParameterSet parameterSet = Create.ParameterSet(ActiveSetting.Setting, zoneData);
+
+            Space space = new Space(zoneData.name, null);
+            space.Add(parameterSet);
+
+            return space;
+        }
     }
 }

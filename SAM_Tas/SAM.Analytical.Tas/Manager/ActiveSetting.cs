@@ -151,6 +151,19 @@ namespace SAM.Analytical.Tas
             mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "HasHorizFins", "hasHorizFins");
             mapCluster.Add(typeof(Panel), typeof(TAS3D.shade), "HasVertFins", "hasVertFins");
 
+            mapCluster.Add(typeof(Space), typeof(TSD.ZoneData), "ZoneNumber", "zoneNumber");
+            mapCluster.Add(typeof(Space), typeof(TSD.ZoneData), "Description", "description");
+            mapCluster.Add(typeof(Space), typeof(TSD.ZoneData), "ZoneGuid", "zoneGUID");
+            mapCluster.Add(typeof(Space), typeof(TSD.ZoneData), "Volume", "volume");
+            mapCluster.Add(typeof(Space), typeof(TSD.ZoneData), "FloorArea", "floorArea");
+            mapCluster.Add(typeof(Space), typeof(TSD.ZoneData), "ConvectiveCommonRatio", "convectiveCommonRatio");
+            mapCluster.Add(typeof(Space), typeof(TSD.ZoneData), "RadiantCommonRatio", "radiantCommonRatio");
+
+            mapCluster.Add(typeof(Panel), typeof(TSD.SurfaceData), "SurfaceNumber", "surfaceNumber");
+            mapCluster.Add(typeof(Panel), typeof(TSD.SurfaceData), "Area", "area");
+            mapCluster.Add(typeof(Panel), typeof(TSD.SurfaceData), "Orientation", "orientation");
+
+
             result.Add(Core.Tas.ActiveSetting.Name.ParameterMap, mapCluster);
 
             return result;
