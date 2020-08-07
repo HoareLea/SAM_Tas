@@ -83,7 +83,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             List<string> names = Analytical.Tas.Modify.UpdateIZAMs(path_TBD, spaces);
 
-            dataAccess.SetData(0, names);
+            dataAccess.SetDataList(0, names);
             dataAccess.SetData(1, names != null);
         }
     }
