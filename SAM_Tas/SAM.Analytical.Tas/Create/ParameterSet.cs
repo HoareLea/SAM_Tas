@@ -8,7 +8,7 @@ namespace SAM.Analytical.Tas
     {
         public static ParameterSet ParameterSet(this Setting setting, Zone zone)
         {
-            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, zone, typeof(Zone), typeof(Space));
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, zone, typeof(Space), typeof(Zone));
             parameterSet.Add("IsUsed", zone.isUsed == 1);
 
             return parameterSet;
@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas
 
         public static ParameterSet ParameterSet(this Setting setting, Element element)
         {
-            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, element, typeof(Element), typeof(Panel));
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, element, typeof(Panel), typeof(Element));
             parameterSet.Add("IsUsed", element.isUsed == 1);
 
             return parameterSet;
@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas
 
         public static ParameterSet ParameterSet(this Setting setting, window window)
         {
-            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, window, typeof(window), typeof(Aperture));
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, window, typeof(Aperture), typeof(window));
             parameterSet.Add("IsUsed", window.isUsed == 1);
 
             return parameterSet;
@@ -32,17 +32,17 @@ namespace SAM.Analytical.Tas
 
         public static ParameterSet ParameterSet(this Setting setting, Building building)
         {
-            return Core.Tas.Create.ParameterSet(setting, building, typeof(Building), typeof(RelationCluster));
+            return Core.Tas.Create.ParameterSet(setting, building, typeof(RelationCluster), typeof(Building));
         }
 
         public static ParameterSet ParameterSet(this Setting setting, zoneSet zoneSet)
         {
-            return Core.Tas.Create.ParameterSet(setting, zoneSet, typeof(zoneSet), typeof(GuidCollection));
+            return Core.Tas.Create.ParameterSet(setting, zoneSet, typeof(GuidCollection), typeof(zoneSet));
         }
 
         public static ParameterSet ParameterSet(this Setting setting, shade shade)
         {
-            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, shade, typeof(shade), typeof(Panel));
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, shade, typeof(Panel), typeof(shade));
             parameterSet.Add("IsUsed", shade.isUsed == 1);
 
             return parameterSet;
@@ -50,14 +50,14 @@ namespace SAM.Analytical.Tas
 
         public static ParameterSet ParameterSet(this Setting setting, ZoneData zoneData)
         {
-            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, zoneData, typeof(ZoneData), typeof(Space));
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, zoneData, typeof(Space), typeof(ZoneData));
 
             return parameterSet;
         }
 
         public static ParameterSet ParameterSet(this Setting setting, SurfaceData surfaceData)
         {
-            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, surfaceData, typeof(SurfaceData), typeof(Panel));
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, surfaceData, typeof(Panel), typeof(SurfaceData));
 
             return parameterSet;
         }
