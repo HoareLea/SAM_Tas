@@ -56,6 +56,7 @@ namespace SAM.Analytical.Tas
             if (tuples == null || tuples.Count == 0)
                 return new List<Guid>();
 
+
             AdjacencyCluster adjacencyCluster_TSD = path_TSD.ToSAM_AdjacencyCluster(null, new PanelDataType[] { PanelDataType.ExternalSolarGain });
 
             throw new NotImplementedException();
