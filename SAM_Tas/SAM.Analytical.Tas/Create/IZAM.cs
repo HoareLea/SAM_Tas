@@ -15,6 +15,9 @@ namespace SAM.Analytical.Tas
             if (!space.TryGetValue(string.Format("SAM_IZAM_{0}_Source", directionText), out name_Direction, true))
                 return null;
 
+            if (string.IsNullOrWhiteSpace(name_Direction))
+                return null;
+
             TBD.IZAM iZAM = building.AddIZAM(null);
 
             foreach (TBD.dayType aDayType in dayTypes)
