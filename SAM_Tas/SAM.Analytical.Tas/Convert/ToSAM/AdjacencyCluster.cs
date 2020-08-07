@@ -1,16 +1,12 @@
-﻿using Microsoft.SqlServer.Server;
-using Newtonsoft.Json.Linq;
-using SAM.Core.Tas;
-using System.Collections;
+﻿using SAM.Core.Tas;
 using System.Collections.Generic;
-using System.Linq;
 using TSD;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {      
-        public static AdjacencyCluster ToSAM(this BuildingData buildingData, IEnumerable<ResultType> resultTypes = null)
+        public static AdjacencyCluster ToSAM(this BuildingData buildingData, IEnumerable<PanelDataType> panelDataTypes = null)
         {
             if (buildingData == null)
                 return null;
@@ -39,7 +35,7 @@ namespace SAM.Analytical.Tas
                     if (surfaceData == null)
                         continue;
 
-                    Panel panel = surfaceData.ToSAM(resultTypes);
+                    Panel panel = surfaceData.ToSAM(panelDataTypes);
                     if (panel == null)
                         continue;
 
@@ -54,17 +50,17 @@ namespace SAM.Analytical.Tas
 
         }
 
-        public static AdjacencyCluster ToSAM(this SAMTSDDocument sAMTSDDocument, IEnumerable<ResultType> resultTypes = null)
+        public static AdjacencyCluster ToSAM(this SAMTSDDocument sAMTSDDocument, IEnumerable<PanelDataType> panelDataTypes = null)
         {
-            return ToSAM(sAMTSDDocument?.TSDDocument, resultTypes);
+            return ToSAM(sAMTSDDocument?.TSDDocument, panelDataTypes);
         }
 
-        public static AdjacencyCluster ToSAM(this TSDDocument tSDDocument, IEnumerable<ResultType> resultTypes = null)
+        public static AdjacencyCluster ToSAM(this TSDDocument tSDDocument, IEnumerable<PanelDataType> panelDataTypes = null)
         {
-            return ToSAM(tSDDocument?.SimulationData?.GetBuildingData(), resultTypes);
+            return ToSAM(tSDDocument?.SimulationData?.GetBuildingData(), panelDataTypes);
         }
 
-        public static AdjacencyCluster ToSAM_AdjacencyCluster(this string path_TSD, IEnumerable<ResultType> resultTypes = null)
+        public static AdjacencyCluster ToSAM_AdjacencyCluster(this string path_TSD, IEnumerable<PanelDataType> panelDataTypes = null)
         {
             if (string.IsNullOrWhiteSpace(path_TSD))
                 return null;
@@ -73,7 +69,7 @@ namespace SAM.Analytical.Tas
 
             using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD))
             {
-                result = sAMTSDDocument.ToSAM(resultTypes);
+                result = sAMTSDDocument.ToSAM(panelDataTypes);
             }
 
             return result;

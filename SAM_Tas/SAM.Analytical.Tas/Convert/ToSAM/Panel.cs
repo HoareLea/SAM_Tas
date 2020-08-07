@@ -37,25 +37,25 @@ namespace SAM.Analytical.Tas
             return panel;
         }
 
-        public static Panel ToSAM(this SurfaceData surfaceData, IEnumerable<ResultType> resultTypes = null)
+        public static Panel ToSAM(this SurfaceData surfaceData, IEnumerable<PanelDataType> panelDataTypes = null)
         {
             if (surfaceData == null)
                 return null;
 
             ParameterSet parameterSet = Create.ParameterSet(ActiveSetting.Setting, surfaceData);
 
-            if (resultTypes != null)
+            if (panelDataTypes != null)
             {
-                foreach (ResultType resultType in resultTypes)
+                foreach (PanelDataType panelDataType in panelDataTypes)
                 {
-                    List<double> values = surfaceData.AnnualSurfaceResult<double>(resultType);
+                    List<double> values = surfaceData.AnnualSurfaceResult<double>(panelDataType);
                     if (values == null)
                         continue;
 
                     JArray jArray = new JArray();
                     values.ForEach(x => jArray.Add(x));
 
-                    parameterSet.Add(resultType.Text(), jArray);
+                    parameterSet.Add(panelDataType.Text(), jArray);
                 }
             }
 

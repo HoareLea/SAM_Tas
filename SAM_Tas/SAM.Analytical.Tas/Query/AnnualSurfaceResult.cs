@@ -39,12 +39,12 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<T> AnnualSurfaceResult<T>(this SurfaceData surfaceData, ResultType resultType) 
+        public static List<T> AnnualSurfaceResult<T>(this SurfaceData surfaceData, PanelDataType panelDataType) 
         {
-            if (surfaceData == null || resultType == Tas.ResultType.Undefined)
+            if (surfaceData == null || panelDataType == Tas.PanelDataType.Undefined)
                 return null;
 
-            return AnnualSurfaceResult<T>(surfaceData, resultType.TsdSurfaceArray().Value);
+            return AnnualSurfaceResult<T>(surfaceData, panelDataType.TsdSurfaceArray().Value);
         }
     }
 }

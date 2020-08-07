@@ -4,12 +4,12 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static tsdSurfaceArray? TsdSurfaceArray(this ResultType resultType)
+        public static tsdSurfaceArray? TsdSurfaceArray(this PanelDataType panelDataType)
         {
-            if (resultType == Tas.ResultType.Undefined)
+            if (panelDataType == Tas.PanelDataType.Undefined)
                 return null;
 
-            return (tsdSurfaceArray)(int)resultType;
+            return (tsdSurfaceArray)(int)panelDataType;
         }
     }
 }

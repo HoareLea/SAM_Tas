@@ -2,9 +2,9 @@
 {
     public static partial class Query
     {
-        public static string Text(this ResultType resultType)
+        public static string Text(this PanelDataType panelDataType)
         {
-            return Core.Query.Description(resultType);
+            return Core.Query.Description(panelDataType);
         }
     }
 }

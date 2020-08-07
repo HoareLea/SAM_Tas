@@ -82,7 +82,7 @@
     <Compile Include="Create\IZAMs.cs" />
     <Compile Include="Create\IZAM.cs" />
     <Compile Include="Create\Schedule.cs" />
-    <Compile Include="Enums\ResultType.cs" />
+    <Compile Include="Enums\PanelDataType.cs" />
     <Compile Include="Modify\Simulate.cs" />
     <Compile Include="Modify\RemoveApertureTypes.cs" />
     <Compile Include="Modify\AssignApertureTypes.cs" />
@@ -93,7 +93,7 @@
     <Compile Include="Modify\AssignBuildingElementType.cs" />
     <Compile Include="Modify\AssignRooflightBuilidingElementType.cs" />
     <Compile Include="Modify\AssignAdiabaticConstruction.cs" />
-    <Compile Include="Query\ResultType.cs" />
+    <Compile Include="Query\PanelDataType.cs" />
     <Compile Include="Query\TsdSurfaceArray.cs" />
     <Compile Include="Query\Text.cs" />
     <Compile Include="Query\Ints.cs" />

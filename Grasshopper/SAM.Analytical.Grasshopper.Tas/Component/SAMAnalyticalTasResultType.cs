@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class SAMAnalyticalTasResultType : GH_SAMComponent
+    public class SAMAnalyticalTasPanelDataType : GH_SAMComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -20,13 +20,13 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_Small;
 
-        private ResultType resultType =  ResultType.Undefined;
+        private PanelDataType panelDataType =  PanelDataType.Undefined;
 
         /// <summary>
         /// Panel Type
         /// </summary>
-        public SAMAnalyticalTasResultType()
-          : base("SAMAnalytical.ResultType", "SAMAnalytical.ResultType",
+        public SAMAnalyticalTasPanelDataType()
+          : base("SAMAnalytical.PanelDataType", "SAMAnalytical.PanelDataType",
               "Select Result Type",
               "SAM", "Tas")
         {
@@ -34,23 +34,23 @@ namespace SAM.Analytical.Grasshopper.Tas
 
         public override bool Write(GH_IWriter writer)
         {
-            writer.SetInt32("ResultType", (int)resultType);
+            writer.SetInt32("PanelDataType", (int)panelDataType);
             return base.Write(writer);
         }
 
         public override bool Read(GH_IReader reader)
         {
             int aIndex = -1;
-            if (reader.TryGetInt32("ResultType", ref aIndex))
-                resultType = (ResultType)aIndex;
+            if (reader.TryGetInt32("PanelDataType", ref aIndex))
+                panelDataType = (PanelDataType)aIndex;
 
             return base.Read(reader);
         }
 
         protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
-            foreach (ResultType resultType in Enum.GetValues(typeof(ResultType)))
-                Menu_AppendItem(menu, resultType.ToString(), Menu_PanelTypeChanged, true, resultType == this.resultType).Tag = resultType;
+            foreach (PanelDataType panelDataType in Enum.GetValues(typeof(PanelDataType)))
+                Menu_AppendItem(menu, panelDataType.ToString(), Menu_PanelTypeChanged, true, panelDataType == this.panelDataType).Tag = panelDataType;
         }
 
         private void Menu_PanelTypeChanged(object sender, EventArgs e)
@@ -58,7 +58,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (sender is ToolStripMenuItem item && item.Tag is ApertureType)
             {
                 //Do something with panelType
-                this.resultType = (ResultType)item.Tag;
+                this.panelDataType = (PanelDataType)item.Tag;
                 ExpireSolution(true);
             }
         }
@@ -75,7 +75,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddGenericParameter("ResultType", "ResultType", "SAM Analytical ResultType", GH_ParamAccess.item);
+            outputParamManager.AddGenericParameter("PanelDataType", "PanelDataType", "SAM Analytical PanelDataType", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            dataAccess.SetData(0, resultType);
+            dataAccess.SetData(0, panelDataType);
         }
     }
 }

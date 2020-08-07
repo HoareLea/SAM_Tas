@@ -40,7 +40,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "string path to TasTSD file", GH_ParamAccess.item);
             
-            index = inputParamManager.AddGenericParameter("resultType_", "resultType_", "SAM Analytical Result Type", GH_ParamAccess.list);
+            index = inputParamManager.AddGenericParameter("panelDataType_", "panelDataType_", "SAM Analytical Panel Data Type", GH_ParamAccess.list);
             inputParamManager[index].Optional = true;
 
             inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
@@ -79,26 +79,26 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            List<ResultType> resultTypes = null;
+            List<PanelDataType> panelDataTypes = null;
 
             List<GH_ObjectWrapper> objectWrappers = new List<GH_ObjectWrapper>();
             if(dataAccess.GetDataList(1, objectWrappers))
             {
-                resultTypes = new List<ResultType>();
+                panelDataTypes = new List<PanelDataType>();
                 foreach(GH_ObjectWrapper objectWrapper in objectWrappers)
                 {
-                    ResultType resultType = ResultType.Undefined;
+                    PanelDataType panelDataType = PanelDataType.Undefined;
                     if (objectWrapper.Value is GH_String)
-                        resultType = Analytical.Tas.Query.ResultType(((GH_String)objectWrapper.Value).Value);
+                        panelDataType = Analytical.Tas.Query.PanelDataType(((GH_String)objectWrapper.Value).Value);
                     else
-                        resultType = Analytical.Tas.Query.ResultType(objectWrapper.Value);
+                        panelDataType = Analytical.Tas.Query.PanelDataType(objectWrapper.Value);
 
-                    if (resultType != ResultType.Undefined)
-                        resultTypes.Add(resultType);
+                    if (panelDataType != PanelDataType.Undefined)
+                        panelDataTypes.Add(panelDataType);
                 }
             }
 
-            AdjacencyCluster adjacencyCluster = path_TSD.ToSAM_AdjacencyCluster(resultTypes);
+            AdjacencyCluster adjacencyCluster = path_TSD.ToSAM_AdjacencyCluster(panelDataTypes);
 
             dataAccess.SetData(0, adjacencyCluster);
             dataAccess.SetData(1, adjacencyCluster != null);

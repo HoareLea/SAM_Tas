@@ -2,7 +2,7 @@
 
 namespace SAM.Analytical.Tas
 {
-    public enum ResultType
+    public enum PanelDataType
     {
         [Description("Undefined")] Undefined,
         [Description("Internal Temperature")]  InternalTemperature = 1,
