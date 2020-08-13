@@ -15,7 +15,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
@@ -44,7 +44,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddGenericParameter("T3DDocument", "T3DDocument", "T3DDocument", GH_ParamAccess.item);
+            outputParamManager.AddParameter(new GooSAMT3DDocumentParam(), "T3DDocument", "T3DDocument", "T3DDocument", GH_ParamAccess.item);
             outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
@@ -54,7 +54,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            dataAccess.SetData(0, false);
+            dataAccess.SetData(1, false);
 
             bool run = false;
             if (!dataAccess.GetData(1, ref run))
@@ -82,8 +82,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 sAMT3DDocument.Dispose();
             };
 
-            dataAccess.SetData(0, true);
-            dataAccess.SetData(1, sAMT3DDocument);
+            dataAccess.SetData(0, new GooSAMT3DDocument(sAMT3DDocument));
+            dataAccess.SetData(1, true);
         }
     }
 }

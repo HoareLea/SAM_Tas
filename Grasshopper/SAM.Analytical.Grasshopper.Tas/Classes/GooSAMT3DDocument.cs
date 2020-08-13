@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
@@ -38,13 +39,15 @@ namespace SAM.Analytical.Grasshopper.Tas
 
         public override string ToString()
         {
-            return typeof(SAMT3DDocument).FullName.Replace(".", " ");
+            return typeof(SAMT3DDocument).Name;
         }
     }
 
     public class GooSAMT3DDocumentParam : GH_PersistentParam<GooSAMT3DDocument>
     {
         public override Guid ComponentGuid => new Guid("1e33f41d-75d3-49fb-a3eb-adab7d71ff73");
+
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
         public GooSAMT3DDocumentParam()
             : base(typeof(SAMT3DDocument).Name, typeof(SAMT3DDocument).Name, typeof(SAMT3DDocument).FullName.Replace(".", " "), "Params", "SAM")
