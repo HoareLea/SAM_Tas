@@ -100,14 +100,29 @@ namespace SAM.Analytical.Tas
                             if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_InternalShadows(), out internalShadows, true))
                                 element.internalShadows = internalShadows;
 
+                            PanelType panelType = Analytical.PanelType.Undefined;
+
                             //BEType
                             string string_BEType = null;
                             if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_PanelType(), out string_BEType, true))
                             {
                                 int bEType = Query.BEType(string_BEType);
                                 if(bEType != -1)
+                                {
                                     element.BEType = bEType;
+                                    panelType = PanelType(bEType);
+                                }
                             }
+
+                            if(panelType == Analytical.PanelType.Undefined)
+                            {
+                                List<Panel> panels_Construction = adjacencyCluster.GetPanels(construction);
+                                if (panels_Construction != null && panels_Construction.Count != 0)
+                                    element.zoneFloorArea = panels_Construction.Find(x => x.PanelType.PanelGroup() == PanelGroup.Floor) != null;
+                            }
+
+                            if (panelType.PanelGroup() == PanelGroup.Floor)
+                                element.zoneFloorArea = true;
 
                             //Ground
                             bool ground = false;
