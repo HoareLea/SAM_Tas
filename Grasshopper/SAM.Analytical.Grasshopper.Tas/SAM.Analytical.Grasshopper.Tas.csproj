@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
+    <Compile Include="Component\TasOpenT3DDocument.cs" />
     <Compile Include="Component\TasTSDCreateAdjacencyCluster.cs" />
     <Compile Include="Component\TasRemoveSchedules.cs" />
     <Compile Include="Component\TasAssignRooflightBuilidingElementType.cs" />
