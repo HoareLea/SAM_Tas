@@ -80,6 +80,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 (sender as GH_Document).SolutionEnd -= endHandler;
                 sAMT3DDocument.Dispose();
+                this.Phase = GH_SolutionPhase.Blank;
             };
 
             dataAccess.SetData(0, new GooSAMT3DDocument(sAMT3DDocument));
