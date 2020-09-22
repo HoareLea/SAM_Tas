@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas
             material.type = (int)TBD.MaterialTypes.tcdGasLayer;
 
             material.description = gasMaterial.Description;
-            material.width = System.Convert.ToSingle(gasMaterial.DefaultThickness()) * 1000;
+            material.width = System.Convert.ToSingle(gasMaterial.DefaultThickness());
             material.convectionCoefficient = float.NaN;
             material.vapourDiffusionFactor = System.Convert.ToSingle(gasMaterial.VapurDiffusionFactor());
 
@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas
             material.type = (int)TBD.MaterialTypes.tcdTransparentLayer;
 
             material.description = transparentMaterial.Description;
-            material.width = System.Convert.ToSingle(transparentMaterial.DefaultThickness()) * 1000;
+            material.width = System.Convert.ToSingle(transparentMaterial.DefaultThickness());
             material.conductivity = System.Convert.ToSingle(transparentMaterial.ThermalConductivity);
             material.vapourDiffusionFactor = System.Convert.ToSingle(transparentMaterial.VapurDiffusionFactor());
             material.solarTransmittance = System.Convert.ToSingle(transparentMaterial.SolarTransmittance());
@@ -64,7 +64,7 @@ namespace SAM.Analytical.Tas
             material.type = (int)TBD.MaterialTypes.tcdOpaqueMaterial;
 
             material.description = opaqueMaterial.Description;
-            material.width = System.Convert.ToSingle(opaqueMaterial.DefaultThickness()) * 1000;
+            material.width = System.Convert.ToSingle(opaqueMaterial.DefaultThickness());
             material.conductivity = System.Convert.ToSingle(opaqueMaterial.ThermalConductivity);
             material.specificHeat = System.Convert.ToSingle(opaqueMaterial.SpecificHeatCapacity);
             material.density = System.Convert.ToSingle(opaqueMaterial.Density);
