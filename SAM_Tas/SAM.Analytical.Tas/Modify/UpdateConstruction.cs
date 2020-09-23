@@ -49,7 +49,7 @@ namespace SAM.Analytical.Tas
                 {
                     TBD.material material_TBD = construction_TBD.AddMaterial();
 
-                    construction_TBD.materialWidth[i + 1] = System.Convert.ToSingle(constructionLayers[i].Thickness);
+                    construction_TBD.materialWidth[i + 1] = System.Convert.ToSingle(constructionLayers.ElementAt(i).Thickness);
 
                     string name = constructionLayers.ElementAt(i).Name;
 
