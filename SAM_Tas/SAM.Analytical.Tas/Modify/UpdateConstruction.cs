@@ -49,19 +49,19 @@ namespace SAM.Analytical.Tas
                 construction_TBD.RemoveMaterials();
                 for (int i = 0; i < constructionLayers.Count(); i++)
                 {
+                    ConstructionLayer constructionLayer = constructionLayers.ElementAt(i);
+                    string name = constructionLayer.Name;
+                    if (string.IsNullOrWhiteSpace(name))
+                        continue;
+
                     TBD.material material_TBD = construction_TBD.AddMaterial();
-
-                    construction_TBD.materialWidth[i + 1] = System.Convert.ToSingle(constructionLayers.ElementAt(i).Thickness);
-
-                    string name = constructionLayers.ElementAt(i).Name;
-
                     material_TBD.name = name;
 
                     IMaterial material = materialLibrary?.GetMaterial(name);
-                    if (material == null)
-                        continue;
+                    if (material != null)
+                        material_TBD.UpdateMaterial(material);
 
-                    material_TBD.UpdateMaterial(material);
+                    construction_TBD.materialWidth[i + 1] = System.Convert.ToSingle(constructionLayer.Thickness);
                 }
             }
 
