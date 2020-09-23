@@ -91,6 +91,7 @@
     <Compile Include="Modify\RemoveIZAMs.cs" />
     <Compile Include="Modify\SetBlinds.cs" />
     <Compile Include="Modify\UpdateApertureControl.cs" />
+    <Compile Include="Modify\UpdateBuildingElements.cs" />
     <Compile Include="Modify\UpdateMaterial.cs" />
     <Compile Include="Modify\UpdateConstruction.cs" />
     <Compile Include="Modify\UpdateConstructions.cs" />

@@ -6,12 +6,12 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasAssignRooflightBuilidingElementType : GH_SAMComponent
+    public class TasUpdateBuildingElements : GH_SAMComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("8f3c51d9-b671-4e90-abb5-00470f756fef");
+        public override Guid ComponentGuid => new Guid("df18fce2-b633-4de1-9e49-7f2966f0d5c2");
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -21,11 +21,12 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasAssignRooflightBuilidingElementType()
-          : base("Tas.AssignRooflightBuilidingElementType", "Tas.AssignRooflightBuilidingElementType",
-              "Assign Rooflight BuilidingElement Type",
+        public TasUpdateBuildingElements()
+          : base("Tas.UpdateBuildingElements", "Tas.UpdateBuildingElements",
+              "Update BuildingElements in TBD File",
               "SAM", "Tas")
         {
+
         }
 
         /// <summary>
@@ -37,9 +38,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_names", "_names", "Names of Buliding Elements to be assigned", GH_ParamAccess.list);
-            inputParamManager.AddBooleanParameter("_caseSensitive_", "_caseSensitive_", "Case Sensitive", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("_trim_", "_trim_", "Trim", GH_ParamAccess.item, true);
+            inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel", "_analyticalModel", "SAM Analytical Model", GH_ParamAccess.item);
             inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
         }
 
@@ -48,7 +47,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddTextParameter("Guids", "Guids", "Guids of Builidng Elements construction has been changed", GH_ParamAccess.list);
+            outputParamManager.AddParameter(new GooAnalyticalModelParam(), "AnalyticalModel", "AnalyticalModel", "SAM Analytical Model", GH_ParamAccess.item);
             outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
@@ -61,7 +60,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(1, false);
 
             bool run = false;
-            if (!dataAccess.GetData(4, ref run))
+            if (!dataAccess.GetData(2, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -76,31 +75,17 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            List<string> names = new List<string>();
-            if (!dataAccess.GetDataList(1, names))
+            AnalyticalModel analyticalModel = null;
+            if (!dataAccess.GetData(1, ref analyticalModel) || analyticalModel == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            bool caseSensitive = false;
-            if (!dataAccess.GetData(2, ref caseSensitive))
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-                return;
-            }
+            bool result = Analytical.Tas.Modify.UpdateBuildingElements(path_TBD, analyticalModel);
 
-            bool trim = false;
-            if (!dataAccess.GetData(3, ref trim))
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-                return;
-            }
-
-            List<Guid> result = Analytical.Tas.Modify.AssignRooflightBuilidingElementType(path_TBD, names, caseSensitive, trim);
-
-            dataAccess.SetData(0, result?.ConvertAll(x => x.ToString()));
-            dataAccess.SetData(1, result != null);
+            dataAccess.SetData(0, new GooAnalyticalModel(analyticalModel));
+            dataAccess.SetData(1, result);
         }
     }
 }
