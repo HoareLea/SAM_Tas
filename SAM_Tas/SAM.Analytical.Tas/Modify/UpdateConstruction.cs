@@ -14,6 +14,8 @@ namespace SAM.Analytical.Tas
             if (!construction.Name.Equals(construction_TBD.name))
                 construction_TBD.name = construction.Name;
 
+            construction_TBD.type = TBD.ConstructionTypes.tcdOpaqueConstruction;
+
             return UpdateConstruction(construction_TBD, construction.ConstructionLayers, materialLibrary);
         }
 

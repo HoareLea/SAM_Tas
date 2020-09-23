@@ -112,7 +112,8 @@ namespace SAM.Analytical.Tas
                     construction_TBD = building.AddConstruction(null);
                     construction_TBD.name = paneName;
                 }
-                    
+
+                construction_TBD.type = ConstructionTypes.tcdTransparentConstruction;
 
                 if (construction_TBD.UpdateConstruction(apertureConstruction.PaneConstructionLayers, materialLibrary))
                     result.Add(apertureConstruction);
@@ -124,7 +125,9 @@ namespace SAM.Analytical.Tas
                     construction_TBD = building.AddConstruction(null);
                     construction_TBD.name = frameName;
                 }
-                    
+
+                construction_TBD.type = ConstructionTypes.tcdOpaqueConstruction;
+
                 if (construction_TBD.UpdateConstruction(apertureConstruction.FrameConstructionLayers, materialLibrary))
                     result.Add(apertureConstruction);
             }
