@@ -57,11 +57,19 @@ namespace SAM.Analytical.Tas
                     TBD.material material_TBD = construction_TBD.AddMaterial();
                     material_TBD.name = name;
 
+                    float thickness = System.Convert.ToSingle(constructionLayer.Thickness);
+
                     IMaterial material = materialLibrary?.GetMaterial(name);
                     if (material != null)
+                    {
                         material_TBD.UpdateMaterial(material);
 
-                    construction_TBD.materialWidth[i + 1] = System.Convert.ToSingle(constructionLayer.Thickness);
+                        if (material is TransparentMaterial)
+                            material_TBD.width = thickness;
+                    }
+                        
+                    construction_TBD.materialWidth[i + 1] = thickness;
+                
                 }
             }
 
