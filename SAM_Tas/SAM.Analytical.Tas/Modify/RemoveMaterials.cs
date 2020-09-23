@@ -7,11 +7,11 @@
             if (construction == null)
                 return false;
 
-            TBD.material material = construction.materials(0);
+            TBD.material material = construction.materials(1);
             while (material != null)
             {
                 construction.RemoveMaterial(0);
-                material = construction.materials(0);
+                material = construction.materials(1);
             }
 
             return true;
