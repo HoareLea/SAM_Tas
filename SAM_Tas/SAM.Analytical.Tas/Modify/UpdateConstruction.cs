@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas
                     update = false;
                     for (int i = 0; i < constructionLayers.Count(); i++)
                     {
-                        if (!constructionLayers.ElementAt(i).Name.Equals(constructionLayers_TBD[i].Name) || !constructionLayers.ElementAt(i).Thickness.Equals(constructionLayers_TBD[i].Thickness))
+                        if (!constructionLayers.ElementAt(i).Name.Equals(constructionLayers_TBD[i].Name) || !Core.Query.AlmostEqual(constructionLayers.ElementAt(i).Thickness, constructionLayers_TBD[i].Thickness))
                         {
                             update = true;
                             break;
