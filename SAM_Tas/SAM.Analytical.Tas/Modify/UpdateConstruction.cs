@@ -28,18 +28,15 @@ namespace SAM.Analytical.Tas
 
             bool update = true;
 
-            if (constructionLayers_TBD != null && constructionLayers != null)
+            if (constructionLayers_TBD != null && constructionLayers != null && constructionLayers_TBD.Count == constructionLayers.Count())
             {
-                if (constructionLayers_TBD.Count == constructionLayers.Count())
+                update = false;
+                for (int i = 0; i < constructionLayers.Count(); i++)
                 {
-                    update = false;
-                    for (int i = 0; i < constructionLayers.Count(); i++)
+                    if (!constructionLayers.ElementAt(i).Name.Equals(constructionLayers_TBD[i].Name) || !Core.Query.AlmostEqual(constructionLayers.ElementAt(i).Thickness, constructionLayers_TBD[i].Thickness))
                     {
-                        if (!constructionLayers.ElementAt(i).Name.Equals(constructionLayers_TBD[i].Name) || !Core.Query.AlmostEqual(constructionLayers.ElementAt(i).Thickness, constructionLayers_TBD[i].Thickness))
-                        {
-                            update = true;
-                            break;
-                        }
+                        update = true;
+                        break;
                     }
                 }
             }

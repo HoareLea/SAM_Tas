@@ -126,7 +126,24 @@ namespace SAM.Analytical.Tas
                     construction_TBD.name = frameName;
                 }
 
-                construction_TBD.type = ConstructionTypes.tcdOpaqueConstruction;
+                ConstructionTypes constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
+
+                List<ConstructionLayer> constructionLayers = apertureConstruction.FrameConstructionLayers;
+                if(constructionLayers != null && constructionLayers.Count != 0)
+                {
+                    constructionTypes = ConstructionTypes.tcdTransparentConstruction;
+                    foreach (ConstructionLayer constructionLayer in constructionLayers)
+                    {
+                        OpaqueMaterial opaqueMaterial = materialLibrary?.GetMaterial(constructionLayer?.Name) as OpaqueMaterial;
+                        if(opaqueMaterial != null)
+                        {
+                            constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
+                            break;
+                        }
+                    }
+                }
+
+                construction_TBD.type = constructionTypes;
 
                 if (construction_TBD.UpdateConstruction(apertureConstruction.FrameConstructionLayers, materialLibrary))
                     result.Add(apertureConstruction);
