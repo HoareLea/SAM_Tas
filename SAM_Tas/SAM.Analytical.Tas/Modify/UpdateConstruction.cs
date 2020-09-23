@@ -1,5 +1,6 @@
 ﻿using SAM.Core;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
@@ -13,22 +14,26 @@ namespace SAM.Analytical.Tas
             if (!construction.Name.Equals(construction_TBD.name))
                 construction_TBD.name = construction.Name;
 
+            return UpdateConstruction(construction_TBD, construction.ConstructionLayers, materialLibrary);
+        }
+
+        public static bool UpdateConstruction(this TBD.Construction construction_TBD, IEnumerable<ConstructionLayer> constructionLayers, MaterialLibrary materialLibrary)
+        {
             List<ConstructionLayer> constructionLayers_TBD = construction_TBD.ConstructionLayers();
-            List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
 
             if (constructionLayers_TBD == null && constructionLayers == null)
                 return false;
 
             bool update = true;
 
-            if(constructionLayers_TBD != null && constructionLayers != null)
+            if (constructionLayers_TBD != null && constructionLayers != null)
             {
-                if(constructionLayers_TBD.Count == constructionLayers.Count)
+                if (constructionLayers_TBD.Count == constructionLayers.Count())
                 {
                     update = false;
-                    for(int i =0; i < constructionLayers.Count; i++)
+                    for (int i = 0; i < constructionLayers.Count(); i++)
                     {
-                        if(!constructionLayers[i].Name.Equals(constructionLayers_TBD[i].Name) || !constructionLayers[i].Thickness.Equals(constructionLayers_TBD[i].Thickness))
+                        if (!constructionLayers.ElementAt(i).Name.Equals(constructionLayers_TBD[i].Name) || !constructionLayers.ElementAt(i).Thickness.Equals(constructionLayers_TBD[i].Thickness))
                         {
                             update = true;
                             break;
@@ -37,15 +42,15 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            if(update)
+            if (update)
             {
                 construction_TBD.RemoveMaterials();
-                for(int i =0; i < constructionLayers.Count; i++)
+                for (int i = 0; i < constructionLayers.Count(); i++)
                 {
                     TBD.material material_TBD = construction_TBD.AddMaterial();
-                    construction_TBD.materialWidth[i] = System.Convert.ToSingle(constructionLayers[i].Thickness);
+                    construction_TBD.materialWidth[i] = System.Convert.ToSingle(constructionLayers.ElementAt(i).Thickness);
 
-                    string name = constructionLayers[i].Name;
+                    string name = constructionLayers.ElementAt(i).Name;
 
                     material_TBD.name = name;
 

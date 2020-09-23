@@ -81,10 +81,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            List<Construction> constructions = Analytical.Tas.Modify.UpdateConstructions(path_TBD, analyticalModel);
+            List<Core.SAMType> sAMtypes = Analytical.Tas.Modify.UpdateConstructions(path_TBD, analyticalModel);
 
             dataAccess.SetData(0, new GooAnalyticalModel(analyticalModel));
-            dataAccess.SetData(1, constructions != null);
+            dataAccess.SetData(1, sAMtypes != null);
         }
     }
 }

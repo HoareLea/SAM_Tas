@@ -7,12 +7,12 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<Construction> UpdateConstructions(this string path_TBD, AnalyticalModel analyticalModel)
+        public static List<SAMType> UpdateConstructions(this string path_TBD, AnalyticalModel analyticalModel)
         {
             if (string.IsNullOrWhiteSpace(path_TBD))
                 return null;
 
-            List<Construction> result = null;
+            List<SAMType> result = null;
 
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<Construction> UpdateConstructions(this SAMTBDDocument sAMTBDDocument, AnalyticalModel analyticalModel)
+        public static List<SAMType> UpdateConstructions(this SAMTBDDocument sAMTBDDocument, AnalyticalModel analyticalModel)
         {
             if (sAMTBDDocument == null)
                 return null;
@@ -32,7 +32,7 @@ namespace SAM.Analytical.Tas
             return UpdateConstructions(sAMTBDDocument.TBDDocument, analyticalModel);
         }
 
-        public static List<Construction> UpdateConstructions(this TBDDocument tBDDocument, AnalyticalModel analyticalModel)
+        public static List<SAMType> UpdateConstructions(this TBDDocument tBDDocument, AnalyticalModel analyticalModel)
         {
             if (tBDDocument == null || analyticalModel == null)
                 return null;
@@ -41,12 +41,25 @@ namespace SAM.Analytical.Tas
             if (building == null)
                 return null;
 
+            List<SAMType> result = new List<SAMType>();
+
             List<Construction> constructions = analyticalModel.AdjacencyCluster?.GetConstructions();
-            if (constructions == null || constructions.Count == 0)
-                return null;
+            if (constructions != null && constructions.Count != 0)
+            {
+                constructions = UpdateConstructions(building, constructions, analyticalModel.MaterialLibrary);
+                if (constructions != null && constructions.Count != 0)
+                    constructions.ForEach(x => result.Add(x));
+            }
 
-            return UpdateConstructions(building, constructions, analyticalModel.MaterialLibrary);
+            List<ApertureConstruction> apertureConstructions = analyticalModel.AdjacencyCluster?.GetApertureConstructions();
+            if (apertureConstructions != null && apertureConstructions.Count != 0)
+            {
+                apertureConstructions = UpdateConstructions(building, apertureConstructions, analyticalModel.MaterialLibrary);
+                if (apertureConstructions != null && apertureConstructions.Count != 0)
+                    apertureConstructions.ForEach(x => result.Add(x));
+            }
 
+            return result;
         }
 
         public static List<Construction> UpdateConstructions(this Building building, IEnumerable<Construction> constructions, MaterialLibrary materialLibrary)
@@ -70,6 +83,50 @@ namespace SAM.Analytical.Tas
 
                 if (construction_TBD.UpdateConstruction(construction, materialLibrary))
                     result.Add(construction);
+            }
+
+            return result;
+        }
+
+        public static List<ApertureConstruction> UpdateConstructions(this Building building, IEnumerable<ApertureConstruction> apertureConstructions, MaterialLibrary materialLibrary)
+        {
+            if (apertureConstructions == null || building == null)
+                return null;
+
+            List<ApertureConstruction> result = new List<ApertureConstruction>();
+            foreach (ApertureConstruction apertureConstruction in apertureConstructions)
+            {
+                if (apertureConstruction == null)
+                    continue;
+
+                string name = apertureConstruction.Name;
+                if (string.IsNullOrWhiteSpace(name))
+                    continue;
+
+                TBD.Construction construction_TBD = null;
+
+                string paneName = string.Format("{0}-pane", name);
+                construction_TBD = building.GetConstructionByName(paneName);
+                if (construction_TBD == null)
+                {
+                    construction_TBD = building.AddConstruction(null);
+                    construction_TBD.name = paneName;
+                }
+                    
+
+                if (construction_TBD.UpdateConstruction(apertureConstruction.PaneConstructionLayers, materialLibrary))
+                    result.Add(apertureConstruction);
+
+                string frameName = string.Format("{0}-frame", name);
+                construction_TBD = building.GetConstructionByName(frameName);
+                if (construction_TBD == null)
+                {
+                    construction_TBD = building.AddConstruction(null);
+                    construction_TBD.name = frameName;
+                }
+                    
+                if (construction_TBD.UpdateConstruction(apertureConstruction.FrameConstructionLayers, materialLibrary))
+                    result.Add(apertureConstruction);
             }
 
             return result;
