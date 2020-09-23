@@ -1,5 +1,4 @@
 ﻿using SAM.Core;
-using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
 {
@@ -22,7 +21,7 @@ namespace SAM.Analytical.Tas
 
             material.description = gasMaterial.Description;
             material.width = System.Convert.ToSingle(gasMaterial.DefaultThickness());
-            material.convectionCoefficient = float.NaN;
+            material.convectionCoefficient = System.Convert.ToSingle(Analytical.Query.HeatTransferCoefficient(gasMaterial));
             material.vapourDiffusionFactor = System.Convert.ToSingle(gasMaterial.VapurDiffusionFactor());
 
             return true;
