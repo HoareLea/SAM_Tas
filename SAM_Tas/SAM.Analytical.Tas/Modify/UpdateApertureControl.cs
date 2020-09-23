@@ -56,7 +56,9 @@ namespace SAM.Analytical.Tas
 
             foreach (ApertureConstruction apertureConstruction in apertureConstructions)
             {
-                buildingElement buildingElement = buildingElements.Find(x => x.name == apertureConstruction.Name + " -pane");
+                string paneApertureConstructionName = apertureConstruction.PaneApertureConstructionName();
+                
+                buildingElement buildingElement = buildingElements.Find(x => x.name == paneApertureConstructionName);
                 if (buildingElement == null)
                     continue;
 
