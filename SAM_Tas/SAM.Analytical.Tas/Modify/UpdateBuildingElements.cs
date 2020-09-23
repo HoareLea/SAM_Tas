@@ -52,7 +52,6 @@ namespace SAM.Analytical.Tas
             if (constructions == null || constructions.Count == 0)
                 return false;
 
-            bool result = false;
             foreach (buildingElement buildingElement in buildingElements)
             {
                 string name = buildingElement.name;
@@ -73,12 +72,10 @@ namespace SAM.Analytical.Tas
                 if (construction == null)
                     continue;
 
-                bool assigned = buildingElement.AssignConstruction(construction) == 1;
-                if (assigned)
-                    result = true;
+                buildingElement.AssignConstruction(construction);
             }
 
-            return result;
+            return true;
         }
     }
 }
