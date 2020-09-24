@@ -56,7 +56,7 @@ namespace SAM.Analytical.Tas
 
                     float thickness = System.Convert.ToSingle(constructionLayer.Thickness);
 
-                    IMaterial material = materialLibrary?.GetMaterial(name);
+                    IMaterial material = constructionLayer.Material(materialLibrary);
                     if (material != null)
                     {
                         material_TBD.UpdateMaterial(material);

@@ -134,7 +134,7 @@ namespace SAM.Analytical.Tas
                     constructionTypes = ConstructionTypes.tcdTransparentConstruction;
                     foreach (ConstructionLayer constructionLayer in constructionLayers)
                     {
-                        OpaqueMaterial opaqueMaterial = materialLibrary?.GetMaterial(constructionLayer?.Name) as OpaqueMaterial;
+                        OpaqueMaterial opaqueMaterial = constructionLayer?.Material(materialLibrary) as OpaqueMaterial;
                         if(opaqueMaterial != null)
                         {
                             constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
