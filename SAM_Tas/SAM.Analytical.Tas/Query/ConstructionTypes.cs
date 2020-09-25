@@ -10,11 +10,16 @@ namespace SAM.Analytical.Tas
             if (constructionLayers == null || materialLibrary == null)
                 return TBD.ConstructionTypes.tcdOpaqueConstruction;
 
-            foreach (ConstructionLayer constructionLayer in constructionLayers)
+            MaterialType materialType = Analytical.Query.MaterialType(constructionLayers, materialLibrary);
+            if (materialType == MaterialType.Undefined)
+                return TBD.ConstructionTypes.tcdOpaqueConstruction;
+
+            switch(materialType)
             {
-                OpaqueMaterial opaqueMaterial = constructionLayer?.Material(materialLibrary) as OpaqueMaterial;
-                if (opaqueMaterial != null)
+                case MaterialType.Opaque:
                     return TBD.ConstructionTypes.tcdOpaqueConstruction;
+                case MaterialType.Transparent:
+                    return TBD.ConstructionTypes.tcdTransparentConstruction;
             }
 
             return TBD.ConstructionTypes.tcdTransparentConstruction;
