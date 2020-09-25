@@ -44,29 +44,32 @@ namespace SAM.Analytical.Tas
             if (update)
             {
                 construction_TBD.RemoveMaterials();
-                for (int i = 0; i < constructionLayers.Count(); i++)
+                if(constructionLayers != null)
                 {
-                    ConstructionLayer constructionLayer = constructionLayers.ElementAt(i);
-                    string name = constructionLayer.Name;
-                    if (string.IsNullOrWhiteSpace(name))
-                        continue;
-
-                    TBD.material material_TBD = construction_TBD.AddMaterial();
-                    material_TBD.name = name;
-
-                    float thickness = System.Convert.ToSingle(constructionLayer.Thickness);
-
-                    IMaterial material = constructionLayer.Material(materialLibrary);
-                    if (material != null)
+                    for (int i = 0; i < constructionLayers.Count(); i++)
                     {
-                        material_TBD.UpdateMaterial(material);
+                        ConstructionLayer constructionLayer = constructionLayers.ElementAt(i);
+                        string name = constructionLayer.Name;
+                        if (string.IsNullOrWhiteSpace(name))
+                            continue;
 
-                        if (material is TransparentMaterial)
-                            material_TBD.width = thickness;
+                        TBD.material material_TBD = construction_TBD.AddMaterial();
+                        material_TBD.name = name;
+
+                        float thickness = System.Convert.ToSingle(constructionLayer.Thickness);
+
+                        IMaterial material = constructionLayer.Material(materialLibrary);
+                        if (material != null)
+                        {
+                            material_TBD.UpdateMaterial(material);
+
+                            if (material is TransparentMaterial)
+                                material_TBD.width = thickness;
+                        }
+
+                        construction_TBD.materialWidth[i + 1] = thickness;
+
                     }
-                        
-                    construction_TBD.materialWidth[i + 1] = thickness;
-                
                 }
             }
 
