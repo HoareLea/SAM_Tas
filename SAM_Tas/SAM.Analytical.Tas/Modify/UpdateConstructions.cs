@@ -73,15 +73,19 @@ namespace SAM.Analytical.Tas
                 if (construction == null)
                     continue;
 
-                string name = construction.UniqueName();
-                if (string.IsNullOrWhiteSpace(name))
+                string uniqueName = construction.UniqueName();
+                if (string.IsNullOrWhiteSpace(uniqueName))
                     continue;
 
-                TBD.Construction construction_TBD = building.GetConstructionByName(name);
+                TBD.Construction construction_TBD = building.GetConstructionByName(uniqueName);
                 if(construction_TBD == null)
+                {
                     construction_TBD = building.AddConstruction(null);
+                    construction_TBD.name = uniqueName;
+                }
 
-                if (construction_TBD.UpdateConstruction(construction, materialLibrary))
+
+                if (construction_TBD.UpdateConstruction(construction.ConstructionLayers, materialLibrary))
                     result.Add(construction);
             }
 

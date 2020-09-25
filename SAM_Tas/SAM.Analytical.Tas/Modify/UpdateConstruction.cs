@@ -6,19 +6,6 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static bool UpdateConstruction(this TBD.Construction construction_TBD, Construction construction, MaterialLibrary materialLibrary)
-        {
-            if (construction == null || construction_TBD == null)
-                return false;
-
-            if (!construction.Name.Equals(construction_TBD.name))
-                construction_TBD.name = construction.Name;
-
-            construction_TBD.type = TBD.ConstructionTypes.tcdOpaqueConstruction;
-
-            return UpdateConstruction(construction_TBD, construction.ConstructionLayers, materialLibrary);
-        }
-
         public static bool UpdateConstruction(this TBD.Construction construction_TBD, IEnumerable<ConstructionLayer> constructionLayers, MaterialLibrary materialLibrary)
         {
             List<ConstructionLayer> constructionLayers_TBD = construction_TBD.ConstructionLayers();
