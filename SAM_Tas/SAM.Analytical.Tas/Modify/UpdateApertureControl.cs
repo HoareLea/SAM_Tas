@@ -1,5 +1,4 @@
-﻿using SAM.Core;
-using SAM.Core.Tas;
+﻿using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 using TBD;
@@ -56,7 +55,7 @@ namespace SAM.Analytical.Tas
 
             foreach (ApertureConstruction apertureConstruction in apertureConstructions)
             {
-                string paneApertureConstructionName = apertureConstruction.PaneApertureConstructionName();
+                string paneApertureConstructionName = apertureConstruction.PaneApertureConstructionUniqueName();
                 
                 buildingElement buildingElement = buildingElements.Find(x => x.name == paneApertureConstructionName);
                 if (buildingElement == null)
