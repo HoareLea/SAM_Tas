@@ -84,8 +84,14 @@ namespace SAM.Analytical.Tas
                     construction_TBD.name = uniqueName;
                 }
 
+                ConstructionTypes constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
+                List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
+                if (constructionLayers != null && constructionLayers.Count != 0)
+                    constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
 
-                if (construction_TBD.UpdateConstruction(construction.ConstructionLayers, materialLibrary))
+                construction_TBD.type = constructionTypes;
+
+                if (construction_TBD.UpdateConstruction(constructionLayers, materialLibrary))
                     result.Add(construction);
             }
 
@@ -108,7 +114,11 @@ namespace SAM.Analytical.Tas
                     continue;
 
                 TBD.Construction construction_TBD = null;
+                List<ConstructionLayer> constructionLayers = null;
+                ConstructionTypes constructionTypes;
 
+
+                //Pane Construction
                 string paneApertureConstructionUniqueName = apertureConstruction.PaneApertureConstructionUniqueName();
                 construction_TBD = building.GetConstructionByName(paneApertureConstructionUniqueName);
                 if (construction_TBD == null)
@@ -117,11 +127,18 @@ namespace SAM.Analytical.Tas
                     construction_TBD.name = paneApertureConstructionUniqueName;
                 }
 
-                construction_TBD.type = ConstructionTypes.tcdTransparentConstruction;
+                constructionTypes = ConstructionTypes.tcdTransparentConstruction;
+                constructionLayers = apertureConstruction.PaneConstructionLayers;
+                if (constructionLayers != null && constructionLayers.Count != 0)
+                    constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
 
-                if (construction_TBD.UpdateConstruction(apertureConstruction.PaneConstructionLayers, materialLibrary))
+                construction_TBD.type = constructionTypes;
+
+                if (construction_TBD.UpdateConstruction(constructionLayers, materialLibrary))
                     result.Add(apertureConstruction);
 
+
+                //Frame Construction
                 string frameApertureConstructionUniqueName = apertureConstruction.FrameApertureConstructionUniqueName();
                 construction_TBD = building.GetConstructionByName(frameApertureConstructionUniqueName);
                 if (construction_TBD == null)
@@ -130,26 +147,14 @@ namespace SAM.Analytical.Tas
                     construction_TBD.name = frameApertureConstructionUniqueName;
                 }
 
-                ConstructionTypes constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
-
-                List<ConstructionLayer> constructionLayers = apertureConstruction.FrameConstructionLayers;
+                constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
+                constructionLayers = apertureConstruction.FrameConstructionLayers;
                 if(constructionLayers != null && constructionLayers.Count != 0)
-                {
-                    constructionTypes = ConstructionTypes.tcdTransparentConstruction;
-                    foreach (ConstructionLayer constructionLayer in constructionLayers)
-                    {
-                        OpaqueMaterial opaqueMaterial = constructionLayer?.Material(materialLibrary) as OpaqueMaterial;
-                        if(opaqueMaterial != null)
-                        {
-                            constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
-                            break;
-                        }
-                    }
-                }
+                    constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
 
                 construction_TBD.type = constructionTypes;
 
-                if (construction_TBD.UpdateConstruction(apertureConstruction.FrameConstructionLayers, materialLibrary))
+                if (construction_TBD.UpdateConstruction(constructionLayers, materialLibrary))
                     result.Add(apertureConstruction);
             }
 
