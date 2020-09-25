@@ -102,6 +102,7 @@
     <Compile Include="Modify\AssignAdiabaticConstruction.cs" />
     <Compile Include="Query\AnnualZoneResult.cs" />
     <Compile Include="Query\ConstructionLayers.cs" />
+    <Compile Include="Query\ConstructionTypes.cs" />
     <Compile Include="Query\SurfaceDataType.cs" />
     <Compile Include="Query\PanelDataType.cs" />
     <Compile Include="Query\TsdZoneArray.cs" />
