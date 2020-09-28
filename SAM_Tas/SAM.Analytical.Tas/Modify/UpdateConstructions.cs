@@ -41,9 +41,15 @@ namespace SAM.Analytical.Tas
             if (building == null)
                 return null;
 
+            AdjacencyCluster adjacencyCluster = analyticalModel.AdjacencyCluster;
+            if (adjacencyCluster == null)
+                return null;
+
+            adjacencyCluster.UpdateConstructionsPanelTypes();
+
             List<SAMType> result = new List<SAMType>();
 
-            List<Construction> constructions = analyticalModel.AdjacencyCluster?.GetConstructions();
+            List<Construction> constructions = adjacencyCluster.GetConstructions();
             if (constructions != null && constructions.Count != 0)
             {
                 constructions = UpdateConstructions(building, constructions, analyticalModel.MaterialLibrary);
