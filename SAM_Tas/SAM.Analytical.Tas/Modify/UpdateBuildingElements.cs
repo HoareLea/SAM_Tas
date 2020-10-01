@@ -54,7 +54,7 @@ namespace SAM.Analytical.Tas
 
             foreach (buildingElement buildingElement in buildingElements)
             {
-                string name = buildingElement.name;
+                string name = Query.Name(buildingElement);
                 if (string.IsNullOrWhiteSpace(name))
                     continue;
 

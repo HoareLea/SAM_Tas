@@ -7,26 +7,12 @@ namespace SAM.Analytical.Tas
     {
         public static string Name(this TAS3D.Element element)
         {
-            if (element == null)
-                return null;
+            return Name(element?.name);
+        }
 
-            string name = element.name;
-            if (string.IsNullOrWhiteSpace(name))
-                return null;
-
-            name = name.Trim();
-
-            name = name.Replace(" : ", ": ");
-            if (name.EndsWith("-ground"))
-                name = name.Substring(0, name.Length - 7);
-            if (name.EndsWith("-air"))
-                name = name.Substring(0, name.Length - 4);
-            if (name.StartsWith("Curtain Basic"))
-                name = name.Substring(8);
-            if (name.StartsWith("Curtain Floor"))
-                name = name.Substring(8);
-
-            return name;
+        public static string Name(TBD.buildingElement buildingElement)
+        {
+            return Name(buildingElement?.name);
         }
 
         public static string Name(this TAS3D.window window)
@@ -41,6 +27,27 @@ namespace SAM.Analytical.Tas
             name = name.Trim();
 
             return name;
+        }
+
+
+        private static string Name(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return name;
+
+            string result = name.Trim();
+
+            result = result.Replace(" : ", ": ");
+            if (result.EndsWith("-ground"))
+                result = result.Substring(0, result.Length - 7);
+            if (result.EndsWith("-air"))
+                result = result.Substring(0, result.Length - 4);
+            if (result.StartsWith("Curtain Basic"))
+                result = result.Substring(8);
+            if (result.StartsWith("Curtain Floor"))
+                result = result.Substring(8);
+
+            return result;
         }
     }
 }
