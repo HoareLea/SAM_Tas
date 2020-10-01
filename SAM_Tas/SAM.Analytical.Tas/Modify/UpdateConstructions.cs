@@ -155,6 +155,11 @@ namespace SAM.Analytical.Tas
 
                 constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
                 constructionLayers = apertureConstruction.FrameConstructionLayers;
+
+                //Frame TBD.Construction cannot be empty
+                if (constructionLayers == null || constructionLayers.Count == 0)
+                    constructionLayers = apertureConstruction.PaneConstructionLayers;
+
                 if(constructionLayers != null && constructionLayers.Count != 0)
                     constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
 
