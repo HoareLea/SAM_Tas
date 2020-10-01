@@ -92,29 +92,55 @@ namespace SAM.Analytical.Tas
 
                             //Transparent
                             bool transparent = false;
-                            if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
-                                element.transparent = transparent;
+                            MaterialType materialType = Analytical.Query.MaterialType(construction.ConstructionLayers, analyticalModel.MaterialLibrary);
+                            if (materialType == MaterialType.Undefined)
+                            {
+                                materialType = MaterialType.Opaque;
+                                if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
+                                    element.transparent = transparent;
+                            }
+                            else
+                            {
+                                element.transparent = materialType == MaterialType.Transparent;
+                            }
 
                             //InternalShadows
                             bool internalShadows = false;
                             if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_InternalShadows(), out internalShadows, true))
                                 element.internalShadows = internalShadows;
+                            else
+                                element.internalShadows = element.transparent;
 
-                            PanelType panelType = Analytical.PanelType.Undefined;
 
                             //BEType
                             string string_BEType = null;
-                            if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_PanelType(), out string_BEType, true))
+
+                            PanelType panelType = construction.PanelType();
+                            if(panelType != Analytical.PanelType.Undefined)
+                            {
+                                string_BEType = panelType.Text();
+                            }
+                            else
+                            {
+                                if (!Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_PanelType(), out string_BEType, true))
+                                    string_BEType = null;
+                            }
+
+                            if(string.IsNullOrEmpty(string_BEType))
                             {
                                 int bEType = Query.BEType(string_BEType);
-                                if(bEType != -1)
+                                if (bEType != -1)
                                 {
                                     element.BEType = bEType;
                                     panelType = PanelType(bEType);
                                 }
                             }
+                            else
+                            {
+                                panelType = Analytical.PanelType.Undefined;
+                            }
 
-                            if(panelType == Analytical.PanelType.Undefined)
+                            if (panelType == Analytical.PanelType.Undefined)
                             {
                                 List<Panel> panels_Construction = adjacencyCluster.GetPanels(construction);
                                 if (panels_Construction != null && panels_Construction.Count != 0)
