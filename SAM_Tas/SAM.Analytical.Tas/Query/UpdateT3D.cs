@@ -126,7 +126,7 @@ namespace SAM.Analytical.Tas
                                     string_BEType = null;
                             }
 
-                            if(string.IsNullOrEmpty(string_BEType))
+                            if(!string.IsNullOrEmpty(string_BEType))
                             {
                                 int bEType = Query.BEType(string_BEType);
                                 if (bEType != -1)
@@ -138,6 +138,16 @@ namespace SAM.Analytical.Tas
                             else
                             {
                                 panelType = Analytical.PanelType.Undefined;
+
+                                List<Panel> panels_Construction =  adjacencyCluster.GetPanels(construction);
+                                if(panels_Construction != null && panels_Construction.Count > 0)
+                                {
+                                    Panel panel = panels_Construction.Find(x => x.PanelType != Analytical.PanelType.Undefined);
+                                    if (panel != null)
+                                        panelType = panel.PanelType;
+                                }    
+                                
+                                
                             }
 
                             if (panelType == Analytical.PanelType.Undefined)
