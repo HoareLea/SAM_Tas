@@ -208,9 +208,29 @@ namespace SAM.Analytical.Tas
                                 window.colour = color;
 
                             //Transparent
+                            List<ConstructionLayer> constructionLayers = null;
+                            if (true)
+                                constructionLayers = apertureConstruction.PaneConstructionLayers;
+                            else
+                                constructionLayers = apertureConstruction.FrameConstructionLayers;
+
                             bool transparent = false;
-                            if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
-                                window.transparent = transparent;
+                            MaterialType materialType = Analytical.Query.MaterialType(constructionLayers, analyticalModel.MaterialLibrary);
+                            if (materialType == MaterialType.Undefined)
+                            {
+                                materialType = MaterialType.Opaque;
+                                if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
+                                    window.transparent = transparent;
+                            }
+                            else
+                            {
+                                window.transparent = materialType == MaterialType.Transparent;
+                            }
+
+                            ////Transparent
+                            //bool transparent = false;
+                            //if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
+                            //    window.transparent = transparent;
 
                             //InternalShadows
                             bool internalShadows = false;
