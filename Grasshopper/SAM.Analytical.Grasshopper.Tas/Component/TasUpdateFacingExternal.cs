@@ -13,6 +13,11 @@ namespace SAM.Analytical.Grasshopper.Tas
         public override Guid ComponentGuid => new Guid("16cdc7dc-660e-497b-b894-acdea257147f");
 
         /// <summary>
+        /// The latest version of this component
+        /// </summary>
+        public override string LatestComponentVersion => "1.0.0";
+
+        /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD;
