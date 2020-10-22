@@ -122,7 +122,7 @@ namespace SAM.Analytical.Tas
                             }
                             else
                             {
-                                if (!Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_PanelType(), out string_BEType, true))
+                                if (!Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Type(), out string_BEType, true))
                                     string_BEType = null;
                             }
 
