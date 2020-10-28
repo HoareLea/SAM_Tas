@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas
             Modify.RemoveUnsusedZones(building);
             
             double northAngle = double.NaN;
-            if (Core.Query.TryGetValue(analyticalModel, Analytical.Query.ParameterName_NorthAngle(), out northAngle))
+            if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
                 building.northAngle = northAngle;
 
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
@@ -81,14 +81,18 @@ namespace SAM.Analytical.Tas
                             //Update Element
 
                             //Thickness
-                            double thickness = double.NaN;
-                            if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Thickness(), out thickness, true))
-                                element.width= thickness;
+                            double thickness = construction.GetThickness();
+                            if(double.IsNaN(thickness))
+                                element.width = thickness;
+
+                            //if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Thickness(), out thickness, true))
+                            //    element.width= thickness;
 
                             //Colour
-                            uint color = uint.MinValue;
-                            if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Color(), out color, true))
-                                element.colour = color;
+                            System.Drawing.Color color = System.Drawing.Color.Empty;
+                            if (construction.TryGetValue(ConstructionParameter.Color, out color))
+                                element.colour = Core.Convert.ToUint(color);
+                                
 
                             //Transparent
                             bool transparent = false;
@@ -96,7 +100,7 @@ namespace SAM.Analytical.Tas
                             if (materialType == MaterialType.Undefined)
                             {
                                 materialType = MaterialType.Opaque;
-                                if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
+                                if(construction.TryGetValue(ConstructionParameter.Transparent, out transparent))
                                     element.transparent = transparent;
                             }
                             else
@@ -106,7 +110,7 @@ namespace SAM.Analytical.Tas
 
                             //InternalShadows
                             bool internalShadows = false;
-                            if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_InternalShadows(), out internalShadows, true))
+                            if(construction.TryGetValue(ConstructionParameter.IsInternalShadow, out internalShadows))
                                 element.internalShadows = internalShadows;
                             else
                                 element.internalShadows = element.transparent;
@@ -122,8 +126,9 @@ namespace SAM.Analytical.Tas
                             }
                             else
                             {
-                                if (!Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Type(), out string_BEType, true))
-                                    string_BEType = null;
+                                
+                                if(!construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string_BEType))
+                                    string_BEType = null;         
                             }
 
                             if(!string.IsNullOrEmpty(string_BEType))
@@ -162,12 +167,12 @@ namespace SAM.Analytical.Tas
 
                             //Ground
                             bool ground = false;
-                            if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Ground(), out ground, true))
+                            if (construction.TryGetValue(ConstructionParameter.IsGround, out ground))
                                 element.ground = ground;
 
                             //Air
                             bool air = false;
-                            if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Air(), out air, true))
+                            if(construction.TryGetValue(ConstructionParameter.IsAir, out air))
                                 element.ghost = air;
 
                             List<Panel> panels = adjacencyCluster.GetPanels(construction);
@@ -203,9 +208,9 @@ namespace SAM.Analytical.Tas
                                 continue;
 
                             //Colour
-                            uint color = uint.MinValue;
-                            if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_Color(), out color, true))
-                                window.colour = color;
+                            System.Drawing.Color color = System.Drawing.Color.Empty;
+                            if (apertureConstruction.TryGetValue(ApertureConstructionParameter.Color, out color))
+                                window.colour = Core.Convert.ToUint(color);
 
                             //Transparent
                             List<ConstructionLayer> constructionLayers = null;
@@ -219,7 +224,7 @@ namespace SAM.Analytical.Tas
                             if (materialType == MaterialType.Undefined)
                             {
                                 materialType = MaterialType.Opaque;
-                                if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
+                                if (apertureConstruction.TryGetValue(ApertureConstructionParameter.Transparent, out transparent))
                                     window.transparent = transparent;
                             }
                             else
@@ -227,19 +232,14 @@ namespace SAM.Analytical.Tas
                                 window.transparent = materialType == MaterialType.Transparent;
                             }
 
-                            ////Transparent
-                            //bool transparent = false;
-                            //if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_Transparent(), out transparent, true))
-                            //    window.transparent = transparent;
-
                             //InternalShadows
                             bool internalShadows = false;
-                            if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_InternalShadows(), out internalShadows, true))
+                            if(apertureConstruction.TryGetValue(ApertureConstructionParameter.IsInternalShadow, out internalShadows))
                                 window.internalShadows = internalShadows;
 
                             //FrameWidth
                             double frameWidth = double.NaN;
-                            if (Core.Query.TryGetValue(apertureConstruction, Analytical.Query.ParameterName_FrameWidth(), out frameWidth, true))
+                            if(apertureConstruction.TryGetValue(ApertureConstructionParameter.DefaultFrameWidth, out frameWidth))
                                 window.frameWidth = frameWidth;
 
                         }

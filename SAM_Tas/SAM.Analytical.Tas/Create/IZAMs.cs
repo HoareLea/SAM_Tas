@@ -18,8 +18,8 @@ namespace SAM.Analytical.Tas
             foreach (Space space in spaces)
             {
                 string name = space.Name;
-                if (string.IsNullOrWhiteSpace(name))
-                    space.TryGetValue(Analytical.Query.ParameterName_SpaceName(), out name, true);
+                //if (string.IsNullOrWhiteSpace(name))
+                //    space.TryGetValue(Analytical.Query.ParameterName_SpaceName(), out name, true);
 
                 if (string.IsNullOrWhiteSpace(name))
                     continue;

@@ -66,7 +66,7 @@ namespace SAM.Analytical.Tas
 
                 if(zone == null)
                 {
-                    if(!space.TryGetValue(Analytical.Query.ParameterName_SpaceName(), out name, true) && !string.IsNullOrWhiteSpace(name))
+                    //if(!space.TryGetValue(Analytical.Query.ParameterName_SpaceName(), out name, true) && !string.IsNullOrWhiteSpace(name))
                     {
                         name = name.Trim();
                         zone = zones.Find(x => x.name.Trim().Equals(name));
@@ -123,9 +123,8 @@ namespace SAM.Analytical.Tas
 
 
             Space space_New = new Space(space);
-
-            space_New.SetParameter(Analytical.Query.ParameterName_FacingExternal(), facingExternal);
-            space_New.SetParameter(Analytical.Query.ParameterName_FacingExternalGlazing(), facingExternalGlazing);
+            space_New.SetValue(SpaceParameter.FacingExternal, facingExternal);
+            space_New.SetValue(SpaceParameter.FacingExternalGlazing, facingExternalGlazing);
 
             return space_New;
         }
