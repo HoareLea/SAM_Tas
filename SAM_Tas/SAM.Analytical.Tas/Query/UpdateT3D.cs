@@ -85,7 +85,7 @@ namespace SAM.Analytical.Tas
                             if (double.IsNaN(thickness) || thickness == 0)
                                 thickness = construction.GetThickness();
 
-                            if(double.IsNaN(thickness))
+                            if(!double.IsNaN(thickness))
                                 element.width = thickness;
 
                             //if (Core.Query.TryGetValue(construction, Analytical.Query.ParameterName_Thickness(), out thickness, true))
