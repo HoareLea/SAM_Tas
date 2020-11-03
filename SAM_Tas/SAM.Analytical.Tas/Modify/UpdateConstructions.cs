@@ -45,7 +45,7 @@ namespace SAM.Analytical.Tas
             if (adjacencyCluster == null)
                 return null;
 
-            adjacencyCluster.UpdateConstructionsPanelTypes();
+            adjacencyCluster.SetConstructionsDefaultPanelType();
 
             List<SAMType> result = new List<SAMType>();
 
