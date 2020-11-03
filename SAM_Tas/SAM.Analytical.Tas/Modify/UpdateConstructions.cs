@@ -83,6 +83,10 @@ namespace SAM.Analytical.Tas
                 if (string.IsNullOrWhiteSpace(uniqueName))
                     continue;
 
+                List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
+                if (constructionLayers == null || constructionLayers.Count == 0)
+                    continue;
+
                 TBD.Construction construction_TBD = building.GetConstructionByName(uniqueName);
                 if(construction_TBD == null)
                 {
@@ -90,12 +94,7 @@ namespace SAM.Analytical.Tas
                     construction_TBD.name = uniqueName;
                 }
 
-                ConstructionTypes constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
-                List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
-                if (constructionLayers != null && constructionLayers.Count != 0)
-                    constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
-
-                construction_TBD.type = constructionTypes;
+                construction_TBD.type = Query.ConstructionTypes(constructionLayers, materialLibrary);
 
                 if (construction_TBD.UpdateConstruction(constructionLayers, materialLibrary))
                     result.Add(construction);
