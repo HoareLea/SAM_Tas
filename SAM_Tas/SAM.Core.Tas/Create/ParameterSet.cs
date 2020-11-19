@@ -1,5 +1,4 @@
-﻿using SAM.Core;
-using System;
+﻿using System;
 
 namespace SAM.Core.Tas
 {
@@ -10,14 +9,14 @@ namespace SAM.Core.Tas
             if (@object == null || type_Destination == null)
                 return null;
 
-            MapCluster mapCluster;
-            if (!setting.TryGetValue(ActiveSetting.Name.ParameterMap, out mapCluster))
+            TypeMap typeMap;
+            if (!setting.TryGetValue(ActiveSetting.Name.ParameterMap, out typeMap))
                 return null;
 
-            if (mapCluster == null)
+            if (typeMap == null)
                 return null;
 
-            return Core.Create.ParameterSet(@object, type_Destination.Assembly, type_Destination, mapCluster);
+            return Core.Create.ParameterSet(@object, type_Destination.Assembly, type_Destination, typeMap);
         }
 
         public static ParameterSet ParameterSet(this Setting setting, object @object, Type type_Source, Type type_Destination)
@@ -25,14 +24,14 @@ namespace SAM.Core.Tas
             if (@object == null || type_Destination == null)
                 return null;
 
-            MapCluster mapCluster;
-            if (!setting.TryGetValue(ActiveSetting.Name.ParameterMap, out mapCluster))
+            TypeMap typeMap;
+            if (!setting.TryGetValue(ActiveSetting.Name.ParameterMap, out typeMap))
                 return null;
 
-            if (mapCluster == null)
+            if (typeMap == null)
                 return null;
 
-            return Core.Create.ParameterSet(@object, type_Destination.Assembly, type_Source.FullName, type_Destination.FullName, mapCluster);
+            return Core.Create.ParameterSet(@object, type_Destination.Assembly, type_Source.FullName, type_Destination.FullName, typeMap);
         }
     }
 }
