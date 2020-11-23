@@ -103,8 +103,12 @@
     <Compile Include="Query\AnnualZoneResult.cs" />
     <Compile Include="Query\ConstructionLayers.cs" />
     <Compile Include="Query\ConstructionTypes.cs" />
+    <Compile Include="Query\HasDayType.cs" />
+    <Compile Include="Query\InternalConditions.cs" />
+    <Compile Include="Query\DayType.cs" />
     <Compile Include="Query\SurfaceDataType.cs" />
     <Compile Include="Query\PanelDataType.cs" />
+    <Compile Include="Query\InternalCondition.cs" />
     <Compile Include="Query\TsdZoneArray.cs" />
     <Compile Include="Query\TsdSurfaceArray.cs" />
     <Compile Include="Query\Text.cs" />
