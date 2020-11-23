@@ -85,6 +85,8 @@
     <Compile Include="Enums\SpaceDataType.cs" />
     <Compile Include="Enums\PanelDataType.cs" />
     <Compile Include="Modify\RemoveMaterials.cs" />
+    <Compile Include="Modify\SetInternalCondition.cs" />
+    <Compile Include="Modify\SetProfile.cs" />
     <Compile Include="Modify\Simulate.cs" />
     <Compile Include="Modify\RemoveApertureTypes.cs" />
     <Compile Include="Modify\AssignApertureTypes.cs" />
