@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas
                     profile_TBD.hourlyValues[i] = System.Convert.ToSingle(values[i]);
             }
 
-            return null;
+            return true;
         }
     }
 }
