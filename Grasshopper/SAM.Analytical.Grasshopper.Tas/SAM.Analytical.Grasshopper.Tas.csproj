@@ -108,6 +108,7 @@
     <Compile Include="Component\TasSimulate.cs" />
     <Compile Include="Component\TasUpdateBuildingElements.cs" />
     <Compile Include="Component\TasUpdateConstructions.cs" />
+    <Compile Include="Component\TasUpdateZones.cs" />
     <Compile Include="Component\TasUpdateIZAMs.cs" />
     <Compile Include="Component\TasUpdateFacingExternal.cs" />
     <Compile Include="Component\TasUpdateT3D.cs" />

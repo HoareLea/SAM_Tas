@@ -1,6 +1,4 @@
-﻿using SAM.Core.Tas;
-
-namespace SAM.Analytical.Tas
+﻿namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
@@ -17,15 +15,22 @@ namespace SAM.Analytical.Tas
                 return true;
             }
 
-            if(profile.Count == 24)
+            if(profile.Count <= 24)
             {
                 profile_TBD.type = TBD.ProfileTypes.ticHourlyProfile;
                 profile_TBD.factor = System.Convert.ToSingle(factor);
 
-                double[] values = profile.Values;
-                for (int i = 0; i < values.Length; i++)
-                    profile_TBD.hourlyValues[i] = System.Convert.ToSingle(values[i]);
+                for (int i = 0; i < 23; i++)
+                    profile_TBD.hourlyValues[i] = System.Convert.ToSingle(profile[i]);
+
+                return true;
             }
+
+            profile_TBD.type = TBD.ProfileTypes.ticYearlyProfile;
+            profile_TBD.factor = System.Convert.ToSingle(factor);
+
+            for (int i = 0; i < 8759; i++)
+                profile_TBD.yearlyValues[i] = System.Convert.ToSingle(profile[i]);
 
             return true;
         }
