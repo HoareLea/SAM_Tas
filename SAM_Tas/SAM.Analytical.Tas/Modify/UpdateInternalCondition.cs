@@ -4,7 +4,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static bool UpdateInternalCondition(this TBD.InternalCondition internalCondition_TBD, InternalCondition internalCondition, double area, ProfileLibrary profileLibrary)
+        public static bool UpdateInternalCondition(this TBD.InternalCondition internalCondition_TBD, InternalCondition internalCondition, double area, double occupancy, ProfileLibrary profileLibrary)
         {
             if (internalCondition_TBD == null || internalCondition == null)
                 return false;
@@ -15,10 +15,6 @@ namespace SAM.Analytical.Tas
 
             TBD.Emitter emitter = null;
             double value = double.NaN;
-
-            double occupancy = double.NaN;
-            if (!internalCondition.TryGetValue(InternalConditionParameter.Occupancy, out occupancy))
-                return false;
 
             emitter = internalCondition_TBD.GetHeatingEmitter();
             if(emitter != null)
@@ -91,30 +87,39 @@ namespace SAM.Analytical.Tas
 
             if(!double.IsNaN(area) && area != 0)
             {
-                profile = internalCondition.GetProfile(ProfileType.Occupancy, profileLibrary);
-                if (profile != null)
+                if(double.IsNaN(occupancy) || occupancy == 0)
                 {
-                    if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyLatentGainPerPerson, out value))
-                    {
-                        TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticELG);
-                        if (profile_TBD != null)
-                        {
-                            value = occupancy * value / area;
-                            UpdateProfile(profile_TBD, profile, value);
-                        }
-                    }
+                    if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyPerArea, out value))
+                        occupancy = value * area;
                 }
 
-                profile = internalCondition.GetProfile(ProfileType.Occupancy, profileLibrary);
-                if (profile != null)
+                if(!double.IsNaN(occupancy) && occupancy != 0)
                 {
-                    if (internalCondition.TryGetValue(InternalConditionParameter.OccupancySensibleGainPerPerson, out value))
+                    profile = internalCondition.GetProfile(ProfileType.Occupancy, profileLibrary);
+                    if (profile != null)
                     {
-                        TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticESG);
-                        if (profile_TBD != null)
+                        if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyLatentGainPerPerson, out value))
                         {
-                            value = occupancy * value / area;
-                            UpdateProfile(profile_TBD, profile, value);
+                            TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticELG);
+                            if (profile_TBD != null)
+                            {
+                                value = occupancy * value / area;
+                                UpdateProfile(profile_TBD, profile, value);
+                            }
+                        }
+                    }
+
+                    profile = internalCondition.GetProfile(ProfileType.Occupancy, profileLibrary);
+                    if (profile != null)
+                    {
+                        if (internalCondition.TryGetValue(InternalConditionParameter.OccupancySensibleGainPerPerson, out value))
+                        {
+                            TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticESG);
+                            if (profile_TBD != null)
+                            {
+                                value = occupancy * value / area;
+                                UpdateProfile(profile_TBD, profile, value);
+                            }
                         }
                     }
                 }
@@ -203,11 +208,15 @@ namespace SAM.Analytical.Tas
 
             double area = double.NaN;
             if (!space.TryGetValue(SpaceParameter.Area, out area))
-                return false;
+                area = double.NaN;
+
+            double occupancy = double.NaN;
+            if (!space.TryGetValue(SpaceParameter.Occupancy, out occupancy))
+                occupancy = double.NaN;
 
             internalCondition_TBD.description = space.Name;
 
-            return UpdateInternalCondition(internalCondition_TBD, internalCondition, area, profileLibrary);
+            return UpdateInternalCondition(internalCondition_TBD, internalCondition, area, occupancy, profileLibrary);
         }
     }
 }
