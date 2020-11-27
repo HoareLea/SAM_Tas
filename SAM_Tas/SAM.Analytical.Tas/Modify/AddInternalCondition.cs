@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas
             List<TBD.dayType> dayTypes = building.DayTypes();
             if(dayTypes != null)
             {
-                dayTypes.RemoveAll(x => x.name.Equals("HDD") || x.name.Equals("CDD"));
+                dayTypes.RemoveAll(x => x.name.Equals("HDD"));
                 foreach(TBD.dayType dayType in dayTypes)
                     internalCondition.SetDayType(dayType, true);
             }
