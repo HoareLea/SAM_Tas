@@ -4,20 +4,12 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static bool UpdateInternalCondition(this TBD.InternalCondition internalCondition_TBD, InternalCondition internalCondition, string spaceName, double area, ProfileLibrary profileLibrary)
+        public static bool UpdateInternalCondition(this TBD.InternalCondition internalCondition_TBD, InternalCondition internalCondition, double area, ProfileLibrary profileLibrary)
         {
             if (internalCondition_TBD == null || internalCondition == null)
                 return false;
 
-            List<string> names = new List<string>();
-            names.Add(spaceName);
-            names.Add(internalCondition.Name);
-            names.RemoveAll(x => string.IsNullOrEmpty(x));
-
-            if (names.Count == 0)
-                return false;
-
-            internalCondition_TBD.name = string.Join(" - ", names);
+            internalCondition_TBD.name = internalCondition.Name;
 
             internalCondition_TBD.includeSolarInMRT = 1;
 
@@ -213,7 +205,9 @@ namespace SAM.Analytical.Tas
             if (!space.TryGetValue(SpaceParameter.Area, out area))
                 return false;
 
-            return UpdateInternalCondition(internalCondition_TBD, internalCondition, space.Name, area, profileLibrary);
+            internalCondition_TBD.description = space.Name;
+
+            return UpdateInternalCondition(internalCondition_TBD, internalCondition, area, profileLibrary);
         }
     }
 }

@@ -17,9 +17,9 @@ namespace SAM.Analytical.Tas
             while (internalCondition != null)
             {
                 result.Add(internalCondition);
-                
-                internalCondition = tBDDocument.Building.GetIC(count);
+
                 count++;
+                internalCondition = tBDDocument.Building.GetIC(count);
             }
 
             return result;
