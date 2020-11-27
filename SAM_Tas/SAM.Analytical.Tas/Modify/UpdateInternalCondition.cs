@@ -9,7 +9,7 @@ namespace SAM.Analytical.Tas
             if (internalCondition_TBD == null || internalCondition == null)
                 return false;
 
-            internalCondition_TBD.name = internalCondition.Name;
+            internalCondition_TBD.description = internalCondition.Name;
 
             internalCondition_TBD.includeSolarInMRT = 1;
 
@@ -51,21 +51,22 @@ namespace SAM.Analytical.Tas
             internalGain.occupantRadProp = (float)0.2;
             internalGain.occupantViewCoefficient = (float)0.227;
             internalGain.domesticHotWater = (float)0.197;
+            internalGain.name = internalCondition.Name;
 
             if (internalCondition.TryGetValue(InternalConditionParameter.LightingLevel, out value))
                 internalGain.targetIlluminance = System.Convert.ToSingle(value);
 
             internalGain.personGain = 0;
-            if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyLatentGain, out value))
+            if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyLatentGainPerPerson, out value))
                 internalGain.personGain += System.Convert.ToSingle(value);
-            if (internalCondition.TryGetValue(InternalConditionParameter.OccupancySensibleGain, out value))
+            if (internalCondition.TryGetValue(InternalConditionParameter.OccupancySensibleGainPerPerson, out value))
                 internalGain.personGain += System.Convert.ToSingle(value);
 
             Profile profile = null;
             
             profile = internalCondition.GetProfile(ProfileType.Infiltration, profileLibrary);
             if (profile != null)
-            {
+            {               
                 if(internalCondition.TryGetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, out value))
                 {
                     TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
@@ -100,7 +101,7 @@ namespace SAM.Analytical.Tas
                     {
                         if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyLatentGainPerPerson, out value))
                         {
-                            TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticELG);
+                            TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticOLG);
                             if (profile_TBD != null)
                             {
                                 value = occupancy * value / area;
@@ -114,7 +115,7 @@ namespace SAM.Analytical.Tas
                     {
                         if (internalCondition.TryGetValue(InternalConditionParameter.OccupancySensibleGainPerPerson, out value))
                         {
-                            TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticESG);
+                            TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticOSG);
                             if (profile_TBD != null)
                             {
                                 value = occupancy * value / area;
@@ -214,7 +215,7 @@ namespace SAM.Analytical.Tas
             if (!space.TryGetValue(SpaceParameter.Occupancy, out occupancy))
                 occupancy = double.NaN;
 
-            internalCondition_TBD.description = space.Name;
+            internalCondition_TBD.name = space.Name;
 
             return UpdateInternalCondition(internalCondition_TBD, internalCondition, area, occupancy, profileLibrary);
         }

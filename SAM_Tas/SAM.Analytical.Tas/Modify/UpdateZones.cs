@@ -14,6 +14,8 @@ namespace SAM.Analytical.Tas
             foreach (Space space in spaces)
                 result.Add(UpdateZone(building, space, profileLibrary));
 
+            building.description = string.Format("Delivered by SAM https://github.com/HoareLea/SAM [{0}]", System.DateTime.Now.ToString("yyyy/MM/dd"));
+
             return result != null && result.Count > 0;
         }
 
@@ -24,6 +26,11 @@ namespace SAM.Analytical.Tas
 
         public static bool UpdateZones(this TBD.Building building, AnalyticalModel analyticalModel)
         {
+            if (analyticalModel == null || building == null)
+                return false;
+
+            building.name = analyticalModel.Name;
+            
             return UpdateZones(building, analyticalModel?.AdjacencyCluster, analyticalModel.ProfileLibrary);
         }
 

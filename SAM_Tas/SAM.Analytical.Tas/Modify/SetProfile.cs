@@ -7,7 +7,10 @@
             if (profile_TBD == null || profile == null || profile.Count == -1)
                 return false;
 
-            if(profile.Count == 1)
+            profile_TBD.name = profile.Name;
+            profile_TBD.description = profile.Category;
+
+            if (profile.Count == 1)
             {
                 profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
                 profile_TBD.factor = System.Convert.ToSingle(factor);

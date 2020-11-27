@@ -11,14 +11,10 @@
             if (zone == null)
                 return null;
 
-            InternalCondition internalCondition = space.InternalCondition;
-            if (internalCondition == null)
-                return null;
-
-            building.RemoveInternalCondition(internalCondition.Name);
+            building.RemoveInternalCondition(space.Name);
 
             TBD.InternalCondition internalCondition_TBD = AddInternalCondition(building, space, profileLibrary);
-            if (internalCondition == null)
+            if (internalCondition_TBD == null)
                 return null;
 
             zone.AssignIC(internalCondition_TBD, true);
