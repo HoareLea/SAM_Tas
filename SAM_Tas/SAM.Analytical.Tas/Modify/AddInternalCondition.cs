@@ -13,6 +13,14 @@ namespace SAM.Analytical.Tas
             if (internalCondition == null)
                 return null;
 
+            List<TBD.dayType> dayTypes = building.DayTypes();
+            if(dayTypes != null)
+            {
+                dayTypes.RemoveAll(x => x.name.Equals("HDD") || x.name.Equals("CDD"));
+                foreach(TBD.dayType dayType in dayTypes)
+                    internalCondition.SetDayType(dayType, true);
+            }
+
             UpdateInternalCondition(internalCondition, space, profileLibrary);
 
             return internalCondition; 

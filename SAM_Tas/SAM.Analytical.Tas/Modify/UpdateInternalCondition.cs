@@ -36,13 +36,6 @@ namespace SAM.Analytical.Tas
                     emitter.viewCoefficient = System.Convert.ToSingle(value);
             }
 
-            TBD.Thermostat thermostat = internalCondition_TBD.GetThermostat();
-            if(thermostat != null)
-            {
-                thermostat.controlRange = 0;
-                thermostat.proportionalControl = 0;
-            }
-
             TBD.InternalGain internalGain = internalCondition_TBD.GetInternalGain();
             internalGain.lightingRadProp = (float)0.3;
             internalGain.lightingViewCoefficient = (float)0.49;
@@ -66,7 +59,7 @@ namespace SAM.Analytical.Tas
             
             profile = internalCondition.GetProfile(ProfileType.Infiltration, profileLibrary);
             if (profile != null)
-            {               
+            {
                 if(internalCondition.TryGetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, out value))
                 {
                     TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
@@ -163,9 +156,13 @@ namespace SAM.Analytical.Tas
                 }
             }
 
+            List<string> names = new List<string>();
+
             profile = internalCondition.GetProfile(ProfileType.Cooling, profileLibrary);
             if (profile != null)
             {
+                names.Add(profile.Name);
+
                 TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticUL);
                 if (profile_TBD != null)
                     UpdateProfile(profile_TBD, profile, 1);
@@ -174,6 +171,8 @@ namespace SAM.Analytical.Tas
             profile = internalCondition.GetProfile(ProfileType.Heating, profileLibrary);
             if (profile != null)
             {
+                names.Add(profile.Name);
+
                 TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLL);
                 if (profile_TBD != null)
                     UpdateProfile(profile_TBD, profile, 1);
@@ -182,6 +181,8 @@ namespace SAM.Analytical.Tas
             profile = internalCondition.GetProfile(ProfileType.Humidification, profileLibrary);
             if (profile != null)
             {
+                names.Add(profile.Name);
+
                 TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticHLL);
                 if (profile_TBD != null)
                     UpdateProfile(profile_TBD, profile, 1);
@@ -190,9 +191,23 @@ namespace SAM.Analytical.Tas
             profile = internalCondition.GetProfile(ProfileType.Dehumidification, profileLibrary);
             if (profile != null)
             {
+                names.Add(profile.Name);
+
                 TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticHUL);
                 if (profile_TBD != null)
                     UpdateProfile(profile_TBD, profile, 1);
+            }
+
+            names.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+            TBD.Thermostat thermostat = internalCondition_TBD.GetThermostat();
+            if (thermostat != null)
+            {
+                if (names.Count != 0)
+                    thermostat.name = string.Join(" & ", names);
+
+                thermostat.controlRange = 0;
+                thermostat.proportionalControl = 0;
             }
 
             return true;

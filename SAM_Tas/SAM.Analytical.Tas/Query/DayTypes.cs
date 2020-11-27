@@ -25,5 +25,22 @@ namespace SAM.Analytical.Tas
 
             return result;
         }
+
+        public static List<TBD.dayType> DayTypes(this TBD.InternalCondition internalCondition)
+        {
+            if (internalCondition == null)
+                return null;
+
+            List<TBD.dayType> result = new List<TBD.dayType>();
+
+            TBD.dayType dayType = internalCondition.GetDayType(result.Count);
+            while (dayType != null)
+            {
+                result.Add(dayType);
+                dayType = internalCondition.GetDayType(result.Count);
+            }
+
+            return result;
+        }
     }
 }
