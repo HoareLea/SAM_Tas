@@ -49,10 +49,22 @@ namespace SAM.Analytical.Tas
 
             List<SAMType> result = new List<SAMType>();
 
-            List<Construction> constructions = adjacencyCluster.GetConstructions();
-            if (constructions != null && constructions.Count != 0)
+            Dictionary<System.Guid, Construction> dictionary_Construction = new Dictionary<System.Guid, Construction>();
+            foreach (Panel panel in adjacencyCluster.GetPanels())
             {
-                constructions = UpdateConstructions(building, constructions, analyticalModel.MaterialLibrary);
+                if (panel == null || panel.PanelType == PanelType.Air)
+                    continue;
+
+                Construction construction = panel.Construction;
+                if (construction == null)
+                    continue;
+
+                dictionary_Construction[construction.Guid] = construction;
+            }
+
+            if (dictionary_Construction != null && dictionary_Construction.Count != 0)
+            {
+                List<Construction> constructions = UpdateConstructions(building, dictionary_Construction.Values, analyticalModel.MaterialLibrary);
                 if (constructions != null && constructions.Count != 0)
                     constructions.ForEach(x => result.Add(x));
             }
