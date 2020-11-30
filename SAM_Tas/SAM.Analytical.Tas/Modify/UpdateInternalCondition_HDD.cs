@@ -57,37 +57,30 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            List<string> names = new List<string>();
-
-            profile = internalCondition.GetProfile(ProfileType.Heating, profileLibrary);
-            if (profile != null)
-            {   
-                names.Add(profile.Name);
-
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLL);
-                if (profile_TBD != null)
-                {
-                    value = profile.Max;
-                    if(!double.IsNaN(value))
-                    {
-                        profile_TBD.name = profile.Name;
-                        profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
-                        profile_TBD.factor = System.Convert.ToSingle(value);
-                        profile_TBD.value = 1;
-                    }
-                }
-            }
-
-            names.RemoveAll(x => string.IsNullOrWhiteSpace(x));
-
             TBD.Thermostat thermostat = internalCondition_TBD.GetThermostat();
             if (thermostat != null)
             {
-                if (names.Count != 0)
-                    thermostat.name = string.Join(" & ", names);
-
                 thermostat.controlRange = 0;
                 thermostat.proportionalControl = 0;
+
+                profile = internalCondition.GetProfile(ProfileType.Heating, profileLibrary);
+                if (profile != null)
+                {
+                    thermostat.name = profile.Name;
+
+                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticLL);
+                    if (profile_TBD != null)
+                    {
+                        value = profile.Max;
+                        if (!double.IsNaN(value))
+                        {
+                            profile_TBD.name = profile.Name;
+                            profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
+                            profile_TBD.factor = System.Convert.ToSingle(value);
+                            profile_TBD.value = 1;
+                        }
+                    }
+                }
             }
 
             return true;

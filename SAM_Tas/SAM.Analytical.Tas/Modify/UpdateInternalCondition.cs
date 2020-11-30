@@ -156,58 +156,58 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            List<string> names = new List<string>();
-
-            profile = internalCondition.GetProfile(ProfileType.Cooling, profileLibrary);
-            if (profile != null)
-            {
-                names.Add(profile.Name);
-
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticUL);
-                if (profile_TBD != null)
-                    UpdateProfile(profile_TBD, profile, 1);
-            }
-
-            profile = internalCondition.GetProfile(ProfileType.Heating, profileLibrary);
-            if (profile != null)
-            {
-                names.Add(profile.Name);
-
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLL);
-                if (profile_TBD != null)
-                    UpdateProfile(profile_TBD, profile, 1);
-            }
-
-            profile = internalCondition.GetProfile(ProfileType.Humidification, profileLibrary);
-            if (profile != null)
-            {
-                names.Add(profile.Name);
-
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticHLL);
-                if (profile_TBD != null)
-                    UpdateProfile(profile_TBD, profile, 1);
-            }
-
-            profile = internalCondition.GetProfile(ProfileType.Dehumidification, profileLibrary);
-            if (profile != null)
-            {
-                names.Add(profile.Name);
-
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticHUL);
-                if (profile_TBD != null)
-                    UpdateProfile(profile_TBD, profile, 1);
-            }
-
-            names.RemoveAll(x => string.IsNullOrWhiteSpace(x));
-
             TBD.Thermostat thermostat = internalCondition_TBD.GetThermostat();
             if (thermostat != null)
             {
-                if (names.Count != 0)
-                    thermostat.name = string.Join(" & ", names);
+                List<string> names = new List<string>();
 
                 thermostat.controlRange = 0;
                 thermostat.proportionalControl = 0;
+
+                profile = internalCondition.GetProfile(ProfileType.Cooling, profileLibrary);
+                if (profile != null)
+                {
+                    names.Add(profile.Name);
+
+                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticUL);
+                    if (profile_TBD != null)
+                        UpdateProfile(profile_TBD, profile, 1);
+                }
+
+                profile = internalCondition.GetProfile(ProfileType.Heating, profileLibrary);
+                if (profile != null)
+                {
+                    names.Add(profile.Name);
+
+                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticLL);
+                    if (profile_TBD != null)
+                        UpdateProfile(profile_TBD, profile, 1);
+                }
+
+                profile = internalCondition.GetProfile(ProfileType.Humidification, profileLibrary);
+                if (profile != null)
+                {
+                    names.Add(profile.Name);
+
+                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHLL);
+                    if (profile_TBD != null)
+                        UpdateProfile(profile_TBD, profile, 1);
+                }
+
+                profile = internalCondition.GetProfile(ProfileType.Dehumidification, profileLibrary);
+                if (profile != null)
+                {
+                    names.Add(profile.Name);
+
+                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHUL);
+                    if (profile_TBD != null)
+                        UpdateProfile(profile_TBD, profile, 1);
+                }
+
+                names.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+                if (names.Count != 0)
+                    thermostat.name = string.Join(" & ", names);
             }
 
             return true;
