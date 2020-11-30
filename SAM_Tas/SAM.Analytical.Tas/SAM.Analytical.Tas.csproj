@@ -85,6 +85,7 @@
     <Compile Include="Create\Schedule.cs" />
     <Compile Include="Enums\SpaceDataType.cs" />
     <Compile Include="Enums\PanelDataType.cs" />
+    <Compile Include="Modify\AddMaterial.cs" />
     <Compile Include="Modify\RemoveInternalCondition.cs" />
     <Compile Include="Modify\RemoveMaterials.cs" />
     <Compile Include="Modify\AddInternalCondition.cs" />
