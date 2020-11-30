@@ -51,8 +51,8 @@ namespace SAM.Analytical.Tas
                     {
                         profile_TBD.name = profile.Name;
                         profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
-                        profile_TBD.factor = System.Convert.ToSingle(value);
-                        profile_TBD.value = 1;
+                        profile_TBD.factor = 1;
+                        profile_TBD.value = System.Convert.ToSingle(value);
                     }
                 }
             }
@@ -76,8 +76,8 @@ namespace SAM.Analytical.Tas
                         {
                             profile_TBD.name = profile.Name;
                             profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
-                            profile_TBD.factor = System.Convert.ToSingle(value);
-                            profile_TBD.value = 1;
+                            profile_TBD.factor = 1;
+                            profile_TBD.value = System.Convert.ToSingle(value);
                         }
                     }
                 }
