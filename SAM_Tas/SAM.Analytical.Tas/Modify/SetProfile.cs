@@ -23,8 +23,8 @@
                 profile_TBD.type = TBD.ProfileTypes.ticHourlyProfile;
                 profile_TBD.factor = System.Convert.ToSingle(factor);
 
-                for (int i = 0; i < 23; i++)
-                    profile_TBD.hourlyValues[i] = System.Convert.ToSingle(profile[i]);
+                for (int i = 0; i <= 23; i++)
+                    profile_TBD.hourlyValues[i + 1] = System.Convert.ToSingle(profile[i]);
 
                 return true;
             }
