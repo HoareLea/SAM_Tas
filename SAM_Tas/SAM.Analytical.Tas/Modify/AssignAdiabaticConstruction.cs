@@ -77,11 +77,15 @@ namespace SAM.Analytical.Tas
                 if (!caseSensitive)
                     name = name.ToUpper();
 
-                if (!constructionNames_Sufixes_Temp.Contains(name))
-                    continue;
-
-                buildingElement.AssignConstruction(construction_Adiabatic);
-                result.Add(Guid.Parse(buildingElement.GUID));
+                foreach(string constructionName_Sufix in constructionNames_Sufixes_Temp)
+                {
+                    if(name.EndsWith(constructionName_Sufix))
+                    {
+                        buildingElement.AssignConstruction(construction_Adiabatic);
+                        result.Add(Guid.Parse(buildingElement.GUID));
+                        break;
+                    }
+                }
             }
             return result;
         }
