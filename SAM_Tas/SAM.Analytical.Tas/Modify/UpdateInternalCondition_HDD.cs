@@ -39,32 +39,38 @@ namespace SAM.Analytical.Tas
             TBD.InternalGain internalGain = internalCondition_TBD.GetInternalGain();
             internalGain.name = internalCondition.Name + " - HDD";
 
-            TBD.profile profile_TBD = null;
+            Profile profile = null;
 
-            if(internalCondition.TryGetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, out value))
+            profile = internalCondition.GetProfile(ProfileType.Infiltration, profileLibrary);
+            if (profile != null)
             {
-                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
-                if (profile_TBD != null)
+                if (internalCondition.TryGetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, out value))
                 {
-                    profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
-                    profile_TBD.factor = System.Convert.ToSingle(value);
-                    profile_TBD.value = 1;
+                    TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
+                    if (profile_TBD != null)
+                    {
+                        profile_TBD.name = profile.Name;
+                        profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
+                        profile_TBD.factor = System.Convert.ToSingle(value);
+                        profile_TBD.value = 1;
+                    }
                 }
             }
 
             List<string> names = new List<string>();
 
-            Profile profile = internalCondition.GetProfile(ProfileType.Heating, profileLibrary);
+            profile = internalCondition.GetProfile(ProfileType.Heating, profileLibrary);
             if (profile != null)
             {   
                 names.Add(profile.Name);
 
-                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLL);
+                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLL);
                 if (profile_TBD != null)
                 {
                     value = profile.Max;
                     if(!double.IsNaN(value))
                     {
+                        profile_TBD.name = profile.Name;
                         profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
                         profile_TBD.factor = System.Convert.ToSingle(value);
                         profile_TBD.value = 1;
