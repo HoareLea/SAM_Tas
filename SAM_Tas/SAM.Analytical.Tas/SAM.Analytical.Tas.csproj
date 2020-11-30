@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modify\AddInternalCondition_HDD.cs" />
     <Compile Include="Convert\ToSAM\AdjacencyCluster.cs" />
     <Compile Include="Convert\ToSAM\RelationCluster.cs" />
     <Compile Include="Convert\ToSAM\Aperture.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Modify\RemoveInternalCondition.cs" />
     <Compile Include="Modify\RemoveMaterials.cs" />
     <Compile Include="Modify\AddInternalCondition.cs" />
+    <Compile Include="Modify\UpdateInternalCondition_HDD.cs" />
     <Compile Include="Modify\UpdateInternalCondition.cs" />
     <Compile Include="Modify\SetProfile.cs" />
     <Compile Include="Modify\Simulate.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Modify\SetBlinds.cs" />
     <Compile Include="Modify\UpdateApertureControl.cs" />
     <Compile Include="Modify\UpdateBuildingElements.cs" />
+    <Compile Include="Modify\UpdateZone_HDD.cs" />
     <Compile Include="Modify\UpdateZones.cs" />
     <Compile Include="Modify\UpdateZone.cs" />
     <Compile Include="Modify\UpdateMaterial.cs" />

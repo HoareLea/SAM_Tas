@@ -84,7 +84,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            bool result = Analytical.Tas.Modify.UpdateZones(analyticalModel, path_TBD);
+            bool result = Analytical.Tas.Modify.UpdateZones(analyticalModel, path_TBD, true);
 
             dataAccess.SetData(0, result);
         }
