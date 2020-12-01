@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\Parameters\ZoneParameter.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
     <Compile Include="Convert\ToSAM\AdjacencyCluster.cs" />
     <Compile Include="Convert\ToSAM\RelationCluster.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Query\HasDayType.cs" />
     <Compile Include="Query\InternalConditions.cs" />
     <Compile Include="Query\DayType.cs" />
+    <Compile Include="Query\Sizing.cs" />
     <Compile Include="Query\SurfaceDataType.cs" />
     <Compile Include="Query\PanelDataType.cs" />
     <Compile Include="Query\InternalCondition.cs" />
