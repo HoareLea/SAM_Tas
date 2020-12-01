@@ -57,21 +57,34 @@ namespace SAM.Analytical.Tas
                     }
 
                     List<TBD.InternalCondition> internalConditions = building.InternalConditions();
-                    internalConditions.RemoveAll(x => x == null || string.IsNullOrWhiteSpace(x.name) || !x.name.EndsWith("HDD"));
+                    //internalConditions.RemoveAll(x => x == null || string.IsNullOrWhiteSpace(x.name) || !x.name.EndsWith("HDD"));
 
-                    foreach (TBD.InternalCondition internalCondition in internalConditions)
+                    for (int i = internalConditions.Count - 1; i >= 0; i--)
                     {
-                        List<zone> zones_Temp = internalCondition.Zones();
-                        foreach (zone zone_Temp in zones_Temp)
-                            zone_Temp.AssignIC(internalCondition, false);
-
-                        if (excludeOutdoorAir)
+                        TBD.InternalCondition internalCondition = building.GetIC(i);
+                        if(internalCondition.name.EndsWith("HDD"))
                         {
-                            profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
-                            if (profile != null)
-                                profile.factor = 0;
+                            while(internalCondition.GetZone(0) == null)
+                            {
+                                zone zone = internalCondition.GetZone(0);
+                                zone.AssignIC(internalCondition, false);
+                            }
                         }
                     }
+                    
+                    //foreach (TBD.InternalCondition internalCondition in internalConditions)
+                    //{
+                    //    List<zone> zones_Temp = internalCondition.Zones();
+                    //    foreach (zone zone_Temp in zones_Temp)
+                    //        zone_Temp.AssignIC(internalCondition, false);
+
+                    //    if (excludeOutdoorAir)
+                    //    {
+                    //        profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
+                    //        if (profile != null)
+                    //            profile.factor = 0;
+                    //    }
+                    //}
 
                     sAMTBDDocument.Save();
                     result = true;
