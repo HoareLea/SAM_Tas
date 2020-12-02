@@ -116,7 +116,7 @@ namespace SAM.Analytical.Tas
                     List<buildingElement> buildingElements = building.BuildingElements();
                     foreach (buildingElement buildingElement in buildingElements)
                     {
-                        if (!buildingElement.name.EndsWith("_AIR"))
+                        if (!buildingElement.name.Contains("_AIR"))
                             continue;
 
                         buildingElement.ghost = 0;
@@ -176,7 +176,7 @@ namespace SAM.Analytical.Tas
                     List<buildingElement> buildingElements = building.BuildingElements();
                     foreach (buildingElement buildingElement in buildingElements)
                     {
-                        if (!buildingElement.name.EndsWith("_AIR"))
+                        if (!buildingElement.name.Contains("_AIR"))
                             continue;
 
                         buildingElement.ghost = 1;
