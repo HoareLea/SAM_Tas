@@ -20,14 +20,11 @@ namespace SAM.Analytical.Tas
 
             string path_TBD_Uncapped = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + System.IO.Path.GetExtension(path_TBD));
             System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
-            if(System.IO.File.Exists(path_TBD_Uncapped))
-                Sizing_Uncapped(path_TBD_Uncapped, excludePositiveInternalGains);
+            Sizing_ApplyAirGlass(path_TBD, excludePositiveInternalGains);
 
             string path_TBD_HDDCDD = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + System.IO.Path.GetExtension(path_TBD));
             System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
-
-            if (System.IO.File.Exists(path_TBD_HDDCDD))
-                Sizing_HDDCDD(path_TBD_HDDCDD);
+            Sizing_ApplyOversizingFactors(path_TBD);
 
             return true;
         }
@@ -57,34 +54,25 @@ namespace SAM.Analytical.Tas
                     }
 
                     List<TBD.InternalCondition> internalConditions = building.InternalConditions();
-                    //internalConditions.RemoveAll(x => x == null || string.IsNullOrWhiteSpace(x.name) || !x.name.EndsWith("HDD"));
-
                     for (int i = internalConditions.Count - 1; i >= 0; i--)
                     {
                         TBD.InternalCondition internalCondition = building.GetIC(i);
                         if(internalCondition.name.EndsWith("HDD"))
                         {
-                            while(internalCondition.GetZone(0) == null)
+                            if (excludeOutdoorAir)
+                            {
+                                profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
+                                if (profile != null)
+                                    profile.factor = 0;
+                            }
+
+                            while (internalCondition.GetZone(0) == null)
                             {
                                 zone zone = internalCondition.GetZone(0);
                                 zone.AssignIC(internalCondition, false);
                             }
                         }
                     }
-                    
-                    //foreach (TBD.InternalCondition internalCondition in internalConditions)
-                    //{
-                    //    List<zone> zones_Temp = internalCondition.Zones();
-                    //    foreach (zone zone_Temp in zones_Temp)
-                    //        zone_Temp.AssignIC(internalCondition, false);
-
-                    //    if (excludeOutdoorAir)
-                    //    {
-                    //        profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
-                    //        if (profile != null)
-                    //            profile.factor = 0;
-                    //    }
-                    //}
 
                     sAMTBDDocument.Save();
                     result = true;
@@ -94,7 +82,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
         
-        private static bool Sizing_Uncapped(string path_TBD, bool excludePositiveInternalGains = false)
+        private static bool Sizing_ApplyAirGlass(string path_TBD, bool excludePositiveInternalGains = false)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
                 return false;
@@ -137,7 +125,7 @@ namespace SAM.Analytical.Tas
 
                     if(excludePositiveInternalGains)
                     {
-                        Sizing(tBDDocument);
+                        Sizing_ExcludePositiveInternalGains(tBDDocument);
                     }
                     else
                     {
@@ -161,7 +149,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_HDDCDD(string path_TBD)
+        private static bool Sizing_ApplyOversizingFactors(string path_TBD)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
                 return false;
@@ -203,7 +191,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing(this TBDDocument tBDDocument)
+        private static bool Sizing_ExcludePositiveInternalGains(this TBDDocument tBDDocument)
         {
             if (tBDDocument == null)
                 return false;
