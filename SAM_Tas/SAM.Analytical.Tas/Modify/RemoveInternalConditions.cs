@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas
 
             int index = 0;
             TBD.InternalCondition internalCondition = building.GetIC(index);
-            while (internalCondition != null && hashSet.Count != 0)
+            while (internalCondition != null)
             {
                 string name = internalCondition.name;
 
@@ -27,17 +27,14 @@ namespace SAM.Analytical.Tas
                 result.Add(contains);
 
                 if (contains)
-                {
                     indexes.Add(index);
-                    hashSet.Remove(name);
-                }
 
                 index++;
                 internalCondition = building.GetIC(index);
             }
 
             for(int i = indexes.Count - 1; i >= 0; i--)
-                building.RemoveIC(i);
+                building.RemoveIC(indexes[i]);
 
             return result;
         }

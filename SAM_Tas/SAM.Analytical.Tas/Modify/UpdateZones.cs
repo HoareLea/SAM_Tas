@@ -14,7 +14,8 @@ namespace SAM.Analytical.Tas
             foreach(Space space in spaces)
             {
                 names.Add(space.Name);
-                names.Add(space.Name + " - HDD");
+                if (includeHDD)
+                    names.Add(space.Name + " - HDD");
             }
 
             RemoveInternalConditions(building, names);

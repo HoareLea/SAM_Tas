@@ -11,8 +11,6 @@
             if (zone == null)
                 return null;
 
-            building.RemoveInternalCondition(space.Name + " - HDD");
-
             TBD.InternalCondition internalCondition_TBD = AddInternalCondition_HDD(building, space, profileLibrary);
             if (internalCondition_TBD == null)
                 return null;

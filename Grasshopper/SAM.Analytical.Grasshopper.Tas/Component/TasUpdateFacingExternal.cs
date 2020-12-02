@@ -27,7 +27,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateFacingExternal()
           : base("Tas.UpdateFacingExternal", "Tas.UpdateFacingExternal",
-              "Update Space FacingExternal from TBD File",
+              "Update Space FacingExternal from TBD File, set Adiabatic surfaces in Zone",
               "SAM", "Tas")
         {
         }
