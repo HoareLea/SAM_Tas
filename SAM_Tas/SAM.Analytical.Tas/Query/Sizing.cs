@@ -10,165 +10,185 @@ namespace SAM.Analytical.Tas
     {
         public static bool Sizing(this string path_TBD, bool excludeOutdoorAir = false, bool excludePositiveInternalGains = false)
         {
-            if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
+            if (string.IsNullOrWhiteSpace(path_TBD))
+                return false;
+
+            if (!Sizing_PrepareDocument(path_TBD, excludeOutdoorAir))
                 return false;
 
             string directory = System.IO.Path.GetDirectoryName(path_TBD);
 
+            string path_TBD_Uncapped = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + System.IO.Path.GetExtension(path_TBD));
+            System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
+            Sizing_ApplyAirGlass(path_TBD, excludePositiveInternalGains);
+
+            string path_TBD_HDDCDD = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + System.IO.Path.GetExtension(path_TBD));
+            System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
+            Sizing_ApplyOversizingFactors(path_TBD);
+
+            return true;
+        }
+
+        private static bool Sizing_PrepareDocument(string path_TBD, bool excludeOutdoorAir = true)
+        {
+            if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
+                return false;
+
+            bool result = false;
+
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-                if (Sizing_PrepareDocument(tBDDocument, excludeOutdoorAir))
+                Building building = tBDDocument?.Building;
+                if (building != null)
                 {
+                    SizingType sizingType = SizingType.tbdSizing;
+
+                    List<zone> zones = building.Zones();
+                    foreach (zone zone in zones)
+                    {
+                        zone.sizeCooling = (int)sizingType;
+                        zone.sizeHeating = (int)sizingType;
+                        zone.maxCoolingLoad = 0;
+                        zone.maxHeatingLoad = 0;
+                    }
+
+                    List<TBD.InternalCondition> internalConditions = building.InternalConditions();
+                    for (int i = internalConditions.Count - 1; i >= 0; i--)
+                    {
+                        TBD.InternalCondition internalCondition = building.GetIC(i);
+                        if (internalCondition.name.EndsWith("HDD"))
+                        {
+                            if (excludeOutdoorAir)
+                            {
+                                profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
+                                if (profile != null)
+                                    profile.factor = 0;
+                            }
+
+                            while (internalCondition.GetZone(0) == null)
+                            {
+                                zone zone = internalCondition.GetZone(0);
+                                zone.AssignIC(internalCondition, false);
+                            }
+                        }
+                    }
+
                     sAMTBDDocument.Save();
-
-                    string path_TBD_Uncapped = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + System.IO.Path.GetExtension(path_TBD));
-                    Core.Query.Copy(path_TBD, path_TBD_Uncapped, true);
-
-                    if (Sizing_ApplyAirGlass(tBDDocument, excludePositiveInternalGains))
-                        sAMTBDDocument.Save();
-
-                    string path_TBD_HDDCDD = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + System.IO.Path.GetExtension(path_TBD));
-                    Core.Query.Copy(path_TBD, path_TBD_HDDCDD, true);
-
-                    if (Sizing_ApplyOversizingFactors(tBDDocument))
-                        sAMTBDDocument.Save();
+                    result = true;
                 }
             }
 
-            return true;
+            return result;
         }
 
-        private static bool Sizing_PrepareDocument(TBDDocument tBDDocument, bool excludeOutdoorAir = true)
+        private static bool Sizing_ApplyAirGlass(string path_TBD, bool excludePositiveInternalGains = false)
         {
-            if (tBDDocument == null)
+            if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
                 return false;
 
-            Building building = tBDDocument?.Building;
-            if (building == null)
-                return false;
+            bool result = false;
 
-            SizingType sizingType = SizingType.tbdSizing;
-
-            List<zone> zones = building.Zones();
-            foreach (zone zone in zones)
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
-                zone.sizeCooling = (int)sizingType;
-                zone.sizeHeating = (int)sizingType;
-                zone.maxCoolingLoad = 0;
-                zone.maxHeatingLoad = 0;
-            }
-
-            List<TBD.InternalCondition> internalConditions = building.InternalConditions();
-            for (int i = internalConditions.Count - 1; i >= 0; i--)
-            {
-                TBD.InternalCondition internalCondition = building.GetIC(i);
-                if (internalCondition.name.EndsWith("HDD"))
+                TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+                Building building = tBDDocument?.Building;
+                if (building != null)
                 {
-                    if (excludeOutdoorAir)
+                    TBD.Construction construction = building.GetConstructionByName("Air_Glass");
+                    if (construction == null)
                     {
-                        profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
-                        if (profile != null)
-                            profile.factor = 0;
+                        construction = building.AddConstruction(null);
+                        construction.name = "Air_Glass";
+                        construction.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                        material material = construction.AddMaterial();
+                        material.name = "Air_Glass";
+                        material.description = "Special for HDD sizing";
+                        material.type = (int)MaterialTypes.tcdTransparentLayer;
+                        material.width = System.Convert.ToSingle(0.02 / 1000);
+                        material.conductivity = 1;
+                        material.vapourDiffusionFactor = 1;
+                        material.solarTransmittance = 0.999999f;
+                        material.externalEmissivity = 0.00001f;
+                        material.internalEmissivity = 0.00001f;
                     }
 
-                    while (internalCondition.GetZone(0) == null)
+                    List<buildingElement> buildingElements = building.BuildingElements();
+                    foreach (buildingElement buildingElement in buildingElements)
                     {
-                        zone zone = internalCondition.GetZone(0);
-                        zone.AssignIC(internalCondition, false);
+                        if (!buildingElement.name.Contains("_AIR"))
+                            continue;
+
+                        buildingElement.ghost = 0;
+                        buildingElement.AssignConstruction(construction);
                     }
+
+                    if (excludePositiveInternalGains)
+                    {
+                        Sizing_ExcludePositiveInternalGains(tBDDocument);
+                    }
+                    else
+                    {
+                        SizingType sizingType = SizingType.tbdDesignSizingOnly;
+
+                        List<zone> zones = building.Zones();
+                        foreach (zone zone in zones)
+                        {
+                            zone.sizeCooling = (int)sizingType;
+                            zone.sizeHeating = (int)sizingType;
+                        }
+
+                        tBDDocument.sizing(0);
+                    }
+
+                    sAMTBDDocument.Save();
+                    result = true;
                 }
             }
 
-            return true;
+            return result;
         }
 
-        private static bool Sizing_ApplyAirGlass(TBDDocument tBDDocument, bool excludePositiveInternalGains = false)
+        private static bool Sizing_ApplyOversizingFactors(string path_TBD)
         {
-            if (tBDDocument == null)
+            if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
                 return false;
 
-            Building building = tBDDocument?.Building;
-            if (building == null)
-                return false;
+            bool result = false;
 
-            TBD.Construction construction = building.GetConstructionByName("Air_Glass");
-            if (construction == null)
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
-                construction = building.AddConstruction(null);
-                construction.name = "Air_Glass";
-                construction.type = TBD.ConstructionTypes.tcdTransparentConstruction;
-                material material = construction.AddMaterial();
-                material.name = "Air_Glass";
-                material.description = "Special for HDD sizing";
-                material.type = (int)MaterialTypes.tcdTransparentLayer;
-                material.width = System.Convert.ToSingle(0.02 / 1000);
-                material.conductivity = 1;
-                material.vapourDiffusionFactor = 1;
-                material.solarTransmittance = 0.999999f;
-                material.externalEmissivity = 0.00001f;
-                material.internalEmissivity = 0.00001f;
+                TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+                Building building = tBDDocument?.Building;
+                if (building != null)
+                {
+                    SizingType sizingType = SizingType.tbdNoSizing;
+
+                    List<zone> zones = building.Zones();
+                    foreach (zone zone in zones)
+                    {
+                        zone.sizeCooling = (int)sizingType;
+                        zone.sizeHeating = (int)sizingType;
+
+                        //Apply Oversizing Factors
+                    }
+
+                    List<buildingElement> buildingElements = building.BuildingElements();
+                    foreach (buildingElement buildingElement in buildingElements)
+                    {
+                        if (!buildingElement.name.Contains("_AIR"))
+                            continue;
+
+                        buildingElement.ghost = 1;
+                        buildingElement.AssignConstruction(null);
+                    }
+
+                    sAMTBDDocument.Save();
+                    result = true;
+                }
             }
 
-            List<buildingElement> buildingElements = building.BuildingElements();
-            foreach (buildingElement buildingElement in buildingElements)
-            {
-                if (!buildingElement.name.Contains("_AIR"))
-                    continue;
-
-                buildingElement.ghost = 0;
-                buildingElement.AssignConstruction(construction);
-            }
-
-            if (excludePositiveInternalGains)
-                return Sizing_ExcludePositiveInternalGains(tBDDocument);
-
-            SizingType sizingType = SizingType.tbdDesignSizingOnly;
-
-            List<zone> zones = building.Zones();
-            foreach (zone zone in zones)
-            {
-                zone.sizeCooling = (int)sizingType;
-                zone.sizeHeating = (int)sizingType;
-            }
-
-            tBDDocument.sizing(0);
-
-            return true;
-        }
-
-        private static bool Sizing_ApplyOversizingFactors(TBDDocument tBDDocument)
-        {
-            if (tBDDocument == null)
-                return false;
-
-            Building building = tBDDocument?.Building;
-            if (building == null)
-                return false;
-
-            SizingType sizingType = SizingType.tbdNoSizing;
-
-            List<zone> zones = building.Zones();
-            foreach (zone zone in zones)
-            {
-                zone.sizeCooling = (int)sizingType;
-                zone.sizeHeating = (int)sizingType;
-
-                //Apply Oversizing Factors
-            }
-
-            List<buildingElement> buildingElements = building.BuildingElements();
-            foreach (buildingElement buildingElement in buildingElements)
-            {
-                if (!buildingElement.name.Contains("_AIR"))
-                    continue;
-
-                buildingElement.ghost = 1;
-                buildingElement.AssignConstruction(null);
-            }
-
-
-            return true;
+            return result;
         }
 
         private static bool Sizing_ExcludePositiveInternalGains(this TBDDocument tBDDocument)
@@ -196,7 +216,7 @@ namespace SAM.Analytical.Tas
                 }
 
                 TBD.InternalCondition internalCondition = internalConditions.Find(x => x.name.EndsWith(" - HDD"));
-                if(internalCondition == null)
+                if (internalCondition == null)
                 {
                     tuples.Add(new Tuple<zone, TBD.InternalCondition, double>(zone, null, -50));
                     continue;
@@ -212,7 +232,7 @@ namespace SAM.Analytical.Tas
                 return false;
 
             Dictionary<zone, double> dictionary = new Dictionary<zone, double>();
-            foreach(double tempearture in temperatures_Unique)
+            foreach (double tempearture in temperatures_Unique)
             {
                 List<Tuple<zone, TBD.InternalCondition, double>> tuples_Temperature = tuples.FindAll(x => x.Item3 <= tempearture);
 
