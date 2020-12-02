@@ -11,8 +11,6 @@
             if (zone == null)
                 return null;
 
-            building.RemoveInternalCondition(space.Name);
-
             TBD.InternalCondition internalCondition_TBD = AddInternalCondition(building, space, profileLibrary);
             if (internalCondition_TBD == null)
                 return null;

@@ -10,6 +10,15 @@ namespace SAM.Analytical.Tas
             if (building == null || spaces == null || profileLibrary == null)
                 return false;
 
+            List<string> names = new List<string>();
+            foreach(Space space in spaces)
+            {
+                names.Add(space.Name);
+                names.Add(space.Name + " - HDD");
+            }
+
+            RemoveInternalConditions(building, names);
+
             List<TBD.zone> result = new List<TBD.zone>();
             foreach (Space space in spaces)
             {
