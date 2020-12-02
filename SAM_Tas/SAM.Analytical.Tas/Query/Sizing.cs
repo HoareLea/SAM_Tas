@@ -23,15 +23,15 @@ namespace SAM.Analytical.Tas
                     sAMTBDDocument.Save();
 
                     string path_TBD_Uncapped = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + System.IO.Path.GetExtension(path_TBD));
-                    System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
+                    Core.Query.Copy(path_TBD, path_TBD_Uncapped, true);
 
                     if (Sizing_ApplyAirGlass(tBDDocument, excludePositiveInternalGains))
                         sAMTBDDocument.Save();
 
                     string path_TBD_HDDCDD = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + System.IO.Path.GetExtension(path_TBD));
-                    System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
+                    Core.Query.Copy(path_TBD, path_TBD_HDDCDD, true);
 
-                    if(Sizing_ApplyOversizingFactors(tBDDocument))
+                    if (Sizing_ApplyOversizingFactors(tBDDocument))
                         sAMTBDDocument.Save();
                 }
             }
