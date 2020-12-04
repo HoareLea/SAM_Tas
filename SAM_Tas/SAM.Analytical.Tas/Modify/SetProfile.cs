@@ -8,7 +8,7 @@
                 return false;
 
             profile_TBD.name = profile.Name;
-            profile_TBD.description = profile.Category;
+            profile_TBD.description = profile.Name;
 
             if (profile.Count == 1)
             {
