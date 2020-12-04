@@ -66,11 +66,11 @@ namespace SAM.Analytical.Tas
                                     profile.factor = 0;
                             }
 
-                            while (internalCondition.GetZone(0) != null)
-                            {
-                                zone zone = internalCondition.GetZone(0);
-                                zone.AssignIC(internalCondition, false);
-                            }
+                            //while (internalCondition.GetZone(0) != null)
+                            //{
+                            //    zone zone = internalCondition.GetZone(0);
+                            //    zone.AssignIC(internalCondition, false);
+                            //}
                         }
                     }
 
