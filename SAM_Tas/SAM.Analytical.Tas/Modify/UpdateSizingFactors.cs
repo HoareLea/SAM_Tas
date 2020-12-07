@@ -46,12 +46,18 @@ namespace SAM.Analytical.Tas
                 if (double.IsNaN(heatingSizingFactor_Zone) && !double.IsNaN(heatingSizingFactor))
                     heatingSizingFactor_Zone = heatingSizingFactor;
 
+                if (heatingSizingFactor_Zone == 0)
+                    heatingSizingFactor_Zone = double.NaN;
+
                 double coolingSizingFactor_Zone = double.NaN;
                 if (!space.TryGetValue(SpaceParameter.CoolingSizingFactor, out coolingSizingFactor_Zone))
                     coolingSizingFactor_Zone = double.NaN;
 
                 if (double.IsNaN(coolingSizingFactor_Zone) && !double.IsNaN(coolingSizingFactor))
                     coolingSizingFactor_Zone = coolingSizingFactor;
+
+                if (coolingSizingFactor_Zone == 0)
+                    coolingSizingFactor_Zone = double.NaN;
 
                 if (double.IsNaN(coolingSizingFactor_Zone) && double.IsNaN(coolingSizingFactor_Zone))
                     continue;
