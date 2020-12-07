@@ -15,7 +15,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -40,7 +40,12 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
+            int index = -1;
+
             inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
+            index = inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel_", "_analyticalModel_", "SAM AnalyticalModel", GH_ParamAccess.item);
+            inputParamManager[index].Optional = true;
+
             inputParamManager.AddBooleanParameter("_excludeOutdoorAir_", "_excludeOutdoorAir_", "Exclude Outdoor Air", GH_ParamAccess.item, false);
             inputParamManager.AddBooleanParameter("_excludePositiveInternalGains_", "_excludePositiveInternalGains_", "Exclude Positive Internal Gains", GH_ParamAccess.item, true);
             inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
@@ -63,13 +68,17 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(0, false);
 
             bool run = false;
-            if (!dataAccess.GetData(3, ref run))
+            if (!dataAccess.GetData(4, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
             if (!run)
                 return;
+
+            AnalyticalModel analyticalModel = null;
+            if (!dataAccess.GetData(1, ref analyticalModel))
+                analyticalModel = null;
 
             string path_TBD = null;
             if (!dataAccess.GetData(0, ref path_TBD) || string.IsNullOrWhiteSpace(path_TBD))
@@ -79,20 +88,20 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             bool excludeOutdoorAir = false;
-            if (!dataAccess.GetData(1, ref excludeOutdoorAir))
+            if (!dataAccess.GetData(2, ref excludeOutdoorAir))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
             bool excludePositiveInternalGains = true;
-            if (!dataAccess.GetData(2, ref excludePositiveInternalGains))
+            if (!dataAccess.GetData(3, ref excludePositiveInternalGains))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            bool result = Analytical.Tas.Query.Sizing(path_TBD, excludeOutdoorAir, excludePositiveInternalGains);
+            bool result = Analytical.Tas.Query.Sizing(path_TBD, analyticalModel, excludeOutdoorAir, excludePositiveInternalGains);
 
             dataAccess.SetData(0, result);
         }

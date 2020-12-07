@@ -8,7 +8,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static bool Sizing(this string path_TBD, bool excludeOutdoorAir = false, bool excludePositiveInternalGains = false)
+        public static bool Sizing(this string path_TBD, AnalyticalModel analyticalModel = null, bool excludeOutdoorAir = false, bool excludePositiveInternalGains = false)
         {
             if (string.IsNullOrWhiteSpace(path_TBD))
                 return false;
@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas
 
             string path_TBD_HDDCDD = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + System.IO.Path.GetExtension(path_TBD));
             System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
-            Sizing_ApplyOversizingFactors(path_TBD);
+            Sizing_ApplyOversizingFactors(path_TBD, analyticalModel);
 
             return true;
         }
@@ -149,7 +149,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_ApplyOversizingFactors(string path_TBD)
+        private static bool Sizing_ApplyOversizingFactors(string path_TBD, AnalyticalModel analyticalModel = null)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
                 return false;
@@ -162,16 +162,7 @@ namespace SAM.Analytical.Tas
                 Building building = tBDDocument?.Building;
                 if (building != null)
                 {
-                    SizingType sizingType = SizingType.tbdNoSizing;
-
-                    List<zone> zones = building.Zones();
-                    foreach (zone zone in zones)
-                    {
-                        zone.sizeCooling = (int)sizingType;
-                        zone.sizeHeating = (int)sizingType;
-
-                        //Apply Oversizing Factors
-                    }
+                    Modify.UpdateSizingFactors(building, analyticalModel);
 
                     List<buildingElement> buildingElements = building.BuildingElements();
                     foreach (buildingElement buildingElement in buildingElements)
