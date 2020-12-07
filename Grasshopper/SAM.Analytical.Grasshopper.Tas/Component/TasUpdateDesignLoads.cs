@@ -88,6 +88,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             analyticalModel = Analytical.Tas.Modify.UpdateDesignLoads(path_TBD, analyticalModel);
 
             dataAccess.SetData(0, new GooAnalyticalModel(analyticalModel));
+            dataAccess.SetData(1, true);
         }
     }
 }
