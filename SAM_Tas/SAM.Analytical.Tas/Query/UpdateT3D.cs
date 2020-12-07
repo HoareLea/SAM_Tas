@@ -39,7 +39,7 @@ namespace SAM.Analytical.Tas
             
             double northAngle = double.NaN;
             if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
-                building.northAngle = Units.Convert.ToDegrees(northAngle);
+                building.northAngle = System.Math.Round(Units.Convert.ToDegrees(northAngle), 1);
 
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
             if(adjacencyCluster != null)
