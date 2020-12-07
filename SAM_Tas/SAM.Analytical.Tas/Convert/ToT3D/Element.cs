@@ -1,6 +1,4 @@
-﻿using SAM.Core;
-using System.Collections.Generic;
-using TAS3D;
+﻿using TAS3D;
 
 namespace SAM.Analytical.Tas
 {

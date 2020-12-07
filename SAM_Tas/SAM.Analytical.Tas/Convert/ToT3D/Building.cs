@@ -7,12 +7,32 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
-        public static Building ToT3D(this RelationCluster relationCluster, T3DDocument t3DDocument)
+        public static Building ToT3D(this AnalyticalModel analyticalModel, T3DDocument t3DDocument)
         {
-            if (t3DDocument == null || relationCluster == null)
+            if (t3DDocument == null || analyticalModel == null)
                 return null;
-            
-            Building building = t3DDocument.Building;
+
+            return ToT3D(analyticalModel.AdjacencyCluster, t3DDocument.Building);
+
+        }
+
+        public static Building ToT3D(this AnalyticalModel analyticalModel, Building building)
+        {
+            if (building == null || analyticalModel == null)
+                return null;
+
+            double northAngle = double.NaN;
+            if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
+                building.northAngle = northAngle;
+
+            return ToT3D(analyticalModel.AdjacencyCluster, building);
+
+        }
+
+        public static Building ToT3D(this RelationCluster relationCluster, Building building)
+        {
+            if (building == null || relationCluster == null)
+                return null;
 
             Dictionary<Guid, Aperture> dictionary_Apertures = new Dictionary<Guid, Aperture>();
 
