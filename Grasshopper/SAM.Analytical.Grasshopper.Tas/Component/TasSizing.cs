@@ -46,8 +46,8 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel_", "_analyticalModel_", "SAM AnalyticalModel", GH_ParamAccess.item);
             inputParamManager[index].Optional = true;
 
-            inputParamManager.AddBooleanParameter("_excludeOutdoorAir_", "_excludeOutdoorAir_", "Exclude Outdoor Air", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("_excludePositiveInternalGains_", "_excludePositiveInternalGains_", "Exclude Positive Internal Gains", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_excludeOutdoorAir_", "_excludeOutdoorAir_", "Exclude Outdoor Air and set TBD ventilation factor to zero", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_excludePositiveInternalGains_", "_excludePositiveInternalGains_", "This will re-run few times sizing simulation for each temperature and therefore internal conduction gains from adj rooms will not offset heating load", GH_ParamAccess.item, true);
             inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
         }
 
