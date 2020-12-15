@@ -83,8 +83,8 @@ namespace SAM.Analytical.Tas
             {
                 if(double.IsNaN(occupancy) || occupancy == 0)
                 {
-                    if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyPerArea, out value))
-                        occupancy = value * area;
+                    if (internalCondition.TryGetValue(InternalConditionParameter.AreaPerPerson, out value))
+                        occupancy = area / value;
                 }
 
                 if(!double.IsNaN(occupancy) && occupancy != 0)
