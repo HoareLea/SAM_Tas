@@ -19,6 +19,8 @@ namespace SAM.Analytical.Tas
             emitter = internalCondition_TBD.GetHeatingEmitter();
             if(emitter != null)
             {
+                emitter.name = internalCondition.GetSystemTypeName<HeatingSystemType>();
+                
                 if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmmiterRadiantProportion, out value))
                     emitter.radiantProportion = System.Convert.ToSingle(value);
 
@@ -29,6 +31,8 @@ namespace SAM.Analytical.Tas
             emitter = internalCondition_TBD.GetCoolingEmitter();
             if (emitter != null)
             {
+                emitter.name = internalCondition.GetSystemTypeName<CoolingSystemType>();
+
                 if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmmiterRadiantProportion, out value))
                     emitter.radiantProportion = System.Convert.ToSingle(value);
 
@@ -45,6 +49,7 @@ namespace SAM.Analytical.Tas
             internalGain.occupantViewCoefficient = (float)0.227;
             internalGain.domesticHotWater = (float)0.197;
             internalGain.name = internalCondition.Name;
+            internalGain.description = internalCondition.GetSystemTypeName<VentilationSystemType>();
 
             if (internalCondition.TryGetValue(InternalConditionParameter.LightingLevel, out value))
                 internalGain.targetIlluminance = System.Convert.ToSingle(value);
