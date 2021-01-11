@@ -26,10 +26,10 @@ namespace SAM.Analytical.Tas
             {
                 emitter.name = internalCondition.GetSystemTypeName<HeatingSystemType>();
                 
-                if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmmiterRadiantProportion, out value))
+                if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmitterRadiantProportion, out value))
                     emitter.radiantProportion = System.Convert.ToSingle(value);
 
-                if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmmiterCoefficient, out value))
+                if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmitterCoefficient, out value))
                     emitter.viewCoefficient = System.Convert.ToSingle(value);
             }
 
@@ -38,10 +38,10 @@ namespace SAM.Analytical.Tas
             {
                 emitter.name = internalCondition.GetSystemTypeName<CoolingSystemType>();
 
-                if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmmiterRadiantProportion, out value))
+                if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmitterRadiantProportion, out value))
                     emitter.radiantProportion = System.Convert.ToSingle(value);
 
-                if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmmiterCoefficient, out value))
+                if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmitterCoefficient, out value))
                     emitter.viewCoefficient = System.Convert.ToSingle(value);
             }
 

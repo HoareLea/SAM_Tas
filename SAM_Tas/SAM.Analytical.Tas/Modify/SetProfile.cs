@@ -14,7 +14,7 @@
             {
                 profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
                 profile_TBD.factor = System.Convert.ToSingle(factor);
-                profile_TBD.value = System.Convert.ToSingle(profile.Values[0]);
+                profile_TBD.value = System.Convert.ToSingle(profile.GetValues()[0]);
                 return true;
             }
 
