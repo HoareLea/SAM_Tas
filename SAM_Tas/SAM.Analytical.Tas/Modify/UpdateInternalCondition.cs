@@ -105,7 +105,7 @@ namespace SAM.Analytical.Tas
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticOLG);
                 if (profile_TBD != null)
                 {
-                    double gain = Analytical.Query.CalculatedOccupancyLatentGain(space);
+                    double gain = Analytical.Query.OccupancyLatentGain(space);
                     if (double.IsNaN(area) || area == 0 || double.IsNaN(gain))
                         gain = 0;
                     else
@@ -117,7 +117,7 @@ namespace SAM.Analytical.Tas
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticOSG);
                 if (profile_TBD != null)
                 {
-                    double gain = Analytical.Query.CalculatedOccupancySensibleGain(space);
+                    double gain = Analytical.Query.OccupancySensibleGain(space);
                     if (double.IsNaN(area) || area == 0 || double.IsNaN(gain))
                         gain = 0;
                     else
