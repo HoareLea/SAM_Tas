@@ -60,9 +60,9 @@ namespace SAM.Analytical.Tas
                 internalGain.targetIlluminance = System.Convert.ToSingle(value);
 
             internalGain.personGain = 0;
-            double occupancyGain = Analytical.Query.CalculatedOccupancyGain(space);
-            if (!double.IsNaN(occupancyGain))
-                internalGain.personGain = System.Convert.ToSingle(occupancyGain);
+            double occupancyGainPerPerson = Analytical.Query.OccupancyGainPerPerson(space);
+            if (!double.IsNaN(occupancyGainPerPerson))
+                internalGain.personGain = System.Convert.ToSingle(occupancyGainPerPerson);
 
             Profile profile = null;
             
