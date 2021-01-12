@@ -71,7 +71,7 @@ namespace SAM.Analytical.Tas
                     TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticLL);
                     if (profile_TBD != null)
                     {
-                        value = profile.Max;
+                        value = profile.MaxValue;
                         if (!double.IsNaN(value))
                         {
                             profile_TBD.name = profile.Name;
