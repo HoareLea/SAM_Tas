@@ -30,6 +30,21 @@ namespace SAM.Analytical.Tas
 
             building.description = string.Format("Delivered by SAM https://github.com/HoareLea/SAM [{0}]", System.DateTime.Now.ToString("yyyy/MM/dd"));
 
+            TBD.GeneralDetails generaldetails = building.GetGeneralDetails();
+            if(generaldetails != null)
+            {
+                if (generaldetails.engineer1 == "")
+                    generaldetails.engineer1 = System.Environment.UserName;
+                else if(generaldetails.engineer1 != System.Environment.UserName)
+                    generaldetails.engineer2 = System.Environment.UserName;                    
+
+                if (generaldetails.externalPollutant == 315) //600
+                {
+                    generaldetails.externalPollutant = 415;
+                }
+                generaldetails.TerrainType = TBD.TerrainType.tbdCity;
+            }
+
             return result != null && result.Count > 0;
         }
 
