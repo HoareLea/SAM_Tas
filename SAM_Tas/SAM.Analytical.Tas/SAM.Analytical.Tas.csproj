@@ -156,6 +156,7 @@
     <Compile Include="Query\Shades.cs" />
     <Compile Include="Query\SurfaceDatas.cs" />
     <Compile Include="Query\AnnualSurfaceResult.cs" />
+    <Compile Include="Query\Array.cs" />
     <Compile Include="Query\ZoneDatas.cs" />
     <Compile Include="Query\Constructions.cs" />
     <Compile Include="Query\Zone.cs" />

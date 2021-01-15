@@ -1,4 +1,6 @@
-﻿namespace SAM.Analytical.Tas
+﻿using System.Collections.Generic;
+
+namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
@@ -32,8 +34,19 @@
             profile_TBD.type = TBD.ProfileTypes.ticYearlyProfile;
             profile_TBD.factor = System.Convert.ToSingle(factor);
 
-            for (int i = 0; i < 8759; i++)
-                profile_TBD.yearlyValues[i] = System.Convert.ToSingle(profile[i]);
+            //object yearlyValues_TBD = profile_TBD.GetYearlyValues();
+
+            //float[] array = Query.Array<float>(yearlyValues_TBD);
+
+            double[] yearlyValues =  profile.GetYearlyValues();
+            float[] yearlyValues_float = new float[yearlyValues.Length];
+            for (int i = 0; i < yearlyValues_float.Length; i++)
+                yearlyValues_float[i] = System.Convert.ToSingle(yearlyValues[i]);
+
+            profile_TBD.SetYearlyValues(yearlyValues_float);
+
+            //for (int i = 0; i < 8759; i++)
+            //    profile_TBD.yearlyValues[i] = System.Convert.ToSingle(profile[i]);
 
             return true;
         }
