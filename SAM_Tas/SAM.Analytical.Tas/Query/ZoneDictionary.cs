@@ -23,5 +23,25 @@ namespace SAM.Analytical.Tas
 
             return result;
         }
+
+        public static Dictionary<string, TBD.zone> ZoneDictionary(this TBD.Building building)
+        {
+            Dictionary<string, TBD.zone> result = new Dictionary<string, TBD.zone>();
+
+            int index = 1;
+            TBD.zone zone = building.GetZone(index);
+            while (zone != null)
+            {
+                string name = zone.name;
+                if (name != null)
+                    result[name] = zone;
+
+                index++;
+
+                zone = building.GetZone(index);
+            }
+
+            return result;
+        }
     }
 }

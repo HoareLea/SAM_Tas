@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas
             if (analyticalModel == null || tBDDocument == null)
                 return null;
 
-            List<TBD.zone> zones = tBDDocument.Building?.Zones();
+            Dictionary<string, TBD.zone> zones = tBDDocument.Building?.ZoneDictionary();
             if (zones == null)
                 return null;
 
@@ -46,37 +46,23 @@ namespace SAM.Analytical.Tas
             if (adjacencyCluster == null)
                 return null;
 
-            List<Space> spaces = adjacencyCluster.GetSpaces();
+            Dictionary<string, Space> spaces = adjacencyCluster.SpaceDictionary();
             if (spaces == null)
                 return null;
 
             if (zones.Count == 0 || spaces.Count == 0)
                 return new AnalyticalModel(analyticalModel);
 
-            foreach (Space space in spaces)
+            foreach (KeyValuePair<string, Space> keyValuePair in spaces)
             {
                 TBD.zone zone = null;
-
-                string name = space.Name;
-                if(!string.IsNullOrWhiteSpace(name))
-                {
-                    name = name.Trim();
-                    zone = zones.Find(x => x.name.Trim().Equals(name));
-                }
-
-                if(zone == null)
-                {
-                    //if(!space.TryGetValue(Analytical.Query.ParameterName_SpaceName(), out name, true) && !string.IsNullOrWhiteSpace(name))
-                    {
-                        name = name.Trim();
-                        zone = zones.Find(x => x.name.Trim().Equals(name));
-                    }
-                }
+                if (!zones.TryGetValue(keyValuePair.Key, out zone))
+                    continue;
 
                 if (zone == null)
                     continue;
 
-                Space space_New = UpdateFacingExternal(space, zone);
+                Space space_New = UpdateFacingExternal(keyValuePair.Value, zone);
                 if (space_New == null)
                     continue;
 
