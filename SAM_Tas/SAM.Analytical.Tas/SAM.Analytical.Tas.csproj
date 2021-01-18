@@ -120,6 +120,7 @@
     <Compile Include="Query\HasDayType.cs" />
     <Compile Include="Query\InternalConditions.cs" />
     <Compile Include="Query\DayType.cs" />
+    <Compile Include="Query\SpaceDictionary.cs" />
     <Compile Include="Query\Sizing.cs" />
     <Compile Include="Query\SurfaceDataType.cs" />
     <Compile Include="Query\PanelDataType.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Query\ZoneDatas.cs" />
     <Compile Include="Query\Constructions.cs" />
     <Compile Include="Query\Zone.cs" />
+    <Compile Include="Query\ZoneDictionary.cs" />
     <Compile Include="Query\ZoneSets.cs" />
     <Compile Include="Query\Zones.cs" />
   </ItemGroup>

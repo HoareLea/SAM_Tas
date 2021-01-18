@@ -45,21 +45,24 @@ namespace SAM.Analytical.Tas
             if(adjacencyCluster != null)
             {
                 //Zones -> Spaces
-                List<Space> spaces = adjacencyCluster.GetSpaces();
+                Dictionary<string, Space> spaces = adjacencyCluster.SpaceDictionary();
                 if (spaces != null)
                 {
-                    List<Zone> zones = building.Zones();
+                    Dictionary<string, Zone> zones = building.ZoneDictionary();
                     if (zones != null)
                     {
-                        foreach (Zone zone in zones)
+                        foreach (KeyValuePair<string, Zone> keyValuePair in zones)
                         {
-                            Space space = zone.Match(spaces);
+                            Space space;
+                            if (!spaces.TryGetValue(keyValuePair.Key, out space))
+                                continue;
+                            
                             if (space == null)
                                 continue;
 
                             //TODO: Update Zone
                             Space space_New = space.Clone();
-                            space_New.Add(Create.ParameterSet(ActiveSetting.Setting, zone));
+                            space_New.Add(Create.ParameterSet(ActiveSetting.Setting, keyValuePair.Value));
                             adjacencyCluster.AddObject(space_New);
                         }
                     }
