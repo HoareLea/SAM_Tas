@@ -4,13 +4,9 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static TBD.zone UpdateZone(this TBD.Building building, Space space, ProfileLibrary profileLibrary)
+        public static TBD.zone UpdateZone(this TBD.Building building, TBD.zone zone, Space space, ProfileLibrary profileLibrary)
         {
-            if (space == null || profileLibrary == null)
-                return null;
-
-            TBD.zone zone = building?.Zones()?.Zone(space.Name);
-            if (zone == null)
+            if (space == null || profileLibrary == null || building == null || zone == null)
                 return null;
 
             TBD.InternalCondition internalCondition_TBD = AddInternalCondition(building, space, profileLibrary);

@@ -10,22 +10,38 @@ namespace SAM.Analytical.Tas
             if (building == null || spaces == null || profileLibrary == null)
                 return false;
 
-            List<string> names = new List<string>();
+            Dictionary<string, TBD.zone> dictionary_Zones = building.ZoneDictionary();
+            if (dictionary_Zones == null)
+                return false;
+
+            Dictionary<string, Space> dictionary_Spaces = new Dictionary<string, Space>();
             foreach(Space space in spaces)
             {
-                names.Add(space.Name);
+                string name = space.Name;
+                if (name == null)
+                    continue;
+
+                dictionary_Spaces[name] = space;
                 if (includeHDD)
-                    names.Add(space.Name + " - HDD");
+                    dictionary_Spaces[space.Name + " - HDD"] = space;
             }
 
-            RemoveInternalConditions(building, names);
+            RemoveInternalConditions(building, dictionary_Spaces.Keys);
 
             List<TBD.zone> result = new List<TBD.zone>();
             foreach (Space space in spaces)
             {
-                result.Add(UpdateZone(building, space, profileLibrary));
+                string name = space?.Name;
+                if (name == null)
+                    continue;
+
+                TBD.zone zone = null;
+                if (!dictionary_Zones.TryGetValue(name, out zone) || zone == null)
+                    continue;
+
+                result.Add(building.UpdateZone(zone, space, profileLibrary));
                 if (includeHDD)
-                    UpdateZone_HDD(building, space, profileLibrary);
+                    building.UpdateZone_HDD(zone, space, profileLibrary);
             }
 
             building.description = string.Format("Delivered by SAM https://github.com/HoareLea/SAM [{0}]", System.DateTime.Now.ToString("yyyy/MM/dd"));
@@ -36,7 +52,7 @@ namespace SAM.Analytical.Tas
                 if (generaldetails.engineer1 == "")
                     generaldetails.engineer1 = System.Environment.UserName;
                 else if(generaldetails.engineer1 != System.Environment.UserName)
-                    generaldetails.engineer2 = System.Environment.UserName;                    
+                    generaldetails.engineer2 = System.Environment.UserName;
 
                 if (generaldetails.externalPollutant == 315) //600
                 {
