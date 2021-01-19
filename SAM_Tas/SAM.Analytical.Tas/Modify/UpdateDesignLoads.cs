@@ -61,11 +61,9 @@ namespace SAM.Analytical.Tas
             if (spaces == null || building == null)
                 return null;
 
-            List<zone> zones = building.Zones();
+            Dictionary<string, zone> zones = building.ZoneDictionary();
             if (zones == null)
                 return null;
-
-            zones.RemoveAll(x => string.IsNullOrEmpty(x.name));
 
             List<Space> result = new List<Space>();
             if (zones.Count == 0)
@@ -80,8 +78,8 @@ namespace SAM.Analytical.Tas
                 if (string.IsNullOrEmpty(name))
                     continue;
 
-                zone zone = zones.Find(x => x.name.Equals(name));
-                if (zone == null)
+                zone zone;
+                if (!zones.TryGetValue(name, out zone) || zone == null)
                     continue;
 
                 space.SetValue(SpaceParameter.DesignHeatingLoad, zone.maxHeatingLoad);
