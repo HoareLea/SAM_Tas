@@ -71,10 +71,7 @@ namespace SAM.Analytical.Tas
 
             foreach(Space space in spaces)
             {
-                if (space == null)
-                    continue;
-
-                string name = space.Name;
+                string name = space?.Name;
                 if (string.IsNullOrEmpty(name))
                     continue;
 
