@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Convert\ToSAM\SpaceSimulationResults.cs" />
     <Compile Include="Enums\Parameters\ZoneParameter.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
     <Compile Include="Convert\ToSAM\AdjacencyCluster.cs" />

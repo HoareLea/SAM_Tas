@@ -23,20 +23,38 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<ZoneData> ZoneDatas(this CoolingDesignData CoolingDesignData)
+        public static List<ZoneData> ZoneDatas(this CoolingDesignData coolingDesignData)
         {
-            if (CoolingDesignData == null)
+            if (coolingDesignData == null)
                 return null;
 
             List<ZoneData> result = new List<ZoneData>();
 
             int index = 1;
-            ZoneData zoneData = CoolingDesignData.GetZoneData(index);
+            ZoneData zoneData = coolingDesignData.GetZoneData(index);
             while (zoneData != null)
             {
                 result.Add(zoneData);
                 index++;
-                zoneData = CoolingDesignData.GetZoneData(index);
+                zoneData = coolingDesignData.GetZoneData(index);
+            }
+            return result;
+        }
+
+        public static List<ZoneData> ZoneDatas(this HeatingDesignData heatingDesignData)
+        {
+            if (heatingDesignData == null)
+                return null;
+
+            List<ZoneData> result = new List<ZoneData>();
+
+            int index = 1;
+            ZoneData zoneData = heatingDesignData.GetZoneData(index);
+            while (zoneData != null)
+            {
+                result.Add(zoneData);
+                index++;
+                zoneData = heatingDesignData.GetZoneData(index);
             }
             return result;
         }

@@ -12,9 +12,12 @@ namespace SAM.Core.Tas
 
         }
 
-        public SAMTSDDocument(string path)
+        public SAMTSDDocument(string path, bool readOnly = false)
         {
-            TSDDocument.open(path);
+            if (readOnly)
+                TSDDocument.openReadOnly(path);
+            else
+                TSDDocument.open(path);
         }
 
         public TSD.TSDDocument TSDDocument

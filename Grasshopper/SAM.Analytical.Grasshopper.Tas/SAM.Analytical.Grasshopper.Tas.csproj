@@ -51,6 +51,10 @@
       <HintPath>..\..\references_buildonly\Interop.TBD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TSD">
+      <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="SAM.Analytical, Version=1.0.7509.27573, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
@@ -92,6 +96,7 @@
     <Compile Include="Component\TasUpdateBuildingElements.cs" />
     <Compile Include="Component\TasUpdateDesignLoads.cs" />
     <Compile Include="Component\TasUpdateConstructions.cs" />
+    <Compile Include="Component\TasTSDCreateSpaceSimulationResults.cs" />
     <Compile Include="Component\TasUpdateZones.cs" />
     <Compile Include="Component\TasUpdateIZAMs.cs" />
     <Compile Include="Component\TasUpdateFacingExternal.cs" />
