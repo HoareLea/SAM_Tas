@@ -30,13 +30,22 @@ namespace SAM.Analytical.Tas
             if (building == null || spaces == null)
                 return;
 
-            List<zone> zones = building.Zones();
+            Dictionary<string, zone> zones = building.ZoneDictionary();
             if (zones == null || zones.Count == 0)
                 return;
 
             foreach(Space space in spaces)
             {
-                if (space == null || string.IsNullOrWhiteSpace(space.Name))
+                string name = space?.Name;
+
+                if (string.IsNullOrWhiteSpace(name))
+                    continue;
+
+                zone zone;
+                if (!zones.TryGetValue(name, out zone))
+                    continue;
+
+                if (zone == null)
                     continue;
 
                 double heatingSizingFactor_Zone = double.NaN;
@@ -60,10 +69,6 @@ namespace SAM.Analytical.Tas
                     coolingSizingFactor_Zone = double.NaN;
 
                 if (double.IsNaN(coolingSizingFactor_Zone) && double.IsNaN(coolingSizingFactor_Zone))
-                    continue;
-
-                zone zone = zones.Zone(space.Name);
-                if (zone == null)
                     continue;
                 
                 if(!double.IsNaN(coolingSizingFactor_Zone))
