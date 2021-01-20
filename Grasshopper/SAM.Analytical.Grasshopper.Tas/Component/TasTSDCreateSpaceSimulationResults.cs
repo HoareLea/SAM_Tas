@@ -160,7 +160,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             int index_AdjacencyCluster = Params.IndexOfOutputParam("AdjacencyCluster");
             if (index_Result != -1 || index_AdjacencyCluster != -1)
             {
-                using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path))
+                using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path, true))
                 {
                     if (index_AdjacencyCluster != -1)
                     {
@@ -174,6 +174,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                         spaceSimulationResults = Analytical.Tas.Convert.ToSAM(sAMTSDDocument);
                         dataAccess.SetDataList(index_Result, spaceSimulationResults?.ConvertAll(x => new GooResult(x)));
                     }
+
+                    sAMTSDDocument.Close();
                 }
             }
 
