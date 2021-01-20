@@ -85,6 +85,14 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             int index;
 
+            bool run = false;
+            index = Params.IndexOfInputParam("_run");
+            if (index != -1)
+                if (!dataAccess.GetData(index, ref run))
+                    run = false;
+
+            if (!run)
+                return;
 
             index = Params.IndexOfInputParam("_pathTasTSD");
             if(index == -1)
