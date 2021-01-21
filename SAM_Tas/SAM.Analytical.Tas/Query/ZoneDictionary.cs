@@ -28,7 +28,7 @@ namespace SAM.Analytical.Tas
         {
             Dictionary<string, TBD.zone> result = new Dictionary<string, TBD.zone>();
 
-            int index = 1;
+            int index = 0;
             TBD.zone zone = building.GetZone(index);
             while (zone != null)
             {
