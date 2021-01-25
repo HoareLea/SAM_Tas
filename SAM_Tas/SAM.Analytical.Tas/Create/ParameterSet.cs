@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Create
     {
-        public static ParameterSet ParameterSet(this Setting setting, Zone zone)
+        public static ParameterSet ParameterSet(this Setting setting, TAS3D.Zone zone)
         {
             ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, zone, typeof(Space), typeof(Zone));
             parameterSet.Add("IsUsed", zone.isUsed == 1);

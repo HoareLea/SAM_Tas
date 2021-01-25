@@ -48,10 +48,10 @@ namespace SAM.Analytical.Tas
                 Dictionary<string, Space> spaces = adjacencyCluster.SpaceDictionary();
                 if (spaces != null)
                 {
-                    Dictionary<string, Zone> zones = building.ZoneDictionary();
+                    Dictionary<string, TAS3D.Zone> zones = building.ZoneDictionary();
                     if (zones != null)
                     {
-                        foreach (KeyValuePair<string, Zone> keyValuePair in zones)
+                        foreach (KeyValuePair<string, TAS3D.Zone> keyValuePair in zones)
                         {
                             Space space;
                             if (!spaces.TryGetValue(keyValuePair.Key, out space))
