@@ -6,8 +6,9 @@ using SAM.Core.Grasshopper;
 using System;
 using System.Collections.Generic;
 
-namespace SAM.Analytical.Grasshopper.Tas
+namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 {
+    [Obsolete("Obsolete since 2021-01-27")]
     public class TasTSDCreateAdjacencyCluster : GH_SAMComponent
     {
         /// <summary>
@@ -19,6 +20,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// The latest version of this component
         /// </summary>
         public override string LatestComponentVersion => "1.0.0";
+
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         /// <summary>
         /// Provides an Icon for the component.

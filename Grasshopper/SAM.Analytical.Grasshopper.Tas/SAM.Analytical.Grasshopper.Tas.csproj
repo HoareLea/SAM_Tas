@@ -86,7 +86,8 @@
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\TasOpenT3DDocument.cs" />
     <Compile Include="Component\TasSizing.cs" />
-    <Compile Include="Component\TasTSDCreateAdjacencyCluster.cs" />
+    <Compile Include="Component\TasTSDUpdateAdjacencyCluster.cs" />
+    <Compile Include="Component\TasTSDCreateAdjacencyCluster._Obsolete.cs" />
     <Compile Include="Component\TasRemoveSchedules.cs" />
     <Compile Include="Component\TasAssignRooflightBuildingElementType.cs" />
     <Compile Include="Component\TasT3DtoTBD.cs" />
@@ -96,7 +97,7 @@
     <Compile Include="Component\TasUpdateBuildingElements.cs" />
     <Compile Include="Component\TasUpdateDesignLoads.cs" />
     <Compile Include="Component\TasUpdateConstructions.cs" />
-    <Compile Include="Component\TasTSDCreateSpaceSimulationResults.cs" />
+    <Compile Include="Component\TasTSDCreateSpaceSimulationResults_Obsolete.cs" />
     <Compile Include="Component\TasUpdateZones.cs" />
     <Compile Include="Component\TasUpdateIZAMs.cs" />
     <Compile Include="Component\TasUpdateFacingExternal.cs" />
@@ -165,7 +166,7 @@
   <ItemGroup>
     <PackageReference Include="Grasshopper">
       <Version>6.32.20340.21001</Version>
-	  <ExcludeAssets>runtime</ExcludeAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
