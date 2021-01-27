@@ -5,12 +5,12 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<SpaceSimulationResult> UpdateAdjacencyCluster(this string path_TSD, AdjacencyCluster adjacencyCLuster)
+        public static List<Core.Result> UpdateAdjacencyCluster(this string path_TSD, AdjacencyCluster adjacencyCLuster)
         {
             if (adjacencyCLuster == null || string.IsNullOrWhiteSpace(path_TSD))
                 return null;
 
-            List<SpaceSimulationResult> result = null;
+            List<Core.Result> result = null;
             using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
             {
                 result = UpdateAdjacencyCluster(sAMTSDDocument, adjacencyCLuster);
@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<SpaceSimulationResult> UpdateAdjacencyCluster(this SAMTSDDocument sAMTSDDocument, AdjacencyCluster adjacencyCLuster)
+        public static List<Core.Result> UpdateAdjacencyCluster(this SAMTSDDocument sAMTSDDocument, AdjacencyCluster adjacencyCLuster)
         {
             if (sAMTSDDocument == null || adjacencyCLuster == null)
                 return null;
@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas
             return UpdateAdjacencyCluster(sAMTSDDocument.TSDDocument, adjacencyCLuster);
         }
 
-        public static List<SpaceSimulationResult> UpdateAdjacencyCluster(this TSD.TSDDocument tSDDocument, AdjacencyCluster adjacencyCLuster)
+        public static List<Core.Result> UpdateAdjacencyCluster(this TSD.TSDDocument tSDDocument, AdjacencyCluster adjacencyCLuster)
         {
             if (tSDDocument == null || adjacencyCLuster == null)
                 return null;
@@ -35,14 +35,14 @@ namespace SAM.Analytical.Tas
             return UpdateAdjacencyCluster(tSDDocument.SimulationData, adjacencyCLuster);
         }
 
-        public static List<SpaceSimulationResult> UpdateAdjacencyCluster(this TSD.SimulationData simulationData, AdjacencyCluster adjacencyCluster)
+        public static List<Core.Result> UpdateAdjacencyCluster(this TSD.SimulationData simulationData, AdjacencyCluster adjacencyCluster)
         {
             if (simulationData == null || adjacencyCluster == null)
                 return null;
 
-            List<SpaceSimulationResult> result = Convert.ToSAM(simulationData);
-            if (result == null || result.Count == 0)
-                return result;
+            List<SpaceSimulationResult> spaceSimulationResults = Convert.ToSAM(simulationData);
+            if (spaceSimulationResults == null)
+                return null;
 
             Dictionary<System.Guid, List<SpaceSimulationResult>> dictionary = new Dictionary<System.Guid, List<SpaceSimulationResult>>();
             List<Space> spaces = adjacencyCluster.GetSpaces();
@@ -50,7 +50,7 @@ namespace SAM.Analytical.Tas
             {
                 foreach (Space space in spaces)
                 {
-                    List<SpaceSimulationResult> spaceSimulationResults_Space = result.FindAll(x => space.Name.Equals(x.Name));
+                    List<SpaceSimulationResult> spaceSimulationResults_Space = spaceSimulationResults.FindAll(x => space.Name.Equals(x.Name));
                     dictionary[space.Guid] = spaceSimulationResults_Space;
                     if(spaceSimulationResults_Space != null && spaceSimulationResults_Space.Count > 0)
                     {
@@ -100,7 +100,7 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            return result;
+            return spaceSimulationResults?.ConvertAll(x => (Core.Result)x);
         }
     }
 }

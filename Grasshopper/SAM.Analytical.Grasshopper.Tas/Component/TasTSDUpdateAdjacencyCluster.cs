@@ -1,7 +1,5 @@
 ﻿using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
-using SAM.Analytical.Tas;
 using SAM.Core.Grasshopper;
 using System;
 using System.Collections.Generic;
@@ -108,10 +106,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             else if(sAMObject is AnalyticalModel)
                 adjacencyCluster = ((AnalyticalModel)sAMObject).AdjacencyCluster;
 
-            List<SpaceSimulationResult> spaceSimulationResults = null;
+            List<Core.Result> results = null;
             if(adjacencyCluster != null)
             {
-                spaceSimulationResults = Analytical.Tas.Modify.UpdateAdjacencyCluster(path_TSD, adjacencyCluster);
+                results = Analytical.Tas.Modify.UpdateAdjacencyCluster(path_TSD, adjacencyCluster);
 
                 if (sAMObject is AdjacencyCluster)
                     sAMObject = adjacencyCluster;
@@ -125,7 +123,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             index = Params.IndexOfOutputParam("Results");
             if (index != -1)
-                dataAccess.SetDataList(index, spaceSimulationResults);
+                dataAccess.SetDataList(index, results);
         }
     }
 }
