@@ -46,6 +46,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "_analytical", NickName = "_analytical", Description = "SAM Analytical Object such as AdjacencyCluster or AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_Tas_TSD", NickName = "_path_Tas_TSD", Description = "Path to Tas TSD file", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+
+                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run_", NickName = "_run_", Description = "Run", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -71,6 +76,14 @@ namespace SAM.Analytical.Grasshopper.Tas
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
             int index;
+
+            bool run = false;
+            index = Params.IndexOfInputParam("_run_");
+            if (index == -1 || !dataAccess.GetData(index, ref run))
+                run = false;
+
+            if (!run)
+                return;
 
             index = Params.IndexOfInputParam("_path_Tas_TSD");
             if(index == -1)

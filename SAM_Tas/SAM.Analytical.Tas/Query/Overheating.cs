@@ -18,10 +18,10 @@ namespace SAM.Analytical.Tas
 
             for (int i = index_Start; i <= index_End; i++)
             {
-                foreach (KeyValuePair<TSD.tsdZoneArray, float[]> keyValuePair in dictionary)
+                foreach (TSD.tsdZoneArray tsdZoneArray in dictionary.Keys)
                 {
-                    float[] yearlyValues = keyValuePair.Value;
-                    float[] dailyValues = (zoneData.GetDailyZoneResult(i, (short)keyValuePair.Key) as IEnumerable).Cast<float>().ToArray();
+                    float[] yearlyValues = dictionary[tsdZoneArray];
+                    float[] dailyValues = (zoneData.GetDailyZoneResult(i, (short)tsdZoneArray) as IEnumerable).Cast<float>().ToArray();
                     int startHour = (i * 24) - 24;
                     int counter = 0;
                     for (int n = startHour; n <= startHour + 23; n++)
@@ -29,7 +29,7 @@ namespace SAM.Analytical.Tas
                         yearlyValues[n] = dailyValues[counter];
                         counter += 1;
                     }
-                    dictionary[keyValuePair.Key] = yearlyValues;
+                    //dictionary[tsdZoneArray] = yearlyValues;
                 }
             }
 
