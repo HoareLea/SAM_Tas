@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Convert\ToSAM\SpaceSimulationResults.cs" />
-    <Compile Include="Enums\Parameters\ZoneParameter.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
     <Compile Include="Convert\ToSAM\AdjacencyCluster.cs" />
     <Compile Include="Convert\ToSAM\RelationCluster.cs" />
@@ -104,6 +103,8 @@
     <Compile Include="Modify\UpdateApertureControl.cs" />
     <Compile Include="Modify\UpdateBuildingElements.cs" />
     <Compile Include="Modify\UpdateSizingFactors.cs" />
+    <Compile Include="Modify\UpdateAdjacencyCluster.cs" />
+    <Compile Include="Query\Overheating.cs" />
     <Compile Include="Modify\UpdateZone_HDD.cs" />
     <Compile Include="Modify\UpdateZones.cs" />
     <Compile Include="Modify\UpdateZone.cs" />
@@ -179,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
+    <Folder Include="Enums\Parameters\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">
