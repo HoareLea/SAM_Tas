@@ -1,5 +1,4 @@
 ﻿using SAM.Core;
-using System;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
@@ -40,9 +39,12 @@ namespace SAM.Analytical.Tas
                 foreach (TAS3D.zoneSet zoneSet in zoneSets)
                 {
                     List<ISAMObject> sAMObjects = zoneSet?.Zones()?.ConvertAll(x => dictionary[x.GUID]);
-                    ParameterSet parameterSet_Temp = Create.ParameterSet(setting, zoneSet);
 
-                    result.AddGroup(sAMObjects, zoneSet.name, parameterSet_Temp);
+                    Group group = new Group(zoneSet.name);
+                    group.Add(Create.ParameterSet(setting, zoneSet));
+
+                    result.AddObject(group);
+                    sAMObjects?.ForEach(x => result.AddRelation(group, x));
                 }
             }
 
