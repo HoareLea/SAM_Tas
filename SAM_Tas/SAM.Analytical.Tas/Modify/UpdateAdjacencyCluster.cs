@@ -40,9 +40,13 @@ namespace SAM.Analytical.Tas
             if (simulationData == null || adjacencyCluster == null)
                 return null;
 
+            List<Core.Result> result = null; 
+
             List<SpaceSimulationResult> spaceSimulationResults = Convert.ToSAM(simulationData);
             if (spaceSimulationResults == null)
-                return null;
+                return result;
+
+            result = new List<Core.Result>(spaceSimulationResults);
 
             Dictionary<System.Guid, List<SpaceSimulationResult>> dictionary = new Dictionary<System.Guid, List<SpaceSimulationResult>>();
             List<Space> spaces = adjacencyCluster.GetSpaces();
@@ -95,12 +99,17 @@ namespace SAM.Analytical.Tas
                     if (!buildingData.TryGetMax(references, TSD.tsdZoneArray.coolingLoad, out int index, out double max) || index == -1 || double.IsNaN(max))
                         continue;
 
-                    zone.SetValue(ZoneParameter.MaxCoolingSensibleLoadIndex, index);
-                    zone.SetValue(ZoneParameter.MaxCoolingSensibleLoad, max);
+                    ZoneSimulationResult zoneSimulationResult = new ZoneSimulationResult(zone.Name, zone.Guid.ToString());
+                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoad, max);
+                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, index);
+
+                    adjacencyCluster.AddObject(zoneSimulationResult);
+                    adjacencyCluster.AddRelation(zone, zoneSimulationResult);
+                    result.Add(zoneSimulationResult);
                 }
             }
 
-            return spaceSimulationResults?.ConvertAll(x => (Core.Result)x);
+            return result;
         }
     }
 }
