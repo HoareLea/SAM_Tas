@@ -70,10 +70,9 @@ namespace SAM.Analytical.Tas
                 SpaceSimulationResult spaceSimulationResult_Heating = null;
 
                 //COOLING
-
                 if ((float)values_BuildingData_Cooling[1, i] == 0 && (float)values_CoolingDesignData[1, i] == 0)
                 {
-                    spaceSimulationResult_Cooling = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, coolingLoad: 0);
+                    spaceSimulationResult_Cooling = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Cooling, 0);
                 }
                 else
                 {
@@ -116,8 +115,8 @@ namespace SAM.Analytical.Tas
                         float zoneApertureFlowOut = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.zoneApertureFlowOut);
                         float pollutant = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.pollutant);
 
-                        spaceSimulationResult_Cooling = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, sizingMethod, 
-                            dryBulbTemp, resultantTemp, coolingLoad, double.NaN, solarGain, lightingGain, infVentGain, airMovementGain, 
+                        spaceSimulationResult_Cooling = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Cooling, coolingLoad, index_ZoneData_Cooling, sizingMethod, 
+                            dryBulbTemp, resultantTemp, solarGain, lightingGain, infVentGain, airMovementGain, 
                             buildingHeatTransfer, externalConductionGlazing, externalConductionOpaque, occupancySensibleGain,
                             occupancyLatentGain, equipmentSensibleGain, equipmentLatentGain, spaceHumidityRatio, relativeHumidity,
                             zoneApertureFlowIn, zoneApertureFlowOut, pollutant);
@@ -130,7 +129,7 @@ namespace SAM.Analytical.Tas
                     ZoneData zoneData_Heating = heatingDesignData.GetZoneData(i + 1);
                     float dryBulbTemp = zoneData_Heating.GetHourlyZoneResult(1, (short)tsdZoneArray.dryBulbTemp);
                     float resultantTemp = zoneData_Heating.GetHourlyZoneResult(1, (short)tsdZoneArray.resultantTemp);
-                    spaceSimulationResult_Heating = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, null, dryBulbTemp, resultantTemp, heatingLoad: 0);
+                    spaceSimulationResult_Heating = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Heating, 0, dryBulbTemperature: dryBulbTemp, resultantTemperature: resultantTemp);
                 }
                 else
                 {
@@ -162,8 +161,7 @@ namespace SAM.Analytical.Tas
                         float externalConductionOpaque = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.externalConductionOpaque);
                         float spaceHumidityRatio = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.humidityRatio);
 
-                        spaceSimulationResult_Heating = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, sizingMethod, dryBulbTemp, resultantTemp, 
-                            heatingLoad: heatingLoad, 
+                        spaceSimulationResult_Heating = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Heating, heatingLoad, index_ZoneData_Heating, sizingMethod, dryBulbTemp, resultantTemp, 
                             infiltartionGain: infVentGain, 
                             airMovementGain: airMovementGain, 
                             buildingHeatTransfer: buildingHeatTransfer,
@@ -183,8 +181,6 @@ namespace SAM.Analytical.Tas
                         foreach (KeyValuePair<SpaceSimulationResultParameter, object> keyValuePair in dictionary)
                             spaceSimulationResult_Cooling.SetValue(keyValuePair.Key, keyValuePair.Value);
 
-                        spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.SimulationType, SimulationType.Cooling.Text());
-
                         result.Add(spaceSimulationResult_Cooling);
                     }
 
@@ -192,8 +188,6 @@ namespace SAM.Analytical.Tas
                     {
                         foreach (KeyValuePair<SpaceSimulationResultParameter, object> keyValuePair in dictionary)
                             spaceSimulationResult_Heating.SetValue(keyValuePair.Key, keyValuePair.Value);
-
-                        spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.SimulationType, SimulationType.Heating.Text());
 
                         result.Add(spaceSimulationResult_Heating);
                     }

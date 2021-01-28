@@ -104,18 +104,18 @@ namespace SAM.Analytical.Tas
                         continue;
 
                     ZoneSimulationResult zoneSimulationResult = new ZoneSimulationResult(zone.Name, zone.Guid.ToString());
-                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoad, max);
-                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, index);
-                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.SimulationType, SimulationType.Cooling.Text());
+                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxSensibleLoad, max);
+                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxSensibleLoadIndex, index);
+                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.SimulationType, LoadType.Cooling.Text());
 
                     if (!double.IsNaN(occupancy))
-                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, occupancy);
+                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.Occupancy, occupancy);
 
                     if (!double.IsNaN(area))
-                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, area);
+                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.Area, area);
 
                     if (!double.IsNaN(volume))
-                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, volume);
+                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.Volume, volume);
 
                     adjacencyCluster.AddObject(zoneSimulationResult);
                     adjacencyCluster.AddRelation(zone, zoneSimulationResult);
