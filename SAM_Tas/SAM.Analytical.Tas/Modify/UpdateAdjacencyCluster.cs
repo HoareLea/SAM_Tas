@@ -78,6 +78,10 @@ namespace SAM.Analytical.Tas
                     if (spaces_Zone == null || spaces_Zone.Count == 0)
                         continue;
 
+                    double area = adjacencyCluster.Sum(zone, SpaceParameter.Area);
+                    double volume = adjacencyCluster.Sum(zone, SpaceParameter.Volume);
+                    double occupancy = adjacencyCluster.Sum(zone, SpaceParameter.Occupancy);
+
                     List<string> references = new List<string>();
                     foreach (Space space in spaces_Zone)
                     {
@@ -102,6 +106,15 @@ namespace SAM.Analytical.Tas
                     ZoneSimulationResult zoneSimulationResult = new ZoneSimulationResult(zone.Name, zone.Guid.ToString());
                     zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoad, max);
                     zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, index);
+
+                    if (!double.IsNaN(occupancy))
+                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, occupancy);
+
+                    if (!double.IsNaN(area))
+                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, area);
+
+                    if (!double.IsNaN(volume))
+                        zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, volume);
 
                     adjacencyCluster.AddObject(zoneSimulationResult);
                     adjacencyCluster.AddRelation(zone, zoneSimulationResult);

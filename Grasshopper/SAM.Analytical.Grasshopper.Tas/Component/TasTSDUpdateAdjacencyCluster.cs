@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -64,7 +64,9 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "Analytical", NickName = "Analytical", Description = "SAM Analytical Object such as AdjacencyCluster or AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "Results", NickName = "Results", Description = "SAM Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "SpaceSimulationResults", NickName = "SpaceSimulationResults", Description = "SAM Analytical SpaceSimulationResults", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "ZoneSimulationResults", NickName = "ZoneSimulationResults", Description = "SAM Analytical ZoneSimulationResults", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "PanelSimulationResults", NickName = "PanelSimulationResults", Description = "SAM Analytical PanelSimulationResults", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -134,9 +136,17 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index != -1)
                 dataAccess.SetData(index, sAMObject);
 
-            index = Params.IndexOfOutputParam("Results");
+            index = Params.IndexOfOutputParam("ZoneSimulationResults");
             if (index != -1)
-                dataAccess.SetDataList(index, results);
+                dataAccess.SetDataList(index, results?.FindAll(x => x is ZoneSimulationResult));
+
+            index = Params.IndexOfOutputParam("SpaceSimulationResults");
+            if (index != -1)
+                dataAccess.SetDataList(index, results?.FindAll(x => x is SpaceSimulationResult));
+
+            index = Params.IndexOfOutputParam("PanelSimulationResults");
+            if (index != -1)
+                dataAccess.SetDataList(index, results?.FindAll(x => x is PanelSimulationResult));
         }
     }
 }
