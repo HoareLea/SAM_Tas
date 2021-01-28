@@ -183,6 +183,8 @@ namespace SAM.Analytical.Tas
                         foreach (KeyValuePair<SpaceSimulationResultParameter, object> keyValuePair in dictionary)
                             spaceSimulationResult_Cooling.SetValue(keyValuePair.Key, keyValuePair.Value);
 
+                        spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.SimulationType, SimulationType.Cooling.Text());
+
                         result.Add(spaceSimulationResult_Cooling);
                     }
 
@@ -190,6 +192,8 @@ namespace SAM.Analytical.Tas
                     {
                         foreach (KeyValuePair<SpaceSimulationResultParameter, object> keyValuePair in dictionary)
                             spaceSimulationResult_Heating.SetValue(keyValuePair.Key, keyValuePair.Value);
+
+                        spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.SimulationType, SimulationType.Heating.Text());
 
                         result.Add(spaceSimulationResult_Heating);
                     }

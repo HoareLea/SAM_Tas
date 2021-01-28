@@ -106,6 +106,7 @@ namespace SAM.Analytical.Tas
                     ZoneSimulationResult zoneSimulationResult = new ZoneSimulationResult(zone.Name, zone.Guid.ToString());
                     zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoad, max);
                     zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, index);
+                    zoneSimulationResult.SetValue(ZoneSimulationResultParameter.SimulationType, SimulationType.Cooling.Text());
 
                     if (!double.IsNaN(occupancy))
                         zoneSimulationResult.SetValue(ZoneSimulationResultParameter.MaxCoolingSensibleLoadIndex, occupancy);
