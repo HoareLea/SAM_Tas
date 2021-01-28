@@ -73,7 +73,7 @@ namespace SAM.Analytical.Tas
 
                 if ((float)values_BuildingData_Cooling[1, i] == 0 && (float)values_CoolingDesignData[1, i] == 0)
                 {
-                    spaceSimulationResult_Cooling = Analytical.Create.SpaceSimulationResult(name, reference, volume, area);
+                    spaceSimulationResult_Cooling = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, coolingLoad: 0);
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace SAM.Analytical.Tas
                     ZoneData zoneData_Heating = heatingDesignData.GetZoneData(i + 1);
                     float dryBulbTemp = zoneData_Heating.GetHourlyZoneResult(1, (short)tsdZoneArray.dryBulbTemp);
                     float resultantTemp = zoneData_Heating.GetHourlyZoneResult(1, (short)tsdZoneArray.resultantTemp);
-                    spaceSimulationResult_Heating = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, null, dryBulbTemp, resultantTemp);
+                    spaceSimulationResult_Heating = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, null, dryBulbTemp, resultantTemp, heatingLoad: 0);
                 }
                 else
                 {
