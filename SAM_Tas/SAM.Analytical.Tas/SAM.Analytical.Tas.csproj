@@ -105,6 +105,7 @@
     <Compile Include="Modify\UpdateSizingFactors.cs" />
     <Compile Include="Modify\AddResults.cs" />
     <Compile Include="Create\SpaceSimulationResult.cs" />
+    <Compile Include="Query\Compare.cs" />
     <Compile Include="Query\Overheating.cs" />
     <Compile Include="Modify\UpdateZone_HDD.cs" />
     <Compile Include="Modify\UpdateZones.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Query\SurfaceDataType.cs" />
     <Compile Include="Query\PanelDataType.cs" />
     <Compile Include="Query\InternalCondition.cs" />
+    <Compile Include="Query\TemperatureSetPointDictionary.cs" />
     <Compile Include="Query\TsdZoneArray.cs" />
     <Compile Include="Query\TsdSurfaceArray.cs" />
     <Compile Include="Query\Text.cs" />
@@ -161,6 +163,9 @@
     <Compile Include="Query\SurfaceDatas.cs" />
     <Compile Include="Query\AnnualSurfaceResult.cs" />
     <Compile Include="Query\Array.cs" />
+    <Compile Include="Query\DailyValues.cs" />
+    <Compile Include="Query\YearlyValues.cs" />
+    <Compile Include="Query\UnmetHours.cs" />
     <Compile Include="Query\ZoneDataDictionary.cs" />
     <Compile Include="Query\ZoneDatas.cs" />
     <Compile Include="Query\Constructions.cs" />
