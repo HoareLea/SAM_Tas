@@ -59,118 +59,30 @@ namespace SAM.Analytical.Tas
                 if (zoneDatas_BuildingData == null)
                     continue;
 
-                SizingMethod sizingMethod = SizingMethod.Undefined;
+                float load_Simulation = float.NaN;
+                int index_Simulation = -1;
+                ZoneData zoneData_Simulation = null;
+                float load_DesignDay = float.NaN;
+                int index_DesignDay = -1;
+                ZoneData zoneData_DesignDay = null;
 
-                string name = zoneData_BuildingData.name;
-                string reference = zoneData_BuildingData.zoneGUID;
-                double area = zoneData_BuildingData.floorArea;
-                double volume = zoneData_BuildingData.volume;
+                load_Simulation = (float)values_BuildingData_Cooling[1, i];
+                load_DesignDay = (float)values_CoolingDesignData[1, i];
+                index_Simulation = (int)values_BuildingData_Cooling[2, i];
+                index_DesignDay = (int)values_CoolingDesignData[2, i];
+                zoneData_Simulation = zoneData_BuildingData;
+                zoneData_DesignDay = coolingDesignData.GetZoneData(i + 1);
 
-                SpaceSimulationResult spaceSimulationResult_Cooling = null;
-                SpaceSimulationResult spaceSimulationResult_Heating = null;
+                SpaceSimulationResult spaceSimulationResult_Cooling = Create.SpaceSimulationResult(LoadType.Cooling, load_Simulation, index_Simulation, zoneData_Simulation, load_DesignDay, index_DesignDay, zoneData_DesignDay);
 
-                //COOLING
-                if ((float)values_BuildingData_Cooling[1, i] == 0 && (float)values_CoolingDesignData[1, i] == 0)
-                {
-                    spaceSimulationResult_Cooling = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Cooling, 0);
-                }
-                else
-                {
+                load_Simulation = (float)values_BuildingData_Heating[1, i];
+                load_DesignDay = (float)values_HeatingDesignData[1, i];
+                index_Simulation = (int)values_BuildingData_Heating[2, i];
+                index_DesignDay = (int)values_HeatingDesignData[2, i];
+                zoneData_Simulation = zoneData_BuildingData;
+                zoneData_DesignDay = heatingDesignData.GetZoneData(i + 1);
 
-                    int index_ZoneData_Cooling = -1;
-                    ZoneData zoneData_Cooling = null;
-
-                    if ((float)values_BuildingData_Cooling[1, i] > (float)values_CoolingDesignData[1, i])
-                    {
-                        sizingMethod = SizingMethod.Simulation;
-                        index_ZoneData_Cooling = (int)values_BuildingData_Cooling[2, i];
-                        zoneData_Cooling = zoneData_BuildingData;
-                    }
-                    else
-                    {
-                        sizingMethod = SizingMethod.CDD;
-                        index_ZoneData_Cooling = (int)values_CoolingDesignData[2, i];
-                        zoneData_Cooling = coolingDesignData.GetZoneData(i + 1);
-                    }
-
-                    if (index_ZoneData_Cooling > -1)
-                    {
-                        float dryBulbTemp = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.dryBulbTemp);
-                        float resultantTemp = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.resultantTemp);
-                        float coolingLoad = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.coolingLoad);
-                        float solarGain = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.solarGain);
-                        float lightingGain = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.lightingGain);
-                        float infVentGain = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.infVentGain);
-                        float airMovementGain = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.airMovementGain);
-                        float buildingHeatTransfer = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.buildingHeatTransfer);
-                        float externalConductionGlazing = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.externalConductionGlazing);
-                        float externalConductionOpaque = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.externalConductionOpaque);
-                        float occupancySensibleGain = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.occupantSensibleGain);
-                        float equipmentSensibleGain = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.equipmentSensibleGain);
-                        float equipmentLatentGain = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.equipmentLatentGain);
-                        float occupancyLatentGain = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.occupancyLatentGain);
-                        float spaceHumidityRatio = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.humidityRatio);
-                        float relativeHumidity = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.relativeHumidity);
-                        float zoneApertureFlowIn = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.zoneApertureFlowIn);
-                        float zoneApertureFlowOut = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.zoneApertureFlowOut);
-                        float pollutant = zoneData_Cooling.GetHourlyZoneResult(index_ZoneData_Cooling, (short)tsdZoneArray.pollutant);
-
-                        spaceSimulationResult_Cooling = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Cooling, coolingLoad, index_ZoneData_Cooling, sizingMethod, 
-                            dryBulbTemp, resultantTemp, solarGain, lightingGain, infVentGain, airMovementGain, 
-                            buildingHeatTransfer, externalConductionGlazing, externalConductionOpaque, occupancySensibleGain,
-                            occupancyLatentGain, equipmentSensibleGain, equipmentLatentGain, spaceHumidityRatio, relativeHumidity,
-                            zoneApertureFlowIn, zoneApertureFlowOut, pollutant);
-                    }
-                }
-
-                //HEATING
-                if ((float)values_BuildingData_Heating[1, i] == 0 && (float)values_HeatingDesignData[1, i] == 0)
-                {
-                    ZoneData zoneData_Heating = heatingDesignData.GetZoneData(i + 1);
-                    float dryBulbTemp = zoneData_Heating.GetHourlyZoneResult(1, (short)tsdZoneArray.dryBulbTemp);
-                    float resultantTemp = zoneData_Heating.GetHourlyZoneResult(1, (short)tsdZoneArray.resultantTemp);
-                    spaceSimulationResult_Heating = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Heating, 0, dryBulbTemperature: dryBulbTemp, resultantTemperature: resultantTemp);
-                }
-                else
-                {
-                    int index_ZoneData_Heating = -1;
-                    ZoneData zoneData_Heating = null;
-
-                    if ((float)values_BuildingData_Heating[1, i] > (float)values_HeatingDesignData[1, i])
-                    {
-                        sizingMethod = SizingMethod.Simulation;
-                        index_ZoneData_Heating = (int)values_BuildingData_Heating[2, i];
-                        zoneData_Heating = zoneDatas_BuildingData[i];
-                    }
-                    else
-                    {
-                        sizingMethod = SizingMethod.HDD;
-                        index_ZoneData_Heating = (int)values_HeatingDesignData[2, i];
-                        zoneData_Heating = heatingDesignData.GetZoneData(i + 1);
-                    }
-
-                    if (index_ZoneData_Heating > -1)
-                    {
-                        float dryBulbTemp = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.dryBulbTemp);
-                        float resultantTemp = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.resultantTemp);
-                        float heatingLoad = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.heatingLoad);
-                        float infVentGain = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.infVentGain);
-                        float airMovementGain = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.airMovementGain);
-                        float buildingHeatTransfer = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.buildingHeatTransfer);
-                        float externalConductionGlazing = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.externalConductionGlazing);
-                        float externalConductionOpaque = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.externalConductionOpaque);
-                        float spaceHumidityRatio = zoneData_Heating.GetHourlyZoneResult(index_ZoneData_Heating, (short)tsdZoneArray.humidityRatio);
-
-                        spaceSimulationResult_Heating = Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Heating, heatingLoad, index_ZoneData_Heating, sizingMethod, dryBulbTemp, resultantTemp, 
-                            infiltartionGain: infVentGain, 
-                            airMovementGain: airMovementGain, 
-                            buildingHeatTransfer: buildingHeatTransfer,
-                            glazingExternalConduction: externalConductionGlazing,
-                            opaqueExternalConduction: externalConductionOpaque,
-                            humidityRatio: spaceHumidityRatio);
-                    }
-
-                }
+                SpaceSimulationResult spaceSimulationResult_Heating = Create.SpaceSimulationResult(LoadType.Heating, load_Simulation, index_Simulation, zoneData_Simulation, load_DesignDay, index_DesignDay, zoneData_DesignDay);
 
                 if(spaceSimulationResult_Cooling != null || spaceSimulationResult_Heating != null)
                 {
@@ -192,8 +104,6 @@ namespace SAM.Analytical.Tas
                         result.Add(spaceSimulationResult_Heating);
                     }
                 }
-
-
             }
 
             return result;
