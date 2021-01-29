@@ -82,9 +82,14 @@ namespace SAM.Analytical.Tas
                 zoneData_Simulation = zoneData_BuildingData;
                 zoneData_DesignDay = heatingDesignData.GetZoneData(i + 1);
 
-                SpaceSimulationResult spaceSimulationResult_Heating = Create.SpaceSimulationResult(LoadType.Heating, load_Simulation, index_Simulation, zoneData_Simulation, load_DesignDay, index_DesignDay, zoneData_DesignDay);
+                //Here we make sure that HDD will be chose if small difference is between two cases
+                SpaceSimulationResult spaceSimulationResult_Heating = null;
+                if (System.Math.Abs(load_Simulation - load_DesignDay) < 10)
+                    spaceSimulationResult_Heating = Create.SpaceSimulationResult(zoneData_DesignDay, index_DesignDay, LoadType.Heating, SizingMethod.HDD); //DesignDay
+                else
+                    spaceSimulationResult_Heating = Create.SpaceSimulationResult(LoadType.Heating, load_Simulation, index_Simulation, zoneData_Simulation, load_DesignDay, index_DesignDay, zoneData_DesignDay);
 
-                if(spaceSimulationResult_Cooling != null || spaceSimulationResult_Heating != null)
+                if (spaceSimulationResult_Cooling != null || spaceSimulationResult_Heating != null)
                 {
                     Dictionary<SpaceSimulationResultParameter, object> dictionary = Query.Overheating(zoneData_BuildingData, simulationData.firstDay, simulationData.lastDay);
 
