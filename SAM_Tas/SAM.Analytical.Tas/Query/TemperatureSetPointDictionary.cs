@@ -17,6 +17,8 @@ namespace SAM.Analytical.Tas
             Dictionary<TBD.Profiles, Dictionary<string, Dictionary<string, double[]>>> dictionary_DayType = new Dictionary<TBD.Profiles, Dictionary<string, Dictionary<string, double[]>>>();
             foreach (TBD.Profiles profiles_Enum in profiles)
             {
+                dictionary_DayType[profiles_Enum] = new Dictionary<string, Dictionary<string, double[]>>();
+
                 foreach (TBD.dayType dayType in dayTypes)
                 {
                     Dictionary<string, double[]> dictionary_Zone = new Dictionary<string, double[]>();
