@@ -90,10 +90,11 @@ namespace SAM.Analytical.Tas
                 if(buildingData != null)
                 {
                     adjacencyClusterSimulationResult = Create.AdjacencyClusterSimulationResult(buildingData);
+                    yearlyValues = sAMTSDDocument.TSDDocument?.SimulationData?.GetBuildingData()?.YearlyValues(new tsdZoneArray[] { tsdZoneArray.dryBulbTemp, tsdZoneArray.occupantSensibleGain });
+
+                    dictionary_SpaceSimulationResult = new Dictionary<string, SpaceSimulationResult>();
                     foreach (KeyValuePair<string, ZoneData> keyValuePair in buildingData.ZoneDataDictionary())
                         dictionary_SpaceSimulationResult[keyValuePair.Key] = Create.SpaceSimulationResult(keyValuePair.Value);
-
-                    yearlyValues = sAMTSDDocument.TSDDocument?.SimulationData?.GetBuildingData()?.YearlyValues(new tsdZoneArray[] { tsdZoneArray.dryBulbTemp, tsdZoneArray.occupantSensibleGain });
                 }
             }
 

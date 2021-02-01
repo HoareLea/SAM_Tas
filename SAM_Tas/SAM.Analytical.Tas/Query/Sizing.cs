@@ -225,22 +225,23 @@ namespace SAM.Analytical.Tas
             Dictionary<zone, double> dictionary = new Dictionary<zone, double>();
             foreach (double tempearture in temperatures_Unique)
             {
-                List<Tuple<zone, TBD.InternalCondition, double>> tuples_Temperature = tuples.FindAll(x => x.Item3 <= tempearture);
+                if (tempearture <= -50)
+                    continue;
 
-                if (tempearture > -50)
+                //Here we filter room that have higher temperature than current set point
+                List<Tuple<zone, TBD.InternalCondition, double>> tuples_Temperature = tuples.FindAll(x => x.Item3 >= tempearture);
+
+                foreach (Tuple<zone, TBD.InternalCondition, double> tuple in tuples_Temperature)
                 {
-                    foreach (Tuple<zone, TBD.InternalCondition, double> tuple in tuples_Temperature)
-                    {
-                        Thermostat thermostat = tuple.Item2?.GetThermostat();
-                        if (thermostat == null)
-                            continue;
+                    Thermostat thermostat = tuple.Item2?.GetThermostat();
+                    if (thermostat == null)
+                        continue;
 
-                        profile profile = thermostat.GetProfile((int)Profiles.ticLL);
-                        if (profile == null)
-                            continue;
+                    profile profile = thermostat.GetProfile((int)Profiles.ticLL);
+                    if (profile == null)
+                        continue;
 
-                        profile.value = System.Convert.ToSingle(tempearture);
-                    }
+                    profile.value = System.Convert.ToSingle(tempearture);
                 }
 
                 tBDDocument.save();
