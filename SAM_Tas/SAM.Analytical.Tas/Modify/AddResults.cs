@@ -28,7 +28,7 @@ namespace SAM.Analytical.Tas
             return AddResults(sAMTSDDocument.TSDDocument, adjacencyCLuster);
         }
 
-        public static List<Core.Result> AddResults(this TSD.TSDDocument tSDDocument, AdjacencyCluster adjacencyCLuster)
+        public static List<Core.Result> AddResults(this TSDDocument tSDDocument, AdjacencyCluster adjacencyCLuster)
         {
             if (tSDDocument == null || adjacencyCLuster == null)
                 return null;
@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas
             return AddResults(tSDDocument.SimulationData, adjacencyCLuster);
         }
 
-        public static List<Core.Result> AddResults(this TSD.SimulationData simulationData, AdjacencyCluster adjacencyCluster)
+        public static List<Core.Result> AddResults(this SimulationData simulationData, AdjacencyCluster adjacencyCluster)
         {
             if (simulationData == null || adjacencyCluster == null)
                 return null;

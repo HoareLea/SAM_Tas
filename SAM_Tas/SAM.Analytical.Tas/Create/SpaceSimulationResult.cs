@@ -18,6 +18,19 @@ namespace SAM.Analytical.Tas
             return Analytical.Create.SpaceSimulationResult(name, reference, volume, area, loadType, 0);
         }
 
+        public static SpaceSimulationResult SpaceSimulationResult(this ZoneData zoneData)
+        {
+            if (zoneData == null)
+                return null;
+
+            string name = zoneData.name;
+            string reference = zoneData.zoneGUID;
+            double area = zoneData.floorArea;
+            double volume = zoneData.volume;
+
+            return Analytical.Create.SpaceSimulationResult(name, reference, volume, area);
+        }
+
         public static SpaceSimulationResult SpaceSimulationResult(this ZoneData zoneData, int index, LoadType loadType, SizingMethod sizingMethod)
         {
             if (zoneData == null || index == -1 || loadType == LoadType.Undefined)

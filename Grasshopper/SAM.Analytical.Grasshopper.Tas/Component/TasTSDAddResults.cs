@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -46,6 +46,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "_analytical", NickName = "_analytical", Description = "SAM Analytical Object such as AdjacencyCluster or AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_Tas_TSD", NickName = "_path_Tas_TSD", Description = "Path to Tas TSD file", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_Tas_TBD", NickName = "_path_Tas_TBD", Description = "Path to Tas TBD file", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run_", NickName = "_run_", Description = "Run", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -66,10 +67,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "Analytical", NickName = "Analytical", Description = "SAM Analytical Object such as AdjacencyCluster or AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "SpaceSimulationResults_Cooling", NickName = "SpaceSimulationResults_Cooling", Description = "SAM Analytical SpaceSimulationResults for Cooling", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "ZoneSimulationResults_Cooling", NickName = "ZoneSimulationResults_Cooling", Description = "SAM Analytical ZoneSimulationResults for Cooling", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "PanelSimulationResults_Cooling", NickName = "PanelSimulationResults_Cooling", Description = "SAM Analytical PanelSimulationResults for Cooling", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "AdjacencyClusterSimulationResult_Cooling", NickName = "AdjacencyClusterSimulationResult_Cooling", Description = "SAM Analytical AdjacencyClusterSimulationResult for Cooling", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "SpaceSimulationResults_Heating", NickName = "SpaceSimulationResults_Heating", Description = "SAM Analytical SpaceSimulationResults for Heating", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "ZoneSimulationResults_Heating", NickName = "ZoneSimulationResults_Heating", Description = "SAM Analytical ZoneSimulationResults for Heating", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "PanelSimulationResults_Heating", NickName = "PanelSimulationResults_Heating", Description = "SAM Analytical PanelSimulationResults for Heating", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "AdjacencyClusterSimulationResult_Heating", NickName = "AdjacencyClusterSimulationResult_Heating", Description = "SAM Analytical AdjacencyClusterSimulationResult for Heating", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "PanelSimulationResults", NickName = "PanelSimulationResults", Description = "SAM Analytical PanelSimulationResults", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -99,6 +101,20 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             string path_TSD = null;
             if (!dataAccess.GetData(index, ref path_TSD) || string.IsNullOrWhiteSpace(path_TSD))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
+            index = Params.IndexOfInputParam("_path_Tas_TBD");
+            if (index == -1)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
+            string path_TBD = null;
+            if (!dataAccess.GetData(index, ref path_TBD) || string.IsNullOrWhiteSpace(path_TBD))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -134,6 +150,26 @@ namespace SAM.Analytical.Grasshopper.Tas
                 else if (sAMObject is AnalyticalModel)
                     sAMObject = new AnalyticalModel((AnalyticalModel)sAMObject, adjacencyCluster);
             }
+
+            List<Core.Result> results_UnmetHours = Analytical.Tas.Query.UnmetHours(path_TSD, path_TBD);
+            if(results_UnmetHours != null && results_UnmetHours.Count > 0)
+            {
+                foreach(Core.Result result in results_UnmetHours)
+                {
+                    if (result is AdjacencyClusterSimulationResult)
+                        results.Add(result);
+                    else if(result is SpaceSimulationResult)
+                    {
+                        SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
+
+                        SpaceSimulationResult spaceSimulationResult_Temp = Analytical.Tas.Query.SpaceSimulationResult(results, spaceSimulationResult);
+                        if(spaceSimulationResult_Temp == null)
+                            results.Add(spaceSimulationResult);
+                        else
+                            Core.Modify.Copy(spaceSimulationResult, spaceSimulationResult_Temp, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours);
+                    }
+                }
+            }
             
             index = Params.IndexOfOutputParam("Analytical");
             if (index != -1)
@@ -147,10 +183,6 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index != -1)
                 dataAccess.SetDataList(index, results?.FindAll(x => x is SpaceSimulationResult && ((SpaceSimulationResult)x).LoadType() == LoadType.Heating));
 
-            index = Params.IndexOfOutputParam("PanelSimulationResults_Heating");
-            if (index != -1)
-                dataAccess.SetDataList(index, results?.FindAll(x => x is PanelSimulationResult));
-
             index = Params.IndexOfOutputParam("ZoneSimulationResults_Cooling");
             if (index != -1)
                 dataAccess.SetDataList(index, results?.FindAll(x => x is ZoneSimulationResult && ((ZoneSimulationResult)x).LoadType() == LoadType.Cooling));
@@ -159,9 +191,17 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index != -1)
                 dataAccess.SetDataList(index, results?.FindAll(x => x is SpaceSimulationResult && ((SpaceSimulationResult)x).LoadType() == LoadType.Cooling));
 
-            index = Params.IndexOfOutputParam("PanelSimulationResults_Cooling");
+            index = Params.IndexOfOutputParam("PanelSimulationResults");
             if (index != -1)
                 dataAccess.SetDataList(index, results?.FindAll(x => x is PanelSimulationResult));
+
+            index = Params.IndexOfOutputParam("AdjacencyClusterSimulationResult_Cooling");
+            if (index != -1)
+                dataAccess.SetData(index, results?.Find(x => x is AdjacencyClusterSimulationResult && Analytical.Query.LoadType(((AdjacencyClusterSimulationResult)x)) == LoadType.Cooling));
+
+            index = Params.IndexOfOutputParam("AdjacencyClusterSimulationResult_Heating");
+            if (index != -1)
+                dataAccess.SetData(index, results?.Find(x => x is AdjacencyClusterSimulationResult && Analytical.Query.LoadType(((AdjacencyClusterSimulationResult)x)) == LoadType.Heating));
         }
     }
 }
