@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.4";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -48,10 +48,20 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_Tas_TSD", NickName = "_path_Tas_TSD", Description = "Path to Tas TSD file", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_Tas_TBD", NickName = "_path_Tas_TBD", Description = "Path to Tas TBD file", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run_", NickName = "_run_", Description = "Run", Access = GH_ParamAccess.item };
-                @boolean.SetPersistentData(false);
+                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_unmetHours_", NickName = "_unmetHours_", Description = "Calculate Unmet Hours", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                global::Grasshopper.Kernel.Parameters.Param_Number number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_unmetHoursMargin_", NickName = "_unmetHoursMargin_", Description = "Unmet Hours Calculation Margin", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(0.5);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run_", NickName = "_run_", Description = "Run", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
                 return result.ToArray();
             }
         }
@@ -151,22 +161,37 @@ namespace SAM.Analytical.Grasshopper.Tas
                     sAMObject = new AnalyticalModel((AnalyticalModel)sAMObject, adjacencyCluster);
             }
 
-            List<Core.Result> results_UnmetHours = Analytical.Tas.Query.UnmetHours(path_TSD, path_TBD);
-            if(results_UnmetHours != null && results_UnmetHours.Count > 0)
-            {
-                foreach(Core.Result result in results_UnmetHours)
-                {
-                    if (result is AdjacencyClusterSimulationResult)
-                        results.Add(result);
-                    else if(result is SpaceSimulationResult)
-                    {
-                        SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
+            bool unmetHours = true;
+            index = Params.IndexOfInputParam("_unmetHours_");
+            if (index != -1)
+                if (!dataAccess.GetData(index, ref unmetHours))
+                    unmetHours = true;
 
-                        SpaceSimulationResult spaceSimulationResult_Temp = Analytical.Tas.Query.SpaceSimulationResult(results, spaceSimulationResult);
-                        if(spaceSimulationResult_Temp == null)
-                            results.Add(spaceSimulationResult);
-                        else
-                            Core.Modify.Copy(spaceSimulationResult, spaceSimulationResult_Temp, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours);
+            double unmetHoursMargin = 0.5;
+            index = Params.IndexOfInputParam("_unmetHoursMargin_");
+            if (index != -1)
+                if (!dataAccess.GetData(index, ref unmetHoursMargin))
+                    unmetHoursMargin = 0.5;
+
+            if (unmetHours)
+            {
+                List<Core.Result> results_UnmetHours = Analytical.Tas.Query.UnmetHours(path_TSD, path_TBD, unmetHoursMargin);
+                if (results_UnmetHours != null && results_UnmetHours.Count > 0)
+                {
+                    foreach (Core.Result result in results_UnmetHours)
+                    {
+                        if (result is AdjacencyClusterSimulationResult)
+                            results.Add(result);
+                        else if (result is SpaceSimulationResult)
+                        {
+                            SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
+
+                            SpaceSimulationResult spaceSimulationResult_Temp = Analytical.Tas.Query.SpaceSimulationResult(results, spaceSimulationResult);
+                            if (spaceSimulationResult_Temp == null)
+                                results.Add(spaceSimulationResult);
+                            else
+                                Core.Modify.Copy(spaceSimulationResult, spaceSimulationResult_Temp, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours);
+                        }
                     }
                 }
             }
