@@ -161,7 +161,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     sAMObject = new AnalyticalModel((AnalyticalModel)sAMObject, adjacencyCluster);
             }
 
-            bool unmetHours = true;
+            bool unmetHours = false;
             index = Params.IndexOfInputParam("_runNnmetHours_");
             if (index != -1)
                 if (!dataAccess.GetData(index, ref unmetHours))
