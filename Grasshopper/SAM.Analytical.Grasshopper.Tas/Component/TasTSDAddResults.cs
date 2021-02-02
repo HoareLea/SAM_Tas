@@ -162,7 +162,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             bool unmetHours = true;
-            index = Params.IndexOfInputParam("_unmetHours_");
+            index = Params.IndexOfInputParam("_runNnmetHours_");
             if (index != -1)
                 if (!dataAccess.GetData(index, ref unmetHours))
                     unmetHours = true;
