@@ -31,7 +31,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasTSDAddResults()
           : base("Tas.TSDAddResults", "Tas.TSDAddResults",
-              "Updates AdjacencyCluster from TSD file with results",
+              "Updates AdjacencyCluster from TSD file with results, \n Cooling/Heating load and all variables per Space, Zone and Model\n*click + on inputs to add UnmetHours",
               "SAM", "Tas")
         {
         }
