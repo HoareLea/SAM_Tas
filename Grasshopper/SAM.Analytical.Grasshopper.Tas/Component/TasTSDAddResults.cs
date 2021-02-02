@@ -55,8 +55,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_Number number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_unmetHoursMargin_", NickName = "_unmetHoursMargin_", Description = "Unmet Hours Calculation Margin", Access = GH_ParamAccess.item };
-                @boolean.SetPersistentData(0.5);
-                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+                number.SetPersistentData(0.5);
+                result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run_", NickName = "_run_", Description = "Run", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
