@@ -144,24 +144,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            AdjacencyCluster adjacencyCluster = null;
-            if (sAMObject is AdjacencyCluster)
-                adjacencyCluster = new AdjacencyCluster((AdjacencyCluster)sAMObject);
-            else if(sAMObject is AnalyticalModel)
-                adjacencyCluster = ((AnalyticalModel)sAMObject).AdjacencyCluster;
-
-            List<Core.Result> results = null;
-            if(adjacencyCluster != null)
-            {
-                results = Analytical.Tas.Modify.AddResults(path_TSD, adjacencyCluster);
-
-                if (sAMObject is AdjacencyCluster)
-                    sAMObject = adjacencyCluster;
-                else if (sAMObject is AnalyticalModel)
-                    sAMObject = new AnalyticalModel((AnalyticalModel)sAMObject, adjacencyCluster);
-            }
-
             bool unmetHours = false;
+
             index = Params.IndexOfInputParam("_runUnmetHours_");
             if (index != -1)
                 if (!dataAccess.GetData(index, ref unmetHours))
@@ -173,28 +157,53 @@ namespace SAM.Analytical.Grasshopper.Tas
                 if (!dataAccess.GetData(index, ref unmetHoursMargin))
                     unmetHoursMargin = 0.5;
 
-            if (unmetHours)
-            {
-                List<Core.Result> results_UnmetHours = Analytical.Tas.Query.UnmetHours(path_TSD, path_TBD, unmetHoursMargin);
-                if (results_UnmetHours != null && results_UnmetHours.Count > 0)
-                {
-                    foreach (Core.Result result in results_UnmetHours)
-                    {
-                        if (result is AdjacencyClusterSimulationResult)
-                            results.Add(result);
-                        else if (result is SpaceSimulationResult)
-                        {
-                            SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
+            AdjacencyCluster adjacencyCluster = null;
+            if (sAMObject is AdjacencyCluster)
+                adjacencyCluster = new AdjacencyCluster((AdjacencyCluster)sAMObject);
+            else if(sAMObject is AnalyticalModel)
+                adjacencyCluster = ((AnalyticalModel)sAMObject).AdjacencyCluster;
 
-                            SpaceSimulationResult spaceSimulationResult_Temp = Analytical.Tas.Query.SpaceSimulationResult(results, spaceSimulationResult);
-                            if (spaceSimulationResult_Temp == null)
-                                results.Add(spaceSimulationResult);
-                            else
-                                Core.Modify.Copy(spaceSimulationResult, spaceSimulationResult_Temp, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours);
+            List<Core.Result> results = null;
+            if(adjacencyCluster != null)
+            {
+                results = Analytical.Tas.Modify.AddResults(path_TSD, adjacencyCluster);
+
+                if (unmetHours)
+                {
+                    List<Core.Result> results_UnmetHours = Analytical.Tas.Query.UnmetHours(path_TSD, path_TBD, unmetHoursMargin);
+                    if (results_UnmetHours != null && results_UnmetHours.Count > 0)
+                    {
+                        foreach (Core.Result result in results_UnmetHours)
+                        {
+                            if (result is AdjacencyClusterSimulationResult)
+                            {
+                                adjacencyCluster.AddObject(result);
+                                results.Add(result);
+                            }
+                            else if (result is SpaceSimulationResult)
+                            {
+                                SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
+
+                                SpaceSimulationResult spaceSimulationResult_Temp = Analytical.Tas.Query.SpaceSimulationResult(results, spaceSimulationResult);
+                                if (spaceSimulationResult_Temp == null)
+                                    results.Add(spaceSimulationResult);
+                                else
+                                    Core.Modify.Copy(spaceSimulationResult, spaceSimulationResult_Temp, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours);
+                            }
                         }
                     }
                 }
+
+                if (sAMObject is AdjacencyCluster)
+                    sAMObject = adjacencyCluster;
+                else if (sAMObject is AnalyticalModel)
+                    sAMObject = new AnalyticalModel((AnalyticalModel)sAMObject, adjacencyCluster);
             }
+
+           
+
+
+
             
             index = Params.IndexOfOutputParam("Analytical");
             if (index != -1)
