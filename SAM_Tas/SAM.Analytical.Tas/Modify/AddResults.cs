@@ -1,5 +1,6 @@
 ﻿using SAM.Core.Tas;
 using System.Collections.Generic;
+using System.Reflection;
 using TSD;
 
 namespace SAM.Analytical.Tas
@@ -113,7 +114,7 @@ namespace SAM.Analytical.Tas
                     ZoneSimulationResult zoneSimulationResult_Cooling = null;
                     if (buildingData.TryGetMax(zoneDatas.ConvertAll(x => x.zoneGUID), tsdZoneArray.coolingLoad, out index, out max) && index != -1 && !double.IsNaN(max))
                     {
-                        zoneSimulationResult_Cooling = new ZoneSimulationResult(zone.Name, zone.Guid.ToString());
+                        zoneSimulationResult_Cooling = new ZoneSimulationResult(zone.Name, Assembly.GetExecutingAssembly().GetName()?.Name, zone.Guid.ToString());
                         zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.MaxSensibleLoad, max);
                         zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.MaxSensibleLoadIndex, index);
                         zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.LoadType, LoadType.Cooling.Text());
@@ -189,7 +190,7 @@ namespace SAM.Analytical.Tas
                     ZoneSimulationResult zoneSimulationResult_Heating = null;
                     if (buildingData.TryGetMax(zoneDatas.ConvertAll(x => x.zoneGUID), tsdZoneArray.heatingLoad, out index, out max) && index != -1 && !double.IsNaN(max))
                     {
-                        zoneSimulationResult_Heating = new ZoneSimulationResult(zone.Name, zone.Guid.ToString());
+                        zoneSimulationResult_Heating = new ZoneSimulationResult(zone.Name, Assembly.GetExecutingAssembly().GetName()?.Name, zone.Guid.ToString());
                         zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.MaxSensibleLoad, max);
                         zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.MaxSensibleLoadIndex, index);
                         zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.LoadType, LoadType.Heating.Text());

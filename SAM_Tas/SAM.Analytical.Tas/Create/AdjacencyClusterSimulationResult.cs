@@ -1,4 +1,5 @@
 ﻿
+using System.Reflection;
 using TSD;
 
 namespace SAM.Analytical.Tas
@@ -10,7 +11,7 @@ namespace SAM.Analytical.Tas
             if (buildingData == null)
                 return null;
 
-            AdjacencyClusterSimulationResult result = new AdjacencyClusterSimulationResult(buildingData.name, buildingData.GUID);
+            AdjacencyClusterSimulationResult result = new AdjacencyClusterSimulationResult(buildingData.name, Assembly.GetExecutingAssembly().GetName()?.Name, buildingData.GUID);
             return result;
         }
     }

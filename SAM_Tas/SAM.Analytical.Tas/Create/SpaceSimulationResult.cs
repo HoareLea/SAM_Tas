@@ -1,4 +1,5 @@
 ﻿
+using System.Reflection;
 using TSD;
 
 namespace SAM.Analytical.Tas
@@ -15,7 +16,7 @@ namespace SAM.Analytical.Tas
             double area = zoneData.floorArea;
             double volume = zoneData.volume;
 
-            return Analytical.Create.SpaceSimulationResult(name, reference, volume, area, loadType, 0);
+            return Analytical.Create.SpaceSimulationResult(name, Assembly.GetExecutingAssembly().GetName()?.Name, reference, volume, area, loadType, 0);
         }
 
         public static SpaceSimulationResult SpaceSimulationResult(this ZoneData zoneData)
@@ -28,7 +29,7 @@ namespace SAM.Analytical.Tas
             double area = zoneData.floorArea;
             double volume = zoneData.volume;
 
-            return Analytical.Create.SpaceSimulationResult(name, reference, volume, area);
+            return Analytical.Create.SpaceSimulationResult(name, Assembly.GetExecutingAssembly().GetName()?.Name, reference, volume, area);
         }
 
         public static SpaceSimulationResult SpaceSimulationResult(this ZoneData zoneData, int index, LoadType loadType, SizingMethod sizingMethod)
@@ -51,7 +52,7 @@ namespace SAM.Analytical.Tas
             float externalConductionOpaque = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.externalConductionOpaque);
             float spaceHumidityRatio = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.humidityRatio);
             if (loadType == LoadType.Heating)
-                return Analytical.Create.SpaceSimulationResult(name, reference, volume, area, LoadType.Heating, load, index, sizingMethod, dryBulbTemp, resultantTemp,
+                return Analytical.Create.SpaceSimulationResult(name, Assembly.GetExecutingAssembly().GetName()?.Name, reference, volume, area, LoadType.Heating, load, index, sizingMethod, dryBulbTemp, resultantTemp,
                     infiltartionGain: infVentGain,
                     airMovementGain: airMovementGain,
                     buildingHeatTransfer: buildingHeatTransfer,
@@ -71,7 +72,7 @@ namespace SAM.Analytical.Tas
             float pollutant = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.pollutant);
 
 
-            return Analytical.Create.SpaceSimulationResult(name, reference, volume, area, loadType, load, index, sizingMethod,
+            return Analytical.Create.SpaceSimulationResult(name, Assembly.GetExecutingAssembly().GetName()?.Name, reference, volume, area, loadType, load, index, sizingMethod,
                 dryBulbTemp, resultantTemp, solarGain, lightingGain, infVentGain, airMovementGain,
                 buildingHeatTransfer, externalConductionGlazing, externalConductionOpaque, occupancySensibleGain,
                 occupancyLatentGain, equipmentSensibleGain, equipmentLatentGain, spaceHumidityRatio, relativeHumidity,
