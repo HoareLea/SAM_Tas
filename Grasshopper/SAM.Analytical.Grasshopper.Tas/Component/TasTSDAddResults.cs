@@ -50,7 +50,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
-                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_unmetHours_", NickName = "_unmetHours_", Description = "Calculate Unmet Hours", Access = GH_ParamAccess.item };
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_runUnmetHours_", NickName = "_runUnmetHours_", Description = "Calculate Unmet Hours", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
@@ -162,7 +162,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             bool unmetHours = false;
-            index = Params.IndexOfInputParam("_runNnmetHours_");
+            index = Params.IndexOfInputParam("_runUnmetHours_");
             if (index != -1)
                 if (!dataAccess.GetData(index, ref unmetHours))
                     unmetHours = true;
