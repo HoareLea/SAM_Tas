@@ -184,11 +184,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                             {
                                 SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
 
-                                SpaceSimulationResult spaceSimulationResult_Temp = Analytical.Tas.Query.SpaceSimulationResult(results, spaceSimulationResult);
-                                if (spaceSimulationResult_Temp == null)
+                                List<SpaceSimulationResult> spaceSimulationResults = Analytical.Tas.Query.Results(results, spaceSimulationResult);
+                                if (spaceSimulationResults == null)
                                     results.Add(spaceSimulationResult);
                                 else
-                                    Core.Modify.Copy(spaceSimulationResult, spaceSimulationResult_Temp, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours);
+                                    spaceSimulationResults.ForEach(x => Core.Modify.Copy(spaceSimulationResult, x, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours));
                             }
                         }
                     }

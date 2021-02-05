@@ -132,7 +132,7 @@
     <Compile Include="Query\PanelDataType.cs" />
     <Compile Include="Query\InternalCondition.cs" />
     <Compile Include="Query\TemperatureSetPointDictionary.cs" />
-    <Compile Include="Query\SpaceSimulationResult.cs" />
+    <Compile Include="Query\Results.cs" />
     <Compile Include="Query\TsdZoneArray.cs" />
     <Compile Include="Query\TsdSurfaceArray.cs" />
     <Compile Include="Query\Text.cs" />
