@@ -37,6 +37,7 @@ namespace SAM.Analytical.Tas
             return AddResults(tSDDocument.SimulationData, adjacencyCLuster);
         }
 
+        //
         public static List<Core.Result> AddResults(this SimulationData simulationData, AdjacencyCluster adjacencyCluster)
         {
             if (simulationData == null || adjacencyCluster == null)
@@ -44,6 +45,7 @@ namespace SAM.Analytical.Tas
 
             List<Core.Result> result = null; 
 
+            //get simulaton data from Tas for individal SAM Space
             List<SpaceSimulationResult> spaceSimulationResults = Convert.ToSAM(simulationData);
             if (spaceSimulationResults == null)
                 return result;
@@ -69,12 +71,15 @@ namespace SAM.Analytical.Tas
                 }
             }
 
+            // get data data about SAM Zones like space GUID, Zone Category etc.
             List<Zone> zones = adjacencyCluster.GetZones();
             if (zones != null && zones.Count > 0)
             {
+                //  Query Tas Zones,  that can be linked with SAM Spaces
                 BuildingData buildingData = simulationData.GetBuildingData();
                 Dictionary<string, ZoneData> dictionary_ZoneData = Query.ZoneDataDictionary(buildingData);
 
+                // Our SAM Zones(list of Space GUIDs)
                 foreach (Zone zone in zones)
                 {
                     List<Space> spaces_Zone = adjacencyCluster.GetSpaces(zone);
@@ -187,64 +192,68 @@ namespace SAM.Analytical.Tas
                     }
 
                     //Heating
-                    ZoneSimulationResult zoneSimulationResult_Heating = null;
-                    if (buildingData.TryGetMax(zoneDatas.ConvertAll(x => x.zoneGUID), tsdZoneArray.heatingLoad, out index, out max) && index != -1 && !double.IsNaN(max))
-                    {
-                        zoneSimulationResult_Heating = new ZoneSimulationResult(zone.Name, Assembly.GetExecutingAssembly().GetName()?.Name, zone.Guid.ToString());
-                        zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.MaxSensibleLoad, max);
-                        zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.MaxSensibleLoadIndex, index);
-                        zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.LoadType, LoadType.Heating.Text());
+                    //ZoneSimulationResult zoneSimulationResult_Heating = null;
+                    //if (buildingData.TryGetMax(zoneDatas.ConvertAll(x => x.zoneGUID), tsdZoneArray.heatingLoad, out index, out max) && index != -1 && !double.IsNaN(max))
+                    //{
+                        //zoneSimulationResult_Heating = new ZoneSimulationResult(zone.Name, Assembly.GetExecutingAssembly().GetName()?.Name, zone.Guid.ToString());
+                        //zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.MaxSensibleLoad, max);
+                        //zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.MaxSensibleLoadIndex, index);
+                        //zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.LoadType, LoadType.Heating.Text());
 
-                        List<SpaceSimulationResult> spaceSimulationResults_Zone = new List<SpaceSimulationResult>();
-                        foreach (ZoneData zoneData in zoneDatas)
-                        {
-                            SpaceSimulationResult spaceSimulationResult_Temp = Create.SpaceSimulationResult(zoneData, index, LoadType.Heating, SizingMethod.Simulation);
-                            if (spaceSimulationResult_Temp == null)
-                                continue;
+                        //List<SpaceSimulationResult> spaceSimulationResults_Zone = new List<SpaceSimulationResult>();
+                        //foreach (ZoneData zoneData in zoneDatas)
+                        //{
+                        //    SpaceSimulationResult spaceSimulationResult_Temp = spaceSimulationResults.FindAll(x => x.LoadType() == LoadType.Heating).Find(x => x.Reference == zoneData.zoneGUID);
+                        //    if (spaceSimulationResult_Temp == null)
+                        //        continue;
 
-                            spaceSimulationResults_Zone.Add(spaceSimulationResult_Temp);
-                        }
+                        //    spaceSimulationResults_Zone.Add(spaceSimulationResult_Temp);
+                        //}
 
-                        if (spaceSimulationResults_Zone != null && spaceSimulationResults_Zone.Count != 0)
-                        {
-                            double airMovementGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.AirMovementGain);
-                            if (!double.IsNaN(airMovementGain))
-                                zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.AirMovementGain, airMovementGain);
+                        //if (spaceSimulationResults_Zone != null && spaceSimulationResults_Zone.Count != 0)
+                        //{
+                        //    //double senisbleLoad = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.Load);
+                        //    //if (!double.IsNaN(senisbleLoad))
+                        //    //    zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.MaxSensibleLoad, senisbleLoad);
 
-                            double buildingHeatTransfer = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.BuildingHeatTransfer);
-                            if (!double.IsNaN(buildingHeatTransfer))
-                                zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.BuildingHeatTransfer, buildingHeatTransfer);
+                        //    //double airMovementGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.AirMovementGain);
+                        //    //if (!double.IsNaN(airMovementGain))
+                        //    //    zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.AirMovementGain, airMovementGain);
 
-                            double glazingExternalConduction = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.GlazingExternalConduction);
-                            if (!double.IsNaN(glazingExternalConduction))
-                                zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.GlazingExternalConduction, glazingExternalConduction);
+                        //    //double buildingHeatTransfer = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.BuildingHeatTransfer);
+                        //    //if (!double.IsNaN(buildingHeatTransfer))
+                        //    //    zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.BuildingHeatTransfer, buildingHeatTransfer);
 
-                            double infiltrationGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.InfiltrationGain);
-                            if (!double.IsNaN(infiltrationGain))
-                                zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.InfiltrationGain, infiltrationGain);
+                        //    //double glazingExternalConduction = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.GlazingExternalConduction);
+                        //    //if (!double.IsNaN(glazingExternalConduction))
+                        //    //    zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.GlazingExternalConduction, glazingExternalConduction);
 
-                            double opaqueExternalConduction = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.OpaqueExternalConduction);
-                            if (!double.IsNaN(opaqueExternalConduction))
-                                zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.OpaqueExternalConduction, opaqueExternalConduction);
-                        }
-                    }
+                        //    //double infiltrationGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.InfiltrationGain);
+                        //    //if (!double.IsNaN(infiltrationGain))
+                        //    //    zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.InfiltrationGain, infiltrationGain);
 
-                    if (!double.IsNaN(occupancy))
-                        zoneSimulationResult_Heating?.SetValue(ZoneSimulationResultParameter.Occupancy, occupancy);
+                        //    //double opaqueExternalConduction = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.OpaqueExternalConduction);
+                        //    //if (!double.IsNaN(opaqueExternalConduction))
+                        //    //    zoneSimulationResult_Heating.SetValue(ZoneSimulationResultParameter.OpaqueExternalConduction, opaqueExternalConduction);
+                        //}
+                    //}
 
-                    if (!double.IsNaN(area))
-                        zoneSimulationResult_Heating?.SetValue(ZoneSimulationResultParameter.Area, area);
+                    //if (!double.IsNaN(occupancy))
+                    //    zoneSimulationResult_Heating?.SetValue(ZoneSimulationResultParameter.Occupancy, occupancy);
 
-                    if (!double.IsNaN(volume))
-                        zoneSimulationResult_Heating?.SetValue(ZoneSimulationResultParameter.Volume, volume);
+                    //if (!double.IsNaN(area))
+                    //    zoneSimulationResult_Heating?.SetValue(ZoneSimulationResultParameter.Area, area);
+
+                    //if (!double.IsNaN(volume))
+                    //    zoneSimulationResult_Heating?.SetValue(ZoneSimulationResultParameter.Volume, volume);
 
 
-                    if (zoneSimulationResult_Heating != null)
-                    {
-                        adjacencyCluster.AddObject(zoneSimulationResult_Heating);
-                        adjacencyCluster.AddRelation(zone, zoneSimulationResult_Heating);
-                        result.Add(zoneSimulationResult_Heating);
-                    }
+                    //if (zoneSimulationResult_Heating != null)
+                    //{
+                    //    adjacencyCluster.AddObject(zoneSimulationResult_Heating);
+                    //    adjacencyCluster.AddRelation(zone, zoneSimulationResult_Heating);
+                    //    result.Add(zoneSimulationResult_Heating);
+                    //}
                 }
             }
 

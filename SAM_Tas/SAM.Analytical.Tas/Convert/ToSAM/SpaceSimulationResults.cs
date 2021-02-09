@@ -29,11 +29,13 @@ namespace SAM.Analytical.Tas
             return ToSAM(sAMTSDDocument.TSDDocument?.SimulationData);
         }
 
+        //Pull/Convert data for Spaces (in Tas they call them Zones) but not for SAM Zones (in Tas ZoneGroups)
         public static List<SpaceSimulationResult> ToSAM(SimulationData simulationData)
         {
             if (simulationData == null)
                 return null;
 
+            //buildingData is is yearly dynamic simulation data
             BuildingData buildingData = simulationData.GetBuildingData();
 
             List<ZoneData> zoneDatas_BuildingData = Query.ZoneDatas(buildingData);
@@ -51,6 +53,7 @@ namespace SAM.Analytical.Tas
             object[,] values_BuildingData_Heating = buildingData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray.heatingLoad });
             object[,] values_HeatingDesignData = heatingDesignData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray.heatingLoad });
 
+            //in SpaceSimulationResult we stored data from tas that is alreay pull in correct output format so Heating is from HDD and cooling is max of design and dynamic simulation
             List<SpaceSimulationResult> result = new List<SpaceSimulationResult>();
 
             for (int i = 0; i < zoneDatas_BuildingData.Count; i++)
