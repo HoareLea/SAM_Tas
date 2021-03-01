@@ -223,6 +223,7 @@ namespace SAM.Analytical.Tas
                             else
                                 constructionLayers = apertureConstruction.FrameConstructionLayers;
 
+                            window.transparent = false; //Requested by Michal 2021.03.01
                             bool transparent = false;
                             MaterialType materialType = Analytical.Query.MaterialType(constructionLayers, analyticalModel.MaterialLibrary);
                             if (materialType == MaterialType.Undefined)
@@ -237,8 +238,9 @@ namespace SAM.Analytical.Tas
                             }
 
                             //InternalShadows
+                            window.internalShadows = false; //Requested by Michal 2021.03.01
                             bool internalShadows = false;
-                            if(apertureConstruction.TryGetValue(ApertureConstructionParameter.IsInternalShadow, out internalShadows))
+                            if (apertureConstruction.TryGetValue(ApertureConstructionParameter.IsInternalShadow, out internalShadows))
                                 window.internalShadows = internalShadows;
 
                             //FrameWidth
