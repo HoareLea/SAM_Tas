@@ -2,7 +2,10 @@
 
 # SAM_Tas
 
-<a href="https://github.com/HoareLea/SAM_Tas/blob/master/Grasshopper/SAM.Analytical.Grasshopper.Tas/Resources/SAM_TasT3D.png" align="left" hspace="10" vspace="6"></a>
+
+<a href="https://github.com/HoareLea/SAM_Tas"><img src="https://github.com/HoareLea/SAM_Tas/blob/master/Grasshopper/SAM.Analytical.Grasshopper.Tas/Resources/SAM_TasTSD.png" align="left" hspace="10" vspace="6"></a>
+<a href="https://github.com/HoareLea/SAM_Tas"><img src="https://github.com/HoareLea/SAM_Tas/blob/master/Grasshopper/SAM.Analytical.Grasshopper.Tas/Resources/SAM_TasTBD.png" align="left" hspace="10" vspace="6"></a>
+<a href="https://github.com/HoareLea/SAM_Tas"><img src="https://github.com/HoareLea/SAM_Tas/blob/master/Grasshopper/SAM.Analytical.Grasshopper.Tas/Resources/SAM_TasT3D.png" align="left" hspace="10" vspace="6"></a>
 
 **SAM_Tas** is part of SAM Toolkit that is designed to help run siulation using [Tas EDSL](https://www.edsl.net/) from SAM Analytical Model. Welcome and let's make the opensource journey continue. :handshake:
 
