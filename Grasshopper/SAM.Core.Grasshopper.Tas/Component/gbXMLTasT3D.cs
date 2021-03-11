@@ -21,6 +21,8 @@ namespace SAM.Core.Grasshopper.Tas
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>

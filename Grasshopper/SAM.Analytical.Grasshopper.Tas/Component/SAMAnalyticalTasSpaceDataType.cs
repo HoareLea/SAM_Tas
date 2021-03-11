@@ -1,6 +1,7 @@
 ﻿using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
 using SAM.Core.Grasshopper;
+using Grasshopper.Kernel;
 using System;
 
 namespace SAM.Analytical.Grasshopper.Tas
@@ -21,6 +22,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// Provides an Icon for the component.
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_Small;
+
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
         /// <summary>
         /// Panel Type

@@ -23,6 +23,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD;
 
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
