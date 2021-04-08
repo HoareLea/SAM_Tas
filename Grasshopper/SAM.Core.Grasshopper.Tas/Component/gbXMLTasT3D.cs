@@ -41,8 +41,8 @@ namespace SAM.Core.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_path_TasT3D", "pathTasT3D", "string path to TasT3D file", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_path_gbXML", "pathgbXML", "string path to gbXML file", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_path_TasT3D", "_path_TasT3D", "string path to TasT3D file", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_path_gbXML", "_path_gbXML", "string path to gbXML file", GH_ParamAccess.item);
             inputParamManager.AddBooleanParameter("_override_", "override", "bool override import setting for gbXML file", GH_ParamAccess.item, true);
             inputParamManager.AddBooleanParameter("_fixNormals_", "fixNormals", "bool Reverse wrong normals using Tas internal engine", GH_ParamAccess.item, false);
             inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "zonesFromSpaces", "bool transforms Spaces for internal Tas Zones using Tas internal engine", GH_ParamAccess.item, true);
