@@ -15,7 +15,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasSimulate()
           : base("Tas.Simulate", "Tas.Simulate",
-              "Simulate TBD File",
+              "Simulates the TasTBD File",
               "SAM", "Tas")
         {
         }
@@ -42,11 +42,11 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "string path to TasTSD file", GH_ParamAccess.item);
-            inputParamManager.AddIntegerParameter("_dayFirst_", "_dayFirst_", "First Day", GH_ParamAccess.item, 1);
-            inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "Last Day", GH_ParamAccess.item, 365);
-            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "The string path to TasTSD file.", GH_ParamAccess.item);
+            inputParamManager.AddIntegerParameter("_dayFirst_", "_dayFirst_", "The first day", GH_ParamAccess.item, 1);
+            inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "The last day", GH_ParamAccess.item, 365);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect the boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
