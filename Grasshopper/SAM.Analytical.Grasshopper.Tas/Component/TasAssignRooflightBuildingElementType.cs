@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -30,7 +30,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasAssignRooflightBuildingElementType()
           : base("Tas.AssignRooflightBuilidingElementType", "Tas.AssignRooflightBuilidingElementType",
-              "Assign Rooflight BuilidingElement Type",
+              "Assign the Rooflight Building Element Type",
               "SAM", "Tas")
         {
         }
@@ -43,11 +43,11 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_names", "_names", "Names of Building Elements to be assigned", GH_ParamAccess.list);
-            inputParamManager.AddBooleanParameter("_caseSensitive_", "_caseSensitive_", "Case Sensitive", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("_trim_", "_trim_", "Trim", GH_ParamAccess.item, true);
-            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to the TasTBD file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_names", "_names", "The assigned name of the Building Elements.", GH_ParamAccess.list);
+            inputParamManager.AddBooleanParameter("_caseSensitive_", "_caseSensitive_", "Should the capitalsation be considered?", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_trim_", "_trim_", "Do you want to trim the Building Element?", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
