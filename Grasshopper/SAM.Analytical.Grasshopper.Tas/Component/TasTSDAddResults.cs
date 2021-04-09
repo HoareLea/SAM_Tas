@@ -31,7 +31,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasTSDAddResults()
           : base("Tas.TSDAddResults", "Tas.TSDAddResults",
-              "Updates an AdjacencyCluster from a TSD file with results, \n Cooling/Heating load and all variables per Space, Zone and Model \n *click "+" on inputs to add UnmetHours and UnmetHoursMargin",
+              "Updates an AdjacencyCluster from a TSD file with results. \n Cooling/Heating load and all variables per Space, Zone and Model \n *click "+" on inputs to add UnmetHours and UnmetHoursMargin",
               "SAM", "Tas")
         {
         }
@@ -44,7 +44,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "_analyticalObject", NickName = "_analyticalObject", Description = "SAM Analytical Object such as AdjacencyCluster or AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "_analyticalObject", NickName = "_analyticalObject", Description = "A SAM analytical object such as an adjacency cluster or an analytical model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTBD", NickName = "_pathTasTBD", Description = "A file path to a TasTBD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
@@ -54,7 +54,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 @boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
-                global::Grasshopper.Kernel.Parameters.Param_Number number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_unmetHoursMargin_", NickName = "_unmetHoursMargin_", Description = "Unmet Hours Calculation Margin, setpoint Band", Access = GH_ParamAccess.item };
+                global::Grasshopper.Kernel.Parameters.Param_Number number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_unmetHoursMargin_", NickName = "_unmetHoursMargin_", Description = "Unmet Hours Calculation Margin, a setpoint Band", Access = GH_ParamAccess.item };
                 number.SetPersistentData(0.5);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
 

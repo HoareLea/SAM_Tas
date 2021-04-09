@@ -30,7 +30,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateIZAMs()
           : base("Tas.UpdateIZAMs", "Tas.UpdateIZAMs",
-              "Updates the IZAMs in a TBD file",
+              "Updates the IZAMs in a TasTBD file.",
               "SAM", "Tas")
         {
         }
@@ -44,7 +44,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_pathTasTBD", "pathTasTBD", "The string path to TasTBD file.", GH_ParamAccess.item);
-            inputParamManager.AddParameter(new GooSpaceParam(), "_spaces", "_spaces", "SAM Analytical Spaces", GH_ParamAccess.list);
+            inputParamManager.AddParameter(new GooSpaceParam(), "_spaces", "_spaces", "The SAM analytical spaces", GH_ParamAccess.list);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 

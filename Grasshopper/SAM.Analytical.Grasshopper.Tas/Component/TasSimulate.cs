@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasSimulate()
           : base("Tas.Simulate", "Tas.Simulate",
-              "Simulates the TasTBD File",
+              "Simulates the TasTBD file.",
               "SAM", "Tas")
         {
         }
@@ -43,10 +43,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "The string path to TasTSD file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "The string path to a TasTSD file.", GH_ParamAccess.item);
             inputParamManager.AddIntegerParameter("_dayFirst_", "_dayFirst_", "The first day", GH_ParamAccess.item, 1);
             inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "The last day", GH_ParamAccess.item, 365);
-            inputParamManager.AddBooleanParameter("_run", "_run", "Connect the boolean toggle to run.", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

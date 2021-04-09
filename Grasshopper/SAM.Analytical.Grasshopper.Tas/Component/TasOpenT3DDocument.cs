@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasOpenT3DDocument()
           : base("Tas.OpenT3DDocument", "Tas.OpenT3DDocument",
-              "Open a Tas T3D Document",
+              "Opens a TasT3D document.",
               "SAM", "Tas")
         {
         }
@@ -42,7 +42,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_pathT3D", "_pathT3D", "The string path to the Tas T3D file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_pathT3D", "_pathT3D", "The string path to a Tas T3D file.", GH_ParamAccess.item);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -51,8 +51,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddParameter(new GooSAMT3DDocumentParam(), "T3DDocument", "T3DDocument", "T3DDocument", GH_ParamAccess.item);
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddParameter(new GooSAMT3DDocumentParam(), "T3DDocument", "T3DDocument", "A T3DDocument", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

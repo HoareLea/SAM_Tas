@@ -28,7 +28,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// </summary>
         public gbXMLTasT3D()
           : base("gbXML.TasT3D", "TasT3D",
-              "Imports a gbXML file to a TasT3D file",
+              "Imports a gbXML file to a TasT3D file.",
               "SAM", "Tas")
         {
         }
@@ -45,8 +45,8 @@ namespace SAM.Core.Grasshopper.Tas
             inputParamManager.AddTextParameter("_pathgbXML", "_pathgbXML", "The string path to a gbXML file.", GH_ParamAccess.item);
             inputParamManager.AddBooleanParameter("_override_", "_override_", "Do you want to override the import settings for the gbXML file?", GH_ParamAccess.item, true);
             inputParamManager.AddBooleanParameter("_fixNormals_", "_fixNormals_", "Do you want to reverse the wrong normals using the Tas internal engine?", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "_zonesFromSpaces_", "Do you want to transform the spaces for the internal Tas Zones using the Tas internal engine?", GH_ParamAccess.item, true);
-            inputParamManager.AddBooleanParameter("_useWidths_", "_useWidths_", "Do you want to use Building Element Widths?", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "_zonesFromSpaces_", "Do you want to transform the spaces for the internal Tas zones using the Tas internal engine?", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_useWidths_", "_useWidths_", "Do you want to use the building element widths?", GH_ParamAccess.item, false);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -55,7 +55,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

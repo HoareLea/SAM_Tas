@@ -43,7 +43,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_pathTasTBD", "pathTasTBD", "The string path of the TasTBD file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path of a TasTBD file.", GH_ParamAccess.item);
             inputParamManager.AddTextParameter("_suffix", "_suffix", "The schedule name suffix.", GH_ParamAccess.item);
             inputParamManager.AddBooleanParameter("_caseSensitive_", "_caseSensitive_", "Should the capitalsation be considered?", GH_ParamAccess.item, false);
             inputParamManager.AddBooleanParameter("_trim_", "_trim_", "Do you want to trim the TasTBD file?", GH_ParamAccess.item, true);
@@ -55,8 +55,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddTextParameter("Names", "Names", "The names of the schedules that have been removed", GH_ParamAccess.list);
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddTextParameter("names", "names", "The names of the schedules that have been removed.", GH_ParamAccess.list);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

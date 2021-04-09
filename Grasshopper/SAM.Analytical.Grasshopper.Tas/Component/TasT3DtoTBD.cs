@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasT3DtoTBD()
           : base("Tas.T3DtoTBD", "Tas.T3DtoTBD",
-              "Exports/Converts TasT3D to TBD",
+              "Exports/Converts TasT3D to TBD.",
               "SAM", "Tas")
         {
         }
@@ -48,7 +48,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "The last day", GH_ParamAccess.item, 365);
             inputParamManager.AddIntegerParameter("_step_", "_step_", "What should the time interval (in days) be, of the solar calculations?", GH_ParamAccess.item, 15);
             inputParamManager.AddBooleanParameter("_autoAssignConstructions_", "_autoAssignConstructions_", "Should the construction be assigned automatically?", GH_ParamAccess.item, true);
-            inputParamManager.AddBooleanParameter("_run", "_run", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

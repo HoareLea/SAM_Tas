@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateT3D()
           : base("Tas.UpdateT3D", "Tas.UpdateT3D",
-              "Update TasT3D",
+              "Updates the TasT3D.",
               "SAM", "Tas")
         {
         }

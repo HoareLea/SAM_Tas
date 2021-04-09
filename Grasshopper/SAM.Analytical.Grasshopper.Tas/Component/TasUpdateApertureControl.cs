@@ -30,7 +30,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateApertureControl()
           : base("Tas.UpdateApertureControl", "Tas.UpdateApertureControl",
-              "Updates the apertures control in a TBD file",
+              "Updates the apertures control in a TBD file.",
               "SAM", "Tas")
         {
         }
@@ -44,7 +44,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "A string path to a TasTBD file", GH_ParamAccess.item);
-            inputParamManager.AddParameter(new GooApertureConstructionParam(), "_apertureConstructions_", "_apertureConstructions_", "SAM analytical aperture constructions", GH_ParamAccess.list);
+            inputParamManager.AddParameter(new GooApertureConstructionParam(), "_apertureConstructions_", "_apertureConstructions_", "The SAM analytical aperture constructions", GH_ParamAccess.list);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -53,7 +53,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddTextParameter("guids", "guids", "Guids", GH_ParamAccess.list);
+            outputParamManager.AddTextParameter("guids", "guids", "The GUIDS (Globally Unique Identifiers) of the aperture constructions.", GH_ParamAccess.list);
             outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 

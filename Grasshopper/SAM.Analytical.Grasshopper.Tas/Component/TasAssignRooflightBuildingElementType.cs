@@ -30,7 +30,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasAssignRooflightBuildingElementType()
           : base("Tas.AssignRooflightBuilidingElementType", "Tas.AssignRooflightBuilidingElementType",
-              "Assign the Rooflight Building Element Type",
+              "Assigns the rooflight building element type.",
               "SAM", "Tas")
         {
         }
@@ -43,10 +43,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to the TasTBD file.", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_names", "_names", "The assigned name of the Building Elements.", GH_ParamAccess.list);
+            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_names", "_names", "The assigned name of the building elements.", GH_ParamAccess.list);
             inputParamManager.AddBooleanParameter("_caseSensitive_", "_caseSensitive_", "Should the capitalsation be considered?", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("_trim_", "_trim_", "Do you want to trim the Building Element?", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_trim_", "_trim_", "Do you want to trim the building elements?", GH_ParamAccess.item, true);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -55,8 +55,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddTextParameter("Guids", "Guids", "Guids of Builidng Elements construction has been changed", GH_ParamAccess.list);
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddTextParameter("guids", "guids", "The GUIDS (Globally Unique Identifiers) of building elements construction that has been changed.", GH_ParamAccess.list);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

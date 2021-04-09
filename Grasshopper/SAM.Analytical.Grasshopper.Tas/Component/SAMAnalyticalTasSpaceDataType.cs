@@ -30,7 +30,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public SAMAnalyticalTasSpaceDataType()
           : base("SAMAnalytical.SpaceDataType", "SAMAnalytical.SpaceDataType",
-              "Select the Space Data Type",
+              "Selects the space data type.",
               "SAM", "Tas")
         {
         }

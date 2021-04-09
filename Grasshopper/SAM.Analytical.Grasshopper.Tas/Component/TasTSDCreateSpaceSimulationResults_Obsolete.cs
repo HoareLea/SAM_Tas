@@ -34,7 +34,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         public TasTSDCreateSpaceSimulationResults()
           : base("Tas.TSDCreateSpaceSimulationResults", "Tas.TSDCreateSpaceSimulationResults",
-              "Creates SpaceSimulationResults from a TSD file",
+              "Creates space simulation results from a TasTSD file.",
               "SAM", "Tas")
         {
         }
@@ -67,8 +67,8 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooResultParam() { Name = "results", NickName = "results", Description = "SAM Analytical SpaceSimulationResults", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooAdjacencyClusterParam() { Name = "adjacencyCluster", NickName = "adjacencyCluster", Description = "SAM Analytical AdjacencyCluster", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "results", NickName = "results", Description = "The SAM analytical space simulation results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAdjacencyClusterParam() { Name = "adjacencyCluster", NickName = "adjacencyCluster", Description = "A SAM analytical adjacency cluster", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly extracted?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 return result.ToArray();

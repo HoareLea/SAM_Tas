@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateZones()
           : base("Tas.UpdateZones", "Tas.UpdateZones",
-              "Updates the TBD Zones",
+              "Updates the TBD zones.",
               "SAM", "Tas")
         {
         }

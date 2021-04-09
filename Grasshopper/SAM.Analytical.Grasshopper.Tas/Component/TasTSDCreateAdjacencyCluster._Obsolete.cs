@@ -33,7 +33,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         public TasTSDCreateAdjacencyCluster()
           : base("Tas.TSDCreateAdjacencyCluster", "Tas.TSDCreateAdjacencyCluster",
-              "Creates an AdjacencyCluster from a TSD file",
+              "Creates an adjacency cluster from a TasTSD file.",
               "SAM", "Tas")
         {
         }
@@ -62,8 +62,8 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddParameter(new GooAdjacencyClusterParam(),  "AdjacencyCluster", "AdjacencyCluster", "SAM Analytical AdjacencyCluster", GH_ParamAccess.item);
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddParameter(new GooAdjacencyClusterParam(),  "adjacencyCluster", "adjacencyCluster", "A SAM analytical adjacency cluster", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

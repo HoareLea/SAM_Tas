@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateFacingExternal()
           : base("Tas.UpdateFacingExternal", "Tas.UpdateFacingExternal",
-              "Updates the space FacingExternal from a TBD File, and sets the adiabatic surfaces in a zone",
+              "Updates the space FacingExternal from a TBD File, and sets the adiabatic surfaces in a zone.",
               "SAM", "Tas")
         {
         }
@@ -43,7 +43,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
-            inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel", "_analyticalModel", "A SAM Analytical Model", GH_ParamAccess.item);
+            inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel", "_analyticalModel", "A SAM analytical model", GH_ParamAccess.item);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -52,7 +52,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddParameter(new GooAnalyticalModelParam(), "analyticalModel", "analyticalModel", "A SAM Analytical Model", GH_ParamAccess.item);
+            outputParamManager.AddParameter(new GooAnalyticalModelParam(), "analyticalModel", "analyticalModel", "A SAM analytical model", GH_ParamAccess.item);
             outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
