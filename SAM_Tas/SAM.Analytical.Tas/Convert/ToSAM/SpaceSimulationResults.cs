@@ -1,5 +1,7 @@
 ﻿using SAM.Core.Tas;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TSD;
 
 namespace SAM.Analytical.Tas
@@ -54,13 +56,12 @@ namespace SAM.Analytical.Tas
             object[,] values_HeatingDesignData = heatingDesignData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray.heatingLoad });
 
             //in SpaceSimulationResult we stored data from tas that is alreay pull in correct output format so Heating is from HDD and cooling is max of design and dynamic simulation
-            List<SpaceSimulationResult> result = new List<SpaceSimulationResult>();
-
-            for (int i = 0; i < zoneDatas_BuildingData.Count; i++)
+            List<List<SpaceSimulationResult>> spaceSimulationResults = Enumerable.Repeat<List<SpaceSimulationResult>>(null, zoneDatas_BuildingData.Count).ToList();
+            Parallel.For(0, zoneDatas_BuildingData.Count, (int i) =>
             {
                 ZoneData zoneData_BuildingData = zoneDatas_BuildingData[i];
                 if (zoneDatas_BuildingData == null)
-                    continue;
+                    return;
 
                 float load_Simulation = float.NaN;
                 int index_Simulation = -1;
@@ -96,12 +97,14 @@ namespace SAM.Analytical.Tas
                 {
                     Dictionary<SpaceSimulationResultParameter, object> dictionary = Query.Overheating(zoneData_BuildingData, simulationData.firstDay, simulationData.lastDay);
 
+                    spaceSimulationResults[i] = new List<SpaceSimulationResult>();
+
                     if (spaceSimulationResult_Cooling != null)
                     {
                         foreach (KeyValuePair<SpaceSimulationResultParameter, object> keyValuePair in dictionary)
                             spaceSimulationResult_Cooling.SetValue(keyValuePair.Key, keyValuePair.Value);
 
-                        result.Add(spaceSimulationResult_Cooling);
+                        spaceSimulationResults[i].Add(spaceSimulationResult_Cooling);
                     }
 
                     if (spaceSimulationResult_Heating != null)
@@ -109,8 +112,17 @@ namespace SAM.Analytical.Tas
                         foreach (KeyValuePair<SpaceSimulationResultParameter, object> keyValuePair in dictionary)
                             spaceSimulationResult_Heating.SetValue(keyValuePair.Key, keyValuePair.Value);
 
-                        result.Add(spaceSimulationResult_Heating);
+                        spaceSimulationResults[i].Add(spaceSimulationResult_Heating);
                     }
+                }
+            });
+
+            List <SpaceSimulationResult> result = new List<SpaceSimulationResult>();
+            foreach(List<SpaceSimulationResult> spaceSimulationResults_Temp in spaceSimulationResults)
+            {
+                if(spaceSimulationResults_Temp != null)
+                {
+                    result.AddRange(spaceSimulationResults_Temp);
                 }
             }
 
