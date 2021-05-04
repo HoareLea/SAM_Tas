@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         public override GH_Exposure Exposure => GH_Exposure.hidden;
 
@@ -33,7 +33,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         public TasTSDCreateAdjacencyCluster()
           : base("Tas.TSDCreateAdjacencyCluster", "Tas.TSDCreateAdjacencyCluster",
-              "Creates AdjacencyCluster from TSD file",
+              "Creates an adjacency cluster from a TasTSD file.",
               "SAM", "Tas")
         {
         }
@@ -46,15 +46,15 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             int index = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "string path to TasTSD file", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_pathTasTSD", "_pathTasTSD", "A string path to a TasTSD file.", GH_ParamAccess.item);
             
-            index = inputParamManager.AddGenericParameter("panelDataType_", "panelDataType_", "SAM Analytical Panel Data Type", GH_ParamAccess.list);
+            index = inputParamManager.AddGenericParameter("panelDataType_", "panelDataType_", "Filters your chosen results for the type: panel.", GH_ParamAccess.list);
             inputParamManager[index].Optional = true;
 
-            index = inputParamManager.AddGenericParameter("spaceDataType_", "spaceDataType_", "SAM Analytical Space Data Type", GH_ParamAccess.list);
+            index = inputParamManager.AddGenericParameter("spaceDataType_", "spaceDataType_", "Filters your chosen results for the type: space.", GH_ParamAccess.list);
             inputParamManager[index].Optional = true;
 
-            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -62,8 +62,8 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddParameter(new GooAdjacencyClusterParam(),  "AdjacencyCluster", "AdjacencyCluster", "SAM Analytical AdjacencyCluster", GH_ParamAccess.item);
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddParameter(new GooAdjacencyClusterParam(),  "adjacencyCluster", "adjacencyCluster", "A SAM analytical adjacency cluster", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

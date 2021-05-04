@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -30,7 +30,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateIZAMs()
           : base("Tas.UpdateIZAMs", "Tas.UpdateIZAMs",
-              "Update IZAMs in TBD file",
+              "Updates the IZAMs in a TasTBD file.",
               "SAM", "Tas")
         {
         }
@@ -43,9 +43,9 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
-            inputParamManager.AddParameter(new GooSpaceParam(), "_spaces", "_spaces", "SAM Analytical Spaces", GH_ParamAccess.list);
-            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddTextParameter("_pathTasTBD", "pathTasTBD", "The string path to TasTBD file.", GH_ParamAccess.item);
+            inputParamManager.AddParameter(new GooSpaceParam(), "_spaces", "_spaces", "The SAM analytical spaces", GH_ParamAccess.list);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddTextParameter("Names", "Names", "Names", GH_ParamAccess.list);
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddTextParameter("names", "names", "The names of the inputted spaces.", GH_ParamAccess.list);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

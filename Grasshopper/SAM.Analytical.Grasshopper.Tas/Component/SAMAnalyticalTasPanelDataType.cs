@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public SAMAnalyticalTasPanelDataType()
           : base("SAMAnalytical.PanelDataType", "SAMAnalytical.PanelDataType",
-              "Select Panel Data Type",
+              "Selects the panel data type.",
               "SAM", "Tas")
         {
         }

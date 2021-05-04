@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -30,7 +30,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasAssignAdiabaticConstruction()
           : base("Tas.AssignAdiabaticConstruction", "Tas.AssignAdiabaticConstruction",
-              "Assign Adiabatic Construction to Builing Element in TBD File",
+              "Assign an adiabatic construction to the building element in a TBD file.",
               "SAM", "Tas")
         {
         }
@@ -43,12 +43,12 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_adiabaticConstructionName_", "_adiabaticConstructionName_", "Name of Adiabatic Construction to be assigned", GH_ParamAccess.item, "Adiabatic");
-            inputParamManager.AddTextParameter("_constructionNameSufixes_", "_constructionNameSufixes_", "Sufixes for builidng Element Construction names to be replaced", GH_ParamAccess.list, new string[] { "-unzoned", "-internal", "-exposed" });
-            inputParamManager.AddBooleanParameter("_caseSensitive_", "_caseSensitive_", "Case Sensitive", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("_trim_", "_trim_", "Trim", GH_ParamAccess.item, true);
-            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_adiabaticConstructionName_", "_adiabaticConstructionName_", "The assigned name of the adiabatic construction.", GH_ParamAccess.item, "Adiabatic");
+            inputParamManager.AddTextParameter("_constructionNameSuffixes_", "_constructionNameSuffixes_", "The suffixes with which the building element construction names will be replaced with.", GH_ParamAccess.list, new string[] { "-unzoned", "-internal", "-exposed" });
+            inputParamManager.AddBooleanParameter("_caseSensitive_", "_caseSensitive_", "Should we consider the capitalisation?", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_trim_", "_trim_", "Do you want to trim the construction?", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddTextParameter("Guids", "Guids", "Guids of Builidng Elements construction has been changed", GH_ParamAccess.list);
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddTextParameter("guids", "guids", "The GUIDS (Globally Unique Identifiers) of the building elements construction that has been changed.", GH_ParamAccess.list);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

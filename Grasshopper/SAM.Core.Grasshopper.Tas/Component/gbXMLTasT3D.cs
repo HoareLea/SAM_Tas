@@ -14,7 +14,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -28,7 +28,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// </summary>
         public gbXMLTasT3D()
           : base("gbXML.TasT3D", "TasT3D",
-              "Import gbXML To Tas T3D",
+              "Imports a gbXML file to a TasT3D file.",
               "SAM", "Tas")
         {
         }
@@ -41,13 +41,13 @@ namespace SAM.Core.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_path_TasT3D", "pathTasT3D", "string path to TasT3D file", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_path_gbXML", "pathgbXML", "string path to gbXML file", GH_ParamAccess.item);
-            inputParamManager.AddBooleanParameter("_override_", "override", "bool override import setting for gbXML file", GH_ParamAccess.item, true);
-            inputParamManager.AddBooleanParameter("_fixNormals_", "fixNormals", "bool Reverse wrong normals using Tas internal engine", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "zonesFromSpaces", "bool transforms Spaces for internal Tas Zones using Tas internal engine", GH_ParamAccess.item, true);
-            inputParamManager.AddBooleanParameter("_useWidths_", "useWidths", "Use Panel Widths", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddTextParameter("_pathTasT3D", "_pathTasT3D", "The string path to a TasT3D file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_pathgbXML", "_pathgbXML", "The string path to a gbXML file.", GH_ParamAccess.item);
+            inputParamManager.AddBooleanParameter("_override_", "_override_", "Do you want to override the import settings for the gbXML file?", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_fixNormals_", "_fixNormals_", "Do you want to reverse the wrong normals using the Tas internal engine?", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_zonesFromSpaces_", "_zonesFromSpaces_", "Do you want to transform the spaces for the internal Tas zones using the Tas internal engine?", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_useWidths_", "_useWidths_", "Do you want to use the building element widths?", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

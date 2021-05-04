@@ -15,7 +15,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasT3DtoTBD()
           : base("Tas.T3DtoTBD", "Tas.T3DtoTBD",
-              "Exports/Converts Tas T3D to TBD",
+              "Exports/Converts TasT3D to TBD.",
               "SAM", "Tas")
         {
         }
@@ -42,13 +42,13 @@ namespace SAM.Analytical.Grasshopper.Tas
             //int aIndex = -1;
             //Param_Boolean booleanParameter = null;
 
-            inputParamManager.AddTextParameter("_path_TasT3D", "pathTasT3D", "string path to TasT3D file", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
-            inputParamManager.AddIntegerParameter("_dayFirst_", "_dayFirst_", "First Day", GH_ParamAccess.item, 1);
-            inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "Last Day", GH_ParamAccess.item, 365);
-            inputParamManager.AddIntegerParameter("_step_", "_step_", "Day Step", GH_ParamAccess.item, 15);
-            inputParamManager.AddBooleanParameter("_autoAssignConstructions_", "_autoAssignConstructions_", "Auto Assign Constructions", GH_ParamAccess.item, true);
-            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddTextParameter("_pathTasT3D", "_pathTasT3D", "The string path to a TasT3D file.", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            inputParamManager.AddIntegerParameter("_dayFirst_", "_dayFirst_", "The first day", GH_ParamAccess.item, 1);
+            inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "The last day", GH_ParamAccess.item, 365);
+            inputParamManager.AddIntegerParameter("_step_", "_step_", "What should the time interval (in days) be, of the solar calculations?", GH_ParamAccess.item, 15);
+            inputParamManager.AddBooleanParameter("_autoAssignConstructions_", "_autoAssignConstructions_", "Should the construction be assigned automatically?", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

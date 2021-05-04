@@ -15,7 +15,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasSizing()
           : base("Tas.Sizing", "Tas.Sizing",
-              "Sizing TAS TBD File",
+              "Sizes the TasTBD file.",
               "SAM", "Tas")
         {
         }
@@ -44,13 +44,13 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             int index = -1;
 
-            inputParamManager.AddTextParameter("_path_TasTBD", "pathTasTBD", "string path to TasTBD file", GH_ParamAccess.item);
-            index = inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel_", "_analyticalModel_", "SAM AnalyticalModel", GH_ParamAccess.item);
+            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            index = inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel_", "_analyticalModel_", "A SAM analytical model", GH_ParamAccess.item);
             inputParamManager[index].Optional = true;
 
-            inputParamManager.AddBooleanParameter("_excludeOutdoorAir_", "_excludeOutdoorAir_", "Exclude Outdoor Air and set TBD ventilation factor to zero", GH_ParamAccess.item, false);
-            inputParamManager.AddBooleanParameter("_excludePositiveInternalGains_", "_excludePositiveInternalGains_", "This will re-run few times sizing simulation for each temperature and therefore internal conduction gains from adj rooms will not offset heating load", GH_ParamAccess.item, true);
-            inputParamManager.AddBooleanParameter("run_", "run_", "Connect Bool Toggle to run", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_excludeOutdoorAir_", "_excludeOutdoorAir_", "Should the outdoor air be excluded and TBD ventilation factor set to zero?", GH_ParamAccess.item, false);
+            inputParamManager.AddBooleanParameter("_excludePositiveInternalGains_", "_excludePositiveInternalGains_", "Should the internal conduction gains not offset the heating load from adjacent rooms? This will re-run few times, sizing the simulation for each temperature.", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddBooleanParameter("Successful", "Successful", "Correctly imported?", GH_ParamAccess.item);
+            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
         /// <summary>

@@ -20,7 +20,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         public override GH_Exposure Exposure => GH_Exposure.hidden;
 
@@ -34,7 +34,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         public TasTSDCreateSpaceSimulationResults()
           : base("Tas.TSDCreateSpaceSimulationResults", "Tas.TSDCreateSpaceSimulationResults",
-              "Create SpaceSimulationResults from TSD File",
+              "Creates space simulation results from a TasTSD file.",
               "SAM", "Tas")
         {
         }
@@ -47,11 +47,11 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "Tas TSD File Path", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "panelDataTypes_", NickName = "panelDataTypes_", Description = "SAM Analytical Panel Data Types", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "spaceDataTypes_", NickName = "spaceDataTypes_", Description = "SAM Analytical Space Data Types", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "panelDataTypes_", NickName = "panelDataTypes_", Description = "Filters your chosen results for the type: panel", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "spaceDataTypes_", NickName = "Filters your chosen results for the type: space", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
 
-                global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Run", Access = GH_ParamAccess.item };
+                global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Binding));
 
@@ -67,9 +67,9 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooResultParam() { Name = "Results", NickName = "Results", Description = "SAM Analytical SpaceSimulationResults", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooAdjacencyClusterParam() { Name = "AdjacencyCluster", NickName = "AdjacencyCluster", Description = "SAM Analytical AdjacencyCluster", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "Successful", NickName = "Successful", Description = "Correctly Extracted", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "results", NickName = "results", Description = "The SAM analytical space simulation results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAdjacencyClusterParam() { Name = "adjacencyCluster", NickName = "adjacencyCluster", Description = "A SAM analytical adjacency cluster", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly extracted?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 return result.ToArray();
             }
@@ -82,7 +82,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
             int index_Successful;
-            index_Successful = Params.IndexOfOutputParam("Successful");
+            index_Successful = Params.IndexOfOutputParam("successful");
             if(index_Successful != -1)
                 dataAccess.SetData(index_Successful, false);
 
@@ -159,8 +159,8 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             AdjacencyCluster adjacencyCluster = null;
             List<SpaceSimulationResult> spaceSimulationResults = new List<SpaceSimulationResult>();
 
-            int index_Result = Params.IndexOfOutputParam("Results");
-            int index_AdjacencyCluster = Params.IndexOfOutputParam("AdjacencyCluster");
+            int index_Result = Params.IndexOfOutputParam("results");
+            int index_AdjacencyCluster = Params.IndexOfOutputParam("adjacencyCluster");
             if (index_Result != -1 || index_AdjacencyCluster != -1)
             {
                 using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path, true))
