@@ -33,7 +33,7 @@ namespace SAM.Analytical.Tas
         {
             Setting result = new Setting(Assembly.GetExecutingAssembly());
 
-            TypeMap typeMap = new TypeMap();
+            TypeMap typeMap = Core.Create.TypeMap();
             //mapCluster.Add(typeof(Space), typeof(TAS3D.Zone), "Colour", "colour");
             //mapCluster.Add(typeof(Space), typeof(TAS3D.Zone), "Description", "description");
            // mapCluster.Add(typeof(Space), typeof(TAS3D.Zone), "External", "external");
