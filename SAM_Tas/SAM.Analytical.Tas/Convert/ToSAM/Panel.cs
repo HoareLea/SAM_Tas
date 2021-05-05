@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas
 
             PlanarBoundary3D planarBoundary3D = null;
 
-            Panel panel = new Panel(new Construction(element.name), Query.PanelType(element.BEType), planarBoundary3D);
+            Panel panel = Analytical.Create.Panel(new Construction(element.name), Query.PanelType(element.BEType), planarBoundary3D);
             panel.Add(parameterSet);
 
             return panel;
@@ -31,7 +31,7 @@ namespace SAM.Analytical.Tas
             
             PlanarBoundary3D planarBoundary3D = null;
 
-            Panel panel = new Panel(new Construction(shade.name), PanelType.Shade, planarBoundary3D);
+            Panel panel = Analytical.Create.Panel(new Construction(shade.name), PanelType.Shade, planarBoundary3D);
             panel.Add(parameterSet);
 
             return panel;
@@ -63,7 +63,7 @@ namespace SAM.Analytical.Tas
 
             PlanarBoundary3D planarBoundary3D = null;
 
-            Panel panel = new Panel(new Construction(surfaceData.BEName), panelType, planarBoundary3D);
+            Panel panel = Analytical.Create.Panel(new Construction(surfaceData.BEName), panelType, planarBoundary3D);
             panel.Add(parameterSet);
 
             return panel;

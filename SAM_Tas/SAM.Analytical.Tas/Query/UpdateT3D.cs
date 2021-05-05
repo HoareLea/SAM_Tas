@@ -187,10 +187,10 @@ namespace SAM.Analytical.Tas
 
                                 foreach(Panel panel in panels)
                                 {
-                                    Panel panel_New = new Panel(panel, construction);
+                                    Panel panel_New = Analytical.Create.Panel(panel, construction);
                                     adjacencyCluster.AddObject(panel_New);
                                 }
-                            }                            
+                            }
                         }
                     }
                 }
