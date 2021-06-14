@@ -241,11 +241,26 @@ namespace SAM.Analytical.Tas
                                 window.transparent = materialType == MaterialType.Transparent;
                             }
 
-                            //InternalShadows
-                            window.internalShadows = false; //Requested by Michal 2021.03.01
-                            bool internalShadows = false;
-                            if (apertureConstruction.TryGetValue(ApertureConstructionParameter.IsInternalShadow, out internalShadows))
-                                window.internalShadows = internalShadows;
+
+                            if(window.transparent)
+                            {
+                                //InternalShadows
+                                window.internalShadows = false; //Requested by Michal 2021.03.01
+                                bool internalShadows = false;
+                                if (apertureConstruction.TryGetValue(ApertureConstructionParameter.IsInternalShadow, out internalShadows))
+                                {
+                                    window.internalShadows = internalShadows;
+                                }
+                                else
+                                {
+                                    List<Panel> panels = adjacencyCluster.GetPanels(apertureConstruction);
+                                    if(panels != null && panels.Count != 0)
+                                    {
+                                        window.internalShadows = panels.TrueForAll(x => adjacencyCluster.External(x));
+                                    }
+                                }
+                                    
+                            }
 
                             //FrameWidth
                             double frameWidth = double.NaN;
