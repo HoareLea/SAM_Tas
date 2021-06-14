@@ -213,8 +213,12 @@ namespace SAM.Analytical.Tas
 
                             //Colour
                             System.Drawing.Color color = System.Drawing.Color.Empty;
-                            if (apertureConstruction.TryGetValue(ApertureConstructionParameter.Color, out color))
+                            if (!apertureConstruction.TryGetValue(ApertureConstructionParameter.Color, out color))
+                                color = SAM.Analytical.Query.Color(apertureConstruction.ApertureType);
+
+                            if (color != System.Drawing.Color.Empty)
                                 window.colour = Core.Convert.ToUint(color);
+
 
                             //Transparent
                             List<ConstructionLayer> constructionLayers = null;
