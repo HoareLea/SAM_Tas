@@ -1,7 +1,5 @@
-﻿using SAM.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using TAS3D;
 
 namespace SAM.Analytical.Tas
 {

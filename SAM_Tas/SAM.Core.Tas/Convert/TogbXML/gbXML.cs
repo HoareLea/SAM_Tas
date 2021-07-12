@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SAM.Core.Tas
+﻿namespace SAM.Core.Tas
 {
     public static partial class Convert
     {
