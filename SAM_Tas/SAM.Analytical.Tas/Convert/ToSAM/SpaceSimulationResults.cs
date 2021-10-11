@@ -57,11 +57,16 @@ namespace SAM.Analytical.Tas
 
             //in SpaceSimulationResult we stored data from tas that is alreay pull in correct output format so Heating is from HDD and cooling is max of design and dynamic simulation
             List<List<SpaceSimulationResult>> spaceSimulationResults = Enumerable.Repeat<List<SpaceSimulationResult>>(null, zoneDatas_BuildingData.Count).ToList();
-            Parallel.For(0, zoneDatas_BuildingData.Count, (int i) =>
+            //Parallel.For(0, zoneDatas_BuildingData.Count, (int i) =>
+            for (int i = 0; i < zoneDatas_BuildingData.Count; i++)
             {
                 ZoneData zoneData_BuildingData = zoneDatas_BuildingData[i];
                 if (zoneDatas_BuildingData == null)
-                    return;
+                {
+                    //return;
+                    continue;
+                }
+
 
                 float load_Simulation = float.NaN;
                 int index_Simulation = -1;
@@ -115,12 +120,12 @@ namespace SAM.Analytical.Tas
                         spaceSimulationResults[i].Add(spaceSimulationResult_Heating);
                     }
                 }
-            });
+            };//);
 
-            List <SpaceSimulationResult> result = new List<SpaceSimulationResult>();
-            foreach(List<SpaceSimulationResult> spaceSimulationResults_Temp in spaceSimulationResults)
+            List<SpaceSimulationResult> result = new List<SpaceSimulationResult>();
+            foreach (List<SpaceSimulationResult> spaceSimulationResults_Temp in spaceSimulationResults)
             {
-                if(spaceSimulationResults_Temp != null)
+                if (spaceSimulationResults_Temp != null)
                 {
                     result.AddRange(spaceSimulationResults_Temp);
                 }
