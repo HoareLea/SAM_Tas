@@ -17,50 +17,50 @@ namespace SAM.Analytical.Tas
 
 
             int index = -1;
-            switch ((BuildingElementType)buildingElement.BEType)
+            switch ((TBD.BuildingElementType)buildingElement.BEType)
             {
-                case BuildingElementType.SHADEELEMENT:
-                case BuildingElementType.SOLARPANEL:
-                case BuildingElementType.NOBETYPE:
-                case BuildingElementType.NULLELEMENT:
+                case TBD.BuildingElementType.SHADEELEMENT:
+                case TBD.BuildingElementType.SOLARPANEL:
+                case TBD.BuildingElementType.NOBETYPE:
+                case TBD.BuildingElementType.NULLELEMENT:
                     index = -1;
                     break;
 
-                case BuildingElementType.UNDERGROUNDWALL:
-                case BuildingElementType.VEHICLEDOOR:
-                case BuildingElementType.FRAMEELEMENT:
-                case BuildingElementType.EXTERNALWALL:
-                case BuildingElementType.DOORELEMENT:
+                case TBD.BuildingElementType.UNDERGROUNDWALL:
+                case TBD.BuildingElementType.VEHICLEDOOR:
+                case TBD.BuildingElementType.FRAMEELEMENT:
+                case TBD.BuildingElementType.EXTERNALWALL:
+                case TBD.BuildingElementType.DOORELEMENT:
                     index = 0;
                     break;
 
-                case BuildingElementType.ROOFELEMENT:
+                case TBD.BuildingElementType.ROOFELEMENT:
                     index = 1;
                     break;
 
-                case BuildingElementType.UNDERGROUNDCEILING:
-                case BuildingElementType.UNDERGROUNDSLAB:
-                case BuildingElementType.SLABONGRADE:
-                case BuildingElementType.EXPOSEDFLOOR:
+                case TBD.BuildingElementType.UNDERGROUNDCEILING:
+                case TBD.BuildingElementType.UNDERGROUNDSLAB:
+                case TBD.BuildingElementType.SLABONGRADE:
+                case TBD.BuildingElementType.EXPOSEDFLOOR:
                     index = 2;
                     break;
 
-                case BuildingElementType.INTERNALWALL:
+                case TBD.BuildingElementType.INTERNALWALL:
                     index = 3;
                     break;
 
-                case BuildingElementType.CEILING:
+                case TBD.BuildingElementType.CEILING:
                     index = 4;
                     break;
 
-                case BuildingElementType.INTERNALFLOOR:
-                case BuildingElementType.RAISEDFLOOR:
+                case TBD.BuildingElementType.INTERNALFLOOR:
+                case TBD.BuildingElementType.RAISEDFLOOR:
                     index = 5;
                     break;
                     
-                case BuildingElementType.ROOFLIGHT:
-                case BuildingElementType.CURTAINWALL:
-                case BuildingElementType.GLAZING:
+                case TBD.BuildingElementType.ROOFLIGHT:
+                case TBD.BuildingElementType.CURTAINWALL:
+                case TBD.BuildingElementType.GLAZING:
                     index = 6;
                     break;
             }
