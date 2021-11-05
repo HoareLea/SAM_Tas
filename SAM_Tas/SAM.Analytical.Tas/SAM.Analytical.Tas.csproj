@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Convert\ToSAM\New\PartitionSimulationResult.cs" />
+    <Compile Include="Convert\ToSAM\New\SpaceSimulationResult.cs" />
     <Compile Include="Convert\ToSAM\SpaceSimulationResults.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
