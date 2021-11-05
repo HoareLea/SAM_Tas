@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Convert\ToSAM\" />
+    <Folder Include="Enums\" />
     <Folder Include="Modify\" />
   </ItemGroup>
   <ItemGroup>
