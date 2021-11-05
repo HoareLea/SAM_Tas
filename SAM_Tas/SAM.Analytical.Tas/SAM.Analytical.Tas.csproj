@@ -81,6 +81,7 @@
     <Compile Include="Convert\ToSAM\New\PartitionSimulationResult.cs" />
     <Compile Include="Convert\ToSAM\New\SpaceSimulationResult.cs" />
     <Compile Include="Convert\ToSAM\SpaceSimulationResults.cs" />
+    <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
     <Compile Include="Convert\ToSAM\AdjacencyCluster.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Modify\UpdateSizingFactors.cs" />
     <Compile Include="Modify\AddResults.cs" />
     <Compile Include="Create\SpaceSimulationResult.cs" />
+    <Compile Include="Query\New\OpeningType.cs" />
     <Compile Include="Query\ThermalTransmittance.cs" />
     <Compile Include="Query\TotalSolarEnergyTransmittance.cs" />
     <Compile Include="Query\LightTransmittance.cs" />
