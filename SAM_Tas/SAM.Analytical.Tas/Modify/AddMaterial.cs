@@ -2,7 +2,7 @@
 {
     public static partial class Modify
     {
-        public static TBD.material AddMaterial(this TBD.Construction construction, SAM.Core.Material material)
+        public static TBD.material AddMaterial(this TBD.Construction construction, Core.Material material)
         {
             if (construction == null || material == null)
                 return null;
