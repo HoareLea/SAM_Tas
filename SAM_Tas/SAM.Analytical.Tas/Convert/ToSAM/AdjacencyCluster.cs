@@ -88,7 +88,7 @@ namespace SAM.Analytical.Tas
             foreach (TBD.Construction construction_TBD in building.Constructions())
             {
                 Construction construction = construction_TBD.ToSAM();
-                if (construction != null)
+                if (construction == null)
                 {
                     continue;
                 }

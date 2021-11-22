@@ -8,7 +8,7 @@ namespace SAM.Analytical.Tas
         {
             List<TBD.material> result = new List<TBD.material>();
 
-            int index = 0;
+            int index = 1;
             TBD.material material = construction.materials(index);
             while (material != null)
             {
