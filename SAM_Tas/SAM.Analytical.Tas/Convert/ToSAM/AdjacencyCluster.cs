@@ -74,5 +74,82 @@ namespace SAM.Analytical.Tas
 
             return result;
         }
+
+        public static AdjacencyCluster ToSAM(this TBD.Building building)
+        {
+            if (building == null)
+            {
+                return null;
+            }
+
+            AdjacencyCluster adjacencyCluster = new AdjacencyCluster();
+
+            Dictionary<string, Construction> dictionary_Construction = new Dictionary<string, Construction>();
+            foreach (TBD.Construction construction_TBD in building.Constructions())
+            {
+                Construction construction = construction_TBD.ToSAM();
+                if (construction != null)
+                {
+                    continue;
+                }
+
+                dictionary_Construction[construction_TBD.GUID] = construction;
+                adjacencyCluster.AddObject(construction);
+            }
+
+            foreach (TBD.zone zone in building.Zones())
+            {
+                Space space = zone.ToSAM(out List<InternalCondition> internalConditions);
+                if (space == null)
+                {
+                    continue;
+                }
+
+                adjacencyCluster.AddObject(space);
+
+                foreach (TBD.IZoneSurface zoneSurface in zone.ZoneSurfaces())
+                {
+                    TBD.buildingElement buildingElement = zoneSurface.buildingElement;
+                    TBD.Construction construction_TBD = buildingElement.GetConstruction();
+
+                    PanelType panelType = Query.PanelType(buildingElement.BEType);
+
+                    Construction construction = null;
+                    if(construction_TBD != null)
+                    {
+                        construction = dictionary_Construction[construction_TBD.GUID];
+                    }
+
+                    foreach(TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
+                    {
+                        Geometry.Spatial.Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
+                        if(polygon3D == null)
+                        {
+                            continue;
+                        }
+
+                        Panel panel = Analytical.Create.Panel(construction, panelType, new Geometry.Spatial.Face3D(polygon3D));
+                        if(panel == null)
+                        {
+                            continue;
+                        }
+
+                        adjacencyCluster.AddObject(panel);
+                        adjacencyCluster.AddRelation(panel, space);
+                    }
+                }
+
+                if (internalConditions != null)
+                {
+                    foreach (InternalCondition internalCondition in internalConditions)
+                    {
+                        adjacencyCluster.AddObject(internalCondition);
+                        adjacencyCluster.AddRelation(space, internalCondition);
+                    }
+                }
+            }
+
+            return adjacencyCluster;
+        }
     }
 }

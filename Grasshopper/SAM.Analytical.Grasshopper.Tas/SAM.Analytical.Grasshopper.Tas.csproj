@@ -62,6 +62,10 @@
     <Reference Include="SAM.Analytical.Grasshopper">
       <HintPath>..\..\..\SAM\build\SAM.Analytical.Grasshopper.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Architectural, Version=1.0.7982.27027, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Architectural.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Core, Version=1.0.7509.27571, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
@@ -84,6 +88,7 @@
     <Compile Include="Classes\GooSAMT3DDocument.cs" />
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
+    <Compile Include="Component\SAMAnalyticalCreatAdjacencyClusterByTBD.cs" />
     <Compile Include="Component\TasOpenT3DDocument.cs" />
     <Compile Include="Component\TasSizing.cs" />
     <Compile Include="Component\TasTSDAddResults.cs" />

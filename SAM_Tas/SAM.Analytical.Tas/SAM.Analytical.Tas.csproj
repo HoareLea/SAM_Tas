@@ -77,9 +77,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Convert\ToSAM\AnalyticalModel.cs" />
+    <Compile Include="Convert\ToSAM\Construction.cs" />
+    <Compile Include="Convert\ToSAM\MaterialLibrary.cs" />
+    <Compile Include="Convert\ToSAM\Material.cs" />
+    <Compile Include="Convert\ToSAM\ProfileLibrary.cs" />
+    <Compile Include="Convert\ToSAM\Profile.cs" />
+    <Compile Include="Convert\ToSAM\Profiles.cs" />
     <Compile Include="Convert\ToSAM\New\OpeningSimulationResult.cs" />
     <Compile Include="Convert\ToSAM\New\PartitionSimulationResult.cs" />
     <Compile Include="Convert\ToSAM\New\SpaceSimulationResult.cs" />
+    <Compile Include="Convert\ToSAM\InternalCondition.cs" />
     <Compile Include="Convert\ToSAM\SpaceSimulationResults.cs" />
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
@@ -116,6 +124,10 @@
     <Compile Include="Modify\AddResults.cs" />
     <Compile Include="Create\SpaceSimulationResult.cs" />
     <Compile Include="Modify\UpdateSizingFactors.cs" />
+    <Compile Include="Query\RoomSurfaces.cs" />
+    <Compile Include="Query\ZoneSurfaces.cs" />
+    <Compile Include="Query\RoomShapes.cs" />
+    <Compile Include="Query\Rooms.cs" />
     <Compile Include="Query\New\OpeningType.cs" />
     <Compile Include="Query\ThermalTransmittance.cs" />
     <Compile Include="Query\TotalSolarEnergyTransmittance.cs" />
