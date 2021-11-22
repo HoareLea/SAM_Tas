@@ -223,6 +223,10 @@
       <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
       <Name>SAM.Core.Tas</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SAM.Geometry.Tas\SAM.Geometry.Tas.csproj">
+      <Project>{913ead72-bc27-4797-a95f-bedf56428ab0}</Project>
+      <Name>SAM.Geometry.Tas</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
