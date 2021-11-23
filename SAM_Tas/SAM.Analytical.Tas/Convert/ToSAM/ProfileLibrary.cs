@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas
         public static ProfileLibrary ToSAM_ProfileLibrary(this TBD.Building building)
         {
             List<Profile> profiles = building?.ToSAM_Profiles();
-            if(profiles != null)
+            if(profiles == null)
             {
                 return null;
             }

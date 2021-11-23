@@ -18,12 +18,6 @@
             {
                 result.SetValue(InternalConditionParameter.HeatingEmitterRadiantProportion, emitter.radiantProportion);
                 result.SetValue(InternalConditionParameter.HeatingEmitterCoefficient, emitter.viewCoefficient);
-
-                TBD.profile profile_TBD = emitter.GetProfile();
-                if (profile_TBD != null)
-                {
-                    result.SetValue(InternalConditionParameter.HeatingProfileName, profile_TBD.name);
-                }
             }
 
             emitter = internalCondition.GetCoolingEmitter();
@@ -31,12 +25,6 @@
             {
                 result.SetValue(InternalConditionParameter.CoolingEmitterRadiantProportion, emitter.radiantProportion);
                 result.SetValue(InternalConditionParameter.CoolingEmitterCoefficient, emitter.viewCoefficient);
-
-                TBD.profile profile_TBD = emitter.GetProfile();
-                if (profile_TBD != null)
-                {
-                    result.SetValue(InternalConditionParameter.CoolingProfileName, profile_TBD.name);
-                }
             }
 
             TBD.InternalGain internalGain = internalCondition.GetInternalGain();
@@ -89,25 +77,25 @@
             {
                 TBD.profile profile_TBD = null;
 
-                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticUL);
+                profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticUL);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.CoolingProfileName, profile_TBD.name);
                 }
 
-                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLL);
+                profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticLL);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.HeatingProfileName, profile_TBD.name);
                 }
 
-                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticHLL);
+                profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHLL);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.HumidificationProfileName, profile_TBD.name);
                 }
 
-                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticHUL);
+                profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHUL);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.DehumidificationProfileName, profile_TBD.name);

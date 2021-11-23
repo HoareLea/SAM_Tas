@@ -66,25 +66,25 @@ namespace SAM.Analytical.Tas
             {
                 Profile profile = null;
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticUL, ProfileType.Cooling);
+                profile = ToSAM(thermostat, TBD.Profiles.ticUL, ProfileType.Cooling);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticLL, ProfileType.Heating);
+                profile = ToSAM(thermostat, TBD.Profiles.ticLL, ProfileType.Heating);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticHLL, ProfileType.Humidification);
+                profile = ToSAM(thermostat, TBD.Profiles.ticHLL, ProfileType.Humidification);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticHUL, ProfileType.Dehumidification);
+                profile = ToSAM(thermostat, TBD.Profiles.ticHUL, ProfileType.Dehumidification);
                 if (profile != null)
                 {
                     result.Add(profile);

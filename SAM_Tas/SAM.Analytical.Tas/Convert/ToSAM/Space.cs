@@ -66,6 +66,12 @@ namespace SAM.Analytical.Tas
                 
                 foreach(TBD.InternalCondition internalCondition_TBD in internalConditions_TBD)
                 {
+                    InternalCondition internalCondition = internalCondition_TBD.ToSAM();
+                    if(internalCondition == null)
+                    {
+                        continue;
+                    }
+
                     TBD.InternalGain internalGain = internalCondition_TBD.GetInternalGain();
                     if(internalGain != null)
                     {
@@ -91,30 +97,31 @@ namespace SAM.Analytical.Tas
 
                         result.SetValue(SpaceParameter.Occupancy, occupancy);
 
-                        InternalCondition internalCondition = internalCondition_TBD.ToSAM();
-                        if(internalCondition != null)
+                        double equipmentLatentGain = 0;
+                        profile = internalGain.GetProfile((int)TBD.Profiles.ticELG);
+                        if (profile != null)
                         {
-                            double equipmentLatentGain = 0;
-                            profile = internalGain.GetProfile((int)TBD.Profiles.ticELG);
-                            if (profile != null)
-                            {
-                                equipmentLatentGain += profile.GetExtremeValue(true) * profile.factor;
-                            }
-
-                            internalCondition.SetValue(InternalConditionParameter.EquipmentLatentGain, equipmentLatentGain * area);
-
-                            double equipmentSensibleGain = 0;
-                            profile = internalGain.GetProfile((int)TBD.Profiles.ticESG);
-                            if (profile != null)
-                            {
-                                equipmentSensibleGain += profile.GetExtremeValue(true) * profile.factor;
-                            }
-
-                            internalCondition.SetValue(InternalConditionParameter.EquipmentSensibleGain, equipmentSensibleGain * area);
-
-                            internalConditions.Add(internalCondition);
+                            equipmentLatentGain += profile.GetExtremeValue(true) * profile.factor;
                         }
+
+                        internalCondition.SetValue(InternalConditionParameter.EquipmentLatentGain, equipmentLatentGain * area);
+
+                        double equipmentSensibleGain = 0;
+                        profile = internalGain.GetProfile((int)TBD.Profiles.ticESG);
+                        if (profile != null)
+                        {
+                            equipmentSensibleGain += profile.GetExtremeValue(true) * profile.factor;
+                        }
+
+                        internalCondition.SetValue(InternalConditionParameter.EquipmentSensibleGain, equipmentSensibleGain * area);
                     }
+
+                    if (internalCondition == null)
+                    {
+                        continue;
+                    }
+
+                    internalConditions.Add(internalCondition);
                 }
             }
 
