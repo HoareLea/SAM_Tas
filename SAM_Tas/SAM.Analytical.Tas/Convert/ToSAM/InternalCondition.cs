@@ -42,14 +42,14 @@
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.InfiltrationProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.InfiltrationProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                     result.SetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, profile_TBD.GetExtremeValue(true));
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLG);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.LightingProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.LightingProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                     result.SetValue(InternalConditionParameter.LightingGainPerArea, profile_TBD.GetExtremeValue(true));
                     result.SetValue(InternalConditionParameter.LightingLevel, internalGain.targetIlluminance);
                 }
@@ -69,7 +69,7 @@
                 if (profile_TBD != null)
                 {
                     double value = profile_TBD.GetExtremeValue(true);
-                    result.SetValue(InternalConditionParameter.OccupancyProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.OccupancyProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                     result.SetValue(InternalConditionParameter.OccupancyLatentGainPerPerson, value);
                     gain += value;
                 }
@@ -83,21 +83,21 @@
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticESG);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.EquipmentSensibleProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.EquipmentSensibleProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                     result.SetValue(InternalConditionParameter.EquipmentSensibleGainPerArea, profile_TBD.GetExtremeValue(true));
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticELG);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.EquipmentLatentProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.EquipmentLatentProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                     result.SetValue(InternalConditionParameter.EquipmentLatentGainPerArea, profile_TBD.GetExtremeValue(true));
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticCOG);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.PollutantProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.PollutantProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                     result.SetValue(InternalConditionParameter.PollutantGenerationPerArea, profile_TBD.GetExtremeValue(true));
                 }
 
@@ -111,25 +111,25 @@
                 profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticUL);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.CoolingProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.CoolingProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                 }
 
                 profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticLL);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.HeatingProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.HeatingProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                 }
 
                 profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHLL);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.HumidificationProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.HumidificationProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                 }
 
                 profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHUL);
                 if (profile_TBD != null)
                 {
-                    result.SetValue(InternalConditionParameter.DehumidificationProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.DehumidificationProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
                 }
             }
 

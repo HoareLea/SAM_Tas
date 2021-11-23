@@ -18,43 +18,43 @@ namespace SAM.Analytical.Tas
             {
                 Profile profile = null;
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticI, ProfileType.Infiltration);
+                profile = ToSAM(internalGain, TBD.Profiles.ticI, ProfileType.Infiltration, internalCondition.name);
                 if(profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticLG, ProfileType.Lighting);
+                profile = ToSAM(internalGain, TBD.Profiles.ticLG, ProfileType.Lighting, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticOLG, ProfileType.Occupancy);
+                profile = ToSAM(internalGain, TBD.Profiles.ticOLG, ProfileType.Occupancy, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticOSG, ProfileType.Occupancy);
+                profile = ToSAM(internalGain, TBD.Profiles.ticOSG, ProfileType.Occupancy, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticESG, ProfileType.EquipmentSensible);
+                profile = ToSAM(internalGain, TBD.Profiles.ticESG, ProfileType.EquipmentSensible, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticELG, ProfileType.EquipmentLatent);
+                profile = ToSAM(internalGain, TBD.Profiles.ticELG, ProfileType.EquipmentLatent, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(internalGain, TBD.Profiles.ticCOG, ProfileType.Pollutant);
+                profile = ToSAM(internalGain, TBD.Profiles.ticCOG, ProfileType.Pollutant, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
@@ -66,25 +66,25 @@ namespace SAM.Analytical.Tas
             {
                 Profile profile = null;
 
-                profile = ToSAM(thermostat, TBD.Profiles.ticUL, ProfileType.Cooling);
+                profile = ToSAM(thermostat, TBD.Profiles.ticUL, ProfileType.Cooling, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(thermostat, TBD.Profiles.ticLL, ProfileType.Heating);
+                profile = ToSAM(thermostat, TBD.Profiles.ticLL, ProfileType.Heating, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(thermostat, TBD.Profiles.ticHLL, ProfileType.Humidification);
+                profile = ToSAM(thermostat, TBD.Profiles.ticHLL, ProfileType.Humidification, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
                 }
 
-                profile = ToSAM(thermostat, TBD.Profiles.ticHUL, ProfileType.Dehumidification);
+                profile = ToSAM(thermostat, TBD.Profiles.ticHUL, ProfileType.Dehumidification, internalCondition.name);
                 if (profile != null)
                 {
                     result.Add(profile);
