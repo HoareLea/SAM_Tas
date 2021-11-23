@@ -67,82 +67,8 @@ namespace SAM.Analytical.Tas
                 
                 foreach(TBD.InternalCondition internalCondition_TBD in internalConditions_TBD)
                 {
-                    InternalCondition internalCondition = internalCondition_TBD.ToSAM();
+                    InternalCondition internalCondition = internalCondition_TBD.ToSAM(area);
                     if(internalCondition == null)
-                    {
-                        continue;
-                    }
-
-                    TBD.InternalGain internalGain = internalCondition_TBD.GetInternalGain();
-                    if(internalGain != null)
-                    {
-                        double personGain = internalGain.personGain;
-
-                        TBD.profile profile = null;
-
-                        double gain = 0;
-                        profile =  internalGain.GetProfile((int)TBD.Profiles.ticOLG);
-                        if(profile != null)
-                        {
-                            gain += profile.GetExtremeValue(true);
-                        }
-
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticOSG);
-                        if (profile != null)
-                        {
-                            gain += profile.GetExtremeValue(true);
-                        }
-
-                        double occupancy = (gain * area) / personGain;
-
-                        internalCondition.SetValue(InternalConditionParameter.AreaPerPerson, area / occupancy);
-                        //result.SetValue(SpaceParameter.Occupancy, occupancy);
-
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticI);
-                        if (profile != null)
-                        {
-                            internalCondition.SetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, profile.GetExtremeValue(true)); //.GetExtremeValue(true) awaiting Tas reply
-                        }
-
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticLG);
-                        if (profile != null)
-                        {
-                            internalCondition.SetValue(InternalConditionParameter.LightingGainPerArea, profile.GetExtremeValue(true));
-                            internalCondition.SetValue(InternalConditionParameter.LightingLevel, internalGain.targetIlluminance);
-                        }
-
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticOSG);
-                        if (profile != null)
-                        {
-                            internalCondition.SetValue(InternalConditionParameter.OccupancySensibleGainPerPerson, profile.GetExtremeValue(true));
-                        }
-
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticOLG);
-                        if (profile != null)
-                        {
-                            internalCondition.SetValue(InternalConditionParameter.OccupancyLatentGainPerPerson, profile.GetExtremeValue(true));
-                        }
-
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticESG);
-                        if (profile != null)
-                        {
-                            internalCondition.SetValue(InternalConditionParameter.EquipmentSensibleGainPerArea, profile.GetExtremeValue(true));
-                        }
-
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticELG);
-                        if (profile != null)
-                        {
-                            internalCondition.SetValue(InternalConditionParameter.EquipmentLatentGainPerArea, profile.GetExtremeValue(true));
-                        }
-
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticCOG);
-                        if (profile != null)
-                        {
-                            result.SetValue(InternalConditionParameter.PollutantGenerationPerArea, profile.GetExtremeValue(true));
-                        }
-                    }
-
-                    if (internalCondition == null)
                     {
                         continue;
                     }
@@ -150,7 +76,6 @@ namespace SAM.Analytical.Tas
                     internalConditions.Add(internalCondition);
                 }
             }
-
 
             return result;
         }

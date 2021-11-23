@@ -39,20 +39,50 @@ namespace SAM.Analytical.Tas
                 emitter.name = internalCondition.GetSystemTypeName<CoolingSystemType>();
 
                 if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmitterRadiantProportion, out value))
+                {
                     emitter.radiantProportion = System.Convert.ToSingle(value);
+                }
 
                 if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmitterCoefficient, out value))
+                {
                     emitter.viewCoefficient = System.Convert.ToSingle(value);
+                }
             }
 
             TBD.InternalGain internalGain = internalCondition_TBD.GetInternalGain();
-            internalGain.lightingRadProp = (float)0.3;
-            internalGain.lightingViewCoefficient = (float)0.49;
-            internalGain.equipmentRadProp = (float)0.1;
-            internalGain.equipmentViewCoefficient = (float)0.372;
-            internalGain.occupantRadProp = (float)0.2;
-            internalGain.occupantViewCoefficient = (float)0.227;
+
+            if(internalCondition.TryGetValue(InternalConditionParameter.LightingRadiantProportion, out value))
+            {
+                internalGain.lightingRadProp = System.Convert.ToSingle(value);
+            }
+
+            if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyRadiantProportion, out value))
+            {
+                internalGain.occupantRadProp = System.Convert.ToSingle(value);
+            }
+
+            if (internalCondition.TryGetValue(InternalConditionParameter.EquipmentRadiantProportion, out value))
+            {
+                internalGain.equipmentRadProp = System.Convert.ToSingle(value);
+            }
+
+            if (internalCondition.TryGetValue(InternalConditionParameter.LightingViewCoefficient, out value))
+            {
+                internalGain.lightingViewCoefficient = System.Convert.ToSingle(value);
+            }
+
+            if (internalCondition.TryGetValue(InternalConditionParameter.OccupancyViewCoefficient, out value))
+            {
+                internalGain.occupantViewCoefficient = System.Convert.ToSingle(value);
+            }
+
+            if (internalCondition.TryGetValue(InternalConditionParameter.EquipmentViewCoefficient, out value))
+            {
+                internalGain.equipmentViewCoefficient = System.Convert.ToSingle(value);
+            }
+
             internalGain.domesticHotWater = (float)0.197;
+
             internalGain.name = internalCondition.Name;
             internalGain.description = internalCondition.GetSystemTypeName<VentilationSystemType>();
 

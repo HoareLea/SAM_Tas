@@ -2,7 +2,7 @@
 {
     public static partial class Convert
     {
-        public static InternalCondition ToSAM(this TBD.InternalCondition internalCondition)
+        public static InternalCondition ToSAM(this TBD.InternalCondition internalCondition, double area = double.NaN)
         {
             if (internalCondition == null)
             {
@@ -30,41 +30,75 @@
             TBD.InternalGain internalGain = internalCondition.GetInternalGain();
             if (internalGain != null)
             {
+                result.SetValue(InternalConditionParameter.LightingRadiantProportion, internalGain.lightingRadProp);
+                result.SetValue(InternalConditionParameter.OccupancyRadiantProportion, internalGain.occupantRadProp);
+                result.SetValue(InternalConditionParameter.EquipmentRadiantProportion, internalGain.equipmentRadProp);
+
+                result.SetValue(InternalConditionParameter.LightingViewCoefficient, internalGain.lightingViewCoefficient);
+                result.SetValue(InternalConditionParameter.OccupancyViewCoefficient, internalGain.occupantViewCoefficient);
+                result.SetValue(InternalConditionParameter.EquipmentViewCoefficient, internalGain.equipmentViewCoefficient);
+
                 TBD.profile profile_TBD = null;
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.InfiltrationProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, profile_TBD.GetExtremeValue(true));
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLG);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.LightingProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.LightingGainPerArea, profile_TBD.GetExtremeValue(true));
+                    result.SetValue(InternalConditionParameter.LightingLevel, internalGain.targetIlluminance);
+                }
+
+                double personGain = internalGain.personGain;
+                double gain = 0;
+
+                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticOSG);
+                if (profile_TBD != null)
+                {
+                    double value = profile_TBD.GetExtremeValue(true);
+                    result.SetValue(InternalConditionParameter.OccupancySensibleGainPerPerson, value);
+                    gain += value;
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticOLG);
                 if (profile_TBD != null)
                 {
+                    double value = profile_TBD.GetExtremeValue(true);
                     result.SetValue(InternalConditionParameter.OccupancyProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.OccupancyLatentGainPerPerson, value);
+                    gain += value;
+                }
+
+                if(!double.IsNaN(area) && !double.IsNaN(gain))
+                {
+                    double occupancy = (gain * area) / personGain;
+                    result.SetValue(InternalConditionParameter.AreaPerPerson, area / occupancy);
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticESG);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.EquipmentSensibleProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.EquipmentSensibleGainPerArea, profile_TBD.GetExtremeValue(true));
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticELG);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.EquipmentLatentProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.EquipmentLatentGainPerArea, profile_TBD.GetExtremeValue(true));
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticCOG);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.PollutantProfileName, profile_TBD.name);
+                    result.SetValue(InternalConditionParameter.PollutantGenerationPerArea, profile_TBD.GetExtremeValue(true));
                 }
 
             }
