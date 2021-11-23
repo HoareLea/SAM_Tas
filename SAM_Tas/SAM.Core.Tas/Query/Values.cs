@@ -25,7 +25,7 @@ namespace SAM.Core.Tas
 
                 case TBD.ProfileTypes.ticYearlyProfile:
                     for (int i = 0; i <= 8759; i++)
-                        result.Add(profile.yearlyValues[i]);
+                        result.Add(profile.yearlyValues[i + 1]);
                     break;
             }
 
