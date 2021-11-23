@@ -58,6 +58,7 @@ namespace SAM.Analytical.Tas
             double area = zone.floorArea;
 
             result.SetValue(SpaceParameter.Area, area);
+            result.SetValue(SpaceParameter.Volume, zone.volume);
 
             List<TBD.InternalCondition> internalConditions_TBD = zone.InternalConditions();
             if(internalConditions_TBD != null)
@@ -83,37 +84,62 @@ namespace SAM.Analytical.Tas
                         profile =  internalGain.GetProfile((int)TBD.Profiles.ticOLG);
                         if(profile != null)
                         {
-                            gain += profile.GetExtremeValue(true) * profile.factor;
+                            gain += profile.GetExtremeValue(true);
                         }
 
                         profile = internalGain.GetProfile((int)TBD.Profiles.ticOSG);
                         if (profile != null)
                         {
-                            gain += profile.GetExtremeValue(true) * profile.factor;
+                            gain += profile.GetExtremeValue(true);
                         }
 
                         double occupancy = (gain * area) / personGain;
 
+                        internalCondition.SetValue(InternalConditionParameter.AreaPerPerson, area / occupancy);
+                        //result.SetValue(SpaceParameter.Occupancy, occupancy);
 
-                        result.SetValue(SpaceParameter.Occupancy, occupancy);
-
-                        double equipmentLatentGain = 0;
-                        profile = internalGain.GetProfile((int)TBD.Profiles.ticELG);
+                        profile = internalGain.GetProfile((int)TBD.Profiles.ticI);
                         if (profile != null)
                         {
-                            equipmentLatentGain += profile.GetExtremeValue(true) * profile.factor;
+                            internalCondition.SetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, profile.GetExtremeValue(true)); //.GetExtremeValue(true) awaiting Tas reply
                         }
 
-                        internalCondition.SetValue(InternalConditionParameter.EquipmentLatentGain, equipmentLatentGain * area);
+                        profile = internalGain.GetProfile((int)TBD.Profiles.ticLG);
+                        if (profile != null)
+                        {
+                            internalCondition.SetValue(InternalConditionParameter.LightingGainPerArea, profile.GetExtremeValue(true));
+                            internalCondition.SetValue(InternalConditionParameter.LightingLevel, internalGain.targetIlluminance);
+                        }
 
-                        double equipmentSensibleGain = 0;
+                        profile = internalGain.GetProfile((int)TBD.Profiles.ticOSG);
+                        if (profile != null)
+                        {
+                            internalCondition.SetValue(InternalConditionParameter.OccupancySensibleGainPerPerson, profile.GetExtremeValue(true));
+                        }
+
+                        profile = internalGain.GetProfile((int)TBD.Profiles.ticOLG);
+                        if (profile != null)
+                        {
+                            internalCondition.SetValue(InternalConditionParameter.OccupancyLatentGainPerPerson, profile.GetExtremeValue(true));
+                        }
+
                         profile = internalGain.GetProfile((int)TBD.Profiles.ticESG);
                         if (profile != null)
                         {
-                            equipmentSensibleGain += profile.GetExtremeValue(true) * profile.factor;
+                            internalCondition.SetValue(InternalConditionParameter.EquipmentSensibleGainPerArea, profile.GetExtremeValue(true));
                         }
 
-                        internalCondition.SetValue(InternalConditionParameter.EquipmentSensibleGain, equipmentSensibleGain * area);
+                        profile = internalGain.GetProfile((int)TBD.Profiles.ticELG);
+                        if (profile != null)
+                        {
+                            internalCondition.SetValue(InternalConditionParameter.EquipmentLatentGainPerArea, profile.GetExtremeValue(true));
+                        }
+
+                        profile = internalGain.GetProfile((int)TBD.Profiles.ticCOG);
+                        if (profile != null)
+                        {
+                            result.SetValue(InternalConditionParameter.PollutantGenerationPerArea, profile.GetExtremeValue(true));
+                        }
                     }
 
                     if (internalCondition == null)

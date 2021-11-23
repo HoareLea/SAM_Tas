@@ -31,13 +31,10 @@
             if (internalGain != null)
             {
                 TBD.profile profile_TBD = null;
-
-                result.SetValue(InternalConditionParameter.LightingLevel, internalGain.targetIlluminance);
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
                 if (profile_TBD != null)
                 {
                     result.SetValue(InternalConditionParameter.InfiltrationProfileName, profile_TBD.name);
-                    result.SetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, profile_TBD.factor * profile_TBD.GetExtremeValue(true));
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLG);
