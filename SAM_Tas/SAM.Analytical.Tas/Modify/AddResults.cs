@@ -60,13 +60,25 @@ namespace SAM.Analytical.Tas
                 {
                     List<SpaceSimulationResult> spaceSimulationResults_Space = spaceSimulationResults.FindAll(x => space.Name.Equals(x.Name));
                     dictionary[space.Guid] = spaceSimulationResults_Space;
-                    if(spaceSimulationResults_Space != null && spaceSimulationResults_Space.Count > 0)
+                    if(spaceSimulationResults_Space == null || spaceSimulationResults_Space.Count == 0)
                     {
-                        foreach (SpaceSimulationResult spaceSimulationResult in spaceSimulationResults_Space)
+                        continue;
+                    }
+
+                    foreach (SpaceSimulationResult spaceSimulationResult in spaceSimulationResults_Space)
+                    {
+                        List<SpaceSimulationResult> spaceSimulationResults_Existing = adjacencyCluster.GetResults<SpaceSimulationResult>(space, Query.Source())?.FindAll(x => x.LoadType() == spaceSimulationResult.LoadType());
+                        if(spaceSimulationResults_Existing != null && spaceSimulationResults_Existing.Count != 0)
                         {
-                            adjacencyCluster.AddObject(spaceSimulationResult);
-                            adjacencyCluster.AddRelation(space, spaceSimulationResult);
+                            adjacencyCluster.Remove(spaceSimulationResults_Existing);
+                            if(spaceSimulationResults_Existing[0].TryGetValue(SpaceSimulationResultParameter.DesignLoad, out double designLoad))
+                            {
+                                spaceSimulationResult.SetValue(SpaceSimulationResultParameter.DesignLoad, designLoad);
+                            }
                         }
+
+                        adjacencyCluster.AddObject(spaceSimulationResult);
+                        adjacencyCluster.AddRelation(space, spaceSimulationResult);
                     }
                 }
             }
