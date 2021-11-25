@@ -2,6 +2,7 @@
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using System;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
@@ -15,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -43,7 +44,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
-            inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel", "_analyticalModel", "A SAM analytical model", GH_ParamAccess.item);
+            inputParamManager.AddParameter(new GooAnalyticalObjectParam(), "_analyticalModel", "_analyticalModel", "A SAM analytical model", GH_ParamAccess.item);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -52,7 +53,10 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddParameter(new GooAnalyticalModelParam(), "analyticalModel", "analyticalModel", "A SAM analytical model", GH_ParamAccess.item);
+            outputParamManager.AddParameter(new GooAnalyticalObjectParam(), "analyticalModel", "analyticalModel", "A SAM analytical model", GH_ParamAccess.item);
+            outputParamManager.AddParameter(new GooSpaceParam(), "spaces", "spaces", "SAM Analytcial Spaces", GH_ParamAccess.list);
+            outputParamManager.AddParameter(new GooResultParam(), "spaceSimulationResultsCooling", "spaceSimulationResultsCooling", "Cooling SpaceSimulationResults", GH_ParamAccess.list);
+            outputParamManager.AddParameter(new GooResultParam(), "spaceSimulationResultsHeating", "spaceSimulationResultsHeating", "Heating SpaceSimulationResults", GH_ParamAccess.list);
             outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
         }
 
@@ -80,17 +84,78 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            AnalyticalModel analyticalModel = null;
-            if (!dataAccess.GetData(1, ref analyticalModel) || analyticalModel == null)
+            IAnalyticalObject analyticalObject = null;
+            if (!dataAccess.GetData(1, ref analyticalObject) || analyticalObject == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            analyticalModel = Analytical.Tas.Modify.UpdateDesignLoads(path_TBD, analyticalModel);
+            List<SpaceSimulationResult> spaceSimulationResults_Cooling = null;
+            List<SpaceSimulationResult> spaceSimulationResults_Heating = null;
+            List<Space> spaces = null;
+            bool result = false;
 
-            dataAccess.SetData(0, new GooAnalyticalModel(analyticalModel));
-            dataAccess.SetData(1, true);
+            if (analyticalObject is AnalyticalModel)
+            {
+                analyticalObject = Analytical.Tas.Modify.UpdateDesignLoads(path_TBD, (AnalyticalModel)analyticalObject);
+                AdjacencyCluster adjacencyCluster = ((AnalyticalModel)analyticalObject).AdjacencyCluster;
+                if (adjacencyCluster != null)
+                {
+                    spaces = adjacencyCluster.GetSpaces();
+                    if (spaces != null)
+                    {
+                        spaceSimulationResults_Cooling = new List<SpaceSimulationResult>();
+                        spaceSimulationResults_Heating = new List<SpaceSimulationResult>();
+
+                        foreach (Space space in spaces)
+                        {
+                            List<SpaceSimulationResult> spaceSimulationResults = adjacencyCluster.GetResults<SpaceSimulationResult>(space, Analytical.Tas.Query.Source());
+                            if (spaceSimulationResults == null)
+                            {
+                                continue;
+                            }
+
+                            spaceSimulationResults_Cooling.AddRange(spaceSimulationResults.FindAll(x => x.LoadType() == LoadType.Cooling));
+                            spaceSimulationResults_Cooling.AddRange(spaceSimulationResults.FindAll(x => x.LoadType() == LoadType.Heating));
+                        }
+                        result = true;
+                    }
+
+                }
+            }
+            else if(analyticalObject is ArchitecturalModel)
+            {
+                ArchitecturalModel architecturalModel = new ArchitecturalModel((ArchitecturalModel)analyticalObject);
+                spaces = Analytical.Tas.Modify.UpdateDesignLoads(architecturalModel, path_TBD);
+                if(spaces != null)
+                {
+                    spaceSimulationResults_Cooling = new List<SpaceSimulationResult>();
+                    spaceSimulationResults_Heating = new List<SpaceSimulationResult>();
+
+                    foreach (Space space in spaces)
+                    {
+                        List<SpaceSimulationResult> spaceSimulationResults = architecturalModel.GetResults<SpaceSimulationResult>(space, Analytical.Tas.Query.Source());
+                        if (spaceSimulationResults == null)
+                        {
+                            continue;
+                        }
+
+                        spaceSimulationResults_Cooling.AddRange(spaceSimulationResults.FindAll(x => x.LoadType() == LoadType.Cooling));
+                        spaceSimulationResults_Cooling.AddRange(spaceSimulationResults.FindAll(x => x.LoadType() == LoadType.Heating));
+                    }
+
+                    result = true;
+                }
+
+                analyticalObject = architecturalModel;
+            }
+
+            dataAccess.SetData(0, new GooAnalyticalObject(analyticalObject));
+            dataAccess.SetData(1, spaces?.ConvertAll(x => new GooSpace(x)));
+            dataAccess.SetData(2, spaceSimulationResults_Cooling?.ConvertAll(x => new GooResult(x)));
+            dataAccess.SetData(3, spaceSimulationResults_Heating?.ConvertAll(x => new GooResult(x)));
+            dataAccess.SetData(4, result);
         }
     }
 }
