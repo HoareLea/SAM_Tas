@@ -51,7 +51,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_runUnmetHours_", NickName = "_runUnmetHours_", Description = "Calculates the amount of hours that the Zone/Space will be outside of the thermostat setpoint (unmet hours).", Access = GH_ParamAccess.item };
-                @boolean.SetPersistentData(true);
+                @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_Number number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_unmetHoursMargin_", NickName = "_unmetHoursMargin_", Description = "Unmet Hours Calculation Margin, a setpoint Band", Access = GH_ParamAccess.item };
