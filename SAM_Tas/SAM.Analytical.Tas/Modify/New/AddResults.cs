@@ -7,39 +7,39 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<Core.Result> AddResults(this string path_TSD, ArchitecturalModel architecturalModel)
+        public static List<Core.Result> AddResults(this string path_TSD, BuildingModel buildingModel)
         {
-            if (architecturalModel == null || string.IsNullOrWhiteSpace(path_TSD))
+            if (buildingModel == null || string.IsNullOrWhiteSpace(path_TSD))
                 return null;
 
             List<Core.Result> result = null;
             using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
             {
-                result = AddResults(sAMTSDDocument, architecturalModel);
+                result = AddResults(sAMTSDDocument, buildingModel);
             }
 
             return result;
         }
 
-        public static List<Core.Result> AddResults(this SAMTSDDocument sAMTSDDocument, ArchitecturalModel architecturalModel)
+        public static List<Core.Result> AddResults(this SAMTSDDocument sAMTSDDocument, BuildingModel buildingModel)
         {
-            if (sAMTSDDocument == null || architecturalModel == null)
+            if (sAMTSDDocument == null || buildingModel == null)
                 return null;
 
-            return AddResults(sAMTSDDocument.TSDDocument, architecturalModel);
+            return AddResults(sAMTSDDocument.TSDDocument, buildingModel);
         }
 
-        public static List<Core.Result> AddResults(this TSDDocument tSDDocument, ArchitecturalModel architecturalModel)
+        public static List<Core.Result> AddResults(this TSDDocument tSDDocument, BuildingModel buildingModel)
         {
-            if (tSDDocument == null || architecturalModel == null)
+            if (tSDDocument == null || buildingModel == null)
                 return null;
 
-            return AddResults(tSDDocument.SimulationData, architecturalModel);
+            return AddResults(tSDDocument.SimulationData, buildingModel);
         }
 
-        public static List<Core.Result> AddResults(this SimulationData simulationData, ArchitecturalModel architecturalModel)
+        public static List<Core.Result> AddResults(this SimulationData simulationData, BuildingModel buildingModel)
         {
-            if (simulationData == null || architecturalModel == null)
+            if (simulationData == null || buildingModel == null)
                 return null;
 
             List<Core.Result> result = null; 
@@ -52,7 +52,7 @@ namespace SAM.Analytical.Tas
             result = new List<Core.Result>(spaceSimulationResults);
 
             Dictionary<System.Guid, List<SpaceSimulationResult>> dictionary = new Dictionary<System.Guid, List<SpaceSimulationResult>>();
-            List<Space> spaces = architecturalModel.GetSpaces();
+            List<Space> spaces = buildingModel.GetSpaces();
             if(spaces != null && spaces.Count > 0)
             {
                 foreach (Space space in spaces)
@@ -63,14 +63,14 @@ namespace SAM.Analytical.Tas
                     {
                         foreach (SpaceSimulationResult spaceSimulationResult in spaceSimulationResults_Space)
                         {
-                            architecturalModel.Add(spaceSimulationResult, space.Guid);
+                            buildingModel.Add(spaceSimulationResult, space.Guid);
                         }
                     }
                 }
             }
 
             // get data data about SAM Zones like space GUID, Zone Category etc.
-            List<Zone> zones = architecturalModel.GetZones();
+            List<Zone> zones = buildingModel.GetZones();
             if (zones != null && zones.Count > 0)
             {
                 //  Query Tas Zones,  that can be linked with SAM Spaces
@@ -80,13 +80,13 @@ namespace SAM.Analytical.Tas
                 // Our SAM Zones(list of Space GUIDs)
                 foreach (Zone zone in zones)
                 {
-                    List<Space> spaces_Zone = architecturalModel.GetSpaces(zone);
+                    List<Space> spaces_Zone = buildingModel.GetSpaces(zone);
                     if (spaces_Zone == null || spaces_Zone.Count == 0)
                         continue;
 
-                    double area = architecturalModel.Sum(zone, SpaceParameter.Area);
-                    double volume = architecturalModel.Sum(zone, SpaceParameter.Volume);
-                    double occupancy = architecturalModel.Sum(zone, SpaceParameter.Occupancy);
+                    double area = buildingModel.Sum(zone, SpaceParameter.Area);
+                    double volume = buildingModel.Sum(zone, SpaceParameter.Volume);
+                    double occupancy = buildingModel.Sum(zone, SpaceParameter.Occupancy);
 
                     List<ZoneData> zoneDatas = new List<ZoneData>();
                     foreach (Space space in spaces_Zone)
@@ -184,7 +184,7 @@ namespace SAM.Analytical.Tas
 
                     if(zoneSimulationResult_Cooling != null)
                     {
-                        architecturalModel.Add(zoneSimulationResult_Cooling, zone);
+                        buildingModel.Add(zoneSimulationResult_Cooling, zone);
                         result.Add(zoneSimulationResult_Cooling);
                     }
 

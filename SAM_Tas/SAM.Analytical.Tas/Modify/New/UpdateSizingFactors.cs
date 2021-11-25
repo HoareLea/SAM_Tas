@@ -5,21 +5,21 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static void UpdateSizingFactors(this Building building, ArchitecturalModel architecturalModel)
+        public static void UpdateSizingFactors(this Building building, BuildingModel buildingModel)
         {
-            if (building == null || architecturalModel == null)
+            if (building == null || buildingModel == null)
                 return;
 
-            List<Space> spaces = architecturalModel.GetSpaces();
+            List<Space> spaces = buildingModel.GetSpaces();
             if (spaces == null || spaces.Count == 0)
                 return;
 
             double heatingSizingFactor = double.NaN;
-            if (!architecturalModel.TryGetValue(ArchitecturalModelParameter.HeatingSizingFactor, out heatingSizingFactor))
+            if (!buildingModel.TryGetValue(BuildingModelParameter.HeatingSizingFactor, out heatingSizingFactor))
                 heatingSizingFactor = double.NaN;
 
             double coolingSizingFactor = double.NaN;
-            if (!architecturalModel.TryGetValue(ArchitecturalModelParameter.CoolingSizingFactor, out coolingSizingFactor))
+            if (!buildingModel.TryGetValue(BuildingModelParameter.CoolingSizingFactor, out coolingSizingFactor))
                 coolingSizingFactor = double.NaN;
 
             UpdateSizingFactors(building, spaces, heatingSizingFactor, coolingSizingFactor);

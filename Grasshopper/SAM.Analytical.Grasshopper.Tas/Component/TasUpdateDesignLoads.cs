@@ -124,10 +124,10 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 }
             }
-            else if(analyticalObject is ArchitecturalModel)
+            else if(analyticalObject is BuildingModel)
             {
-                ArchitecturalModel architecturalModel = new ArchitecturalModel((ArchitecturalModel)analyticalObject);
-                spaces = Analytical.Tas.Modify.UpdateDesignLoads(architecturalModel, path_TBD);
+                BuildingModel buildingModel = new BuildingModel((BuildingModel)analyticalObject);
+                spaces = Analytical.Tas.Modify.UpdateDesignLoads(buildingModel, path_TBD);
                 if(spaces != null)
                 {
                     spaceSimulationResults_Cooling = new List<SpaceSimulationResult>();
@@ -135,7 +135,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     foreach (Space space in spaces)
                     {
-                        List<SpaceSimulationResult> spaceSimulationResults = architecturalModel.GetResults<SpaceSimulationResult>(space, Analytical.Tas.Query.Source());
+                        List<SpaceSimulationResult> spaceSimulationResults = buildingModel.GetResults<SpaceSimulationResult>(space, Analytical.Tas.Query.Source());
                         if (spaceSimulationResults == null)
                         {
                             continue;
@@ -148,7 +148,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     result = true;
                 }
 
-                analyticalObject = architecturalModel;
+                analyticalObject = buildingModel;
             }
 
             dataAccess.SetData(0, new GooAnalyticalObject(analyticalObject));

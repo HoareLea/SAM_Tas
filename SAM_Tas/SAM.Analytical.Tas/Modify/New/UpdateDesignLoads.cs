@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<Space> UpdateDesignLoads(this ArchitecturalModel architecturalModel, string path_TBD)
+        public static List<Space> UpdateDesignLoads(this BuildingModel buildingModel, string path_TBD)
         {
             if (string.IsNullOrWhiteSpace(path_TBD))
                 return null;
@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas
 
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
-                result = UpdateDesignLoads(architecturalModel, sAMTBDDocument);
+                result = UpdateDesignLoads(buildingModel, sAMTBDDocument);
                 if (result != null)
                     sAMTBDDocument.Save();
             }
@@ -24,24 +24,24 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<Space> UpdateDesignLoads(this ArchitecturalModel architecturalModel, SAMTBDDocument sAMTBDDocument)
+        public static List<Space> UpdateDesignLoads(this BuildingModel buildingModel, SAMTBDDocument sAMTBDDocument)
         {
             if (sAMTBDDocument == null)
                 return null;
 
-            return UpdateDesignLoads(architecturalModel, sAMTBDDocument.TBDDocument);
+            return UpdateDesignLoads(buildingModel, sAMTBDDocument.TBDDocument);
         }
 
-        public static List<Space> UpdateDesignLoads(this ArchitecturalModel architecturalModel, TBDDocument tBDDocument)
+        public static List<Space> UpdateDesignLoads(this BuildingModel buildingModel, TBDDocument tBDDocument)
         {
-            if (tBDDocument == null || architecturalModel == null)
+            if (tBDDocument == null || buildingModel == null)
                 return null;
 
             Building building = tBDDocument.Building;
             if (building == null)
                 return null;
 
-            List<Space> spaces = architecturalModel.GetSpaces();
+            List<Space> spaces = buildingModel.GetSpaces();
             if (spaces == null || spaces.Count == 0)
                 return spaces;
 
@@ -65,9 +65,9 @@ namespace SAM.Analytical.Tas
                 space.SetValue(SpaceParameter.DesignHeatingLoad, zone.maxHeatingLoad);
                 space.SetValue(SpaceParameter.DesignCoolingLoad, zone.maxCoolingLoad);
 
-                architecturalModel.Add(space);
+                buildingModel.Add(space);
 
-                List<SpaceSimulationResult> spaceSimulationResults = architecturalModel.GetResults<SpaceSimulationResult>(space, Query.Source());
+                List<SpaceSimulationResult> spaceSimulationResults = buildingModel.GetResults<SpaceSimulationResult>(space, Query.Source());
                 foreach(LoadType loadType in new LoadType[] {LoadType.Heating, LoadType.Cooling })
                 {
                     SpaceSimulationResult spaceSimulationResult = spaceSimulationResults?.Find(x => x.LoadType() == loadType);
@@ -84,7 +84,7 @@ namespace SAM.Analytical.Tas
 
                     if (spaceSimulationResult != null)
                     {
-                        architecturalModel.Add(spaceSimulationResult, space);
+                        buildingModel.Add(spaceSimulationResult, space);
                     }
                 }
             }
