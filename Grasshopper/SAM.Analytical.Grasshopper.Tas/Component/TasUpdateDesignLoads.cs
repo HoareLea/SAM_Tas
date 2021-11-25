@@ -152,9 +152,9 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             dataAccess.SetData(0, new GooAnalyticalObject(analyticalObject));
-            dataAccess.SetData(1, spaces?.ConvertAll(x => new GooSpace(x)));
-            dataAccess.SetData(2, spaceSimulationResults_Cooling?.ConvertAll(x => new GooResult(x)));
-            dataAccess.SetData(3, spaceSimulationResults_Heating?.ConvertAll(x => new GooResult(x)));
+            dataAccess.SetDataList(1, spaces?.ConvertAll(x => new GooSpace(x)));
+            dataAccess.SetDataList(2, spaceSimulationResults_Cooling?.ConvertAll(x => new GooResult(x)));
+            dataAccess.SetDataList(3, spaceSimulationResults_Heating?.ConvertAll(x => new GooResult(x)));
             dataAccess.SetData(4, result);
         }
     }
