@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -46,6 +46,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "A string path to a TasTBD file", GH_ParamAccess.item);
             inputParamManager.AddParameter(new GooAnalyticalObjectParam() { Optional = true}, "_coolingDesignDays_", "_coolingDesignDays_", "The SAM Analytical Design Days for Cooling",  GH_ParamAccess.list);
             inputParamManager.AddParameter(new GooAnalyticalObjectParam() { Optional = true }, "_heatingDesignDays_", "_heatingDesignDays_", "The SAM Analytical Design Days for Heating", GH_ParamAccess.list);
+            inputParamManager.AddIntegerParameter("_repetitions", "_repetitions", "Repetitions", GH_ParamAccess.item, 30);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -67,7 +68,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(1, false);
 
             bool run = false;
-            if (!dataAccess.GetData(3, ref run))
+            if (!dataAccess.GetData(4, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -88,12 +89,15 @@ namespace SAM.Analytical.Grasshopper.Tas
             List<DesignDay> heatingDesignDays = new List<DesignDay>();
             dataAccess.GetDataList(2, heatingDesignDays);
 
+            int repetitions = 30;
+            dataAccess.GetData(3, ref repetitions);
+
             List<Guid> guids = null;
             if (coolingDesignDays != null || heatingDesignDays != null)
             {
                 if(coolingDesignDays.Count != 0 || heatingDesignDays.Count != 0)
                 {
-                    guids = Analytical.Tas.Modify.AddDesignDays(path_TBD, coolingDesignDays, heatingDesignDays);
+                    guids = Analytical.Tas.Modify.AddDesignDays(path_TBD, coolingDesignDays, heatingDesignDays, repetitions);
                 }
             }
 

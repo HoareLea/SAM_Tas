@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<Guid> AddDesignDays(this string path_TBD, IEnumerable<DesignDay> coolingDesignDays, IEnumerable<DesignDay> heatingDesignDays)
+        public static List<Guid> AddDesignDays(this string path_TBD, IEnumerable<DesignDay> coolingDesignDays, IEnumerable<DesignDay> heatingDesignDays, int repetitions = 30)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || (coolingDesignDays == null && heatingDesignDays == null))
                 return null;
@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas
 
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
-                result = AddDesignDays(sAMTBDDocument, coolingDesignDays, heatingDesignDays);
+                result = AddDesignDays(sAMTBDDocument, coolingDesignDays, heatingDesignDays, repetitions);
                 if (result != null)
                     sAMTBDDocument.Save();
             }
@@ -24,20 +24,20 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<Guid> AddDesignDays(this SAMTBDDocument sAMTBDDocument, IEnumerable<DesignDay> coolingDesignDays, IEnumerable<DesignDay> heatingDesignDays)
+        public static List<Guid> AddDesignDays(this SAMTBDDocument sAMTBDDocument, IEnumerable<DesignDay> coolingDesignDays, IEnumerable<DesignDay> heatingDesignDays, int repetitions = 30)
         {
             if (sAMTBDDocument == null)
                 return null;
 
-            return AddDesignDays(sAMTBDDocument.TBDDocument, coolingDesignDays, heatingDesignDays);
+            return AddDesignDays(sAMTBDDocument.TBDDocument, coolingDesignDays, heatingDesignDays, repetitions);
         }
 
-        public static List<Guid> AddDesignDays(this TBD.TBDDocument tBDDocument, IEnumerable<DesignDay> coolingDesignDays, IEnumerable<DesignDay> heatingDesignDays)
+        public static List<Guid> AddDesignDays(this TBD.TBDDocument tBDDocument, IEnumerable<DesignDay> coolingDesignDays, IEnumerable<DesignDay> heatingDesignDays, int repetitions = 30)
         {
-            return AddDesignDays(tBDDocument?.Building, coolingDesignDays, heatingDesignDays);
+            return AddDesignDays(tBDDocument?.Building, coolingDesignDays, heatingDesignDays, repetitions);
         }
 
-        public static List<Guid> AddDesignDays(this TBD.Building building, IEnumerable<DesignDay> coolingDesignDays, IEnumerable<DesignDay> heatingDesignDays)
+        public static List<Guid> AddDesignDays(this TBD.Building building, IEnumerable<DesignDay> coolingDesignDays, IEnumerable<DesignDay> heatingDesignDays, int repetitions = 30)
         {
             if(building == null)
             {
@@ -62,7 +62,7 @@ namespace SAM.Analytical.Tas
                         coolingDesignDay_TBD = building.AddCoolingDesignDay();
                     }
 
-                    coolingDesignDay_TBD.Update(designDay);
+                    coolingDesignDay_TBD.Update(designDay, repetitions);
                     result.Add(Guid.Parse(coolingDesignDay_TBD.GUID));
                 }
             }
@@ -83,7 +83,7 @@ namespace SAM.Analytical.Tas
                         heatingDesignDay_TBD = building.AddHeatingDesignDay();
                     }
 
-                    heatingDesignDay_TBD.Update(designDay);
+                    heatingDesignDay_TBD.Update(designDay, repetitions);
                     result.Add(Guid.Parse(heatingDesignDay_TBD.GUID));
                 }
             }
