@@ -66,6 +66,9 @@
     <Reference Include="SAM.Units">
       <HintPath>..\..\..\SAM\build\SAM.Units.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Weather">
+      <HintPath>..\..\..\SAM\build\SAM.Weather.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -104,6 +107,7 @@
     <Compile Include="Enums\SpaceDataType.cs" />
     <Compile Include="Enums\PanelDataType.cs" />
     <Compile Include="Modify\AddMaterial.cs" />
+    <Compile Include="Modify\AddDesignDays.cs" />
     <Compile Include="Modify\New\AddResults.cs" />
     <Compile Include="Modify\New\UpdateDesignLoads.cs" />
     <Compile Include="Modify\RemoveInternalConditions.cs" />
@@ -113,7 +117,7 @@
     <Compile Include="Modify\UpdateDesignLoads.cs" />
     <Compile Include="Modify\UpdateInternalCondition_HDD.cs" />
     <Compile Include="Modify\UpdateInternalCondition.cs" />
-    <Compile Include="Modify\SetProfile.cs" />
+    <Compile Include="Modify\Update.cs" />
     <Compile Include="Modify\Simulate.cs" />
     <Compile Include="Modify\RemoveApertureTypes.cs" />
     <Compile Include="Modify\AssignApertureTypes.cs" />
@@ -125,6 +129,9 @@
     <Compile Include="Modify\AddResults.cs" />
     <Compile Include="Create\SpaceSimulationResult.cs" />
     <Compile Include="Modify\UpdateSizingFactors.cs" />
+    <Compile Include="Query\DesignDays.cs" />
+    <Compile Include="Query\HeatingDesignDays.cs" />
+    <Compile Include="Query\CoolingDesignDays.cs" />
     <Compile Include="Query\Source.cs" />
     <Compile Include="Query\RoomSurfaces.cs" />
     <Compile Include="Query\ZoneSurfaces.cs" />
@@ -228,6 +235,10 @@
     <ProjectReference Include="..\SAM.Geometry.Tas\SAM.Geometry.Tas.csproj">
       <Project>{913ead72-bc27-4797-a95f-bedf56428ab0}</Project>
       <Name>SAM.Geometry.Tas</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SAM.Weather.Tas\SAM.Weather.Tas.csproj">
+      <Project>{d7ab37f9-a953-4b62-a55b-50cb13ff768b}</Project>
+      <Name>SAM.Weather.Tas</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

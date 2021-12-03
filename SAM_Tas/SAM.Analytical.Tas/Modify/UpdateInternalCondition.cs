@@ -103,7 +103,7 @@ namespace SAM.Analytical.Tas
                 {
                     TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
                     if (profile_TBD != null)
-                        UpdateProfile(profile_TBD, profile, value);
+                        Update(profile_TBD, profile, value);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace SAM.Analytical.Tas
                     else
                         gain = gain / area;
 
-                    UpdateProfile(profile_TBD, profile, gain);
+                    Update(profile_TBD, profile, gain);
                 }
             }
 
@@ -141,7 +141,7 @@ namespace SAM.Analytical.Tas
                     else
                         gain = gain / area;
 
-                    UpdateProfile(profile_TBD, profile, gain);
+                    Update(profile_TBD, profile, gain);
                 }
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticOSG);
@@ -153,7 +153,7 @@ namespace SAM.Analytical.Tas
                     else
                         gain = gain / area;
 
-                    UpdateProfile(profile_TBD, profile, gain);
+                    Update(profile_TBD, profile, gain);
                 }
             }
 
@@ -169,7 +169,7 @@ namespace SAM.Analytical.Tas
                     else
                         gain = gain / area;
 
-                    UpdateProfile(profile_TBD, profile, gain);
+                    Update(profile_TBD, profile, gain);
                 }
             }
 
@@ -185,7 +185,7 @@ namespace SAM.Analytical.Tas
                     else
                         gain = gain / area;
 
-                    UpdateProfile(profile_TBD, profile, gain);
+                    Update(profile_TBD, profile, gain);
                 }
             }
 
@@ -201,7 +201,7 @@ namespace SAM.Analytical.Tas
                     else
                         generation = generation / area;
 
-                    UpdateProfile(profile_TBD, profile, generation);
+                    Update(profile_TBD, profile, generation);
                 }
             }
 
@@ -220,7 +220,7 @@ namespace SAM.Analytical.Tas
 
                     TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticUL);
                     if (profile_TBD != null)
-                        UpdateProfile(profile_TBD, profile, 1);
+                        Update(profile_TBD, profile, 1);
                 }
 
                 profile = internalCondition.GetProfile(ProfileType.Heating, profileLibrary);
@@ -230,7 +230,7 @@ namespace SAM.Analytical.Tas
 
                     TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticLL);
                     if (profile_TBD != null)
-                        UpdateProfile(profile_TBD, profile, 1);
+                        Update(profile_TBD, profile, 1);
                 }
 
                 profile = internalCondition.GetProfile(ProfileType.Humidification, profileLibrary);
@@ -240,7 +240,7 @@ namespace SAM.Analytical.Tas
 
                     TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHLL);
                     if (profile_TBD != null)
-                        UpdateProfile(profile_TBD, profile, 1);
+                        Update(profile_TBD, profile, 1);
                 }
 
                 profile = internalCondition.GetProfile(ProfileType.Dehumidification, profileLibrary);
@@ -250,7 +250,7 @@ namespace SAM.Analytical.Tas
 
                     TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHUL);
                     if (profile_TBD != null)
-                        UpdateProfile(profile_TBD, profile, 1);
+                        Update(profile_TBD, profile, 1);
                 }
 
                 names.RemoveAll(x => string.IsNullOrWhiteSpace(x));

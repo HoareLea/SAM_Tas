@@ -2,7 +2,7 @@
 {
     public static partial class Modify
     {
-        public static bool UpdateProfile(TBD.profile profile_TBD, Profile profile, double factor)
+        public static bool Update(this TBD.profile profile_TBD, Profile profile, double factor)
         {
             if (profile_TBD == null || profile == null || profile.Count == -1)
                 return false;
@@ -47,6 +47,43 @@
             //    profile_TBD.yearlyValues[i] = System.Convert.ToSingle(profile[i]);
 
             return true;
+        }
+
+        public static bool Update(this TBD.CoolingDesignDay coolingDesignDay_TBD, DesignDay designDay)
+        {
+            if(coolingDesignDay_TBD == null || designDay == null)
+            {
+                return false;
+            }
+
+            coolingDesignDay_TBD.name = designDay.Name;
+            foreach(TBD.DesignDay designDay_TBD in coolingDesignDay_TBD.DesignDays())
+            {
+                designDay_TBD?.Update(designDay);
+            }
+
+            return true;
+        }
+
+        public static bool Update(this TBD.HeatingDesignDay heatingDesignDay_TBD, DesignDay designDay)
+        {
+            if (heatingDesignDay_TBD == null || designDay == null)
+            {
+                return false;
+            }
+
+            heatingDesignDay_TBD.name = designDay.Name;
+            foreach (TBD.DesignDay designDay_TBD in heatingDesignDay_TBD.DesignDays())
+            {
+                designDay_TBD?.Update(designDay);
+            }
+
+            return true;
+        }
+
+        public static bool Update(this TBD.DesignDay designDay_TBD, DesignDay designDay)
+        {
+            return Weather.Tas.Modify.Update(designDay_TBD?.GetWeatherDay(), designDay);
         }
     }
 }
