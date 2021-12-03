@@ -44,10 +44,14 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            List<TBD.dayType> dayTypes = building.DayTypes();
+
             List<Guid> result = new List<Guid>();
 
             if(coolingDesignDays != null && coolingDesignDays.Count() != 0)
             {
+                TBD.dayType dayType = dayTypes?.Find(x => x.name == "CDD");
+                
                 List<TBD.CoolingDesignDay> coolingDesignDays_TBD = building.CoolingDesignDays();
                 foreach(DesignDay designDay in coolingDesignDays)
                 {
@@ -62,13 +66,15 @@ namespace SAM.Analytical.Tas
                         coolingDesignDay_TBD = building.AddCoolingDesignDay();
                     }
 
-                    coolingDesignDay_TBD.Update(designDay, repetitions);
+                    coolingDesignDay_TBD.Update(designDay, dayType, repetitions);
                     result.Add(Guid.Parse(coolingDesignDay_TBD.GUID));
                 }
             }
 
             if (heatingDesignDays != null && heatingDesignDays.Count() != 0)
             {
+                TBD.dayType dayType = dayTypes?.Find(x => x.name == "HDD");
+
                 List<TBD.HeatingDesignDay> heatingDesignDays_TBD = building.HeatingDesignDays();
                 foreach (DesignDay designDay in heatingDesignDays)
                 {
@@ -83,7 +89,7 @@ namespace SAM.Analytical.Tas
                         heatingDesignDay_TBD = building.AddHeatingDesignDay();
                     }
 
-                    heatingDesignDay_TBD.Update(designDay, repetitions);
+                    heatingDesignDay_TBD.Update(designDay, dayType, repetitions);
                     result.Add(Guid.Parse(heatingDesignDay_TBD.GUID));
                 }
             }

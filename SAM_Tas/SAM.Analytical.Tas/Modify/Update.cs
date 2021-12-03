@@ -49,7 +49,7 @@
             return true;
         }
 
-        public static bool Update(this TBD.CoolingDesignDay coolingDesignDay_TBD, DesignDay designDay, int repetitions = 30)
+        public static bool Update(this TBD.CoolingDesignDay coolingDesignDay_TBD, DesignDay designDay, TBD.dayType dayType = null, int repetitions = 30)
         {
             if(coolingDesignDay_TBD == null || designDay == null)
             {
@@ -59,13 +59,13 @@
             coolingDesignDay_TBD.name = designDay.Name;
             foreach(TBD.DesignDay designDay_TBD in coolingDesignDay_TBD.DesignDays())
             {
-                designDay_TBD?.Update(designDay, repetitions);
+                designDay_TBD?.Update(designDay, dayType, repetitions);
             }
 
             return true;
         }
 
-        public static bool Update(this TBD.HeatingDesignDay heatingDesignDay_TBD, DesignDay designDay, int repetitions = 30)
+        public static bool Update(this TBD.HeatingDesignDay heatingDesignDay_TBD, DesignDay designDay, TBD.dayType dayType = null, int repetitions = 30)
         {
             if (heatingDesignDay_TBD == null || designDay == null)
             {
@@ -75,21 +75,26 @@
             heatingDesignDay_TBD.name = designDay.Name;
             foreach (TBD.DesignDay designDay_TBD in heatingDesignDay_TBD.DesignDays())
             {
-                designDay_TBD?.Update(designDay, repetitions);
+                designDay_TBD?.Update(designDay, dayType, repetitions);
             }
 
             return true;
         }
 
-        public static bool Update(this TBD.DesignDay designDay_TBD, DesignDay designDay, int repetitions = 30)
+        public static bool Update(this TBD.DesignDay designDay_TBD, DesignDay designDay, TBD.dayType dayType = null, int repetitions = 30)
         {
             if(designDay_TBD == null)
             {
                 return false;
             }
 
-            designDay_TBD.yearDay = Core.Query.HourOfYear(designDay.DateTime);
+            designDay_TBD.yearDay = designDay.DateTime.DayOfYear;
             designDay_TBD.repetitions = repetitions;
+
+            if(dayType != null)
+            {
+                designDay_TBD.SetDayType(dayType);
+            }
 
             return Weather.Tas.Modify.Update(designDay_TBD?.GetWeatherDay(), designDay);
         }

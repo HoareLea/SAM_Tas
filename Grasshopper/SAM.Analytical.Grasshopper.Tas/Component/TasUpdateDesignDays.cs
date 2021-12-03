@@ -46,7 +46,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "A string path to a TasTBD file", GH_ParamAccess.item);
             inputParamManager.AddParameter(new GooAnalyticalObjectParam() { Optional = true}, "_coolingDesignDays_", "_coolingDesignDays_", "The SAM Analytical Design Days for Cooling",  GH_ParamAccess.list);
             inputParamManager.AddParameter(new GooAnalyticalObjectParam() { Optional = true }, "_heatingDesignDays_", "_heatingDesignDays_", "The SAM Analytical Design Days for Heating", GH_ParamAccess.list);
-            inputParamManager.AddIntegerParameter("_repetitions", "_repetitions", "Repetitions", GH_ParamAccess.item, 30);
+            inputParamManager.AddIntegerParameter("_repetitions_", "_repetitions_", "Repetitions", GH_ParamAccess.item, 30);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
