@@ -66,7 +66,7 @@ namespace SAM.Analytical.Tas
                 // does the zone have occupancy
                 if (occupancySensibleGains[i] > 0)
                 {
-                    //We are taking temperature data for to cases: greater than 25 and greated than 28
+                    //We are taking temperature data for to cases: greater than 25 and greated than 28 resultantTemperature
                     for (int n = 0; n < temperatures.Length; n++)
                     {
                         if (resultantTemperatures[i] > temperatures[n])
