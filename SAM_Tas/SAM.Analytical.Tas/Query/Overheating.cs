@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static Dictionary<SpaceSimulationResultParameter, object> Overheating(TSD.ZoneData zoneData, int index_Start, int index_End)
+        public static Dictionary<Analytical.SpaceSimulationResultParameter, object> Overheating(TSD.ZoneData zoneData, int index_Start, int index_End)
         {
             if (zoneData == null)
                 return null;
@@ -78,14 +78,14 @@ namespace SAM.Analytical.Tas
 
             }
 
-            Dictionary<SpaceSimulationResultParameter, object> result = new Dictionary<SpaceSimulationResultParameter, object>();
-            result[SpaceSimulationResultParameter.OccupiedHours] = occupiedHours;
-            result[SpaceSimulationResultParameter.OccupiedHours25] = temperatures_Count[0];
-            result[SpaceSimulationResultParameter.OccupiedHours28] = temperatures_Count[1];
-            result[SpaceSimulationResultParameter.MaxDryBulbTemperatureIndex] = temperature_Max_Index;
-            result[SpaceSimulationResultParameter.MinDryBulbTemperatureIndex] = temperature_Min_Index;
-            result[SpaceSimulationResultParameter.MaxDryBulbTemperature] = temperature_Max;
-            result[SpaceSimulationResultParameter.MinDryBulbTemperature] = temperature_Min;
+            Dictionary<Analytical.SpaceSimulationResultParameter, object> result = new Dictionary<Analytical.SpaceSimulationResultParameter, object>();
+            result[Analytical.SpaceSimulationResultParameter.OccupiedHours] = occupiedHours;
+            result[Analytical.SpaceSimulationResultParameter.OccupiedHours25] = temperatures_Count[0];
+            result[Analytical.SpaceSimulationResultParameter.OccupiedHours28] = temperatures_Count[1];
+            result[Analytical.SpaceSimulationResultParameter.MaxDryBulbTemperatureIndex] = temperature_Max_Index;
+            result[Analytical.SpaceSimulationResultParameter.MinDryBulbTemperatureIndex] = temperature_Min_Index;
+            result[Analytical.SpaceSimulationResultParameter.MaxDryBulbTemperature] = temperature_Max;
+            result[Analytical.SpaceSimulationResultParameter.MinDryBulbTemperature] = temperature_Min;
 
             return result;
         }

@@ -19,8 +19,8 @@ namespace SAM.Analytical.Tas
             result.SetValue("Description", zone.description);
             result.SetValue("External", zone.external);
             result.SetValue("Is Used", zone.isUsed);
-            result.SetValue(SpaceSimulationResultParameter.Area, zone.floorArea);
-            result.SetValue(SpaceSimulationResultParameter.Volume, zone.volume);
+            result.SetValue(Analytical.SpaceSimulationResultParameter.Area, zone.floorArea);
+            result.SetValue(Analytical.SpaceSimulationResultParameter.Volume, zone.volume);
 
             return result;
         }
@@ -32,8 +32,8 @@ namespace SAM.Analytical.Tas
             result.SetValue("Description", zoneData.description);
             result.SetValue("Convective Weighting Factors Count", zoneData.nConvWeightingFactors);
             result.SetValue("Radiat Weighting Factors Count", zoneData.nRadWeightingFactors);
-            result.SetValue(SpaceSimulationResultParameter.Area, zoneData.floorArea);
-            result.SetValue(SpaceSimulationResultParameter.Volume, zoneData.volume);
+            result.SetValue(Analytical.SpaceSimulationResultParameter.Area, zoneData.floorArea);
+            result.SetValue(Analytical.SpaceSimulationResultParameter.Volume, zoneData.volume);
             result.SetValue("Convective Common Ratio", zoneData.convectiveCommonRatio);
             result.SetValue("Radiat Common Ratio", zoneData.radiantCommonRatio);
 

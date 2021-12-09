@@ -96,6 +96,7 @@
     <Compile Include="Convert\ToSAM\Results.cs" />
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
+    <Compile Include="Enums\Parameters\SpaceSimulationResultParameter.cs" />
     <Compile Include="Enums\Parameters\PanelSimulationResultParameter.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
     <Compile Include="Convert\ToSAM\AdjacencyCluster.cs" />

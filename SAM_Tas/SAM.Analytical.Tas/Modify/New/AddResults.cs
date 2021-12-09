@@ -134,39 +134,39 @@ namespace SAM.Analytical.Tas
 
                         if(spaceSimulationResults_Zone != null && spaceSimulationResults_Zone.Count != 0)
                         {
-                            double airMovementGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.AirMovementGain);
+                            double airMovementGain = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.AirMovementGain);
                             if (!double.IsNaN(airMovementGain))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.AirMovementGain, airMovementGain);
 
-                            double buildingHeatTransfer = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.BuildingHeatTransfer);
+                            double buildingHeatTransfer = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.BuildingHeatTransfer);
                             if (!double.IsNaN(buildingHeatTransfer))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.BuildingHeatTransfer, buildingHeatTransfer);
 
-                            double equipmentSensibleGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.EquipmentSensibleGain);
+                            double equipmentSensibleGain = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.EquipmentSensibleGain);
                             if (!double.IsNaN(equipmentSensibleGain))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.EquipmentSensibleGain, equipmentSensibleGain);
 
-                            double glazingExternalConduction = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.GlazingExternalConduction);
+                            double glazingExternalConduction = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.GlazingExternalConduction);
                             if (!double.IsNaN(glazingExternalConduction))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.GlazingExternalConduction, glazingExternalConduction);
 
-                            double lightingGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.LightingGain);
+                            double lightingGain = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.LightingGain);
                             if (!double.IsNaN(lightingGain))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.LightingGain, lightingGain);
 
-                            double infiltrationGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.InfiltrationGain);
+                            double infiltrationGain = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.InfiltrationGain);
                             if (!double.IsNaN(infiltrationGain))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.InfiltrationGain, infiltrationGain);
 
-                            double occupancySensibleGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.OccupancySensibleGain);
+                            double occupancySensibleGain = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.OccupancySensibleGain);
                             if (!double.IsNaN(occupancySensibleGain))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.OccupancySensibleGain, occupancySensibleGain);
 
-                            double opaqueExternalConduction = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.OpaqueExternalConduction);
+                            double opaqueExternalConduction = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.OpaqueExternalConduction);
                             if (!double.IsNaN(opaqueExternalConduction))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.OpaqueExternalConduction, opaqueExternalConduction);
 
-                            double solarGain = spaceSimulationResults_Zone.Sum(SpaceSimulationResultParameter.SolarGain);
+                            double solarGain = spaceSimulationResults_Zone.Sum(Analytical.SpaceSimulationResultParameter.SolarGain);
                             if (!double.IsNaN(solarGain))
                                 zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.SolarGain, solarGain);
                         }

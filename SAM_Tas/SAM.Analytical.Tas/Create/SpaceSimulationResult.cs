@@ -1,4 +1,5 @@
-﻿using TSD;
+﻿using System.Collections.Generic;
+using TSD;
 
 namespace SAM.Analytical.Tas
 {
@@ -44,10 +45,10 @@ namespace SAM.Analytical.Tas
             double designLoad = loadType == LoadType.Cooling ? zone.maxCoolingLoad : zone.maxHeatingLoad;
 
             SpaceSimulationResult result = new SpaceSimulationResult(name, Query.Source(), reference);
-            result.SetValue(SpaceSimulationResultParameter.Area, area);
-            result.SetValue(SpaceSimulationResultParameter.Volume, volume);
-            result.SetValue(SpaceSimulationResultParameter.DesignLoad, designLoad);
-            result.SetValue(SpaceSimulationResultParameter.LoadType, loadType.Text());
+            result.SetValue(Analytical.SpaceSimulationResultParameter.Area, area);
+            result.SetValue(Analytical.SpaceSimulationResultParameter.Volume, volume);
+            result.SetValue(Analytical.SpaceSimulationResultParameter.DesignLoad, designLoad);
+            result.SetValue(Analytical.SpaceSimulationResultParameter.LoadType, loadType.Text());
 
             return result;
         }
@@ -92,11 +93,24 @@ namespace SAM.Analytical.Tas
             float pollutant = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.pollutant);
 
 
-            return Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, loadType, load, index, sizingMethod,
+            SpaceSimulationResult result =  Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, loadType, load, index, sizingMethod,
                 dryBulbTemp, resultantTemp, solarGain, lightingGain, infVentGain, airMovementGain,
                 buildingHeatTransfer, externalConductionGlazing, externalConductionOpaque, occupancySensibleGain,
                 occupancyLatentGain, equipmentSensibleGain, equipmentLatentGain, spaceHumidityRatio, relativeHumidity,
                 zoneApertureFlowIn, zoneApertureFlowOut, pollutant);
+
+            if(result == null)
+            {
+                return null;
+            }
+
+            List<double> dryBulbTemperatures = zoneData.AnnualZoneResult<double>(tsdZoneArray.dryBulbTemp);
+            if(dryBulbTemperatures != null)
+            {
+                result.SetValue(SpaceSimulationResultParameter.DryBulbTemperatureProfile, new Profile("Dry Bulb Temperature", "Annual Space Values", dryBulbTemperatures));
+            }
+
+            return result;
         }
 
         public static SpaceSimulationResult SpaceSimulationResult(LoadType loadType, float load_Simulation, int index_Simulation, ZoneData zoneData_Simulation, float load_DesignDay, int index_DesignDay, ZoneData zoneData_DesignDay)
@@ -154,10 +168,10 @@ namespace SAM.Analytical.Tas
                 if (zoneData_DesignDay != null)
                 {
                     double dryBulbTemp = zoneData_DesignDay.GetHourlyZoneResult(1, (short)tsdZoneArray.dryBulbTemp);
-                    result.SetValue(SpaceSimulationResultParameter.DryBulbTempearture, dryBulbTemp);
+                    result.SetValue(Analytical.SpaceSimulationResultParameter.DryBulbTempearture, dryBulbTemp);
 
                     double resultantTemp = zoneData_DesignDay.GetHourlyZoneResult(1, (short)tsdZoneArray.resultantTemp);
-                    result.SetValue(SpaceSimulationResultParameter.ResultantTemperature, resultantTemp);
+                    result.SetValue(Analytical.SpaceSimulationResultParameter.ResultantTemperature, resultantTemp);
                 }
                 return result;
             }

@@ -132,16 +132,16 @@ namespace SAM.Analytical.Tas
                         List<bool> values = heating.ToList();
 
                         SpaceSimulationResult spaceSimulationResult_Heating = new SpaceSimulationResult(System.Guid.NewGuid(), spaceSimulationResult);
-                        spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.LoadType, LoadType.Heating.Text());
-                        spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.UnmetHours, values.Count(x => !x));
-                        spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.UnmetHourFirstIndex, values.IndexOf(false));
+                        spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.LoadType, LoadType.Heating.Text());
+                        spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.UnmetHours, values.Count(x => !x));
+                        spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.UnmetHourFirstIndex, values.IndexOf(false));
 
                         int count = 0;
                         for (int i = 0; i < values.Count; i++)
                             if (!values[i] && occupantSensibleGain[i])
                                 count++;
 
-                        spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.OccupiedUnmetHours, count);
+                        spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.OccupiedUnmetHours, count);
                         result.Add(spaceSimulationResult_Heating);
                     }
 
@@ -151,16 +151,16 @@ namespace SAM.Analytical.Tas
                         List<bool> values = cooling.ToList();
 
                         SpaceSimulationResult spaceSimulationResult_Cooling = new SpaceSimulationResult(System.Guid.NewGuid(), spaceSimulationResult);
-                        spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.LoadType, LoadType.Cooling.Text());
-                        spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.UnmetHours, values.Count(x => !x));
-                        spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.UnmetHourFirstIndex, values.IndexOf(false));
+                        spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.LoadType, LoadType.Cooling.Text());
+                        spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.UnmetHours, values.Count(x => !x));
+                        spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.UnmetHourFirstIndex, values.IndexOf(false));
 
                         int count = 0;
                         for (int i = 0; i < values.Count; i++)
                             if (!values[i] && occupantSensibleGain[i])
                                 count++;
 
-                        spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.OccupiedUnmetHours, count);
+                        spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.OccupiedUnmetHours, count);
                         result.Add(spaceSimulationResult_Cooling);
                     }
                 }

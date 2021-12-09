@@ -77,9 +77,9 @@ namespace SAM.Analytical.Tas
                     }
                     else
                     {
-                        spaceSimulationResult.SetValue(SpaceSimulationResultParameter.Area, zone.floorArea);
-                        spaceSimulationResult.SetValue(SpaceSimulationResultParameter.Volume, zone.volume);
-                        spaceSimulationResult.SetValue(SpaceSimulationResultParameter.DesignLoad, loadType == LoadType.Cooling ? zone.maxCoolingLoad : zone.maxHeatingLoad);
+                        spaceSimulationResult.SetValue(Analytical.SpaceSimulationResultParameter.Area, zone.floorArea);
+                        spaceSimulationResult.SetValue(Analytical.SpaceSimulationResultParameter.Volume, zone.volume);
+                        spaceSimulationResult.SetValue(Analytical.SpaceSimulationResultParameter.DesignLoad, loadType == LoadType.Cooling ? zone.maxCoolingLoad : zone.maxHeatingLoad);
                     }
 
                     if (spaceSimulationResult != null)

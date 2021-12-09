@@ -100,13 +100,13 @@ namespace SAM.Analytical.Tas
 
                 if (spaceSimulationResult_Cooling != null || spaceSimulationResult_Heating != null)
                 {
-                    Dictionary<SpaceSimulationResultParameter, object> dictionary = Query.Overheating(zoneData_BuildingData, simulationData.firstDay, simulationData.lastDay);
+                    Dictionary<Analytical.SpaceSimulationResultParameter, object> dictionary = Query.Overheating(zoneData_BuildingData, simulationData.firstDay, simulationData.lastDay);
 
                     results[i] = new List<Core.Result>();
 
                     if (spaceSimulationResult_Cooling != null)
                     {
-                        foreach (KeyValuePair<SpaceSimulationResultParameter, object> keyValuePair in dictionary)
+                        foreach (KeyValuePair<Analytical.SpaceSimulationResultParameter, object> keyValuePair in dictionary)
                             spaceSimulationResult_Cooling.SetValue(keyValuePair.Key, keyValuePair.Value);
 
                         results[i].Add(spaceSimulationResult_Cooling);
@@ -114,7 +114,7 @@ namespace SAM.Analytical.Tas
 
                     if (spaceSimulationResult_Heating != null)
                     {
-                        foreach (KeyValuePair<SpaceSimulationResultParameter, object> keyValuePair in dictionary)
+                        foreach (KeyValuePair<Analytical.SpaceSimulationResultParameter, object> keyValuePair in dictionary)
                             spaceSimulationResult_Heating.SetValue(keyValuePair.Key, keyValuePair.Value);
 
                         results[i].Add(spaceSimulationResult_Heating);
@@ -126,7 +126,7 @@ namespace SAM.Analytical.Tas
                 {
                     ZoneData zoneData = spaceSimulationResult_Cooling.SizingMethod() == SizingMethod.Simulation ? zoneData_Simulation : zoneData_DesignDay_Cooling;
 
-                    if(!spaceSimulationResult_Cooling.TryGetValue(SpaceSimulationResultParameter.LoadIndex, out int index))
+                    if(!spaceSimulationResult_Cooling.TryGetValue(Analytical.SpaceSimulationResultParameter.LoadIndex, out int index))
                     {
                         continue;
                     }
@@ -148,7 +148,7 @@ namespace SAM.Analytical.Tas
                 {
                     ZoneData zoneData = spaceSimulationResult_Heating.SizingMethod() == SizingMethod.Simulation ? zoneData_Simulation : zoneData_DesignDay_Heating;
 
-                    if (!spaceSimulationResult_Heating.TryGetValue(SpaceSimulationResultParameter.LoadIndex, out int index))
+                    if (!spaceSimulationResult_Heating.TryGetValue(Analytical.SpaceSimulationResultParameter.LoadIndex, out int index))
                     {
                         continue;
                     }
