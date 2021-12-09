@@ -84,6 +84,7 @@
     <Compile Include="Convert\ToSAM\Construction.cs" />
     <Compile Include="Convert\ToSAM\MaterialLibrary.cs" />
     <Compile Include="Convert\ToSAM\Material.cs" />
+    <Compile Include="Convert\ToSAM\PanelSimulationResult.cs" />
     <Compile Include="Convert\ToSAM\ProfileLibrary.cs" />
     <Compile Include="Convert\ToSAM\Profile.cs" />
     <Compile Include="Convert\ToSAM\Profiles.cs" />
@@ -91,9 +92,11 @@
     <Compile Include="Convert\ToSAM\New\PartitionSimulationResult.cs" />
     <Compile Include="Convert\ToSAM\New\SpaceSimulationResult.cs" />
     <Compile Include="Convert\ToSAM\InternalCondition.cs" />
-    <Compile Include="Convert\ToSAM\SpaceSimulationResults.cs" />
+    <Compile Include="Convert\ToSAM\PanelSimulationResults.cs" />
+    <Compile Include="Convert\ToSAM\Results.cs" />
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
+    <Compile Include="Enums\Parameters\PanelSimulationResultParameter.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
     <Compile Include="Convert\ToSAM\AdjacencyCluster.cs" />
     <Compile Include="Convert\ToSAM\RelationCluster.cs" />
@@ -225,7 +228,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
-    <Folder Include="Enums\Parameters\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">

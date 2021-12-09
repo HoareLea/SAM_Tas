@@ -20,7 +20,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         public override GH_Exposure Exposure => GH_Exposure.hidden;
 
@@ -157,7 +157,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             }
 
             AdjacencyCluster adjacencyCluster = null;
-            List<SpaceSimulationResult> spaceSimulationResults = new List<SpaceSimulationResult>();
+            List<Core.Result> results = new List<Core.Result>();
 
             int index_Result = Params.IndexOfOutputParam("results");
             int index_AdjacencyCluster = Params.IndexOfOutputParam("adjacencyCluster");
@@ -174,8 +174,8 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
                     if (index_Result != -1)
                     {
-                        spaceSimulationResults = Analytical.Tas.Convert.ToSAM(sAMTSDDocument);
-                        dataAccess.SetDataList(index_Result, spaceSimulationResults?.ConvertAll(x => new GooResult(x)));
+                        results = Analytical.Tas.Convert.ToSAM(sAMTSDDocument);
+                        dataAccess.SetDataList(index_Result, results?.ConvertAll(x => new GooResult(x)));
                     }
 
                     sAMTSDDocument.Close();

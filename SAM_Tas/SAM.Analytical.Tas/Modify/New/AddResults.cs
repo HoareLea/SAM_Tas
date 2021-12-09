@@ -45,11 +45,11 @@ namespace SAM.Analytical.Tas
             List<Core.Result> result = null; 
 
             //get simulaton data from Tas for individal SAM Space
-            List<SpaceSimulationResult> spaceSimulationResults = Convert.ToSAM(simulationData);
-            if (spaceSimulationResults == null)
+            List<Core.Result> results = Convert.ToSAM(simulationData);
+            if (results == null)
                 return result;
 
-            result = new List<Core.Result>(spaceSimulationResults);
+            result = new List<Core.Result>(results);
 
             Dictionary<System.Guid, List<SpaceSimulationResult>> dictionary = new Dictionary<System.Guid, List<SpaceSimulationResult>>();
             List<Space> spaces = buildingModel.GetSpaces();
@@ -57,7 +57,7 @@ namespace SAM.Analytical.Tas
             {
                 foreach (Space space in spaces)
                 {
-                    List<SpaceSimulationResult> spaceSimulationResults_Space = spaceSimulationResults.FindAll(x => space.Name.Equals(x.Name));
+                    List<SpaceSimulationResult> spaceSimulationResults_Space = results.FindAll(x => x is SpaceSimulationResult && space.Name.Equals(x.Name)).ConvertAll(x => (SpaceSimulationResult)x);
                     dictionary[space.Guid] = spaceSimulationResults_Space;
                     if(spaceSimulationResults_Space != null && spaceSimulationResults_Space.Count > 0)
                     {

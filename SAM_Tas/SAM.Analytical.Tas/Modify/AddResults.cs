@@ -46,11 +46,11 @@ namespace SAM.Analytical.Tas
             List<Core.Result> result = null; 
 
             //get simulaton data from Tas for individal SAM Space
-            List<SpaceSimulationResult> spaceSimulationResults = Convert.ToSAM(simulationData);
-            if (spaceSimulationResults == null)
+            List<Core.Result> results = Convert.ToSAM(simulationData);
+            if (results == null)
                 return result;
 
-            result = new List<Core.Result>(spaceSimulationResults);
+            result = new List<Core.Result>(results);
 
             Dictionary<System.Guid, List<SpaceSimulationResult>> dictionary = new Dictionary<System.Guid, List<SpaceSimulationResult>>();
             List<Space> spaces = adjacencyCluster.GetSpaces();
@@ -58,27 +58,35 @@ namespace SAM.Analytical.Tas
             {
                 foreach (Space space in spaces)
                 {
-                    List<SpaceSimulationResult> spaceSimulationResults_Space = spaceSimulationResults.FindAll(x => space.Name.Equals(x.Name));
+                    List<SpaceSimulationResult> spaceSimulationResults_Space = results.FindAll(x => x is SpaceSimulationResult && space.Name.Equals(x.Name)).ConvertAll(x => (SpaceSimulationResult)x);
                     dictionary[space.Guid] = spaceSimulationResults_Space;
-                    if(spaceSimulationResults_Space == null || spaceSimulationResults_Space.Count == 0)
+                    if(spaceSimulationResults_Space != null && spaceSimulationResults_Space.Count != 0)
                     {
-                        continue;
+                        foreach (SpaceSimulationResult spaceSimulationResult in spaceSimulationResults_Space)
+                        {
+                            List<SpaceSimulationResult> spaceSimulationResults_Existing = adjacencyCluster.GetResults<SpaceSimulationResult>(space, Query.Source())?.FindAll(x => x.LoadType() == spaceSimulationResult.LoadType());
+                            if (spaceSimulationResults_Existing != null && spaceSimulationResults_Existing.Count != 0)
+                            {
+                                adjacencyCluster.Remove(spaceSimulationResults_Existing);
+                                if (spaceSimulationResults_Existing[0].TryGetValue(SpaceSimulationResultParameter.DesignLoad, out double designLoad))
+                                {
+                                    spaceSimulationResult.SetValue(SpaceSimulationResultParameter.DesignLoad, designLoad);
+                                }
+                            }
+
+                            adjacencyCluster.AddObject(spaceSimulationResult);
+                            adjacencyCluster.AddRelation(space, spaceSimulationResult);
+                        }
                     }
 
-                    foreach (SpaceSimulationResult spaceSimulationResult in spaceSimulationResults_Space)
+                    List<PanelSimulationResult> panelSimulationResults_Space = results.FindAll(x => x is PanelSimulationResult && space.Name.Equals(x.Name)).ConvertAll(x => (PanelSimulationResult)x);
+                    if (panelSimulationResults_Space != null && panelSimulationResults_Space.Count != 0)
                     {
-                        List<SpaceSimulationResult> spaceSimulationResults_Existing = adjacencyCluster.GetResults<SpaceSimulationResult>(space, Query.Source())?.FindAll(x => x.LoadType() == spaceSimulationResult.LoadType());
-                        if(spaceSimulationResults_Existing != null && spaceSimulationResults_Existing.Count != 0)
+                        foreach (PanelSimulationResult panelSimulationResult_Space in panelSimulationResults_Space)
                         {
-                            adjacencyCluster.Remove(spaceSimulationResults_Existing);
-                            if(spaceSimulationResults_Existing[0].TryGetValue(SpaceSimulationResultParameter.DesignLoad, out double designLoad))
-                            {
-                                spaceSimulationResult.SetValue(SpaceSimulationResultParameter.DesignLoad, designLoad);
-                            }
+                            adjacencyCluster.AddObject(panelSimulationResult_Space);
+                            adjacencyCluster.AddRelation(space, panelSimulationResult_Space);
                         }
-
-                        adjacencyCluster.AddObject(spaceSimulationResult);
-                        adjacencyCluster.AddRelation(space, spaceSimulationResult);
                     }
                 }
             }
