@@ -148,7 +148,7 @@ namespace SAM.Analytical.Tas
                 {
                     ZoneData zoneData = spaceSimulationResult_Heating.SizingMethod() == SizingMethod.Simulation ? zoneData_Simulation : zoneData_DesignDay_Heating;
 
-                    if (!spaceSimulationResult_Cooling.TryGetValue(SpaceSimulationResultParameter.LoadIndex, out int index))
+                    if (!spaceSimulationResult_Heating.TryGetValue(SpaceSimulationResultParameter.LoadIndex, out int index))
                     {
                         continue;
                     }

@@ -79,14 +79,21 @@ namespace SAM.Analytical.Tas
                         }
                     }
 
-                    List<PanelSimulationResult> panelSimulationResults_Space = results.FindAll(x => x is PanelSimulationResult && space.Name.Equals(x.Name)).ConvertAll(x => (PanelSimulationResult)x);
-                    if (panelSimulationResults_Space != null && panelSimulationResults_Space.Count != 0)
+                    foreach(Core.Result result_Temp in results)
                     {
-                        foreach (PanelSimulationResult panelSimulationResult_Space in panelSimulationResults_Space)
+                        PanelSimulationResult panelSimulationResult = result_Temp as PanelSimulationResult;
+                        if(panelSimulationResult == null)
                         {
-                            adjacencyCluster.AddObject(panelSimulationResult_Space);
-                            adjacencyCluster.AddRelation(space, panelSimulationResult_Space);
+                            continue;
                         }
+
+                        if(!panelSimulationResult.TryGetValue(PanelSimulationResultParameter.ZoneName, out string zoneName) || !space.Name.Equals(zoneName))
+                        {
+                            continue;
+                        }
+
+                        adjacencyCluster.AddObject(panelSimulationResult);
+                        adjacencyCluster.AddRelation(space, panelSimulationResult);
                     }
                 }
             }
