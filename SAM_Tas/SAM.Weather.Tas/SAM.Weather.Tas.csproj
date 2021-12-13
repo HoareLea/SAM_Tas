@@ -67,8 +67,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Manager\ActiveSetting.cs" />
+    <Compile Include="Modify\UpdateWeatherData.cs" />
     <Compile Include="Modify\Update.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\WeatherDays.cs" />
     <Compile Include="Query\AnnualBuildingResult.cs" />
     <Compile Include="Query\WeatherYear.cs" />
   </ItemGroup>
