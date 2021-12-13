@@ -13,7 +13,7 @@ namespace SAM.Weather.Tas
 
             List<TBD.WeatherDay> result = new List<TBD.WeatherDay>();
 
-            int index = 0;
+            int index = 1;
             TBD.WeatherDay weatherDay = weatherYear.weatherDays(index);
             while (weatherDay != null)
             {

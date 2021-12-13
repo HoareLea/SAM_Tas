@@ -58,8 +58,30 @@ namespace SAM.Weather.Tas
                 weatherYear_TBD = building.AddWeatherYear();
             }
 
-            weatherYear_TBD.altitude = System.Convert.ToSingle(weatherData.Latitude);
+            weatherYear_TBD.latitude = System.Convert.ToSingle(weatherData.Latitude);
             weatherYear_TBD.longitude = System.Convert.ToSingle(weatherData.Longitude);
+            weatherYear_TBD.name = weatherData.Name;
+            weatherYear_TBD.description = weatherData.Description;
+            weatherYear_TBD.altitude = System.Convert.ToSingle(weatherData.Elevtion);
+            
+            if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out int timeZone))
+            {
+                weatherYear_TBD.timeZone = timeZone;
+            }
+
+            if (weatherData.TryGetValue(WeatherDataParameter.GroundTemperatures, out Core.SAMCollection<GroundTemperature> groundTemperatures) && groundTemperatures != null && groundTemperatures.Count != 0)
+            {
+                GroundTemperature groundTemperature = groundTemperatures.ToList().Find(x => System.Math.Abs(x.Depth - 2.0) < Core.Tolerance.MacroDistance);
+                if(groundTemperature == null)
+                {
+                    groundTemperature = groundTemperatures.FirstOrDefault();
+                }
+
+                if(groundTemperature != null)
+                {
+                    weatherYear_TBD.groundTemperature = System.Convert.ToSingle(groundTemperature.Temperatures.Sum() / 12.0);
+                }
+            }
 
             return Update(weatherData.WeatherYears?.FirstOrDefault(), weatherYear_TBD);
         }
