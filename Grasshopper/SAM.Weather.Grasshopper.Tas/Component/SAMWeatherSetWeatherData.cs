@@ -16,7 +16,7 @@ namespace SAM.Weather.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -67,6 +67,7 @@ namespace SAM.Weather.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooWeatherDataParam() { Name = "weatherData", NickName = "weatherData", Description = "SAM Weather Data", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -77,6 +78,12 @@ namespace SAM.Weather.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
+            int index_successful = Params.IndexOfOutputParam("successful");
+            if(index_successful != -1)
+            {
+                dataAccess.SetData(index_successful, false);
+            }
+
             int index;
 
             bool run = false;
@@ -123,6 +130,11 @@ namespace SAM.Weather.Grasshopper.Tas
             index = Params.IndexOfOutputParam("weatherData");
             if (index != -1)
                 dataAccess.SetData(index, new GooWeatherData(weatherData));
+
+            if (index_successful != -1)
+            {
+                dataAccess.SetData(index_successful, weatherData != null);
+            }
         }
     }
 }
