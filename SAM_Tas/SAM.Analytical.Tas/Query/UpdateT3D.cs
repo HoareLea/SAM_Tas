@@ -41,6 +41,13 @@ namespace SAM.Analytical.Tas
             if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
                 building.northAngle = System.Math.Round(Units.Convert.ToDegrees(northAngle), 1);
 
+            Location location = analyticalModel.Location;
+            if(location != null)
+            {
+                building.longitude = location.Longitude;
+                building.latitude = location.Latitude;
+            }
+
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
             if(adjacencyCluster != null)
             {
