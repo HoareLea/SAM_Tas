@@ -46,6 +46,7 @@ namespace SAM.Analytical.Tas
             {
                 building.longitude = location.Longitude;
                 building.latitude = location.Latitude;
+
             }
 
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
