@@ -47,6 +47,14 @@ namespace SAM.Analytical.Tas
                 building.longitude = location.Longitude;
                 building.latitude = location.Latitude;
 
+                if(location.TryGetValue(LocationParameter.TimeZone, out string timeZone))
+                {
+                    double @double = Core.Query.Double(Core.Query.UTC(timeZone));
+                    if(!double.IsNaN(@double))
+                    {
+                        building.timeZone = System.Convert.ToSingle(@double);
+                    }
+                }
             }
 
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
