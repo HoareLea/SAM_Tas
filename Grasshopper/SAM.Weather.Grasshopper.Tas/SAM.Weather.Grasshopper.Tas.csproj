@@ -85,6 +85,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Component\SAMWeatherCreateWeatherData.cs" />
     <Compile Include="Component\SAMWeatherSetWeatherData.cs" />
     <Compile Include="Component\SAMWeatherWeatherYear.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

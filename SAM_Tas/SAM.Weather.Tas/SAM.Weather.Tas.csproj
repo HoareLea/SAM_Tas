@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Convert\ToSAM\WeatherData.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
     <Compile Include="Modify\UpdateWeatherData.cs" />
     <Compile Include="Modify\Update.cs" />
@@ -87,7 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />
-    <Folder Include="Convert\ToSAM\" />
     <Folder Include="Create\" />
     <Folder Include="Enums\" />
   </ItemGroup>

@@ -38,6 +38,8 @@ namespace SAM.Analytical.Tas
             Core.MaterialLibrary materialLibrary = building.ToSAM_MaterialLibrary();
 
             Core.Location location = new Core.Location(building.name, building.longitude, building.latitude, 0);
+            location.SetValue(Core.LocationParameter.TimeZone, Core.Query.Description(Core.Query.UTC(building.timeZone)));
+
             Core.Address address = new Core.Address(null, null, null, Core.CountryCode.Undefined);
 
             return new AnalyticalModel(building.name, null, location, address, ToSAM(building), materialLibrary, profileLibrary);

@@ -64,9 +64,13 @@ namespace SAM.Weather.Tas
             weatherYear_TBD.description = weatherData.Description;
             weatherYear_TBD.altitude = System.Convert.ToSingle(weatherData.Elevtion);
             
-            if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out int timeZone))
+            if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out string timeZone))
             {
-                weatherYear_TBD.timeZone = timeZone;
+                double @double = Core.Query.Double(Core.Query.UTC(timeZone));
+                if(!double.IsNaN(@double))
+                {
+                    weatherYear_TBD.timeZone = System.Convert.ToSingle(@double);
+                }
             }
 
             if (weatherData.TryGetValue(WeatherDataParameter.GroundTemperatures, out Core.SAMCollection<GroundTemperature> groundTemperatures) && groundTemperatures != null && groundTemperatures.Count != 0)

@@ -117,5 +117,28 @@ namespace SAM.Weather.Tas
 
             return true;
         }
+
+        public static bool Update(this TBD.WeatherYear weatherYear_TBD, WeatherYear weatherYear)
+        {
+            if (weatherYear_TBD == null || weatherYear == null)
+            {
+                return false;
+            }
+
+            List<TBD.WeatherDay> weatherDays_TBD =  weatherYear_TBD.WeatherDays();
+            if(weatherDays_TBD == null)
+            {
+                return false;
+            }
+
+            for(int i = 0; i < weatherDays_TBD.Count; i++)
+            {
+                WeatherDay weatherDay = new WeatherDay();
+                weatherDays_TBD[i]?.Update(weatherDay);
+                weatherYear[i] = weatherDay;
+            }
+
+            return true;
+        }
     }
 }
