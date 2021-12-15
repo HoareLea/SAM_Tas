@@ -87,7 +87,7 @@ namespace SAM.Weather.Tas
                 }
             }
 
-            return Update(weatherData.WeatherYears?.FirstOrDefault(), weatherYear_TBD);
+            return Update(weatherYear_TBD, weatherData.WeatherYears?.FirstOrDefault());
         }
     }
 }

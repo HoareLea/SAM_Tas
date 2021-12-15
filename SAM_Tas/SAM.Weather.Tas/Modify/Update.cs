@@ -5,10 +5,10 @@ namespace SAM.Weather.Tas
     public static partial class Modify
     {
         /// <summary>
-        /// Updates SAM Weather Day from TBD WeatherDay
+        /// Updates TBD Weather Day from SAM WeatherDay
         /// </summary>
-        /// <param name="weatherDay_TBD">Source TBD WeatherDay</param>
-        /// <param name="weatherDay">Destination SAM WeatherDay </param>
+        /// <param name="weatherDay_TBD">Destination TBD WeatherDay</param>
+        /// <param name="weatherDay">Source SAM WeatherDay </param>
         /// <returns>True if data updated</returns>
         public static bool Update(this TBD.WeatherDay weatherDay_TBD, WeatherDay weatherDay)
         {
@@ -68,10 +68,10 @@ namespace SAM.Weather.Tas
         }
 
         /// <summary>
-        /// Updates TBD WeatherDay from SAM WeatherDay
+        /// Updates SAM WeatherDay from TBD WeatherDay
         /// </summary>
-        /// <param name="weatherDay">Source SAM WeatherDay</param>
-        /// <param name="weatherDay_TBD">Destination TBD WeatherDay</param>
+        /// <param name="weatherDay">Destination SAM WeatherDay</param>
+        /// <param name="weatherDay_TBD">Source TBD WeatherDay</param>
         /// <returns>True if data Updated</returns>
         public static bool Update(this WeatherDay weatherDay, TBD.WeatherDay weatherDay_TBD)
         {
@@ -95,10 +95,10 @@ namespace SAM.Weather.Tas
         }
 
         /// <summary>
-        /// Updates TBD WeatherYear from SAM WeatherYear
+        /// Updates SAM WeatherYear from TBD WeatherYear
         /// </summary>
-        /// <param name="weatherYear">Source SAM WeatherYear</param>
-        /// <param name="weatherYear_TBD">Destination TBD WeatherYear</param>
+        /// <param name="weatherYear">Destination SAM WeatherYear</param>
+        /// <param name="weatherYear_TBD">Source TBD WeatherYear</param>
         /// <returns>True if data Updated</returns>
         public static bool Update(this WeatherYear weatherYear, TBD.WeatherYear weatherYear_TBD)
         {
@@ -112,12 +112,18 @@ namespace SAM.Weather.Tas
             List<TBD.WeatherDay> weatherDays = weatherYear_TBD.WeatherDays();
             for(int i =0; i < weatherDays.Count; i++)
             {
-                Update(weatherDays[i], weatherYear[i]);
+                Update(weatherYear[i], weatherDays[i]);
             }
 
             return true;
         }
 
+        /// <summary>
+        /// Updates TBD WeatherYear from SAM WeatherYear
+        /// </summary>
+        /// <param name="weatherYear_TBD">Destination TBD WeatherYear</param>
+        /// <param name="weatherYear">Source SAM WeatherYear</param>
+        /// <returns>True if data Updated</returns>
         public static bool Update(this TBD.WeatherYear weatherYear_TBD, WeatherYear weatherYear)
         {
             if (weatherYear_TBD == null || weatherYear == null)
@@ -134,7 +140,7 @@ namespace SAM.Weather.Tas
             for(int i = 0; i < weatherDays_TBD.Count; i++)
             {
                 WeatherDay weatherDay = new WeatherDay();
-                weatherDays_TBD[i]?.Update(weatherDay);
+                Update(weatherDays_TBD[i], weatherDay);
                 weatherYear[i] = weatherDay;
             }
 

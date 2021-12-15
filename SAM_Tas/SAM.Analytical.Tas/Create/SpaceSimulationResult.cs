@@ -72,32 +72,37 @@ namespace SAM.Analytical.Tas
             float externalConductionGlazing = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.externalConductionGlazing);
             float externalConductionOpaque = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.externalConductionOpaque);
             float spaceHumidityRatio = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.humidityRatio);
+
+            SpaceSimulationResult result = null;
             if (loadType == LoadType.Heating)
-                return Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, LoadType.Heating, load, index, sizingMethod, dryBulbTemp, resultantTemp,
+            {
+                result = Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, LoadType.Heating, load, index, sizingMethod, dryBulbTemp, resultantTemp,
                     infiltartionGain: infVentGain,
                     airMovementGain: airMovementGain,
                     buildingHeatTransfer: buildingHeatTransfer,
                     glazingExternalConduction: externalConductionGlazing,
                     opaqueExternalConduction: externalConductionOpaque,
                     humidityRatio: spaceHumidityRatio);
+            }
+            else if (loadType == LoadType.Cooling)
+            {
+                float solarGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.solarGain);
+                float lightingGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.lightingGain);
+                float occupancySensibleGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.occupantSensibleGain);
+                float equipmentSensibleGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.equipmentSensibleGain);
+                float equipmentLatentGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.equipmentLatentGain);
+                float occupancyLatentGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.occupancyLatentGain);
+                float relativeHumidity = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.relativeHumidity);
+                float zoneApertureFlowIn = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.zoneApertureFlowIn);
+                float zoneApertureFlowOut = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.zoneApertureFlowOut);
+                float pollutant = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.pollutant);
 
-            float solarGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.solarGain);
-            float lightingGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.lightingGain);
-            float occupancySensibleGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.occupantSensibleGain);
-            float equipmentSensibleGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.equipmentSensibleGain);
-            float equipmentLatentGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.equipmentLatentGain);
-            float occupancyLatentGain = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.occupancyLatentGain);
-            float relativeHumidity = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.relativeHumidity);
-            float zoneApertureFlowIn = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.zoneApertureFlowIn);
-            float zoneApertureFlowOut = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.zoneApertureFlowOut);
-            float pollutant = zoneData.GetHourlyZoneResult(index, (short)tsdZoneArray.pollutant);
-
-
-            SpaceSimulationResult result =  Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, loadType, load, index, sizingMethod,
-                dryBulbTemp, resultantTemp, solarGain, lightingGain, infVentGain, airMovementGain,
-                buildingHeatTransfer, externalConductionGlazing, externalConductionOpaque, occupancySensibleGain,
-                occupancyLatentGain, equipmentSensibleGain, equipmentLatentGain, spaceHumidityRatio, relativeHumidity,
-                zoneApertureFlowIn, zoneApertureFlowOut, pollutant);
+                result = Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, loadType, load, index, sizingMethod,
+                    dryBulbTemp, resultantTemp, solarGain, lightingGain, infVentGain, airMovementGain,
+                    buildingHeatTransfer, externalConductionGlazing, externalConductionOpaque, occupancySensibleGain,
+                    occupancyLatentGain, equipmentSensibleGain, equipmentLatentGain, spaceHumidityRatio, relativeHumidity,
+                    zoneApertureFlowIn, zoneApertureFlowOut, pollutant);
+            }
 
             if(result == null)
             {

@@ -111,7 +111,7 @@ namespace SAM.Weather.Tas
             }
 
             WeatherYear weatherYear_SAM = new WeatherYear(weatherYear.year);
-            weatherYear.Update(weatherYear_SAM);
+            weatherYear_SAM.Update(weatherYear);
 
             WeatherData result = new WeatherData(weatherYear.name, weatherYear.description, weatherYear.latitude, weatherYear.longitude, weatherYear.altitude);
             result.SetValue(WeatherDataParameter.TimeZone, Core.Query.Description(Core.Query.UTC(weatherYear.timeZone)));
