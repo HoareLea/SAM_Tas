@@ -44,6 +44,8 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            building.ClearDesignDays();
+
             List<TBD.dayType> dayTypes = building.DayTypes();
 
             List<Guid> result = new List<Guid>();
@@ -51,7 +53,6 @@ namespace SAM.Analytical.Tas
             if(coolingDesignDays != null && coolingDesignDays.Count() != 0)
             {
                 TBD.dayType dayType = dayTypes?.Find(x => x.name == "CDD");
-                
                 List<TBD.CoolingDesignDay> coolingDesignDays_TBD = building.CoolingDesignDays();
                 foreach(DesignDay designDay in coolingDesignDays)
                 {
