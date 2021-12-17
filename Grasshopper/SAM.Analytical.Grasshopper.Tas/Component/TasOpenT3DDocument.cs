@@ -30,7 +30,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         public TasOpenT3DDocument()
           : base("Tas.OpenT3DDocument", "Tas.OpenT3DDocument",
               "Opens a TasT3D document.",
-              "SAM", "Tas")
+              "SAM WIP", "Tas")
         {
         }
 

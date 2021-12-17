@@ -85,9 +85,9 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component\SAMWeatherCreateWeatherData.cs" />
-    <Compile Include="Component\SAMWeatherSetWeatherData.cs" />
-    <Compile Include="Component\SAMWeatherWeatherYear.cs" />
+    <Compile Include="Component\TasCreateWeatherData.cs" />
+    <Compile Include="Component\SAMWeatherTasUpdateWeatherData.cs" />
+    <Compile Include="Component\TasWeatherYear.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -140,6 +140,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SAM_Small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TBD_TSD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_TasTBD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_TasT3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_TasTSD.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

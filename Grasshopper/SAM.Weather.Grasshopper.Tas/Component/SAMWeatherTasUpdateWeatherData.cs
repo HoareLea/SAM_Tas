@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace SAM.Weather.Grasshopper.Tas
 {
-    public class SAMWeatherSetWeatherData : GH_SAMVariableOutputParameterComponent
+    public class SAMWeatherTasUpdateWeatherData : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -21,7 +21,7 @@ namespace SAM.Weather.Grasshopper.Tas
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_Small;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD;
 
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
@@ -29,9 +29,9 @@ namespace SAM.Weather.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMWeatherSetWeatherData()
-          : base("SAMWeather.SetWeatherData", "SAMWeather.SetWeatherData",
-              "Set TBD WeatherYear from SAM WeatherData",
+        public SAMWeatherTasUpdateWeatherData()
+          : base("SAMWeather.TasUpdateWeather", "SAMWeather.TasUpdateWeather",
+              "Set WeatherYear in TBD from SAM WeatherData",
               "SAM", "Tas")
         {
         }

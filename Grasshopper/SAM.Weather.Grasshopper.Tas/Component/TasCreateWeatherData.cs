@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace SAM.Weather.Grasshopper.Tas
 {
-    public class SAMWeatherCreateWeatherData : GH_SAMVariableOutputParameterComponent
+    public class TasCreateWeatherData : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -21,7 +21,7 @@ namespace SAM.Weather.Grasshopper.Tas
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_Small;
+        protected override System.Drawing.Bitmap Icon => Resources.TBD_TSD;
 
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
@@ -29,9 +29,9 @@ namespace SAM.Weather.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMWeatherCreateWeatherData()
-          : base("SAMWeather.CreateWeatherData", "SAMWeather.CreateWeatherData",
-              "Create SAM WeatherYear from Tas File",
+        public TasCreateWeatherData()
+          : base("Tas.CreateWeatherData", "Tas.CreateWeatherData",
+              "Create SAM WeatherYear from Tas File TBD or TSD",
               "SAM", "Tas")
         {
         }
@@ -44,7 +44,7 @@ namespace SAM.Weather.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTas", NickName = "_pathTas", Description = "A file path to a Tas file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTas", NickName = "_pathTas", Description = "A file path to a Tas file TBD or TSD.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
