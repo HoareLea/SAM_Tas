@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SAM.Core.Tas;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
 {
@@ -36,6 +37,55 @@ namespace SAM.Analytical.Tas
             }
 
             return result;
+        }
+
+        public static List<TBD.DesignDay> DesignDays(this string path, out List<DesignDay> coolingDesignDays, out List<DesignDay> heatingDesignDays)
+        {
+            coolingDesignDays = null;
+            heatingDesignDays = null;
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return null;
+            }
+
+            List<TBD.DesignDay> result = null;
+
+            string extension = System.IO.Path.GetExtension(path).ToLower().Trim();
+            if (extension.EndsWith("tbd"))
+            {
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path))
+                {
+                    result = DesignDays(sAMTBDDocument, out coolingDesignDays, out heatingDesignDays);
+                }
+            }
+            else if (extension.EndsWith("tsd"))
+            {
+                using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path))
+                {
+                    result = DesignDays(sAMTSDDocument, out coolingDesignDays, out heatingDesignDays);
+                }
+            }
+
+            return result;
+        }
+
+        public static List<TBD.DesignDay> DesignDays(this SAMTSDDocument sAMTSDDocument, out List<DesignDay> coolingDesignDays, out List<DesignDay> heatingDesignDays)
+        {
+            coolingDesignDays = null;
+            heatingDesignDays = null;
+
+            if (sAMTSDDocument == null)
+            {
+                return null;
+            }
+
+            throw new System.Exception();
+        }
+
+        public static List<TBD.DesignDay> DesignDays(this SAMTBDDocument sAMTBDDocument, out List<DesignDay> coolingDesignDays, out List<DesignDay> heatingDesignDays)
+        {
+            throw new System.Exception();
         }
     }
 }

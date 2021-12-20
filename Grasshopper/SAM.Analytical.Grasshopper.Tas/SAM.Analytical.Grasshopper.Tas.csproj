@@ -89,6 +89,7 @@
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\SAMAnalyticalCreatAdjacencyClusterByTBD.cs" />
+    <Compile Include="Component\TasCreateDesignDays.cs" />
     <Compile Include="Component\TasOpenT3DDocument.cs" />
     <Compile Include="Component\TasSizing.cs" />
     <Compile Include="Component\TasTSDAddResults.cs" />
