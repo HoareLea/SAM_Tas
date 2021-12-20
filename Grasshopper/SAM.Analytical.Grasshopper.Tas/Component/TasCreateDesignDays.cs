@@ -107,15 +107,15 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-
+            throw new System.NotImplementedException();
             
             index = Params.IndexOfOutputParam("weatherData");
             if (index != -1)
-                dataAccess.SetData(index, new GooWeatherData(weatherData));
+                dataAccess.SetData(index, null);
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, weatherData != null);
+                dataAccess.SetData(index_successful, null != null);
             }
         }
     }
