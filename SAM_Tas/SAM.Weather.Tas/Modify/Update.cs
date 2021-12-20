@@ -109,10 +109,18 @@ namespace SAM.Weather.Tas
 
             weatherYear.Year = weatherYear_TBD.year;
 
-            List<TBD.WeatherDay> weatherDays = weatherYear_TBD.WeatherDays();
-            for(int i =0; i < weatherDays.Count; i++)
+            List<TBD.WeatherDay> weatherDays_TBD = weatherYear_TBD.WeatherDays();
+            for(int i =0; i < weatherDays_TBD.Count; i++)
             {
-                Update(weatherYear[i], weatherDays[i]);
+                WeatherDay weatherDay = weatherYear[i];
+                if(weatherDay == null)
+                {
+                    weatherDay = new WeatherDay();
+                }
+
+                Update(weatherDay, weatherDays_TBD[i]);
+
+                weatherYear[i] = weatherDay;
             }
 
             return true;
@@ -139,9 +147,7 @@ namespace SAM.Weather.Tas
 
             for(int i = 0; i < weatherDays_TBD.Count; i++)
             {
-                WeatherDay weatherDay = new WeatherDay();
-                Update(weatherDays_TBD[i], weatherDay);
-                weatherYear[i] = weatherDay;
+                Update(weatherDays_TBD[i], weatherYear[i]);
             }
 
             return true;
