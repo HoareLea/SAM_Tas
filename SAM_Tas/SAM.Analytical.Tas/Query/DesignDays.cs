@@ -1,5 +1,4 @@
 ﻿using SAM.Core.Tas;
-using System;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
@@ -40,80 +39,23 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<DesignDay> DesignDays(this string path, out List<DesignDay> coolingDesignDays, out List<DesignDay> heatingDesignDays)
+        public static List<DesignDay> DesignDays(this string path_TBD, out List<DesignDay> coolingDesignDays, out List<DesignDay> heatingDesignDays)
         {
             coolingDesignDays = null;
             heatingDesignDays = null;
 
-            if (string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(path_TBD))
             {
                 return null;
             }
 
             List<DesignDay> result = null;
-
-            string extension = System.IO.Path.GetExtension(path).ToLower().Trim();
-            if (extension.EndsWith("tbd"))
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
-                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path))
-                {
-                    result = DesignDays(sAMTBDDocument, out coolingDesignDays, out heatingDesignDays);
-                }
-            }
-            else if (extension.EndsWith("tsd"))
-            {
-                using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path))
-                {
-                    result = DesignDays(sAMTSDDocument, out coolingDesignDays, out heatingDesignDays);
-                }
+                result = DesignDays(sAMTBDDocument, out coolingDesignDays, out heatingDesignDays);
             }
 
             return result;
-        }
-
-        public static List<DesignDay> DesignDays(this SAMTSDDocument sAMTSDDocument, out List<DesignDay> coolingDesignDays, out List<DesignDay> heatingDesignDays, int year = 2018)
-        {
-            coolingDesignDays = null;
-            heatingDesignDays = null;
-
-            if (sAMTSDDocument == null)
-            {
-                return null;
-            }
-
-            throw new NotImplementedException();
-
-
-            //List<TSD.CoolingDesignData> coolingDesignDatas = sAMTSDDocument.TSDDocument?.SimulationData?.CoolingDesignDatas();
-            //if(coolingDesignDatas != null)
-            //{
-            //    foreach(TSD.CoolingDesignData coolingDesignData in coolingDesignDatas)
-            //    {
-            //        int dayOfYear = coolingDesignData.firstDay;
-            //        DateTime dateTime = new DateTime(year, 1, 1);
-            //        dateTime.AddDays(dayOfYear);
-
-            //        List<TSD.ZoneData> zoneDatas = coolingDesignData.ZoneDatas();
-            //        if(zoneDatas != null && zoneDatas.Count != 0)
-            //        {
-            //            foreach(TSD.ZoneData zoneData in zoneDatas)
-            //            {
-            //                DesignDay designDay = new DesignDay(zoneData.name, System.Convert.ToInt16(dateTime.Year), System.Convert.ToByte(dateTime.Month), System.Convert.ToByte(dateTime.Day));
-
-            //                float[] values = (zoneData.GetDailyZoneResult(coolingDesignData.firstDay, (short)TSD.tsdZoneArray.dryBulbTemp) as IEnumerable).Cast<float>().ToArray();
-            //                if(values != null)
-            //                {
-            //                    for(int i = 0; i <= 23; i++)
-            //                    {
-            //                        designDay[Weather.WeatherDataType.DryBulbTemperature, i] = System.Convert.ToDouble(values[i]);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            
         }
 
         public static List<DesignDay> DesignDays(this SAMTBDDocument sAMTBDDocument, out List<DesignDay> coolingDesignDays, out List<DesignDay> heatingDesignDays, int year = 2018)
@@ -129,15 +71,15 @@ namespace SAM.Analytical.Tas
             List<DesignDay> result = new List<DesignDay>();
 
             List<TBD.CoolingDesignDay> coolingDesignDays_TBD = sAMTBDDocument.TBDDocument?.Building.CoolingDesignDays();
-            if(coolingDesignDays_TBD != null)
+            if (coolingDesignDays_TBD != null)
             {
                 coolingDesignDays = new List<DesignDay>();
-                foreach(TBD.CoolingDesignDay coolingDesignDay_TBD in coolingDesignDays_TBD)
+                foreach (TBD.CoolingDesignDay coolingDesignDay_TBD in coolingDesignDays_TBD)
                 {
                     List<TBD.DesignDay> designDays_TBD = coolingDesignDay_TBD.DesignDays();
-                    if(designDays_TBD != null && designDays_TBD.Count != 0)
+                    if (designDays_TBD != null && designDays_TBD.Count != 0)
                     {
-                        foreach(TBD.DesignDay designDay_TBD in designDays_TBD)
+                        foreach (TBD.DesignDay designDay_TBD in designDays_TBD)
                         {
                             DesignDay designDay = designDay_TBD?.ToSAM(coolingDesignDay_TBD.name, year);
                             if(designDay == null)
