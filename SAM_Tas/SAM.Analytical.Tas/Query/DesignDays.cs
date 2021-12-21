@@ -139,7 +139,7 @@ namespace SAM.Analytical.Tas
                     {
                         foreach(TBD.DesignDay designDay_TBD in designDays_TBD)
                         {
-                            DesignDay designDay = designDay_TBD?.ToSAM(year);
+                            DesignDay designDay = designDay_TBD?.ToSAM(coolingDesignDay_TBD.name, year);
                             if(designDay == null)
                             {
                                 continue;
@@ -163,7 +163,7 @@ namespace SAM.Analytical.Tas
                     {
                         foreach (TBD.DesignDay designDay_TBD in designDays_TBD)
                         {
-                            DesignDay designDay = designDay_TBD?.ToSAM(year);
+                            DesignDay designDay = designDay_TBD?.ToSAM(heatingDesignDay_TBD.name, year);
                             if (designDay == null)
                             {
                                 continue;

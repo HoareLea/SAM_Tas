@@ -5,20 +5,26 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
-        public static DesignDay ToSAM(this TBD.DesignDay designDay, int year = 2018)
+        public static DesignDay ToSAM(this TBD.DesignDay designDay, string name = null, int year = 2018)
         {
             if(designDay == null)
             {
                 return null;
             }
 
+            string name_Temp = name;
+            if(string.IsNullOrWhiteSpace(name_Temp))
+            {
+                name_Temp = designDay.name;
+            }
+
             int dayOfYear = designDay.yearDay;
             DateTime dateTime = new DateTime(year, 1, 1);
-            dateTime.AddDays(dayOfYear);
+            dateTime = dateTime.AddDays(dayOfYear - 1);
 
             TBD.WeatherDay weatherDay_TBD = designDay.GetWeatherDay();
 
-            DesignDay result = new DesignDay(designDay.name, System.Convert.ToInt16(dateTime.Year), System.Convert.ToByte(dateTime.Month), System.Convert.ToByte(dateTime.Day));
+            DesignDay result = new DesignDay(name_Temp, System.Convert.ToInt16(dateTime.Year), System.Convert.ToByte(dateTime.Month), System.Convert.ToByte(dateTime.Day));
 
             for (int i = 1; i <= 24; i++)
             {
