@@ -5,6 +5,24 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
+        public static Dictionary<string, ZoneData> ZoneDataDictionary(this IEnumerable<ZoneData> zoneDatas)
+        {
+            if (zoneDatas == null)
+                return null;
+
+            Dictionary<string, ZoneData> result = new Dictionary<string, ZoneData>();
+
+            foreach(ZoneData zoneData in zoneDatas)
+            {
+                string reference = zoneData.zoneGUID;
+                if (reference == null)
+                    continue;
+
+                result[reference] = zoneData;
+            }
+            return result;
+        }
+
         public static Dictionary<string, ZoneData> ZoneDataDictionary(this BuildingData buildingData)
         {
             if (buildingData == null)

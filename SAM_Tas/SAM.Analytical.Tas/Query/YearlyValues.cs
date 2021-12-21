@@ -7,12 +7,36 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
+        public static Dictionary<tsdZoneArray, Dictionary<string, double[]>> YearlyValues(this HeatingDesignData heatingDesignData, IEnumerable<tsdZoneArray> tSDZoneArrays)
+        {
+            if (heatingDesignData == null || tSDZoneArrays == null)
+                return null;
+
+            return YearlyValues(heatingDesignData.ZoneDatas(), tSDZoneArrays);
+        }
+
+        public static Dictionary<tsdZoneArray, Dictionary<string, double[]>> YearlyValues(this CoolingDesignData coolingDesignData, IEnumerable<tsdZoneArray> tSDZoneArrays)
+        {
+            if (coolingDesignData == null || tSDZoneArrays == null)
+                return null;
+
+            return YearlyValues(coolingDesignData.ZoneDatas(), tSDZoneArrays);
+        }
+
         public static Dictionary<tsdZoneArray, Dictionary<string, double[]>> YearlyValues(this BuildingData buildingData, IEnumerable<tsdZoneArray> tSDZoneArrays)
         {
             if (buildingData == null || tSDZoneArrays == null)
                 return null;
 
-            Dictionary<string, ZoneData> dictionary = ZoneDataDictionary(buildingData);
+            return YearlyValues(buildingData.ZoneDatas(), tSDZoneArrays);
+        }
+
+        public static Dictionary<tsdZoneArray, Dictionary<string, double[]>> YearlyValues(this IEnumerable<ZoneData> zoneDatas, IEnumerable<tsdZoneArray> tSDZoneArrays)
+        {
+            if (zoneDatas == null || tSDZoneArrays == null)
+                return null;
+
+            Dictionary<string, ZoneData> dictionary = ZoneDataDictionary(zoneDatas);
 
             Dictionary<tsdZoneArray, Dictionary<string, double[]>> result = new Dictionary<tsdZoneArray, Dictionary<string, double[]>>();
             foreach (tsdZoneArray tSDZoneArray in tSDZoneArrays)
@@ -42,9 +66,20 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
+
         public static Dictionary<string, double[]> YearlyValues(this BuildingData buildingData, tsdZoneArray tSDZoneArray)
         {
             return YearlyValues(buildingData, new tsdZoneArray[] { tSDZoneArray })?[tSDZoneArray];
+        }
+
+        public static Dictionary<string, double[]> YearlyValues(this HeatingDesignData heatingDesignData, tsdZoneArray tSDZoneArray)
+        {
+            return YearlyValues(heatingDesignData, new tsdZoneArray[] { tSDZoneArray })?[tSDZoneArray];
+        }
+
+        public static Dictionary<string, double[]> YearlyValues(this CoolingDesignData coolingDesignData, tsdZoneArray tSDZoneArray)
+        {
+            return YearlyValues(coolingDesignData, new tsdZoneArray[] { tSDZoneArray })?[tSDZoneArray];
         }
     }
 }
