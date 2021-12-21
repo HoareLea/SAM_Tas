@@ -111,11 +111,11 @@ namespace SAM.Analytical.Grasshopper.Tas
             
             index = Params.IndexOfOutputParam("coolingDesignDays");
             if (index != -1)
-                dataAccess.SetData(index, coolingDesignDays?.ConvertAll(x => new GooDesignDay(x)));
+                dataAccess.SetDataList(index, coolingDesignDays?.ConvertAll(x => new GooDesignDay(x)));
 
             index = Params.IndexOfOutputParam("heatingDesignDays");
             if (index != -1)
-                dataAccess.SetData(index, heatingDesignDays?.ConvertAll(x => new GooDesignDay(x)));
+                dataAccess.SetDataList(index, heatingDesignDays?.ConvertAll(x => new GooDesignDay(x)));
 
             if (index_successful != -1)
             {
