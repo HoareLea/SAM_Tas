@@ -107,15 +107,19 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            throw new System.NotImplementedException();
+            Analytical.Tas.Query.DesignDays(path, out List<DesignDay> coolingDesignDays, out List<DesignDay> heatingDesignDays);
             
-            index = Params.IndexOfOutputParam("weatherData");
+            index = Params.IndexOfOutputParam("coolingDesignDays");
             if (index != -1)
-                dataAccess.SetData(index, null);
+                dataAccess.SetData(index, coolingDesignDays?.ConvertAll(x => new GooDesignDay(x)));
+
+            index = Params.IndexOfOutputParam("heatingDesignDays");
+            if (index != -1)
+                dataAccess.SetData(index, heatingDesignDays?.ConvertAll(x => new GooDesignDay(x)));
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, null != null);
+                dataAccess.SetData(index_successful, (heatingDesignDays != null && heatingDesignDays.Count > 0) || (coolingDesignDays != null && coolingDesignDays.Count > 0));
             }
         }
     }

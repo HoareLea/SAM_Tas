@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="Convert\ToSAM\AnalyticalModel.cs" />
     <Compile Include="Convert\ToSAM\Construction.cs" />
+    <Compile Include="Convert\ToSAM\DesignDay.cs" />
     <Compile Include="Convert\ToSAM\MaterialLibrary.cs" />
     <Compile Include="Convert\ToSAM\Material.cs" />
     <Compile Include="Convert\ToSAM\PanelSimulationResult.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Query\DesignDays.cs" />
     <Compile Include="Query\HeatingDesignDays.cs" />
     <Compile Include="Query\CoolingDesignDays.cs" />
+    <Compile Include="Query\CoolingDesignDatas.cs" />
     <Compile Include="Query\Source.cs" />
     <Compile Include="Query\RoomSurfaces.cs" />
     <Compile Include="Query\ZoneSurfaces.cs" />
