@@ -88,7 +88,7 @@
                 return false;
             }
 
-            designDay_TBD.yearDay = designDay.DateTime.DayOfYear;
+            designDay_TBD.yearDay = designDay.GetDateTime().DayOfYear;
             designDay_TBD.repetitions = repetitions;
 
             if(dayType != null)
