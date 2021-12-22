@@ -163,6 +163,9 @@ namespace SAM.Analytical.Tas
             typeMap.Add(typeof(Panel), typeof(TSD.SurfaceData), "Area", "area");
             typeMap.Add(typeof(Panel), typeof(TSD.SurfaceData), "Orientation", "orientation");
 
+            typeMap.Add(SpaceSimulationResultParameter.ZoneNumber, typeof(TSD.ZoneData), "zoneNumber");
+            typeMap.Add(SpaceSimulationResultParameter.ZoneGuid, typeof(TSD.ZoneData), "zoneGUID");
+
 
             result.Add(Core.Tas.ActiveSetting.Name.ParameterMap, typeMap);
 

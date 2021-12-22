@@ -9,7 +9,12 @@ namespace SAM.Analytical.Tas
     {
         public static Dictionary<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>> DesignDataDictionary(this SAMTSDDocument sAMTSDDocument)
         {
-            SimulationData simulationData = sAMTSDDocument?.TSDDocument?.SimulationData;
+            return DesignDataDictionary(sAMTSDDocument?.TSDDocument?.SimulationData);
+
+        }
+
+        public static Dictionary<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>> DesignDataDictionary(this SimulationData simulationData)
+        {
             if (simulationData == null)
             {
                 return null;
@@ -61,12 +66,12 @@ namespace SAM.Analytical.Tas
             }
 
             Dictionary<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>> result = new Dictionary<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>>();
-            if(dictionary_DesignDay_Cooling != null)
+            if (dictionary_DesignDay_Cooling != null)
             {
-                foreach(KeyValuePair<string, Tuple<double, CoolingDesignData>> keyValuePair_Cooling in dictionary_DesignDay_Cooling)
+                foreach (KeyValuePair<string, Tuple<double, CoolingDesignData>> keyValuePair_Cooling in dictionary_DesignDay_Cooling)
                 {
                     Tuple<double, HeatingDesignData> tuple_Heating = null;
-                    if(dictionary_DesignDay_Heating == null || !dictionary_DesignDay_Heating.TryGetValue(keyValuePair_Cooling.Key, out tuple_Heating))
+                    if (dictionary_DesignDay_Heating == null || !dictionary_DesignDay_Heating.TryGetValue(keyValuePair_Cooling.Key, out tuple_Heating))
                     {
                         tuple_Heating = null;
                     }
@@ -75,7 +80,7 @@ namespace SAM.Analytical.Tas
                     CoolingDesignData coolingDesignData = keyValuePair_Cooling.Value.Item2;
                     double heatingLoad = double.NaN;
                     HeatingDesignData heatingDesignData = null;
-                    if(tuple_Heating != null)
+                    if (tuple_Heating != null)
                     {
                         heatingLoad = tuple_Heating.Item1;
                         heatingDesignData = tuple_Heating.Item2;
@@ -85,11 +90,11 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            if(dictionary_DesignDay_Heating != null)
+            if (dictionary_DesignDay_Heating != null)
             {
                 foreach (KeyValuePair<string, Tuple<double, HeatingDesignData>> keyValuePair_Heating in dictionary_DesignDay_Heating)
                 {
-                    if(result.ContainsKey(keyValuePair_Heating.Key))
+                    if (result.ContainsKey(keyValuePair_Heating.Key))
                     {
                         continue;
                     }

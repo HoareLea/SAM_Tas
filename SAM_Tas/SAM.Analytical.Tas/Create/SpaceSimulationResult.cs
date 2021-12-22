@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SAM.Core;
+using System.Collections.Generic;
 using TSD;
 
 namespace SAM.Analytical.Tas
@@ -15,7 +16,14 @@ namespace SAM.Analytical.Tas
             double area = zoneData.floorArea;
             double volume = zoneData.volume;
 
-            return Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, loadType, 0);
+            SpaceSimulationResult result = Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, loadType, 0);
+
+            ParameterSet parameterSet = ParameterSet(ActiveSetting.Setting, zoneData);
+            if(parameterSet != null)
+            {
+                result.Add(parameterSet);
+            }
+            return result;
         }
 
         public static SpaceSimulationResult SpaceSimulationResult(this ZoneData zoneData)
@@ -28,7 +36,14 @@ namespace SAM.Analytical.Tas
             double area = zoneData.floorArea;
             double volume = zoneData.volume;
 
-            return Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area);
+            SpaceSimulationResult result = Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area);
+
+            ParameterSet parameterSet = ParameterSet(ActiveSetting.Setting, zoneData);
+            if (parameterSet != null)
+            {
+                result.Add(parameterSet);
+            }
+            return result;
         }
 
         public static SpaceSimulationResult SpaceSimulationResult(this TBD.zone zone, LoadType loadType)
@@ -113,6 +128,12 @@ namespace SAM.Analytical.Tas
             if(dryBulbTemperatures != null)
             {
                 result.SetValue(SpaceSimulationResultParameter.DryBulbTemperatureProfile, new Profile("Dry Bulb Temperature", "Annual Space Values", dryBulbTemperatures));
+            }
+
+            ParameterSet parameterSet = ParameterSet(ActiveSetting.Setting, zoneData);
+            if (parameterSet != null)
+            {
+                result.Add(parameterSet);
             }
 
             return result;

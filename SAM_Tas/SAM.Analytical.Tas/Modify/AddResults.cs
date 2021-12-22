@@ -1,4 +1,5 @@
 ﻿using SAM.Core.Tas;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using TSD;
@@ -37,7 +38,6 @@ namespace SAM.Analytical.Tas
             return AddResults(tSDDocument.SimulationData, adjacencyCLuster);
         }
 
-        //
         public static List<Core.Result> AddResults(this SimulationData simulationData, AdjacencyCluster adjacencyCluster)
         {
             if (simulationData == null || adjacencyCluster == null)
@@ -52,7 +52,39 @@ namespace SAM.Analytical.Tas
 
             result = new List<Core.Result>(results);
 
-            Dictionary<System.Guid, List<SpaceSimulationResult>> dictionary = new Dictionary<System.Guid, List<SpaceSimulationResult>>();
+            Dictionary<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>> designDataDictionary = Query.DesignDataDictionary(simulationData);
+            if(designDataDictionary != null)
+            {
+                foreach(SpaceSimulationResult spaceSimulationResult in result.FindAll(x => x is SpaceSimulationResult))
+                {
+                    if(spaceSimulationResult == null)
+                    {
+                        continue;
+                    }
+
+                    if(!spaceSimulationResult.TryGetValue(SpaceSimulationResultParameter.ZoneGuid, out string zoneGuid) || string.IsNullOrWhiteSpace(zoneGuid))
+                    {
+                        continue;
+                    }
+
+                    if(!designDataDictionary.TryGetValue(zoneGuid, out Tuple<CoolingDesignData, double, HeatingDesignData, double> tuple) || tuple == null)
+                    {
+                        continue;
+                    }
+
+                    if(tuple.Item1 != null)
+                    {
+                        spaceSimulationResult.SetValue(SpaceSimulationResultParameter.CoolingDesignDayName, tuple.Item1.name);
+                    }
+
+                    if (tuple.Item3 != null)
+                    {
+                        spaceSimulationResult.SetValue(SpaceSimulationResultParameter.HeatingDesignDayName, tuple.Item3.name);
+                    }
+                }
+            }
+
+            Dictionary<Guid, List<SpaceSimulationResult>> dictionary = new Dictionary<Guid, List<SpaceSimulationResult>>();
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces != null && spaces.Count > 0)
             {
