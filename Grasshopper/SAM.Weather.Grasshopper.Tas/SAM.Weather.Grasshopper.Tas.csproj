@@ -86,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Component\TasCreateWeatherData.cs" />
-    <Compile Include="Component\SAMWeatherTasUpdateWeatherData.cs" />
+    <Compile Include="Component\TasUpdateWeatherData.cs" />
     <Compile Include="Component\TasWeatherYear.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

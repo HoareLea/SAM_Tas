@@ -31,7 +31,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         public TasRemoveSchedules()
           : base("Tas.RemoveSchedules", "Tas.RemoveSchedules",
               "Removes the schedules from a TBD file by the given name suffix.",
-              "SAM", "Tas")
+              "SAM WIP", "Tas")
         {
         }
 

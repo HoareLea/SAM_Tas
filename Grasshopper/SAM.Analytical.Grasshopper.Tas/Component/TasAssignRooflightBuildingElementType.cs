@@ -31,7 +31,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         public TasAssignRooflightBuildingElementType()
           : base("Tas.AssignRooflightBuilidingElementType", "Tas.AssignRooflightBuilidingElementType",
               "Assigns the rooflight building element type.",
-              "SAM", "Tas")
+              "SAM WIP", "Tas")
         {
         }
 
