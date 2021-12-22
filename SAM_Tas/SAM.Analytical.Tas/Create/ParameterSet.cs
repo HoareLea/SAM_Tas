@@ -48,9 +48,16 @@ namespace SAM.Analytical.Tas
             return parameterSet;
         }
 
-        public static ParameterSet ParameterSet(this Setting setting, ZoneData zoneData)
+        public static ParameterSet ParameterSet_Space(this Setting setting, ZoneData zoneData)
         {
             ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, zoneData, typeof(Space), typeof(ZoneData));
+
+            return parameterSet;
+        }
+
+        public static ParameterSet ParameterSet_SpaceSimulationResult(this Setting setting, ZoneData zoneData)
+        {
+            ParameterSet parameterSet = Core.Tas.Create.ParameterSet(setting, zoneData, typeof(SpaceSimulationResult), typeof(ZoneData));
 
             return parameterSet;
         }

@@ -18,11 +18,14 @@ namespace SAM.Analytical.Tas
 
             SpaceSimulationResult result = Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area, loadType, 0);
 
-            ParameterSet parameterSet = ParameterSet(ActiveSetting.Setting, zoneData);
+            ParameterSet parameterSet = ParameterSet_SpaceSimulationResult(ActiveSetting.Setting, zoneData);
             if(parameterSet != null)
             {
                 result.Add(parameterSet);
             }
+
+            result.SetValue(SpaceSimulationResultParameter.ZoneGuid, zoneData.zoneGUID);
+
             return result;
         }
 
@@ -38,11 +41,14 @@ namespace SAM.Analytical.Tas
 
             SpaceSimulationResult result = Analytical.Create.SpaceSimulationResult(name, Query.Source(), reference, volume, area);
 
-            ParameterSet parameterSet = ParameterSet(ActiveSetting.Setting, zoneData);
+            ParameterSet parameterSet = ParameterSet_SpaceSimulationResult(ActiveSetting.Setting, zoneData);
             if (parameterSet != null)
             {
                 result.Add(parameterSet);
             }
+
+            result.SetValue(SpaceSimulationResultParameter.ZoneGuid, zoneData.zoneGUID);
+
             return result;
         }
 
@@ -130,7 +136,9 @@ namespace SAM.Analytical.Tas
                 result.SetValue(SpaceSimulationResultParameter.DryBulbTemperatureProfile, new Profile("Dry Bulb Temperature", "Annual Space Values", dryBulbTemperatures));
             }
 
-            ParameterSet parameterSet = ParameterSet(ActiveSetting.Setting, zoneData);
+            result.SetValue(SpaceSimulationResultParameter.ZoneGuid, zoneData.zoneGUID);
+
+            ParameterSet parameterSet = ParameterSet_SpaceSimulationResult(ActiveSetting.Setting, zoneData);
             if (parameterSet != null)
             {
                 result.Add(parameterSet);

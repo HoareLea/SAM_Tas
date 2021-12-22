@@ -31,7 +31,7 @@ namespace SAM.Core.Tas
             if (typeMap == null)
                 return null;
 
-            return Core.Create.ParameterSet(@object, type_Destination.Assembly, type_Source.FullName, type_Destination.FullName, typeMap);
+            return Core.Create.ParameterSet(@object, type_Destination.Assembly, Core.Query.FullTypeName(type_Source), Core.Query.FullTypeName(type_Destination), typeMap);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas
 
         public static Space ToSAM(this TSD.ZoneData zoneData, IEnumerable<SpaceDataType> spaceDataTypes = null)
         {
-            ParameterSet parameterSet = Create.ParameterSet(ActiveSetting.Setting, zoneData);
+            ParameterSet parameterSet = Create.ParameterSet_Space(ActiveSetting.Setting, zoneData);
 
             if(spaceDataTypes != null)
             {

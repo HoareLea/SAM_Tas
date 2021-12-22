@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas
             result.SetValue("Convective Common Ratio", zoneData.convectiveCommonRatio);
             result.SetValue("Radiat Common Ratio", zoneData.radiantCommonRatio);
 
-            ParameterSet parameterSet = Create.ParameterSet(ActiveSetting.Setting, zoneData);
+            ParameterSet parameterSet = Create.ParameterSet_SpaceSimulationResult(ActiveSetting.Setting, zoneData);
 
             if(spaceDataTypes != null)
             {
@@ -55,6 +55,8 @@ namespace SAM.Analytical.Tas
             }
 
             result.Add(parameterSet);
+
+            result.SetValue(SpaceSimulationResultParameter.ZoneGuid, zoneData.zoneGUID);
 
             return result;
         }
