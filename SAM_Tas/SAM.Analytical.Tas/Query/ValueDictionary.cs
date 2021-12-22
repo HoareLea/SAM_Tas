@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TSD;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static Dictionary<string, double> ValueDictionary(this BuildingData buildingData, tsdZoneArray tsdZoneArray)
+        public static Dictionary<string, Tuple<double, int>> ValueDictionary(this BuildingData buildingData, tsdZoneArray tsdZoneArray)
         {
             if(buildingData == null)
             {
@@ -20,10 +21,10 @@ namespace SAM.Analytical.Tas
 
             object[,] values = buildingData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray });
 
-            Dictionary<string, double> dictionary = new Dictionary<string, double>();
+            Dictionary<string, Tuple<double, int>> dictionary = new Dictionary<string, Tuple<double, int>>();
             for (int i = 0; i < zoneDatas.Count; i++)
             {
-                dictionary[zoneDatas[i].zoneGUID] = (float)values[1, i];
+                dictionary[zoneDatas[i].zoneGUID] = new Tuple<double, int> ((float)values[1, i], (int)values[2, i]);
             }
 
             return dictionary;

@@ -7,14 +7,14 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static Dictionary<string, Tuple<double, CoolingDesignData>> MaxValueDictionary(this IEnumerable<CoolingDesignData> coolingDesignDatas, tsdZoneArray tsdZoneArray) 
+        public static Dictionary<string, Tuple<double, int, CoolingDesignData>> MaxValueDictionary(this IEnumerable<CoolingDesignData> coolingDesignDatas, tsdZoneArray tsdZoneArray) 
         {
             if(coolingDesignDatas == null)
             {
                 return null;
             }
 
-            Dictionary<string, Tuple<double, CoolingDesignData>> result = new Dictionary<string, Tuple<double, CoolingDesignData>>();
+            Dictionary<string, Tuple<double, int, CoolingDesignData>> result = new Dictionary<string, Tuple<double, int, CoolingDesignData>>();
 
             if(coolingDesignDatas.Count() == 0)
             {
@@ -40,8 +40,9 @@ namespace SAM.Analytical.Tas
             {
                 string id = zoneDatas[i].zoneGUID;
                 double value = (float)values[1, i];
+                int index = (int)values[2, i];
 
-                result[id] = new Tuple<double, CoolingDesignData>(value, coolingDesignData);
+                result[id] = new Tuple<double, int, CoolingDesignData>(value, index, coolingDesignData);
             }
 
             for (int i = 1; i < coolingDesignDatas.Count(); i++)
@@ -51,14 +52,15 @@ namespace SAM.Analytical.Tas
                 {
                     string id = zoneDatas[j].zoneGUID;
                     double value = (float)values[1, j];
+                    int index = (int)values[2, j];
 
-                    if(!result.TryGetValue(id, out Tuple<double, CoolingDesignData> tuple))
+                    if (!result.TryGetValue(id, out Tuple<double, int, CoolingDesignData> tuple))
                     {
-                        result[id] = new Tuple<double, CoolingDesignData>(value, coolingDesignData);
+                        result[id] = new Tuple<double, int, CoolingDesignData>(value, index, coolingDesignData);
                     }
                     else if(tuple.Item1 < value)
                     {
-                        tuple = new Tuple<double, CoolingDesignData>(value, coolingDesignDatas.ElementAt(i));
+                        tuple = new Tuple<double, int, CoolingDesignData>(value, index, coolingDesignDatas.ElementAt(i));
                         result[id] = tuple;
                     }
                 }
@@ -67,14 +69,14 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static Dictionary<string, Tuple<double, HeatingDesignData>> MaxValueDictionary(this IEnumerable<HeatingDesignData> heatingDesignDatas, tsdZoneArray tsdZoneArray)
+        public static Dictionary<string, Tuple<double, int, HeatingDesignData>> MaxValueDictionary(this IEnumerable<HeatingDesignData> heatingDesignDatas, tsdZoneArray tsdZoneArray)
         {
             if (heatingDesignDatas == null)
             {
                 return null;
             }
 
-            Dictionary<string, Tuple<double, HeatingDesignData>> result = new Dictionary<string, Tuple<double, HeatingDesignData>>();
+            Dictionary<string, Tuple<double, int, HeatingDesignData>> result = new Dictionary<string, Tuple<double, int, HeatingDesignData>>();
 
             if (heatingDesignDatas.Count() == 0)
             {
@@ -100,8 +102,9 @@ namespace SAM.Analytical.Tas
             {
                 string id = zoneDatas[i].zoneGUID;
                 double value = (float)values[1, i];
+                int index = (int)values[2, i];
 
-                result[id] = new Tuple<double, HeatingDesignData>(value, heatingDesignData);
+                result[id] = new Tuple<double, int, HeatingDesignData>(value, index, heatingDesignData);
             }
 
             for (int i = 1; i < heatingDesignDatas.Count(); i++)
@@ -111,14 +114,15 @@ namespace SAM.Analytical.Tas
                 {
                     string id = zoneDatas[j].zoneGUID;
                     double value = (float)values[1, j];
+                    int index = (int)values[2, j];
 
-                    if (!result.TryGetValue(id, out Tuple<double, HeatingDesignData> tuple))
+                    if (!result.TryGetValue(id, out Tuple<double, int, HeatingDesignData> tuple))
                     {
-                        result[id] = new Tuple<double, HeatingDesignData>(value, heatingDesignData);
+                        result[id] = new Tuple<double, int, HeatingDesignData>(value, index, heatingDesignData);
                     }
                     else if (tuple.Item1 < value)
                     {
-                        tuple = new Tuple<double, HeatingDesignData>(value, heatingDesignDatas.ElementAt(i));
+                        tuple = new Tuple<double, int, HeatingDesignData>(value, index, heatingDesignDatas.ElementAt(i));
                         result[id] = tuple;
                     }
                 }

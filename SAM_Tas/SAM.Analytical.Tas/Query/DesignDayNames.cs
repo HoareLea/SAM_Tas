@@ -17,13 +17,13 @@ namespace SAM.Analytical.Tas
             List<Tuple<string, string, string>> result = null;
             using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD))
             {
-                Dictionary<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>> dictionary = DesignDataDictionary(sAMTSDDocument);
+                Dictionary<string, Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int>> dictionary = DesignDataDictionary(sAMTSDDocument);
                 if(dictionary != null)
                 {
                     result = new List<Tuple<string, string, string>>();
-                    foreach(KeyValuePair<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>> keyValuePair in dictionary)
+                    foreach(KeyValuePair<string, Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int>> keyValuePair in dictionary)
                     {
-                        result.Add(new Tuple<string, string, string>(keyValuePair.Key, keyValuePair.Value.Item1?.name, keyValuePair.Value.Item3?.name));
+                        result.Add(new Tuple<string, string, string>(keyValuePair.Key, keyValuePair.Value.Item1?.name, keyValuePair.Value.Item4?.name));
                     }
                 }
 
