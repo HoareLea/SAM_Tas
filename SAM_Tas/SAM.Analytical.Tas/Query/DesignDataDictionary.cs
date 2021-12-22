@@ -1,7 +1,6 @@
 ﻿using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TSD;
 
 namespace SAM.Analytical.Tas
@@ -16,20 +15,8 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            Task<Dictionary<string, Tuple<double, CoolingDesignData>>> task_Cooling = new Task<Dictionary<string, Tuple<double, CoolingDesignData>>>(() =>
-            {
-                return MaxValueDictionary(simulationData.CoolingDesignDatas(), tsdZoneArray.coolingLoad);
-            });
-
-            Task<Dictionary<string, Tuple<double, HeatingDesignData>>> task_Heating = new Task<Dictionary<string, Tuple<double, HeatingDesignData>>>(() =>
-            {
-                return MaxValueDictionary(simulationData.HeatingDesignDatas(), tsdZoneArray.heatingLoad);
-            });
-
-            Task.WhenAll(task_Cooling, task_Heating);
-
-            Dictionary<string, Tuple<double, CoolingDesignData>> dictionary_DesignDay_Cooling = task_Cooling.Result;
-            Dictionary<string, Tuple<double, HeatingDesignData>> dictionary_DesignDay_Heating = task_Heating.Result;
+            Dictionary<string, Tuple<double, CoolingDesignData>> dictionary_DesignDay_Cooling = MaxValueDictionary(simulationData.CoolingDesignDatas(), tsdZoneArray.coolingLoad);
+            Dictionary<string, Tuple<double, HeatingDesignData>> dictionary_DesignDay_Heating = MaxValueDictionary(simulationData.HeatingDesignDatas(), tsdZoneArray.heatingLoad);
 
             BuildingData buildingData = simulationData.GetBuildingData();
             if (buildingData != null)
