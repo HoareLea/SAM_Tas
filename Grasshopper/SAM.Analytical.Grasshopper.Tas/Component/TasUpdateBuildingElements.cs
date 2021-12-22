@@ -1,6 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
+using SAM.Core.Tas;
 using System;
 
 namespace SAM.Analytical.Grasshopper.Tas
@@ -88,7 +89,18 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            bool result = Analytical.Tas.Modify.UpdateBuildingElements(path_TBD, analyticalModel);
+            bool result = false;
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            {
+                result = Analytical.Tas.Modify.UpdateBuildingElements(sAMTBDDocument, analyticalModel);
+                AdjacencyCluster adjacencyCluster = analyticalModel.AdjacencyCluster;
+                Analytical.Tas.Modify.UpdateThermalTransmittances(adjacencyCluster, sAMTBDDocument.TBDDocument?.Building);
+                analyticalModel = new AnalyticalModel(analyticalModel, adjacencyCluster);
+                if (result)
+                {
+                    sAMTBDDocument.Save();
+                }
+            }
 
             dataAccess.SetData(0, new GooAnalyticalModel(analyticalModel));
             dataAccess.SetData(1, result);

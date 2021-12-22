@@ -119,6 +119,7 @@
     <Compile Include="Modify\RemoveInternalCondition.cs" />
     <Compile Include="Modify\RemoveMaterials.cs" />
     <Compile Include="Modify\AddInternalCondition.cs" />
+    <Compile Include="Modify\UpdateThermalTransmittances.cs" />
     <Compile Include="Modify\UpdateDesignLoads.cs" />
     <Compile Include="Modify\UpdateInternalCondition_HDD.cs" />
     <Compile Include="Modify\UpdateInternalCondition.cs" />
