@@ -20,6 +20,7 @@ namespace SAM.Analytical.Tas
                 Dictionary<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>> dictionary = DesignDataDictionary(sAMTSDDocument);
                 if(dictionary != null)
                 {
+                    result = new List<Tuple<string, string, string>>();
                     foreach(KeyValuePair<string, Tuple<CoolingDesignData, double, HeatingDesignData, double>> keyValuePair in dictionary)
                     {
                         result.Add(new Tuple<string, string, string>(keyValuePair.Key, keyValuePair.Value.Item1?.name, keyValuePair.Value.Item3?.name));
