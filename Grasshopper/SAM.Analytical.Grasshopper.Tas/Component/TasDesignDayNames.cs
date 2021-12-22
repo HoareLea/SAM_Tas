@@ -21,7 +21,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTSD;
 
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
@@ -31,8 +31,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasDesignDayNames()
           : base("Tas.DesignDayNames", "Tas.DesignDayNames",
-              "DesignDay Names",
-              "SAM", "Tas")
+              "extract DesignDay Names from TSD  z\n Iterates via all Desing Days and check for max heating and cooling load and returns design day name",
+              "SAM WIP", "Tas")
         {
         }
 
