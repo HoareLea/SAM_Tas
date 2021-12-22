@@ -27,13 +27,21 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                TBD.Construction construction_TBD = constructions_TBD.Find(x => x.name == construction.Name);
+                string name = construction.Name;
+
+                TBD.Construction construction_TBD = constructions_TBD.Find(x => x.name == name);
                 if(construction_TBD == null)
+                {
+                    name = Analytical.Query.UniqueName(panel.PanelType, name);
+                    construction_TBD = constructions_TBD.Find(x => x.name == name);
+                }
+
+                if (construction_TBD == null)
                 {
                     continue;
                 }
 
-                double thermalTransmittance = Query.ThermalTransmittance(construction_TBD, panel.PanelType);
+                    double thermalTransmittance = Query.ThermalTransmittance(construction_TBD, panel.PanelType);
 
                 panel.SetValue(PanelParameter.ThermalTransmittance, thermalTransmittance);
                 adjacencyCluster.AddObject(panel);
