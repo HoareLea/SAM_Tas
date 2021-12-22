@@ -196,6 +196,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                     }
                 }
 
+                adjacencyCluster = Analytical.Tas.Modify.UpdateDesignLoads(path_TBD, adjacencyCluster);
+
                 if (sAMObject is AdjacencyCluster)
                     sAMObject = adjacencyCluster;
                 else if (sAMObject is AnalyticalModel)
