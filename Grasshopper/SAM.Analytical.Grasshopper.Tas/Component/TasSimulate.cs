@@ -156,8 +156,11 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
                 {
-                    Core.Tas.Modify.UpdateSurfaceOutputSpecs(sAMTBDDocument.TBDDocument, surfaceOutputSpecs);
-                    Core.Tas.Modify.AssignSurfaceOutputSpecs(sAMTBDDocument.TBDDocument, surfaceOutputSpecs[0].Name);
+                    TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                    Core.Tas.Modify.UpdateSurfaceOutputSpecs(tBDDocument, surfaceOutputSpecs);
+                    Core.Tas.Modify.AssignSurfaceOutputSpecs(tBDDocument, surfaceOutputSpecs[0].Name);
+                    sAMTBDDocument.Save();
                 }
             }
 
