@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas
         public static Dictionary<Panel, double> UpdateThermalTransmittances(this AdjacencyCluster adjacencyCluster, TBD.Building building)
         {
             List<TBD.Construction> constructions_TBD = building?.Constructions();
-            if(constructions_TBD == null)
+            if (constructions_TBD == null)
             {
                 return null;
             }
@@ -19,10 +19,10 @@ namespace SAM.Analytical.Tas
             }
 
             Dictionary<Panel, double> result = new Dictionary<Panel, double>();
-            foreach(Panel panel in panels)
+            foreach (Panel panel in panels)
             {
                 Construction construction = panel?.Construction;
-                if(construction == null)
+                if (construction == null)
                 {
                     continue;
                 }
@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas
                 string name = construction.Name;
 
                 TBD.Construction construction_TBD = constructions_TBD.Find(x => x.name == name);
-                if(construction_TBD == null)
+                if (construction_TBD == null)
                 {
                     name = Analytical.Query.UniqueName(panel.PanelType, name);
                     construction_TBD = constructions_TBD.Find(x => x.name == name);
@@ -41,7 +41,11 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                    double thermalTransmittance = Query.ThermalTransmittance(construction_TBD, panel.PanelType);
+                double thermalTransmittance = Query.ThermalTransmittance(construction_TBD, panel.PanelType);
+
+                double totalSolarEnergyTransmittance = Query.TotalSolarEnergyTransmittance(construction_TBD);
+
+                double lightTransmittance = Query.LightTransmittance(construction_TBD);
 
                 panel.SetValue(PanelParameter.ThermalTransmittance, thermalTransmittance);
                 adjacencyCluster.AddObject(panel);

@@ -65,7 +65,7 @@ namespace SAM.Analytical.Tas
                     break;
             }
 
-            return index == -1 || values.Length > index ? double.NaN : Core.Query.Round(values[index], tolerance);
+            return index == -1 || values.Length <= index ? double.NaN : Core.Query.Round(values[index], tolerance);
         }
 
         public static double ThermalTransmittance(this TBD.Construction construction, PanelType panelType, double tolerance = Core.Tolerance.MacroDistance)
