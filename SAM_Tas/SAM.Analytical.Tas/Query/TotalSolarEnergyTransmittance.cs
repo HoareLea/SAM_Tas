@@ -17,7 +17,7 @@
             {
                 object @object = construction.GetGlazingValues();
                 float[] values = Array<float>(@object);
-                if (values == null || values.Length >= 5)
+                if (values == null || values.Length <= 5)
                     return double.NaN;
 
                 return Core.Query.Round(values[5], tolerance);
