@@ -2,6 +2,7 @@
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using System;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
@@ -39,11 +40,12 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager inputParamManager)
         {
-            //int aIndex = -1;
-            //Param_Boolean booleanParameter = null;
-
             inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
             inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "The string path to a TasTSD file.", GH_ParamAccess.item);
+
+            global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "_surfaceOutputSpec", NickName = "_surfaceOutputSpec", Description = "Surface Output Spec.", Access = GH_ParamAccess.list, Optional = true };
+            inputParamManager.AddParameter(genericObject);
+
             inputParamManager.AddIntegerParameter("_dayFirst_", "_dayFirst_", "The first day", GH_ParamAccess.item, 1);
             inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "The last day", GH_ParamAccess.item, 365);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
@@ -66,7 +68,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(0, false);
 
             bool run = false;
-            if (!dataAccess.GetData(4, ref run))
+            if (!dataAccess.GetData(5, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -89,17 +91,68 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             int day_First = -1;
-            if (!dataAccess.GetData(2, ref day_First))
+            if (!dataAccess.GetData(3, ref day_First))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
             int day_Last = -1;
-            if (!dataAccess.GetData(3, ref day_Last))
+            if (!dataAccess.GetData(4, ref day_Last))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
+            }
+
+            List<Core.Tas.SurfaceOutputSpec> surfaceOutputSpecs = null;
+
+            List<bool> bools = new List<bool>();
+            if(dataAccess.GetDataList(2, bools) && bools != null && bools.Count != 0)
+            {
+                if(bools[0] == true)
+                {
+                    surfaceOutputSpecs = new List<Core.Tas.SurfaceOutputSpec>() { new Core.Tas.SurfaceOutputSpec(null as string) };
+                    surfaceOutputSpecs[0].SolarGain = true;
+                    surfaceOutputSpecs[0].Conduction = true;
+                    surfaceOutputSpecs[0].ApertureData = false;
+                    surfaceOutputSpecs[0].Condensation = false;
+                    surfaceOutputSpecs[0].Convection = false;
+                    surfaceOutputSpecs[0].LongWave = false;
+                    surfaceOutputSpecs[0].Temperature = false;
+                }
+            }
+            
+            if(surfaceOutputSpecs == null)
+            {
+                List<double> doubles = new List<double>();
+                if (dataAccess.GetDataList(2, doubles) && doubles != null && doubles.Count != 0)
+                {
+                    if (doubles[0] == 2)
+                    {
+                        surfaceOutputSpecs = new List<Core.Tas.SurfaceOutputSpec>() { new Core.Tas.SurfaceOutputSpec(null as string) };
+                        surfaceOutputSpecs[0].SolarGain = true;
+                        surfaceOutputSpecs[0].Conduction = true;
+                        surfaceOutputSpecs[0].ApertureData = true;
+                        surfaceOutputSpecs[0].Condensation = true;
+                        surfaceOutputSpecs[0].Convection = true;
+                        surfaceOutputSpecs[0].LongWave = true;
+                        surfaceOutputSpecs[0].Temperature = true;
+                    }
+                }
+            }
+
+            if (surfaceOutputSpecs == null)
+            {
+                List<Core.Tas.SurfaceOutputSpec> surfaceOutputSpecs_Temp = new List<Core.Tas.SurfaceOutputSpec>();
+                if (dataAccess.GetDataList(2, surfaceOutputSpecs_Temp) && surfaceOutputSpecs_Temp != null && surfaceOutputSpecs_Temp.Count != 0)
+                {
+                    surfaceOutputSpecs = surfaceOutputSpecs_Temp;
+                }
+            }
+
+            if (surfaceOutputSpecs != null && surfaceOutputSpecs.Count > 0)
+            {
+                Core.Tas.Modify.UpdateSurfaceOutputSpecs(path_TBD, surfaceOutputSpecs);
             }
 
             bool result = Analytical.Tas.Modify.Simulate(path_TBD, path_TSD, day_First, day_Last);

@@ -15,7 +15,7 @@ namespace SAM.Core.Tas
                 if (aObject != null)
                 {
                     t3DDocument = aObject as TAS3D.T3DDocument;
-                    Modify.ReleaseCOMObject(aObject);
+                    Core.Modify.ReleaseCOMObject(aObject);
                     t3DDocument = null;
                 }
             }

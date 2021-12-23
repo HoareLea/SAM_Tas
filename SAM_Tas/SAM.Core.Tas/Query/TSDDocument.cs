@@ -15,7 +15,7 @@ namespace SAM.Core.Tas
                 if (aObject != null)
                 {
                     tSDDocument = aObject as TSD.TSDDocument;
-                    Modify.ReleaseCOMObject(aObject);
+                    Core.Modify.ReleaseCOMObject(aObject);
                     tSDDocument = null;
                 }
             }

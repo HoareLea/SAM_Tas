@@ -64,12 +64,15 @@
   <ItemGroup>
     <Compile Include="Classes\SAMTBDDocument.cs" />
     <Compile Include="Classes\SAMTSDDocument.cs" />
+    <Compile Include="Classes\SurfaceOutputSpec.cs" />
     <Compile Include="Convert\TogbXML\gbXML.cs" />
     <Compile Include="Convert\ToT3D\T3D.cs" />
     <Compile Include="Create\ParameterSet.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
+    <Compile Include="Modify\UpdateSurfaceOutputSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\SAMT3DDocument.cs" />
+    <Compile Include="Query\SurfaceOutputSpecs.cs" />
     <Compile Include="Query\TBDDocument.cs" />
     <Compile Include="Query\TryGetMax.cs" />
     <Compile Include="Query\TSDDocument.cs" />
@@ -90,7 +93,6 @@
   <ItemGroup>
     <Folder Include="Convert\ToSAM\" />
     <Folder Include="Enums\" />
-    <Folder Include="Modify\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">

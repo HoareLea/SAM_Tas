@@ -50,7 +50,7 @@ namespace SAM.Core.Tas
                     // TODO: dispose managed state (managed objects).
                     if (tSDDocument != null)
                     {
-                        Modify.ReleaseCOMObject(tSDDocument);
+                        Core.Modify.ReleaseCOMObject(tSDDocument);
                         tSDDocument = null;
                     }
                 }

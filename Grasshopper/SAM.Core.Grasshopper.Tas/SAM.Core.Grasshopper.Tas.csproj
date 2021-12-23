@@ -47,6 +47,10 @@
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="SAM.Core, Version=1.0.8027.17724, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Core.Grasshopper">
       <HintPath>..\..\..\SAM\build\SAM.Core.Grasshopper.dll</HintPath>
     </Reference>
@@ -62,6 +66,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\GooSurfaceOutputSpec.cs" />
+    <Compile Include="Component\TasCreateSurfaceOutputSpec.cs" />
     <Compile Include="Kernel\AssemblyPriority.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
