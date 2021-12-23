@@ -2,6 +2,7 @@
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
+using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 
@@ -153,7 +154,11 @@ namespace SAM.Analytical.Grasshopper.Tas
             
             if (surfaceOutputSpecs != null && surfaceOutputSpecs.Count > 0)
             {
-                Core.Tas.Modify.UpdateSurfaceOutputSpecs(path_TBD, surfaceOutputSpecs);
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+                {
+                    Core.Tas.Modify.UpdateSurfaceOutputSpecs(sAMTBDDocument.TBDDocument, surfaceOutputSpecs);
+                    Core.Tas.Modify.AssignSurfaceOutputSpecs(sAMTBDDocument.TBDDocument, surfaceOutputSpecs[0].Name);
+                }
             }
 
             bool result = Analytical.Tas.Modify.Simulate(path_TBD, path_TSD, day_First, day_Last);
