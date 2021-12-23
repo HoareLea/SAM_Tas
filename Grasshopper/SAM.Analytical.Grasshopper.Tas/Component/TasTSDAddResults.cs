@@ -204,11 +204,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                     sAMObject = new AnalyticalModel((AnalyticalModel)sAMObject, adjacencyCluster);
             }
 
-           
-
-
-
-            
             index = Params.IndexOfOutputParam("analyticalObject");
             if (index != -1)
                 dataAccess.SetData(index, sAMObject);

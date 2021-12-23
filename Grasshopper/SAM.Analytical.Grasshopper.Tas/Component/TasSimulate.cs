@@ -106,12 +106,12 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            List<Core.Tas.SurfaceOutputSpec> surfaceOutputSpecs = null;
+            List<SurfaceOutputSpec> surfaceOutputSpecs = null;
 
             List<GH_ObjectWrapper> objectWrappers = new List<GH_ObjectWrapper>();
             if(dataAccess.GetDataList(2, objectWrappers) && objectWrappers != null && objectWrappers.Count != 0)
             {
-                surfaceOutputSpecs = new List<Core.Tas.SurfaceOutputSpec>();
+                surfaceOutputSpecs = new List<SurfaceOutputSpec>();
                 foreach (GH_ObjectWrapper objectWrapper in objectWrappers)
                 {
                     object value = objectWrapper.Value;
@@ -122,7 +122,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if (value is bool && ((bool)value))
                     {
-                        Core.Tas.SurfaceOutputSpec surfaceOutputSpec = new Core.Tas.SurfaceOutputSpec("Tas.Simulate");
+                        SurfaceOutputSpec surfaceOutputSpec = new SurfaceOutputSpec("Tas.Simulate");
                         surfaceOutputSpec.SolarGain = true;
                         surfaceOutputSpec.Conduction = true;
                         surfaceOutputSpec.ApertureData = false;
@@ -135,7 +135,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     }
                     else if(Core.Query.IsNumeric(value) && Core.Query.TryConvert(value, out double @double) && @double == 2.0)
                     {
-                        surfaceOutputSpecs = new List<Core.Tas.SurfaceOutputSpec>() { new Core.Tas.SurfaceOutputSpec("Tas.Simulate") };
+                        surfaceOutputSpecs = new List<SurfaceOutputSpec>() { new SurfaceOutputSpec("Tas.Simulate") };
                         surfaceOutputSpecs[0].SolarGain = true;
                         surfaceOutputSpecs[0].Conduction = true;
                         surfaceOutputSpecs[0].ApertureData = true;
@@ -144,9 +144,9 @@ namespace SAM.Analytical.Grasshopper.Tas
                         surfaceOutputSpecs[0].LongWave = true;
                         surfaceOutputSpecs[0].Temperature = true;
                     }
-                    else if(value is Core.Tas.SurfaceOutputSpec)
+                    else if(value is SurfaceOutputSpec)
                     {
-                        surfaceOutputSpecs.Add((Core.Tas.SurfaceOutputSpec)value);
+                        surfaceOutputSpecs.Add((SurfaceOutputSpec)value);
                     }
 
                 }
