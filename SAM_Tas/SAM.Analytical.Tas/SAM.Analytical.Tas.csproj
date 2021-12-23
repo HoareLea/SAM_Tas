@@ -119,7 +119,7 @@
     <Compile Include="Modify\RemoveInternalCondition.cs" />
     <Compile Include="Modify\RemoveMaterials.cs" />
     <Compile Include="Modify\AddInternalCondition.cs" />
-    <Compile Include="Modify\UpdateThermalTransmittances.cs" />
+    <Compile Include="Modify\UpdateThermalParameters.cs" />
     <Compile Include="Modify\UpdateDesignLoads.cs" />
     <Compile Include="Modify\UpdateInternalCondition_HDD.cs" />
     <Compile Include="Modify\UpdateInternalCondition.cs" />
@@ -135,6 +135,7 @@
     <Compile Include="Modify\AddResults.cs" />
     <Compile Include="Create\SpaceSimulationResult.cs" />
     <Compile Include="Modify\UpdateSizingFactors.cs" />
+    <Compile Include="Query\GlazingValues.cs" />
     <Compile Include="Query\DesignDataDictionary.cs" />
     <Compile Include="Query\MaxValueDictionary.cs" />
     <Compile Include="Query\ValueDictionary.cs" />

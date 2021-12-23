@@ -94,7 +94,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 result = Analytical.Tas.Modify.UpdateBuildingElements(sAMTBDDocument, analyticalModel);
                 AdjacencyCluster adjacencyCluster = analyticalModel.AdjacencyCluster;
-                Analytical.Tas.Modify.UpdateThermalTransmittances(adjacencyCluster, sAMTBDDocument.TBDDocument?.Building);
+                Analytical.Tas.Modify.UpdateThermalParameters(adjacencyCluster, sAMTBDDocument.TBDDocument?.Building);
                 analyticalModel = new AnalyticalModel(analyticalModel, adjacencyCluster);
                 if (result)
                 {
