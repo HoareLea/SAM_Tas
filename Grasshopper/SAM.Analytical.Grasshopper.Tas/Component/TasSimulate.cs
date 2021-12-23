@@ -1,4 +1,5 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using System;
@@ -106,30 +107,34 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             List<Core.Tas.SurfaceOutputSpec> surfaceOutputSpecs = null;
 
-            List<bool> bools = new List<bool>();
-            if(dataAccess.GetDataList(2, bools) && bools != null && bools.Count != 0)
+            List<GH_ObjectWrapper> objectWrappers = new List<GH_ObjectWrapper>();
+            if(dataAccess.GetDataList(2, objectWrappers) && objectWrappers != null && objectWrappers.Count != 0)
             {
-                if(bools[0] == true)
+                surfaceOutputSpecs = new List<Core.Tas.SurfaceOutputSpec>();
+                foreach (GH_ObjectWrapper objectWrapper in objectWrappers)
                 {
-                    surfaceOutputSpecs = new List<Core.Tas.SurfaceOutputSpec>() { new Core.Tas.SurfaceOutputSpec(null as string) };
-                    surfaceOutputSpecs[0].SolarGain = true;
-                    surfaceOutputSpecs[0].Conduction = true;
-                    surfaceOutputSpecs[0].ApertureData = false;
-                    surfaceOutputSpecs[0].Condensation = false;
-                    surfaceOutputSpecs[0].Convection = false;
-                    surfaceOutputSpecs[0].LongWave = false;
-                    surfaceOutputSpecs[0].Temperature = false;
-                }
-            }
-            
-            if(surfaceOutputSpecs == null)
-            {
-                List<double> doubles = new List<double>();
-                if (dataAccess.GetDataList(2, doubles) && doubles != null && doubles.Count != 0)
-                {
-                    if (doubles[0] == 2)
+                    object value = objectWrapper.Value;
+                    if (value is IGH_Goo)
                     {
-                        surfaceOutputSpecs = new List<Core.Tas.SurfaceOutputSpec>() { new Core.Tas.SurfaceOutputSpec(null as string) };
+                        value = (value as dynamic)?.Value;
+                    }
+
+                    if (value is bool && ((bool)value))
+                    {
+                        Core.Tas.SurfaceOutputSpec surfaceOutputSpec = new Core.Tas.SurfaceOutputSpec("Tas.Simulate");
+                        surfaceOutputSpec.SolarGain = true;
+                        surfaceOutputSpec.Conduction = true;
+                        surfaceOutputSpec.ApertureData = false;
+                        surfaceOutputSpec.Condensation = false;
+                        surfaceOutputSpec.Convection = false;
+                        surfaceOutputSpec.LongWave = false;
+                        surfaceOutputSpec.Temperature = false;
+
+                        surfaceOutputSpecs.Add(surfaceOutputSpec);
+                    }
+                    else if(Core.Query.IsNumeric(value) && Core.Query.TryConvert(value, out double @double) && @double == 2.0)
+                    {
+                        surfaceOutputSpecs = new List<Core.Tas.SurfaceOutputSpec>() { new Core.Tas.SurfaceOutputSpec("Tas.Simulate") };
                         surfaceOutputSpecs[0].SolarGain = true;
                         surfaceOutputSpecs[0].Conduction = true;
                         surfaceOutputSpecs[0].ApertureData = true;
@@ -138,18 +143,14 @@ namespace SAM.Analytical.Grasshopper.Tas
                         surfaceOutputSpecs[0].LongWave = true;
                         surfaceOutputSpecs[0].Temperature = true;
                     }
+                    else if(value is Core.Tas.SurfaceOutputSpec)
+                    {
+                        surfaceOutputSpecs.Add((Core.Tas.SurfaceOutputSpec)value);
+                    }
+
                 }
             }
-
-            if (surfaceOutputSpecs == null)
-            {
-                List<Core.Tas.SurfaceOutputSpec> surfaceOutputSpecs_Temp = new List<Core.Tas.SurfaceOutputSpec>();
-                if (dataAccess.GetDataList(2, surfaceOutputSpecs_Temp) && surfaceOutputSpecs_Temp != null && surfaceOutputSpecs_Temp.Count != 0)
-                {
-                    surfaceOutputSpecs = surfaceOutputSpecs_Temp;
-                }
-            }
-
+            
             if (surfaceOutputSpecs != null && surfaceOutputSpecs.Count > 0)
             {
                 Core.Tas.Modify.UpdateSurfaceOutputSpecs(path_TBD, surfaceOutputSpecs);

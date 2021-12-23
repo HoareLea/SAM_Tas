@@ -73,7 +73,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
         {
-            outputParamManager.AddParameter(new GooSurfaceOutputSpecParam(), "surfaceOutputSpec", "surfaceOutputSpec", "SAM Core TAs SurfaceOutputSpec", GH_ParamAccess.item);
+            outputParamManager.AddParameter(new GooSurfaceOutputSpecParam(), "surfaceOutputSpec", "surfaceOutputSpec", "SAM Core Tas SurfaceOutputSpec", GH_ParamAccess.item);
         }
 
         /// <summary>

@@ -55,6 +55,7 @@
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="SAM.Analytical, Version=1.0.7509.27573, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
@@ -151,6 +152,10 @@
     <ProjectReference Include="..\..\SAM_Tas\SAM.Core.Tas\SAM.Core.Tas.csproj">
       <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
       <Name>SAM.Core.Tas</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SAM.Core.Grasshopper.Tas\SAM.Core.Grasshopper.Tas.csproj">
+      <Project>{b8f0ee34-a776-4518-ada2-e047e468b47b}</Project>
+      <Name>SAM.Core.Grasshopper.Tas</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

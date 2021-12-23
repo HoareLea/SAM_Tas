@@ -15,7 +15,9 @@ namespace SAM.Core.Tas
 
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
-                result = UpdateSurfaceOutputSpecs(sAMTBDDocument.TBDDocument.Building, surfaceOutputSpecs);
+                
+
+                result = UpdateSurfaceOutputSpecs(sAMTBDDocument.TBDDocument, surfaceOutputSpecs);
                 if (result != null)
                     sAMTBDDocument.Save();
             }
@@ -23,9 +25,15 @@ namespace SAM.Core.Tas
             return result;
         }
 
-        public static List<bool> UpdateSurfaceOutputSpecs(this TBD.Building building, IEnumerable<SurfaceOutputSpec> surfaceOutputSpecs)
+        public static List<bool> UpdateSurfaceOutputSpecs(this TBD.TBDDocument tBDDocument, IEnumerable<SurfaceOutputSpec> surfaceOutputSpecs)
         {
-            if(building == null || surfaceOutputSpecs == null)
+            if(tBDDocument == null || surfaceOutputSpecs == null)
+            {
+                return null;
+            }
+
+            TBD.Building building = tBDDocument.Building;
+            if(building == null)
             {
                 return null;
             }
@@ -33,7 +41,13 @@ namespace SAM.Core.Tas
             List<bool> result = new List<bool>();
 
             List<TBD.SurfaceOutputSpec> surfaceOutputSpecs_TBD = building?.SurfaceOutputSpecs();
-            foreach(SurfaceOutputSpec surfaceOutputSpec in surfaceOutputSpecs)
+            foreach(TBD.SurfaceOutputSpec surfaceOutputSpec_TBD in surfaceOutputSpecs_TBD)
+            {
+                tBDDocument.DeleteObjectByName(surfaceOutputSpec_TBD.name);
+            }
+            surfaceOutputSpecs_TBD.Clear();
+
+            foreach (SurfaceOutputSpec surfaceOutputSpec in surfaceOutputSpecs)
             {
                 if(surfaceOutputSpec == null)
                 {
@@ -41,7 +55,7 @@ namespace SAM.Core.Tas
                 }
 
                 TBD.SurfaceOutputSpec surfaceOutputSpec_TBD = surfaceOutputSpecs_TBD.Find(x => x.name == surfaceOutputSpec.Name);
-                if(surfaceOutputSpecs_TBD == null)
+                if(surfaceOutputSpec_TBD == null)
                 {
                     surfaceOutputSpec_TBD = building.AddSurfaceOutputSpec();
 
