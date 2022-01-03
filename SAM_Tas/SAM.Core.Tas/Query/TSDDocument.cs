@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SAM.Core.Tas
 {
@@ -19,9 +20,9 @@ namespace SAM.Core.Tas
                     tSDDocument = null;
                 }
             }
-            catch
+            catch(Exception exception)
             {
-
+                string message = exception.Message;
             }
 
             tSDDocument = new TSD.TSDDocument();

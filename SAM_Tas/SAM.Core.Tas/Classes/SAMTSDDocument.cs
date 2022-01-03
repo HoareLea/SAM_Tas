@@ -19,7 +19,7 @@ namespace SAM.Core.Tas
             
             if (readOnly)
             {
-                TSDDocument.openReadOnly(path);
+                TSDDocument.open(path);
             }
             else
             {
