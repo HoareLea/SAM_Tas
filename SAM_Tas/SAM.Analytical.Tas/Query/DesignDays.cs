@@ -1,7 +1,5 @@
 ﻿using SAM.Core.Tas;
-using System;
 using System.Collections.Generic;
-using TSD;
 
 namespace SAM.Analytical.Tas
 {
@@ -52,7 +50,7 @@ namespace SAM.Analytical.Tas
             }
 
             List<DesignDay> result = null;
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD, true))
             {
                 result = DesignDays(sAMTBDDocument, out coolingDesignDays, out heatingDesignDays);
             }

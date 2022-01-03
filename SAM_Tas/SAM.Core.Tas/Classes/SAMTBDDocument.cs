@@ -6,15 +6,20 @@ namespace SAM.Core.Tas
     {
         private bool disposed = false;
         private TBD.TBDDocument tBDDocument;
+        private bool readOnly = false;
 
-        public SAMTBDDocument()
+        public SAMTBDDocument(string path, bool readOnly = false)
         {
+            this.readOnly = readOnly;
 
-        }
-
-        public SAMTBDDocument(string path)
-        {
-            TBDDocument.open(path);
+            if(readOnly)
+            {
+                TBDDocument.openReadOnly(path);
+            }
+            else
+            {
+                TBDDocument.open(path);
+            }
         }
 
         public TBD.TBDDocument TBDDocument
@@ -30,6 +35,11 @@ namespace SAM.Core.Tas
 
         public bool Save()
         {
+            if(readOnly)
+            {
+                return false;
+            }
+            
             return tBDDocument.save() == 1;
         }
 
