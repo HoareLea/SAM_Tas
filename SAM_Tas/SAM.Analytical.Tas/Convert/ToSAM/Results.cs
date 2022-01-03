@@ -86,7 +86,7 @@ namespace SAM.Analytical.Tas
                 SpaceSimulationResult spaceSimulationResult_Cooling = Create.SpaceSimulationResult(zoneData_BuildingData, coolingIndex, LoadType.Cooling, sizingMethod);
                 if(spaceSimulationResult_Cooling != null && coolingDesignData != null)
                 {
-                    spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.CoolingDesignDayName, coolingDesignData.name);
+                    spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.DesignDayName, coolingDesignData.name);
                 }
 
                 HeatingDesignData heatingDesignData = keyValuePair.Value.Item4;
@@ -105,7 +105,7 @@ namespace SAM.Analytical.Tas
                 SpaceSimulationResult spaceSimulationResult_Heating = Create.SpaceSimulationResult(zoneData_Heating, heatingIndex, LoadType.Heating, sizingMethod);
                 if (spaceSimulationResult_Heating != null && heatingDesignData != null)
                 {
-                    spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.HeatingDesignDayName, heatingDesignData.name);
+                    spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.DesignDayName, heatingDesignData.name);
                 }
 
                 if (spaceSimulationResult_Cooling != null || spaceSimulationResult_Heating != null)
