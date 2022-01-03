@@ -102,7 +102,7 @@ namespace SAM.Analytical.Tas
                     sizingMethod = SizingMethod.Simulation;
                 }
 
-                SpaceSimulationResult spaceSimulationResult_Heating = Create.SpaceSimulationResult(zoneData_Heating, coolingIndex, LoadType.Heating, sizingMethod);
+                SpaceSimulationResult spaceSimulationResult_Heating = Create.SpaceSimulationResult(zoneData_Heating, heatingIndex, LoadType.Heating, sizingMethod);
                 if (spaceSimulationResult_Heating != null && heatingDesignData != null)
                 {
                     spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.HeatingDesignDayName, heatingDesignData.name);
