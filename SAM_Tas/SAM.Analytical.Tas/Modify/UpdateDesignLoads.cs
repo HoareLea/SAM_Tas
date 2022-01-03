@@ -118,7 +118,7 @@ namespace SAM.Analytical.Tas
 
             AdjacencyCluster result = null;
 
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD, true))
             {
                 result = UpdateDesignLoads(sAMTBDDocument.TBDDocument, adjacencyCluster);
                 if (result != null)

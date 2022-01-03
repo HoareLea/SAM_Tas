@@ -72,7 +72,7 @@ namespace SAM.Analytical.Tas
                 return null;
 
             Dictionary<TBD.Profiles, Dictionary<string, double[]>> temperatureSetPointDictionary = null;
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD, true))
             {
                 temperatureSetPointDictionary = sAMTBDDocument.TBDDocument?.Building?.TemperatureSetPointDictionary(TBD.Profiles.ticLL, TBD.Profiles.ticUL);
                 sAMTBDDocument.Close();
