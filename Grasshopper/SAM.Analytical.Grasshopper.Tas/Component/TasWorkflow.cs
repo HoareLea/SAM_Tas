@@ -241,7 +241,8 @@ namespace SAM.Analytical.Grasshopper.Tas
             List<SurfaceOutputSpec> surfaceOutputSpecs = null;
 
             List<GH_ObjectWrapper> objectWrappers = new List<GH_ObjectWrapper>();
-            if (dataAccess.GetDataList(2, objectWrappers) && objectWrappers != null && objectWrappers.Count != 0)
+            index = Params.IndexOfInputParam("surfaceOutputSpec_");
+            if (index != -1 && dataAccess.GetDataList(index, objectWrappers) && objectWrappers != null && objectWrappers.Count != 0)
             {
                 surfaceOutputSpecs = new List<SurfaceOutputSpec>();
                 foreach (GH_ObjectWrapper objectWrapper in objectWrappers)
