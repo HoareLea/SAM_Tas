@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -49,9 +49,9 @@ namespace SAM.Analytical.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathgbXML", NickName = "_pathgbXML", Description = "A file path to a gbXML file", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasT3D", NickName = "_pathTasT3D", Description = "A file path to a Tas file T3D", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                //result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasT3D", NickName = "_pathTasT3D", Description = "A file path to a Tas file T3D", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTBD", NickName = "_pathTasTBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a Tas file TSD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                //result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a Tas file TSD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
 
                 result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
@@ -126,13 +126,13 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            string path_T3D = null;
-            index = Params.IndexOfInputParam("_pathTasT3D");
-            if (index == -1 || !dataAccess.GetData(index, ref path_T3D) || string.IsNullOrWhiteSpace(path_T3D))
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-                return;
-            }
+            //string path_T3D = null;
+            //index = Params.IndexOfInputParam("_pathTasT3D");
+            //if (index == -1 || !dataAccess.GetData(index, ref path_T3D) || string.IsNullOrWhiteSpace(path_T3D))
+            //{
+            //    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+            //    return;
+            //}
 
             string path_TBD = null;
             index = Params.IndexOfInputParam("_pathTasTBD");
@@ -142,13 +142,19 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            string path_TSD = null;
-            index = Params.IndexOfInputParam("_pathTasTSD");
-            if (index == -1 || !dataAccess.GetData(index, ref path_TSD) || string.IsNullOrWhiteSpace(path_TSD))
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-                return;
-            }
+            string directory = System.IO.Path.GetDirectoryName(path_TBD);
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(path_TBD);
+
+            string path_T3D = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "t3d"));
+            string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
+
+            //string path_TSD = null;
+            //index = Params.IndexOfInputParam("_pathTasTSD");
+            //if (index == -1 || !dataAccess.GetData(index, ref path_TSD) || string.IsNullOrWhiteSpace(path_TSD))
+            //{
+            //    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+            //    return;
+            //}
 
             WeatherData weatherData = null;
             index = Params.IndexOfInputParam("weatherData_");
