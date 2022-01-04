@@ -1,4 +1,5 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
@@ -18,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -56,6 +57,9 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
+
+                global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "surfaceOutputSpec_", NickName = "surfaceOutputSpec_", Description = "Surface Output Spec", Access = GH_ParamAccess.list, Optional = true };
+                result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_Number number = null;
 
@@ -227,9 +231,66 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             Analytical.Tas.Query.Sizing(path_TBD, analyticalModel, false, true);
-            Analytical.Tas.Modify.Simulate(path_TBD, path_TSD, 1, 1);
 
+            List<SurfaceOutputSpec> surfaceOutputSpecs = null;
 
+            List<GH_ObjectWrapper> objectWrappers = new List<GH_ObjectWrapper>();
+            if (dataAccess.GetDataList(2, objectWrappers) && objectWrappers != null && objectWrappers.Count != 0)
+            {
+                surfaceOutputSpecs = new List<SurfaceOutputSpec>();
+                foreach (GH_ObjectWrapper objectWrapper in objectWrappers)
+                {
+                    object value = objectWrapper.Value;
+                    if (value is IGH_Goo)
+                    {
+                        value = (value as dynamic)?.Value;
+                    }
+
+                    if (value is bool && ((bool)value))
+                    {
+                        SurfaceOutputSpec surfaceOutputSpec = new SurfaceOutputSpec("Tas.Simulate");
+                        surfaceOutputSpec.SolarGain = true;
+                        surfaceOutputSpec.Conduction = true;
+                        surfaceOutputSpec.ApertureData = false;
+                        surfaceOutputSpec.Condensation = false;
+                        surfaceOutputSpec.Convection = false;
+                        surfaceOutputSpec.LongWave = false;
+                        surfaceOutputSpec.Temperature = false;
+
+                        surfaceOutputSpecs.Add(surfaceOutputSpec);
+                    }
+                    else if (Core.Query.IsNumeric(value) && Core.Query.TryConvert(value, out double @double) && @double == 2.0)
+                    {
+                        surfaceOutputSpecs = new List<SurfaceOutputSpec>() { new SurfaceOutputSpec("Tas.Simulate") };
+                        surfaceOutputSpecs[0].SolarGain = true;
+                        surfaceOutputSpecs[0].Conduction = true;
+                        surfaceOutputSpecs[0].ApertureData = true;
+                        surfaceOutputSpecs[0].Condensation = true;
+                        surfaceOutputSpecs[0].Convection = true;
+                        surfaceOutputSpecs[0].LongWave = true;
+                        surfaceOutputSpecs[0].Temperature = true;
+                    }
+                    else if (value is SurfaceOutputSpec)
+                    {
+                        surfaceOutputSpecs.Add((SurfaceOutputSpec)value);
+                    }
+
+                }
+            }
+
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            {
+                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                if (surfaceOutputSpecs != null && surfaceOutputSpecs.Count > 0)
+                {
+                    Core.Tas.Modify.UpdateSurfaceOutputSpecs(tBDDocument, surfaceOutputSpecs);
+                    Core.Tas.Modify.AssignSurfaceOutputSpecs(tBDDocument, surfaceOutputSpecs[0].Name);
+                    sAMTBDDocument.Save();
+                }
+
+                Analytical.Tas.Modify.Simulate(tBDDocument, path_TSD, 1, 1);
+            }
 
             adjacencyCluster = analyticalModel.AdjacencyCluster;
             List<Core.Result> results = Analytical.Tas.Modify.AddResults(path_TSD, adjacencyCluster);
