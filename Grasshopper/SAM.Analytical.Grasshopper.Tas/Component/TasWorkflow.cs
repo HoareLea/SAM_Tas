@@ -175,7 +175,16 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             string guid = null;
+            using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
+            {
+                TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
+                guid = t3DDocument.Building.GUID;
+                sAMT3DDocument.Save();
+            }
 
+            float latitude = float.NaN;
+            float longitude = float.NaN;
+            float timeZone = float.NaN;
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
@@ -185,9 +194,16 @@ namespace SAM.Analytical.Grasshopper.Tas
                     Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
                 }
 
-                sAMTBDDocument.Save();
+                if(!string.IsNullOrWhiteSpace(guid))
+                {
+                    tBDDocument.Building.GUID = guid;
+                }
 
-                guid = tBDDocument.Building.GUID;
+                latitude = tBDDocument.Building.latitude;
+                longitude = tBDDocument.Building.longitude;
+                timeZone = tBDDocument.Building.timeZone;
+
+                sAMTBDDocument.Save();
             }
 
             using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
@@ -197,10 +213,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 t3DDocument.TogbXML(path_gbXML, false, true, true);
                 t3DDocument.SetUseBEWidths(false);
                 analyticalModel = Analytical.Tas.Query.UpdateT3D(analyticalModel, t3DDocument);
-                if(!string.IsNullOrWhiteSpace(guid))
-                {
-                    t3DDocument.Building.GUID = guid;
-                }
+
+                t3DDocument.Building.latitude = float.IsNaN(latitude) ? t3DDocument.Building.latitude : latitude;
+                t3DDocument.Building.longitude = float.IsNaN(longitude) ? t3DDocument.Building.longitude : longitude;
+                t3DDocument.Building.timeZone = float.IsNaN(timeZone) ? t3DDocument.Building.timeZone : timeZone;
 
                 sAMT3DDocument.Save();
 
