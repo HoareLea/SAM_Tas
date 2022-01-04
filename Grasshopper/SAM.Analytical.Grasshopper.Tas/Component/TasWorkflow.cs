@@ -174,6 +174,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
+            string guid = null;
+
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
@@ -184,6 +186,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
 
                 sAMTBDDocument.Save();
+
+                guid = tBDDocument.Building.GUID;
             }
 
             using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
@@ -193,6 +197,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 t3DDocument.TogbXML(path_gbXML, false, true, true);
                 t3DDocument.SetUseBEWidths(false);
                 analyticalModel = Analytical.Tas.Query.UpdateT3D(analyticalModel, t3DDocument);
+                if(!string.IsNullOrWhiteSpace(guid))
+                {
+                    t3DDocument.Building.GUID = guid;
+                }
+
                 sAMT3DDocument.Save();
 
                 Analytical.Tas.Convert.ToTBD(t3DDocument, path_TBD, 1, 365, 15, true);
