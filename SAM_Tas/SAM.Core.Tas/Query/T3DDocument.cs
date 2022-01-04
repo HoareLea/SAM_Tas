@@ -10,12 +10,12 @@ namespace SAM.Core.Tas
 
             try
             {
-                object aObject = Marshal.GetActiveObject("T3D.Document");
+                object @object = Marshal.GetActiveObject("T3D.Document");
 
-                if (aObject != null)
+                if (@object != null)
                 {
-                    t3DDocument = aObject as TAS3D.T3DDocument;
-                    Core.Modify.ReleaseCOMObject(aObject);
+                    t3DDocument = @object as TAS3D.T3DDocument;
+                    Core.Modify.ReleaseCOMObject(@object);
                     t3DDocument = null;
                 }
             }

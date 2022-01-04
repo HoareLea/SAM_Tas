@@ -77,6 +77,13 @@
     <Reference Include="SAM.Geometry">
       <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Weather, Version=1.0.8038.17610, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Weather.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Weather.Grasshopper">
+      <HintPath>..\..\..\SAM\build\SAM.Weather.Grasshopper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -90,6 +97,7 @@
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\SAMAnalyticalCreatAdjacencyClusterByTBD.cs" />
+    <Compile Include="Component\TasWorkflow.cs" />
     <Compile Include="Component\TasDesignDayNames.cs" />
     <Compile Include="Component\TasCreateDesignDays.cs" />
     <Compile Include="Component\TasOpenT3DDocument.cs" />
@@ -152,6 +160,10 @@
     <ProjectReference Include="..\..\SAM_Tas\SAM.Core.Tas\SAM.Core.Tas.csproj">
       <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
       <Name>SAM.Core.Tas</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SAM_Tas\SAM.Weather.Tas\SAM.Weather.Tas.csproj">
+      <Project>{d7ab37f9-a953-4b62-a55b-50cb13ff768b}</Project>
+      <Name>SAM.Weather.Tas</Name>
     </ProjectReference>
     <ProjectReference Include="..\SAM.Core.Grasshopper.Tas\SAM.Core.Grasshopper.Tas.csproj">
       <Project>{b8f0ee34-a776-4518-ada2-e047e468b47b}</Project>
