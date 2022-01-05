@@ -68,6 +68,9 @@
   <ItemGroup>
     <Compile Include="Convert\ToSAM\Polygon3D.cs" />
     <Compile Include="Convert\ToSAM\Point3D.cs" />
+    <Compile Include="Convert\ToTBD\Polygon.cs" />
+    <Compile Include="Convert\ToTBD\Perimeter.cs" />
+    <Compile Include="Convert\ToTBD\TasPoint.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

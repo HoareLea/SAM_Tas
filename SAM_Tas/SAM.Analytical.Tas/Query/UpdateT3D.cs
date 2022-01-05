@@ -150,7 +150,7 @@ namespace SAM.Analytical.Tas
                             {
                                 
                                 if(!construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string_BEType))
-                                    string_BEType = null;         
+                                    string_BEType = null;
                             }
 
                             if(!string.IsNullOrEmpty(string_BEType))
