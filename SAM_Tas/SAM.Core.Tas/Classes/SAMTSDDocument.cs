@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace SAM.Core.Tas
 {
@@ -16,7 +17,22 @@ namespace SAM.Core.Tas
         public SAMTSDDocument(string path, bool readOnly = false)
         {
             this.readOnly = readOnly;
-            
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+
+            if (File.Exists(path))
+            {
+                FileInfo fileInfo = new FileInfo(path);
+
+                if (Core.Query.Locked(fileInfo))
+                {
+                    readOnly = true;
+                }
+            }
+
             if (readOnly)
             {
                 TSDDocument.openReadOnly(path);
@@ -62,6 +78,7 @@ namespace SAM.Core.Tas
                     // TODO: dispose managed state (managed objects).
                     if (tSDDocument != null)
                     {
+                        tSDDocument.close();
                         Core.Modify.ReleaseCOMObject(tSDDocument);
                         tSDDocument = null;
                     }
@@ -82,5 +99,7 @@ namespace SAM.Core.Tas
             // TODO: uncomment the following line if the finalizer is overridden above.
             GC.SuppressFinalize(this);
         }
+
+        ~SAMTSDDocument() { Dispose(false); }
     }
 }

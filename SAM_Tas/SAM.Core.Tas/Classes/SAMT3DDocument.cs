@@ -50,6 +50,7 @@ namespace SAM.Core.Tas
                     // TODO: dispose managed state (managed objects).
                     if (t3DDocument != null)
                     {
+                        t3DDocument.Close();
                         Core.Modify.ReleaseCOMObject(t3DDocument);
                         t3DDocument = null;
                     }
@@ -70,5 +71,7 @@ namespace SAM.Core.Tas
             // TODO: uncomment the following line if the finalizer is overridden above.
             GC.SuppressFinalize(this);
         }
+
+        ~SAMT3DDocument() { Dispose(false); }
     }
 }
