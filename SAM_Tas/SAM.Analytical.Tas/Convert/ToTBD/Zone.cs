@@ -103,6 +103,11 @@ namespace SAM.Analytical.Tas
                         buildingElement.AssignConstruction(construction_TBD);
                         buildingElements.Add(buildingElement);
                     }
+
+                    if(buildingElement != null)
+                    {
+                        zoneSurface.buildingElement = buildingElement;
+                    }
                 }
             }
 

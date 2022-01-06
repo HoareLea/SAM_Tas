@@ -31,20 +31,7 @@ namespace SAM.Analytical.Tas
 
             tBDDocument.simulate(day_First, day_Last, 0, 1, 0, 0, path_TSD, 1, 0);
 
-            if (System.IO.File.Exists(path_TSD))
-            {
-                System.IO.FileInfo fileInfo = new System.IO.FileInfo(path_TSD);
-                while (true)
-                {
-                    if (!Core.Query.Locked(fileInfo))
-                    {
-                        break;
-                    }
-                    System.Threading.Thread.Sleep(1000);
-                }
-            }
-
-            return true;
+            return Core.Query.WaitToUnlock(path_TSD);
         }
     }
 }
