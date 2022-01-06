@@ -72,7 +72,6 @@ namespace SAM.Analytical.Tas
                         Construction construction = panel.Construction;
                         if (construction != null)
                         {
-                            int index = 0;
                             construction_TBD = constructions.Find(x => x.name == construction.Name);
                             if (construction_TBD == null)
                             {
@@ -82,6 +81,7 @@ namespace SAM.Analytical.Tas
                                 List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
                                 if (constructionLayers != null && constructionLayers.Count != 0)
                                 {
+                                    int index = 1;
                                     foreach (ConstructionLayer constructionLayer in constructionLayers)
                                     {
                                         Core.Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
