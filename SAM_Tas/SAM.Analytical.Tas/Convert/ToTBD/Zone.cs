@@ -52,8 +52,9 @@ namespace SAM.Analytical.Tas
                     zoneSurface.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(panel));
                     zoneSurface.area = System.Convert.ToSingle(face3D.GetArea());
 
-
                     TBD.RoomSurface roomSurface = room.AddSurface();
+                    roomSurface.area = System.Convert.ToSingle(face3D.GetArea());
+                    roomSurface.zoneSurface = zoneSurface;
 
                     TBD.Perimeter perimeter = Geometry.Tas.Convert.ToTBD(face3D, roomSurface);
                     if(perimeter == null)
