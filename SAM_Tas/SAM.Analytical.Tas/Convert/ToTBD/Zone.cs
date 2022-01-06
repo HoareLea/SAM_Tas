@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas
             {
                 foreach(Panel panel in panels)
                 {
-                    string name = Analytical.Query.UniqueName(panel, adjacencyCluster);
+                    string name = panel.Name;
                     if(string.IsNullOrWhiteSpace(name))
                     {
                         continue;
@@ -62,59 +62,57 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    TBD.Construction construction_TBD = null;
-
                     PanelType panelType = panel.PanelType;
 
-                    Construction construction = panel.Construction;
-                    if(construction != null)
+                    TBD.buildingElement buildingElement = buildingElements.Find(x => x.name == name);
+                    if (buildingElement == null)
                     {
-                        int index = 0;
-                        construction_TBD = constructions.Find(x => x.name == construction.Name);
-                        if(construction_TBD == null)
+                        TBD.Construction construction_TBD = null;
+
+                        Construction construction = panel.Construction;
+                        if (construction != null)
                         {
-                            construction_TBD = building.AddConstruction(null);
-                            construction_TBD.name = construction.Name;
-
-                            List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
-                            if(constructionLayers != null && constructionLayers.Count != 0)
+                            int index = 0;
+                            construction_TBD = constructions.Find(x => x.name == construction.Name);
+                            if (construction_TBD == null)
                             {
-                                foreach(ConstructionLayer constructionLayer in constructionLayers)
-                                {
-                                    Core.Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
-                                    if(material == null)
-                                    {
-                                        continue;
-                                    }
+                                construction_TBD = building.AddConstruction(null);
+                                construction_TBD.name = construction.Name;
 
-                                    TBD.material material_TBD = construction_TBD.AddMaterial(material);
-                                    if(material_TBD != null)
+                                List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
+                                if (constructionLayers != null && constructionLayers.Count != 0)
+                                {
+                                    foreach (ConstructionLayer constructionLayer in constructionLayers)
                                     {
-                                        material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
-                                        construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
-                                        index++;
+                                        Core.Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
+                                        if (material == null)
+                                        {
+                                            continue;
+                                        }
+
+                                        TBD.material material_TBD = construction_TBD.AddMaterial(material);
+                                        if (material_TBD != null)
+                                        {
+                                            material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                            construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
+                                            index++;
+                                        }
                                     }
                                 }
+
+                                constructions.Add(construction_TBD);
                             }
 
-                            constructions.Add(construction_TBD);
-                        }
-
-                        if (panelType == PanelType.Undefined && construction != null)
-                        {
-                            panelType = construction.PanelType();
-                            if (panelType == PanelType.Undefined && construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string panelTypeString))
+                            if (panelType == PanelType.Undefined && construction != null)
                             {
-                                panelType = Core.Query.Enum<PanelType>(panelTypeString);
+                                panelType = construction.PanelType();
+                                if (panelType == PanelType.Undefined && construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string panelTypeString))
+                                {
+                                    panelType = Core.Query.Enum<PanelType>(panelTypeString);
+                                }
                             }
                         }
-                    }
 
-                    zoneSurface.type = Query.SurfaceType(panelType);
-
-                    TBD.buildingElement buildingElement = buildingElements.Find(x => x.name == name);
-                    if(buildingElement == null)
-                    {
                         buildingElement = building.AddBuildingElement();
                         buildingElement.name = name;
                         buildingElement.BEType = Query.BEType(panelType.Text());
@@ -122,10 +120,12 @@ namespace SAM.Analytical.Tas
                         buildingElements.Add(buildingElement);
                     }
 
-                    if(buildingElement != null)
+                    if (buildingElement != null)
                     {
                         zoneSurface.buildingElement = buildingElement;
                     }
+
+                    zoneSurface.type = Query.SurfaceType(panelType);
                 }
             }
 
