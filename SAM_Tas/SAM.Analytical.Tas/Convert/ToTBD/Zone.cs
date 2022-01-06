@@ -69,6 +69,7 @@ namespace SAM.Analytical.Tas
                     Construction construction = panel.Construction;
                     if(construction != null)
                     {
+                        int index = 0;
                         construction_TBD = constructions.Find(x => x.name == construction.Name);
                         if(construction_TBD == null)
                         {
@@ -87,7 +88,12 @@ namespace SAM.Analytical.Tas
                                     }
 
                                     TBD.material material_TBD = construction_TBD.AddMaterial(material);
-                                    material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                    if(material_TBD != null)
+                                    {
+                                        material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                        construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
+                                        index++;
+                                    }
                                 }
                             }
 
