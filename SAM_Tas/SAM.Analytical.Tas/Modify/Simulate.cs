@@ -29,7 +29,20 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || string.IsNullOrWhiteSpace(path_TSD))
                 return false;
 
-            tBDDocument.simulate(day_First, day_Last, 0, 1, 0, 1, path_TSD, 1, 0);
+            tBDDocument.simulate(day_First, day_Last, 0, 1, 0, 0, path_TSD, 1, 0);
+
+            if (System.IO.File.Exists(path_TSD))
+            {
+                System.IO.FileInfo fileInfo = new System.IO.FileInfo(path_TSD);
+                while (true)
+                {
+                    if (!Core.Query.Locked(fileInfo))
+                    {
+                        break;
+                    }
+                    System.Threading.Thread.Sleep(1000);
+                }
+            }
 
             return true;
         }

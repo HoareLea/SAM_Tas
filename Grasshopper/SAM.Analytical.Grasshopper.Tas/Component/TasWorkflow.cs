@@ -310,6 +310,15 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            //if(System.IO.File.Exists(path_TSD))
+            //{
+            //    System.IO.FileInfo fileInfo = new System.IO.FileInfo(path_TSD);
+            //    if (!Core.Query.Locked(fileInfo))
+            //    {
+            //        System.IO.File.Delete(path_TSD);
+            //    }
+            //}
+
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;

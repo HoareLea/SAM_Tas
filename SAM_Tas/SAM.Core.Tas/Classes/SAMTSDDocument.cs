@@ -33,14 +33,23 @@ namespace SAM.Core.Tas
                 }
             }
 
-            if (readOnly)
+            try
             {
-                TSDDocument.openReadOnly(path);
+
+                if (readOnly)
+                {
+                    TSDDocument.openReadOnly(path);
+                }
+                else
+                {
+                    TSDDocument.open(path);
+                }
             }
-            else
+            catch
             {
-                TSDDocument.open(path);
+
             }
+
         }
 
         public TSD.TSDDocument TSDDocument
