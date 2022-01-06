@@ -14,8 +14,16 @@ namespace SAM.Analytical.Tas
 
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
 
+            Shell shell = adjacencyCluster.Shell(space);
+            if(shell == null)
+            {
+                return null;
+            }
+
             TBD.zone result = building.AddZone();
             result.name = space.Name;
+            result.volume = System.Convert.ToSingle(shell.Volume());
+            result.floorArea = System.Convert.ToSingle(shell.Area(0.1));
 
             TBD.room room = result.AddRoom();
 
@@ -27,25 +35,31 @@ namespace SAM.Analytical.Tas
             {
                 foreach(Panel panel in panels)
                 {
-                    TBD.zoneSurface zoneSurface = result.AddSurface();
-                    zoneSurface.orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
-                    zoneSurface.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(panel));
-                    
-                    TBD.RoomSurface roomSurface = room.AddSurface();
-
-                    Face3D face3D = panel.Face3D;
-                    if(face3D == null)
+                    string name = Analytical.Query.UniqueName(panel, adjacencyCluster);
+                    if(string.IsNullOrWhiteSpace(name))
                     {
                         continue;
                     }
+
+                    Face3D face3D = panel.Face3D;
+                    if (face3D == null)
+                    {
+                        continue;
+                    }
+
+                    TBD.zoneSurface zoneSurface = result.AddSurface();
+                    zoneSurface.orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
+                    zoneSurface.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(panel));
+                    zoneSurface.area = System.Convert.ToSingle(face3D.GetArea());
+
+
+                    TBD.RoomSurface roomSurface = room.AddSurface();
 
                     TBD.Perimeter perimeter = Geometry.Tas.Convert.ToTBD(face3D, roomSurface);
                     if(perimeter == null)
                     {
                         continue;
                     }
-
-                    string guid_Panel = panel.Guid.ToString("B");
 
                     TBD.Construction construction_TBD = null;
 
@@ -54,12 +68,10 @@ namespace SAM.Analytical.Tas
                     Construction construction = panel.Construction;
                     if(construction != null)
                     {
-                        string guid_Construction = construction.Guid.ToString("B");
                         construction_TBD = constructions.Find(x => x.name == construction.Name);
                         if(construction_TBD == null)
                         {
                             construction_TBD = building.AddConstruction(null);
-                            //construction_TBD.GUID = guid_Construction;
                             construction_TBD.name = construction.Name;
 
                             List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
@@ -93,12 +105,11 @@ namespace SAM.Analytical.Tas
 
                     zoneSurface.type = Query.SurfaceType(panelType);
 
-                    TBD.buildingElement buildingElement = buildingElements.Find(x => x.name == guid_Panel);
+                    TBD.buildingElement buildingElement = buildingElements.Find(x => x.name == name);
                     if(buildingElement == null)
                     {
                         buildingElement = building.AddBuildingElement();
-                        //buildingElement.GUID = guid_Panel;
-                        buildingElement.name = guid_Panel;
+                        buildingElement.name = name;
                         buildingElement.BEType = Query.BEType(panelType.Text());
                         buildingElement.AssignConstruction(construction_TBD);
                         buildingElements.Add(buildingElement);
