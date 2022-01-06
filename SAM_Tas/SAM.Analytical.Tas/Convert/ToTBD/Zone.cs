@@ -55,11 +55,11 @@ namespace SAM.Analytical.Tas
                     if(construction != null)
                     {
                         string guid_Construction = construction.Guid.ToString("B");
-                        construction_TBD = constructions.Find(x => x.GUID == guid_Construction);
+                        construction_TBD = constructions.Find(x => x.name == construction.Name);
                         if(construction_TBD == null)
                         {
                             construction_TBD = building.AddConstruction(null);
-                            construction_TBD.GUID = guid_Construction;
+                            //construction_TBD.GUID = guid_Construction;
                             construction_TBD.name = construction.Name;
 
                             List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
@@ -77,6 +77,8 @@ namespace SAM.Analytical.Tas
                                     material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
                                 }
                             }
+
+                            constructions.Add(construction_TBD);
                         }
 
                         if (panelType == PanelType.Undefined && construction != null)
@@ -91,14 +93,15 @@ namespace SAM.Analytical.Tas
 
                     zoneSurface.type = Query.SurfaceType(panelType);
 
-                    TBD.buildingElement buildingElement = buildingElements.Find(x => x.GUID == guid_Panel);
+                    TBD.buildingElement buildingElement = buildingElements.Find(x => x.name == guid_Panel);
                     if(buildingElement == null)
                     {
                         buildingElement = building.AddBuildingElement();
-                        buildingElement.GUID = guid_Panel;
-                        buildingElement.name = panel.Name;
+                        //buildingElement.GUID = guid_Panel;
+                        buildingElement.name = guid_Panel;
                         buildingElement.BEType = Query.BEType(panelType.Text());
                         buildingElement.AssignConstruction(construction_TBD);
+                        buildingElements.Add(buildingElement);
                     }
                 }
             }

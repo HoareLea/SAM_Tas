@@ -28,14 +28,23 @@ namespace SAM.Core.Tas
                 }
             }
 
-            if(readOnly)
+            if(File.Exists(path))
             {
-                TBDDocument.openReadOnly(path);
+                if (readOnly)
+                {
+                    TBDDocument.openReadOnly(path);
+                }
+                else
+                {
+                    TBDDocument.open(path);
+                }
             }
             else
             {
-                TBDDocument.open(path);
+                TBDDocument.create(path);
             }
+
+
         }
 
         public TBD.TBDDocument TBDDocument
