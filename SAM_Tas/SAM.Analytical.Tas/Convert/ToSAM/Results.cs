@@ -83,7 +83,7 @@ namespace SAM.Analytical.Tas
 
                 ZoneData zoneData_Heating = zoneData_BuildingData;
 
-                SpaceSimulationResult spaceSimulationResult_Cooling = Create.SpaceSimulationResult(zoneData_BuildingData, coolingIndex, LoadType.Cooling, sizingMethod);
+                SpaceSimulationResult spaceSimulationResult_Cooling = Create.SpaceSimulationResult(zoneData_Cooling, coolingIndex, LoadType.Cooling, sizingMethod);
                 if(spaceSimulationResult_Cooling != null && coolingDesignData != null)
                 {
                     spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.DesignDayName, coolingDesignData.name);
