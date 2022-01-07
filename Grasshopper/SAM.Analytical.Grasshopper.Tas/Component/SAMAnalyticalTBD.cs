@@ -139,6 +139,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 coolingDesignDays = null;
             }
 
+            if(System.IO.File.Exists(path))
+            {
+                System.IO.File.Delete(path);
+            }
+
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path))
             {
                 TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
@@ -147,6 +152,16 @@ namespace SAM.Analytical.Grasshopper.Tas
                 {
                     Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
                 }
+
+                TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
+
+                TBD.dayType dayType = null;
+                dayType = calendar.AddDayType();
+                dayType.name = "HDD";
+                dayType = calendar.AddDayType();
+                dayType.name = "CDD";
+
+
 
                 Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
                 Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
