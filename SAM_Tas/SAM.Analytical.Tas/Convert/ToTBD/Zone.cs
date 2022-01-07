@@ -115,6 +115,7 @@ namespace SAM.Analytical.Tas
 
                         buildingElement = building.AddBuildingElement();
                         buildingElement.name = name;
+                        buildingElement.colour = Core.Convert.ToUint(Analytical.Query.Color(panelType));
                         buildingElement.BEType = Query.BEType(panelType.Text());
                         buildingElement.AssignConstruction(construction_TBD);
                         buildingElements.Add(buildingElement);
