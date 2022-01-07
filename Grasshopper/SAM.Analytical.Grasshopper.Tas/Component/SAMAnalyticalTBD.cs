@@ -2,6 +2,7 @@
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
+using SAM.Weather;
 using System;
 using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -47,6 +48,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_TBD", NickName = "_path_TBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+
+                result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
@@ -110,9 +115,47 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
+            WeatherData weatherData = null;
+            index = Params.IndexOfInputParam("weatherData_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref weatherData))
+                {
+                    weatherData = null;
+                }
+            }
+
+            List<DesignDay> heatingDesignDays = new List<DesignDay>();
+            index = Params.IndexOfInputParam("heatingDesignDays_");
+            if (index == -1 || !dataAccess.GetDataList(index, heatingDesignDays) || heatingDesignDays == null || heatingDesignDays.Count == 0)
+            {
+                heatingDesignDays = null;
+            }
+
+            List<DesignDay> coolingDesignDays = new List<DesignDay>();
+            index = Params.IndexOfInputParam("coolingDesignDays_");
+            if (index == -1 || !dataAccess.GetDataList(index, coolingDesignDays) || coolingDesignDays == null || coolingDesignDays.Count == 0)
+            {
+                coolingDesignDays = null;
+            }
+
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path))
             {
-                Analytical.Tas.Convert.ToTBD(analyticalModel, sAMTBDDocument.TBDDocument);
+                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                if (weatherData != null)
+                {
+                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                }
+
+                Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
+                Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
+
+                if (coolingDesignDays != null || heatingDesignDays != null)
+                {
+                    Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
+                }
+
                 sAMTBDDocument.Save();
             }
 
