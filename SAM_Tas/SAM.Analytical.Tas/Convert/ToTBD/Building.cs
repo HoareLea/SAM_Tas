@@ -1,4 +1,5 @@
-﻿using SAM.Geometry.Spatial;
+﻿using SAM.Core;
+using SAM.Geometry.Spatial;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
@@ -30,6 +31,8 @@ namespace SAM.Analytical.Tas
             {
                 return result;
             }
+
+            MaterialLibrary materialLibrary = analyticalModel.MaterialLibrary;
 
             Dictionary<System.Guid, TBD.zoneSurface> dictionary = new Dictionary<System.Guid, TBD.zoneSurface>();
 
@@ -104,6 +107,11 @@ namespace SAM.Analytical.Tas
                                 {
                                     construction_TBD = result.AddConstruction(null);
                                     construction_TBD.name = construction.Name;
+
+                                    if(construction.Transparent(materialLibrary))
+                                    {
+                                        construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                                    }
 
                                     List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
                                     if (constructionLayers != null && constructionLayers.Count != 0)
@@ -212,13 +220,18 @@ namespace SAM.Analytical.Tas
                                             construction_TBD = result.AddConstruction(null);
                                             construction_TBD.name = name_Aperture;
 
+                                            if(apertureConstruction.Transparent(materialLibrary))
+                                            {
+                                                construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                                            }
+
                                             List<ConstructionLayer> constructionLayers = apertureConstruction.PaneConstructionLayers;
                                             if (constructionLayers != null && constructionLayers.Count != 0)
                                             {
                                                 int index = 1;
                                                 foreach (ConstructionLayer constructionLayer in constructionLayers)
                                                 {
-                                                    Core.Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
+                                                    Core.Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
                                                     if (material == null)
                                                     {
                                                         continue;

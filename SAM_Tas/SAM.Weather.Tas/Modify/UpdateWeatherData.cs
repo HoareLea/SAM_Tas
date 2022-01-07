@@ -60,21 +60,22 @@ namespace SAM.Weather.Tas
 
             building.latitude = System.Convert.ToSingle(weatherData.Latitude);
             building.longitude = System.Convert.ToSingle(weatherData.Longitude);
+            building.maxBuildingAltitude= System.Convert.ToSingle(weatherData.Elevtion);
+            if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out double timeZone))
+            {
+                double @double = Core.Query.Double(Core.Query.UTC(timeZone));
+                if (!double.IsNaN(@double))
+                {
+                    building.timeZone = System.Convert.ToSingle(@double);
+                }
+            }
 
             weatherYear_TBD.latitude = building.latitude;
             weatherYear_TBD.longitude = building.longitude;
             weatherYear_TBD.name = weatherData.Name;
             weatherYear_TBD.description = weatherData.Description;
             weatherYear_TBD.altitude = System.Convert.ToSingle(weatherData.Elevtion);
-            
-            if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out string timeZone))
-            {
-                double @double = Core.Query.Double(Core.Query.UTC(timeZone));
-                if(!double.IsNaN(@double))
-                {
-                    weatherYear_TBD.timeZone = System.Convert.ToSingle(@double);
-                }
-            }
+            weatherYear_TBD.timeZone = building.timeZone;
 
             if (weatherData.TryGetValue(WeatherDataParameter.GroundTemperatures, out Core.SAMCollection<GroundTemperature> groundTemperatures) && groundTemperatures != null && groundTemperatures.Count != 0)
             {
