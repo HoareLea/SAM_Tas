@@ -53,5 +53,18 @@ namespace SAM.Analytical.Tas
 
             return -1;
         }
+
+        public static int BEType(this ApertureType apertureType, bool frame = false)
+        {
+            switch(apertureType)
+            {
+                case Analytical.ApertureType.Door:
+                    return BEType("Door");
+                case Analytical.ApertureType.Window:
+                    return frame ? BEType("Frame") : BEType("Glazing");
+            }
+
+            return -1;
+        }
     }
 }
