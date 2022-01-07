@@ -34,6 +34,8 @@ namespace SAM.Analytical.Tas
 
             MaterialLibrary materialLibrary = analyticalModel.MaterialLibrary;
 
+            Plane plane = Plane.WorldXY;
+
             Dictionary<System.Guid, TBD.zoneSurface> dictionary = new Dictionary<System.Guid, TBD.zoneSurface>();
 
             foreach(Space space in spaces)
@@ -79,8 +81,9 @@ namespace SAM.Analytical.Tas
                         zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Panel.GetCentroid().Z);
                         zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
+                        zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
 
-                        if(dictionary.TryGetValue(panel.Guid, out TBD.zoneSurface zoneSurface_Panel_Link) && zoneSurface_Panel_Link != null)
+                        if (dictionary.TryGetValue(panel.Guid, out TBD.zoneSurface zoneSurface_Panel_Link) && zoneSurface_Panel_Link != null)
                         {
                             zoneSurface_Panel.linkSurface = zoneSurface_Panel_Link;
                             zoneSurface_Panel_Link.linkSurface = zoneSurface_Panel;
@@ -198,8 +201,9 @@ namespace SAM.Analytical.Tas
 
                                 zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation;
                                 zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
-                                zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
-                                zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
+                                zoneSurface_Aperture.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
+                                zoneSurface_Aperture.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
+                                zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Aperture));
                                 //zoneSurface_Aperture.area = System.Convert.ToSingle(face3D_Aperture.GetArea());
 
                                 zoneSurface_Aperture.type = zoneSurface_Panel.type;
