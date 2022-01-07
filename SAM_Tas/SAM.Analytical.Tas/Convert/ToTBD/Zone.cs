@@ -41,7 +41,7 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    Face3D face3D_Panel = panel.GetFace3D(true);
+                    Face3D face3D_Panel = panel.GetFace3D(false);
                     if (face3D_Panel == null)
                     {
                         continue;
@@ -139,6 +139,8 @@ namespace SAM.Analytical.Tas
                                 continue;
                             }
 
+                            name_Aperture = string.Format("{0} -pane", aperture.Name);
+
                             Face3D face3D_Aperture = aperture.Face3D;
                             if (face3D_Aperture == null)
                             {
@@ -174,7 +176,7 @@ namespace SAM.Analytical.Tas
                                     if (construction_TBD == null)
                                     {
                                         construction_TBD = building.AddConstruction(null);
-                                        construction_TBD.name = apertureConstruction.Name;
+                                        construction_TBD.name = name_Aperture;
 
                                         List<ConstructionLayer> constructionLayers = apertureConstruction.PaneConstructionLayers;
                                         if (constructionLayers != null && constructionLayers.Count != 0)
@@ -204,12 +206,12 @@ namespace SAM.Analytical.Tas
 
                                 ApertureType apertureType = aperture.ApertureType;
 
-                                buildingElement_Panel = building.AddBuildingElement();
-                                buildingElement_Panel.name = name_Aperture;
-                                buildingElement_Panel.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType));
-                                buildingElement_Panel.BEType = Query.BEType(apertureType, false);
-                                buildingElement_Panel.AssignConstruction(construction_TBD);
-                                buildingElements.Add(buildingElement_Panel);
+                                buildingElement_Aperture = building.AddBuildingElement();
+                                buildingElement_Aperture.name = name_Aperture;
+                                buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType));
+                                buildingElement_Aperture.BEType = Query.BEType(apertureType, false);
+                                buildingElement_Aperture.AssignConstruction(construction_TBD);
+                                buildingElements.Add(buildingElement_Aperture);
                             }
 
                             if (buildingElement_Aperture != null)
