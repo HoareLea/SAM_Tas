@@ -56,7 +56,7 @@ namespace SAM.Geometry.Tas
                         continue;
                     }
 
-                    segmentable3D = externalEdge3D as ISegmentable3D;
+                    segmentable3D = closedPlanar3D as ISegmentable3D;
                     if (segmentable3D == null)
                     {
                         throw new System.NotImplementedException();

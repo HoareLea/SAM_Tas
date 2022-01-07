@@ -177,6 +177,11 @@ namespace SAM.Analytical.Tas
                                 float area = System.Convert.ToSingle(face3D_Aperture.GetArea());
 
                                 TBD.zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
+                                if(zoneSurface_Aperture == null)
+                                {
+                                    continue;
+                                }
+
                                 zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation;
                                 zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
                                 //zoneSurface_Aperture.area = System.Convert.ToSingle(face3D_Aperture.GetArea());
