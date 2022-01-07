@@ -174,10 +174,12 @@ namespace SAM.Analytical.Tas
                                     continue;
                                 }
 
-                                TBD.zoneSurface zoneSurface_Aperture = zone.AddSurface();
+                                float area = System.Convert.ToSingle(face3D_Aperture.GetArea());
+
+                                TBD.zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
                                 zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation;
                                 zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
-                                zoneSurface_Aperture.area = System.Convert.ToSingle(face3D_Aperture.GetArea());
+                                //zoneSurface_Aperture.area = System.Convert.ToSingle(face3D_Aperture.GetArea());
 
                                 zoneSurface_Aperture.type = zoneSurface_Panel.type;
 
