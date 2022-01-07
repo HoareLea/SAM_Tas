@@ -71,9 +71,13 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
+                        BoundingBox3D boundingBox3D_Panel = face3D_Panel.GetBoundingBox();
+
                         TBD.zoneSurface zoneSurface_Panel = zone.AddSurface();
                         zoneSurface_Panel.orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
                         zoneSurface_Panel.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(panel));
+                        zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Panel.GetCentroid().Z);
+                        zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
 
                         if(dictionary.TryGetValue(panel.Guid, out TBD.zoneSurface zoneSurface_Panel_Link) && zoneSurface_Panel_Link != null)
@@ -119,7 +123,7 @@ namespace SAM.Analytical.Tas
                                         int index = 1;
                                         foreach (ConstructionLayer constructionLayer in constructionLayers)
                                         {
-                                            Core.Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
+                                            Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
                                             if (material == null)
                                             {
                                                 continue;
@@ -182,6 +186,8 @@ namespace SAM.Analytical.Tas
                                     continue;
                                 }
 
+                                BoundingBox3D boundingBox3D_Aperture = face3D_Aperture.GetBoundingBox();
+
                                 float area = System.Convert.ToSingle(face3D_Aperture.GetArea());
 
                                 TBD.zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
@@ -192,6 +198,8 @@ namespace SAM.Analytical.Tas
 
                                 zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation;
                                 zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
+                                zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
+                                zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
                                 //zoneSurface_Aperture.area = System.Convert.ToSingle(face3D_Aperture.GetArea());
 
                                 zoneSurface_Aperture.type = zoneSurface_Panel.type;
