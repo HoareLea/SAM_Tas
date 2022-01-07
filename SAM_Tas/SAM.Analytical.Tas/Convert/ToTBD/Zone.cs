@@ -212,9 +212,9 @@ namespace SAM.Analytical.Tas
                                 buildingElements.Add(buildingElement_Panel);
                             }
 
-                            if (buildingElement_Panel != null)
+                            if (buildingElement_Aperture != null)
                             {
-                                zoneSurface_Panel.buildingElement = buildingElement_Panel;
+                                zoneSurface_Aperture.buildingElement = buildingElement_Aperture;
                             }
 
 
