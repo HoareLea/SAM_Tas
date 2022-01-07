@@ -62,7 +62,7 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
-                        Face3D face3D_Panel = panel.GetFace3D(true);
+                        Face3D face3D_Panel = panel.Face3D;
                         if (face3D_Panel == null)
                         {
                             continue;
@@ -83,7 +83,7 @@ namespace SAM.Analytical.Tas
                         roomSurface_Panel.area = zoneSurface_Panel.area;
                         roomSurface_Panel.zoneSurface = zoneSurface_Panel;
 
-                        TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D_Panel, roomSurface_Panel);
+                        TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(panel.GetFace3D(true), roomSurface_Panel);
                         if (perimeter_Panel == null)
                         {
                             continue;
