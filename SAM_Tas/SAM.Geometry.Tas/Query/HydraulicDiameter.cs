@@ -19,7 +19,7 @@ namespace SAM.Geometry.Tas
             }
 
             Face3D face3D_Project = plane.Project(face3D);
-            if(face3D_Project == null || face3D_Project.IsValid())
+            if(face3D_Project == null || !face3D_Project.IsValid())
             {
                 return 0;
             }
