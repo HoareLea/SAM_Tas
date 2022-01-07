@@ -168,7 +168,7 @@ namespace SAM.Analytical.Tas
                             zoneSurface_Panel.buildingElement = buildingElement_Panel;
                         }
 
-                        zoneSurface_Panel.type = Query.SurfaceType(panelType);
+                        zoneSurface_Panel.type = TBD.SurfaceType.tbdExposed;
 
                         List<Aperture> apertures = panel.Apertures;
                         if (apertures != null && apertures.Count != 0)
@@ -281,6 +281,8 @@ namespace SAM.Analytical.Tas
 
                             }
                         }
+
+                        zoneSurface_Panel.type = Query.SurfaceType(panelType);
 
                         dictionary[panel.Guid] = zoneSurface_Panel;
                     }
