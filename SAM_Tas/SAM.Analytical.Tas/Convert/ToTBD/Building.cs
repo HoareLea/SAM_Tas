@@ -76,6 +76,7 @@ namespace SAM.Analytical.Tas
                         if(dictionary.TryGetValue(panel.Guid, out TBD.zoneSurface zoneSurface_Panel_Link) && zoneSurface_Panel_Link != null)
                         {
                             zoneSurface_Panel.linkSurface = zoneSurface_Panel_Link;
+                            zoneSurface_Panel_Link.linkSurface = zoneSurface_Panel;
                         }
 
                         TBD.RoomSurface roomSurface_Panel = room.AddSurface();
