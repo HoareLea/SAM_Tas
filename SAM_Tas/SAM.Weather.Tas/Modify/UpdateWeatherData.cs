@@ -58,8 +58,11 @@ namespace SAM.Weather.Tas
                 weatherYear_TBD = building.AddWeatherYear();
             }
 
-            weatherYear_TBD.latitude = System.Convert.ToSingle(weatherData.Latitude);
-            weatherYear_TBD.longitude = System.Convert.ToSingle(weatherData.Longitude);
+            building.latitude = System.Convert.ToSingle(weatherData.Latitude);
+            building.longitude = System.Convert.ToSingle(weatherData.Longitude);
+
+            weatherYear_TBD.latitude = building.latitude;
+            weatherYear_TBD.longitude = building.longitude;
             weatherYear_TBD.name = weatherData.Name;
             weatherYear_TBD.description = weatherData.Description;
             weatherYear_TBD.altitude = System.Convert.ToSingle(weatherData.Elevtion);

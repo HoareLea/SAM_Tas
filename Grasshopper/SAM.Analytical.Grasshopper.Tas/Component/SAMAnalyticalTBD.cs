@@ -161,8 +161,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 dayType = calendar.AddDayType();
                 dayType.name = "CDD";
 
-
-
                 Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
                 Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
 
