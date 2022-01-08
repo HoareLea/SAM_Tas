@@ -1,6 +1,7 @@
 ﻿using SAM.Core;
 using SAM.Geometry.Spatial;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
@@ -49,7 +50,14 @@ namespace SAM.Analytical.Tas
                 TBD.zone zone = result.AddZone();
                 zone.name = space.Name;
                 zone.volume = System.Convert.ToSingle(shell.Volume());
-                zone.floorArea = System.Convert.ToSingle(shell.Area(0.1));
+
+                List<Face3D> face3Ds = Geometry.Spatial.Query.Section(shell, 0.1, false);
+                if(face3Ds != null && face3Ds.Count != 0)
+                {
+                    face3Ds.RemoveAll(x => x == null || !x.IsValid());
+                    zone.floorArea = System.Convert.ToSingle(face3Ds.ConvertAll(x => x.GetArea()).Sum());
+                    zone.length = System.Convert.ToSingle(face3Ds.ConvertAll(x => Geometry.Planar.Query.Perimeter(x.ExternalEdge2D)).Sum());
+                }
 
                 TBD.room room = zone.AddRoom();
 
