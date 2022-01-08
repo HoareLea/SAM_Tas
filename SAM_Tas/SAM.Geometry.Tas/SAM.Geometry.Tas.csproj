@@ -73,6 +73,7 @@
     <Compile Include="Convert\ToTBD\TasPoint.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\Length.cs" />
     <Compile Include="Query\HydraulicDiameter.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -51,12 +51,13 @@ namespace SAM.Analytical.Tas
                 zone.name = space.Name;
                 zone.volume = System.Convert.ToSingle(shell.Volume());
 
-                List<Face3D> face3Ds = Geometry.Spatial.Query.Section(shell, 0.1, false);
+                List<Face3D> face3Ds = Geometry.Spatial.Query.Section(shell, 0.01, false);
                 if(face3Ds != null && face3Ds.Count != 0)
                 {
                     face3Ds.RemoveAll(x => x == null || !x.IsValid());
                     zone.floorArea = System.Convert.ToSingle(face3Ds.ConvertAll(x => x.GetArea()).Sum());
-                    zone.length = System.Convert.ToSingle(face3Ds.ConvertAll(x => Geometry.Planar.Query.Perimeter(x.ExternalEdge2D)).Sum());
+                    zone.exposedPerimeter = System.Convert.ToSingle(face3Ds.ConvertAll(x => Geometry.Planar.Query.Perimeter(x.ExternalEdge2D)).Sum());
+                    zone.length = System.Convert.ToSingle(face3Ds.ConvertAll(x => Geometry.Tas.Query.Length(x)).Sum());
                 }
 
                 TBD.room room = zone.AddRoom();
