@@ -51,6 +51,11 @@ namespace SAM.Analytical.Tas
                 zone.name = space.Name;
                 zone.volume = System.Convert.ToSingle(shell.Volume());
 
+                if (space.TryGetValue(SpaceParameter.Color, out SAMColor sAMColor) && sAMColor != null)
+                {
+                    zone.colour = Core.Convert.ToUint(sAMColor.ToColor());
+                }
+
                 List<Face3D> face3Ds = Geometry.Spatial.Query.Section(shell, 0.01, false);
                 if(face3Ds != null && face3Ds.Count != 0)
                 {
