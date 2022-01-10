@@ -97,6 +97,10 @@ namespace SAM.Analytical.Tas
                             zoneSurface_Panel.linkSurface = zoneSurface_Panel_Link;
                             zoneSurface_Panel_Link.linkSurface = zoneSurface_Panel;
                         }
+                        else
+                        {
+                            zoneSurface_Panel.reversed = 1;
+                        }
 
                         TBD.RoomSurface roomSurface_Panel = room.AddSurface();
                         roomSurface_Panel.area = zoneSurface_Panel.area;

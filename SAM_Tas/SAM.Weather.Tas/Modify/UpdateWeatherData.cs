@@ -1,4 +1,5 @@
 ﻿using SAM.Core.Tas;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SAM.Weather.Tas
@@ -61,7 +62,7 @@ namespace SAM.Weather.Tas
             building.latitude = System.Convert.ToSingle(weatherData.Latitude);
             building.longitude = System.Convert.ToSingle(weatherData.Longitude);
             building.maxBuildingAltitude= System.Convert.ToSingle(weatherData.Elevtion);
-            if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out double timeZone))
+            if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out string timeZone))
             {
                 double @double = Core.Query.Double(Core.Query.UTC(timeZone));
                 if (!double.IsNaN(@double))
@@ -91,7 +92,13 @@ namespace SAM.Weather.Tas
                 }
             }
 
-            return Update(weatherYear_TBD, weatherData.WeatherYears?.FirstOrDefault());
+            WeatherYear weatherYear = weatherData.WeatherYears?.FirstOrDefault();
+            if (weatherYear != null)
+            {
+                weatherYear_TBD.year = weatherYear.Year;
+            }
+
+            return Update(weatherYear_TBD, weatherYear);
         }
     }
 }
