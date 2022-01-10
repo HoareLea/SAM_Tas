@@ -307,15 +307,38 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            //foreach(KeyValuePair<System.Guid, List<TBD.zoneSurface>> keyValuePair in dictionary)
-            //{
-            //    if(keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
-            //    {
-            //        continue;
-            //    }
+            foreach (KeyValuePair<System.Guid, List<TBD.zoneSurface>> keyValuePair in dictionary)
+            {
+                if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
+                {
+                    continue;
+                }
 
-            //    keyValuePair.Value[1].reversed = 1;
-            //}
+                if (keyValuePair.Value[0].orientation == 0 || keyValuePair.Value[0].orientation == 180)
+                {
+                    float inclination = keyValuePair.Value[0].inclination;
+                    inclination -= 180;
+                    if (inclination < 0)
+                    {
+                        inclination += 360;
+                    }
+
+                    keyValuePair.Value[0].inclination = inclination;
+                    keyValuePair.Value[0].reversed = 1;
+                }
+                else
+                {
+                    float orientation = keyValuePair.Value[1].orientation;
+                    orientation += 180;
+                    if (orientation >= 360)
+                    {
+                        orientation -= 360;
+                    }
+
+                    keyValuePair.Value[1].orientation = orientation;
+                    keyValuePair.Value[1].reversed = 1;
+                }
+            }
 
             return result;
         }

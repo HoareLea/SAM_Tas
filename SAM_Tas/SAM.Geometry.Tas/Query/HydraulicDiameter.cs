@@ -36,7 +36,8 @@ namespace SAM.Geometry.Tas
                 return 0;
             }
 
-            return (4 * area) / segmentable2D.GetLength();
+            //return (4 * area) / segmentable2D.GetLength();
+            return segmentable2D.GetLength();
         }
     }
 }
