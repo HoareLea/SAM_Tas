@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas
 
             Plane plane = Plane.WorldXY;
 
-            Dictionary<System.Guid, TBD.zoneSurface> dictionary = new Dictionary<System.Guid, TBD.zoneSurface>();
+            Dictionary<System.Guid, List<TBD.zoneSurface>> dictionary = new Dictionary<System.Guid, List<TBD.zoneSurface>>();
 
             foreach(Space space in spaces)
             {
@@ -92,14 +92,13 @@ namespace SAM.Analytical.Tas
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
                         zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
 
-                        if (dictionary.TryGetValue(panel.Guid, out TBD.zoneSurface zoneSurface_Panel_Link) && zoneSurface_Panel_Link != null)
+                        if (dictionary.TryGetValue(panel.Guid, out List<TBD.zoneSurface> zoneSurfaces_Panel) && zoneSurfaces_Panel != null)
                         {
-                            zoneSurface_Panel.linkSurface = zoneSurface_Panel_Link;
-                            zoneSurface_Panel_Link.linkSurface = zoneSurface_Panel;
-                        }
-                        else
-                        {
-                            zoneSurface_Panel.reversed = 1;
+                            if(zoneSurfaces_Panel.Count != 0)
+                            {
+                                zoneSurface_Panel.linkSurface = zoneSurfaces_Panel[0];
+                                zoneSurfaces_Panel[0].linkSurface = zoneSurface_Panel;
+                            }
                         }
 
                         TBD.RoomSurface roomSurface_Panel = room.AddSurface();
@@ -297,10 +296,26 @@ namespace SAM.Analytical.Tas
 
                         zoneSurface_Panel.type = Query.SurfaceType(panelType);
 
-                        dictionary[panel.Guid] = zoneSurface_Panel;
+                        if(zoneSurfaces_Panel == null)
+                        {
+                            zoneSurfaces_Panel = new List<TBD.zoneSurface>();
+                            dictionary[panel.Guid] = zoneSurfaces_Panel;
+                        }
+
+                        zoneSurfaces_Panel.Add(zoneSurface_Panel);
                     }
                 }
             }
+
+            //foreach(KeyValuePair<System.Guid, List<TBD.zoneSurface>> keyValuePair in dictionary)
+            //{
+            //    if(keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
+            //    {
+            //        continue;
+            //    }
+
+            //    keyValuePair.Value[1].reversed = 1;
+            //}
 
             return result;
         }
