@@ -223,7 +223,7 @@ namespace SAM.Analytical.Tas
                                 zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Aperture));
                                 //zoneSurface_Aperture.area = System.Convert.ToSingle(face3D_Aperture.GetArea());
 
-                                zoneSurface_Aperture.type = zoneSurface_Panel.type;
+                                zoneSurface_Aperture.type = adjacencyCluster.Internal(panel)? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
 
                                 TBD.RoomSurface roomSurface_Aperture = room.AddSurface();
                                 roomSurface_Aperture.area = zoneSurface_Aperture.area;
