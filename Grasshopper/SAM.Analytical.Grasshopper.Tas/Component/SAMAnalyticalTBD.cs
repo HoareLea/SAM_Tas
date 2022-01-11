@@ -155,11 +155,18 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
 
-                TBD.dayType dayType = null;
-                dayType = calendar.AddDayType();
-                dayType.name = "HDD";
-                dayType = calendar.AddDayType();
-                dayType.name = "CDD";
+                List<TBD.dayType> dayTypes = Grashopper.Tas.Query.DayTypes(calendar);
+                if(dayTypes.Find(x => x.name == "HDD") == null)
+                {
+                    TBD.dayType dayType = calendar.AddDayType();
+                    dayType.name = "HDD";
+                }
+
+                if (dayTypes.Find(x => x.name == "CDD") == null)
+                {
+                    TBD.dayType dayType = calendar.AddDayType();
+                    dayType.name = "CDD";
+                }
 
                 Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
                 Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);

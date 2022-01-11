@@ -199,6 +199,21 @@ namespace SAM.Analytical.Grasshopper.Tas
                     tBDDocument.Building.GUID = guid;
                 }
 
+                TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
+
+                List<TBD.dayType> dayTypes = Grashopper.Tas.Query.DayTypes(calendar);
+                if (dayTypes.Find(x => x.name == "HDD") == null)
+                {
+                    TBD.dayType dayType = calendar.AddDayType();
+                    dayType.name = "HDD";
+                }
+
+                if (dayTypes.Find(x => x.name == "CDD") == null)
+                {
+                    TBD.dayType dayType = calendar.AddDayType();
+                    dayType.name = "CDD";
+                }
+
                 latitude = tBDDocument.Building.latitude;
                 longitude = tBDDocument.Building.longitude;
                 timeZone = tBDDocument.Building.timeZone;
