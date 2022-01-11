@@ -37,9 +37,9 @@ namespace SAM.Analytical.Tas
 
             Plane plane = Plane.WorldXY;
 
-            Dictionary<System.Guid, List<TBD.zoneSurface>> dictionary = new Dictionary<System.Guid, List<TBD.zoneSurface>>();
-
-            foreach(Space space in spaces)
+            Dictionary<System.Guid, List<TBD.zoneSurface>> dictionary_Panel = new Dictionary<System.Guid, List<TBD.zoneSurface>>();
+            Dictionary<System.Guid, List<TBD.zoneSurface>> dictionary_Aperture = new Dictionary<System.Guid, List<TBD.zoneSurface>>();
+            foreach (Space space in spaces)
             {
                 Shell shell = adjacencyCluster.Shell(space);
                 if (shell == null)
@@ -96,15 +96,6 @@ namespace SAM.Analytical.Tas
                         zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
                         zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
-
-                        if (dictionary.TryGetValue(panel.Guid, out List<TBD.zoneSurface> zoneSurfaces_Panel) && zoneSurfaces_Panel != null)
-                        {
-                            if(zoneSurfaces_Panel.Count != 0)
-                            {
-                                zoneSurface_Panel.linkSurface = zoneSurfaces_Panel[0];
-                                zoneSurfaces_Panel[0].linkSurface = zoneSurface_Panel;
-                            }
-                        }
 
                         TBD.RoomSurface roomSurface_Panel = room.AddSurface();
                         roomSurface_Panel.area = zoneSurface_Panel.area;
@@ -190,6 +181,8 @@ namespace SAM.Analytical.Tas
                         List<Aperture> apertures = panel.Apertures;
                         if (apertures != null && apertures.Count != 0)
                         {
+                            bool @internal = adjacencyCluster.Internal(panel);
+
                             foreach (Aperture aperture in apertures)
                             {
                                 string name_Aperture = aperture.Name;
@@ -223,7 +216,7 @@ namespace SAM.Analytical.Tas
                                 zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Aperture));
                                 //zoneSurface_Aperture.area = System.Convert.ToSingle(face3D_Aperture.GetArea());
 
-                                zoneSurface_Aperture.type = adjacencyCluster.Internal(panel)? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
+                                zoneSurface_Aperture.type = @internal ? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
 
                                 TBD.RoomSurface roomSurface_Aperture = room.AddSurface();
                                 roomSurface_Aperture.area = zoneSurface_Aperture.area;
@@ -295,16 +288,22 @@ namespace SAM.Analytical.Tas
                                     zoneSurface_Aperture.buildingElement = buildingElement_Aperture;
                                 }
 
+                                if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<TBD.zoneSurface> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
+                                {
+                                    zoneSurfaces_Aperture = new List<TBD.zoneSurface>();
+                                    dictionary_Aperture[aperture.Guid] = zoneSurfaces_Aperture;
+                                }
 
+                                zoneSurfaces_Aperture.Add(zoneSurface_Aperture);
                             }
                         }
 
                         zoneSurface_Panel.type = Query.SurfaceType(panelType);
 
-                        if(zoneSurfaces_Panel == null)
+                        if (!dictionary_Panel.TryGetValue(panel.Guid, out List<TBD.zoneSurface> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
                         {
                             zoneSurfaces_Panel = new List<TBD.zoneSurface>();
-                            dictionary[panel.Guid] = zoneSurfaces_Panel;
+                            dictionary_Panel[panel.Guid] = zoneSurfaces_Panel;
                         }
 
                         zoneSurfaces_Panel.Add(zoneSurface_Panel);
@@ -312,12 +311,51 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            foreach (KeyValuePair<System.Guid, List<TBD.zoneSurface>> keyValuePair in dictionary)
+            foreach (KeyValuePair<System.Guid, List<TBD.zoneSurface>> keyValuePair in dictionary_Panel)
             {
                 if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
                 {
                     continue;
                 }
+
+                keyValuePair.Value[1].linkSurface = keyValuePair.Value[0];
+                keyValuePair.Value[0].linkSurface = keyValuePair.Value[1];
+
+                if (keyValuePair.Value[0].orientation == 0 || keyValuePair.Value[0].orientation == 180)
+                {
+                    float inclination = keyValuePair.Value[0].inclination;
+                    inclination -= 180;
+                    if (inclination < 0)
+                    {
+                        inclination += 360;
+                    }
+
+                    keyValuePair.Value[0].inclination = inclination;
+                    keyValuePair.Value[0].reversed = 1;
+                }
+                else
+                {
+                    float orientation = keyValuePair.Value[1].orientation;
+                    orientation += 180;
+                    if (orientation >= 360)
+                    {
+                        orientation -= 360;
+                    }
+
+                    keyValuePair.Value[1].orientation = orientation;
+                    keyValuePair.Value[1].reversed = 1;
+                }
+            }
+
+            foreach(KeyValuePair<System.Guid, List<TBD.zoneSurface>> keyValuePair in dictionary_Aperture)
+            {
+                if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
+                {
+                    continue;
+                }
+
+                keyValuePair.Value[1].linkSurface = keyValuePair.Value[0];
+                keyValuePair.Value[0].linkSurface = keyValuePair.Value[1];
 
                 if (keyValuePair.Value[0].orientation == 0 || keyValuePair.Value[0].orientation == 180)
                 {
