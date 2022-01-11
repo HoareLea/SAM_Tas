@@ -92,6 +92,7 @@ namespace SAM.Analytical.Tas
                         TBD.zoneSurface zoneSurface_Panel = zone.AddSurface();
                         zoneSurface_Panel.orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
                         zoneSurface_Panel.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(panel));
+                        
                         zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Panel.GetCentroid().Z);
                         zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
@@ -321,7 +322,7 @@ namespace SAM.Analytical.Tas
                 keyValuePair.Value[1].linkSurface = keyValuePair.Value[0];
                 keyValuePair.Value[0].linkSurface = keyValuePair.Value[1];
 
-                if (keyValuePair.Value[0].orientation == 0 || keyValuePair.Value[0].orientation == 180)
+                if (keyValuePair.Value[0].inclination == 0 || keyValuePair.Value[0].inclination == 180)
                 {
                     float inclination = keyValuePair.Value[1].inclination;
                     inclination -= 180;
@@ -344,6 +345,13 @@ namespace SAM.Analytical.Tas
 
                     keyValuePair.Value[1].orientation = orientation;
                     keyValuePair.Value[1].reversed = 1;
+
+                    float inclination = keyValuePair.Value[1].inclination;
+                    if(inclination > 180)
+                    {
+                        inclination -= 180;
+                    }
+                    keyValuePair.Value[1].inclination = inclination;
                 }
             }
 
@@ -357,7 +365,7 @@ namespace SAM.Analytical.Tas
                 keyValuePair.Value[1].linkSurface = keyValuePair.Value[0];
                 keyValuePair.Value[0].linkSurface = keyValuePair.Value[1];
 
-                if (keyValuePair.Value[0].orientation == 0 || keyValuePair.Value[0].orientation == 180)
+                if (keyValuePair.Value[0].inclination == 0 || keyValuePair.Value[0].inclination == 180)
                 {
                     float inclination = keyValuePair.Value[0].inclination;
                     inclination -= 180;
@@ -380,6 +388,8 @@ namespace SAM.Analytical.Tas
 
                     keyValuePair.Value[1].orientation = orientation;
                     keyValuePair.Value[1].reversed = 1;
+
+
                 }
             }
 
