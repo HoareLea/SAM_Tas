@@ -1,4 +1,5 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
@@ -49,11 +50,18 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_TBD", NickName = "_path_TBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
-                result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
+                global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "surfaceOutputSpec_", NickName = "surfaceOutputSpec_", Description = "Surface Output Spec", Access = GH_ParamAccess.list, Optional = true };
+                result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_runUnmetHours_", NickName = "_runUnmetHours_", Description = "Calculates the amount of hours that the Zone/Space will be outside of the thermostat setpoint (unmet hours).", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -139,6 +147,59 @@ namespace SAM.Analytical.Grasshopper.Tas
                 coolingDesignDays = null;
             }
 
+            List<SurfaceOutputSpec> surfaceOutputSpecs = null;
+
+            List<GH_ObjectWrapper> objectWrappers = new List<GH_ObjectWrapper>();
+            index = Params.IndexOfInputParam("surfaceOutputSpec_");
+            if (index != -1 && dataAccess.GetDataList(index, objectWrappers) && objectWrappers != null && objectWrappers.Count != 0)
+            {
+                surfaceOutputSpecs = new List<SurfaceOutputSpec>();
+                foreach (GH_ObjectWrapper objectWrapper in objectWrappers)
+                {
+                    object value = objectWrapper.Value;
+                    if (value is IGH_Goo)
+                    {
+                        value = (value as dynamic)?.Value;
+                    }
+
+                    if (value is bool && ((bool)value))
+                    {
+                        SurfaceOutputSpec surfaceOutputSpec = new SurfaceOutputSpec("Tas.Simulate");
+                        surfaceOutputSpec.SolarGain = true;
+                        surfaceOutputSpec.Conduction = true;
+                        surfaceOutputSpec.ApertureData = false;
+                        surfaceOutputSpec.Condensation = false;
+                        surfaceOutputSpec.Convection = false;
+                        surfaceOutputSpec.LongWave = false;
+                        surfaceOutputSpec.Temperature = false;
+
+                        surfaceOutputSpecs.Add(surfaceOutputSpec);
+                    }
+                    else if (Core.Query.IsNumeric(value) && Core.Query.TryConvert(value, out double @double) && @double == 2.0)
+                    {
+                        surfaceOutputSpecs = new List<SurfaceOutputSpec>() { new SurfaceOutputSpec("Tas.Simulate") };
+                        surfaceOutputSpecs[0].SolarGain = true;
+                        surfaceOutputSpecs[0].Conduction = true;
+                        surfaceOutputSpecs[0].ApertureData = true;
+                        surfaceOutputSpecs[0].Condensation = true;
+                        surfaceOutputSpecs[0].Convection = true;
+                        surfaceOutputSpecs[0].LongWave = true;
+                        surfaceOutputSpecs[0].Temperature = true;
+                    }
+                    else if (value is SurfaceOutputSpec)
+                    {
+                        surfaceOutputSpecs.Add((SurfaceOutputSpec)value);
+                    }
+
+                }
+            }
+
+            bool unmetHours = false;
+            index = Params.IndexOfInputParam("_runUnmetHours_");
+            if (index != -1)
+                if (!dataAccess.GetData(index, ref unmetHours))
+                    unmetHours = true;
+
             if (System.IO.File.Exists(path_TBD))
             {
                 System.IO.File.Delete(path_TBD);
@@ -179,18 +240,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 sAMTBDDocument.Save();
             }
 
-            List<SurfaceOutputSpec> surfaceOutputSpecs = new List<SurfaceOutputSpec>() { new SurfaceOutputSpec("Tas.Simulate")
-            {
-                SolarGain = true,
-                Conduction = true,
-                ApertureData = true,
-                Condensation = true,
-                Convection = true,
-                LongWave = true,
-                Temperature = true
-            }};
-
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, true);
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
