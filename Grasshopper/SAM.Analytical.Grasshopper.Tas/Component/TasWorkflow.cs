@@ -225,7 +225,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
 
-                t3DDocument.TogbXML(path_gbXML, false, true, true);
+                t3DDocument.TogbXML(path_gbXML, true, true, true);
                 t3DDocument.SetUseBEWidths(false);
                 analyticalModel = Analytical.Tas.Query.UpdateT3D(analyticalModel, t3DDocument);
 
