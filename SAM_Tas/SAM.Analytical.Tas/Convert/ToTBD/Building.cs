@@ -323,15 +323,15 @@ namespace SAM.Analytical.Tas
 
                 if (keyValuePair.Value[0].orientation == 0 || keyValuePair.Value[0].orientation == 180)
                 {
-                    float inclination = keyValuePair.Value[0].inclination;
+                    float inclination = keyValuePair.Value[1].inclination;
                     inclination -= 180;
                     if (inclination < 0)
                     {
                         inclination += 360;
                     }
 
-                    keyValuePair.Value[0].inclination = inclination;
-                    keyValuePair.Value[0].reversed = 1;
+                    keyValuePair.Value[1].inclination = inclination;
+                    keyValuePair.Value[1].reversed = 1;
                 }
                 else
                 {

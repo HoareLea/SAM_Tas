@@ -373,7 +373,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-
             adjacencyCluster = Analytical.Tas.Modify.UpdateDesignLoads(path_TBD, adjacencyCluster);
             analyticalModel = new AnalyticalModel(analyticalModel, adjacencyCluster);
 
