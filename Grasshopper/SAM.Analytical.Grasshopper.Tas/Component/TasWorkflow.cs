@@ -126,14 +126,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            //string path_T3D = null;
-            //index = Params.IndexOfInputParam("_pathTasT3D");
-            //if (index == -1 || !dataAccess.GetData(index, ref path_T3D) || string.IsNullOrWhiteSpace(path_T3D))
-            //{
-            //    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-            //    return;
-            //}
-
             string path_TBD = null;
             index = Params.IndexOfInputParam("_pathTasTBD");
             if (index == -1 || !dataAccess.GetData(index, ref path_TBD) || string.IsNullOrWhiteSpace(path_TBD))
@@ -142,19 +134,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            string directory = System.IO.Path.GetDirectoryName(path_TBD);
-            string fileName = System.IO.Path.GetFileNameWithoutExtension(path_TBD);
-
-            string path_T3D = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "t3d"));
-            string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
-
-            //string path_TSD = null;
-            //index = Params.IndexOfInputParam("_pathTasTSD");
-            //if (index == -1 || !dataAccess.GetData(index, ref path_TSD) || string.IsNullOrWhiteSpace(path_TSD))
-            //{
-            //    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-            //    return;
-            //}
 
             WeatherData weatherData = null;
             index = Params.IndexOfInputParam("weatherData_");
@@ -174,70 +153,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            string guid = null;
-            using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
-            {
-                TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
-                guid = t3DDocument.Building.GUID;
-                sAMT3DDocument.Save();
-            }
-
-            float latitude = float.NaN;
-            float longitude = float.NaN;
-            float timeZone = float.NaN;
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
-            {
-                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-
-                if (weatherData != null)
-                {
-                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
-                }
-
-                if(!string.IsNullOrWhiteSpace(guid))
-                {
-                    tBDDocument.Building.GUID = guid;
-                }
-
-                TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
-
-                List<TBD.dayType> dayTypes = Grashopper.Tas.Query.DayTypes(calendar);
-                if (dayTypes.Find(x => x.name == "HDD") == null)
-                {
-                    TBD.dayType dayType = calendar.AddDayType();
-                    dayType.name = "HDD";
-                }
-
-                if (dayTypes.Find(x => x.name == "CDD") == null)
-                {
-                    TBD.dayType dayType = calendar.AddDayType();
-                    dayType.name = "CDD";
-                }
-
-                latitude = tBDDocument.Building.latitude;
-                longitude = tBDDocument.Building.longitude;
-                timeZone = tBDDocument.Building.timeZone;
-
-                sAMTBDDocument.Save();
-            }
-
-            using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
-            {
-                TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
-
-                t3DDocument.TogbXML(path_gbXML, true, true, true);
-                t3DDocument.SetUseBEWidths(false);
-                analyticalModel = Analytical.Tas.Query.UpdateT3D(analyticalModel, t3DDocument);
-
-                t3DDocument.Building.latitude = float.IsNaN(latitude) ? t3DDocument.Building.latitude : latitude;
-                t3DDocument.Building.longitude = float.IsNaN(longitude) ? t3DDocument.Building.longitude : longitude;
-                t3DDocument.Building.timeZone = float.IsNaN(timeZone) ? t3DDocument.Building.timeZone : timeZone;
-
-                sAMT3DDocument.Save();
-
-                Analytical.Tas.Convert.ToTBD(t3DDocument, path_TBD, 1, 365, 15, true);
-            }
-
             List<DesignDay> heatingDesignDays = new List<DesignDay>();
             index = Params.IndexOfInputParam("heatingDesignDays_");
             if(index == -1 || !dataAccess.GetDataList(index, heatingDesignDays) || heatingDesignDays == null || heatingDesignDays.Count == 0)
@@ -251,32 +166,6 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 coolingDesignDays = null;
             }
-
-            AdjacencyCluster adjacencyCluster = null;
-
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
-            {
-                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-
-                analyticalModel = Analytical.Tas.Query.UpdateFacingExternal(analyticalModel, tBDDocument);
-                Analytical.Tas.Modify.AssignAdiabaticConstruction(tBDDocument, "Adiabatic", new string[] { "-unzoned", "-internal", "-exposed" }, false, true);
-                Analytical.Tas.Modify.UpdateBuildingElements(tBDDocument, analyticalModel);
-
-                adjacencyCluster = analyticalModel.AdjacencyCluster;
-                Analytical.Tas.Modify.UpdateThermalParameters(adjacencyCluster, tBDDocument.Building);
-                analyticalModel = new AnalyticalModel(analyticalModel, adjacencyCluster);
-
-                Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
-
-                if (coolingDesignDays != null || heatingDesignDays != null)
-                {
-                    Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
-                }
-
-                sAMTBDDocument.Save();
-            }
-
-            Analytical.Tas.Query.Sizing(path_TBD, analyticalModel, false, true);
 
             List<SurfaceOutputSpec> surfaceOutputSpecs = null;
 
@@ -325,56 +214,13 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
-            {
-                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-
-                if (surfaceOutputSpecs != null && surfaceOutputSpecs.Count > 0)
-                {
-                    Core.Tas.Modify.UpdateSurfaceOutputSpecs(tBDDocument, surfaceOutputSpecs);
-                    Core.Tas.Modify.AssignSurfaceOutputSpecs(tBDDocument, surfaceOutputSpecs[0].Name);
-                    sAMTBDDocument.Save();
-                }
-
-                Analytical.Tas.Modify.Simulate(tBDDocument, path_TSD, 1, 1);
-            }
-
-            adjacencyCluster = analyticalModel.AdjacencyCluster;
-            List<Core.Result> results = Analytical.Tas.Modify.AddResults(path_TSD, adjacencyCluster);
-
             bool unmetHours = false;
             index = Params.IndexOfInputParam("_runUnmetHours_");
             if (index != -1)
                 if (!dataAccess.GetData(index, ref unmetHours))
                     unmetHours = true;
 
-            if (unmetHours)
-            {
-                List<Core.Result> results_UnmetHours = Analytical.Tas.Query.UnmetHours(path_TSD, path_TBD, 0.5);
-                if (results_UnmetHours != null && results_UnmetHours.Count > 0)
-                {
-                    foreach (Core.Result result in results_UnmetHours)
-                    {
-                        if (result is AdjacencyClusterSimulationResult)
-                        {
-                            adjacencyCluster.AddObject(result);
-                        }
-                        else if (result is SpaceSimulationResult)
-                        {
-                            SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
-
-                            List<SpaceSimulationResult> spaceSimulationResults = Analytical.Tas.Query.Results(results, spaceSimulationResult);
-                            if (spaceSimulationResults == null)
-                                results.Add(spaceSimulationResult);
-                            else
-                                spaceSimulationResults.ForEach(x => Core.Modify.Copy(spaceSimulationResult, x, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours));
-                        }
-                    }
-                }
-            }
-
-            adjacencyCluster = Analytical.Tas.Modify.UpdateDesignLoads(path_TBD, adjacencyCluster);
-            analyticalModel = new AnalyticalModel(analyticalModel, adjacencyCluster);
+            Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_gbXML, path_TBD, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
