@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasWorkflow : GH_SAMVariableOutputParameterComponent
+    public class TasWorkflowgbXML : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -32,7 +32,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasWorkflow()
+        public TasWorkflowgbXML()
           : base("Tas.Workflow", "Tas.Workflow",
               "Runs Tas workflow",
               "SAM WIP", "Tas")
@@ -220,7 +220,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 if (!dataAccess.GetData(index, ref unmetHours))
                     unmetHours = true;
 
-            Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_gbXML, path_TBD, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours);
+            Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, path_gbXML, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)

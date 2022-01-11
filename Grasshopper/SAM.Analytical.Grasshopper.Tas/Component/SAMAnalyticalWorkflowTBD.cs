@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class SAMAnalyticalWorkflow : GH_SAMVariableOutputParameterComponent
+    public class SAMAnalyticalWorkflowTBD : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -31,7 +31,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMAnalyticalWorkflow()
+        public SAMAnalyticalWorkflowTBD()
           : base("SAMAnalytical.Workflow", "SAMAnalytical.Workflow",
               "SAM Analytical Workflow",
               "SAM WIP", "Tas")
@@ -48,7 +48,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_TBD", NickName = "_path_TBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_gbXML", NickName = "_path_gbXML", Description = "A file path to a gbXML file", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
@@ -103,14 +102,6 @@ namespace SAM.Analytical.Grasshopper.Tas
             string path_TBD = null;
             index = Params.IndexOfInputParam("_path_TBD");
             if (index == -1 || !dataAccess.GetData(index, ref path_TBD) || string.IsNullOrWhiteSpace(path_TBD))
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-                return;
-            }
-
-            string path_gbXML = null;
-            index = Params.IndexOfInputParam("_path_gbXML");
-            if (index == -1 || !dataAccess.GetData(index, ref path_gbXML) || string.IsNullOrWhiteSpace(path_gbXML))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -199,7 +190,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 Temperature = true
             }};
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_gbXML, path_TBD, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, true);
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, true);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)

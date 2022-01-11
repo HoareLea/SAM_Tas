@@ -5,9 +5,9 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_gbXML, string path_TBD, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true)
+        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true)
         {
-            if(analyticalModel == null || string.IsNullOrWhiteSpace(path_TBD) || string.IsNullOrWhiteSpace(path_gbXML))
+            if(analyticalModel == null || string.IsNullOrWhiteSpace(path_TBD))
             {
                 return null;
             }
@@ -15,71 +15,75 @@ namespace SAM.Analytical.Tas
             string directory = System.IO.Path.GetDirectoryName(path_TBD);
             string fileName = System.IO.Path.GetFileNameWithoutExtension(path_TBD);
 
-            string path_T3D = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "t3d"));
             string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
 
-            string guid = null;
-            using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
+            if (!string.IsNullOrWhiteSpace(path_gbXML))
             {
-                TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
-                guid = t3DDocument.Building.GUID;
-                sAMT3DDocument.Save();
-            }
+                string path_T3D = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "t3d"));
 
-            float latitude = float.NaN;
-            float longitude = float.NaN;
-            float timeZone = float.NaN;
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
-            {
-                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-
-                if (weatherData != null)
+                string guid = null;
+                using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
                 {
-                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                    TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
+                    guid = t3DDocument.Building.GUID;
+                    sAMT3DDocument.Save();
                 }
 
-                if (!string.IsNullOrWhiteSpace(guid))
+                float latitude = float.NaN;
+                float longitude = float.NaN;
+                float timeZone = float.NaN;
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
                 {
-                    tBDDocument.Building.GUID = guid;
+                    TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                    if (weatherData != null)
+                    {
+                        Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(guid))
+                    {
+                        tBDDocument.Building.GUID = guid;
+                    }
+
+                    TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
+
+                    List<TBD.dayType> dayTypes = Query.DayTypes(calendar);
+                    if (dayTypes.Find(x => x.name == "HDD") == null)
+                    {
+                        TBD.dayType dayType = calendar.AddDayType();
+                        dayType.name = "HDD";
+                    }
+
+                    if (dayTypes.Find(x => x.name == "CDD") == null)
+                    {
+                        TBD.dayType dayType = calendar.AddDayType();
+                        dayType.name = "CDD";
+                    }
+
+                    latitude = tBDDocument.Building.latitude;
+                    longitude = tBDDocument.Building.longitude;
+                    timeZone = tBDDocument.Building.timeZone;
+
+                    sAMTBDDocument.Save();
                 }
 
-                TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
-
-                List<TBD.dayType> dayTypes = Query.DayTypes(calendar);
-                if (dayTypes.Find(x => x.name == "HDD") == null)
+                using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
                 {
-                    TBD.dayType dayType = calendar.AddDayType();
-                    dayType.name = "HDD";
+                    TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
+
+                    t3DDocument.TogbXML(path_gbXML, true, true, true);
+                    t3DDocument.SetUseBEWidths(false);
+                    analyticalModel = Query.UpdateT3D(analyticalModel, t3DDocument);
+
+                    t3DDocument.Building.latitude = float.IsNaN(latitude) ? t3DDocument.Building.latitude : latitude;
+                    t3DDocument.Building.longitude = float.IsNaN(longitude) ? t3DDocument.Building.longitude : longitude;
+                    t3DDocument.Building.timeZone = float.IsNaN(timeZone) ? t3DDocument.Building.timeZone : timeZone;
+
+                    sAMT3DDocument.Save();
+
+                    Convert.ToTBD(t3DDocument, path_TBD, 1, 365, 15, true);
                 }
-
-                if (dayTypes.Find(x => x.name == "CDD") == null)
-                {
-                    TBD.dayType dayType = calendar.AddDayType();
-                    dayType.name = "CDD";
-                }
-
-                latitude = tBDDocument.Building.latitude;
-                longitude = tBDDocument.Building.longitude;
-                timeZone = tBDDocument.Building.timeZone;
-
-                sAMTBDDocument.Save();
-            }
-
-            using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
-            {
-                TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
-
-                t3DDocument.TogbXML(path_gbXML, true, true, true);
-                t3DDocument.SetUseBEWidths(false);
-                analyticalModel = Query.UpdateT3D(analyticalModel, t3DDocument);
-
-                t3DDocument.Building.latitude = float.IsNaN(latitude) ? t3DDocument.Building.latitude : latitude;
-                t3DDocument.Building.longitude = float.IsNaN(longitude) ? t3DDocument.Building.longitude : longitude;
-                t3DDocument.Building.timeZone = float.IsNaN(timeZone) ? t3DDocument.Building.timeZone : timeZone;
-
-                sAMT3DDocument.Save();
-
-                Convert.ToTBD(t3DDocument, path_TBD, 1, 365, 15, true);
             }
 
             AdjacencyCluster adjacencyCluster = null;

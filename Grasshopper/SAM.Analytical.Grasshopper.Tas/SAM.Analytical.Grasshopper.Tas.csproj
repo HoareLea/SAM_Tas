@@ -97,9 +97,9 @@
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\SAMAnalyticalCreatAdjacencyClusterByTBD.cs" />
-    <Compile Include="Component\SAMAnalyticalWorkflow.cs" />
+    <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
-    <Compile Include="Component\TasWorkflow.cs" />
+    <Compile Include="Component\TasWorkflowgbXML.cs" />
     <Compile Include="Component\TasDesignDayNames.cs" />
     <Compile Include="Component\TasCreateDesignDays.cs" />
     <Compile Include="Component\TasOpenT3DDocument.cs" />
