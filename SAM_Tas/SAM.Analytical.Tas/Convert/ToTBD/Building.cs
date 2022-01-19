@@ -37,6 +37,9 @@ namespace SAM.Analytical.Tas
 
             Plane plane = Plane.WorldXY;
 
+            List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
+            result.ClearShadingData();
+
             Dictionary<System.Guid, List<TBD.zoneSurface>> dictionary_Panel = new Dictionary<System.Guid, List<TBD.zoneSurface>>();
             Dictionary<System.Guid, List<TBD.zoneSurface>> dictionary_Aperture = new Dictionary<System.Guid, List<TBD.zoneSurface>>();
             foreach (Space space in spaces)
@@ -69,9 +72,6 @@ namespace SAM.Analytical.Tas
 
                 List<TBD.buildingElement> buildingElements = result.BuildingElements();
                 List<TBD.Construction> constructions = result.Constructions();
-
-                List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
-                result.ClearShadingData();
 
                 List<Panel> panels = adjacencyCluster?.GetPanels(space);
                 if (panels != null || panels.Count != 0)
