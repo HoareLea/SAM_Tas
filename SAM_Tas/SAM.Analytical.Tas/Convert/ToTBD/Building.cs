@@ -102,6 +102,12 @@ namespace SAM.Analytical.Tas
                         roomSurface_Panel.area = zoneSurface_Panel.area;
                         roomSurface_Panel.zoneSurface = zoneSurface_Panel;
 
+                        Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult = analyticalModel.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel)?.FirstOrDefault();
+                        if(solarFaceSimulationResult != null)
+                        {
+                            List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(result, zoneSurface_Panel, analyticalModel, solarFaceSimulationResult);
+                        }
+
                         TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(panel.GetFace3D(true), roomSurface_Panel);
                         if (perimeter_Panel == null)
                         {
