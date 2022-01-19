@@ -6,9 +6,9 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, TBD.zoneSurface zoneSurface, AnalyticalModel analyticalModel,  Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult)
+        public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, AnalyticalModel analyticalModel,  Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult)
         {
-            if (building == null || analyticalModel == null || solarFaceSimulationResult == null || zoneSurface == null)
+            if (daysShades == null || analyticalModel == null || solarFaceSimulationResult == null || zoneSurface == null)
             {
                 return null;
             }
@@ -49,10 +49,12 @@ namespace SAM.Analytical.Tas
 
                 int dayIndex = dateTime.DayOfYear;
 
-                TBD.DaysShade daysShade = UpdateDaysShade(building, dayIndex);
+                TBD.DaysShade daysShade = daysShades.Find(x => x.day == dayIndex);
                 if(daysShade == null)
                 {
-                    continue;
+                    daysShade = building.AddDaysShade();
+                    daysShade.day = dayIndex;
+                    daysShades.Add(daysShade);
                 }
 
                 TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour));

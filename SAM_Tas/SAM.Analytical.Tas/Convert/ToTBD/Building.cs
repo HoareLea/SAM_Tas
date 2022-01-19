@@ -70,6 +70,9 @@ namespace SAM.Analytical.Tas
                 List<TBD.buildingElement> buildingElements = result.BuildingElements();
                 List<TBD.Construction> constructions = result.Constructions();
 
+                List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
+                result.ClearShadingData();
+
                 List<Panel> panels = adjacencyCluster?.GetPanels(space);
                 if (panels != null || panels.Count != 0)
                 {
@@ -105,7 +108,7 @@ namespace SAM.Analytical.Tas
                         Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult = analyticalModel.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel)?.FirstOrDefault();
                         if(solarFaceSimulationResult != null)
                         {
-                            List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(result, zoneSurface_Panel, analyticalModel, solarFaceSimulationResult);
+                            List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(result, daysShades, zoneSurface_Panel, analyticalModel, solarFaceSimulationResult);
                         }
 
                         TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(panel.GetFace3D(true), roomSurface_Panel);
