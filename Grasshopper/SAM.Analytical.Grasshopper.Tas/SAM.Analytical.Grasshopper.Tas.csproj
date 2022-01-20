@@ -99,6 +99,7 @@
     <Compile Include="Component\SAMAnalyticalCreatAdjacencyClusterByTBD.cs" />
     <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
+    <Compile Include="Component\TasUpdateShading.cs" />
     <Compile Include="Component\TasWorkflowgbXML.cs" />
     <Compile Include="Component\TasDesignDayNames.cs" />
     <Compile Include="Component\TasCreateDesignDays.cs" />

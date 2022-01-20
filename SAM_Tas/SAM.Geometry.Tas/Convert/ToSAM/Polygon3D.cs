@@ -5,7 +5,7 @@ namespace SAM.Geometry.Tas
 {
     public static partial class Convert
     {
-        public static Polygon3D ToSAM(TBD.Polygon polygon)
+        public static Polygon3D ToSAM(this TBD.Polygon polygon)
         {
             if(polygon == null)
             {
