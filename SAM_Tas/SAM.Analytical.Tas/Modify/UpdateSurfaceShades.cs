@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, AnalyticalModel analyticalModel,  Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult)
+        public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, AnalyticalModel analyticalModel,  Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
         {
             if (daysShades == null || analyticalModel == null || solarFaceSimulationResult == null || zoneSurface == null)
             {
@@ -57,8 +57,14 @@ namespace SAM.Analytical.Tas
                     daysShades.Add(daysShade);
                 }
 
+                float proportion = System.Convert.ToSingle(Core.Query.Round(sunExposureArea / area, tolerance));
+                if(proportion <= tolerance)
+                {
+                    proportion = 0;
+                }
+
                 TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour));
-                surfaceShade.proportion = System.Convert.ToSingle(sunExposureArea / area);
+                surfaceShade.proportion = proportion;
                 surfaceShade.surface = zoneSurface;
 
                 result.Add(surfaceShade);

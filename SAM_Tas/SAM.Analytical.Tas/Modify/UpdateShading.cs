@@ -134,5 +134,83 @@ namespace SAM.Analytical.Tas
 
             return true;
         }
+
+
+        public static bool UpdateShading(this AnalyticalModel analyticalModel, TBD.Building building, double tolerance = Core.Tolerance.Distance)
+        {
+            if (building == null || analyticalModel == null)
+            {
+                return false;
+            }
+
+            List<TBD.zone> zones = building.Zones();
+            if (zones == null)
+            {
+                return false;
+            }
+
+            List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface, int, int>> tuples_ZoneSurfaces = new List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface, int, int>>();
+            
+            int index_Zone = 0;
+            foreach (TBD.zone zone in zones)
+            {
+                List<TBD.IZoneSurface> zoneSurfaces_Zone = zone?.ZoneSurfaces();
+                if (zoneSurfaces_Zone == null)
+                {
+                    continue;
+                }
+
+                int index_Surface = 0;
+                foreach (TBD.IZoneSurface zoneSurface in zoneSurfaces_Zone)
+                {
+                    List<TBD.IRoomSurface> roomSurfaces = zoneSurface.RoomSurfaces();
+                    if (roomSurfaces == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (TBD.IRoomSurface roomSurface in roomSurfaces)
+                    {
+                        Face3D face3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter());
+                        if (face3D == null || !face3D.IsValid())
+                        {
+                            continue;
+                        }
+
+                        tuples_ZoneSurfaces.Add(new Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface, int, int>(face3D, face3D.GetBoundingBox(), zoneSurface, index_Zone, index_Surface));
+                    }
+
+                    index_Surface++;
+                }
+                index_Zone++;
+            }
+
+            if (tuples_ZoneSurfaces == null || tuples_ZoneSurfaces.Count == 0)
+            {
+                return false;
+            }
+
+            List<Panel> panels = analyticalModel.GetPanels();
+            if (panels == null)
+            {
+                return false;
+            }
+
+            List<Tuple<Face3D, Point3D, BoundingBox3D, Panel>> tuples_Panel = new List<Tuple<Face3D, Point3D, BoundingBox3D, Panel>>();
+            foreach (Panel panel in panels)
+            {
+                Face3D face3D = panel.Face3D;
+                if (face3D == null || !face3D.IsValid())
+                {
+                    continue;
+                }
+
+                BoundingBox3D boundingBox3D = face3D.GetBoundingBox();
+                Point3D point3D = face3D.GetInternalPoint3D(tolerance);
+
+            }
+
+            throw new NotImplementedException();
+        }
   }
 }
