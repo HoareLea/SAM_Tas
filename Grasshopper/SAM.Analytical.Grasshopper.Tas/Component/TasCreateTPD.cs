@@ -110,7 +110,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
 
-            string path_TPD = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path_TSD), string.Format(System.IO.Path.GetFileNameWithoutExtension(path_TSD), ".tpd"));
+            string path_TPD = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path_TSD), string.Format("{0}.{1}", System.IO.Path.GetFileNameWithoutExtension(path_TSD), "tpd"));
             if (System.IO.File.Exists(path_TPD))
             {
                 System.IO.File.Delete(path_TPD);
@@ -124,7 +124,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 if(tPDDoc != null)
                 {
                     TPD.PlantRoom plantRoom = tPDDoc.EnergyCentre.AddPlantRoom();
-                    tPDDoc.EnergyCentre.AddTSDData(path_TPD, 0);
+                    tPDDoc.EnergyCentre.AddTSDData(path_TSD, 0);
 
                     TPD.TSDData tSDData = tPDDoc.EnergyCentre.GetTSDData(1);
 
@@ -225,7 +225,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
                     {
                         dynamic systemZone;
-                        systemZone = componentGroup.GetComponent(2 + (i * 2) + 2);
+                        systemZone = componentGroup.GetComponent(i + 1);
                         systemZone.AddZoneLoad(zoneLoad);
                         systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                         systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowDeltaT;
@@ -252,11 +252,18 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     TPD.WrResultSet wrResultSet = (TPD.WrResultSet)tPDDoc.EnergyCentre.GetResultSet(TPD.tpdResultsPeriod.tpdResultsPeriodAnnual, 0, 0, 0, null);
                     int count = wrResultSet.GetVectorSize(TPD.tpdResultVectorType.tpdConsumption);
-                    for (int j = 1; j <= count; i++)
+                    for (int j = 1; j <= count; j++)
                     {
-                        TPD.WrResultItem tpdResultItem = (TPD.WrResultItem)wrResultSet.GetResultItem(TPD.tpdResultVectorType.tpdConsumption, i);
-                        Array array = (Array)tpdResultItem.GetValues();
-                        total += (double)array.GetValue(0);
+                        TPD.WrResultItem wrResultItem = (TPD.WrResultItem)wrResultSet.GetResultItem(TPD.tpdResultVectorType.tpdConsumption, j);
+                        if(wrResultItem != null)
+                        {
+                            Array array = (Array)wrResultItem.GetValues();
+                            if(array != null && array.Length != 0)
+                            {
+                                total += (double)array.GetValue(0);
+                            }
+                        }
+
                     }
                     wrResultSet.Dispose();
 
