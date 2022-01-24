@@ -51,6 +51,10 @@
       <HintPath>..\..\references_buildonly\Interop.TBD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TPD">
+      <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Interop.TSD">
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -97,6 +101,7 @@
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\SAMAnalyticalCreatAdjacencyClusterByTBD.cs" />
+    <Compile Include="Component\TasCreateTPD.cs" />
     <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
     <Compile Include="Component\TasUpdateShading.cs" />

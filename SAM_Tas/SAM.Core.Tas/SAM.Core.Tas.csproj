@@ -44,6 +44,10 @@
       <HintPath>..\..\references_buildonly\Interop.TCD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TPD">
+      <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Interop.TSD">
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -63,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\SAMTPDDocument.cs" />
     <Compile Include="Classes\SAMTBDDocument.cs" />
     <Compile Include="Classes\SAMTSDDocument.cs" />
     <Compile Include="Classes\SurfaceOutputSpec.cs" />

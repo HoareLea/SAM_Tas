@@ -44,6 +44,10 @@
       <HintPath>..\..\references_buildonly\Interop.TCD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TPD">
+      <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Interop.TSD">
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -106,6 +110,10 @@
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Enums\Parameters\SpaceSimulationResultParameter.cs" />
     <Compile Include="Enums\Parameters\PanelSimulationResultParameter.cs" />
+    <Compile Include="Enums\AirSideControllerSetup.cs" />
+    <Compile Include="Enums\WaterSideControllerSetup.cs" />
+    <Compile Include="Modify\SetAirSideController.cs" />
+    <Compile Include="Modify\SetWaterSideController.cs" />
     <Compile Include="Modify\UpdateShading.cs" />
     <Compile Include="Modify\UpdateSurfaceShades.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
