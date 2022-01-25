@@ -88,9 +88,13 @@ namespace SAM.Analytical.Tas
 
             AdjacencyCluster adjacencyCluster = null;
 
+            bool hasWeatherData = false;
+
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                hasWeatherData = tBDDocument?.Building.GetWeatherYear() != null;
 
                 analyticalModel = Query.UpdateFacingExternal(analyticalModel, tBDDocument);
                 AssignAdiabaticConstruction(tBDDocument, "Adiabatic", new string[] { "-unzoned", "-internal", "-exposed" }, false, true);
@@ -108,6 +112,11 @@ namespace SAM.Analytical.Tas
                 }
 
                 sAMTBDDocument.Save();
+            }
+
+            if(!hasWeatherData)
+            {
+                return new AnalyticalModel(analyticalModel, adjacencyCluster);
             }
 
             Query.Sizing(path_TBD, analyticalModel, false, true);
@@ -155,6 +164,7 @@ namespace SAM.Analytical.Tas
             }
 
             adjacencyCluster = UpdateDesignLoads(path_TBD, adjacencyCluster);
+
             return new AnalyticalModel(analyticalModel, adjacencyCluster);
         }
   }
