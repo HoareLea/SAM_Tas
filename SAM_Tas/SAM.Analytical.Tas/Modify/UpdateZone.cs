@@ -18,16 +18,14 @@ namespace SAM.Analytical.Tas
             List<string> values = new List<string>();
 
             //TODO: Update [Id] to [Element Id]
-            string id;
-            if (space.TryGetValue("Element Id", out id))
+            if (space.TryGetValue("Element Id", out string id))
             {
                 if (!string.IsNullOrWhiteSpace(id))
                     values.Add(string.Format("[Id]={0}", id));
             }
 
             //TODO: Update [LevelName] to [Level Name]
-            string levelName = null;
-            if(space.TryGetValue(SpaceParameter.LevelName, out levelName))
+            if(space.TryGetValue(SpaceParameter.LevelName, out string levelName))
             {
                 if (!string.IsNullOrWhiteSpace(levelName))
                     values.Add(string.Format("[LevelName]={0}", levelName));
@@ -35,6 +33,22 @@ namespace SAM.Analytical.Tas
 
             if (values != null && values.Count > 0)
                 zone.description = string.Join("; ", values);
+
+            if(space.TryGetValue(SpaceParameter.VentilationRiserName, out string ventilationRiserName) && !string.IsNullOrWhiteSpace(ventilationRiserName))
+            {
+                TBD.ZoneGroup zoneGroup = Query.ZoneGroups(building)?.Find(x =>  ventilationRiserName.Equals(x.name));
+                if(zoneGroup == null)
+                {
+                    zoneGroup = building.AddZoneGroup();
+                    zoneGroup.name = ventilationRiserName;
+                    zoneGroup.type = (int)TBD.ZoneGroupType.tbdHVACZG;
+                }
+
+                if(zoneGroup != null)
+                {
+                    zoneGroup.InsertZone(zone);
+                }
+            }
 
             return zone;
         }

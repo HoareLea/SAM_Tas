@@ -168,6 +168,7 @@
     <Compile Include="Query\CoolingDesignDatas.cs" />
     <Compile Include="Query\Source.cs" />
     <Compile Include="Query\RoomSurfaces.cs" />
+    <Compile Include="Query\ZoneGrups.cs" />
     <Compile Include="Query\ZoneSurfaces.cs" />
     <Compile Include="Query\RoomShapes.cs" />
     <Compile Include="Query\Rooms.cs" />
