@@ -34,22 +34,6 @@ namespace SAM.Analytical.Tas
             if (values != null && values.Count > 0)
                 zone.description = string.Join("; ", values);
 
-            if(space.TryGetValue(SpaceParameter.VentilationRiserName, out string ventilationRiserName) && !string.IsNullOrWhiteSpace(ventilationRiserName))
-            {
-                TBD.ZoneGroup zoneGroup = Query.ZoneGroups(building)?.Find(x =>  ventilationRiserName.Equals(x.name));
-                if(zoneGroup == null)
-                {
-                    zoneGroup = building.AddZoneGroup();
-                    zoneGroup.name = ventilationRiserName;
-                    zoneGroup.type = (int)TBD.ZoneGroupType.tbdHVACZG;
-                }
-
-                if(zoneGroup != null)
-                {
-                    zoneGroup.InsertZone(zone);
-                }
-            }
-
             return zone;
         }
     }

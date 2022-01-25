@@ -1,5 +1,6 @@
 ﻿using SAM.Core.Tas;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
@@ -13,10 +14,16 @@ namespace SAM.Analytical.Tas
         /// <param name="profileLibrary">ProfileLibrary which contains information about profiles used in spaces</param>
         /// <param name="includeHDD">Include Heating Design Day in the process</param>
         /// <returns>TBD.zones have been used in update process</returns>
-        public static bool UpdateZones(this TBD.Building building, IEnumerable<Space> spaces, ProfileLibrary profileLibrary, bool includeHDD = false)
+        public static bool UpdateZones(this TBD.Building building, AdjacencyCluster adjacencyCluster, ProfileLibrary profileLibrary, bool includeHDD = false)
         {
-            if (building == null || spaces == null || profileLibrary == null)
+            if (building == null || adjacencyCluster == null || profileLibrary == null)
                 return false;
+
+            List<Space> spaces = adjacencyCluster?.GetSpaces();
+            if(spaces == null || spaces.Count == 0)
+            {
+                return false;
+            }
 
             //Zone Dictionary <- Dictionary constains zone.name as a key and TBD.zone as Value. Dictionary helps to match TBD.zone with SAM.Analytical.Space
             Dictionary<string, TBD.zone> dictionary_Zones = building.ZoneDictionary();
@@ -51,8 +58,31 @@ namespace SAM.Analytical.Tas
                 if (!dictionary_Zones.TryGetValue(name, out zone) || zone == null)
                     continue;
 
+                zone = building.UpdateZone(zone, space, profileLibrary);
+
+                VentilationSystem ventilationSystem = adjacencyCluster.GetRelatedObjects<VentilationSystem>(space)?.FirstOrDefault();
+                if(ventilationSystem != null)
+                {
+                    string ventilationSystemTypeName = (ventilationSystem.Type as VentilationSystemType)?.Name;
+                    if(!string.IsNullOrWhiteSpace(ventilationSystemTypeName))
+                    {
+                        TBD.ZoneGroup zoneGroup = Query.ZoneGroups(building)?.Find(x => ventilationSystemTypeName.Equals(x.name));
+                        if (zoneGroup == null)
+                        {
+                            zoneGroup = building.AddZoneGroup();
+                            zoneGroup.name = ventilationSystemTypeName;
+                            zoneGroup.type = (int)TBD.ZoneGroupType.tbdHVACZG;
+                        }
+
+                        if (zoneGroup != null)
+                        {
+                            zoneGroup.InsertZone(zone);
+                        }
+                    }
+                }
+
                 //Update TBD.zone using data stored in space and ProfileLibrary
-                result.Add(building.UpdateZone(zone, space, profileLibrary));
+                result.Add(zone);
                 
                 //Include HDD if includeHDD input set to true
                 if (includeHDD)
@@ -79,11 +109,6 @@ namespace SAM.Analytical.Tas
 
             //Returning TBD.zones have been used in update process
             return result != null && result.Count > 0;
-        }
-
-        public static bool UpdateZones(this TBD.Building building, AdjacencyCluster adjacencyCluster, ProfileLibrary profileLibrary, bool includeHDD = false)
-        {
-            return UpdateZones(building, adjacencyCluster?.GetSpaces(), profileLibrary, includeHDD);
         }
 
         public static bool UpdateZones(this TBD.Building building, AnalyticalModel analyticalModel, bool includeHDD = false)
