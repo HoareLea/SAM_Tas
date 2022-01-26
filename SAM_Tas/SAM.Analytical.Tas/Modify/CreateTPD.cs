@@ -114,7 +114,7 @@ namespace SAM.Analytical.Tas
             Point offset = new Point(0, 0);
             double circuitLength = 10;
 
-            TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(0);
+            TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
 
             dynamic heatingGroup = plantRoom.AddHeatingGroup();
             heatingGroup.Name = "Heating Circuit Group";
@@ -122,27 +122,28 @@ namespace SAM.Analytical.Tas
             heatingGroup.SetPosition(offset.X + 200, offset.Y);
 
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "Unventilated";
+            system.Name = "UV";
             system.Multiplicity = zoneLoads.Count();
 
 
             dynamic junction_In = system.AddJunction();
-            junction_In.SetPosition(100, 110);
+            junction_In.SetPosition(100, 120);
+            junction_In.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic junction_Out = system.AddJunction();
-            junction_Out.SetPosition(100, 190);
-
-            junction_In.SetDirection(TPD.tpdDirection.tpdRightLeft);
-            junction_Out.SetDirection(TPD.tpdDirection.tpdRightLeft);
-
+            junction_Out.SetPosition(260, 120);
+            junction_Out.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic zone = system.AddSystemZone();
-            zone.SetPosition(630, 80);
+            zone.SetPosition(160, 100);
 
-            TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[1];
+            TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[3];
             systemComponents[0] = (TPD.SystemComponent)zone;
             systemComponents[1] = (TPD.SystemComponent)junction_In;
             systemComponents[2] = (TPD.SystemComponent)junction_Out;
+
+            system.AddDuct(junction_In, 1, zone, 1);
+            system.AddDuct(zone, 1, junction_Out, 1);
 
             TPD.Controller[] controllers = new TPD.Controller[0];
 
@@ -212,7 +213,7 @@ namespace SAM.Analytical.Tas
             fuelSource_Gas.TimeOfUseType = TPD.tpdTimeOfUseType.tpdTimeOfUseValue;
             fuelSource_Gas.PeakCost = 0.05;
 
-            TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(0);
+            TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
 
             dynamic heatingGroup = plantRoom.AddHeatingGroup();
             heatingGroup.Name = "Heating Circuit Group";
@@ -259,13 +260,13 @@ namespace SAM.Analytical.Tas
             }
 
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "Natural Ventilation";
+            system.Name = "NV";
             system.Multiplicity = zoneLoads.Count();
 
             dynamic zone = system.AddSystemZone();
             zone.SetPosition(630, 80);
 
-            TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[3];
+            TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[1];
             systemComponents[0] = (TPD.SystemComponent)zone;
 
             TPD.Controller[] controllers = new TPD.Controller[0];
@@ -296,7 +297,7 @@ namespace SAM.Analytical.Tas
                     radiator.Duty.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
-                i += 3;
+                i++;
             }
         }
     }
