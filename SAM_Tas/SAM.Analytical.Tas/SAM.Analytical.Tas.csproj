@@ -112,6 +112,7 @@
     <Compile Include="Enums\Parameters\PanelSimulationResultParameter.cs" />
     <Compile Include="Enums\AirSideControllerSetup.cs" />
     <Compile Include="Enums\WaterSideControllerSetup.cs" />
+    <Compile Include="Modify\CreateTPD.cs" />
     <Compile Include="Modify\SetAirSideController.cs" />
     <Compile Include="Modify\SetWaterSideController.cs" />
     <Compile Include="Modify\UpdateShading.cs" />
