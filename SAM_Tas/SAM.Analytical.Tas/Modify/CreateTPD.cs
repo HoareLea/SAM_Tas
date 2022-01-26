@@ -183,7 +183,110 @@ namespace SAM.Analytical.Tas
             system.Name = "EOC";
             system.Multiplicity = zoneLoads.Count();
 
+            // Grid Supplied Electricity Fuel Source
+            dynamic fuelSource = energyCentre.AddFuelSource();
+            fuelSource.Name = "Grid Supplied Electricity";
+            fuelSource.Description = "";
+            fuelSource.CO2Factor = 0.519;
+            fuelSource.Electrical = 1;
+            fuelSource.TimeOfUseType = TPD.tpdTimeOfUseType.tpdTimeOfUseValue;
+            fuelSource.PeakCost = 0.13;
 
+            // Electrical Groups
+            dynamic electricalGroup = plantRoom.AddElectricalGroup();
+            electricalGroup.SetPosition(offset.X, offset.Y);
+            electricalGroup.Name = "Electrical Group - Fans";
+            electricalGroup.SetFuelSource(1, fuelSource);
+            electricalGroup.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupFans;
+            offset.X += 100;
+
+            dynamic plantSchedule = energyCentre.AddSchedule(TPD.tpdScheduleType.tpdScheduleFunction);
+            plantSchedule.Name = "System Schedule";
+            plantSchedule.FunctionType = TPD.tpdScheduleFunctionType.tpdScheduleFunctionAllZonesLoad;
+            plantSchedule.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
+
+            dynamic zone = system.AddSystemZone();
+            zone.SetPosition(630, 80);
+
+            dynamic heatingGroup = plantRoom.GetHeatingGroup(1);
+
+            dynamic fan = system.AddFan();
+            fan.name = "Fresh Air Fan";
+            fan.DesignFlowRate.Value = 150;
+            fan.OverallEfficiency.Value = 1;
+            fan.Pressure = 1000;
+            fan.HeatGainFactor = 0;
+            fan.SetElectricalGroup1(electricalGroup);
+            fan.PartLoad.Value = 0;
+            fan.PartLoad.ClearModifiers();
+            fan.SetSchedule(plantSchedule);
+
+            TPD.ProfileDataModifierTable profileDataModifierTable = fan.PartLoad.AddModifierTable();
+            profileDataModifierTable.Name = "Fan Part Load Curve";
+            profileDataModifierTable.SetVariable(1, TPD.tpdProfileDataVariableType.tpdProfileDataVariablePartload);
+            profileDataModifierTable.Multiplier = TPD.tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
+            profileDataModifierTable.Clear();
+            profileDataModifierTable.AddPoint(0, 0);
+            profileDataModifierTable.AddPoint(10, 3);
+            profileDataModifierTable.AddPoint(20, 7);
+            profileDataModifierTable.AddPoint(30, 13);
+            profileDataModifierTable.AddPoint(40, 21);
+            profileDataModifierTable.AddPoint(50, 30);
+            profileDataModifierTable.AddPoint(60, 41);
+            profileDataModifierTable.AddPoint(70, 54);
+            profileDataModifierTable.AddPoint(80, 68);
+            profileDataModifierTable.AddPoint(90, 83);
+            profileDataModifierTable.AddPoint(100, 100);
+
+            dynamic junction = system.AddJunction();
+            junction.SetPosition(260, 120);
+            junction.SetDirection(TPD.tpdDirection.tpdLeftRight);
+
+            dynamic damper = system.AddDamper();
+            damper.SetPosition(530, 90);
+
+            system.AddDuct(zone, 1, damper, 1);
+            system.AddDuct(damper, 1, fan, 1);
+            system.AddDuct(fan, 1, junction, 1);
+
+            TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[2];
+            systemComponents[0] = (TPD.SystemComponent)zone;
+            systemComponents[1] = (TPD.SystemComponent)damper;
+
+            TPD.Controller[] controllers = new TPD.Controller[0];
+
+            TPD.ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
+            componentGroup.SetMultiplicity(zoneLoads.Count());
+
+            int i = 1;
+            foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
+            {
+                dynamic systemZone = componentGroup.GetComponent(i);
+                systemZone.AddZoneLoad(zoneLoad);
+                systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowDeltaT;
+                for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
+                {
+                    systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                }
+
+                dynamic damper_Zone;
+                damper_Zone = componentGroup.GetComponent(i + 1);
+                damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
+
+                dynamic radiator_Zone = systemZone.AddRadiator();
+                radiator_Zone.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                radiator_Zone.Duty.SizeFraction = 1;
+
+                radiator_Zone.SetHeatingGroup(heatingGroup);
+                for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
+                {
+                    radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                }
+
+                i += 2;
+            }
 
         }
 
