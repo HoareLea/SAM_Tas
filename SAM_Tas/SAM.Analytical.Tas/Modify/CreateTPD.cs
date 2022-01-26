@@ -221,6 +221,8 @@ namespace SAM.Analytical.Tas
             fan.SetSchedule(plantSchedule);
             fan.SetPosition(140, 10);
             fan.SetDirection(TPD.tpdDirection.tpdLeftRight);
+            fan.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+
 
             TPD.ProfileDataModifierTable profileDataModifierTable = fan.PartLoad.AddModifierTable();
             profileDataModifierTable.Name = "Fan Part Load Curve";
@@ -239,16 +241,21 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable.AddPoint(90, 83);
             profileDataModifierTable.AddPoint(100, 100);
 
-            dynamic junction = system.AddJunction();
-            junction.SetPosition(220, 10);
-            junction.SetDirection(TPD.tpdDirection.tpdLeftRight);
+            dynamic junction_Out = system.AddJunction();
+            junction_Out.SetPosition(220, 10);
+            junction_Out.SetDirection(TPD.tpdDirection.tpdLeftRight);
+
+            dynamic junction_In = system.AddJunction();
+            junction_In.SetPosition(-20, -30);
+            junction_In.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic damper = system.AddDamper();
             damper.SetPosition(80, 10);
+            damper.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
             system.AddDuct(zone, 1, damper, 1);
             system.AddDuct(damper, 1, fan, 1);
-            system.AddDuct(fan, 1, junction, 1);
+            system.AddDuct(fan, 1, junction_Out, 1);
 
             TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[2];
             systemComponents[0] = (TPD.SystemComponent)zone;
@@ -273,7 +280,8 @@ namespace SAM.Analytical.Tas
                 dynamic systemZone = componentGroup.GetComponent(i+1);
                 systemZone.AddZoneLoad(zoneLoad);
                 systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowDeltaT;
+                systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
+                systemZone.FlowRate.Value = 5;
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
                     systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
@@ -281,7 +289,7 @@ namespace SAM.Analytical.Tas
 
                 dynamic damper_Zone;
                 damper_Zone = componentGroup.GetComponent(i + 2);
-                damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
+                damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
                 dynamic radiator_Zone = systemZone.AddRadiator();
                 radiator_Zone.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
