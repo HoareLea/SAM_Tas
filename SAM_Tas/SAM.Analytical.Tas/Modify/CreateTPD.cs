@@ -12,7 +12,10 @@ namespace SAM.Analytical.Tas
         {
             totalConsumption = double.NaN;
 
-            if(string.IsNullOrWhiteSpace(path_TPD) || string.IsNullOrWhiteSpace(path_TSD))
+            Point offset = new Point(0, 0);
+            double circuitLength = 10;
+
+            if (string.IsNullOrWhiteSpace(path_TPD) || string.IsNullOrWhiteSpace(path_TSD))
             {
                 return;
             }
@@ -33,6 +36,11 @@ namespace SAM.Analytical.Tas
                     energyCentre.AddTSDData(path_TSD, 0);
 
                     TPD.TSDData tSDData = energyCentre.GetTSDData(1);
+
+                    dynamic heatingGroup = plantRoom.AddHeatingGroup();
+                    heatingGroup.Name = "Heating Circuit Group";
+                    heatingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
+                    heatingGroup.SetPosition(offset.X + 200, offset.Y);
 
                     Dictionary<string, List<TPD.ZoneLoad>> dictionary = new Dictionary<string, List<TPD.ZoneLoad>>();
                     for (int j = 1; j <= tSDData.GetZoneLoadGroupCount(); j++)
@@ -111,20 +119,11 @@ namespace SAM.Analytical.Tas
 
         private static void CreateTPD_UV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
         {
-            Point offset = new Point(0, 0);
-            double circuitLength = 10;
-
             TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
-
-            dynamic heatingGroup = plantRoom.AddHeatingGroup();
-            heatingGroup.Name = "Heating Circuit Group";
-            heatingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-            heatingGroup.SetPosition(offset.X + 200, offset.Y);
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = "UV";
             system.Multiplicity = zoneLoads.Count();
-
 
             dynamic junction_In = system.AddJunction();
             junction_In.SetPosition(100, 120);
@@ -163,17 +162,6 @@ namespace SAM.Analytical.Tas
                     systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
-                dynamic radiator = systemZone.AddRadiator();
-                radiator.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                radiator.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                radiator.Duty.SizeFraction = 1;
-
-                radiator.SetHeatingGroup(heatingGroup);
-                for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
-                {
-                    radiator.Duty.AddDesignCondition(energyCentre.GetDesignCondition(j));
-                }
-
                 i += 3;
             }
 
@@ -186,13 +174,22 @@ namespace SAM.Analytical.Tas
 
         private static void CreateTPD_EOC(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
         {
+            Point offset = new Point(0, 0);
+            double circuitLength = 10;
+
+            TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
+
+            TPD.System system = plantRoom.AddSystem();
+            system.Name = "EOC";
+            system.Multiplicity = zoneLoads.Count();
+
+
 
         }
 
         private static void CreateTPD_NV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
         {
             Point offset = new Point(0, 0);
-            double circuitLength = 10;
 
             dynamic designConditionLoad = energyCentre.AddDesignCondition();
             designConditionLoad.Name = "Annual Design Condition";
@@ -215,11 +212,6 @@ namespace SAM.Analytical.Tas
 
             TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
 
-            dynamic heatingGroup = plantRoom.AddHeatingGroup();
-            heatingGroup.Name = "Heating Circuit Group";
-            heatingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-            heatingGroup.SetPosition(offset.X + 200, offset.Y);
-
             dynamic multiBoiler = plantRoom.AddMultiBoiler();
             multiBoiler.Name = "Heating Circuit Boiler";
             multiBoiler.DesignPressureDrop = 25;
@@ -230,6 +222,8 @@ namespace SAM.Analytical.Tas
             multiBoiler.Duty.SizeFraction = 1.0;
             multiBoiler.Duty.AddDesignCondition(designConditionLoad);
             multiBoiler.SetPosition(offset.X, offset.Y);
+
+            dynamic heatingGroup = plantRoom.GetHeatingGroup(1);
 
             dynamic pump = plantRoom.AddPump();
             pump.Name = "Heating Circuit Pump";
