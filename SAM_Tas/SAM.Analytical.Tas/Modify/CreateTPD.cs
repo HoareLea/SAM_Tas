@@ -175,7 +175,6 @@ namespace SAM.Analytical.Tas
         private static void CreateTPD_EOC(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
         {
             Point offset = new Point(0, 0);
-            double circuitLength = 10;
 
             TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
 
@@ -206,7 +205,7 @@ namespace SAM.Analytical.Tas
             plantSchedule.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
 
             dynamic zone = system.AddSystemZone();
-            zone.SetPosition(630, 80);
+            zone.SetPosition(0, 0);
 
             dynamic heatingGroup = plantRoom.GetHeatingGroup(1);
 
@@ -220,6 +219,8 @@ namespace SAM.Analytical.Tas
             fan.PartLoad.Value = 0;
             fan.PartLoad.ClearModifiers();
             fan.SetSchedule(plantSchedule);
+            fan.SetPosition(140, 10);
+            fan.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             TPD.ProfileDataModifierTable profileDataModifierTable = fan.PartLoad.AddModifierTable();
             profileDataModifierTable.Name = "Fan Part Load Curve";
@@ -239,11 +240,11 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable.AddPoint(100, 100);
 
             dynamic junction = system.AddJunction();
-            junction.SetPosition(260, 120);
+            junction.SetPosition(220, 10);
             junction.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic damper = system.AddDamper();
-            damper.SetPosition(530, 90);
+            damper.SetPosition(80, 10);
 
             system.AddDuct(zone, 1, damper, 1);
             system.AddDuct(damper, 1, fan, 1);
@@ -258,10 +259,18 @@ namespace SAM.Analytical.Tas
             TPD.ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
             componentGroup.SetMultiplicity(zoneLoads.Count());
 
+            //List<string> names = new List<string>();
+            //for(int j = 1; j < componentGroup.GetComponentCount(); j++)
+            //{
+            //    dynamic component = componentGroup.GetComponent(j);
+            //    names.Add(component.Name);
+            //    names.Add(component.GetFullName());
+            //}
+
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
             {
-                dynamic systemZone = componentGroup.GetComponent(i);
+                dynamic systemZone = componentGroup.GetComponent(i+1);
                 systemZone.AddZoneLoad(zoneLoad);
                 systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowDeltaT;
@@ -271,7 +280,7 @@ namespace SAM.Analytical.Tas
                 }
 
                 dynamic damper_Zone;
-                damper_Zone = componentGroup.GetComponent(i + 1);
+                damper_Zone = componentGroup.GetComponent(i + 2);
                 damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
                 dynamic radiator_Zone = systemZone.AddRadiator();
