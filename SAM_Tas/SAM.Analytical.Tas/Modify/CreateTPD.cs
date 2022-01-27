@@ -33,15 +33,16 @@ namespace SAM.Analytical.Tas
                 {
                     TPD.EnergyCentre energyCentre = tPDDoc.EnergyCentre;
 
-                    TPD.PlantRoom plantRoom = energyCentre.AddPlantRoom();
+                    TPD.PlantRoom plantRoom = energyCentre.PlantRoom("Main PlantRoom");
+                    if(plantRoom == null)
+                    {
+                        plantRoom = energyCentre.AddPlantRoom();
+                        plantRoom.Name = "Main PlantRoom";
+                    }
+
                     energyCentre.AddTSDData(path_TSD, 0);
 
                     TPD.TSDData tSDData = energyCentre.GetTSDData(1);
-
-                    dynamic heatingGroup = plantRoom.AddHeatingGroup();
-                    heatingGroup.Name = "Heating Circuit Group";
-                    heatingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-                    heatingGroup.SetPosition(offset.X + 200, offset.Y);
 
                     Dictionary<string, List<TPD.ZoneLoad>> dictionary = new Dictionary<string, List<TPD.ZoneLoad>>();
                     for (int j = 1; j <= tSDData.GetZoneLoadGroupCount(); j++)
@@ -59,7 +60,81 @@ namespace SAM.Analytical.Tas
                         }
                     }
 
-                    foreach(KeyValuePair<string, List<TPD.ZoneLoad>> keyValuePair in dictionary)
+                    //Heating Groups
+
+                    dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
+                    if(heatingGroup == null)
+                    {
+                        heatingGroup = plantRoom.AddHeatingGroup();
+                        heatingGroup.Name = "Heating Circuit Group";
+                        heatingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
+                        heatingGroup.SetPosition(offset.X + 200, offset.Y);
+                    }
+
+                    //Fuel Sources
+
+                    dynamic fuelSource_Electrical = energyCentre.FuelSource("Grid Supplied Electricity");
+                    if(fuelSource_Electrical == null)
+                    {
+                        fuelSource_Electrical = energyCentre.AddFuelSource();
+                        fuelSource_Electrical.Name = "Grid Supplied Electricity";
+                        fuelSource_Electrical.Description = "";
+                        fuelSource_Electrical.CO2Factor = 0.519;
+                        fuelSource_Electrical.Electrical = 1;
+                        fuelSource_Electrical.TimeOfUseType = TPD.tpdTimeOfUseType.tpdTimeOfUseValue;
+                        fuelSource_Electrical.PeakCost = 0.13;
+                    }
+
+                    dynamic fuelSource_Gas = energyCentre.FuelSource("Natural Gas");
+                    if(fuelSource_Gas == null)
+                    {
+                        fuelSource_Gas = energyCentre.AddFuelSource();
+                        fuelSource_Gas.Name = "Natural Gas";
+                        fuelSource_Gas.Description = "";
+                        fuelSource_Gas.CO2Factor = 0.216;
+                        fuelSource_Gas.Electrical = 0;
+                        fuelSource_Gas.TimeOfUseType = TPD.tpdTimeOfUseType.tpdTimeOfUseValue;
+                        fuelSource_Gas.PeakCost = 0.05;
+                    }
+
+                    // Electrical Groups
+
+                    //Fans
+                    dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
+                    if (electricalGroup_Fans == null)
+                    {
+                        electricalGroup_Fans = plantRoom.AddElectricalGroup();
+                        electricalGroup_Fans.SetPosition(400, 0);
+                        electricalGroup_Fans.Name = "Electrical Group - Fans";
+                        electricalGroup_Fans.SetFuelSource(1, fuelSource_Electrical);
+                        electricalGroup_Fans.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupFans;
+                    }
+
+                    //Lighting
+                    dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
+                    if(electricalGroup_Lighting)
+                    {
+                        electricalGroup_Lighting = plantRoom.AddElectricalGroup();
+                        electricalGroup_Lighting.SetPosition(offset.X + 500, offset.Y + 0);
+                        electricalGroup_Lighting.Name = "Electrical Group - Lighting";
+                        electricalGroup_Lighting.Description = "Internal Lighting";
+                        electricalGroup_Lighting.SetFuelSource(1, fuelSource_Electrical);
+                        electricalGroup_Lighting.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupLighting;
+                    }
+
+                    //Equipment
+                    dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
+                    if (electricalGroup_SmallPower)
+                    {
+                        electricalGroup_SmallPower = plantRoom.AddElectricalGroup();
+                        electricalGroup_SmallPower.SetPosition(offset.X + 580, offset.Y + 0);
+                        electricalGroup_SmallPower.Name = "Electrical Group - Small Power";
+                        electricalGroup_SmallPower.Description = "Space Equipment";
+                        electricalGroup_SmallPower.SetFuelSource(1, fuelSource_Electrical);
+                        electricalGroup_SmallPower.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupEquipment;
+                    }
+
+                    foreach (KeyValuePair<string, List<TPD.ZoneLoad>> keyValuePair in dictionary)
                     {
                         CreateTPD(energyCentre, keyValuePair.Key, keyValuePair.Value);
                     }
@@ -127,22 +202,31 @@ namespace SAM.Analytical.Tas
 
         private static void CreateTPD_UV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
         {
-            TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
+            TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
+            if(plantRoom == null)
+            {
+                return;
+            }
+
+            Point offset = new Point(0, 0);
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = "UV";
             system.Multiplicity = zoneLoads.Count();
 
+            dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
+            dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
+
             dynamic junction_In = system.AddJunction();
-            junction_In.SetPosition(100, 120);
+            junction_In.SetPosition(offset.X + 100, offset.Y + 120);
             junction_In.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic junction_Out = system.AddJunction();
-            junction_Out.SetPosition(260, 120);
+            junction_Out.SetPosition(offset.X + 260, offset.Y + 120);
             junction_Out.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic zone = system.AddSystemZone();
-            zone.SetPosition(160, 100);
+            zone.SetPosition(offset.X + 160, offset.Y + 100);
 
             TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[3];
             systemComponents[0] = (TPD.SystemComponent)zone;
@@ -170,6 +254,16 @@ namespace SAM.Analytical.Tas
                     systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
+                if (electricalGroup_SmallPower != null)
+                {
+                    (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
+                }
+
+                if (electricalGroup_Lighting != null)
+                {
+                    (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
+                }
+
                 i += 3;
             }
 
@@ -184,41 +278,15 @@ namespace SAM.Analytical.Tas
         {
             Point offset = new Point(0, 0);
 
-            TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
+            TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
+            if (plantRoom == null)
+            {
+                return;
+            }
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = "EOC";
             system.Multiplicity = zoneLoads.Count();
-
-            // Grid Supplied Electricity Fuel Source
-            dynamic fuelSource = energyCentre.AddFuelSource();
-            fuelSource.Name = "Grid Supplied Electricity";
-            fuelSource.Description = "";
-            fuelSource.CO2Factor = 0.519;
-            fuelSource.Electrical = 1;
-            fuelSource.TimeOfUseType = TPD.tpdTimeOfUseType.tpdTimeOfUseValue;
-            fuelSource.PeakCost = 0.13;
-
-            // Electrical Groups
-            dynamic electricalGroup_Fans = plantRoom.AddElectricalGroup();
-            electricalGroup_Fans.SetPosition(400, 0);
-            electricalGroup_Fans.Name = "Electrical Group - Fans";
-            electricalGroup_Fans.SetFuelSource(1, fuelSource);
-            electricalGroup_Fans.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupFans;
-
-            dynamic electricalGroup_Lighting = plantRoom.AddElectricalGroup();
-            electricalGroup_Lighting.SetPosition(500, 0);
-            electricalGroup_Lighting.Name = "Electrical Group - Lighting";
-            electricalGroup_Lighting.Description = "Internal Lighting";
-            electricalGroup_Lighting.SetFuelSource(1, fuelSource);
-            electricalGroup_Lighting.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupLighting;
-
-            dynamic electricalGroup_SmallPower = plantRoom.AddElectricalGroup();
-            electricalGroup_SmallPower.SetPosition(580, 0);
-            electricalGroup_SmallPower.Name = "Electrical Group - Small Power";
-            electricalGroup_SmallPower.Description = "Space Equipment";
-            electricalGroup_SmallPower.SetFuelSource(1, fuelSource);
-            electricalGroup_SmallPower.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupEquipment;
 
             dynamic plantSchedule = energyCentre.AddSchedule(TPD.tpdScheduleType.tpdScheduleFunction);
             plantSchedule.Name = "System Schedule";
@@ -226,9 +294,11 @@ namespace SAM.Analytical.Tas
             plantSchedule.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
 
             dynamic zone = system.AddSystemZone();
-            zone.SetPosition(0, 0);
+            zone.SetPosition(offset.X + 0, offset.Y + 0);
 
-            dynamic heatingGroup = plantRoom.GetHeatingGroup(1);
+            dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
+            dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
+            dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
 
             dynamic fan = system.AddFan();
             fan.name = "Fresh Air Fan";
@@ -240,7 +310,7 @@ namespace SAM.Analytical.Tas
             fan.PartLoad.Value = 0;
             fan.PartLoad.ClearModifiers();
             fan.SetSchedule(plantSchedule);
-            fan.SetPosition(140, 10);
+            fan.SetPosition(offset.X + 140, offset.Y + 10);
             fan.SetDirection(TPD.tpdDirection.tpdLeftRight);
             fan.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
@@ -262,15 +332,15 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable.AddPoint(100, 100);
 
             dynamic junction_Out = system.AddJunction();
-            junction_Out.SetPosition(220, 10);
+            junction_Out.SetPosition(offset.X + 220, offset.Y + 10);
             junction_Out.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic junction_In = system.AddJunction();
-            junction_In.SetPosition(-60, 20);
+            junction_In.SetPosition(offset.X -60, offset.Y + 20);
             junction_In.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic damper = system.AddDamper();
-            damper.SetPosition(80, 10);
+            damper.SetPosition(offset.X + 80, offset.Y + 10);
             damper.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
             system.AddDuct(junction_In, 1, zone, 1);
@@ -287,6 +357,8 @@ namespace SAM.Analytical.Tas
             TPD.ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
             componentGroup.SetMultiplicity(zoneLoads.Count());
 
+            dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
+
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
             {
@@ -296,8 +368,16 @@ namespace SAM.Analytical.Tas
                 systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
                 systemZone.FlowRate.Value = 5;
                 //(systemZone as dynamic).SetDHWGroup(tpdDHWGrp);
-                (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
-                (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
+                if(electricalGroup_SmallPower != null)
+                {
+                    (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
+                }
+
+                if(electricalGroup_Lighting != null)
+                {
+                    (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
+                }
+
                 TPD.SizedFlowVariable sizedFlowVariable_FreshAir = systemZone.FreshAir;
                 sizedFlowVariable_FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
@@ -313,7 +393,11 @@ namespace SAM.Analytical.Tas
                 radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
                 radiator_Zone.Duty.SizeFraction = 1;
 
-                (radiator_Zone as dynamic).SetHeatingGroup(heatingGroup);
+                if(heatingGroup != null)
+                {
+                    (radiator_Zone as dynamic).SetHeatingGroup(heatingGroup);
+                }
+
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
                     radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(j));
@@ -326,28 +410,22 @@ namespace SAM.Analytical.Tas
 
         private static void CreateTPD_NV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
         {
+            TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
+            if (plantRoom == null)
+            {
+                return;
+            }
+
             Point offset = new Point(0, 0);
 
             dynamic designConditionLoad = energyCentre.AddDesignCondition();
             designConditionLoad.Name = "Annual Design Condition";
 
-            dynamic fuelSource_Electrical = energyCentre.AddFuelSource();
-            fuelSource_Electrical.Name = "Grid Supplied Electricity";
-            fuelSource_Electrical.Description = "";
-            fuelSource_Electrical.CO2Factor = 0.519;
-            fuelSource_Electrical.Electrical = 1;
-            fuelSource_Electrical.TimeOfUseType = TPD.tpdTimeOfUseType.tpdTimeOfUseValue;
-            fuelSource_Electrical.PeakCost = 0.13;
+            dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
+            dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
 
-            dynamic fuelSource_Gas = energyCentre.AddFuelSource();
-            fuelSource_Gas.Name = "Natural Gas";
-            fuelSource_Gas.Description = "";
-            fuelSource_Gas.CO2Factor = 0.216;
-            fuelSource_Gas.Electrical = 0;
-            fuelSource_Gas.TimeOfUseType = TPD.tpdTimeOfUseType.tpdTimeOfUseValue;
-            fuelSource_Gas.PeakCost = 0.05;
-
-            TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(1);
+            dynamic fuelSource_Electrical = energyCentre.FuelSource("Grid Supplied Electricity");
+            dynamic fuelSource_Gas = energyCentre.FuelSource("Natural Gas");
 
             dynamic multiBoiler = plantRoom.AddMultiBoiler();
             multiBoiler.Name = "Heating Circuit Boiler";
@@ -360,7 +438,7 @@ namespace SAM.Analytical.Tas
             multiBoiler.Duty.AddDesignCondition(designConditionLoad);
             multiBoiler.SetPosition(offset.X, offset.Y);
 
-            dynamic heatingGroup = plantRoom.GetHeatingGroup(1);
+            dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
             dynamic pump = plantRoom.AddPump();
             pump.Name = "Heating Circuit Pump";
@@ -395,7 +473,7 @@ namespace SAM.Analytical.Tas
             system.Multiplicity = zoneLoads.Count();
 
             dynamic zone = system.AddSystemZone();
-            zone.SetPosition(630, 80);
+            zone.SetPosition(offset.X + 630, offset.Y + 80);
 
             TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[1];
             systemComponents[0] = (TPD.SystemComponent)zone;
@@ -415,6 +493,16 @@ namespace SAM.Analytical.Tas
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
                     systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                }
+
+                if (electricalGroup_SmallPower != null)
+                {
+                    (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
+                }
+
+                if (electricalGroup_Lighting != null)
+                {
+                    (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
                 }
 
                 dynamic radiator = systemZone.AddRadiator();
