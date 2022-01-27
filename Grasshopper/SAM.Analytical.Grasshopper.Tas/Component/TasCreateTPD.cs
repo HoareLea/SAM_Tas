@@ -112,7 +112,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             AnalyticalModel analyticalModel = null;
-            index = Params.IndexOfInputParam("_analyticalModel");
+            index = Params.IndexOfInputParam("analyticalModel_");
             if (index != -1)
             {
                 dataAccess.GetData(index, ref analyticalModel);
@@ -124,7 +124,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 System.IO.File.Delete(path_TPD);
             }
 
-            analyticalModel = new AnalyticalModel(analyticalModel);
+            analyticalModel = analyticalModel == null ? null : new AnalyticalModel(analyticalModel);
 
             Analytical.Tas.Modify.CreateTPD(path_TPD, path_TSD, analyticalModel);
 

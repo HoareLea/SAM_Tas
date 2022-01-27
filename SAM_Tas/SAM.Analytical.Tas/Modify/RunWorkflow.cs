@@ -165,12 +165,12 @@ namespace SAM.Analytical.Tas
 
             AnalyticalModel analyticalModel_Temp = new AnalyticalModel(analyticalModel, adjacencyCluster);
 
-            if (System.IO.File.Exists(path_TSD))
-            {
-                string path_TPD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tpd"));
+            //if (System.IO.File.Exists(path_TSD))
+            //{
+            //    string path_TPD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tpd"));
 
-                CreateTPD(path_TPD, path_TSD, analyticalModel_Temp);
-            }
+            //    CreateTPD(path_TPD, path_TSD, analyticalModel_Temp);
+            //}
 
             adjacencyCluster = UpdateDesignLoads(path_TBD, analyticalModel_Temp.AdjacencyCluster);
 

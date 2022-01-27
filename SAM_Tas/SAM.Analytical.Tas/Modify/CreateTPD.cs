@@ -110,7 +110,7 @@ namespace SAM.Analytical.Tas
 
                     //Lighting
                     dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
-                    if(electricalGroup_Lighting)
+                    if(electricalGroup_Lighting == null)
                     {
                         electricalGroup_Lighting = plantRoom.AddElectricalGroup();
                         electricalGroup_Lighting.SetPosition(offset.X + 500, offset.Y + 0);
@@ -122,7 +122,7 @@ namespace SAM.Analytical.Tas
 
                     //Equipment
                     dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
-                    if (electricalGroup_SmallPower)
+                    if (electricalGroup_SmallPower == null)
                     {
                         electricalGroup_SmallPower = plantRoom.AddElectricalGroup();
                         electricalGroup_SmallPower.SetPosition(offset.X + 580, offset.Y + 0);
