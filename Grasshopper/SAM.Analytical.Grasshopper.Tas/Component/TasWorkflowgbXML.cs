@@ -93,7 +93,6 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "analyticalModel", NickName = "analyticalModel", Description = "AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "totalConsumption", NickName = "totalConsumption", Description = "Total Consumption", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "successful", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -224,19 +223,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                     unmetHours = true;
 
             Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, path_gbXML, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours);
-
-            index = Params.IndexOfOutputParam("totalConsumption");
-            if (index != -1)
-            {
-                AnalyticalModelSimulationResult analyticalModelSimulationResult = analyticalModel.GetAnalyticalModelSimulationResults()?.FirstOrDefault();
-                if(analyticalModelSimulationResult != null)
-                {
-                    if(analyticalModelSimulationResult.TryGetValue(AnalyticalModelSimulationResultParameter.TotalConsumption, out double totalConsumption))
-                    {
-                        dataAccess.SetData(index, totalConsumption);
-                    }
-                }
-            }
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)

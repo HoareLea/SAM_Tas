@@ -9,10 +9,8 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static void CreateTPD(this string path_TPD, string path_TSD, out double totalConsumption, AnalyticalModel analyticalModel = null)
+        public static void CreateTPD(this string path_TPD, string path_TSD, AnalyticalModel analyticalModel = null)
         {
-            totalConsumption = double.NaN;
-
             Point offset = new Point(0, 0);
             double circuitLength = 10;
 
@@ -141,29 +139,80 @@ namespace SAM.Analytical.Tas
 
                     plantRoom.SimulateEx(1, 8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)TPD.tpdSimulationData.tpdSimulationDataLoad + (int)TPD.tpdSimulationData.tpdSimulationDataPipe, 0, 0);
 
-                    totalConsumption = 0;
-
-                    TPD.WrResultSet wrResultSet = (TPD.WrResultSet)energyCentre.GetResultSet(TPD.tpdResultsPeriod.tpdResultsPeriodAnnual, 0, 0, 0, null);
-                    int count = wrResultSet.GetVectorSize(TPD.tpdResultVectorType.tpdConsumption);
-                    for (int j = 1; j <= count; j++)
+                    if(analyticalModel != null)
                     {
-                        TPD.WrResultItem wrResultItem = (TPD.WrResultItem)wrResultSet.GetResultItem(TPD.tpdResultVectorType.tpdConsumption, j);
-                        if (wrResultItem != null)
+                        double totalConsumption = 0;
+                        double CO2Emission = 0;
+                        double cost = 0;
+                        double unmetHours = 0;
+
+                        TPD.WrResultSet wrResultSet = (TPD.WrResultSet)energyCentre.GetResultSet(TPD.tpdResultsPeriod.tpdResultsPeriodAnnual, 0, 0, 0, null);
+
+                        int count;
+
+                        count = wrResultSet.GetVectorSize(TPD.tpdResultVectorType.tpdConsumption);
+                        for (int j = 1; j <= count; j++)
                         {
-                            Array array = (Array)wrResultItem.GetValues();
-                            if (array != null && array.Length != 0)
+                            TPD.WrResultItem wrResultItem = (TPD.WrResultItem)wrResultSet.GetResultItem(TPD.tpdResultVectorType.tpdConsumption, j);
+                            if (wrResultItem != null)
                             {
-                                totalConsumption += (double)array.GetValue(0);
+                                Array array = (Array)wrResultItem.GetValues();
+                                if (array != null && array.Length != 0)
+                                {
+                                    totalConsumption += (double)array.GetValue(0);
+                                }
                             }
                         }
 
-                    }
-                    wrResultSet.Dispose();
+                        count = wrResultSet.GetVectorSize(TPD.tpdResultVectorType.tpdCost);
+                        for (int j = 1; j <= count; j++)
+                        {
+                            TPD.WrResultItem wrResultItem = (TPD.WrResultItem)wrResultSet.GetResultItem(TPD.tpdResultVectorType.tpdCost, j);
+                            if (wrResultItem != null)
+                            {
+                                Array array = (Array)wrResultItem.GetValues();
+                                if (array != null && array.Length != 0)
+                                {
+                                    cost += (double)array.GetValue(0);
+                                }
+                            }
+                        }
 
-                    if(analyticalModel != null)
-                    {
+                        count = wrResultSet.GetVectorSize(TPD.tpdResultVectorType.tpdCo2);
+                        for (int j = 1; j <= count; j++)
+                        {
+                            TPD.WrResultItem wrResultItem = (TPD.WrResultItem)wrResultSet.GetResultItem(TPD.tpdResultVectorType.tpdCo2, j);
+                            if (wrResultItem != null)
+                            {
+                                Array array = (Array)wrResultItem.GetValues();
+                                if (array != null && array.Length != 0)
+                                {
+                                    CO2Emission += (double)array.GetValue(0);
+                                }
+                            }
+                        }
+
+                        count = wrResultSet.GetVectorSize(TPD.tpdResultVectorType.tpdUnmetHours);
+                        for (int j = 1; j <= count; j++)
+                        {
+                            TPD.WrResultItem wrResultItem = (TPD.WrResultItem)wrResultSet.GetResultItem(TPD.tpdResultVectorType.tpdUnmetHours, j);
+                            if (wrResultItem != null)
+                            {
+                                Array array = (Array)wrResultItem.GetValues();
+                                if (array != null && array.Length != 0)
+                                {
+                                    unmetHours += (double)array.GetValue(0);
+                                }
+                            }
+                        }
+
+                        wrResultSet.Dispose();
+
                         AnalyticalModelSimulationResult analyticalModelSimulationResult = new AnalyticalModelSimulationResult(analyticalModel.Name, Assembly.GetExecutingAssembly().GetName()?.Name, path_TPD);
-                        analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.TotalConsumption, totalConsumption);
+                        analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualTotalConsumption, totalConsumption);
+                        analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualCO2Emission, CO2Emission);
+                        analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualCost, cost);
+                        analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualUnmetHours, unmetHours);
                         analyticalModel.AddResult(analyticalModelSimulationResult);
                     }
 

@@ -1,11 +1,13 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
+using SAM.Analytical.Tas;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using SAM.Weather;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
@@ -19,7 +21,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -47,7 +49,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                //result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "analyticalModel_", NickName = "_analyticalModel_", Description = "SAM Analytical Model", Access = GH_ParamAccess.item, Optional = true}, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_TSD", NickName = "_path_TSD", Description = "A file path to a Tas file TSD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 //result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
@@ -72,8 +74,8 @@ namespace SAM.Analytical.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                //result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "analyticalModel", NickName = "analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "totalConsumption", NickName = "totalConsumption", Description = "Total Consumption [kWh]", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "analyticalModel", NickName = "analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
+                //result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "totalConsumption", NickName = "totalConsumption", Description = "Total Consumption [kWh]", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -109,6 +111,12 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
+            AnalyticalModel analyticalModel = null;
+            index = Params.IndexOfInputParam("_analyticalModel");
+            if (index != -1)
+            {
+                dataAccess.GetData(index, ref analyticalModel);
+            }
 
             string path_TPD = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path_TSD), string.Format("{0}.{1}", System.IO.Path.GetFileNameWithoutExtension(path_TSD), "tpd"));
             if (System.IO.File.Exists(path_TPD))
@@ -116,12 +124,14 @@ namespace SAM.Analytical.Grasshopper.Tas
                 System.IO.File.Delete(path_TPD);
             }
 
-            Analytical.Tas.Modify.CreateTPD(path_TPD, path_TSD, out double totalConsumption);
+            analyticalModel = new AnalyticalModel(analyticalModel);
 
-            index = Params.IndexOfOutputParam("totalConsumption");
+            Analytical.Tas.Modify.CreateTPD(path_TPD, path_TSD, analyticalModel);
+
+            index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
             {
-                dataAccess.SetData(index, totalConsumption);
+                dataAccess.SetData(index, analyticalModel);
             }
 
             if (index_successful != -1)

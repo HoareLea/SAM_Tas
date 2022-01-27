@@ -169,7 +169,7 @@ namespace SAM.Analytical.Tas
             {
                 string path_TPD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tpd"));
 
-                CreateTPD(path_TPD, path_TSD, out double totalConsumption, analyticalModel_Temp);
+                CreateTPD(path_TPD, path_TSD, analyticalModel_Temp);
             }
 
             adjacencyCluster = UpdateDesignLoads(path_TBD, analyticalModel_Temp.AdjacencyCluster);
