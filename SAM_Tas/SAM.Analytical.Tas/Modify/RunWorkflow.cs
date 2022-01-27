@@ -163,8 +163,14 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            adjacencyCluster = UpdateDesignLoads(path_TBD, adjacencyCluster);
+            if(System.IO.File.Exists(path_TSD))
+            {
+                string path_TPD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tpd"));
 
+                CreateTPD(path_TPD, path_TSD, out double totalConsumption, analyticalModel);
+            }
+
+            adjacencyCluster = UpdateDesignLoads(path_TBD, adjacencyCluster);
             return new AnalyticalModel(analyticalModel, adjacencyCluster);
         }
   }

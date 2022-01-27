@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static void CreateTPD(this string path_TPD, string path_TSD, out double totalConsumption)
+        public static void CreateTPD(this string path_TPD, string path_TSD, out double totalConsumption, AnalyticalModel analyticalModel = null)
         {
             totalConsumption = double.NaN;
 
@@ -63,11 +64,11 @@ namespace SAM.Analytical.Tas
                         CreateTPD(energyCentre, keyValuePair.Key, keyValuePair.Value);
                     }
 
-                    plantRoom.SimulateEx(1, 8760, 0, tPDDoc.EnergyCentre.ExternalPollutant.Value, 10.0, (int)TPD.tpdSimulationData.tpdSimulationDataLoad + (int)TPD.tpdSimulationData.tpdSimulationDataPipe, 0, 0);
+                    plantRoom.SimulateEx(1, 8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)TPD.tpdSimulationData.tpdSimulationDataLoad + (int)TPD.tpdSimulationData.tpdSimulationDataPipe, 0, 0);
 
                     totalConsumption = 0;
 
-                    TPD.WrResultSet wrResultSet = (TPD.WrResultSet)tPDDoc.EnergyCentre.GetResultSet(TPD.tpdResultsPeriod.tpdResultsPeriodAnnual, 0, 0, 0, null);
+                    TPD.WrResultSet wrResultSet = (TPD.WrResultSet)energyCentre.GetResultSet(TPD.tpdResultsPeriod.tpdResultsPeriodAnnual, 0, 0, 0, null);
                     int count = wrResultSet.GetVectorSize(TPD.tpdResultVectorType.tpdConsumption);
                     for (int j = 1; j <= count; j++)
                     {
@@ -83,6 +84,13 @@ namespace SAM.Analytical.Tas
 
                     }
                     wrResultSet.Dispose();
+
+                    if(analyticalModel != null)
+                    {
+                        AnalyticalModelSimulationResult analyticalModelSimulationResult = new AnalyticalModelSimulationResult(analyticalModel.Name, Assembly.GetExecutingAssembly().GetName()?.Name, path_TPD);
+                        analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.TotalConsumption, totalConsumption);
+                        analyticalModel.AddResult(analyticalModelSimulationResult);
+                    }
 
                     tPDDoc.Save();
                 }
@@ -223,7 +231,6 @@ namespace SAM.Analytical.Tas
             fan.SetDirection(TPD.tpdDirection.tpdLeftRight);
             fan.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
-
             TPD.ProfileDataModifierTable profileDataModifierTable = fan.PartLoad.AddModifierTable();
             profileDataModifierTable.Name = "Fan Part Load Curve";
             profileDataModifierTable.SetVariable(1, TPD.tpdProfileDataVariableType.tpdProfileDataVariablePartload);
@@ -267,20 +274,11 @@ namespace SAM.Analytical.Tas
             TPD.ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
             componentGroup.SetMultiplicity(zoneLoads.Count());
 
-            //List<string> names = new List<string>();
-            //for (int j = 1; j < componentGroup.GetComponentCount(); j++)
-            //{
-            //    dynamic component = componentGroup.GetComponent(j);
-            //    names.Add(component.Name);
-            //    names.Add(component.GetFullName());
-            //}
-
- 
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
             {
-                dynamic systemZone = componentGroup.GetComponent(i + 2);
-                systemZone.AddZoneLoad(zoneLoad);
+                TPD.SystemZone systemZone = componentGroup.GetComponent(i + 2) as TPD.SystemZone;
+                (systemZone as dynamic).AddZoneLoad(zoneLoad);
                 systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
                 systemZone.FlowRate.Value = 5;
@@ -291,16 +289,15 @@ namespace SAM.Analytical.Tas
                     systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
-                dynamic damper_Zone;
-                damper_Zone = componentGroup.GetComponent(i + 3);
+                TPD.Damper damper_Zone = componentGroup.GetComponent(i + 3) as TPD.Damper;
                 damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
-                dynamic radiator_Zone = systemZone.AddRadiator();
+                TPD.Radiator radiator_Zone = systemZone.AddRadiator();
                 radiator_Zone.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
                 radiator_Zone.Duty.SizeFraction = 1;
 
-                radiator_Zone.SetHeatingGroup(heatingGroup);
+                (radiator_Zone as dynamic).SetHeatingGroup(heatingGroup);
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
                     radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(j));

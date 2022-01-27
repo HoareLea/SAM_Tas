@@ -108,6 +108,7 @@
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Convert\ToTBD\Building.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
+    <Compile Include="Enums\Parameters\AnalyticalModelSimulationResultParameter.cs" />
     <Compile Include="Enums\Parameters\SpaceSimulationResultParameter.cs" />
     <Compile Include="Enums\Parameters\PanelSimulationResultParameter.cs" />
     <Compile Include="Enums\AirSideControllerSetup.cs" />
