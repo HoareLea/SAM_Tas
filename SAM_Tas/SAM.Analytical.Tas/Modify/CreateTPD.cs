@@ -215,7 +215,7 @@ namespace SAM.Analytical.Tas
 
             dynamic electricalGroup_SmallPower = plantRoom.AddElectricalGroup();
             electricalGroup_SmallPower.SetPosition(580, 0);
-            electricalGroup_SmallPower.Name = "Electrical Group - Lighting";
+            electricalGroup_SmallPower.Name = "Electrical Group - Small Power";
             electricalGroup_SmallPower.Description = "Space Equipment";
             electricalGroup_SmallPower.SetFuelSource(1, fuelSource);
             electricalGroup_SmallPower.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupEquipment;
@@ -266,7 +266,7 @@ namespace SAM.Analytical.Tas
             junction_Out.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic junction_In = system.AddJunction();
-            junction_In.SetPosition(-30, 30);
+            junction_In.SetPosition(-60, 20);
             junction_In.SetDirection(TPD.tpdDirection.tpdLeftRight);
 
             dynamic damper = system.AddDamper();
@@ -295,6 +295,9 @@ namespace SAM.Analytical.Tas
                 systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
                 systemZone.FlowRate.Value = 5;
+                //(systemZone as dynamic).SetDHWGroup(tpdDHWGrp);
+                (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
+                (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
                 TPD.SizedFlowVariable sizedFlowVariable_FreshAir = systemZone.FreshAir;
                 sizedFlowVariable_FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
@@ -303,7 +306,7 @@ namespace SAM.Analytical.Tas
                 }
 
                 TPD.Damper damper_Zone = componentGroup.GetComponent(i + 3) as TPD.Damper;
-                damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+                damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
                 TPD.Radiator radiator_Zone = systemZone.AddRadiator();
                 radiator_Zone.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
