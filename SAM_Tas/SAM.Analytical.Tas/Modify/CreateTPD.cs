@@ -200,12 +200,25 @@ namespace SAM.Analytical.Tas
             fuelSource.PeakCost = 0.13;
 
             // Electrical Groups
-            dynamic electricalGroup = plantRoom.AddElectricalGroup();
-            electricalGroup.SetPosition(offset.X, offset.Y);
-            electricalGroup.Name = "Electrical Group - Fans";
-            electricalGroup.SetFuelSource(1, fuelSource);
-            electricalGroup.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupFans;
-            offset.X += 100;
+            dynamic electricalGroup_Fans = plantRoom.AddElectricalGroup();
+            electricalGroup_Fans.SetPosition(400, 0);
+            electricalGroup_Fans.Name = "Electrical Group - Fans";
+            electricalGroup_Fans.SetFuelSource(1, fuelSource);
+            electricalGroup_Fans.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupFans;
+
+            dynamic electricalGroup_Lighting = plantRoom.AddElectricalGroup();
+            electricalGroup_Lighting.SetPosition(500, 0);
+            electricalGroup_Lighting.Name = "Electrical Group - Lighting";
+            electricalGroup_Lighting.Description = "Internal Lighting";
+            electricalGroup_Lighting.SetFuelSource(1, fuelSource);
+            electricalGroup_Lighting.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupLighting;
+
+            dynamic electricalGroup_SmallPower = plantRoom.AddElectricalGroup();
+            electricalGroup_SmallPower.SetPosition(580, 0);
+            electricalGroup_SmallPower.Name = "Electrical Group - Lighting";
+            electricalGroup_SmallPower.Description = "Space Equipment";
+            electricalGroup_SmallPower.SetFuelSource(1, fuelSource);
+            electricalGroup_SmallPower.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupEquipment;
 
             dynamic plantSchedule = energyCentre.AddSchedule(TPD.tpdScheduleType.tpdScheduleFunction);
             plantSchedule.Name = "System Schedule";
@@ -223,7 +236,7 @@ namespace SAM.Analytical.Tas
             fan.OverallEfficiency.Value = 1;
             fan.Pressure = 1000;
             fan.HeatGainFactor = 0;
-            fan.SetElectricalGroup1(electricalGroup);
+            fan.SetElectricalGroup1(electricalGroup_Fans);
             fan.PartLoad.Value = 0;
             fan.PartLoad.ClearModifiers();
             fan.SetSchedule(plantSchedule);
