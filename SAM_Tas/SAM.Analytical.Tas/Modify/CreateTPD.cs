@@ -469,7 +469,7 @@ namespace SAM.Analytical.Tas
             fan.SetSchedule(plantSchedule);
             fan.SetPosition(offset.X + 140, offset.Y + 10);
             fan.SetDirection(TPD.tpdDirection.tpdLeftRight);
-            fan.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+            fan.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
             TPD.ProfileDataModifierTable profileDataModifierTable = fan.PartLoad.AddModifierTable();
             profileDataModifierTable.Name = "Fan Part Load Curve";
@@ -522,7 +522,7 @@ namespace SAM.Analytical.Tas
             for(int k=1; k < componentGroup.GetComponentCount(); k ++)
             {
                 TPD.SystemComponent systemComponent = componentGroup.GetComponent(k);
-                names.Add(systemComponent?.Name);
+                names.Add((systemComponent as dynamic)?.name);
             }
 
             int i = 1;
