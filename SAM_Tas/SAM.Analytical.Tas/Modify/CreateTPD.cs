@@ -843,7 +843,7 @@ namespace SAM.Analytical.Tas
             multiChiller.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
             multiChiller.Duty.SizeFraction = 1.0;
             multiChiller.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-            multiChiller.SetPosition(offset.X, offset.Y);
+            multiChiller.SetPosition(offset.X, offset.Y + 280);
 
             dynamic pump_Cooling = plantRoom.AddPump();
             pump_Cooling.Name = "Cooling Circuit Pump";
@@ -852,7 +852,7 @@ namespace SAM.Analytical.Tas
             pump_Cooling.OverallEfficiency.Value = 1;
             pump_Cooling.SetFuelSource(1, fuelSource_Electrical);
             pump_Cooling.Pressure = (multiChiller.DesignPressureDrop + coolingGroup.DesignPressureDrop) / 0.712;
-            pump_Cooling.SetPosition(offset.X + 100, offset.Y);
+            pump_Cooling.SetPosition(offset.X + 100, offset.Y + 280);
 
             plantRoom.AddPipe(multiChiller, 1, pump_Cooling, 1);
             plantRoom.AddPipe(pump_Cooling, 1, coolingGroup, 1);
@@ -862,7 +862,7 @@ namespace SAM.Analytical.Tas
             plantController_Cooling.AddControlArc(pump_Cooling);
             dynamic plantSensorArc_Cooling = plantController_Cooling.AddSensorArcToComponent(coolingGroup, 1);
 
-            plantController_Cooling.SetPosition(offset.X + 180, offset.Y + 110);
+            plantController_Cooling.SetPosition(offset.X + 180, offset.Y + 110 + 280);
             plantController_Cooling.SensorArc1 = plantSensorArc_Cooling;
             SetWaterSideController(plantController_Cooling, WaterSideControllerSetup.Load, 0.1, 0.1);
             offset.X += 300;
