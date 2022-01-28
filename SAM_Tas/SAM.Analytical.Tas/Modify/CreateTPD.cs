@@ -936,13 +936,13 @@ namespace SAM.Analytical.Tas
             dynamic junction_FreshAir = system.AddJunction();
             junction_FreshAir.Name = "Junction Fresh Air";
             junction_FreshAir.Description = "Junction Fresh Air";
-            junction_FreshAir.SetPosition(0, 100);
+            junction_FreshAir.SetPosition(0, 110);
 
             dynamic junction_ExhaustAir = system.AddJunction();
             junction_ExhaustAir.Name = "Junction Exhaust Air";
             junction_ExhaustAir.Description = "Junction Exhaust Air";
             junction_ExhaustAir.SetDirection(TPD.tpdDirection.tpdRightLeft);
-            junction_ExhaustAir.SetPosition(0, 200);
+            junction_ExhaustAir.SetPosition(0, 190);
 
             dynamic exchanger = system.AddExchanger();
             exchanger.ExchLatType = TPD.tpdExchangerLatentType.tpdExchangerLatentEnthalpy;
