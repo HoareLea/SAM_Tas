@@ -880,6 +880,7 @@ namespace SAM.Analytical.Tas
 
             dynamic pump_DHW = plantRoom.AddPump();
             pump_DHW.Name = "DHW Circuit Pump";
+            pump_DHW.Description = "DHW Circuit Pump";
             pump_DHW.DesignFlowRate = 1;
             pump_DHW.Capacity = 1;
             pump_DHW.OverallEfficiency.Value = 1;
@@ -889,11 +890,13 @@ namespace SAM.Analytical.Tas
 
             dynamic junction_DHW_In = plantRoom.AddJunction();
             junction_DHW_In.Name = "DHW Junction In";
+            junction_DHW_In.Description = "DHW Junction In";
             junction_DHW_In.SetPosition(offset.X + 100, offset.Y + 70);
             junction_DHW_In.SetDirection(TPD.tpdDirection.tpdRightLeft);
 
             dynamic junction_DHW_Out = plantRoom.AddJunction();
             junction_DHW_Out.Name = "DHW Junction Out";
+            junction_DHW_Out.Description = "DHW Junction Out";
             junction_DHW_Out.SetPosition(offset.X + 140, offset.Y + 70);
             junction_DHW_Out.SetDirection(TPD.tpdDirection.tpdRightLeft);
 
@@ -933,6 +936,8 @@ namespace SAM.Analytical.Tas
             dynamic junction_In = system.AddJunction();
 
             dynamic junction_Out = system.AddJunction();
+            junction_Out.Name = "Junction Out";
+            junction_Out.Description = "Junction Out";
             junction_Out.SetDirection(TPD.tpdDirection.tpdRightLeft);
 
             dynamic exchanger = system.AddExchanger();
@@ -941,6 +946,7 @@ namespace SAM.Analytical.Tas
             exchanger.SensibleEfficiency.Value = 0.7;
             exchanger.Setpoint.Value = 14;
             exchanger.Flags = TPD.tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
+            exchanger.SetPosition(160, 100);
 
             dynamic fan_FreashAir = system.AddFan();
             fan_FreashAir.name = "Fresh Air Fan";
@@ -953,6 +959,7 @@ namespace SAM.Analytical.Tas
             fan_FreashAir.PartLoad.ClearModifiers();
             fan_FreashAir.SetSchedule(plantSchedule_System);
             fan_FreashAir.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+            fan_FreashAir.SetPosition(390, 100);
 
             TPD.ProfileDataModifierTable profileDataModifierTable_FreshAir = fan_FreashAir.PartLoad.AddModifierTable();
             profileDataModifierTable_FreshAir.Name = "Fan Part Load Curve";
@@ -971,35 +978,36 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable_FreshAir.AddPoint(90, 83);
             profileDataModifierTable_FreshAir.AddPoint(100, 100);
 
-            dynamic fan_Extract = system.AddFan();
-            fan_Extract.name = "Return Fan";
-            fan_Extract.DesignFlowRate.Value = 150;
-            fan_Extract.OverallEfficiency.Value = 1;
-            fan_Extract.Pressure = 600;
-            fan_Extract.HeatGainFactor = 0;
-            fan_Extract.SetElectricalGroup1(electricalGroup_Fans);
-            fan_Extract.PartLoad.Value = 0;
-            fan_Extract.PartLoad.ClearModifiers();
-            fan_Extract.SetSchedule(plantSchedule_System);
-            fan_Extract.SetDirection(TPD.tpdDirection.tpdRightLeft);
-            fan_Extract.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+            dynamic fan_Return = system.AddFan();
+            fan_Return.name = "Return Fan";
+            fan_Return.DesignFlowRate.Value = 150;
+            fan_Return.OverallEfficiency.Value = 1;
+            fan_Return.Pressure = 600;
+            fan_Return.HeatGainFactor = 0;
+            fan_Return.SetElectricalGroup1(electricalGroup_Fans);
+            fan_Return.PartLoad.Value = 0;
+            fan_Return.PartLoad.ClearModifiers();
+            fan_Return.SetSchedule(plantSchedule_System);
+            fan_Return.SetDirection(TPD.tpdDirection.tpdRightLeft);
+            fan_Return.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+            fan_Return.SetPosition(600, 250);
 
-            dynamic profileDataModifierTable_Extract = fan_Extract.PartLoad.AddModifierTable();
-            profileDataModifierTable_Extract.Name = "Fan Part Load Curve";
-            profileDataModifierTable_Extract.SetVariable(1, TPD.tpdProfileDataVariableType.tpdProfileDataVariablePartload);
-            profileDataModifierTable_Extract.Multiplier = TPD.tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
-            profileDataModifierTable_Extract.Clear();
-            profileDataModifierTable_Extract.AddPoint(0, 0);
-            profileDataModifierTable_Extract.AddPoint(10, 3);
-            profileDataModifierTable_Extract.AddPoint(20, 7);
-            profileDataModifierTable_Extract.AddPoint(30, 13);
-            profileDataModifierTable_Extract.AddPoint(40, 21);
-            profileDataModifierTable_Extract.AddPoint(50, 30);
-            profileDataModifierTable_Extract.AddPoint(60, 41);
-            profileDataModifierTable_Extract.AddPoint(70, 54);
-            profileDataModifierTable_Extract.AddPoint(80, 68);
-            profileDataModifierTable_Extract.AddPoint(90, 83);
-            profileDataModifierTable_Extract.AddPoint(100, 100);
+            dynamic profileDataModifierTable_Return = fan_Return.PartLoad.AddModifierTable();
+            profileDataModifierTable_Return.Name = "Fan Part Load Curve";
+            profileDataModifierTable_Return.SetVariable(1, TPD.tpdProfileDataVariableType.tpdProfileDataVariablePartload);
+            profileDataModifierTable_Return.Multiplier = TPD.tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
+            profileDataModifierTable_Return.Clear();
+            profileDataModifierTable_Return.AddPoint(0, 0);
+            profileDataModifierTable_Return.AddPoint(10, 3);
+            profileDataModifierTable_Return.AddPoint(20, 7);
+            profileDataModifierTable_Return.AddPoint(30, 13);
+            profileDataModifierTable_Return.AddPoint(40, 21);
+            profileDataModifierTable_Return.AddPoint(50, 30);
+            profileDataModifierTable_Return.AddPoint(60, 41);
+            profileDataModifierTable_Return.AddPoint(70, 54);
+            profileDataModifierTable_Return.AddPoint(80, 68);
+            profileDataModifierTable_Return.AddPoint(90, 83);
+            profileDataModifierTable_Return.AddPoint(100, 100);
 
             dynamic damper = system.AddDamper();
             damper.SetPosition(530, 90);
@@ -1015,6 +1023,8 @@ namespace SAM.Analytical.Tas
             optimiser.SetPosition(240, 100);
 
             dynamic junction_Return = system.AddJunction();
+            junction_Return.Name = "Junction Return";
+            junction_Return.Description = "Junction Return";
             junction_Return.SetPosition(240, 200);
             junction_Return.SetDirection(TPD.tpdDirection.tpdBottomTop);
 
@@ -1045,10 +1055,10 @@ namespace SAM.Analytical.Tas
             system.AddDuct(fan_FreashAir, 1, damper, 1);
             system.AddDuct(damper, 1, systemZone, 1);
             
-            TPD.Duct duct_ZoneOut = system.AddDuct(systemZone, 1, fan_Extract, 1);
+            TPD.Duct duct_ZoneOut = system.AddDuct(systemZone, 1, fan_Return, 1);
             duct_ZoneOut.AddNode(680, 110);
             duct_ZoneOut.AddNode(680, 260);
-            duct_ZoneOut = system.AddDuct(fan_Extract, 1, junction_Return, 1);
+            duct_ZoneOut = system.AddDuct(fan_Return, 1, junction_Return, 1);
             duct_ZoneOut.AddNode(250, 250);
             
             system.AddDuct(junction_Return, 1, exchanger, 2);
