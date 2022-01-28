@@ -77,7 +77,7 @@ namespace SAM.Analytical.Tas
                         coolingGroup = plantRoom.AddCoolingGroup();
                         coolingGroup.Name = "Cooling Circuit Group";
                         coolingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-                        coolingGroup.SetPosition(offset.X + 200, offset.Y);
+                        coolingGroup.SetPosition(offset.X + 200, offset.Y + 280);
                     }
 
                     //DHW Groups
@@ -89,7 +89,7 @@ namespace SAM.Analytical.Tas
                         dHWGroup.Name = "DHW Circuit Group";
                         dHWGroup.DesignPressureDrop = 17 + (circuitLength / 4);
                         dHWGroup.LoadDistribution = TPD.tpdLoadDistribution.tpdLoadDistributionEven;
-                        dHWGroup.SetPosition(offset.X + 200, offset.Y);
+                        dHWGroup.SetPosition(offset.X + 200, offset.Y + 140);
                     }
 
                     //Fuel Sources
@@ -876,7 +876,7 @@ namespace SAM.Analytical.Tas
             multiBoiler_DHW.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
             multiBoiler_DHW.Duty.SizeFraction = 1.0;
             multiBoiler_DHW.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-            multiBoiler_DHW.SetPosition(offset.X, offset.Y);
+            multiBoiler_DHW.SetPosition(offset.X, offset.Y + 140);
 
             dynamic pump_DHW = plantRoom.AddPump();
             pump_DHW.Name = "DHW Circuit Pump";
@@ -886,18 +886,18 @@ namespace SAM.Analytical.Tas
             pump_DHW.OverallEfficiency.Value = 1;
             pump_DHW.SetFuelSource(1, fuelSource_Electrical);
             pump_DHW.Pressure = (multiBoiler_DHW.DesignPressureDrop + dHWGroup.DesignPressureDrop) / 0.712;
-            pump_DHW.SetPosition(offset.X + 100, offset.Y);
+            pump_DHW.SetPosition(offset.X + 100, offset.Y + 140);
 
             dynamic junction_DHW_In = plantRoom.AddJunction();
             junction_DHW_In.Name = "DHW Junction In";
             junction_DHW_In.Description = "DHW Junction In";
-            junction_DHW_In.SetPosition(offset.X + 100, offset.Y + 70);
+            junction_DHW_In.SetPosition(offset.X + 100, offset.Y + 70 + 140);
             junction_DHW_In.SetDirection(TPD.tpdDirection.tpdRightLeft);
 
             dynamic junction_DHW_Out = plantRoom.AddJunction();
             junction_DHW_Out.Name = "DHW Junction Out";
             junction_DHW_Out.Description = "DHW Junction Out";
-            junction_DHW_Out.SetPosition(offset.X + 140, offset.Y + 70);
+            junction_DHW_Out.SetPosition(offset.X + 140, offset.Y + 70 + 140);
             junction_DHW_Out.SetDirection(TPD.tpdDirection.tpdRightLeft);
 
             plantRoom.AddPipe(junction_DHW_In, 1, multiBoiler_DHW, 1);
@@ -907,7 +907,8 @@ namespace SAM.Analytical.Tas
             TPD.Pipe pipe = plantRoom.AddPipe(dHWGroup, 1, junction_DHW_Out, 1);
 
             dynamic plantController_Load = plantRoom.AddController();
-            plantController_Load.SetPosition(offset.X + 180, offset.Y + 110);
+            plantController_Load.Name = "DHW Load Controller";
+            plantController_Load.SetPosition(offset.X + 180, offset.Y + 110 + 140);
             
             dynamic plantSensorArc_Load = plantController_Load.AddSensorArcToComponent(dHWGroup, 1);
             plantController_Load.SensorArc1 = plantSensorArc_Load;
@@ -915,7 +916,8 @@ namespace SAM.Analytical.Tas
             SetWaterSideController(plantController_Load, WaterSideControllerSetup.Load, 0.1, 0.1);
 
             dynamic plantController_Temperature = plantRoom.AddController();
-            plantController_Temperature.SetPosition(offset.X + 170, offset.Y + 140);
+            plantController_Temperature.Name = "DHW Temperature Controller";
+            plantController_Temperature.SetPosition(offset.X + 170, offset.Y + 140 + 140);
 
             SetWaterSideController(plantController_Temperature, WaterSideControllerSetup.TemperatureLowZero, 10, 0);
 
@@ -923,7 +925,8 @@ namespace SAM.Analytical.Tas
             plantController_Temperature.SensorArc1 = plantSensorArc_Temperature;
 
             dynamic plantController_Max = plantRoom.AddController();
-            plantController_Max.SetPosition(offset.X + 140, offset.Y + 110);
+            plantController_Max.Name = "DHW Max Controller";
+            plantController_Max.SetPosition(offset.X + 140, offset.Y + 110 + 140);
             plantController_Max.ControlType = TPD.tpdControlType.tpdControlMin;
             plantController_Max.AddControlArc(pump_DHW);
             plantController_Max.AddChainArc(plantController_Load);
