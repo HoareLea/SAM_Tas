@@ -85,6 +85,7 @@ namespace SAM.Analytical.Tas
                     dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
                     if (dHWGroup == null)
                     {
+                        dHWGroup = plantRoom.AddDHWGroup();
                         dHWGroup.Name = "DHW Circuit Group";
                         dHWGroup.DesignPressureDrop = 17 + (circuitLength / 4);
                         dHWGroup.LoadDistribution = TPD.tpdLoadDistribution.tpdLoadDistributionEven;
@@ -308,6 +309,10 @@ namespace SAM.Analytical.Tas
 
                 case "EOC":
                     CreateTPD_EOC(energyCentre, zoneLoads);
+                    break;
+
+                case "CAV":
+                    CreateTPD_AHU(energyCentre, zoneLoads);
                     break;
             }
         }
