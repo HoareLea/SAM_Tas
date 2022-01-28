@@ -933,12 +933,16 @@ namespace SAM.Analytical.Tas
             system.Name = "AHU";
             system.Multiplicity = zoneLoads.Count();
 
-            dynamic junction_In = system.AddJunction();
+            dynamic junction_FreshAir = system.AddJunction();
+            junction_FreshAir.Name = "Junction Fresh Air";
+            junction_FreshAir.Description = "Junction Fresh Air";
+            junction_FreshAir.SetPosition(0, 100);
 
-            dynamic junction_Out = system.AddJunction();
-            junction_Out.Name = "Junction Out";
-            junction_Out.Description = "Junction Out";
-            junction_Out.SetDirection(TPD.tpdDirection.tpdRightLeft);
+            dynamic junction_ExhaustAir = system.AddJunction();
+            junction_ExhaustAir.Name = "Junction Exhaust Air";
+            junction_ExhaustAir.Description = "Junction Exhaust Air";
+            junction_ExhaustAir.SetDirection(TPD.tpdDirection.tpdRightLeft);
+            junction_ExhaustAir.SetPosition(0, 200);
 
             dynamic exchanger = system.AddExchanger();
             exchanger.ExchLatType = TPD.tpdExchangerLatentType.tpdExchangerLatentEnthalpy;
@@ -990,7 +994,7 @@ namespace SAM.Analytical.Tas
             fan_Return.SetSchedule(plantSchedule_System);
             fan_Return.SetDirection(TPD.tpdDirection.tpdRightLeft);
             fan_Return.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
-            fan_Return.SetPosition(600, 250);
+            fan_Return.SetPosition(600, 240);
 
             dynamic profileDataModifierTable_Return = fan_Return.PartLoad.AddModifierTable();
             profileDataModifierTable_Return.Name = "Fan Part Load Curve";
@@ -1046,7 +1050,7 @@ namespace SAM.Analytical.Tas
             coolingCoil.MinimumOffcoil.Value = 16;
             coolingCoil.SetPosition(310, 100);
 
-            system.AddDuct(junction_In, 1, exchanger, 1);
+            system.AddDuct(junction_FreshAir, 1, exchanger, 1);
             system.AddDuct(exchanger, 1, optimiser, 1);
             system.AddDuct(optimiser, 1, coolingCoil, 1);
             system.AddDuct(coolingCoil, 1, heatingCoil, 1);
@@ -1063,7 +1067,7 @@ namespace SAM.Analytical.Tas
             
             system.AddDuct(junction_Return, 1, exchanger, 2);
             system.AddDuct(junction_Return, 1, optimiser, 2);
-            system.AddDuct(exchanger, 2, junction_Out, 1);
+            system.AddDuct(exchanger, 2, junction_ExhaustAir, 1);
 
             TPD.Controller controller_HeatingGroup = system.AddController();
             controller_HeatingGroup.Name = "Heating Group";
