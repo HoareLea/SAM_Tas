@@ -77,7 +77,7 @@ namespace SAM.Analytical.Tas
                         coolingGroup = plantRoom.AddCoolingGroup();
                         coolingGroup.Name = "Cooling Circuit Group";
                         coolingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-                        coolingGroup.SetPosition(offset.X + 230, offset.Y + 280);
+                        coolingGroup.SetPosition(offset.X + 100, offset.Y + 280);
                     }
 
                     //DHW Groups
@@ -843,7 +843,7 @@ namespace SAM.Analytical.Tas
             multiChiller.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
             multiChiller.Duty.SizeFraction = 1.0;
             multiChiller.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-            multiChiller.SetPosition(offset.X + 100, offset.Y + 280);
+            multiChiller.SetPosition(offset.X + 230, offset.Y + 280);
 
             dynamic pump_Cooling = plantRoom.AddPump();
             pump_Cooling.Name = "Cooling Circuit Pump";
@@ -852,7 +852,7 @@ namespace SAM.Analytical.Tas
             pump_Cooling.OverallEfficiency.Value = 1;
             pump_Cooling.SetFuelSource(1, fuelSource_Electrical);
             pump_Cooling.Pressure = (multiChiller.DesignPressureDrop + coolingGroup.DesignPressureDrop) / 0.712;
-            pump_Cooling.SetPosition(offset.X - 80, offset.Y + 270);
+            pump_Cooling.SetPosition(offset.X - 10, offset.Y + 270);
 
             plantRoom.AddPipe(multiChiller, 1, pump_Cooling, 1);
             plantRoom.AddPipe(pump_Cooling, 1, coolingGroup, 1);
