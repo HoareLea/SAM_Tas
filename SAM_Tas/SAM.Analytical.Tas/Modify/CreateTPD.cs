@@ -89,7 +89,7 @@ namespace SAM.Analytical.Tas
                         dHWGroup.Name = "DHW Circuit Group";
                         dHWGroup.DesignPressureDrop = 17 + (circuitLength / 4);
                         dHWGroup.LoadDistribution = TPD.tpdLoadDistribution.tpdLoadDistributionEven;
-                        dHWGroup.SetPosition(offset.X + 200, offset.Y + 140);
+                        dHWGroup.SetPosition(0, 140);
                     }
 
                     //Fuel Sources
@@ -876,7 +876,7 @@ namespace SAM.Analytical.Tas
             multiBoiler_DHW.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
             multiBoiler_DHW.Duty.SizeFraction = 1.0;
             multiBoiler_DHW.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-            multiBoiler_DHW.SetPosition(offset.X, offset.Y + 140);
+            multiBoiler_DHW.SetPosition(120, 140);
 
             dynamic pump_DHW = plantRoom.AddPump();
             pump_DHW.Name = "DHW Circuit Pump";
@@ -886,7 +886,7 @@ namespace SAM.Analytical.Tas
             pump_DHW.OverallEfficiency.Value = 1;
             pump_DHW.SetFuelSource(1, fuelSource_Electrical);
             pump_DHW.Pressure = (multiBoiler_DHW.DesignPressureDrop + dHWGroup.DesignPressureDrop) / 0.712;
-            pump_DHW.SetPosition(offset.X + 100, offset.Y + 140);
+            pump_DHW.SetPosition(60, 100);
 
             dynamic junction_DHW_In = plantRoom.AddJunction();
             junction_DHW_In.Name = "DHW Junction In";
