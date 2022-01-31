@@ -863,17 +863,18 @@ namespace SAM.Analytical.Tas
             dynamic junction_DHW_In = plantRoom.AddJunction();
             junction_DHW_In.Name = "DHW Junction In";
             junction_DHW_In.Description = "DHW Junction In";
-            junction_DHW_In.SetPosition(100, 210);
+            junction_DHW_In.SetPosition(80, 210);
             junction_DHW_In.SetDirection(TPD.tpdDirection.tpdRightLeft);
 
             dynamic junction_DHW_Out = plantRoom.AddJunction();
             junction_DHW_Out.Name = "DHW Junction Out";
             junction_DHW_Out.Description = "DHW Junction Out";
-            junction_DHW_Out.SetPosition(180, 210);
-            junction_DHW_Out.SetDirection(TPD.tpdDirection.tpdLeftRight);
+            junction_DHW_Out.SetPosition(160, 210);
+            junction_DHW_Out.SetDirection(TPD.tpdDirection.tpdRightLeft);
 
             plantRoom.AddPipe(junction_DHW_In, 1, multiBoiler_DHW, 1);
-            plantRoom.AddPipe(multiBoiler_DHW, 1, pump_DHW, 1);
+            TPD.Pipe pipe_DHW_Multiboiler_Pump =plantRoom.AddPipe(multiBoiler_DHW, 1, pump_DHW, 1);
+            pipe_DHW_Multiboiler_Pump.AddNode(80, 270);
             plantRoom.AddPipe(pump_DHW, 1, dHWGroup, 1);
             
             TPD.Pipe pipe = plantRoom.AddPipe(dHWGroup, 1, junction_DHW_Out, 1);
