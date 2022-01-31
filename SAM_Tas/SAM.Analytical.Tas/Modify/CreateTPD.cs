@@ -66,7 +66,7 @@ namespace SAM.Analytical.Tas
                         heatingGroup = plantRoom.AddHeatingGroup();
                         heatingGroup.Name = "Heating Circuit Group";
                         heatingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-                        heatingGroup.SetPosition(offset.X + 200, offset.Y);
+                        heatingGroup.SetPosition(200, 0);
                     }
 
                     //Cooling Groups
@@ -77,7 +77,7 @@ namespace SAM.Analytical.Tas
                         coolingGroup = plantRoom.AddCoolingGroup();
                         coolingGroup.Name = "Cooling Circuit Group";
                         coolingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-                        coolingGroup.SetPosition(230, 280);
+                        coolingGroup.SetPosition(200, 0);
                     }
 
                     //DHW Groups
@@ -808,7 +808,7 @@ namespace SAM.Analytical.Tas
             multiBoiler_Heating.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
             multiBoiler_Heating.Duty.SizeFraction = 1.0;
             multiBoiler_Heating.Duty.AddDesignCondition(designConditionLoad_Annual);
-            multiBoiler_Heating.SetPosition(offset.X, offset.Y);
+            multiBoiler_Heating.SetPosition(0, 0);
 
             dynamic pump_Heating = plantRoom.AddPump();
             pump_Heating.Name = "Heating Circuit Pump";
@@ -817,7 +817,7 @@ namespace SAM.Analytical.Tas
             pump_Heating.OverallEfficiency.Value = 1;
             pump_Heating.SetFuelSource(1, fuelSource_Electrical);
             pump_Heating.Pressure = (multiBoiler_Heating.DesignPressureDrop + heatingGroup.DesignPressureDrop) / 0.712;
-            pump_Heating.SetPosition(offset.X + 100, offset.Y);
+            pump_Heating.SetPosition(100, 0);
 
             plantRoom.AddPipe(multiBoiler_Heating, 1, pump_Heating, 1);
             plantRoom.AddPipe(pump_Heating, 1, heatingGroup, 1);
@@ -827,7 +827,7 @@ namespace SAM.Analytical.Tas
             plantController_Heating.AddControlArc(pump_Heating);
             dynamic plantSensorArc_Heating = plantController_Heating.AddSensorArcToComponent(heatingGroup, 1);
 
-            plantController_Heating.SetPosition(offset.X + 180, offset.Y + 110);
+            plantController_Heating.SetPosition(180, 110);
             plantController_Heating.SensorArc1 = plantSensorArc_Heating;
             SetWaterSideController(plantController_Heating, WaterSideControllerSetup.Load, 0.1, 0.1);
             offset.X += 300;
