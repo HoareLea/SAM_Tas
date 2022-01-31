@@ -198,52 +198,130 @@ namespace SAM.Analytical.Tas
 
                     //Components
 
-                    //MultiBoilers
-                    dynamic multiBoiler = plantRoom.MultiBoiler("Heating Circuit Boiler");
-                    if(multiBoiler == null)
+                    //Heating MultiBoiler
+                    dynamic multiBoiler_Heating = plantRoom.MultiBoiler("Heating Circuit Boiler");
+                    if(multiBoiler_Heating == null)
                     {
-                        multiBoiler = plantRoom.AddMultiBoiler();
-                        multiBoiler.Name = "Heating Circuit Boiler";
-                        multiBoiler.DesignPressureDrop = 25;
-                        multiBoiler.DesignDeltaT = 11;
-                        multiBoiler.Setpoint.Value = 71;
-                        multiBoiler.SetFuelSource(1, fuelSource_Gas);
-                        multiBoiler.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        multiBoiler.Duty.SizeFraction = 1.0;
-                        multiBoiler.Duty.AddDesignCondition(designConditionLoad_Annual);
-                        multiBoiler.SetPosition(offset.X, offset.Y);
+                        multiBoiler_Heating = plantRoom.AddMultiBoiler();
+                        multiBoiler_Heating.Name = "Heating Circuit Boiler";
+                        multiBoiler_Heating.DesignPressureDrop = 25;
+                        multiBoiler_Heating.DesignDeltaT = 11;
+                        multiBoiler_Heating.Setpoint.Value = 71;
+                        multiBoiler_Heating.SetFuelSource(1, fuelSource_Gas);
+                        multiBoiler_Heating.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        multiBoiler_Heating.Duty.SizeFraction = 1.0;
+                        multiBoiler_Heating.Duty.AddDesignCondition(designConditionLoad_Annual);
+                        multiBoiler_Heating.SetPosition(offset.X, offset.Y);
                     }
 
-                    //Pumps
-                    dynamic pump = plantRoom.Component<TPD.Pump>("Heating Circuit Pump");
-                    if(pump == null)
+                    //Heating Pump
+                    dynamic pump_Heating = plantRoom.Component<TPD.Pump>("Heating Circuit Pump");
+                    if(pump_Heating == null)
                     {
-                        pump = plantRoom.AddPump();
-                        pump.Name = "Heating Circuit Pump";
-                        pump.DesignFlowRate = 0;
-                        pump.Capacity = 1;
-                        pump.OverallEfficiency.Value = 1;
-                        pump.SetFuelSource(1, fuelSource_Electrical);
-                        pump.Pressure = (multiBoiler.DesignPressureDrop + heatingGroup.DesignPressureDrop) / 0.712;
-                        pump.SetPosition(offset.X + 100, offset.Y);
+                        pump_Heating = plantRoom.AddPump();
+                        pump_Heating.Name = "Heating Circuit Pump";
+                        pump_Heating.DesignFlowRate = 0;
+                        pump_Heating.Capacity = 1;
+                        pump_Heating.OverallEfficiency.Value = 1;
+                        pump_Heating.SetFuelSource(1, fuelSource_Electrical);
+                        pump_Heating.Pressure = (multiBoiler_Heating.DesignPressureDrop + heatingGroup.DesignPressureDrop) / 0.712;
+                        pump_Heating.SetPosition(offset.X + 100, offset.Y);
                     }
 
-                    plantRoom.AddPipe(multiBoiler, 1, pump, 1);
-                    plantRoom.AddPipe(pump, 1, heatingGroup, 1);
-                    plantRoom.AddPipe(heatingGroup, 1, multiBoiler, 1);
+                    plantRoom.AddPipe(multiBoiler_Heating, 1, pump_Heating, 1);
+                    plantRoom.AddPipe(pump_Heating, 1, heatingGroup, 1);
+                    plantRoom.AddPipe(heatingGroup, 1, multiBoiler_Heating, 1);
 
-                    TPD.PlantController plantController = plantRoom.AddController();
-                    plantController.AddControlArc(pump);
-                    dynamic plantSensorArc = plantController.AddSensorArcToComponent(heatingGroup, 1);
+                    TPD.PlantController plantController_Heating = plantRoom.AddController();
+                    plantController_Heating.AddControlArc(pump_Heating);
+                    dynamic plantSensorArc = plantController_Heating.AddSensorArcToComponent(heatingGroup, 1);
 
-                    plantController.SetPosition(offset.X + 180, offset.Y + 110);
-                    plantController.SensorArc1 = plantSensorArc;
-                    SetWaterSideController(plantController, WaterSideControllerSetup.Load, 0.1, 0.1);
+                    plantController_Heating.SetPosition(offset.X + 180, offset.Y + 110);
+                    plantController_Heating.SensorArc1 = plantSensorArc;
+                    SetWaterSideController(plantController_Heating, WaterSideControllerSetup.Load, 0.1, 0.1);
+
+                    //DHW MultiBoiler
+                    dynamic multiBoiler_DHW = plantRoom.MultiBoiler("DHW Circuit Boiler");
+                    if(multiBoiler_DHW == null)
+                    {
+                        multiBoiler_DHW = plantRoom.AddMultiBoiler();
+                        multiBoiler_DHW.DesignPressureDrop = 25;
+                        multiBoiler_DHW.Setpoint.Value = 60;
+                        multiBoiler_DHW.SetFuelSource(1, fuelSource_Gas);
+                        multiBoiler_DHW.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        multiBoiler_DHW.Duty.SizeFraction = 1.0;
+                        multiBoiler_DHW.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                        multiBoiler_DHW.SetPosition(0, 140);
+                    }
+
+                    //DHW Pump
+                    dynamic pump_DHW = plantRoom.Component<TPD.Pump>("DHW Circuit Pump");
+                    if(pump_DHW == null)
+                    {
+                        pump_DHW = plantRoom.AddPump();
+                        pump_DHW.Name = "DHW Circuit Pump";
+                        pump_DHW.Description = "DHW Circuit Pump";
+                        pump_DHW.DesignFlowRate = 1;
+                        pump_DHW.Capacity = 1;
+                        pump_DHW.OverallEfficiency.Value = 1;
+                        pump_DHW.SetFuelSource(1, fuelSource_Electrical);
+                        pump_DHW.Pressure = (multiBoiler_DHW.DesignPressureDrop + dHWGroup.DesignPressureDrop) / 0.712;
+                        pump_DHW.SetPosition(100, 150);
+                    }
+
+                    dynamic junction_DHW_In = plantRoom.AddJunction();
+                    junction_DHW_In.Name = "DHW Junction In";
+                    junction_DHW_In.Description = "Main Cold Water Supply";
+                    junction_DHW_In.SetPosition(80, 210);
+                    junction_DHW_In.SetDirection(TPD.tpdDirection.tpdRightLeft);
+
+                    dynamic junction_DHW_Out = plantRoom.AddJunction();
+                    junction_DHW_Out.Name = "DHW Junction Out";
+                    junction_DHW_Out.Description = "DHW Junction Out";
+                    junction_DHW_Out.SetPosition(160, 210);
+                    junction_DHW_Out.SetDirection(TPD.tpdDirection.tpdRightLeft);
+
+                    plantRoom.AddPipe(junction_DHW_In, 1, multiBoiler_DHW, 1);
+                    TPD.Pipe pipe_DHW_Multiboiler_Pump = plantRoom.AddPipe(multiBoiler_DHW, 1, pump_DHW, 1);
+                    pipe_DHW_Multiboiler_Pump.AddNode(80, 180);
+                    plantRoom.AddPipe(pump_DHW, 1, dHWGroup, 1);
+
+                    TPD.Pipe pipe = plantRoom.AddPipe(dHWGroup, 1, junction_DHW_Out, 1);
+
+                    dynamic plantController_Load = plantRoom.AddController();
+                    plantController_Load.Name = "DHW Load Controller";
+                    plantController_Load.SetPosition(80, 250);
+
+                    dynamic plantSensorArc_Load = plantController_Load.AddSensorArcToComponent(dHWGroup, 1);
+                    plantController_Load.SensorArc1 = plantSensorArc_Load;
+
+                    SetWaterSideController(plantController_Load, WaterSideControllerSetup.Load, 0.1, 0.1);
+
+                    dynamic plantController_Temperature = plantRoom.AddController();
+                    plantController_Temperature.Name = "DHW Temperature Controller";
+                    plantController_Temperature.SetPosition(140, 250);
+
+                    SetWaterSideController(plantController_Temperature, WaterSideControllerSetup.TemperatureLowZero, 10, 0);
+
+                    dynamic plantSensorArc_Temperature = plantController_Temperature.AddSensorArc(pipe);
+                    plantController_Temperature.SensorArc1 = plantSensorArc_Temperature;
+
+                    dynamic plantController_Max = plantRoom.AddController();
+                    plantController_Max.Name = "DHW Max Controller";
+                    plantController_Max.SetPosition(110, 210);
+                    plantController_Max.ControlType = TPD.tpdControlType.tpdControlMin;
+                    plantController_Max.AddControlArc(pump_DHW);
+                    plantController_Max.AddChainArc(plantController_Load);
+                    plantController_Max.AddChainArc(plantController_Temperature);
 
                     for (int j = 1; j <= energyCentre.GetCalendar().GetDayTypeCount(); j++)
                     {
                         TPD.PlantDayType plantDayType = plantRoom.GetEnergyCentre().GetCalendar().GetDayType(j);
-                        plantController.AddDayType(plantDayType);
+
+                        plantController_Heating.AddDayType(plantDayType);
+                        plantController_Max.AddDayType(plantDayType);
+                        plantController_Load.AddDayType(plantDayType);
+                        plantController_Temperature.AddDayType(plantDayType);
                     }
 
                     foreach (KeyValuePair<string, List<TPD.ZoneLoad>> keyValuePair in dictionary)
@@ -383,6 +461,7 @@ namespace SAM.Analytical.Tas
 
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
+            dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
             dynamic junction_In = system.AddJunction();
             junction_In.SetPosition(offset.X + 100, offset.Y + 120);
@@ -411,25 +490,29 @@ namespace SAM.Analytical.Tas
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
             {
-                dynamic systemZone;
-                systemZone = componentGroup.GetComponent(i);
-                systemZone.AddZoneLoad(zoneLoad);
-                systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
+                dynamic systemZone_Group = componentGroup.GetComponent(i);
+                systemZone_Group.AddZoneLoad(zoneLoad);
+                systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 //systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowDeltaT;
-                systemZone.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
+                systemZone_Group.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
-                    systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                    systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
                 if (electricalGroup_SmallPower != null)
                 {
-                    (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
+                    (systemZone_Group as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
                 }
 
                 if (electricalGroup_Lighting != null)
                 {
-                    (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
+                    (systemZone_Group as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
+                }
+
+                if(dHWGroup != null)
+                {
+                    systemZone_Group.SetDHWGroup(dHWGroup);
                 }
 
                 i += 3;
@@ -451,6 +534,7 @@ namespace SAM.Analytical.Tas
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
 
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
+            dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = "NV";
@@ -470,26 +554,31 @@ namespace SAM.Analytical.Tas
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
             {
-                dynamic systemZone = componentGroup.GetComponent(i);
-                systemZone.AddZoneLoad(zoneLoad);
-                systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
-                systemZone.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
+                dynamic systemZone_Group = componentGroup.GetComponent(i);
+                systemZone_Group.AddZoneLoad(zoneLoad);
+                systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
+                systemZone_Group.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
-                    systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                    systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
                 if (electricalGroup_SmallPower != null)
                 {
-                    (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
+                    (systemZone_Group as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
                 }
 
                 if (electricalGroup_Lighting != null)
                 {
-                    (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
+                    (systemZone_Group as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
                 }
 
-                dynamic radiator = systemZone.AddRadiator();
+                if (dHWGroup != null)
+                {
+                    systemZone_Group.SetDHWGroup(dHWGroup);
+                }
+
+                dynamic radiator = systemZone_Group.AddRadiator();
                 radiator.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 radiator.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
                 radiator.Duty.SizeFraction = 1;
@@ -529,6 +618,8 @@ namespace SAM.Analytical.Tas
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
+
+            dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
             dynamic fan = system.AddFan();
             fan.name = "Fresh Air Fan";
@@ -601,33 +692,38 @@ namespace SAM.Analytical.Tas
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
             {
-                TPD.SystemZone systemZone = componentGroup.GetComponent(i + 2) as TPD.SystemZone;
-                (systemZone as dynamic).AddZoneLoad(zoneLoad);
-                systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
-                systemZone.FlowRate.Value = 5;
+                TPD.SystemZone systemZone_Group = componentGroup.GetComponent(i + 2) as TPD.SystemZone;
+                (systemZone_Group as dynamic).AddZoneLoad(zoneLoad);
+                systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                systemZone_Group.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
+                systemZone_Group.FlowRate.Value = 5;
                 //(systemZone as dynamic).SetDHWGroup(tpdDHWGrp);
                 if (electricalGroup_SmallPower != null)
                 {
-                    (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
+                    (systemZone_Group as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
                 }
 
                 if (electricalGroup_Lighting != null)
                 {
-                    (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
+                    (systemZone_Group as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
                 }
 
-                TPD.SizedFlowVariable sizedFlowVariable_FreshAir = systemZone.FreshAir;
+                if (dHWGroup != null)
+                {
+                    (systemZone_Group as dynamic).SetDHWGroup(dHWGroup);
+                }
+
+                TPD.SizedFlowVariable sizedFlowVariable_FreshAir = systemZone_Group.FreshAir;
                 sizedFlowVariable_FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
-                    systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                    systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
                 TPD.Damper damper_Zone = componentGroup.GetComponent(i + 3) as TPD.Damper;
                 damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
-                TPD.Radiator radiator_Zone = systemZone.AddRadiator();
+                TPD.Radiator radiator_Zone = systemZone_Group.AddRadiator();
                 radiator_Zone.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
                 radiator_Zone.Duty.SizeFraction = 1;
@@ -671,6 +767,8 @@ namespace SAM.Analytical.Tas
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
+
+            dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
             dynamic fan = system.AddFan();
             fan.name = "Fresh Air Fan";
@@ -734,33 +832,38 @@ namespace SAM.Analytical.Tas
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
             {
-                TPD.SystemZone systemZone = componentGroup.GetComponent(i + 2) as TPD.SystemZone;
-                (systemZone as dynamic).AddZoneLoad(zoneLoad);
-                systemZone.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                systemZone.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
-                systemZone.FlowRate.Value = 5;
+                TPD.SystemZone systemZone_Group = componentGroup.GetComponent(i + 2) as TPD.SystemZone;
+                (systemZone_Group as dynamic).AddZoneLoad(zoneLoad);
+                systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                systemZone_Group.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
+                systemZone_Group.FlowRate.Value = 5;
                 //(systemZone as dynamic).SetDHWGroup(tpdDHWGrp);
                 if (electricalGroup_SmallPower != null)
                 {
-                    (systemZone as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
+                    (systemZone_Group as dynamic).SetElectricalGroup1(electricalGroup_SmallPower);
                 }
 
                 if (electricalGroup_Lighting != null)
                 {
-                    (systemZone as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
+                    (systemZone_Group as dynamic).SetElectricalGroup2(electricalGroup_Lighting);
                 }
 
-                TPD.SizedFlowVariable sizedFlowVariable_FreshAir = systemZone.FreshAir;
+                if (dHWGroup != null)
+                {
+                    (systemZone_Group as dynamic).SetDHWGroup(dHWGroup);
+                }
+
+                TPD.SizedFlowVariable sizedFlowVariable_FreshAir = systemZone_Group.FreshAir;
                 sizedFlowVariable_FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
-                    systemZone.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                    systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
                 TPD.Damper damper_Zone = componentGroup.GetComponent(i + 3) as TPD.Damper;
                 damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
-                TPD.Radiator radiator_Zone = systemZone.AddRadiator();
+                TPD.Radiator radiator_Zone = systemZone_Group.AddRadiator();
                 radiator_Zone.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
                 radiator_Zone.Duty.SizeFraction = 1;
@@ -792,12 +895,8 @@ namespace SAM.Analytical.Tas
 
             dynamic plantSchedule_Occupancy = energyCentre.PlantSchedule("Occupancy Schedule");
             dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
-            dynamic plantSchedule_Zone = energyCentre.PlantSchedule("Zone Schedule");
-
-            dynamic designConditionLoad_Annual = energyCentre.DesignConditionLoad("Annual Design Condition");
 
             dynamic fuelSource_Electrical = energyCentre.FuelSource("Grid Supplied Electricity");
-            dynamic fuelSource_Gas = energyCentre.FuelSource("Natural Gas");
 
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
@@ -806,6 +905,8 @@ namespace SAM.Analytical.Tas
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
             dynamic coolingGroup = plantRoom.CoolingGroup("Cooling Circuit Group");
+
+            dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
             dynamic multiChiller = plantRoom.AddMultiChiller();
             multiChiller.Name = "Cooling Circuit Chiller";
@@ -838,72 +939,6 @@ namespace SAM.Analytical.Tas
             plantController_Cooling.SetPosition(180, 380);
             plantController_Cooling.SensorArc1 = plantSensorArc_Cooling;
             SetWaterSideController(plantController_Cooling, WaterSideControllerSetup.Load, 0.1, 0.1);
-
-            dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
-
-            dynamic multiBoiler_DHW = plantRoom.AddMultiBoiler();
-            multiBoiler_DHW.DesignPressureDrop = 25;
-            multiBoiler_DHW.Setpoint.Value = 60;
-            multiBoiler_DHW.SetFuelSource(1, fuelSource_Gas);
-            multiBoiler_DHW.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-            multiBoiler_DHW.Duty.SizeFraction = 1.0;
-            multiBoiler_DHW.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-            multiBoiler_DHW.SetPosition(0, 140);
-
-            dynamic pump_DHW = plantRoom.AddPump();
-            pump_DHW.Name = "DHW Circuit Pump";
-            pump_DHW.Description = "DHW Circuit Pump";
-            pump_DHW.DesignFlowRate = 1;
-            pump_DHW.Capacity = 1;
-            pump_DHW.OverallEfficiency.Value = 1;
-            pump_DHW.SetFuelSource(1, fuelSource_Electrical);
-            pump_DHW.Pressure = (multiBoiler_DHW.DesignPressureDrop + dHWGroup.DesignPressureDrop) / 0.712;
-            pump_DHW.SetPosition(100, 150);
-
-            dynamic junction_DHW_In = plantRoom.AddJunction();
-            junction_DHW_In.Name = "DHW Junction In";
-            junction_DHW_In.Description = "Main Cold Water Supply";
-            junction_DHW_In.SetPosition(80, 210);
-            junction_DHW_In.SetDirection(TPD.tpdDirection.tpdRightLeft);
-
-            dynamic junction_DHW_Out = plantRoom.AddJunction();
-            junction_DHW_Out.Name = "DHW Junction Out";
-            junction_DHW_Out.Description = "DHW Junction Out";
-            junction_DHW_Out.SetPosition(160, 210);
-            junction_DHW_Out.SetDirection(TPD.tpdDirection.tpdRightLeft);
-
-            plantRoom.AddPipe(junction_DHW_In, 1, multiBoiler_DHW, 1);
-            TPD.Pipe pipe_DHW_Multiboiler_Pump =plantRoom.AddPipe(multiBoiler_DHW, 1, pump_DHW, 1);
-            pipe_DHW_Multiboiler_Pump.AddNode(80, 180);
-            plantRoom.AddPipe(pump_DHW, 1, dHWGroup, 1);
-            
-            TPD.Pipe pipe = plantRoom.AddPipe(dHWGroup, 1, junction_DHW_Out, 1);
-
-            dynamic plantController_Load = plantRoom.AddController();
-            plantController_Load.Name = "DHW Load Controller";
-            plantController_Load.SetPosition(80, 250);
-            
-            dynamic plantSensorArc_Load = plantController_Load.AddSensorArcToComponent(dHWGroup, 1);
-            plantController_Load.SensorArc1 = plantSensorArc_Load;
-
-            SetWaterSideController(plantController_Load, WaterSideControllerSetup.Load, 0.1, 0.1);
-
-            dynamic plantController_Temperature = plantRoom.AddController();
-            plantController_Temperature.Name = "DHW Temperature Controller";
-            plantController_Temperature.SetPosition(140, 250);
-
-            SetWaterSideController(plantController_Temperature, WaterSideControllerSetup.TemperatureLowZero, 10, 0);
-
-            dynamic plantSensorArc_Temperature = plantController_Temperature.AddSensorArc(pipe);
-            plantController_Temperature.SensorArc1 = plantSensorArc_Temperature;
-
-            dynamic plantController_Max = plantRoom.AddController();
-            plantController_Max.Name = "DHW Max Controller";
-            plantController_Max.SetPosition(110, 210);
-            plantController_Max.ControlType = TPD.tpdControlType.tpdControlMin;
-            plantController_Max.AddControlArc(pump_DHW);
-            plantController_Max.AddChainArc(plantController_Load);
-            plantController_Max.AddChainArc(plantController_Temperature);
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = "AHU";
@@ -1113,9 +1148,7 @@ namespace SAM.Analytical.Tas
 
                 // Water Side
                 plantController_Cooling.AddDayType(plantDayType);
-                plantController_Max.AddDayType(plantDayType);
-                plantController_Load.AddDayType(plantDayType);
-                plantController_Temperature.AddDayType(plantDayType);
+
             }
 
             TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[2];
@@ -1168,6 +1201,11 @@ namespace SAM.Analytical.Tas
 
                 index++;
             }
+
+        }
+
+        private static void CreateTPD_CAV_FreshAir(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        {
 
         }
     }
