@@ -862,7 +862,7 @@ namespace SAM.Analytical.Tas
 
             dynamic junction_DHW_In = plantRoom.AddJunction();
             junction_DHW_In.Name = "DHW Junction In";
-            junction_DHW_In.Description = "DHW Junction In";
+            junction_DHW_In.Description = "Main Cold Water Supply";
             junction_DHW_In.SetPosition(80, 210);
             junction_DHW_In.SetDirection(TPD.tpdDirection.tpdRightLeft);
 
