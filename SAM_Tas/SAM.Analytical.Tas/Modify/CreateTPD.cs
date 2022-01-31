@@ -858,7 +858,7 @@ namespace SAM.Analytical.Tas
             pump_DHW.OverallEfficiency.Value = 1;
             pump_DHW.SetFuelSource(1, fuelSource_Electrical);
             pump_DHW.Pressure = (multiBoiler_DHW.DesignPressureDrop + dHWGroup.DesignPressureDrop) / 0.712;
-            pump_DHW.SetPosition(100, 160);
+            pump_DHW.SetPosition(100, 150);
 
             dynamic junction_DHW_In = plantRoom.AddJunction();
             junction_DHW_In.Name = "DHW Junction In";
@@ -874,7 +874,7 @@ namespace SAM.Analytical.Tas
 
             plantRoom.AddPipe(junction_DHW_In, 1, multiBoiler_DHW, 1);
             TPD.Pipe pipe_DHW_Multiboiler_Pump =plantRoom.AddPipe(multiBoiler_DHW, 1, pump_DHW, 1);
-            pipe_DHW_Multiboiler_Pump.AddNode(80, 270);
+            pipe_DHW_Multiboiler_Pump.AddNode(80, 180);
             plantRoom.AddPipe(pump_DHW, 1, dHWGroup, 1);
             
             TPD.Pipe pipe = plantRoom.AddPipe(dHWGroup, 1, junction_DHW_Out, 1);
@@ -899,7 +899,7 @@ namespace SAM.Analytical.Tas
 
             dynamic plantController_Max = plantRoom.AddController();
             plantController_Max.Name = "DHW Max Controller";
-            plantController_Max.SetPosition(170, 200);
+            plantController_Max.SetPosition(110, 210);
             plantController_Max.ControlType = TPD.tpdControlType.tpdControlMin;
             plantController_Max.AddControlArc(pump_DHW);
             plantController_Max.AddChainArc(plantController_Load);
