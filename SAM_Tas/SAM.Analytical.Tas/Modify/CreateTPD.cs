@@ -196,6 +196,56 @@ namespace SAM.Analytical.Tas
                         designConditionLoad_Annual.Name = "Annual Design Condition";
                     }
 
+                    //Components
+
+                    //MultiBoilers
+                    dynamic multiBoiler = plantRoom.MultiBoiler("Heating Circuit Boiler");
+                    if(multiBoiler == null)
+                    {
+                        multiBoiler = plantRoom.AddMultiBoiler();
+                        multiBoiler.Name = "Heating Circuit Boiler";
+                        multiBoiler.DesignPressureDrop = 25;
+                        multiBoiler.DesignDeltaT = 11;
+                        multiBoiler.Setpoint.Value = 71;
+                        multiBoiler.SetFuelSource(1, fuelSource_Gas);
+                        multiBoiler.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        multiBoiler.Duty.SizeFraction = 1.0;
+                        multiBoiler.Duty.AddDesignCondition(designConditionLoad_Annual);
+                        multiBoiler.SetPosition(offset.X, offset.Y);
+                    }
+
+                    //Pumps
+                    dynamic pump = plantRoom.Component<TPD.Pump>("Heating Circuit Pump");
+                    if(pump == null)
+                    {
+                        pump = plantRoom.AddPump();
+                        pump.Name = "Heating Circuit Pump";
+                        pump.DesignFlowRate = 0;
+                        pump.Capacity = 1;
+                        pump.OverallEfficiency.Value = 1;
+                        pump.SetFuelSource(1, fuelSource_Electrical);
+                        pump.Pressure = (multiBoiler.DesignPressureDrop + heatingGroup.DesignPressureDrop) / 0.712;
+                        pump.SetPosition(offset.X + 100, offset.Y);
+                    }
+
+                    plantRoom.AddPipe(multiBoiler, 1, pump, 1);
+                    plantRoom.AddPipe(pump, 1, heatingGroup, 1);
+                    plantRoom.AddPipe(heatingGroup, 1, multiBoiler, 1);
+
+                    TPD.PlantController plantController = plantRoom.AddController();
+                    plantController.AddControlArc(pump);
+                    dynamic plantSensorArc = plantController.AddSensorArcToComponent(heatingGroup, 1);
+
+                    plantController.SetPosition(offset.X + 180, offset.Y + 110);
+                    plantController.SensorArc1 = plantSensorArc;
+                    SetWaterSideController(plantController, WaterSideControllerSetup.Load, 0.1, 0.1);
+
+                    for (int j = 1; j <= energyCentre.GetCalendar().GetDayTypeCount(); j++)
+                    {
+                        TPD.PlantDayType plantDayType = plantRoom.GetEnergyCentre().GetCalendar().GetDayType(j);
+                        plantController.AddDayType(plantDayType);
+                    }
+
                     foreach (KeyValuePair<string, List<TPD.ZoneLoad>> keyValuePair in dictionary)
                     {
                         CreateTPD(energyCentre, keyValuePair.Key, keyValuePair.Value);
@@ -397,54 +447,10 @@ namespace SAM.Analytical.Tas
 
             Point offset = new Point(0, 0);
 
-            dynamic designConditionLoad_Annual = energyCentre.DesignConditionLoad("Annual Design Condition");
-
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
 
-            dynamic fuelSource_Electrical = energyCentre.FuelSource("Grid Supplied Electricity");
-            dynamic fuelSource_Gas = energyCentre.FuelSource("Natural Gas");
-
-            dynamic multiBoiler = plantRoom.AddMultiBoiler();
-            multiBoiler.Name = "Heating Circuit Boiler";
-            multiBoiler.DesignPressureDrop = 25;
-            multiBoiler.DesignDeltaT = 11;
-            multiBoiler.Setpoint.Value = 71;
-            multiBoiler.SetFuelSource(1, fuelSource_Gas);
-            multiBoiler.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-            multiBoiler.Duty.SizeFraction = 1.0;
-            multiBoiler.Duty.AddDesignCondition(designConditionLoad_Annual);
-            multiBoiler.SetPosition(offset.X, offset.Y);
-
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
-
-            dynamic pump = plantRoom.AddPump();
-            pump.Name = "Heating Circuit Pump";
-            pump.DesignFlowRate = 0;
-            pump.Capacity = 1;
-            pump.OverallEfficiency.Value = 1;
-            pump.SetFuelSource(1, fuelSource_Electrical);
-            pump.Pressure = (multiBoiler.DesignPressureDrop + heatingGroup.DesignPressureDrop) / 0.712;
-            pump.SetPosition(offset.X + 100, offset.Y);
-
-            plantRoom.AddPipe(multiBoiler, 1, pump, 1);
-            plantRoom.AddPipe(pump, 1, heatingGroup, 1);
-            plantRoom.AddPipe(heatingGroup, 1, multiBoiler, 1);
-
-            TPD.PlantController plantController = plantRoom.AddController();
-            plantController.AddControlArc(pump);
-            dynamic plantSensorArc = plantController.AddSensorArcToComponent(heatingGroup, 1);
-
-            plantController.SetPosition(offset.X + 180, offset.Y + 110);
-            plantController.SensorArc1 = plantSensorArc;
-            SetWaterSideController(plantController, WaterSideControllerSetup.Load, 0.1, 0.1);
-            offset.X += 300;
-
-            for (int j = 1; j <= plantRoom.GetEnergyCentre().GetCalendar().GetDayTypeCount(); j++)
-            {
-                TPD.PlantDayType plantDayType = plantRoom.GetEnergyCentre().GetCalendar().GetDayType(j);
-                plantController.AddDayType(plantDayType);
-            }
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = "NV";
@@ -799,39 +805,6 @@ namespace SAM.Analytical.Tas
 
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
-            dynamic multiBoiler_Heating = plantRoom.AddMultiBoiler();
-            multiBoiler_Heating.Name = "Heating Circuit Boiler";
-            multiBoiler_Heating.DesignPressureDrop = 25;
-            multiBoiler_Heating.DesignDeltaT = 11;
-            multiBoiler_Heating.Setpoint.Value = 71;
-            multiBoiler_Heating.SetFuelSource(1, fuelSource_Gas);
-            multiBoiler_Heating.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-            multiBoiler_Heating.Duty.SizeFraction = 1.0;
-            multiBoiler_Heating.Duty.AddDesignCondition(designConditionLoad_Annual);
-            multiBoiler_Heating.SetPosition(0, 0);
-
-            dynamic pump_Heating = plantRoom.AddPump();
-            pump_Heating.Name = "Heating Circuit Pump";
-            pump_Heating.DesignFlowRate = 0;
-            pump_Heating.Capacity = 1;
-            pump_Heating.OverallEfficiency.Value = 1;
-            pump_Heating.SetFuelSource(1, fuelSource_Electrical);
-            pump_Heating.Pressure = (multiBoiler_Heating.DesignPressureDrop + heatingGroup.DesignPressureDrop) / 0.712;
-            pump_Heating.SetPosition(100, 0);
-
-            plantRoom.AddPipe(multiBoiler_Heating, 1, pump_Heating, 1);
-            plantRoom.AddPipe(pump_Heating, 1, heatingGroup, 1);
-            plantRoom.AddPipe(heatingGroup, 1, multiBoiler_Heating, 1);
-
-            TPD.PlantController plantController_Heating = plantRoom.AddController();
-            plantController_Heating.AddControlArc(pump_Heating);
-            dynamic plantSensorArc_Heating = plantController_Heating.AddSensorArcToComponent(heatingGroup, 1);
-
-            plantController_Heating.SetPosition(180, 110);
-            plantController_Heating.SensorArc1 = plantSensorArc_Heating;
-            SetWaterSideController(plantController_Heating, WaterSideControllerSetup.Load, 0.1, 0.1);
-            offset.X += 300;
-
             dynamic coolingGroup = plantRoom.CoolingGroup("Cooling Circuit Group");
 
             dynamic multiChiller = plantRoom.AddMultiChiller();
@@ -1128,8 +1101,9 @@ namespace SAM.Analytical.Tas
             TPD.PlantDayType plantDayType = null;
             for (int i = 1; i <= plantRoom.GetEnergyCentre().GetCalendar().GetDayTypeCount(); i++)
             {
-                // Air Side
                 plantDayType = energyCentre.GetCalendar().GetDayType(i);
+
+                // Air Side
                 controller_HeatingGroupCombiner.AddDayType(plantDayType);
                 controller_HeatingGroup.AddDayType(plantDayType);
                 controller_CoolingGroupCombiner.AddDayType(plantDayType);
@@ -1138,7 +1112,6 @@ namespace SAM.Analytical.Tas
                 controller_Optimiser.AddDayType(plantDayType);
 
                 // Water Side
-                plantController_Heating.AddDayType(plantDayType);
                 plantController_Cooling.AddDayType(plantDayType);
                 plantController_Max.AddDayType(plantDayType);
                 plantController_Load.AddDayType(plantDayType);
