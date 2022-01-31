@@ -41,6 +41,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\build\SAM.Analytical.Grasshopper.Tas.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.TAS3D">
