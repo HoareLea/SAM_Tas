@@ -1329,7 +1329,7 @@ namespace SAM.Analytical.Tas
             heatingCoil.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
             heatingCoil.Duty.SizeFraction = 1.25; //defult ASHRAE oversizing factors
             heatingCoil.Duty.AddDesignCondition(energyCentre.GetDesignCondition(3));//change from 1 to 3 for annual dsign condition
-            //heatingCoil.MaximumOffcoil.Value = 28;
+            heatingCoil.MaximumOffcoil.Value = 60;
             heatingCoil.SetPosition(350, 100);
 
             dynamic coolingCoil = system.AddCoolingCoil();
@@ -1338,7 +1338,7 @@ namespace SAM.Analytical.Tas
             coolingCoil.Duty.SizeFraction = 1.15;//defult ASHRAE oversizing factors
             coolingCoil.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
             coolingCoil.BypassFactor.Value = 0.1;
-            //coolingCoil.MinimumOffcoil.Value = 16;
+            coolingCoil.MinimumOffcoil.Value = 10;
             coolingCoil.SetPosition(310, 100);
 
             system.AddDuct(junction_FreshAir, 1, exchanger, 1);
@@ -1364,7 +1364,6 @@ namespace SAM.Analytical.Tas
             controller_HeatingCoilController.SetPosition(370, 160);
             controller_HeatingCoilController.AddControlArc(heatingCoil).AddNode(360, 170); //connection  in front of controller
             controller_HeatingCoilController.ControlType = TPD.tpdControlType.tpdControlMin;
-            
 
             TPD.Controller controller_CoolingCoilController = system.AddController();
             controller_CoolingCoilController.Name = "Cooling Coil Controller";
@@ -1372,36 +1371,16 @@ namespace SAM.Analytical.Tas
             controller_CoolingCoilController.SetPosition(330, 180);
             controller_CoolingCoilController.AddControlArc(coolingCoil).AddNode(320, 190); //connection  in front of controller
             controller_CoolingCoilController.ControlType = TPD.tpdControlType.tpdControlMax;
-            
-            //TPD.Controller controller_PassThroughExchanger = system.AddController();
-            //controller_PassThroughExchanger.Name = "Pass Through Ex";
-            //controller_PassThroughExchanger.SetPosition(320, 40);
-            //controller_PassThroughExchanger.AddControlArc(exchanger).AddNode(180, 50);
 
             TPD.SensorArc sensorArc_HeatingCoil = controller_HeatingCoilController.AddSensorArc(duct_FreshAir);
             sensorArc_HeatingCoil.AddNode(490, 170); //connection after node
             controller_HeatingCoilController.SensorArc1 = sensorArc_HeatingCoil;
             SetAirSideController(controller_HeatingCoilController, AirSideControllerSetup.TempHighZero, 20, 1.5);
 
-            TPD.SensorArc sensorArc_CoolingCoil = controller_CoolingCoilController.AddSensorArc(duct_OffCoils);
+            TPD.SensorArc sensorArc_CoolingCoil = controller_CoolingCoilController.AddSensorArc(duct_FreshAir);
             sensorArc_CoolingCoil.AddNode(490, 190);  //connection after node
             controller_CoolingCoilController.SensorArc1 = sensorArc_CoolingCoil;
             SetAirSideController(controller_CoolingCoilController, AirSideControllerSetup.TempLowZero, 13, 1.5);
-
-            //TPD.SensorArc sensorArc_HeatingGroup = controller_HeatingGroup.AddSensorArcToComponent(systemZone, 1);
-            //sensorArc_HeatingGroup.AddNode(645, 170);
-            //controller_HeatingGroup.SensorArc1 = sensorArc_HeatingGroup;
-            //SetAirSideController(controller_HeatingGroup, AirSideControllerSetup.ThermLL, 0, 0.5);
-
-            //TPD.SensorArc sensorArc_CoolingGroup = controller_CoolingGroup.AddSensorArcToComponent(systemZone, 1);
-            //sensorArc_CoolingGroup.AddNode(645, 190);
-            //controller_CoolingGroup.SensorArc1 = sensorArc_CoolingGroup;
-            //SetAirSideController(controller_CoolingGroup, AirSideControllerSetup.ThermUL, 0, 0.5);
-
-            //TPD.SensorArc sensorArc_PassThroughExchanger = controller_PassThroughExchanger.AddSensorArc(duct_OffCoils);
-            //sensorArc_PassThroughExchanger.AddNode(380, 50);
-            //controller_PassThroughExchanger.SensorArc1 = sensorArc_PassThroughExchanger;
-            //SetAirSideController(controller_PassThroughExchanger, AirSideControllerSetup.TempPassThrough);
 
             TPD.PlantDayType plantDayType = null;
             for (int i = 1; i <= plantRoom.GetEnergyCentre().GetCalendar().GetDayTypeCount(); i++)
@@ -1410,10 +1389,7 @@ namespace SAM.Analytical.Tas
 
                 // Air Side
                 controller_HeatingCoilController.AddDayType(plantDayType);
-                //controller_HeatingGroup.AddDayType(plantDayType);
                 controller_CoolingCoilController.AddDayType(plantDayType);
-                //controller_CoolingGroup.AddDayType(plantDayType);
-                //controller_PassThroughExchanger.AddDayType(plantDayType);
             }
 
             TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[2];
@@ -1421,8 +1397,6 @@ namespace SAM.Analytical.Tas
             systemComponents[1] = (TPD.SystemComponent)systemZone;
 
             TPD.Controller[] controllers = new TPD.Controller[0];
-            //controllers[0] = (TPD.Controller)controller_HeatingGroup;
-            //controllers[1] = (TPD.Controller)controller_CoolingGroup;
 
             TPD.ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
             componentGroup.SetMultiplicity(zoneLoads.Count());
