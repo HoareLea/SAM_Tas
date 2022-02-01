@@ -1223,6 +1223,9 @@ namespace SAM.Analytical.Tas
             system.Name = "CAV_FreshAir";
             system.Multiplicity = zoneLoads.Count();
 
+            dynamic junction_Zero = system.AddJunction();
+            junction_Zero.SetPosition(0, 0);
+
             dynamic junction_FreshAir = system.AddJunction();
             junction_FreshAir.Name = "Junction Fresh Air";
             junction_FreshAir.Description = "Junction Fresh Air";
@@ -1350,26 +1353,26 @@ namespace SAM.Analytical.Tas
             system.AddDuct(junction_Return, 1, exchanger, 2);
             system.AddDuct(exchanger, 2, junction_ExhaustAir, 1);
 
-            TPD.Controller controller_HeatingGroup = system.AddController();
-            controller_HeatingGroup.Name = "Heating Group";
-            controller_HeatingGroup.SetPosition(570, 160);
+            //TPD.Controller controller_HeatingGroup = system.AddController();
+            //controller_HeatingGroup.Name = "Heating Group";
+            //controller_HeatingGroup.SetPosition(570, 160);
 
             TPD.Controller controller_HeatingGroupCombiner = system.AddController();
             controller_HeatingGroupCombiner.Name = "Heat Group Combiner";
             controller_HeatingGroupCombiner.SetPosition(370, 160);
             controller_HeatingGroupCombiner.AddControlArc(heatingCoil).AddNode(360, 170);
-            controller_HeatingGroupCombiner.AddChainArc(controller_HeatingGroup).AddNode(380, 170);
+            //controller_HeatingGroupCombiner.AddChainArc(controller_HeatingGroup).AddNode(380, 170);
             controller_HeatingGroupCombiner.ControlType = TPD.tpdControlType.tpdControlMin;
 
-            TPD.Controller controller_CoolingGroup = system.AddController();
-            controller_CoolingGroup.Name = "Cooling Group";
-            controller_CoolingGroup.SetPosition(540, 180);
+            //TPD.Controller controller_CoolingGroup = system.AddController();
+            //controller_CoolingGroup.Name = "Cooling Group";
+            //controller_CoolingGroup.SetPosition(540, 180);
 
             TPD.Controller controller_CoolingGroupCombiner = system.AddController();
             controller_CoolingGroupCombiner.Name = "Cooling Group Combiner";
             controller_CoolingGroupCombiner.SetPosition(330, 180);
             controller_CoolingGroupCombiner.AddControlArc(coolingCoil).AddNode(320, 190);
-            controller_CoolingGroupCombiner.AddChainArc(controller_CoolingGroup).AddNode(340, 190);
+            //controller_CoolingGroupCombiner.AddChainArc(controller_CoolingGroup).AddNode(340, 190);
             controller_CoolingGroupCombiner.ControlType = TPD.tpdControlType.tpdControlMax;
 
             TPD.Controller controller_PassThroughExchanger = system.AddController();
@@ -1377,15 +1380,15 @@ namespace SAM.Analytical.Tas
             controller_PassThroughExchanger.SetPosition(320, 40);
             controller_PassThroughExchanger.AddControlArc(exchanger).AddNode(180, 50);
 
-            TPD.SensorArc sensorArc_HeatingGroup = controller_HeatingGroup.AddSensorArcToComponent(systemZone, 1);
-            sensorArc_HeatingGroup.AddNode(645, 170);
-            controller_HeatingGroup.SensorArc1 = sensorArc_HeatingGroup;
-            SetAirSideController(controller_HeatingGroup, AirSideControllerSetup.ThermLL, 0, 0.5);
+            //TPD.SensorArc sensorArc_HeatingGroup = controller_HeatingGroup.AddSensorArcToComponent(systemZone, 1);
+            //sensorArc_HeatingGroup.AddNode(645, 170);
+            //controller_HeatingGroup.SensorArc1 = sensorArc_HeatingGroup;
+            //SetAirSideController(controller_HeatingGroup, AirSideControllerSetup.ThermLL, 0, 0.5);
 
-            TPD.SensorArc sensorArc_CoolingGroup = controller_CoolingGroup.AddSensorArcToComponent(systemZone, 1);
-            sensorArc_CoolingGroup.AddNode(645, 190);
-            controller_CoolingGroup.SensorArc1 = sensorArc_CoolingGroup;
-            SetAirSideController(controller_CoolingGroup, AirSideControllerSetup.ThermUL, 0, 0.5);
+            //TPD.SensorArc sensorArc_CoolingGroup = controller_CoolingGroup.AddSensorArcToComponent(systemZone, 1);
+            //sensorArc_CoolingGroup.AddNode(645, 190);
+            //controller_CoolingGroup.SensorArc1 = sensorArc_CoolingGroup;
+            //SetAirSideController(controller_CoolingGroup, AirSideControllerSetup.ThermUL, 0, 0.5);
 
             TPD.SensorArc sensorArc_PassThroughExchanger = controller_PassThroughExchanger.AddSensorArc(duct_OffCoils);
             sensorArc_PassThroughExchanger.AddNode(380, 50);
@@ -1399,9 +1402,9 @@ namespace SAM.Analytical.Tas
 
                 // Air Side
                 controller_HeatingGroupCombiner.AddDayType(plantDayType);
-                controller_HeatingGroup.AddDayType(plantDayType);
+                //controller_HeatingGroup.AddDayType(plantDayType);
                 controller_CoolingGroupCombiner.AddDayType(plantDayType);
-                controller_CoolingGroup.AddDayType(plantDayType);
+                //controller_CoolingGroup.AddDayType(plantDayType);
                 controller_PassThroughExchanger.AddDayType(plantDayType);
             }
 
@@ -1409,9 +1412,9 @@ namespace SAM.Analytical.Tas
             systemComponents[0] = (TPD.SystemComponent)damper;
             systemComponents[1] = (TPD.SystemComponent)systemZone;
 
-            TPD.Controller[] controllers = new TPD.Controller[2];
-            controllers[0] = (TPD.Controller)controller_HeatingGroup;
-            controllers[1] = (TPD.Controller)controller_CoolingGroup;
+            TPD.Controller[] controllers = new TPD.Controller[0];
+            //controllers[0] = (TPD.Controller)controller_HeatingGroup;
+            //controllers[1] = (TPD.Controller)controller_CoolingGroup;
 
             TPD.ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
             componentGroup.SetMultiplicity(zoneLoads.Count());
