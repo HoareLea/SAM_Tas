@@ -1386,12 +1386,12 @@ namespace SAM.Analytical.Tas
             controller_PassThroughExchanger.AddControlArc(exchanger).AddNode(180, 50);
 
             TPD.SensorArc sensorArc_Heating = controller_HeatingGroupCombiner.AddSensorArc(duct_FreshAir);
-            //sensorArc_Heating.AddNode(380, 50);
+            sensorArc_Heating.AddNode(480, 160);
             controller_HeatingGroupCombiner.SensorArc1 = sensorArc_Heating;
             SetAirSideController(controller_HeatingGroupCombiner, AirSideControllerSetup.ThermLL, 0, 0.5);
 
             TPD.SensorArc sensorArc_Cooling = controller_CoolingGroupCombiner.AddSensorArc(duct_FreshAir);
-            //sensorArc_Cooling.AddNode(380, 50);
+            sensorArc_Cooling.AddNode(480, 180);
             controller_CoolingGroupCombiner.SensorArc1 = sensorArc_Cooling;
             SetAirSideController(controller_CoolingGroupCombiner, AirSideControllerSetup.ThermUL, 0, 0.5);
 
