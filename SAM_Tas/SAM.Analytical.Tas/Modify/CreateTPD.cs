@@ -1328,7 +1328,7 @@ namespace SAM.Analytical.Tas
             heatingCoil.SetHeatingGroup(heatingGroup);
             heatingCoil.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
             heatingCoil.Duty.SizeFraction = 1.25; //defult ASHRAE oversizing factors
-            heatingCoil.Duty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+            heatingCoil.Duty.AddDesignCondition(energyCentre.GetDesignCondition(3));//change from 1 to 3 for annual dsign condition
             //heatingCoil.MaximumOffcoil.Value = 28;
             heatingCoil.SetPosition(350, 100);
 
