@@ -1255,7 +1255,7 @@ namespace SAM.Analytical.Tas
             fan_FreashAir.DesignFlowRate.Value = 150;
             fan_FreashAir.OverallEfficiency.Value = 1;
             fan_FreashAir.Pressure = 1000;
-            fan_FreashAir.HeatGainFactor = 0;
+            fan_FreashAir.HeatGainFactor = 1;
             fan_FreashAir.SetElectricalGroup1(electricalGroup_Fans);
             fan_FreashAir.PartLoad.Value = 0;
             fan_FreashAir.PartLoad.ClearModifiers();
@@ -1285,7 +1285,7 @@ namespace SAM.Analytical.Tas
             fan_Return.DesignFlowRate.Value = 150;
             fan_Return.OverallEfficiency.Value = 1;
             fan_Return.Pressure = 600;
-            fan_Return.HeatGainFactor = 0;
+            fan_Return.HeatGainFactor = 1;
             fan_Return.SetElectricalGroup1(electricalGroup_Fans);
             fan_Return.PartLoad.Value = 0;
             fan_Return.PartLoad.ClearModifiers();
@@ -1439,14 +1439,16 @@ namespace SAM.Analytical.Tas
                 systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
                 systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
                 systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                systemZone_Group.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowDeltaT;
+                systemZone_Group.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowPeakPerson;
+                systemZone_Group.FlowRate.Value = 10;
                 for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
                 {
                     systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
                 systemZone_Group.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                systemZone_Group.FreshAir.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
+                systemZone_Group.FreshAir.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowPeakPerson;
+                systemZone_Group.FreshAir.Value = 10;
                 for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
                 {
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
