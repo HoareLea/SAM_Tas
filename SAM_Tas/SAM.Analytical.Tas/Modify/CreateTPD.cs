@@ -1259,7 +1259,7 @@ namespace SAM.Analytical.Tas
             fan_FreashAir.SetElectricalGroup1(electricalGroup_Fans);
             fan_FreashAir.PartLoad.Value = 0;
             fan_FreashAir.PartLoad.ClearModifiers();
-            fan_FreashAir.SetSchedule(plantSchedule_System);
+            fan_FreashAir.SetSchedule(plantSchedule_Occupancy);
             fan_FreashAir.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
             fan_FreashAir.SetPosition(390, 100);
 
@@ -1289,7 +1289,7 @@ namespace SAM.Analytical.Tas
             fan_Return.SetElectricalGroup1(electricalGroup_Fans);
             fan_Return.PartLoad.Value = 0;
             fan_Return.PartLoad.ClearModifiers();
-            fan_Return.SetSchedule(plantSchedule_System);
+            fan_Return.SetSchedule(plantSchedule_Occupancy);
             fan_Return.SetDirection(TPD.tpdDirection.tpdRightLeft);
             fan_Return.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
             fan_Return.SetPosition(600, 240);
@@ -1327,18 +1327,18 @@ namespace SAM.Analytical.Tas
             heatingCoil.Setpoint.Value = 14;
             heatingCoil.SetHeatingGroup(heatingGroup);
             heatingCoil.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-            heatingCoil.Duty.SizeFraction = 1.0;
+            heatingCoil.Duty.SizeFraction = 1.25; //defult ASHRAE oversizing factors
             heatingCoil.Duty.AddDesignCondition(energyCentre.GetDesignCondition(1));
-            heatingCoil.MaximumOffcoil.Value = 28;
+            //heatingCoil.MaximumOffcoil.Value = 28;
             heatingCoil.SetPosition(350, 100);
 
             dynamic coolingCoil = system.AddCoolingCoil();
             coolingCoil.SetCoolingGroup(coolingGroup);
             coolingCoil.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-            coolingCoil.Duty.SizeFraction = 1.0;
+            coolingCoil.Duty.SizeFraction = 1.15;//defult ASHRAE oversizing factors
             coolingCoil.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
             coolingCoil.BypassFactor.Value = 0.1;
-            coolingCoil.MinimumOffcoil.Value = 16;
+            //coolingCoil.MinimumOffcoil.Value = 16;
             coolingCoil.SetPosition(310, 100);
 
             system.AddDuct(junction_FreshAir, 1, exchanger, 1);
@@ -1374,10 +1374,10 @@ namespace SAM.Analytical.Tas
             controller_CoolingCoilController.ControlType = TPD.tpdControlType.tpdControlMax;
             SetAirSideController(controller_CoolingCoilController, AirSideControllerSetup.TempLowZero, 13, 1.5);
 
-            TPD.Controller controller_PassThroughExchanger = system.AddController();
-            controller_PassThroughExchanger.Name = "Pass Through Ex";
-            controller_PassThroughExchanger.SetPosition(320, 40);
-            controller_PassThroughExchanger.AddControlArc(exchanger).AddNode(180, 50);
+            //TPD.Controller controller_PassThroughExchanger = system.AddController();
+            //controller_PassThroughExchanger.Name = "Pass Through Ex";
+            //controller_PassThroughExchanger.SetPosition(320, 40);
+            //controller_PassThroughExchanger.AddControlArc(exchanger).AddNode(180, 50);
 
             TPD.SensorArc sensorArc_HeatingCoil = controller_HeatingCoilController.AddSensorArc(duct_FreshAir);
             sensorArc_HeatingCoil.AddNode(490, 170); //connection after node
@@ -1397,10 +1397,10 @@ namespace SAM.Analytical.Tas
             //controller_CoolingGroup.SensorArc1 = sensorArc_CoolingGroup;
             //SetAirSideController(controller_CoolingGroup, AirSideControllerSetup.ThermUL, 0, 0.5);
 
-            TPD.SensorArc sensorArc_PassThroughExchanger = controller_PassThroughExchanger.AddSensorArc(duct_OffCoils);
-            sensorArc_PassThroughExchanger.AddNode(380, 50);
-            controller_PassThroughExchanger.SensorArc1 = sensorArc_PassThroughExchanger;
-            SetAirSideController(controller_PassThroughExchanger, AirSideControllerSetup.TempPassThrough);
+            //TPD.SensorArc sensorArc_PassThroughExchanger = controller_PassThroughExchanger.AddSensorArc(duct_OffCoils);
+            //sensorArc_PassThroughExchanger.AddNode(380, 50);
+            //controller_PassThroughExchanger.SensorArc1 = sensorArc_PassThroughExchanger;
+            //SetAirSideController(controller_PassThroughExchanger, AirSideControllerSetup.TempPassThrough);
 
             TPD.PlantDayType plantDayType = null;
             for (int i = 1; i <= plantRoom.GetEnergyCentre().GetCalendar().GetDayTypeCount(); i++)
@@ -1412,7 +1412,7 @@ namespace SAM.Analytical.Tas
                 //controller_HeatingGroup.AddDayType(plantDayType);
                 controller_CoolingCoilController.AddDayType(plantDayType);
                 //controller_CoolingGroup.AddDayType(plantDayType);
-                controller_PassThroughExchanger.AddDayType(plantDayType);
+                //controller_PassThroughExchanger.AddDayType(plantDayType);
             }
 
             TPD.SystemComponent[] systemComponents = new TPD.SystemComponent[2];
@@ -1439,16 +1439,16 @@ namespace SAM.Analytical.Tas
                 systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
                 systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
                 systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                systemZone_Group.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowPeakPerson;
-                systemZone_Group.FlowRate.Value = 10;
+                systemZone_Group.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
+                //systemZone_Group.FlowRate.Value = 100;
                 for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
                 {
                     systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
                 systemZone_Group.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                systemZone_Group.FreshAir.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowPeakPerson;
-                systemZone_Group.FreshAir.Value = 10;
+                systemZone_Group.FreshAir.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
+                //systemZone_Group.FreshAir.Value = 100;
                 for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
                 {
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
