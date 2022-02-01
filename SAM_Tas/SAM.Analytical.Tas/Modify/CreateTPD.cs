@@ -1364,7 +1364,7 @@ namespace SAM.Analytical.Tas
             controller_HeatingCoilController.SetPosition(370, 160);
             controller_HeatingCoilController.AddControlArc(heatingCoil).AddNode(360, 170); //connection  in front of controller
             controller_HeatingCoilController.ControlType = TPD.tpdControlType.tpdControlMin;
-            SetAirSideController(controller_HeatingCoilController, AirSideControllerSetup.TempHighZero, 20, 1.5);
+            
 
             TPD.Controller controller_CoolingCoilController = system.AddController();
             controller_CoolingCoilController.Name = "Cooling Coil Controller";
@@ -1372,8 +1372,7 @@ namespace SAM.Analytical.Tas
             controller_CoolingCoilController.SetPosition(330, 180);
             controller_CoolingCoilController.AddControlArc(coolingCoil).AddNode(320, 190); //connection  in front of controller
             controller_CoolingCoilController.ControlType = TPD.tpdControlType.tpdControlMax;
-            SetAirSideController(controller_CoolingCoilController, AirSideControllerSetup.TempLowZero, 13, 1.5);
-
+            
             //TPD.Controller controller_PassThroughExchanger = system.AddController();
             //controller_PassThroughExchanger.Name = "Pass Through Ex";
             //controller_PassThroughExchanger.SetPosition(320, 40);
@@ -1382,10 +1381,12 @@ namespace SAM.Analytical.Tas
             TPD.SensorArc sensorArc_HeatingCoil = controller_HeatingCoilController.AddSensorArc(duct_FreshAir);
             sensorArc_HeatingCoil.AddNode(490, 170); //connection after node
             controller_HeatingCoilController.SensorArc1 = sensorArc_HeatingCoil;
+            SetAirSideController(controller_HeatingCoilController, AirSideControllerSetup.TempHighZero, 20, 1.5);
 
             TPD.SensorArc sensorArc_CoolingCoil = controller_CoolingCoilController.AddSensorArc(duct_FreshAir);
             sensorArc_CoolingCoil.AddNode(490, 190);  //connection after node
             controller_CoolingCoilController.SensorArc1 = sensorArc_CoolingCoil;
+            SetAirSideController(controller_CoolingCoilController, AirSideControllerSetup.TempLowZero, 13, 1.5);
 
             //TPD.SensorArc sensorArc_HeatingGroup = controller_HeatingGroup.AddSensorArcToComponent(systemZone, 1);
             //sensorArc_HeatingGroup.AddNode(645, 170);
