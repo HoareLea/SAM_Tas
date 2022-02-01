@@ -1429,15 +1429,15 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
-                dynamic radiatior_Group = systemZone_Group.AddRadiator();
-                radiatior_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                radiatior_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                radiatior_Group.Duty.SizeFraction = 1;
+                dynamic radiator_Group = systemZone_Group.AddRadiator();
+                radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                radiator_Group.Duty.SizeFraction = 1;
 
-                radiatior_Group.SetHeatingGroup(heatingGroup);
+                radiator_Group.SetHeatingGroup(heatingGroup);
                 for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
                 {
-                    radiatior_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
+                    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
                 index++;
