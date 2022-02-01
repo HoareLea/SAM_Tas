@@ -1224,7 +1224,12 @@ namespace SAM.Analytical.Tas
             system.Multiplicity = zoneLoads.Count();
 
             dynamic junction_Zero = system.AddJunction();
+            junction_Zero.Description = "0, 0";
             junction_Zero.SetPosition(0, 0);
+
+            dynamic junction_Fourty = system.AddJunction();
+            junction_Fourty.Description = "40, 40";
+            junction_Fourty.SetPosition(40, 40);
 
             dynamic junction_FreshAir = system.AddJunction();
             junction_FreshAir.Name = "Junction Fresh Air";
@@ -1381,12 +1386,12 @@ namespace SAM.Analytical.Tas
             controller_PassThroughExchanger.AddControlArc(exchanger).AddNode(180, 50);
 
             TPD.SensorArc sensorArc_Heating = controller_HeatingGroupCombiner.AddSensorArc(duct_FreshAir);
-            sensorArc_Heating.AddNode(380, 50);
+            //sensorArc_Heating.AddNode(380, 50);
             controller_HeatingGroupCombiner.SensorArc1 = sensorArc_Heating;
             SetAirSideController(controller_HeatingGroupCombiner, AirSideControllerSetup.ThermLL, 0, 0.5);
 
             TPD.SensorArc sensorArc_Cooling = controller_CoolingGroupCombiner.AddSensorArc(duct_FreshAir);
-            sensorArc_Cooling.AddNode(380, 50);
+            //sensorArc_Cooling.AddNode(380, 50);
             controller_CoolingGroupCombiner.SensorArc1 = sensorArc_Cooling;
             SetAirSideController(controller_CoolingGroupCombiner, AirSideControllerSetup.ThermUL, 0, 0.5);
 
