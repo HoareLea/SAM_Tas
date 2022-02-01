@@ -1341,7 +1341,7 @@ namespace SAM.Analytical.Tas
             system.AddDuct(coolingCoil, 1, heatingCoil, 1);
 
             TPD.Duct duct_OffCoils = system.AddDuct(heatingCoil, 1, fan_FreashAir, 1);
-            system.AddDuct(fan_FreashAir, 1, damper, 1);
+            TPD.Duct duct_FreshAir = system.AddDuct(fan_FreashAir, 1, damper, 1);
             system.AddDuct(damper, 1, systemZone, 1);
 
             TPD.Duct duct_ZoneOut = system.AddDuct(systemZone, 1, fan_Return, 1);
@@ -1379,6 +1379,16 @@ namespace SAM.Analytical.Tas
             controller_PassThroughExchanger.Name = "Pass Through Ex";
             controller_PassThroughExchanger.SetPosition(320, 40);
             controller_PassThroughExchanger.AddControlArc(exchanger).AddNode(180, 50);
+
+            TPD.SensorArc sensorArc_Heating = controller_HeatingGroupCombiner.AddSensorArc(duct_FreshAir);
+            sensorArc_Heating.AddNode(380, 50);
+            controller_HeatingGroupCombiner.SensorArc1 = sensorArc_Heating;
+            SetAirSideController(controller_HeatingGroupCombiner, AirSideControllerSetup.ThermLL, 0, 0.5);
+
+            TPD.SensorArc sensorArc_Cooling = controller_CoolingGroupCombiner.AddSensorArc(duct_FreshAir);
+            sensorArc_Cooling.AddNode(380, 50);
+            controller_CoolingGroupCombiner.SensorArc1 = sensorArc_Cooling;
+            SetAirSideController(controller_CoolingGroupCombiner, AirSideControllerSetup.ThermUL, 0, 0.5);
 
             //TPD.SensorArc sensorArc_HeatingGroup = controller_HeatingGroup.AddSensorArcToComponent(systemZone, 1);
             //sensorArc_HeatingGroup.AddNode(645, 170);
