@@ -1383,7 +1383,7 @@ namespace SAM.Analytical.Tas
             controller_HeatingCoilController.SensorArc1 = sensorArc_HeatingCoil;
             SetAirSideController(controller_HeatingCoilController, AirSideControllerSetup.TempHighZero, 20, 1.5);
 
-            TPD.SensorArc sensorArc_CoolingCoil = controller_CoolingCoilController.AddSensorArc(duct_FreshAir);
+            TPD.SensorArc sensorArc_CoolingCoil = controller_CoolingCoilController.AddSensorArc(duct_OffCoils);
             sensorArc_CoolingCoil.AddNode(490, 190);  //connection after node
             controller_CoolingCoilController.SensorArc1 = sensorArc_CoolingCoil;
             SetAirSideController(controller_CoolingCoilController, AirSideControllerSetup.TempLowZero, 13, 1.5);
