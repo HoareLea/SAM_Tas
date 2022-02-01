@@ -1366,6 +1366,7 @@ namespace SAM.Analytical.Tas
             controller_HeatingGroupCombiner.Name = "Heat Group Combiner";
             controller_HeatingGroupCombiner.SetPosition(370, 160);
             controller_HeatingGroupCombiner.AddControlArc(heatingCoil).AddNode(360, 170);
+            controller_HeatingGroupCombiner.SensorType = TPD.tpdSensorType.tpdTempSensor;
             //controller_HeatingGroupCombiner.AddChainArc(controller_HeatingGroup).AddNode(380, 170);
             controller_HeatingGroupCombiner.ControlType = TPD.tpdControlType.tpdControlMin;
 
@@ -1377,8 +1378,10 @@ namespace SAM.Analytical.Tas
             controller_CoolingGroupCombiner.Name = "Cooling Group Combiner";
             controller_CoolingGroupCombiner.SetPosition(330, 180);
             controller_CoolingGroupCombiner.AddControlArc(coolingCoil).AddNode(320, 190);
+            controller_CoolingGroupCombiner.SensorType = TPD.tpdSensorType.tpdTempSensor;
             //controller_CoolingGroupCombiner.AddChainArc(controller_CoolingGroup).AddNode(340, 190);
             controller_CoolingGroupCombiner.ControlType = TPD.tpdControlType.tpdControlMax;
+            controller_CoolingGroupCombiner.Setpoint = 18;
 
             TPD.Controller controller_PassThroughExchanger = system.AddController();
             controller_PassThroughExchanger.Name = "Pass Through Ex";
