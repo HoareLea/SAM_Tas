@@ -1223,13 +1223,13 @@ namespace SAM.Analytical.Tas
             system.Name = "CAV_FreshAir";
             system.Multiplicity = zoneLoads.Count();
 
-            dynamic junction_Zero = system.AddJunction();
-            junction_Zero.Description = "0, 0";
-            junction_Zero.SetPosition(0, 0);
+            //dynamic junction_Zero = system.AddJunction();
+            //junction_Zero.Description = "0, 0";
+            //junction_Zero.SetPosition(0, 0);
 
-            dynamic junction_Fourty = system.AddJunction();
-            junction_Fourty.Description = "40, 40";
-            junction_Fourty.SetPosition(40, 40);
+            //dynamic junction_Fourty = system.AddJunction();
+            //junction_Fourty.Description = "40, 40";
+            //junction_Fourty.SetPosition(40, 40);
 
             dynamic junction_FreshAir = system.AddJunction();
             junction_FreshAir.Name = "Junction Fresh Air";
@@ -1358,45 +1358,34 @@ namespace SAM.Analytical.Tas
             system.AddDuct(junction_Return, 1, exchanger, 2);
             system.AddDuct(exchanger, 2, junction_ExhaustAir, 1);
 
-            //TPD.Controller controller_HeatingGroup = system.AddController();
-            //controller_HeatingGroup.Name = "Heating Group";
-            //controller_HeatingGroup.SetPosition(570, 160);
+            TPD.Controller controller_HeatingCoilController = system.AddController();
+            controller_HeatingCoilController.Name = "Heating Coil Controller";
+            controller_HeatingCoilController.Description = "AHU Heating Coil Controller";
+            controller_HeatingCoilController.SetPosition(370, 160);
+            controller_HeatingCoilController.AddControlArc(heatingCoil).AddNode(360, 170); //connection  in front of controller
+            controller_HeatingCoilController.ControlType = TPD.tpdControlType.tpdControlMin;
+            SetAirSideController(controller_HeatingCoilController, AirSideControllerSetup.TempHighZero, 20, 1.5);
 
-            TPD.Controller controller_HeatingGroupCombiner = system.AddController();
-            controller_HeatingGroupCombiner.Name = "Heat Group Combiner";
-            controller_HeatingGroupCombiner.SetPosition(370, 160);
-            controller_HeatingGroupCombiner.AddControlArc(heatingCoil).AddNode(360, 170);
-            controller_HeatingGroupCombiner.SensorType = TPD.tpdSensorType.tpdTempSensor;
-            //controller_HeatingGroupCombiner.AddChainArc(controller_HeatingGroup).AddNode(380, 170);
-            controller_HeatingGroupCombiner.ControlType = TPD.tpdControlType.tpdControlMin;
-
-            //TPD.Controller controller_CoolingGroup = system.AddController();
-            //controller_CoolingGroup.Name = "Cooling Group";
-            //controller_CoolingGroup.SetPosition(540, 180);
-
-            TPD.Controller controller_CoolingGroupCombiner = system.AddController();
-            controller_CoolingGroupCombiner.Name = "Cooling Group Combiner";
-            controller_CoolingGroupCombiner.SetPosition(330, 180);
-            controller_CoolingGroupCombiner.AddControlArc(coolingCoil).AddNode(320, 190);
-            controller_CoolingGroupCombiner.SensorType = TPD.tpdSensorType.tpdTempSensor;
-            //controller_CoolingGroupCombiner.AddChainArc(controller_CoolingGroup).AddNode(340, 190);
-            controller_CoolingGroupCombiner.ControlType = TPD.tpdControlType.tpdControlMax;
-            controller_CoolingGroupCombiner.Setpoint = 18;
+            TPD.Controller controller_CoolingCoilController = system.AddController();
+            controller_CoolingCoilController.Name = "Cooling Coil Controller";
+            controller_CoolingCoilController.Description = "AHU Cooling Coil Controller";
+            controller_CoolingCoilController.SetPosition(330, 180);
+            controller_CoolingCoilController.AddControlArc(coolingCoil).AddNode(320, 190); //connection  in front of controller
+            controller_CoolingCoilController.ControlType = TPD.tpdControlType.tpdControlMax;
+            SetAirSideController(controller_CoolingCoilController, AirSideControllerSetup.TempLowZero, 13, 1.5);
 
             TPD.Controller controller_PassThroughExchanger = system.AddController();
             controller_PassThroughExchanger.Name = "Pass Through Ex";
             controller_PassThroughExchanger.SetPosition(320, 40);
             controller_PassThroughExchanger.AddControlArc(exchanger).AddNode(180, 50);
 
-            TPD.SensorArc sensorArc_Heating = controller_HeatingGroupCombiner.AddSensorArc(duct_FreshAir);
-            sensorArc_Heating.AddNode(480, 160);
-            controller_HeatingGroupCombiner.SensorArc1 = sensorArc_Heating;
-            SetAirSideController(controller_HeatingGroupCombiner, AirSideControllerSetup.ThermLL, 0, 0.5);
+            TPD.SensorArc sensorArc_HeatingCoil = controller_HeatingCoilController.AddSensorArc(duct_FreshAir);
+            sensorArc_HeatingCoil.AddNode(490, 170); //connection after node
+            controller_HeatingCoilController.SensorArc1 = sensorArc_HeatingCoil;
 
-            TPD.SensorArc sensorArc_Cooling = controller_CoolingGroupCombiner.AddSensorArc(duct_FreshAir);
-            sensorArc_Cooling.AddNode(480, 180);
-            controller_CoolingGroupCombiner.SensorArc1 = sensorArc_Cooling;
-            SetAirSideController(controller_CoolingGroupCombiner, AirSideControllerSetup.ThermUL, 0, 0.5);
+            TPD.SensorArc sensorArc_CoolingCoil = controller_CoolingCoilController.AddSensorArc(duct_FreshAir);
+            sensorArc_CoolingCoil.AddNode(490, 190);  //connection after node
+            controller_CoolingCoilController.SensorArc1 = sensorArc_CoolingCoil;
 
             //TPD.SensorArc sensorArc_HeatingGroup = controller_HeatingGroup.AddSensorArcToComponent(systemZone, 1);
             //sensorArc_HeatingGroup.AddNode(645, 170);
@@ -1419,9 +1408,9 @@ namespace SAM.Analytical.Tas
                 plantDayType = energyCentre.GetCalendar().GetDayType(i);
 
                 // Air Side
-                controller_HeatingGroupCombiner.AddDayType(plantDayType);
+                controller_HeatingCoilController.AddDayType(plantDayType);
                 //controller_HeatingGroup.AddDayType(plantDayType);
-                controller_CoolingGroupCombiner.AddDayType(plantDayType);
+                controller_CoolingCoilController.AddDayType(plantDayType);
                 //controller_CoolingGroup.AddDayType(plantDayType);
                 controller_PassThroughExchanger.AddDayType(plantDayType);
             }
