@@ -131,6 +131,17 @@ namespace SAM.Analytical.Tas
                         electricalGroup_Fans.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupFans;
                     }
 
+                    //Fans
+                    dynamic electricalGroup_Humidifiers = plantRoom.ElectricalGroup("Electrical Group - Humidifiers");
+                    if (electricalGroup_Humidifiers == null)
+                    {
+                        electricalGroup_Humidifiers = plantRoom.AddElectricalGroup();
+                        electricalGroup_Humidifiers.SetPosition(660, 0);
+                        electricalGroup_Humidifiers.Name = "Electrical Group - Humidifiers";
+                        electricalGroup_Humidifiers.SetFuelSource(1, fuelSource_Electrical);
+                        electricalGroup_Humidifiers.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupEquipment;
+                    }
+
                     //Lighting
                     dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
                     if(electricalGroup_Lighting == null)
@@ -1459,6 +1470,7 @@ namespace SAM.Analytical.Tas
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
+            dynamic electricalGroup_Humidifiers = plantRoom.ElectricalGroup("Electrical Group - Humidifiers");
 
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
@@ -1528,7 +1540,9 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable_FreshAir.AddPoint(100, 100);
 
             dynamic sprayHumidifier = system.AddSprayHumidifier();
-            sprayHumidifier.SetPosition(600, 240);
+            sprayHumidifier.Setpoint.Value = 90;
+            sprayHumidifier.SetElectricalGroup1(electricalGroup_Humidifiers);
+            sprayHumidifier.SetPosition(600, 230);
 
             dynamic fan_Return = system.AddFan();
             fan_Return.name = "Return Fan";
