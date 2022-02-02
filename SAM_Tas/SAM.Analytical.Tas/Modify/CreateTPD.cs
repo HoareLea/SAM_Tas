@@ -1207,6 +1207,7 @@ namespace SAM.Analytical.Tas
             }
 
             dynamic plantSchedule_Occupancy = energyCentre.PlantSchedule("Occupancy Schedule");
+            dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
 
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
@@ -1316,11 +1317,11 @@ namespace SAM.Analytical.Tas
             dynamic systemZone = system.AddSystemZone();
             systemZone.SetPosition(630, 80);
 
-            //dynamic junction_Return = system.AddJunction();
-            //junction_Return.Name = "Junction Return";
-            //junction_Return.Description = "Junction Return";
-            //junction_Return.SetPosition(240, 200);
-            //junction_Return.SetDirection(TPD.tpdDirection.tpdBottomTop);
+            dynamic junction_Return = system.AddJunction();
+            junction_Return.Name = "Junction Return";
+            junction_Return.Description = "Junction Return";
+            junction_Return.SetPosition(240, 200);
+            junction_Return.SetDirection(TPD.tpdDirection.tpdBottomTop);
 
             dynamic heatingCoil = system.AddHeatingCoil();
             heatingCoil.Setpoint.Value = 14;
@@ -1343,14 +1344,18 @@ namespace SAM.Analytical.Tas
             system.AddDuct(junction_FreshAir, 1, exchanger, 1);
             system.AddDuct(exchanger, 1, coolingCoil, 1);
             system.AddDuct(coolingCoil, 1, heatingCoil, 1);
+
             TPD.Duct duct_OffCoils = system.AddDuct(heatingCoil, 1, fan_FreashAir, 1);
             TPD.Duct duct_FreshAir = system.AddDuct(fan_FreashAir, 1, damper, 1);
             system.AddDuct(damper, 1, systemZone, 1);
+
             TPD.Duct duct_ZoneOut = system.AddDuct(systemZone, 1, fan_Return, 1);
             duct_ZoneOut.AddNode(680, 110);
             duct_ZoneOut.AddNode(680, 260);
+            duct_ZoneOut = system.AddDuct(fan_Return, 1, junction_Return, 1);
             duct_ZoneOut.AddNode(250, 250);
-            system.AddDuct(fan_Return, 1, exchanger, 2);
+
+            system.AddDuct(junction_Return, 1, exchanger, 2);
             system.AddDuct(exchanger, 2, junction_ExhaustAir, 1);
 
             TPD.Controller controller_HeatingCoilController = system.AddController();
@@ -1437,8 +1442,6 @@ namespace SAM.Analytical.Tas
 
                 index++;
             }
-
-
         }
     }
 }
