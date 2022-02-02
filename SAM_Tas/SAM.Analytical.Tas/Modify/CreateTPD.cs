@@ -1542,6 +1542,7 @@ namespace SAM.Analytical.Tas
             dynamic sprayHumidifier = system.AddSprayHumidifier();
             sprayHumidifier.Setpoint.Value = 90;
             sprayHumidifier.SetElectricalGroup1(electricalGroup_Humidifiers);
+            sprayHumidifier.SetDirection(TPD.tpdDirection.tpdRightLeft);
             sprayHumidifier.SetPosition(600, 230);
 
             dynamic fan_Return = system.AddFan();
@@ -1615,13 +1616,13 @@ namespace SAM.Analytical.Tas
 
             TPD.Duct duct_ZoneOut = system.AddDuct(systemZone, 1, sprayHumidifier, 1);
             duct_ZoneOut.AddNode(680, 110);
-            duct_ZoneOut.AddNode(680, 260);
+            duct_ZoneOut.AddNode(680, 250);
             duct_ZoneOut = system.AddDuct(sprayHumidifier, 1, junction_Return, 1);
             duct_ZoneOut.AddNode(250, 250);
 
             system.AddDuct(junction_Return, 1, desiccantWheel, 2);
             system.AddDuct(desiccantWheel, 2, fan_Return, 1);
-            system.AddDuct(fan_Return, 1, junction_ExhaustAir, 1);
+            //system.AddDuct(fan_Return, 1, junction_ExhaustAir, 1);
 
             TPD.Controller controller_HeatingCoilController = system.AddController();
             controller_HeatingCoilController.Name = "Heating Coil Controller";
