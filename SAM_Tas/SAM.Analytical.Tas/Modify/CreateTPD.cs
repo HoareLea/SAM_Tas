@@ -1622,7 +1622,7 @@ namespace SAM.Analytical.Tas
 
             system.AddDuct(junction_Return, 1, desiccantWheel, 2);
             system.AddDuct(desiccantWheel, 2, fan_Return, 1);
-            //system.AddDuct(fan_Return, 1, junction_ExhaustAir, 1);
+            system.AddDuct(fan_Return, 1, junction_ExhaustAir, 1);
 
             TPD.Controller controller_HeatingCoilController = system.AddController();
             controller_HeatingCoilController.Name = "Heating Coil Controller";
