@@ -1528,7 +1528,7 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable_FreshAir.AddPoint(100, 100);
 
             dynamic sprayHumidifier = system.AddSprayHumidifier();
-            sprayHumidifier.SetPosition(80, 190);
+            sprayHumidifier.SetPosition(600, 240);
 
             dynamic fan_Return = system.AddFan();
             fan_Return.name = "Return Fan";
@@ -1542,7 +1542,7 @@ namespace SAM.Analytical.Tas
             fan_Return.SetSchedule(plantSchedule_Occupancy);
             fan_Return.SetDirection(TPD.tpdDirection.tpdRightLeft);
             fan_Return.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
-            fan_Return.SetPosition(600, 240);
+            fan_Return.SetPosition(80, 190);
 
             dynamic profileDataModifierTable_Return = fan_Return.PartLoad.AddModifierTable();
             profileDataModifierTable_Return.Name = "Fan Part Load Curve";
