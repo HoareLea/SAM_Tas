@@ -1510,7 +1510,7 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
-                Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil, out bool chilledBeam);
+                Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
                 if(radiator)
                 {
                     dynamic radiator_Group = systemZone_Group.AddRadiator();
@@ -1523,16 +1523,28 @@ namespace SAM.Analytical.Tas
                     radiator_Group.SetHeatingGroup(heatingGroup);
                 }
 
-                if(chilledBeam)
+                if(chilledBeam_Heating || chilledBeam_Cooling)
                 {
                     dynamic chilledBeam_Group = systemZone_Group.AddChilledBeam();
                     chilledBeam_Group.Name = "Chilled Beam";
                     chilledBeam_Group.Description = "CHB";
                     chilledBeam_Group.SetSchedule(plantSchedule_System);
-                    chilledBeam_Group.SetCoolingGroup(coolingGroup);
-                    chilledBeam_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                    chilledBeam_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
-                    chilledBeam_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+
+                    if(chilledBeam_Cooling)
+                    {
+                        chilledBeam_Group.SetCoolingGroup(coolingGroup);
+                        chilledBeam_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        chilledBeam_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
+                        chilledBeam_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    }
+
+                    if(chilledBeam_Heating)
+                    {
+                        chilledBeam_Group.SetHeatingGroup(heatingGroup);
+                        chilledBeam_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        chilledBeam_Group.HeatingDuty.SizeFraction = 1.15;//per AHRAE
+                        chilledBeam_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                    }
                 }
 
                 if (fanCoil_Heating || fanCoil_Cooling)
