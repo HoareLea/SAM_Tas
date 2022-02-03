@@ -42,19 +42,62 @@ namespace SAM.Analytical.Tas
 
                     TPD.TSDData tSDData = energyCentre.GetTSDData(1);
 
-                    Dictionary<string, List<TPD.ZoneLoad>> dictionary = new Dictionary<string, List<TPD.ZoneLoad>>();
-                    for (int j = 1; j <= tSDData.GetZoneLoadGroupCount(); j++)
+
+                    Dictionary<string, Tuple<List<TPD.ZoneLoad>, CoolingSystem, HeatingSystem, VentilationSystem>> dictionary = new Dictionary<string, Tuple<List<TPD.ZoneLoad>, CoolingSystem, HeatingSystem, VentilationSystem>>();
+
+                    if (analyticalModel != null)
                     {
-                        TPD.ZoneLoadGroup zoneLoadGroup = tSDData.GetZoneLoadGroup(j);
-                        if (zoneLoadGroup == null)
+                        List<Space> spaces = analyticalModel.GetSpaces();
+
+                        for (int j = 1; j <= tSDData.GetZoneLoadCount(); j++)
                         {
-                            continue;
+                            TPD.ZoneLoad zoneLoad = tSDData.GetZoneLoad(j);
+
+                            Space space = spaces.Find(x => x.Name == zoneLoad.Name);
+                            if(space == null)
+                            {
+                                continue;
+                            }
+
+                            CoolingSystem coolingSystem = analyticalModel.GetRelatedObjects<CoolingSystem>(space).FirstOrDefault();
+                            HeatingSystem heatingSystem = analyticalModel.GetRelatedObjects<HeatingSystem>(space).FirstOrDefault();
+                            VentilationSystem ventilationSystem = analyticalModel.GetRelatedObjects<VentilationSystem>(space).FirstOrDefault();
+
+                            List<string> names = new List<string>() {ventilationSystem?.FullName, heatingSystem?.FullName, coolingSystem?.FullName };
+                            names.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+                            string name = string.Join(" : ", names);
+
+                            if (string.IsNullOrWhiteSpace(name))
+                            {
+                                continue;
+                            }
+
+                            if (!dictionary.TryGetValue(name, out Tuple<List<TPD.ZoneLoad>, CoolingSystem, HeatingSystem, VentilationSystem> zoneLoads))
+                            {
+                                zoneLoads = new Tuple<List<TPD.ZoneLoad>, CoolingSystem, HeatingSystem, VentilationSystem>(new List<TPD.ZoneLoad>(), coolingSystem, heatingSystem, ventilationSystem);
+                                dictionary[name] = zoneLoads;
+                            }
+
+                            zoneLoads.Item1.Add(zoneLoad);
                         }
 
-                        dictionary[zoneLoadGroup.Name] = new List<TPD.ZoneLoad>();
-                        for (int k = 1; k <= zoneLoadGroup.GetZoneLoadCount(); k++)
+                    }
+                    else
+                    {
+                        for (int j = 1; j <= tSDData.GetZoneLoadGroupCount(); j++)
                         {
-                            dictionary[zoneLoadGroup.Name].Add(zoneLoadGroup.GetZoneLoad(k));
+                            TPD.ZoneLoadGroup zoneLoadGroup = tSDData.GetZoneLoadGroup(j);
+                            if (zoneLoadGroup == null)
+                            {
+                                continue;
+                            }
+
+                            dictionary[zoneLoadGroup.Name] = new Tuple<List<TPD.ZoneLoad>, CoolingSystem, HeatingSystem, VentilationSystem>(new List<TPD.ZoneLoad>(), null, null, null);
+                            for (int k = 1; k <= zoneLoadGroup.GetZoneLoadCount(); k++)
+                            {
+                                dictionary[zoneLoadGroup.Name].Item1.Add(zoneLoadGroup.GetZoneLoad(k));
+                            }
                         }
                     }
 
@@ -369,9 +412,9 @@ namespace SAM.Analytical.Tas
                         plantController_Cooling.AddDayType(plantDayType);
                     }
 
-                    foreach (KeyValuePair<string, List<TPD.ZoneLoad>> keyValuePair in dictionary)
+                    foreach (KeyValuePair<string, Tuple<List<TPD.ZoneLoad>, CoolingSystem, HeatingSystem, VentilationSystem>> keyValuePair in dictionary)
                     {
-                        CreateTPD(energyCentre, keyValuePair.Key, keyValuePair.Value);
+                        CreateTPD(energyCentre, keyValuePair.Key, keyValuePair.Value.Item1, keyValuePair.Value.Item4, keyValuePair.Value.Item3, keyValuePair.Value.Item2);
                     }
 
                     plantRoom.SimulateEx(1, 8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)TPD.tpdSimulationData.tpdSimulationDataLoad + (int)TPD.tpdSimulationData.tpdSimulationDataPipe, 0, 0);
@@ -459,37 +502,50 @@ namespace SAM.Analytical.Tas
 
         }
 
-        private static void CreateTPD(this TPD.EnergyCentre energyCentre, string name, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        private static void CreateTPD(this TPD.EnergyCentre energyCentre, string name, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             if(string.IsNullOrWhiteSpace(name) || energyCentre == null || zoneLoads == null || zoneLoads.Count() == 0)
             {
                 return;
             }
 
-            switch(name)
+            if(ventilationSystem == null && heatingSystem == null && coolingSystem == null)
             {
-                case "UV":
-                    CreateTPD_UV(energyCentre, zoneLoads);
-                    break;
+                switch (name)
+                {
+                    case "UV":
+                        CreateTPD_UV(energyCentre, zoneLoads);
+                        break;
 
-                case "NV":
-                    CreateTPD_NV(energyCentre, zoneLoads);
-                    break;
+                    case "NV":
+                        CreateTPD_NV(energyCentre, zoneLoads);
+                        break;
 
-                case "EOL":
-                    CreateTPD_EOL(energyCentre, zoneLoads);
-                    break;
+                    case "EOL":
+                        CreateTPD_EOL(energyCentre, zoneLoads);
+                        break;
 
-                case "EOC":
-                    CreateTPD_EOC(energyCentre, zoneLoads);
-                    break;
+                    case "EOC":
+                        CreateTPD_EOC(energyCentre, zoneLoads);
+                        break;
 
-                case "CAV":
-                    //CreateTPD_AHU(energyCentre, zoneLoads);
-                    //CreateTPD_CAV_FreshAir(energyCentre, zoneLoads);
-                    CreateTPD_CAV_FreshAir_Special(energyCentre, zoneLoads);
-                    break;
+                    case "CAV":
+                        //CreateTPD_AHU(energyCentre, zoneLoads);
+                        CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, null, null, null);
+                        //CreateTPD_CAV_FreshAir_Special(energyCentre, zoneLoads);
+                        break;
+                }
             }
+
+            if(ventilationSystem != null)
+            {
+                if(ventilationSystem.Name == "CAV")
+                {
+                    CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                }
+            }
+
+
         }
 
         private static void CreateTPD_UV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
@@ -1210,7 +1266,7 @@ namespace SAM.Analytical.Tas
             }
         }
 
-        private static void CreateTPD_CAV_FreshAir(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        private static void CreateTPD_CAV_FreshAir(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
@@ -1441,15 +1497,29 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
-                dynamic radiator_Group = systemZone_Group.AddRadiator();
-                radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                radiator_Group.Duty.SizeFraction = 1;
-
-                radiator_Group.SetHeatingGroup(heatingGroup);
-                for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
+                Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil, out bool dXCoil, out bool chilledBeam);
+                if(radiator)
                 {
-                    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
+                    dynamic radiator_Group = systemZone_Group.AddRadiator();
+                    radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    radiator_Group.Duty.SizeFraction = 1;
+
+                    radiator_Group.SetHeatingGroup(heatingGroup);
+                    for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
+                    {
+                        radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
+                    }
+                }
+
+                if(chilledBeam)
+                {
+                    dynamic chilledBeam_Group = systemZone_Group.AddChilledBeam();
+                }
+
+                if (fanCoil)
+                {
+                    dynamic fanCoilUnit_Group = systemZone_Group.AddFanCoilUnit();
                 }
 
                 index++;

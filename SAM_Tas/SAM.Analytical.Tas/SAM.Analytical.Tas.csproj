@@ -155,6 +155,7 @@
     <Compile Include="Modify\AddResults.cs" />
     <Compile Include="Create\SpaceSimulationResult.cs" />
     <Compile Include="Modify\UpdateSizingFactors.cs" />
+    <Compile Include="Query\ComponentTypes.cs" />
     <Compile Include="Query\DHWGroup.cs" />
     <Compile Include="Query\Component.cs" />
     <Compile Include="Query\MultiBoiler.cs" />
