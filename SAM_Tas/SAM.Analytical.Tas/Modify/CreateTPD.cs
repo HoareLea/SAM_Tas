@@ -1515,12 +1515,11 @@ namespace SAM.Analytical.Tas
                 {
                     dynamic radiator_Group = systemZone_Group.AddRadiator();
                     radiator_Group.Name = "RAD";
-                    //Add Schedule = 'System Schedule'
+                    radiator_Group.SetSchedule(plantSchedule_System);
                     radiator_Group.Description = "Radiator";
                     radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(1));
                     radiator_Group.Duty.SizeFraction = 1.25;//per AHRAE
-
                     radiator_Group.SetHeatingGroup(heatingGroup);
                 }
 
@@ -1529,7 +1528,7 @@ namespace SAM.Analytical.Tas
                     dynamic chilledBeam_Group = systemZone_Group.AddChilledBeam();
                     chilledBeam_Group.Name = "Chilled Beam";
                     chilledBeam_Group.Description = "CHB";
-                    //Add Schedule = 'System Schedule'
+                    chilledBeam_Group.SetSchedule(plantSchedule_System);
                     chilledBeam_Group.SetCoolingGroup(coolingGroup);
                     chilledBeam_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     chilledBeam_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
@@ -1539,7 +1538,7 @@ namespace SAM.Analytical.Tas
                 if (fanCoil_Heating || fanCoil_Cooling)
                 {
                     dynamic fanCoilUnit_Group = systemZone_Group.AddFanCoilUnit();
-                    //Add Schedule = 'System Schedule'
+                    fanCoilUnit_Group.SetSchedule(plantSchedule_System);
                     fanCoilUnit_Group.Name = "FanCoil Unit";
                     fanCoilUnit_Group.Description = "FCU";
                     fanCoilUnit_Group.SetElectricalGroup1(electricalGroup_FanCoilUnits);
@@ -1558,6 +1557,7 @@ namespace SAM.Analytical.Tas
                     if(fanCoil_Cooling)
                     {
                         fanCoilUnit_Group.SetCoolingGroup(coolingGroup);
+                        fanCoilUnit_Group.SetSchedule(plantSchedule_System);
                         fanCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                         fanCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
                         fanCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
