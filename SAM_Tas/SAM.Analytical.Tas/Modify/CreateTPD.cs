@@ -1526,6 +1526,7 @@ namespace SAM.Analytical.Tas
                 if(chilledBeam_Heating || chilledBeam_Cooling)
                 {
                     dynamic chilledBeam_Group = systemZone_Group.AddChilledBeam();
+                    chilledBeam_Group.Flags = chilledBeam_Heating ? 1 : 0;
                     chilledBeam_Group.Name = "Chilled Beam";
                     chilledBeam_Group.Description = "CHB";
                     chilledBeam_Group.SetSchedule(plantSchedule_System);
