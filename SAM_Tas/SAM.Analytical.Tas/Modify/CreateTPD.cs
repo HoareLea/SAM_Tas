@@ -63,14 +63,10 @@ namespace SAM.Analytical.Tas
                             HeatingSystem heatingSystem = analyticalModel.GetRelatedObjects<HeatingSystem>(space).FirstOrDefault();
                             VentilationSystem ventilationSystem = analyticalModel.GetRelatedObjects<VentilationSystem>(space).FirstOrDefault();
 
-                            List<string> names = new List<string>() {ventilationSystem?.FullName, heatingSystem?.FullName, coolingSystem?.FullName };
-                            names.RemoveAll(x => string.IsNullOrWhiteSpace(x));
-
-                            string name = string.Join(" : ", names);
-
-                            if (string.IsNullOrWhiteSpace(name))
+                            string name = ventilationSystem?.Name;
+                            if(name == null)
                             {
-                                continue;
+                                name = string.Empty;
                             }
 
                             if (!dictionary.TryGetValue(name, out Tuple<List<TPD.ZoneLoad>, CoolingSystem, HeatingSystem, VentilationSystem> zoneLoads))
@@ -551,41 +547,31 @@ namespace SAM.Analytical.Tas
                 switch (name)
                 {
                     case "UV":
-                        CreateTPD_UV(energyCentre, zoneLoads);
+                        CreateTPD_UV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
                         break;
 
                     case "NV":
-                        CreateTPD_NV(energyCentre, zoneLoads);
+                        CreateTPD_NV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
                         break;
 
                     case "EOL":
-                        CreateTPD_EOL(energyCentre, zoneLoads);
+                        CreateTPD_EOL(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
                         break;
 
                     case "EOC":
-                        CreateTPD_EOC(energyCentre, zoneLoads);
+                        CreateTPD_EOC(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
                         break;
 
                     case "CAV":
-                        //CreateTPD_AHU(energyCentre, zoneLoads);
-                        CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, null, null, null);
-                        //CreateTPD_CAV_FreshAir_Special(energyCentre, zoneLoads);
+                        //CreateTPD_AHU(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                        CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                        //CreateTPD_CAV_FreshAir_Special(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
                         break;
                 }
             }
-
-            if(ventilationSystem != null)
-            {
-                if(ventilationSystem.Name == "CAV")
-                {
-                    CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                }
-            }
-
-
         }
 
-        private static void CreateTPD_UV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        private static void CreateTPD_UV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if(plantRoom == null)
@@ -655,12 +641,14 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.SetDHWGroup(dHWGroup);
                 }
 
+                AddComponents(systemZone_Group as TPD.SystemZone, energyCentre, heatingSystem, coolingSystem);
+
                 i += 3;
             }
 
         }
 
-        private static void CreateTPD_NV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        private static void CreateTPD_NV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
@@ -673,7 +661,6 @@ namespace SAM.Analytical.Tas
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
 
-            dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
             TPD.System system = plantRoom.AddSystem();
@@ -718,22 +705,13 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.SetDHWGroup(dHWGroup);
                 }
 
-                dynamic radiator = systemZone_Group.AddRadiator();
-                radiator.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                radiator.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                radiator.Duty.SizeFraction = 1;
-
-                radiator.SetHeatingGroup(heatingGroup);
-                for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
-                {
-                    radiator.Duty.AddDesignCondition(energyCentre.GetDesignCondition(j));
-                }
+                AddComponents(systemZone_Group as TPD.SystemZone, energyCentre, heatingSystem, coolingSystem);
 
                 i++;
             }
         }
 
-        private static void CreateTPD_EOL(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        private static void CreateTPD_EOL(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             Point offset = new Point(0, 0);
 
@@ -863,26 +841,13 @@ namespace SAM.Analytical.Tas
                 TPD.Damper damper_Zone = componentGroup.GetComponent(i + 3) as TPD.Damper;
                 damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
-                TPD.Radiator radiator_Zone = systemZone_Group.AddRadiator();
-                radiator_Zone.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                radiator_Zone.Duty.SizeFraction = 1;
-
-                if (heatingGroup != null)
-                {
-                    (radiator_Zone as dynamic).SetHeatingGroup(heatingGroup);
-                }
-
-                for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
-                {
-                    radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(j));
-                }
+                AddComponents(systemZone_Group, energyCentre, heatingSystem, coolingSystem);
 
                 i += 2;
             }
         }
 
-        private static void CreateTPD_EOC(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        private static void CreateTPD_EOC(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             Point offset = new Point(0, 0);
 
@@ -1003,27 +968,14 @@ namespace SAM.Analytical.Tas
                 TPD.Damper damper_Zone = componentGroup.GetComponent(i + 3) as TPD.Damper;
                 damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
-                TPD.Radiator radiator_Zone = systemZone_Group.AddRadiator();
-                radiator_Zone.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                radiator_Zone.Duty.SizeFraction = 1;
-
-                if (heatingGroup != null)
-                {
-                    (radiator_Zone as dynamic).SetHeatingGroup(heatingGroup);
-                }
-
-                for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
-                {
-                    radiator_Zone.Duty.AddDesignCondition(energyCentre.GetDesignCondition(j));
-                }
+                AddComponents(systemZone_Group, energyCentre, heatingSystem, coolingSystem);
 
                 i += 2;
             }
 
         }
 
-        private static void CreateTPD_AHU(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        private static void CreateTPD_AHU(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
@@ -1288,16 +1240,7 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
-                dynamic radiator_Group = systemZone_Group.AddRadiator();
-                radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                radiator_Group.Duty.SizeFraction = 1;
-
-                radiator_Group.SetHeatingGroup(heatingGroup);
-                for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
-                {
-                    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
-                }
+                AddComponents(systemZone_Group as TPD.SystemZone, energyCentre, heatingSystem, coolingSystem);
 
                 index++;
             }
@@ -1312,19 +1255,14 @@ namespace SAM.Analytical.Tas
             }
 
             dynamic plantSchedule_Occupancy = energyCentre.PlantSchedule("Occupancy Schedule");
-            dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
 
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
-            dynamic electricalGroup_FanCoilUnits = plantRoom.ElectricalGroup("Electrical Group - FanCoil Units");
-            dynamic electricalGroup_DXCoilUnits = plantRoom.ElectricalGroup("Electrical Group - DXCoil Units");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
 
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
             dynamic coolingGroup = plantRoom.CoolingGroup("Cooling Circuit Group");
-
-            TPD.RefrigerantGroup refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
 
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
@@ -1538,143 +1476,13 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
-                Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil_Heating, out bool dXCoil_Cooling, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
-                if(radiator)
-                {
-                    dynamic radiator_Group = systemZone_Group.AddRadiator();
-                    radiator_Group.Name = "RAD";
-                    radiator_Group.SetSchedule(plantSchedule_System);
-                    radiator_Group.Description = "Radiator";
-                    radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(1));
-                    radiator_Group.Duty.SizeFraction = 1.25;//per AHRAE
-                    radiator_Group.SetHeatingGroup(heatingGroup);
-                }
-
-                if(chilledBeam_Heating || chilledBeam_Cooling)
-                {
-                    dynamic chilledBeam_Group = systemZone_Group.AddChilledBeam();
-                    chilledBeam_Group.Flags = chilledBeam_Heating ? 1 : 0;
-                    chilledBeam_Group.Name = "Chilled Beam";
-                    chilledBeam_Group.Description = "CHB";
-                    chilledBeam_Group.SetSchedule(plantSchedule_System);
-
-                    if(chilledBeam_Cooling)
-                    {
-                        chilledBeam_Group.SetCoolingGroup(coolingGroup);
-                        chilledBeam_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        chilledBeam_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
-                        chilledBeam_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                    }
-
-                    if(chilledBeam_Heating)
-                    {
-                        chilledBeam_Group.SetHeatingGroup(heatingGroup);
-                        chilledBeam_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        chilledBeam_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
-                        chilledBeam_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
-                    }
-                }
-
-                if (fanCoil_Heating || fanCoil_Cooling)
-                {
-                    dynamic fanCoilUnit_Group = systemZone_Group.AddFanCoilUnit();
-                    fanCoilUnit_Group.SetSchedule(plantSchedule_System);
-                    fanCoilUnit_Group.Name = "FanCoil Unit";
-                    fanCoilUnit_Group.Description = "FCU";
-                    fanCoilUnit_Group.SetElectricalGroup1(electricalGroup_FanCoilUnits);
-                    fanCoilUnit_Group.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateSized;
-                    
-                    fanCoilUnit_Group.OverallEfficiency.Value = 0.9;
-                    fanCoilUnit_Group.HeatGainFactor = 0.9;
-                    fanCoilUnit_Group.Pressure = 150;
-
-                    fanCoilUnit_Group.DesignFlowRate.SizeFraction = 1.15;//per AHRAE
-                    for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
-                    {
-                        fanCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                    }
-
-                    if(fanCoil_Cooling)
-                    {
-                        fanCoilUnit_Group.SetCoolingGroup(coolingGroup);
-                        fanCoilUnit_Group.SetSchedule(plantSchedule_System);
-                        fanCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        fanCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
-                        fanCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                    }
-                    else
-                    {
-                        fanCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
-                        fanCoilUnit_Group.CoolingDuty.Value = 0;
-                    }
-
-                    if (fanCoil_Heating)
-                    {
-                        fanCoilUnit_Group.SetHeatingGroup(heatingGroup);
-                        fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        fanCoilUnit_Group.HeatingDuty.SizeFraction = 1.15;//per AHRAE
-                        fanCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
-                    }
-                    else
-                    {
-                        fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
-                        fanCoilUnit_Group.HeatingDuty.Value = 0;
-                    }
-                }
-
-                if (dXCoil_Heating || dXCoil_Cooling)
-                {
-                    dynamic dXCoilUnit_Group = systemZone_Group.AddDXCoilUnit();
-                    dXCoilUnit_Group.SetSchedule(plantSchedule_System);
-                    dXCoilUnit_Group.Name = "DXCoil Unit";
-                    dXCoilUnit_Group.Description = "VRV";
-                    dXCoilUnit_Group.SetElectricalGroup1(electricalGroup_DXCoilUnits);
-                    dXCoilUnit_Group.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateSized;
-
-                    dXCoilUnit_Group.OverallEfficiency.Value = 0.9;
-                    dXCoilUnit_Group.HeatGainFactor = 0.9;
-                    dXCoilUnit_Group.Pressure = 150;
-                    //dXCoilUnit_Group.Refrigerant = refrigerantGroup;
-                    dXCoilUnit_Group.SetRefrigerantGroup(refrigerantGroup);
-
-                    dXCoilUnit_Group.DesignFlowRate.SizeFraction = 1.15;//per AHRAE
-                    dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(1));
-                    dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
-
-                    if (dXCoil_Cooling)
-                    {
-                        dXCoilUnit_Group.SetCoolingGroup(coolingGroup);
-                        dXCoilUnit_Group.SetSchedule(plantSchedule_System);
-                        dXCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        dXCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
-                        dXCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                    }
-                    else
-                    {
-                        dXCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
-                        dXCoilUnit_Group.CoolingDuty.Value = 0;
-                    }
-
-                    if (dXCoil_Heating)
-                    {
-                        dXCoilUnit_Group.SetHeatingGroup(heatingGroup);
-                        dXCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        dXCoilUnit_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
-                        dXCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
-                    }
-                    else
-                    {
-                        dXCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
-                        dXCoilUnit_Group.HeatingDuty.Value = 0;
-                    }
-                }
+                AddComponents(systemZone_Group as TPD.SystemZone, energyCentre, heatingSystem, coolingSystem);
 
                 index++;
             }
         }
 
-        private static void CreateTPD_CAV_FreshAir_Special(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads)
+        private static void CreateTPD_CAV_FreshAir_Special(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
@@ -1683,7 +1491,6 @@ namespace SAM.Analytical.Tas
             }
 
             dynamic plantSchedule_Occupancy = energyCentre.PlantSchedule("Occupancy Schedule");
-            dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
 
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
@@ -1917,16 +1724,7 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
-                dynamic radiator_Group = systemZone_Group.AddRadiator();
-                radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                radiator_Group.Duty.SizeFraction = 1;
-
-                radiator_Group.SetHeatingGroup(heatingGroup);
-                for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
-                {
-                    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
-                }
+                AddComponents(systemZone_Group as TPD.SystemZone, energyCentre, heatingSystem, coolingSystem);
 
                 index++;
             }
