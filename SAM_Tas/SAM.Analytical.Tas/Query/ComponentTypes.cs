@@ -2,12 +2,13 @@
 {
     public static partial class Query
     {
-        public static void ComponentTypes(HeatingSystem heatingSystem, CoolingSystem coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil, out bool chilledBeam_Heating, out bool chilledBeam_Cooling)
+        public static void ComponentTypes(HeatingSystem heatingSystem, CoolingSystem coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil_Heating, out bool dXCoil_Cooling, out bool chilledBeam_Heating, out bool chilledBeam_Cooling)
         {
             radiator = false;
             fanCoil_Heating = false;
             fanCoil_Cooling = false;
-            dXCoil = false;
+            dXCoil_Heating = false;
+            dXCoil_Cooling = false;
             chilledBeam_Heating = false;
             chilledBeam_Cooling = false;
 
@@ -30,6 +31,10 @@
                 {
                     chilledBeam_Heating = true;
                 }
+                else if (heatingSystem.Name == "VRV")
+                {
+                    dXCoil_Heating = true;
+                }
             }
 
             if(coolingSystem != null)
@@ -41,6 +46,10 @@
                 else if (coolingSystem.Name == "TRC" || coolingSystem.Name == "FCU")
                 {
                     fanCoil_Cooling = true;
+                }
+                else if (coolingSystem.Name == "VRV")
+                {
+                    dXCoil_Cooling = true;
                 }
             }
 

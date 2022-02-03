@@ -101,6 +101,15 @@ namespace SAM.Analytical.Tas
                         }
                     }
 
+                    //Heating Refrigerant Groups
+
+                    dynamic refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
+                    if (refrigerantGroup == null)
+                    {
+                        refrigerantGroup = plantRoom.AddRefrigerantGroup();
+                        refrigerantGroup.Name = "DXCoil Units Refrigerant Group";
+                    }
+
                     //Heating Groups
 
                     dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
@@ -172,6 +181,17 @@ namespace SAM.Analytical.Tas
                         electricalGroup_Fans.Name = "Electrical Group - Fans";
                         electricalGroup_Fans.SetFuelSource(1, fuelSource_Electrical);
                         electricalGroup_Fans.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupFans;
+                    }
+
+                    //DXCoilUnits
+                    dynamic electricalGroup_DXCoilUnits = plantRoom.ElectricalGroup("Electrical Group - DXCoil Units");
+                    if (electricalGroup_DXCoilUnits == null)
+                    {
+                        electricalGroup_DXCoilUnits = plantRoom.AddElectricalGroup();
+                        electricalGroup_DXCoilUnits.SetPosition(820, 0);
+                        electricalGroup_DXCoilUnits.Name = "Electrical Group - DXCoil Units";
+                        electricalGroup_DXCoilUnits.SetFuelSource(1, fuelSource_Electrical);
+                        electricalGroup_DXCoilUnits.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupEquipment;
                     }
 
                     //Humidifiers
@@ -411,6 +431,11 @@ namespace SAM.Analytical.Tas
                     plantController_Cooling.SetPosition(180, 380);
                     plantController_Cooling.SensorArc1 = plantSensorArc_Cooling;
                     SetWaterSideController(plantController_Cooling, WaterSideControllerSetup.Load, 0.1, 0.1);
+
+                    dynamic airSourceHeatPump = plantRoom.AddAirSourceHeatPump();
+                    airSourceHeatPump.Name = "DXCoil Units Air Source Heat Pump";
+                    plantRoom.AddPipe(refrigerantGroup, 1, airSourceHeatPump, 1);
+                    plantRoom.AddPipe(airSourceHeatPump, 1, refrigerantGroup, 1);
 
                     for (int j = 1; j <= energyCentre.GetCalendar().GetDayTypeCount(); j++)
                     {
@@ -1291,12 +1316,15 @@ namespace SAM.Analytical.Tas
 
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
             dynamic electricalGroup_FanCoilUnits = plantRoom.ElectricalGroup("Electrical Group - FanCoil Units");
+            dynamic electricalGroup_DXCoilUnits = plantRoom.ElectricalGroup("Electrical Group - DXCoil Units");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
 
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
             dynamic coolingGroup = plantRoom.CoolingGroup("Cooling Circuit Group");
+
+            TPD.RefrigerantGroup refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
 
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
@@ -1510,7 +1538,7 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
-                Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
+                Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil_Heating, out bool dXCoil_Cooling, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
                 if(radiator)
                 {
                     dynamic radiator_Group = systemZone_Group.AddRadiator();
@@ -1592,6 +1620,55 @@ namespace SAM.Analytical.Tas
                     {
                         fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
                         fanCoilUnit_Group.HeatingDuty.Value = 0;
+                    }
+                }
+
+                if (dXCoil_Heating || dXCoil_Cooling)
+                {
+                    dynamic dXCoilUnit_Group = systemZone_Group.AddDXCoilUnit();
+                    dXCoilUnit_Group.SetSchedule(plantSchedule_System);
+                    dXCoilUnit_Group.Name = "DXCoil Unit";
+                    dXCoilUnit_Group.Description = "VRV";
+                    dXCoilUnit_Group.SetElectricalGroup1(electricalGroup_DXCoilUnits);
+                    dXCoilUnit_Group.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateSized;
+
+                    dXCoilUnit_Group.OverallEfficiency.Value = 0.9;
+                    dXCoilUnit_Group.HeatGainFactor = 0.9;
+                    dXCoilUnit_Group.Pressure = 150;
+                    dXCoilUnit_Group.Refrigerant = refrigerantGroup;
+                    // dXCoilUnit_Group.SetRefrigerantGroup(refrigerantGroup);
+
+                    dXCoilUnit_Group.DesignFlowRate.SizeFraction = 1.15;//per AHRAE
+                    for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
+                    {
+                        dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    }
+
+                    if (dXCoil_Cooling)
+                    {
+                        dXCoilUnit_Group.SetCoolingGroup(coolingGroup);
+                        dXCoilUnit_Group.SetSchedule(plantSchedule_System);
+                        dXCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        dXCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
+                        dXCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    }
+                    else
+                    {
+                        dXCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
+                        dXCoilUnit_Group.CoolingDuty.Value = 0;
+                    }
+
+                    if (dXCoil_Heating)
+                    {
+                        dXCoilUnit_Group.SetHeatingGroup(heatingGroup);
+                        dXCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        dXCoilUnit_Group.HeatingDuty.SizeFraction = 1.15;//per AHRAE
+                        dXCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                    }
+                    else
+                    {
+                        dXCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
+                        dXCoilUnit_Group.HeatingDuty.Value = 0;
                     }
                 }
 
