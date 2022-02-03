@@ -1510,7 +1510,7 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
-                Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil, out bool dXCoil, out bool chilledBeam);
+                Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil, out bool chilledBeam);
                 if(radiator)
                 {
                     dynamic radiator_Group = systemZone_Group.AddRadiator();
@@ -1521,25 +1521,20 @@ namespace SAM.Analytical.Tas
                     radiator_Group.Duty.SizeFraction = 1.25;//per AHRAE
 
                     radiator_Group.SetHeatingGroup(heatingGroup);
-                    //for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
-                    //{
-                    //    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
-                    //}
                 }
 
                 if(chilledBeam)
                 {
                     dynamic chilledBeam_Group = systemZone_Group.AddChilledBeam();
+                    chilledBeam_Group.Name = "Chilled Beam";
                     chilledBeam_Group.Description = "CHB";
                 }
 
-                if (fanCoil)
+                if (fanCoil_Heating || fanCoil_Cooling)
                 {
                     dynamic fanCoilUnit_Group = systemZone_Group.AddFanCoilUnit();
-                    fanCoilUnit_Group.Name = "FCU";
+                    fanCoilUnit_Group.Name = "FanCoil Unit";
                     fanCoilUnit_Group.Description = "FCU";
-                    fanCoilUnit_Group.SetCoolingGroup(coolingGroup);
-                    fanCoilUnit_Group.SetHeatingGroup(heatingGroup);
                     fanCoilUnit_Group.SetElectricalGroup1(electricalGroup_FanCoilUnits);
                     fanCoilUnit_Group.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateSized;
                     
@@ -1552,13 +1547,32 @@ namespace SAM.Analytical.Tas
                     {
                         fanCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
                     }
-                    
-                    fanCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                    fanCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
-                    fanCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
 
-                    fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
-                    fanCoilUnit_Group.HeatingDuty.Value = 0;
+                    if(fanCoil_Cooling)
+                    {
+                        fanCoilUnit_Group.SetCoolingGroup(coolingGroup);
+                        fanCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        fanCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
+                        fanCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    }
+                    else
+                    {
+                        fanCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
+                        fanCoilUnit_Group.CoolingDuty.Value = 0;
+                    }
+
+                    if (fanCoil_Heating)
+                    {
+                        fanCoilUnit_Group.SetHeatingGroup(heatingGroup);
+                        fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                        fanCoilUnit_Group.HeatingDuty.SizeFraction = 1.15;//per AHRAE
+                        fanCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                    }
+                    else
+                    {
+                        fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
+                        fanCoilUnit_Group.HeatingDuty.Value = 0;
+                    }
                 }
 
                 index++;
