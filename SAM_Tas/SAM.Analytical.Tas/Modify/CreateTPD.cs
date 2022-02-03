@@ -1635,14 +1635,12 @@ namespace SAM.Analytical.Tas
                     dXCoilUnit_Group.OverallEfficiency.Value = 0.9;
                     dXCoilUnit_Group.HeatGainFactor = 0.9;
                     dXCoilUnit_Group.Pressure = 150;
-                    dXCoilUnit_Group.Refrigerant = refrigerantGroup;
-                    // dXCoilUnit_Group.SetRefrigerantGroup(refrigerantGroup);
+                    //dXCoilUnit_Group.Refrigerant = refrigerantGroup;
+                    dXCoilUnit_Group.SetRefrigerantGroup(refrigerantGroup);
 
                     dXCoilUnit_Group.DesignFlowRate.SizeFraction = 1.15;//per AHRAE
-                    for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
-                    {
-                        dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                    }
+                    dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                    dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
 
                     if (dXCoil_Cooling)
                     {
@@ -1662,7 +1660,7 @@ namespace SAM.Analytical.Tas
                     {
                         dXCoilUnit_Group.SetHeatingGroup(heatingGroup);
                         dXCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        dXCoilUnit_Group.HeatingDuty.SizeFraction = 1.15;//per AHRAE
+                        dXCoilUnit_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
                         dXCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
                     }
                     else
