@@ -1613,6 +1613,10 @@ namespace SAM.Analytical.Tas
             sprayHumidifier.Setpoint.Value = 90;
             sprayHumidifier.SetElectricalGroup1(electricalGroup_Humidifiers);
             sprayHumidifier.SetDirection(TPD.tpdDirection.tpdRightLeft);
+            sprayHumidifier.ElectricalLoad.Value = 100;
+            sprayHumidifier.WaterFlowCapacity.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+            sprayHumidifier.WaterFlowCapacity.AddDesignCondition(energyCentre.GetDesignCondition(3));//change from 1 to 3 for annual dsign condition
+            sprayHumidifier.WaterFlowCapacity.SizeFraction = 1.15; //defult ASHRAE oversizing factors
             sprayHumidifier.SetPosition(600, 230);
 
             dynamic fan_Return = system.AddFan();
