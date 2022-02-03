@@ -104,6 +104,7 @@ namespace SAM.Analytical.Tas
                     {
                         refrigerantGroup = plantRoom.AddRefrigerantGroup();
                         refrigerantGroup.Name = "DXCoil Units Refrigerant Group";
+                        refrigerantGroup.SetPosition(200, 440);
                     }
 
                     //Heating Groups
@@ -429,6 +430,8 @@ namespace SAM.Analytical.Tas
                     SetWaterSideController(plantController_Cooling, WaterSideControllerSetup.Load, 0.1, 0.1);
 
                     dynamic airSourceHeatPump = plantRoom.AddAirSourceHeatPump();
+                    airSourceHeatPump.SetPosition(0, 440);
+                    airSourceHeatPump.SetFuelSource(1, fuelSource_Electrical);
                     airSourceHeatPump.Name = "DXCoil Units Air Source Heat Pump";
                     plantRoom.AddPipe(refrigerantGroup, 1, airSourceHeatPump, 1);
                     plantRoom.AddPipe(airSourceHeatPump, 1, refrigerantGroup, 1);
