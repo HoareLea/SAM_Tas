@@ -1543,7 +1543,7 @@ namespace SAM.Analytical.Tas
                     {
                         chilledBeam_Group.SetHeatingGroup(heatingGroup);
                         chilledBeam_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                        chilledBeam_Group.HeatingDuty.SizeFraction = 1.15;//per AHRAE
+                        chilledBeam_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
                         chilledBeam_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
                     }
                 }
