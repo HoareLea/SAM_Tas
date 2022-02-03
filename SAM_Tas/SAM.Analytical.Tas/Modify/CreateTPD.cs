@@ -174,7 +174,7 @@ namespace SAM.Analytical.Tas
                         electricalGroup_Fans.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupFans;
                     }
 
-                    //Fans
+                    //Humidifiers
                     dynamic electricalGroup_Humidifiers = plantRoom.ElectricalGroup("Electrical Group - Humidifiers");
                     if (electricalGroup_Humidifiers == null)
                     {
@@ -183,6 +183,17 @@ namespace SAM.Analytical.Tas
                         electricalGroup_Humidifiers.Name = "Electrical Group - Humidifiers";
                         electricalGroup_Humidifiers.SetFuelSource(1, fuelSource_Electrical);
                         electricalGroup_Humidifiers.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupEquipment;
+                    }
+
+                    //FanCoilUnits
+                    dynamic electricalGroup_FanCoilUnits = plantRoom.ElectricalGroup("Electrical Group - FanCoil Units");
+                    if (electricalGroup_FanCoilUnits == null)
+                    {
+                        electricalGroup_FanCoilUnits = plantRoom.AddElectricalGroup();
+                        electricalGroup_FanCoilUnits.SetPosition(740, 0);
+                        electricalGroup_FanCoilUnits.Name = "Electrical Group - FanCoil Units";
+                        electricalGroup_FanCoilUnits.SetFuelSource(1, fuelSource_Electrical);
+                        electricalGroup_FanCoilUnits.ElectricalGroupType = TPD.tpdElectricalGroupType.tpdElectricalGroupEquipment;
                     }
 
                     //Lighting
@@ -248,6 +259,7 @@ namespace SAM.Analytical.Tas
                     {
                         designConditionLoad_Annual = energyCentre.AddDesignCondition();
                         designConditionLoad_Annual.Name = "Annual Design Condition";
+                        designConditionLoad_Annual.PrecondHours = 48;
                     }
 
                     //Components
@@ -1278,6 +1290,7 @@ namespace SAM.Analytical.Tas
             dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
 
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
+            dynamic electricalGroup_FanCoilUnits = plantRoom.ElectricalGroup("Electrical Group - FanCoil Units");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
 
@@ -1501,25 +1514,51 @@ namespace SAM.Analytical.Tas
                 if(radiator)
                 {
                     dynamic radiator_Group = systemZone_Group.AddRadiator();
+                    radiator_Group.Name = "RAD";
+                    radiator_Group.Description = "Radiator";
                     radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                    radiator_Group.Duty.SizeFraction = 1;
+                    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                    radiator_Group.Duty.SizeFraction = 1.25;//per AHRAE
 
                     radiator_Group.SetHeatingGroup(heatingGroup);
-                    for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
-                    {
-                        radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
-                    }
+                    //for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
+                    //{
+                    //    radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(i));
+                    //}
                 }
 
                 if(chilledBeam)
                 {
                     dynamic chilledBeam_Group = systemZone_Group.AddChilledBeam();
+                    chilledBeam_Group.Description = "CHB";
                 }
 
                 if (fanCoil)
                 {
                     dynamic fanCoilUnit_Group = systemZone_Group.AddFanCoilUnit();
+                    fanCoilUnit_Group.Name = "FCU";
+                    fanCoilUnit_Group.Description = "FCU";
+                    fanCoilUnit_Group.SetCoolingGroup(coolingGroup);
+                    fanCoilUnit_Group.SetHeatingGroup(heatingGroup);
+                    fanCoilUnit_Group.SetElectricalGroup1(electricalGroup_FanCoilUnits);
+                    fanCoilUnit_Group.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateSized;
+                    
+                    fanCoilUnit_Group.OverallEfficiency.Value = 0.9;
+                    fanCoilUnit_Group.HeatGainFactor = 0.9;
+                    fanCoilUnit_Group.Pressure = 150;
+
+                    fanCoilUnit_Group.DesignFlowRate.SizeFraction = 1.15;//per AHRAE
+                    for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
+                    {
+                        fanCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    }
+                    
+                    fanCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
+                    fanCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
+                    fanCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+
+                    fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableValue;
+                    fanCoilUnit_Group.HeatingDuty.Value = 0;
                 }
 
                 index++;

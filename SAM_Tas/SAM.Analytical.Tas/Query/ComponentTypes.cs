@@ -36,7 +36,7 @@
                 {
                     chilledBeam = true;
                 }
-                else if (heatingSystem.Name == "TRC" || heatingSystem.Name == "FCU")
+                else if (coolingSystem.Name == "TRC" || coolingSystem.Name == "FCU")
                 {
                     fanCoil = true;
                 }
