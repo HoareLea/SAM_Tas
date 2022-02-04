@@ -837,7 +837,7 @@ namespace SAM.Analytical.Tas
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
             {
-                TPD.SystemZone systemZone_Group = componentGroup.GetComponent(i + 2) as TPD.SystemZone;
+                TPD.SystemZone systemZone_Group = componentGroup.GetComponent(i * 3) as TPD.SystemZone;
                 (systemZone_Group as dynamic).AddZoneLoad(zoneLoad);
                 systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FlowRate.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
@@ -865,12 +865,12 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
-                TPD.Damper damper_Zone = componentGroup.GetComponent(i + 3) as TPD.Damper;
+                TPD.Damper damper_Zone = componentGroup.GetComponent((i * 3) + 1) as TPD.Damper;
                 damper_Zone.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
                 AddComponents(systemZone_Group, energyCentre, heatingSystem, coolingSystem);
 
-                i += 2;
+                i++;
             }
         }
 
