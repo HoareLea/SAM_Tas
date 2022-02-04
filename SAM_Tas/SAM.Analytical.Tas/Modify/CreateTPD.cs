@@ -1415,11 +1415,11 @@ namespace SAM.Analytical.Tas
 
             dynamic junction_SystemZone_In = system.AddJunction();
             junction_SystemZone_In.Description = "System Zone In";
-            junction_SystemZone_In.SetPosition(390, 180);
+            junction_SystemZone_In.SetPosition(490, 260);
 
             dynamic junction_SystemZone_Out = system.AddJunction();
             junction_SystemZone_Out.Description = "System Zone Out";
-            junction_SystemZone_Out.SetPosition(390, 380);
+            junction_SystemZone_Out.SetPosition(690, 260);
 
             dynamic junction_Return = system.AddJunction();
             junction_Return.Name = "Junction Return";
