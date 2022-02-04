@@ -583,7 +583,7 @@ namespace SAM.Analytical.Tas
                     break;
 
                 case "VAV":
-                    CreateTPD_VAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, true);
+                    CreateTPD_VAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, false);
                     break;
             }
         }
