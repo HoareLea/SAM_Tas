@@ -566,9 +566,8 @@ namespace SAM.Analytical.Tas
                     break;
 
                 case "CAV":
-                    //CreateTPD_AHU(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, false);
-                    //CreateTPD_CAV_FreshAir_Special(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    CreateTPD_CAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    //CreateTPD_CAV_Special(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
                     break;
 
                 case "MV":
@@ -579,8 +578,12 @@ namespace SAM.Analytical.Tas
                     CreateTPD_MVRE(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
                     break;
 
+                case "DISP":
+                    CreateTPD_VAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, true);
+                    break;
+
                 case "VAV":
-                    CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, true);
+                    CreateTPD_VAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, true);
                     break;
             }
         }
@@ -989,7 +992,7 @@ namespace SAM.Analytical.Tas
 
         }
 
-        private static void CreateTPD_AHU(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
+        private static void CreateTPD_CAV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
@@ -1011,7 +1014,7 @@ namespace SAM.Analytical.Tas
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "AHU";
+            system.Name = "CAV";
             system.Multiplicity = zoneLoads.Count();
 
             dynamic junction_FreshAir = system.AddJunction();
@@ -1260,7 +1263,7 @@ namespace SAM.Analytical.Tas
             }
         }
 
-        private static void CreateTPD_CAV_FreshAir(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem, bool displacementVent = false)
+        private static void CreateTPD_VAV(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem, bool displacementVent = false)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
@@ -1281,7 +1284,7 @@ namespace SAM.Analytical.Tas
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
             TPD.System system = plantRoom.AddSystem();
-            system.Name = displacementVent ? "VAV" : "CAV_FreshAir";
+            system.Name = displacementVent ? "DISP" : "VAV";
             system.Multiplicity = zoneLoads.Count();
 
             //dynamic junction_Zero = system.AddJunction();
@@ -1498,7 +1501,7 @@ namespace SAM.Analytical.Tas
             }
         }
 
-        private static void CreateTPD_CAV_FreshAir_Special(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
+        private static void CreateTPD_VAV_Special(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
