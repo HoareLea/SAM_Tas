@@ -63,7 +63,14 @@ namespace SAM.Analytical.Tas
                             HeatingSystem heatingSystem = analyticalModel.GetRelatedObjects<HeatingSystem>(space).FirstOrDefault();
                             VentilationSystem ventilationSystem = analyticalModel.GetRelatedObjects<VentilationSystem>(space).FirstOrDefault();
 
-                            string name = ventilationSystem?.Name;
+                            List<string> names = new List<string>();
+                            names.Add(ventilationSystem?.DisplayName());
+                            names.Add(heatingSystem?.FullName);
+                            names.Add(coolingSystem?.FullName);
+
+                            names.RemoveAll(x => string.IsNullOrEmpty(x));
+
+                            string name = string.Join(":", names);
                             if(name == null)
                             {
                                 name = string.Empty;
@@ -547,44 +554,41 @@ namespace SAM.Analytical.Tas
                 return;
             }
 
-            switch (name)
+            if(name.StartsWith("UV"))
             {
-                case "UV":
-                    CreateTPD_UV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    break;
-
-                case "NV":
-                    CreateTPD_NV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    break;
-
-                case "EOL":
-                    CreateTPD_EOL(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    break;
-
-                case "EOC":
-                    CreateTPD_EOC(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    break;
-
-                case "CAV":
-                    CreateTPD_CAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    //CreateTPD_CAV_Special(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    break;
-
-                case "MV":
-                    CreateTPD_MV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    break;
-
-                case "MVRE":
-                    CreateTPD_MVRE(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                    break;
-
-                case "DISP":
-                    CreateTPD_VAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, true);
-                    break;
-
-                case "VAV":
-                    CreateTPD_VAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, false);
-                    break;
+                CreateTPD_UV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+            }
+            else if(name.StartsWith("NV"))
+            {
+                CreateTPD_NV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+            }
+            else if (name.StartsWith("EOL"))
+            {
+                CreateTPD_EOL(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+            }
+            else if (name.StartsWith("EOC"))
+            {
+                CreateTPD_EOC(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+            }
+            else if (name.StartsWith("CAV"))
+            {
+                CreateTPD_CAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+            }
+            else if (name.StartsWith("MV"))
+            {
+                CreateTPD_MV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+            }
+            else if (name.StartsWith("MVRE"))
+            {
+                CreateTPD_MVRE(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+            }
+            else if (name.StartsWith("DISP"))
+            {
+                CreateTPD_VAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, true);
+            }
+            else if (name.StartsWith("VAV"))
+            {
+                CreateTPD_VAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem, false);
             }
         }
 
@@ -738,8 +742,14 @@ namespace SAM.Analytical.Tas
                 return;
             }
 
+            string name = ventilationSystem?.DisplayName();
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "EOL";
+            }
+
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "EOL";
+            system.Name = name;
             system.Multiplicity = zoneLoads.Count();
 
             dynamic plantSchedule = energyCentre.AddSchedule(TPD.tpdScheduleType.tpdScheduleFunction);
@@ -874,8 +884,14 @@ namespace SAM.Analytical.Tas
                 return;
             }
 
+            string name = ventilationSystem?.DisplayName();
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "EOC";
+            }
+
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "EOC";
+            system.Name = name;
             system.Multiplicity = zoneLoads.Count();
 
             dynamic plantSchedule = energyCentre.AddSchedule(TPD.tpdScheduleType.tpdScheduleFunction);
@@ -1013,8 +1029,14 @@ namespace SAM.Analytical.Tas
 
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
+            string name = ventilationSystem?.DisplayName();
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "CAV";
+            }
+  
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "CAV";
+            system.Name = name;
             system.Multiplicity = zoneLoads.Count();
 
             dynamic junction_FreshAir = system.AddJunction();
@@ -1207,7 +1229,7 @@ namespace SAM.Analytical.Tas
             controller_Optimiser.Name = "Pass Through Optimiser";
 
             TPD.PlantDayType plantDayType = null;
-            for (int i = 1; i <= plantRoom.GetEnergyCentre().GetCalendar().GetDayTypeCount(); i++)
+            for (int i = 1; i <= energyCentre.GetCalendar().GetDayTypeCount(); i++)
             {
                 plantDayType = energyCentre.GetCalendar().GetDayType(i);
 
@@ -1283,8 +1305,14 @@ namespace SAM.Analytical.Tas
 
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
+            string name = ventilationSystem?.DisplayName();
+            if (string.IsNullOrEmpty(name))
+            {
+                name = displacementVent ? "DISP" : "VAV";
+            }
+
             TPD.System system = plantRoom.AddSystem();
-            system.Name = displacementVent ? "DISP" : "VAV";
+            system.Name = name;
             system.Multiplicity = zoneLoads.Count();
 
             //dynamic junction_Zero = system.AddJunction();
@@ -1501,7 +1529,7 @@ namespace SAM.Analytical.Tas
             }
         }
 
-        private static void CreateTPD_VAV_Special(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
+        private static void CreateTPD_VAV_Special(this TPD.EnergyCentre energyCentre, IEnumerable<TPD.ZoneLoad> zoneLoads, VentilationSystem ventilationSystem, HeatingSystem heatingSystem, CoolingSystem coolingSystem, bool displacementVent = false)
         {
             TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
@@ -1522,8 +1550,14 @@ namespace SAM.Analytical.Tas
 
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
+            string name = ventilationSystem?.DisplayName();
+            if (string.IsNullOrEmpty(name))
+            {
+                name = displacementVent ? "DISP" : "VAV";
+            }
+
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "CAV_FreshAir";
+            system.Name = name;
             system.Multiplicity = zoneLoads.Count();
 
             //dynamic junction_Zero = system.AddJunction();
@@ -1735,6 +1769,8 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
 
+                systemZone_Group.DisplacementVent = displacementVent ? 1 : 0;
+
                 systemZone_Group.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FreshAir.Method = TPD.tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
                 //systemZone_Group.FreshAir.Value = 100;
@@ -1769,8 +1805,14 @@ namespace SAM.Analytical.Tas
 
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
+            string name = ventilationSystem?.DisplayName();
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "MVRE";
+            }
+
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "MVRE";
+            system.Name = name;
             system.Multiplicity = zoneLoads.Count();
 
             dynamic junction_FreshAir = system.AddJunction();
@@ -1938,8 +1980,14 @@ namespace SAM.Analytical.Tas
 
             dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
 
+            string name = ventilationSystem?.DisplayName();
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "MV";
+            }
+
             TPD.System system = plantRoom.AddSystem();
-            system.Name = "MV";
+            system.Name = name;
             system.Multiplicity = zoneLoads.Count();
 
             dynamic junction_FreshAir = system.AddJunction();
