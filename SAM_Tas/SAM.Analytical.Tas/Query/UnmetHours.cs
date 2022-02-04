@@ -131,7 +131,7 @@ namespace SAM.Analytical.Tas
                     {
                         List<bool> values = heating.ToList();
 
-                        SpaceSimulationResult spaceSimulationResult_Heating = new SpaceSimulationResult(System.Guid.NewGuid(), spaceSimulationResult);
+                        SpaceSimulationResult spaceSimulationResult_Heating = new SpaceSimulationResult(global::System.Guid.NewGuid(), spaceSimulationResult);
                         spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.LoadType, LoadType.Heating.Text());
                         spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.UnmetHours, values.Count(x => !x));
                         spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.UnmetHourFirstIndex, values.IndexOf(false));
@@ -150,7 +150,7 @@ namespace SAM.Analytical.Tas
                     {
                         List<bool> values = cooling.ToList();
 
-                        SpaceSimulationResult spaceSimulationResult_Cooling = new SpaceSimulationResult(System.Guid.NewGuid(), spaceSimulationResult);
+                        SpaceSimulationResult spaceSimulationResult_Cooling = new SpaceSimulationResult(global::System.Guid.NewGuid(), spaceSimulationResult);
                         spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.LoadType, LoadType.Cooling.Text());
                         spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.UnmetHours, values.Count(x => !x));
                         spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.UnmetHourFirstIndex, values.IndexOf(false));
@@ -175,7 +175,7 @@ namespace SAM.Analytical.Tas
                     combined = Combine(dictionary_Cooling.Values);
                     if(combined != null)
                     {
-                        AdjacencyClusterSimulationResult adjacencyClusterSimulationResult_Temp = new AdjacencyClusterSimulationResult(System.Guid.NewGuid(), adjacencyClusterSimulationResult);
+                        AdjacencyClusterSimulationResult adjacencyClusterSimulationResult_Temp = new AdjacencyClusterSimulationResult(global::System.Guid.NewGuid(), adjacencyClusterSimulationResult);
                         adjacencyClusterSimulationResult_Temp.SetValue(AdjacencyClusterSimulationResultParameter.LoadType, LoadType.Cooling);
                         adjacencyClusterSimulationResult_Temp.SetValue(AdjacencyClusterSimulationResultParameter.UnmetHours, combined.Count(x => !x));
                         result.Add(adjacencyClusterSimulationResult_Temp);
@@ -187,7 +187,7 @@ namespace SAM.Analytical.Tas
                     combined = Combine(dictionary_Heating.Values);
                     if (combined != null)
                     {
-                        AdjacencyClusterSimulationResult adjacencyClusterSimulationResult_Temp = new AdjacencyClusterSimulationResult(System.Guid.NewGuid(), adjacencyClusterSimulationResult);
+                        AdjacencyClusterSimulationResult adjacencyClusterSimulationResult_Temp = new AdjacencyClusterSimulationResult(global::System.Guid.NewGuid(), adjacencyClusterSimulationResult);
                         adjacencyClusterSimulationResult_Temp.SetValue(AdjacencyClusterSimulationResultParameter.LoadType, LoadType.Heating);
                         adjacencyClusterSimulationResult_Temp.SetValue(AdjacencyClusterSimulationResultParameter.UnmetHours, combined.Count(x => !x));
                         result.Add(adjacencyClusterSimulationResult_Temp);

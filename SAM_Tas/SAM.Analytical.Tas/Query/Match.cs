@@ -26,7 +26,7 @@ namespace SAM.Analytical.Tas
             if (constructions == null || element == null)
                 return null;
 
-            string name = Query.Name(element);
+            string name = Name(element);
             if (string.IsNullOrWhiteSpace(name))
                 return null;
 
@@ -53,7 +53,7 @@ namespace SAM.Analytical.Tas
             if (apertureConstructions == null || window == null)
                 return null;
 
-            string name = Query.Name(window);
+            string name = Name(window);
             if (string.IsNullOrWhiteSpace(name))
                 return null;
 

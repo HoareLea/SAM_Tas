@@ -16,14 +16,14 @@ namespace SAM.Analytical.Tas
             if (!Sizing_PrepareDocument(path_TBD, excludeOutdoorAir))
                 return false;
 
-            string directory = System.IO.Path.GetDirectoryName(path_TBD);
+            string directory = global::System.IO.Path.GetDirectoryName(path_TBD);
 
-            string path_TBD_Uncapped = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + System.IO.Path.GetExtension(path_TBD));
-            System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
+            string path_TBD_Uncapped = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + global::System.IO.Path.GetExtension(path_TBD));
+            global::System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
             Sizing_ApplyAirGlass(path_TBD, excludePositiveInternalGains);
 
-            string path_TBD_HDDCDD = System.IO.Path.Combine(directory, System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + System.IO.Path.GetExtension(path_TBD));
-            System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
+            string path_TBD_HDDCDD = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + global::System.IO.Path.GetExtension(path_TBD));
+            global::System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
             Sizing_ApplyOversizingFactors(path_TBD, analyticalModel);
 
             return true;
@@ -31,7 +31,7 @@ namespace SAM.Analytical.Tas
 
         private static bool Sizing_PrepareDocument(string path_TBD, bool excludeOutdoorAir = true)
         {
-            if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
+            if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
                 return false;
 
             bool result = false;
@@ -84,7 +84,7 @@ namespace SAM.Analytical.Tas
 
         private static bool Sizing_ApplyAirGlass(string path_TBD, bool excludePositiveInternalGains = false)
         {
-            if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
+            if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
                 return false;
 
             bool result = false;
@@ -105,7 +105,7 @@ namespace SAM.Analytical.Tas
                         material.name = "Air_Glass";
                         material.description = "Special for HDD sizing";
                         material.type = (int)MaterialTypes.tcdTransparentLayer;
-                        material.width = System.Convert.ToSingle(0.02 / 1000);
+                        material.width = global::System.Convert.ToSingle(0.02 / 1000);
                         material.conductivity = 1;
                         material.vapourDiffusionFactor = 1;
                         material.solarTransmittance = 0.999999f;
@@ -151,7 +151,7 @@ namespace SAM.Analytical.Tas
 
         private static bool Sizing_ApplyOversizingFactors(string path_TBD, AnalyticalModel analyticalModel = null)
         {
-            if (string.IsNullOrWhiteSpace(path_TBD) || !System.IO.File.Exists(path_TBD))
+            if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
                 return false;
 
             bool result = false;
@@ -241,7 +241,7 @@ namespace SAM.Analytical.Tas
                     if (profile == null)
                         continue;
 
-                    profile.value = System.Convert.ToSingle(tempearture);
+                    profile.value = global::System.Convert.ToSingle(tempearture);
                 }
 
                 tBDDocument.save();
@@ -261,7 +261,7 @@ namespace SAM.Analytical.Tas
                 zone.sizeCooling = (int)sizingType;
                 zone.sizeHeating = (int)sizingType;
 
-                zone.maxHeatingLoad = System.Convert.ToSingle(keyValuePair.Value);
+                zone.maxHeatingLoad = global::System.Convert.ToSingle(keyValuePair.Value);
             }
 
             return true;

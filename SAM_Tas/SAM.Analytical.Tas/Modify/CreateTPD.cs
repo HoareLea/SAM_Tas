@@ -1413,6 +1413,14 @@ namespace SAM.Analytical.Tas
             dynamic systemZone = system.AddSystemZone();
             systemZone.SetPosition(630, 80);
 
+            dynamic junction_SystemZone_In = system.AddJunction();
+            junction_SystemZone_In.Description = "System Zone In";
+            junction_SystemZone_In.SetPosition(390, 180);
+
+            dynamic junction_SystemZone_Out = system.AddJunction();
+            junction_SystemZone_Out.Description = "System Zone Out";
+            junction_SystemZone_Out.SetPosition(390, 380);
+
             dynamic junction_Return = system.AddJunction();
             junction_Return.Name = "Junction Return";
             junction_Return.Description = "Junction Return";
@@ -1442,10 +1450,12 @@ namespace SAM.Analytical.Tas
             system.AddDuct(coolingCoil, 1, heatingCoil, 1);
 
             TPD.Duct duct_OffCoils = system.AddDuct(heatingCoil, 1, fan_FreashAir, 1);
-            TPD.Duct duct_FreshAir = system.AddDuct(fan_FreashAir, 1, damper, 1);
+            TPD.Duct duct_FreshAir = system.AddDuct(fan_FreashAir, 1, junction_SystemZone_In, 1);
+            system.AddDuct(junction_SystemZone_In, 1, damper, 1);
             system.AddDuct(damper, 1, systemZone, 1);
 
-            TPD.Duct duct_ZoneOut = system.AddDuct(systemZone, 1, fan_Return, 1);
+            system.AddDuct(systemZone, 1, junction_SystemZone_Out, 1);
+            TPD.Duct duct_ZoneOut = system.AddDuct(junction_SystemZone_Out, 1, fan_Return, 1);
             duct_ZoneOut.AddNode(680, 110);
             duct_ZoneOut.AddNode(680, 260);
             duct_ZoneOut = system.AddDuct(fan_Return, 1, junction_Return, 1);

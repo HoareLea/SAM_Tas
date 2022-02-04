@@ -39,7 +39,7 @@ namespace SAM.Analytical.Tas
             
             double northAngle = double.NaN;
             if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
-                building.northAngle = System.Math.Round(Units.Convert.ToDegrees(northAngle), 1);
+                building.northAngle = global::System.Math.Round(Units.Convert.ToDegrees(northAngle), 1);
 
             Location location = analyticalModel.Location;
             if(location != null)
@@ -52,7 +52,7 @@ namespace SAM.Analytical.Tas
                     double @double = Core.Query.Double(Core.Query.UTC(timeZone));
                     if(!double.IsNaN(@double))
                     {
-                        building.timeZone = System.Convert.ToSingle(@double);
+                        building.timeZone = global::System.Convert.ToSingle(@double);
                     }
                 }
             }
@@ -111,7 +111,7 @@ namespace SAM.Analytical.Tas
                             //    element.width= thickness;
 
                             //Colour
-                            System.Drawing.Color color = System.Drawing.Color.Empty;
+                            System.Drawing.Color color = global::System.Drawing.Color.Empty;
                             if (construction.TryGetValue(ConstructionParameter.Color, out color))
                                 element.colour = Core.Convert.ToUint(color);
                                 
@@ -155,7 +155,7 @@ namespace SAM.Analytical.Tas
 
                             if(!string.IsNullOrEmpty(string_BEType))
                             {
-                                int bEType = Query.BEType(string_BEType);
+                                int bEType = BEType(string_BEType);
                                 if (bEType != -1)
                                 {
                                     element.BEType = bEType;
@@ -228,11 +228,11 @@ namespace SAM.Analytical.Tas
                                 continue;
 
                             //Colour
-                            System.Drawing.Color color = System.Drawing.Color.Empty;
+                            System.Drawing.Color color = global::System.Drawing.Color.Empty;
                             if (!apertureConstruction.TryGetValue(ApertureConstructionParameter.Color, out color))
-                                color = SAM.Analytical.Query.Color(apertureConstruction.ApertureType);
+                                color = Analytical.Query.Color(apertureConstruction.ApertureType);
 
-                            if (color != System.Drawing.Color.Empty)
+                            if (color != global::System.Drawing.Color.Empty)
                                 window.colour = Core.Convert.ToUint(color);
 
 

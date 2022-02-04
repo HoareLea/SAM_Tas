@@ -32,7 +32,7 @@ namespace SAM.Analytical.Tas
 
                         TBD.Thermostat thermostat = internalCondition.GetThermostat();
                         TBD.profile profile = thermostat.GetProfile((int)profiles_Enum);
-                        double[] dailyValues = Query.DailyValues(profile);
+                        double[] dailyValues = DailyValues(profile);
                         dictionary_Zone.Add(zone.GUID, dailyValues);
                     }
                 }

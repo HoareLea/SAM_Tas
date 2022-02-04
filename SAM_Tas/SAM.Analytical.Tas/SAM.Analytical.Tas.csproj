@@ -160,6 +160,7 @@
     <Compile Include="Query\ComponentTypes.cs" />
     <Compile Include="Query\DHWGroup.cs" />
     <Compile Include="Query\Component.cs" />
+    <Compile Include="Query\System.cs" />
     <Compile Include="Query\RefrigerantGroup.cs" />
     <Compile Include="Query\MultiBoiler.cs" />
     <Compile Include="Query\ElectricalGroup.cs" />

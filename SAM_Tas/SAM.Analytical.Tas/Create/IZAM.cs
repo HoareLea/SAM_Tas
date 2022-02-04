@@ -81,7 +81,7 @@ namespace SAM.Analytical.Tas
                 
                 List<int> values = scheduleValues.Ints();
                 
-                TBD.schedule schedule = Create.Schedule(building, name_Schedule, values);
+                TBD.schedule schedule = Schedule(building, name_Schedule, values);
                 if (schedule != null)
                     profile.schedule = schedule;
             }
