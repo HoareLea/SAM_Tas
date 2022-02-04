@@ -1408,18 +1408,18 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable_Return.AddPoint(100, 100);
 
             dynamic damper = system.AddDamper();
-            damper.SetPosition(530, 90);
+            damper.SetPosition(570, 90);
 
             dynamic systemZone = system.AddSystemZone();
             systemZone.SetPosition(630, 80);
 
             dynamic junction_SystemZone_In = system.AddJunction();
             junction_SystemZone_In.Description = "System Zone In";
-            junction_SystemZone_In.SetPosition(490, 260);
+            junction_SystemZone_In.SetPosition(490, 100);
 
             dynamic junction_SystemZone_Out = system.AddJunction();
             junction_SystemZone_Out.Description = "System Zone Out";
-            junction_SystemZone_Out.SetPosition(690, 260);
+            junction_SystemZone_Out.SetPosition(750, 100);
 
             dynamic junction_Return = system.AddJunction();
             junction_Return.Name = "Junction Return";
@@ -1456,8 +1456,9 @@ namespace SAM.Analytical.Tas
 
             system.AddDuct(systemZone, 1, junction_SystemZone_Out, 1);
             TPD.Duct duct_ZoneOut = system.AddDuct(junction_SystemZone_Out, 1, fan_Return, 1);
-            duct_ZoneOut.AddNode(680, 110);
-            duct_ZoneOut.AddNode(680, 260);
+            duct_ZoneOut.AddNode(800, 110);
+            duct_ZoneOut.AddNode(800, 260);
+
             duct_ZoneOut = system.AddDuct(fan_Return, 1, junction_Return, 1);
             duct_ZoneOut.AddNode(250, 250);
 
