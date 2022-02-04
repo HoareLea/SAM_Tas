@@ -432,6 +432,8 @@ namespace SAM.Analytical.Tas
                     dynamic airSourceHeatPump = plantRoom.AddAirSourceHeatPump();
                     airSourceHeatPump.SetPosition(0, 440);
                     airSourceHeatPump.SetFuelSource(1, fuelSource_Electrical);
+                    airSourceHeatPump.SetFuelSource(2, fuelSource_Electrical);
+                    airSourceHeatPump.SetFuelSource(3, fuelSource_Electrical);
                     airSourceHeatPump.Name = "DXCoil Units Air Source Heat Pump";
                     plantRoom.AddPipe(refrigerantGroup, 1, airSourceHeatPump, 1);
                     plantRoom.AddPipe(airSourceHeatPump, 1, refrigerantGroup, 1);
@@ -545,32 +547,29 @@ namespace SAM.Analytical.Tas
                 return;
             }
 
-            if(ventilationSystem == null && heatingSystem == null && coolingSystem == null)
+            switch (name)
             {
-                switch (name)
-                {
-                    case "UV":
-                        CreateTPD_UV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                        break;
+                case "UV":
+                    CreateTPD_UV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    break;
 
-                    case "NV":
-                        CreateTPD_NV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                        break;
+                case "NV":
+                    CreateTPD_NV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    break;
 
-                    case "EOL":
-                        CreateTPD_EOL(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                        break;
+                case "EOL":
+                    CreateTPD_EOL(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    break;
 
-                    case "EOC":
-                        CreateTPD_EOC(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                        break;
+                case "EOC":
+                    CreateTPD_EOC(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    break;
 
-                    case "CAV":
-                        //CreateTPD_AHU(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                        CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                        //CreateTPD_CAV_FreshAir_Special(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-                        break;
-                }
+                case "CAV":
+                    //CreateTPD_AHU(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    CreateTPD_CAV_FreshAir(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    //CreateTPD_CAV_FreshAir_Special(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+                    break;
             }
         }
 
