@@ -768,6 +768,7 @@ namespace SAM.Analytical.Tas
 
             dynamic fan = system.AddFan();
             fan.name = "Fresh Air Fan";
+            fan.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
             fan.DesignFlowRate.Value = 150;
             fan.OverallEfficiency.Value = 1;
             fan.Pressure = 1000;
@@ -910,6 +911,7 @@ namespace SAM.Analytical.Tas
 
             dynamic fan = system.AddFan();
             fan.name = "Fresh Air Fan";
+            fan.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
             fan.DesignFlowRate.Value = 150;
             fan.OverallEfficiency.Value = 1;
             fan.Pressure = 1000;
@@ -964,8 +966,6 @@ namespace SAM.Analytical.Tas
 
             TPD.ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
             componentGroup.SetMultiplicity(zoneLoads.Count());
-
-            dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
             int i = 1;
             foreach (TPD.ZoneLoad zoneLoad in zoneLoads)
@@ -1060,6 +1060,7 @@ namespace SAM.Analytical.Tas
 
             dynamic fan_FreashAir = system.AddFan();
             fan_FreashAir.name = "Fresh Air Fan";
+            fan_FreashAir.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
             fan_FreashAir.DesignFlowRate.Value = 150;
             fan_FreashAir.OverallEfficiency.Value = 1;
             fan_FreashAir.Pressure = 1000;
@@ -1089,7 +1090,8 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable_FreshAir.AddPoint(100, 100);
 
             dynamic fan_Return = system.AddFan();
-            fan_Return.name = "Return Fan";
+            fan_Return.name = "Return Air Fan";
+            fan_Return.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.ExhaustUnitName);
             fan_Return.DesignFlowRate.Value = 150;
             fan_Return.OverallEfficiency.Value = 1;
             fan_Return.Pressure = 600;
@@ -1344,6 +1346,7 @@ namespace SAM.Analytical.Tas
 
             dynamic fan_FreashAir = system.AddFan();
             fan_FreashAir.name = "Fresh Air Fan";
+            fan_FreashAir.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
             fan_FreashAir.DesignFlowRate.Value = 150;
             fan_FreashAir.OverallEfficiency.Value = 1;
             fan_FreashAir.Pressure = 1000;
@@ -1373,7 +1376,8 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable_FreshAir.AddPoint(100, 100);
 
             dynamic fan_Return = system.AddFan();
-            fan_Return.name = "Return Fan";
+            fan_Return.name = "Return Air Fan";
+            fan_Return.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.ExhaustUnitName);
             fan_Return.DesignFlowRate.Value = 150;
             fan_Return.OverallEfficiency.Value = 1;
             fan_Return.Pressure = 600;
@@ -1589,6 +1593,7 @@ namespace SAM.Analytical.Tas
 
             dynamic fan_FreashAir = system.AddFan();
             fan_FreashAir.name = "Fresh Air Fan";
+            fan_FreashAir.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
             fan_FreashAir.DesignFlowRate.Value = 150;
             fan_FreashAir.OverallEfficiency.Value = 1;
             fan_FreashAir.Pressure = 1000;
@@ -1628,7 +1633,8 @@ namespace SAM.Analytical.Tas
             sprayHumidifier.SetPosition(600, 230);
 
             dynamic fan_Return = system.AddFan();
-            fan_Return.name = "Return Fan";
+            fan_Return.name = "Return Air Fan";
+            fan_Return.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.ExhaustUnitName);
             fan_Return.DesignFlowRate.Value = 150;
             fan_Return.OverallEfficiency.Value = 1;
             fan_Return.Pressure = 600;
@@ -1836,6 +1842,7 @@ namespace SAM.Analytical.Tas
 
             dynamic fan_FreashAir = system.AddFan();
             fan_FreashAir.name = "Fresh Air Fan";
+            fan_FreashAir.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
             fan_FreashAir.DesignFlowRate.Value = 150;
             fan_FreashAir.OverallEfficiency.Value = 1;
             fan_FreashAir.Pressure = 1000;
@@ -1865,7 +1872,8 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable_FreshAir.AddPoint(100, 100);
 
             dynamic fan_Return = system.AddFan();
-            fan_Return.name = "Return Fan";
+            fan_Return.name = "Return Air Fan";
+            fan_Return.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.ExhaustUnitName);
             fan_Return.DesignFlowRate.Value = 150;
             fan_Return.OverallEfficiency.Value = 1;
             fan_Return.Pressure = 600;
@@ -2003,6 +2011,7 @@ namespace SAM.Analytical.Tas
 
             dynamic fan_FreashAir = system.AddFan();
             fan_FreashAir.name = "Fresh Air Fan";
+            fan_FreashAir.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
             fan_FreashAir.DesignFlowRate.Value = 150;
             fan_FreashAir.OverallEfficiency.Value = 1;
             fan_FreashAir.Pressure = 1000;
@@ -2032,7 +2041,8 @@ namespace SAM.Analytical.Tas
             profileDataModifierTable_FreshAir.AddPoint(100, 100);
 
             dynamic fan_Return = system.AddFan();
-            fan_Return.name = "Return Fan";
+            fan_Return.name = "Return Air Fan";
+            fan_Return.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.ExhaustUnitName);
             fan_Return.DesignFlowRate.Value = 150;
             fan_Return.OverallEfficiency.Value = 1;
             fan_Return.Pressure = 600;
