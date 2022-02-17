@@ -118,8 +118,8 @@ namespace SAM.Analytical.Tas
             List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
             foreach(Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult> tuple in tuples_solarFaceSimulationResult)
             {
-                List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>> tuples_Temp = tuples_ZoneSurfaces.FindAll(x => tuple.Item3.InRange(x.Item2, tolerance));
-                tuples_Temp = tuples_Temp.FindAll(x => x.Item1.On(tuple.Item2, tolerance));
+                List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>> tuples_Temp = tuples_ZoneSurfaces.FindAll(x => tuple.Item3.InRange(x.Item2, Core.Tolerance.MacroDistance));
+                tuples_Temp = tuples_Temp.FindAll(x => x.Item1.On(tuple.Item2, Core.Tolerance.MacroDistance));
 
                 if(tuples_Temp == null || tuples_Temp.Count == 0)
                 {
