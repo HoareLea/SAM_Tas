@@ -245,7 +245,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 sAMTBDDocument.Save();
             }
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate);
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, false);
 
             index = Params.IndexOfOutputParam("_path_TSD");
             if (index != -1)
