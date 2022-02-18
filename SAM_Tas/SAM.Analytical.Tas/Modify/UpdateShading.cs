@@ -48,6 +48,62 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
+            List<Panel> panels = analyticalModel.GetPanels();
+            if (panels == null)
+            {
+                return false;
+            }
+
+            List<Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>> tuples_solarFaceSimulationResult = new List<Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>>();
+            foreach (Panel panel in panels)
+            {
+                List<Geometry.SolarCalculator.SolarFaceSimulationResult> solarFaceSimulationResults = analyticalModel.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel);
+                if (solarFaceSimulationResults == null || solarFaceSimulationResults.Count == 0)
+                {
+                    continue;
+                }
+
+                Face3D face3D = panel.GetFace3D(true);
+                if (face3D == null || !face3D.IsValid())
+                {
+                    continue;
+                }
+
+                BoundingBox3D boundingBox3D = face3D.GetBoundingBox();
+                Point3D point3D = face3D.GetInternalPoint3D(tolerance);
+
+                foreach (Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult in solarFaceSimulationResults)
+                {
+                    tuples_solarFaceSimulationResult.Add(new Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>(face3D, point3D, boundingBox3D, solarFaceSimulationResult));
+                }
+
+                List<Aperture> apertures = panel.Apertures;
+                if (apertures != null && apertures.Count != 0)
+                {
+                    foreach (Aperture aperture in apertures)
+                    {
+                        Face3D face3D_Aperture = aperture.Face3D;
+                        if (face3D_Aperture == null || !face3D_Aperture.IsValid())
+                        {
+                            continue;
+                        }
+
+                        BoundingBox3D boundingBox3D_Aperture = face3D_Aperture.GetBoundingBox();
+                        Point3D point3D_Aperture = face3D_Aperture.GetInternalPoint3D(tolerance);
+
+                        foreach (Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult in solarFaceSimulationResults)
+                        {
+                            tuples_solarFaceSimulationResult.Add(new Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>(face3D_Aperture, point3D_Aperture, boundingBox3D, solarFaceSimulationResult));
+                        }
+                    }
+                }
+            }
+
+            if(tuples_solarFaceSimulationResult == null || tuples_solarFaceSimulationResult.Count == 0)
+            {
+                return false;
+            }
+
             List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>> tuples_ZoneSurfaces = new List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>>();
             foreach (TBD.zone zone in zones)
             {
@@ -83,57 +139,6 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
-            List<Panel> panels = analyticalModel.GetPanels();
-            if(panels == null)
-            {
-                return false;
-            }
-
-            List<Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>> tuples_solarFaceSimulationResult = new List<Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>>();
-            foreach(Panel panel in panels)
-            {
-                List<Geometry.SolarCalculator.SolarFaceSimulationResult> solarFaceSimulationResults = analyticalModel.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel);
-                if(solarFaceSimulationResults == null || solarFaceSimulationResults.Count == 0)
-                {
-                    continue;
-                }
-
-                Face3D face3D = panel.GetFace3D(true);
-                if(face3D == null || !face3D.IsValid())
-                {
-                    continue;
-                }
-
-                BoundingBox3D boundingBox3D = face3D.GetBoundingBox();
-                Point3D point3D = face3D.GetInternalPoint3D(tolerance);
-
-                foreach(Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult in solarFaceSimulationResults)
-                {
-                    tuples_solarFaceSimulationResult.Add(new Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>(face3D, point3D, boundingBox3D, solarFaceSimulationResult));
-                }
-
-                List<Aperture> apertures = panel.Apertures;
-                if(apertures != null && apertures.Count != 0)
-                {
-                    foreach(Aperture aperture in apertures)
-                    {
-                        Face3D face3D_Aperture = aperture.Face3D;
-                        if (face3D_Aperture == null || !face3D_Aperture.IsValid())
-                        {
-                            continue;
-                        }
-
-                        BoundingBox3D boundingBox3D_Aperture = face3D_Aperture.GetBoundingBox();
-                        Point3D point3D_Aperture = face3D_Aperture.GetInternalPoint3D(tolerance);
-
-                        foreach (Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult in solarFaceSimulationResults)
-                        {
-                            tuples_solarFaceSimulationResult.Add(new Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>(face3D_Aperture, point3D_Aperture, boundingBox3D, solarFaceSimulationResult));
-                        }
-                    }
-                }
-            }
-
             building.ClearShadingData();
 
             List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
@@ -159,7 +164,6 @@ namespace SAM.Analytical.Tas
 
             return true;
         }
-
 
         public static bool UpdateShading(this AnalyticalModel analyticalModel, TBD.Building building, double tolerance = Core.Tolerance.Distance)
         {
