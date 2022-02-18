@@ -1,6 +1,8 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
+using SAM.Core.Tas;
+using SAM.Weather;
 using System;
 using System.Collections.Generic;
 
@@ -16,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -46,6 +48,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTBD", NickName = "_pathTasTBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
@@ -109,7 +112,28 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            bool result = Analytical.Tas.Modify.UpdateShading(path_TBD, analyticalModel);
+            WeatherData weatherData = null;
+            index = Params.IndexOfInputParam("weatherData_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref weatherData))
+                {
+                    weatherData = null;
+                }
+            }
+
+            bool result = false;
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            {
+                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                if (weatherData != null)
+                {
+                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                }
+
+                result = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
+            }
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
