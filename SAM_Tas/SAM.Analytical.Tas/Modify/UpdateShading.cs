@@ -153,7 +153,7 @@ namespace SAM.Analytical.Tas
 
                 foreach(Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface> tuple_ZoneSurface in tuples_ZoneSurfaces_Temp)
                 {
-                    UpdateSurfaceShades(building, daysShades, (TBD.zoneSurface)tuple_ZoneSurface.Item3, analyticalModel, tuple.Item4);
+                    UpdateSurfaceShades(building, daysShades, (TBD.zoneSurface)tuple_ZoneSurface.Item3, tuple.Item4);
                 }
             }
 
