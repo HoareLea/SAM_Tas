@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true)
+        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true, bool simulate = true)
         {
             if(analyticalModel == null || string.IsNullOrWhiteSpace(path_TBD))
             {
@@ -132,7 +132,15 @@ namespace SAM.Analytical.Tas
                     sAMTBDDocument.Save();
                 }
 
-                Simulate(tBDDocument, path_TSD, 1, 1);
+                if(simulate)
+                {
+                    Simulate(tBDDocument, path_TSD, 1, 1);
+                }
+            }
+
+            if(!simulate)
+            {
+                return new AnalyticalModel(analyticalModel);
             }
 
             adjacencyCluster = analyticalModel.AdjacencyCluster;

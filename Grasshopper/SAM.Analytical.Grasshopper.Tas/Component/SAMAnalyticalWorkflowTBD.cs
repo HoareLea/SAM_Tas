@@ -206,6 +206,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 System.IO.File.Delete(path_TBD);
             }
 
+            bool simulate = false;
+
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
@@ -238,12 +240,12 @@ namespace SAM.Analytical.Grasshopper.Tas
                     Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
                 }
 
-                Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
+                simulate = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
 
                 sAMTBDDocument.Save();
             }
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours);
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate);
 
             index = Params.IndexOfOutputParam("_path_TSD");
             if (index != -1)
