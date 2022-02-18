@@ -127,12 +127,18 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
 
+                bool save = false;
                 if (weatherData != null)
                 {
-                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                    save = Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
                 }
 
                 result = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
+
+                if(save || result)
+                {
+                    tBDDocument.save();
+                }
             }
 
             index = Params.IndexOfOutputParam("analyticalModel");
