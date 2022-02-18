@@ -98,7 +98,7 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                Face3D face3D = panel.Face3D;
+                Face3D face3D = panel.GetFace3D(true);
                 if(face3D == null || !face3D.IsValid())
                 {
                     continue;
@@ -111,6 +111,27 @@ namespace SAM.Analytical.Tas
                 {
                     tuples_solarFaceSimulationResult.Add(new Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>(face3D, point3D, boundingBox3D, solarFaceSimulationResult));
                 }
+
+                List<Aperture> apertures = panel.Apertures;
+                if(apertures != null && apertures.Count != 0)
+                {
+                    foreach(Aperture aperture in apertures)
+                    {
+                        Face3D face3D_Aperture = aperture.Face3D;
+                        if (face3D_Aperture == null || !face3D_Aperture.IsValid())
+                        {
+                            continue;
+                        }
+
+                        BoundingBox3D boundingBox3D_Aperture = face3D_Aperture.GetBoundingBox();
+                        Point3D point3D_Aperture = face3D_Aperture.GetInternalPoint3D(tolerance);
+
+                        foreach (Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult in solarFaceSimulationResults)
+                        {
+                            tuples_solarFaceSimulationResult.Add(new Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>(face3D_Aperture, point3D_Aperture, boundingBox3D, solarFaceSimulationResult));
+                        }
+                    }
+                }
             }
 
             building.ClearShadingData();
@@ -118,15 +139,19 @@ namespace SAM.Analytical.Tas
             List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
             foreach(Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult> tuple in tuples_solarFaceSimulationResult)
             {
-                List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>> tuples_Temp = tuples_ZoneSurfaces.FindAll(x => tuple.Item3.InRange(x.Item2, Core.Tolerance.MacroDistance));
-                tuples_Temp = tuples_Temp.FindAll(x => x.Item1.On(tuple.Item2, Core.Tolerance.MacroDistance));
-
-                if(tuples_Temp == null || tuples_Temp.Count == 0)
+                if(tuple.Item4 == null || tuple.Item4.DateTimes == null || tuple.Item4.DateTimes.Count == 0)
                 {
                     continue;
                 }
 
-                foreach(Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface> tuple_ZoneSurface in tuples_Temp)
+                List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>> tuples_ZoneSurfaces_BoundingBox = tuples_ZoneSurfaces.FindAll(x => x.Item2.InRange(tuple.Item3, Core.Tolerance.MacroDistance));
+                List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>> tuples_ZoneSurfaces_Temp = tuples_ZoneSurfaces_BoundingBox?.FindAll(x => x.Item1.On(tuple.Item2, Core.Tolerance.MacroDistance));
+                if(tuples_ZoneSurfaces_Temp == null || tuples_ZoneSurfaces_Temp.Count == 0)
+                {
+                    continue;
+                }
+
+                foreach(Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface> tuple_ZoneSurface in tuples_ZoneSurfaces_Temp)
                 {
                     UpdateSurfaceShades(building, daysShades, (TBD.zoneSurface)tuple_ZoneSurface.Item3, analyticalModel, tuple.Item4);
                 }
