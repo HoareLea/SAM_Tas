@@ -150,7 +150,7 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    foreach(Geometry.Planar.Face2D face2D in face3Ds)
+                    foreach(Geometry.Planar.Face2D face2D in face2Ds)
                     {
                         if(face2D == null)
                         {
