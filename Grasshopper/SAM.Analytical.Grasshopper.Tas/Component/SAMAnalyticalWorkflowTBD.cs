@@ -208,41 +208,64 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             bool simulate = false;
 
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            int count = 5;
+            if(weatherData != null)
             {
-                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+                count++;
+            }
 
-                if (weatherData != null)
+            if (coolingDesignDays != null || heatingDesignDays != null)
+            {
+                count++;
+            }
+
+            using (Core.Windows.SimpleProgressForm simpleProgressForm = new Core.Windows.SimpleProgressForm("SAM Workflow -  TBD Update", string.Empty, count))
+            {
+                simpleProgressForm.Increment("Opening TBD document");
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
                 {
-                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                    TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                    if (weatherData != null)
+                    {
+                        simpleProgressForm.Increment("Updating Weather Data");
+                        Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                    }
+
+                    simpleProgressForm.Increment("Adding HDD and CDD Day Types");
+
+                    TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
+
+                    List<TBD.dayType> dayTypes = Grashopper.Tas.Query.DayTypes(calendar);
+                    if (dayTypes.Find(x => x.name == "HDD") == null)
+                    {
+                        TBD.dayType dayType = calendar.AddDayType();
+                        dayType.name = "HDD";
+                    }
+
+                    if (dayTypes.Find(x => x.name == "CDD") == null)
+                    {
+                        TBD.dayType dayType = calendar.AddDayType();
+                        dayType.name = "CDD";
+                    }
+
+                    simpleProgressForm.Increment("Converting to TBD");
+                    Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
+
+                    simpleProgressForm.Increment("Updating Zones");
+                    Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
+
+                    if (coolingDesignDays != null || heatingDesignDays != null)
+                    {
+                        simpleProgressForm.Increment("Adding Design Days");
+                        Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
+                    }
+
+                    simpleProgressForm.Increment("Updating Shades");
+                    simulate = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
+
+                    sAMTBDDocument.Save();
                 }
-
-                TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
-
-                List<TBD.dayType> dayTypes = Grashopper.Tas.Query.DayTypes(calendar);
-                if (dayTypes.Find(x => x.name == "HDD") == null)
-                {
-                    TBD.dayType dayType = calendar.AddDayType();
-                    dayType.name = "HDD";
-                }
-
-                if (dayTypes.Find(x => x.name == "CDD") == null)
-                {
-                    TBD.dayType dayType = calendar.AddDayType();
-                    dayType.name = "CDD";
-                }
-
-                Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
-                Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
-
-                if (coolingDesignDays != null || heatingDesignDays != null)
-                {
-                    Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
-                }
-
-                simulate = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
-
-                sAMTBDDocument.Save();
             }
 
             analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, false);
