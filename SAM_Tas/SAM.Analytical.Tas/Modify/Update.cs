@@ -90,6 +90,7 @@
 
             designDay_TBD.yearDay = designDay.GetDateTime().DayOfYear;
             designDay_TBD.repetitions = repetitions;
+            designDay_TBD.description = designDay.Description;
 
             if(dayType != null)
             {

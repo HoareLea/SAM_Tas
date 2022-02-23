@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas
 
             TBD.WeatherDay weatherDay_TBD = designDay.GetWeatherDay();
 
-            DesignDay result = new DesignDay(name_Temp, System.Convert.ToInt16(dateTime.Year), System.Convert.ToByte(dateTime.Month), System.Convert.ToByte(dateTime.Day));
+            DesignDay result = new DesignDay(name_Temp, designDay.description, System.Convert.ToInt16(dateTime.Year), System.Convert.ToByte(dateTime.Month), System.Convert.ToByte(dateTime.Day));
 
             for (int i = 1; i <= 24; i++)
             {
