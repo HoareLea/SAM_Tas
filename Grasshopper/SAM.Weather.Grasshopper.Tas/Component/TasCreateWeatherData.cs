@@ -31,7 +31,7 @@ namespace SAM.Weather.Grasshopper.Tas
         /// </summary>
         public TasCreateWeatherData()
           : base("Tas.CreateWeatherData", "Tas.CreateWeatherData",
-              "Create SAM WeatherYear from Tas File TBD, TSDot TWD",
+              "Create SAM WeatherYear from Tas File TWD, TBD, TSD",
               "SAM", "Tas")
         {
         }
@@ -44,7 +44,7 @@ namespace SAM.Weather.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTas", NickName = "_pathTas", Description = "A file path to a Tas file TBD or TSD.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTas", NickName = "_pathTas", Description = "A file path to a Tas file TWD, TBD or TSD.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
