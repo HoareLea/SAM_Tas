@@ -4,34 +4,6 @@ namespace SAM.Weather.Tas
 {
     public static partial class Convert
     {
-        public static WeatherData ToSAM_WeatherData(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                return null;
-            }
-
-            WeatherData result = null;
-
-            string extension = System.IO.Path.GetExtension(path).ToLower().Trim();
-            if (extension.EndsWith("tbd"))
-            {
-                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path))
-                {
-                    result = ToSAM_WeatherData(sAMTBDDocument);
-                }
-            }
-            else if(extension.EndsWith("tsd"))
-            {
-                using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path))
-                {
-                    result = ToSAM_WeatherData(sAMTSDDocument);
-                }
-            }
-
-            return result;
-        }
-
         public static WeatherData ToSAM_WeatherData(this SAMTSDDocument sAMTSDDocument, int year = 2018)
         {
             if (sAMTSDDocument == null)
@@ -117,6 +89,46 @@ namespace SAM.Weather.Tas
             result.SetValue(WeatherDataParameter.TimeZone, Core.Query.Description(Core.Query.UTC(weatherYear.timeZone)));
 
             result.Add(weatherYear_SAM);
+            return result;
+        }
+
+        public static WeatherData ToSAM_WeatherData(this TWD.WeatherYear weatherYear)
+        {
+            if(weatherYear == null)
+            {
+                return null;
+            }
+
+            WeatherData result = new WeatherData(weatherYear.name, weatherYear.description, weatherYear.latitude, weatherYear.longitude, weatherYear.altitude);
+            result.SetValue(WeatherDataParameter.TimeZone, (double)weatherYear.timeZone);
+
+            GroundTemperature groundTemperature = new GroundTemperature(
+                double.NaN, 
+                double.NaN,
+                double.NaN,
+                double.NaN,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature,
+                weatherYear.groundTemperature);
+
+            Core.SAMCollection<GroundTemperature> groundTemperatures = new Core.SAMCollection<GroundTemperature>() {groundTemperature };
+            result.SetValue(WeatherDataParameter.GroundTemperatures, groundTemperatures);
+
+            WeatherYear weatherYear_Temp = weatherYear.ToSAM();
+            if(weatherYear_Temp != null)
+            {
+                result.Add(weatherYear_Temp);
+            }
+
             return result;
         }
     }

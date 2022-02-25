@@ -70,12 +70,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Convert\ToSAM\WeatherYear.cs" />
     <Compile Include="Convert\ToSAM\WeatherDatas.cs" />
     <Compile Include="Convert\ToSAM\WeatherData.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
     <Compile Include="Modify\UpdateWeatherData.cs" />
     <Compile Include="Modify\Update.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\AnnualParameter.cs" />
+    <Compile Include="Query\WeatherYears.cs" />
+    <Compile Include="Query\WeatherFolders.cs" />
     <Compile Include="Query\WeatherDays.cs" />
     <Compile Include="Query\AnnualBuildingResult.cs" />
     <Compile Include="Query\WeatherYear.cs" />

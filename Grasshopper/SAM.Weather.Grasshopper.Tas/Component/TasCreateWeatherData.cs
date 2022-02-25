@@ -16,7 +16,7 @@ namespace SAM.Weather.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -31,7 +31,7 @@ namespace SAM.Weather.Grasshopper.Tas
         /// </summary>
         public TasCreateWeatherData()
           : base("Tas.CreateWeatherData", "Tas.CreateWeatherData",
-              "Create SAM WeatherYear from Tas File TBD or TSD",
+              "Create SAM WeatherYear from Tas File TBD, TSDot TWD",
               "SAM", "Tas")
         {
         }
@@ -64,7 +64,7 @@ namespace SAM.Weather.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooWeatherDataParam() { Name = "weatherData", NickName = "weatherData", Description = "SAM Weather Data", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooWeatherDataParam() { Name = "weatherDatas", NickName = "weatherDatas", Description = "SAM Weather Datas", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -106,15 +106,15 @@ namespace SAM.Weather.Grasshopper.Tas
                 return;
             }
 
-            WeatherData weatherData = Weather.Tas.Convert.ToSAM_WeatherData(path);
+            List<WeatherData> weatherDatas = Weather.Tas.Convert.ToSAM_WeatherDatas(path);
             
-            index = Params.IndexOfOutputParam("weatherData");
+            index = Params.IndexOfOutputParam("weatherDatas");
             if (index != -1)
-                dataAccess.SetData(index, new GooWeatherData(weatherData));
+                dataAccess.SetDataList(index, weatherDatas?.ConvertAll(x => new GooWeatherData(x)));
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, weatherData != null);
+                dataAccess.SetData(index_successful, weatherDatas != null && weatherDatas.Count != 0);
             }
         }
     }
