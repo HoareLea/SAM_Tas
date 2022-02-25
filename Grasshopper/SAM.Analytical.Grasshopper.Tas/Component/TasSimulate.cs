@@ -42,8 +42,13 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager inputParamManager)
         {
-            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
-            inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "The string path to a TasTSD file.", GH_ParamAccess.item);
+            int index = -1;
+
+            index = inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            inputParamManager[index].WireDisplay = GH_ParamWireDisplay.hidden;
+            
+            index = inputParamManager.AddTextParameter("_path_TasTSD", "pathTasTSD", "The string path to a TasTSD file.", GH_ParamAccess.item);
+            inputParamManager[index].WireDisplay = GH_ParamWireDisplay.hidden;
 
             global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "_surfaceOutputSpec", NickName = "_surfaceOutputSpec", Description = "Surface Output Spec.", Access = GH_ParamAccess.list, Optional = true };
             inputParamManager.AddParameter(genericObject);

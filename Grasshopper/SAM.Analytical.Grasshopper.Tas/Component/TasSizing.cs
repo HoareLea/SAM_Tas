@@ -44,7 +44,9 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             int index = -1;
 
-            inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            index = inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            inputParamManager[index].WireDisplay = GH_ParamWireDisplay.hidden;
+            
             index = inputParamManager.AddParameter(new GooAnalyticalModelParam(), "_analyticalModel_", "_analyticalModel_", "A SAM analytical model", GH_ParamAccess.item);
             inputParamManager[index].Optional = true;
 

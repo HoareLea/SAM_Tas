@@ -47,7 +47,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item}, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_FilePath filePath = new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TBD", NickName = "_path_TBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item };
                 filePath.WireDisplay = GH_ParamWireDisplay.hidden;
