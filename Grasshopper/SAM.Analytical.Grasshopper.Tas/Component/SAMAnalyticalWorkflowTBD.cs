@@ -92,10 +92,10 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            int index_successful = Params.IndexOfOutputParam("successful");
-            if (index_successful != -1)
+            int index_Successful = Params.IndexOfOutputParam("successful");
+            if (index_Successful != -1)
             {
-                dataAccess.SetData(index_successful, false);
+                dataAccess.SetData(index_Successful, false);
             }
 
             int index;
@@ -219,7 +219,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 count++;
             }
 
-            using (Core.Windows.SimpleProgressForm simpleProgressForm = new Core.Windows.SimpleProgressForm("SAM Workflow -  TBD Update", string.Empty, count))
+            using (Core.Windows.SimpleProgressForm simpleProgressForm = new Core.Windows.SimpleProgressForm("SAM Workflow - TBD Update", string.Empty, count))
             {
                 simpleProgressForm.Increment("Opening TBD document");
                 using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
@@ -296,9 +296,9 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index != -1)
                 dataAccess.SetData(index, analyticalModel);
 
-            if (index_successful != -1)
+            if (index_Successful != -1)
             {
-                dataAccess.SetData(index_successful, true);
+                dataAccess.SetData(index_Successful, true);
             }
         }
     }

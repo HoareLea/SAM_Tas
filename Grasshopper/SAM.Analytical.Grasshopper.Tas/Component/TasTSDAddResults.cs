@@ -83,6 +83,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "zoneSimulationResultsCooling", NickName = "zoneSimulationResultsCooling", Description = "SAM Analytical ZoneSimulationResults for Cooling", Access = GH_ParamAccess.list }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "spaceSimulationResultsCooling", NickName = "spaceSimulationResultsCooling", Description = "SAM Analytical SpaceSimulationResults for Cooling", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "panelSimulationResultsCooling", NickName = "panelSimulationResultsCooling", Description = "SAM Analytical PanelSimulationResultsCooling", Access = GH_ParamAccess.list }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly added?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 return result.ToArray();
             }
@@ -95,6 +96,13 @@ namespace SAM.Analytical.Grasshopper.Tas
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
             int index;
+            int index_Successful;
+
+            index_Successful = Params.IndexOfOutputParam("successful");
+            if (index_Successful != -1)
+            {
+                dataAccess.SetData(index_Successful, false);
+            }
 
             bool run = false;
             index = Params.IndexOfInputParam("_run");
@@ -239,6 +247,11 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfOutputParam("adjacencyClusterSimulationResultHeating");
             if (index != -1)
                 dataAccess.SetData(index, results?.Find(x => x is AdjacencyClusterSimulationResult && Analytical.Query.LoadType(((AdjacencyClusterSimulationResult)x)) == LoadType.Heating));
+
+            if (index_Successful != -1)
+            {
+                dataAccess.SetData(index_Successful, results != null && results.Count != 0);
+            }
         }
     }
 }
