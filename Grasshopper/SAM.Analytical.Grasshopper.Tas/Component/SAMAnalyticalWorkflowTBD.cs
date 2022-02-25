@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -48,7 +48,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_TBD", NickName = "_path_TBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+
+                global::Grasshopper.Kernel.Parameters.Param_FilePath filePath = new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TBD", NickName = "_path_TBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item };
+                filePath.WireDisplay = GH_ParamWireDisplay.hidden;
+                result.Add(new GH_SAMParam(filePath, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "surfaceOutputSpec_", NickName = "surfaceOutputSpec_", Description = "Surface Output Spec", Access = GH_ParamAccess.list, Optional = true };
                 result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
@@ -80,7 +83,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "analyticalModel", NickName = "analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_TSD", NickName = "_path_TSD", Description = "A file path to a Tas file TSD", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TSD", NickName = "_path_TSD", Description = "A file path to a Tas file TSD", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }

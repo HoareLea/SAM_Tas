@@ -52,6 +52,10 @@
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TWD">
+      <HintPath>..\..\references_buildonly\Interop.TWD.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="SAM.Core, Version=1.0.7488.22264, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
@@ -69,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Classes\SAMTPDDocument.cs" />
     <Compile Include="Classes\SAMTBDDocument.cs" />
+    <Compile Include="Classes\SAMTWDDocument.cs" />
     <Compile Include="Classes\SAMTSDDocument.cs" />
     <Compile Include="Classes\SurfaceOutputSpec.cs" />
     <Compile Include="Convert\TogbXML\gbXML.cs" />
@@ -83,6 +88,7 @@
     <Compile Include="Query\SurfaceOutputSpecs.cs" />
     <Compile Include="Query\TBDDocument.cs" />
     <Compile Include="Query\TryGetMax.cs" />
+    <Compile Include="Query\TWDDocument.cs" />
     <Compile Include="Query\TSDDocument.cs" />
     <Compile Include="Query\T3DDocument.cs" />
     <Compile Include="Query\Values.cs" />

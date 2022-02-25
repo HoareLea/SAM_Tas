@@ -48,6 +48,10 @@
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TWD">
+      <HintPath>..\..\references_buildonly\Interop.TWD.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="SAM.Core, Version=1.0.7488.22264, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
@@ -66,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Convert\ToSAM\WeatherDatas.cs" />
     <Compile Include="Convert\ToSAM\WeatherData.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
     <Compile Include="Modify\UpdateWeatherData.cs" />

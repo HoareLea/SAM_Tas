@@ -10,12 +10,12 @@ namespace SAM.Core.Tas
 
             try
             {
-                object aObject = Marshal.GetActiveObject("Document");
+                object @object = Marshal.GetActiveObject("Document");
 
-                if (aObject != null)
+                if (@object != null)
                 {
-                    tBDDocument = aObject as TBD.TBDDocument;
-                    Core.Modify.ReleaseCOMObject(aObject);
+                    tBDDocument = @object as TBD.TBDDocument;
+                    Core.Modify.ReleaseCOMObject(@object);
                     tBDDocument = null;
                 }
             }

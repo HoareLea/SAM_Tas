@@ -59,6 +59,10 @@
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TWD">
+      <HintPath>..\..\references_buildonly\Interop.TWD.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="SAM.Core, Version=1.0.8014.28389, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>

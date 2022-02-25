@@ -5,19 +5,19 @@ namespace SAM.Core.Tas
 {
     public static partial class Query
     {
-        public static TSD.TSDDocument TSDDocument()
+        public static TWD.Document TWDDocument()
         {
-            TSD.TSDDocument tSDDocument = null;
+            TWD.Document document = null;
 
             try
             {
-                object @object = Marshal.GetActiveObject("Document");
+                object @object = null;//Marshal.GetActiveObject("Document");
 
                 if (@object != null)
                 {
-                    tSDDocument = @object as TSD.TSDDocument;
+                    document = @object as TWD.Document;
                     Core.Modify.ReleaseCOMObject(@object);
-                    tSDDocument = null;
+                    document = null;
                 }
             }
             catch(Exception exception)
@@ -25,9 +25,9 @@ namespace SAM.Core.Tas
                 string message = exception.Message;
             }
 
-            tSDDocument = new TSD.TSDDocument();
+            document = new TWD.Document();
 
-            return tSDDocument;
+            return document;
         }
     }
 }
