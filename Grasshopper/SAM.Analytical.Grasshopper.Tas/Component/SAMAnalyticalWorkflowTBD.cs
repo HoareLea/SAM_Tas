@@ -230,6 +230,17 @@ namespace SAM.Analytical.Grasshopper.Tas
                     {
                         simpleProgressForm.Increment("Updating Weather Data");
                         Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+
+                        double latitude_TBD = Core.Query.Round(tBDDocument.Building.latitude, 0.01);
+                        double longitude_TBD = Core.Query.Round(tBDDocument.Building.longitude, 0.01);
+
+                        double latitude_WeatherData = Core.Query.Round(weatherData.Latitude, 0.01);
+                        double longitude_WeatherDate = Core.Query.Round(weatherData.Longitude, 0.01);
+
+                        if(Math.Abs(latitude_TBD - latitude_WeatherData) > 0.01 || Math.Abs(longitude_TBD - longitude_WeatherDate) > 0.01)
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "WeatherData Longitude or Latitude mismatch");
+                        }
                     }
 
                     simpleProgressForm.Increment("Adding HDD and CDD Day Types");
