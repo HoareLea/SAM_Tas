@@ -78,6 +78,7 @@
     <Compile Include="Modify\Update.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query\AnnualParameter.cs" />
+    <Compile Include="Query\Index.cs" />
     <Compile Include="Query\WeatherYears.cs" />
     <Compile Include="Query\WeatherFolders.cs" />
     <Compile Include="Query\WeatherDays.cs" />

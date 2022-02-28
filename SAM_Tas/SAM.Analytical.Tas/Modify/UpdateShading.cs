@@ -54,6 +54,10 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
+            TBD.WeatherYear weatherYear = building?.GetWeatherYear();
+
+            List<double> globalSolarRadiations = Weather.Tas.Query.AnnualParameter<double>(weatherYear, Weather.WeatherDataType.GlobalSolarRadiation);
+
             List<Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>> tuples_solarFaceSimulationResult = new List<Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult>>();
             foreach (Panel panel in panels)
             {
@@ -144,10 +148,30 @@ namespace SAM.Analytical.Tas
             List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
             foreach(Tuple<Face3D, Point3D, BoundingBox3D, Geometry.SolarCalculator.SolarFaceSimulationResult> tuple in tuples_solarFaceSimulationResult)
             {
-                if(tuple.Item4 == null || tuple.Item4.DateTimes == null || tuple.Item4.DateTimes.Count == 0)
+                List<DateTime> dateTimes = tuple?.Item4?.DateTimes;
+                if(dateTimes == null || dateTimes.Count == 0)
                 {
                     continue;
                 }
+
+                for (int i = dateTimes.Count - 1; i >= 0; i--)
+                {
+                    int index = Core.Query.HourOfYear(dateTimes[i]);
+                    if (index >= 0 && index < globalSolarRadiations.Count)
+                    {
+                        if (globalSolarRadiations[index] < 10)
+                        {
+                            dateTimes.RemoveAt(i);
+                        }
+                    }
+                }
+
+                if(dateTimes.Count == 0)
+                {
+                    continue;
+                }
+
+                Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult = new Geometry.SolarCalculator.SolarFaceSimulationResult(tuple.Item4, dateTimes);
 
                 List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>> tuples_ZoneSurfaces_BoundingBox = tuples_ZoneSurfaces.FindAll(x => x.Item2.InRange(tuple.Item3, Core.Tolerance.MacroDistance));
                 List<Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface>> tuples_ZoneSurfaces_Temp = tuples_ZoneSurfaces_BoundingBox?.FindAll(x => x.Item1.On(tuple.Item2, Core.Tolerance.MacroDistance));
@@ -158,7 +182,7 @@ namespace SAM.Analytical.Tas
 
                 foreach(Tuple<Face3D, BoundingBox3D, TBD.IZoneSurface> tuple_ZoneSurface in tuples_ZoneSurfaces_Temp)
                 {
-                    UpdateSurfaceShades(building, daysShades, (TBD.zoneSurface)tuple_ZoneSurface.Item3, tuple.Item4);
+                    UpdateSurfaceShades(building, daysShades, (TBD.zoneSurface)tuple_ZoneSurface.Item3, solarFaceSimulationResult);
                 }
             }
 
