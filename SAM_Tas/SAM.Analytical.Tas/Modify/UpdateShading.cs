@@ -159,7 +159,7 @@ namespace SAM.Analytical.Tas
                     int index = Core.Query.HourOfYear(dateTimes[i]);
                     if (index >= 0 && index < globalSolarRadiations.Count)
                     {
-                        if (globalSolarRadiations[index] < 10)
+                        if (globalSolarRadiations[index - 1] < 10)
                         {
                             dateTimes.RemoveAt(i);
                         }

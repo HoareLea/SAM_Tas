@@ -173,7 +173,7 @@ namespace SAM.Analytical.Tas
                     proportion = 0;
                 }
 
-                TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour));
+                TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour - 1));
                 surfaceShade.proportion = proportion;
                 surfaceShade.surface = zoneSurface;
 
