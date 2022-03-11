@@ -84,6 +84,7 @@
     <Compile Include="Modify\UpdateSurfaceOutputSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\SAMT3DDocument.cs" />
+    <Compile Include="Query\TSDPath.cs" />
     <Compile Include="Query\TPDPath.cs" />
     <Compile Include="Query\TWDPath.cs" />
     <Compile Include="Query\TCDPath.cs" />
