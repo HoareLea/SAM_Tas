@@ -84,6 +84,11 @@
     <Compile Include="Modify\UpdateSurfaceOutputSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\SAMT3DDocument.cs" />
+    <Compile Include="Query\ReportGeneratorPath.cs" />
+    <Compile Include="Query\UKBRStudio2013Path.cs" />
+    <Compile Include="Query\PMVAndPPDPath.cs" />
+    <Compile Include="Query\IDFWizardPath.cs" />
+    <Compile Include="Query\NPOStudioPath.cs" />
     <Compile Include="Query\TSDPath.cs" />
     <Compile Include="Query\TPDPath.cs" />
     <Compile Include="Query\TWDPath.cs" />
