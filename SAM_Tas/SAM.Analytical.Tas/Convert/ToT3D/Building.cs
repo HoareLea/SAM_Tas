@@ -23,7 +23,14 @@ namespace SAM.Analytical.Tas
 
             double northAngle = double.NaN;
             if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
-                building.northAngle = Units.Convert.ToDegrees(northAngle);
+            {
+                building.northAngle = Math.Round(Units.Convert.ToDegrees(northAngle), 1);
+            }
+
+            if (building.northAngle < 0.5)
+            {
+                building.northAngle = 0.5;
+            }
 
             return ToT3D(analyticalModel.AdjacencyCluster, building);
 
