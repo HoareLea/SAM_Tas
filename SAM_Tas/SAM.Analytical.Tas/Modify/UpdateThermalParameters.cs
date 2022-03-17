@@ -125,7 +125,7 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
-                        thermalTransmittance = Query.ThermalTransmittance(construction_TBD_Aperture, panel.PanelType);
+                        thermalTransmittance = Query.ThermalTransmittance(construction_TBD_Aperture, PanelType.CurtainWall);
                         if (!double.IsNaN(thermalTransmittance))
                         {
                             aperture.SetValue(ApertureParameter.ThermalTransmittance, thermalTransmittance);
