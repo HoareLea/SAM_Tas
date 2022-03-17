@@ -116,7 +116,7 @@ namespace SAM.Analytical.Tas
                         TBD.Construction construction_TBD_Aperture = constructions_TBD.Find(x => x.name == name_Aperture);
                         if (construction_TBD_Aperture == null)
                         {
-                            name_Aperture = Analytical.Query.UniqueName(aperture.ApertureType, name_Aperture);
+                            name_Aperture = string.Format("{0} -pane", name_Aperture);
                             construction_TBD_Aperture = constructions_TBD.Find(x => x.name == name_Aperture);
                         }
 
