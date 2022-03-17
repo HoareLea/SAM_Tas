@@ -97,6 +97,95 @@ namespace SAM.Analytical.Tas
                     panel.SetValue(PanelParameter.PilkingtonShadingLongWavelengthCoefficient, pilkingtonLongWavelengthCoefficient);
                 }
 
+                List<Aperture> apertures = panel.Apertures;
+                if(apertures != null && apertures.Count > 0)
+                {
+                    foreach(Aperture aperture in apertures)
+                    {
+                        if(aperture == null)
+                        {
+                            continue;
+                        }
+
+                        string name_Aperture = aperture.ApertureConstruction?.Name;
+                        if(string.IsNullOrWhiteSpace(name_Aperture))
+                        {
+                            continue;
+                        }
+
+                        TBD.Construction construction_TBD_Aperture = constructions_TBD.Find(x => x.name == name_Aperture);
+                        if (construction_TBD_Aperture == null)
+                        {
+                            name_Aperture = Analytical.Query.UniqueName(aperture.ApertureType, name_Aperture);
+                            construction_TBD_Aperture = constructions_TBD.Find(x => x.name == name_Aperture);
+                        }
+
+                        if (construction_TBD_Aperture == null)
+                        {
+                            continue;
+                        }
+
+                        thermalTransmittance = Query.ThermalTransmittance(construction_TBD_Aperture, panel.PanelType);
+                        if (!double.IsNaN(thermalTransmittance))
+                        {
+                            aperture.SetValue(ApertureParameter.ThermalTransmittance, thermalTransmittance);
+                        }
+
+                        Query.GlazingValues(construction_TBD_Aperture,
+                            out lightTransmittance,
+                            out lightReflectance,
+                            out directSolarEnergyTransmittance,
+                            out directSolarEnergyReflectance,
+                            out directSolarEnergyAbsorptance,
+                            out totalSolarEnergyTransmittance,
+                            out pilkingtonShortWavelengthCoefficient,
+                            out pilkingtonLongWavelengthCoefficient);
+
+                        if (!double.IsNaN(lightTransmittance))
+                        {
+                            aperture.SetValue(ApertureParameter.LightTransmittance, lightTransmittance);
+                        }
+
+                        if (!double.IsNaN(lightReflectance))
+                        {
+                            aperture.SetValue(ApertureParameter.LightReflectance, lightReflectance);
+                        }
+
+                        if (!double.IsNaN(directSolarEnergyTransmittance))
+                        {
+                            aperture.SetValue(ApertureParameter.DirectSolarEnergyTransmittance, directSolarEnergyTransmittance);
+                        }
+
+                        if (!double.IsNaN(directSolarEnergyReflectance))
+                        {
+                            aperture.SetValue(ApertureParameter.DirectSolarEnergyReflectance, directSolarEnergyReflectance);
+                        }
+
+                        if (!double.IsNaN(directSolarEnergyAbsorptance))
+                        {
+                            aperture.SetValue(ApertureParameter.DirectSolarEnergyAbsorptance, directSolarEnergyAbsorptance);
+                        }
+
+                        if (!double.IsNaN(totalSolarEnergyTransmittance))
+                        {
+                            aperture.SetValue(ApertureParameter.TotalSolarEnergyTransmittance, totalSolarEnergyTransmittance);
+                        }
+
+                        if (!double.IsNaN(pilkingtonShortWavelengthCoefficient))
+                        {
+                            aperture.SetValue(ApertureParameter.PilkingtonShadingShortWavelengthCoefficient, pilkingtonShortWavelengthCoefficient);
+                        }
+
+                        if (!double.IsNaN(pilkingtonLongWavelengthCoefficient))
+                        {
+                            aperture.SetValue(ApertureParameter.PilkingtonShadingLongWavelengthCoefficient, pilkingtonLongWavelengthCoefficient);
+                        }
+
+                        panel.RemoveAperture(aperture.Guid);
+                        panel.AddAperture(aperture);
+                    }
+                }
+
 
                 adjacencyCluster.AddObject(panel);
                 result[panel] = thermalTransmittance;
