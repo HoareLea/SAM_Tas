@@ -41,7 +41,13 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                double thermalTransmittance = Query.ThermalTransmittance(construction_TBD, panel.PanelType);
+                PanelType panelType = panel.PanelType;
+                if(construction_TBD.type == TBD.ConstructionTypes.tcdTransparentConstruction)
+                {
+                    panelType = PanelType.CurtainWall;
+                }
+
+                double thermalTransmittance = Query.ThermalTransmittance(construction_TBD, panelType);
                 if (!double.IsNaN(thermalTransmittance))
                 {
                     panel.SetValue(PanelParameter.ThermalTransmittance, thermalTransmittance);
@@ -125,7 +131,7 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
-                        thermalTransmittance = Query.ThermalTransmittance(construction_TBD_Aperture, PanelType.CurtainWall);
+                        thermalTransmittance = Query.ThermalTransmittance(construction_TBD_Aperture, construction_TBD_Aperture.type == TBD.ConstructionTypes.tcdTransparentConstruction ? PanelType.CurtainWall : panel.PanelType);
                         if (!double.IsNaN(thermalTransmittance))
                         {
                             aperture.SetValue(ApertureParameter.ThermalTransmittance, thermalTransmittance);
