@@ -308,7 +308,7 @@ namespace SAM.Analytical.Tas
                             }
                         }
 
-                        zoneSurface_Panel.type = Query.SurfaceType(panelType);
+                        zoneSurface_Panel.type = Analytical.Query.Adiabatic(panel) ? TBD.SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
 
                         if (!dictionary_Panel.TryGetValue(panel.Guid, out List<TBD.zoneSurface> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
                         {
