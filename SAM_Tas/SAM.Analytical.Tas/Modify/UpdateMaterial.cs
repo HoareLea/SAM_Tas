@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas
             material.type = (int)TBD.MaterialTypes.tcdGasLayer;
 
             material.description = gasMaterial.Description;
-            material.width = System.Convert.ToSingle(gasMaterial.GetValue<double>(MaterialParameter.DefaultThickness));
+            material.width = System.Convert.ToSingle(gasMaterial.GetValue<double>(Core.MaterialParameter.DefaultThickness));
             material.convectionCoefficient = System.Convert.ToSingle(gasMaterial.GetValue<double>(GasMaterialParameter.HeatTransferCoefficient));
             material.vapourDiffusionFactor = System.Convert.ToSingle(gasMaterial.GetValue<double>(MaterialParameter.VapourDiffusionFactor));
 
@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas
             material.type = (int)TBD.MaterialTypes.tcdTransparentLayer;
 
             material.description = transparentMaterial.Description;
-            material.width = System.Convert.ToSingle(transparentMaterial.GetValue<double>(MaterialParameter.DefaultThickness));
+            material.width = System.Convert.ToSingle(transparentMaterial.GetValue<double>(Core.MaterialParameter.DefaultThickness));
             material.conductivity = System.Convert.ToSingle(transparentMaterial.ThermalConductivity);
             material.vapourDiffusionFactor = System.Convert.ToSingle(transparentMaterial.GetValue<double>(MaterialParameter.VapourDiffusionFactor));
             material.solarTransmittance = System.Convert.ToSingle(transparentMaterial.GetValue<double>(TransparentMaterialParameter.SolarTransmittance));
@@ -63,7 +63,7 @@ namespace SAM.Analytical.Tas
             material.type = (int)TBD.MaterialTypes.tcdOpaqueMaterial;
 
             material.description = opaqueMaterial.Description;
-            material.width = System.Convert.ToSingle(opaqueMaterial.GetValue<double>(MaterialParameter.DefaultThickness));
+            material.width = System.Convert.ToSingle(opaqueMaterial.GetValue<double>(Core.MaterialParameter.DefaultThickness));
             material.conductivity = System.Convert.ToSingle(opaqueMaterial.ThermalConductivity);
             material.specificHeat = System.Convert.ToSingle(opaqueMaterial.SpecificHeatCapacity);
             material.density = System.Convert.ToSingle(opaqueMaterial.Density);
