@@ -128,6 +128,11 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
+                        if(panelType == PanelType.Undefined)
+                        {
+                            panelType = Analytical.Query.PanelType(polygon3D.GetPlane().Normal);
+                        }
+
                         Panel panel = Analytical.Create.Panel(construction, panelType, new Geometry.Spatial.Face3D(polygon3D));
                         if(panel == null)
                         {
