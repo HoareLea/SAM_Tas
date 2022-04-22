@@ -122,7 +122,7 @@ namespace SAM.Weather.Grasshopper.Tas
                 return;
             }
 
-            if(!Weather.Tas.Modify.UpdateWeatherData(path_TBD, weatherData))
+            if(!Weather.Tas.Modify.UpdateWeatherData(path_TBD, weatherData, 0))
             {
                 weatherData = null;
             }

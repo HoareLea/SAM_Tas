@@ -130,7 +130,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 bool save = false;
                 if (weatherData != null)
                 {
-                    save = Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                    save = Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, analyticalModel.AdjacencyCluster.BuildingHeight());
                 }
 
                 result = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
