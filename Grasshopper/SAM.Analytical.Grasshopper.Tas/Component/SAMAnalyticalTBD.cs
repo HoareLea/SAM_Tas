@@ -150,7 +150,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 if (weatherData != null)
                 {
-                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, 0);
                 }
 
                 TBD.Calendar calendar = tBDDocument.Building.GetCalendar();

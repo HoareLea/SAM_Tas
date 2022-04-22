@@ -63,7 +63,7 @@ namespace SAM.Analytical.Tas
                         simpleProgressForm.Increment("Updating Weather Data");
                         if (weatherData != null)
                         {
-                            Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                            Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, adjacencyCluster.BuildingHeight());
                         }
 
                         if (!string.IsNullOrWhiteSpace(guid))

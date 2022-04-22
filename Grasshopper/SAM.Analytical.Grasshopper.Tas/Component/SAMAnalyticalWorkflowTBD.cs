@@ -232,7 +232,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     if (weatherData != null)
                     {
                         simpleProgressForm.Increment("Updating Weather Data");
-                        Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData);
+                        Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, analyticalModel.AdjacencyCluster.BuildingHeight());
 
                         double latitude_TBD = Core.Query.Round(analyticalModel.Location.Latitude, 0.01);
                         double longitude_TBD = Core.Query.Round(analyticalModel.Location.Longitude, 0.01);

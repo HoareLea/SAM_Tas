@@ -5,7 +5,7 @@ namespace SAM.Weather.Tas
 {
     public static partial class Modify
     {
-        public static bool UpdateWeatherData(string path_TBD, WeatherData weatherData)
+        public static bool UpdateWeatherData(string path_TBD, WeatherData weatherData, double buildingHeight)
         {
             if(string.IsNullOrWhiteSpace(path_TBD) || weatherData == null)
             {
@@ -15,7 +15,7 @@ namespace SAM.Weather.Tas
             bool result = false;
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
-                result = UpdateWeatherData(sAMTBDDocument, weatherData);
+                result = UpdateWeatherData(sAMTBDDocument, weatherData, buildingHeight);
                 if (result)
                 {
                     sAMTBDDocument.Save();
@@ -25,27 +25,27 @@ namespace SAM.Weather.Tas
             return result;
         }
 
-        public static bool UpdateWeatherData(this SAMTBDDocument sAMTBDDocument, WeatherData weatherData)
+        public static bool UpdateWeatherData(this SAMTBDDocument sAMTBDDocument, WeatherData weatherData, double buildingHeight)
         {
             if(sAMTBDDocument == null || weatherData == null)
             {
                 return false;
             }
 
-            return UpdateWeatherData(sAMTBDDocument.TBDDocument, weatherData);
+            return UpdateWeatherData(sAMTBDDocument.TBDDocument, weatherData, buildingHeight);
         }
 
-        public static bool UpdateWeatherData(this TBD.TBDDocument tBDDocument, WeatherData weatherData)
+        public static bool UpdateWeatherData(this TBD.TBDDocument tBDDocument, WeatherData weatherData, double buildingHeight)
         {
             if(tBDDocument == null || weatherData == null)
             {
                 return false;
             }
 
-            return UpdateWeatherData(tBDDocument.Building, weatherData);
+            return UpdateWeatherData(tBDDocument.Building, weatherData, buildingHeight);
         }
 
-        public static bool UpdateWeatherData(this TBD.Building building, WeatherData weatherData)
+        public static bool UpdateWeatherData(this TBD.Building building, WeatherData weatherData, double buildingHeight)
         {
             if (building == null || weatherData == null)
             {
@@ -60,7 +60,7 @@ namespace SAM.Weather.Tas
 
             building.latitude = System.Convert.ToSingle(weatherData.Latitude);
             building.longitude = System.Convert.ToSingle(weatherData.Longitude);
-            building.maxBuildingAltitude= System.Convert.ToSingle(weatherData.Elevtion);
+            building.maxBuildingAltitude= System.Convert.ToSingle(buildingHeight);
             if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out string timeZone))
             {
                 double @double = Core.Query.Double(Core.Query.UTC(timeZone));
