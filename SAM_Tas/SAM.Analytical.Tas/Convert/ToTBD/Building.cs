@@ -93,9 +93,11 @@ namespace SAM.Analytical.Tas
 
                         BoundingBox3D boundingBox3D_Panel = face3D_Panel.GetBoundingBox();
 
+                        Vector3D normal = dictionary_Panel.ContainsKey(panel.Guid) ? panel.Normal.GetNegated() : panel.Normal;
+
                         TBD.zoneSurface zoneSurface_Panel = zone.AddSurface();
                         zoneSurface_Panel.orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
-                        zoneSurface_Panel.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(panel));
+                        zoneSurface_Panel.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(normal));
                         
                         zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Panel.GetCentroid().Z);
                         zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
@@ -334,14 +336,14 @@ namespace SAM.Analytical.Tas
 
                 if (keyValuePair.Value[0].inclination == 0 || keyValuePair.Value[0].inclination == 180)
                 {
-                    float inclination = keyValuePair.Value[1].inclination;
-                    inclination -= 180;
-                    if (inclination < 0)
-                    {
-                        inclination += 360;
-                    }
+                    //float inclination = keyValuePair.Value[1].inclination;
+                    //inclination -= 180;
+                    //if (inclination < 0)
+                    //{
+                    //    inclination += 360;
+                    //}
 
-                    keyValuePair.Value[1].inclination = inclination;
+                    //keyValuePair.Value[1].inclination = inclination;
                     keyValuePair.Value[1].reversed = 1;
                 }
                 else
