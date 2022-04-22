@@ -45,7 +45,8 @@ namespace SAM.Analytical.Tas
             foreach (Space space in spaces)
             {
                 Shell shell = adjacencyCluster.Shell(space);
-                if (shell == null)
+                BoundingBox3D boundingBox3D = shell?.GetBoundingBox();
+                if (shell == null || boundingBox3D == null)
                 {
                     return null;
                 }
@@ -59,7 +60,7 @@ namespace SAM.Analytical.Tas
                     zone.colour = Core.Convert.ToUint(sAMColor.ToColor());
                 }
 
-                List<Face3D> face3Ds = Geometry.Spatial.Query.Section(shell, 0.01, false);
+                List<Face3D> face3Ds = Geometry.Spatial.Query.Section(shell, (boundingBox3D.Max.Z - boundingBox3D.Min.Z) / 2, false);
                 if(face3Ds != null && face3Ds.Count != 0)
                 {
                     face3Ds.RemoveAll(x => x == null || !x.IsValid());
