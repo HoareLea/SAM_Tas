@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static Dictionary<Analytical.SpaceSimulationResultParameter, object> Overheating(TSD.ZoneData zoneData, int index_Start, int index_End)
+        public static Dictionary<Analytical.SpaceSimulationResultParameter, object> Overheating(TSD.ZoneData zoneData, int index_Start, int index_End, double tolerance = 0.01)
         {
             if (zoneData == null)
                 return null;
@@ -36,6 +36,10 @@ namespace SAM.Analytical.Tas
             float[] occupancySensibleGains = dictionary[TSD.tsdZoneArray.occupantSensibleGain];
             float[] resultantTemperatures = dictionary[TSD.tsdZoneArray.resultantTemp];
             float[] dryBulbTemperatures = dictionary[TSD.tsdZoneArray.dryBulbTemp];
+            for(int i =0; i < dryBulbTemperatures.Length; i++)
+            {
+                dryBulbTemperatures[i] = Core.Query.Round(dryBulbTemperatures[i], (float)tolerance);
+            }
 
             float temperature_Max = float.MinValue;
             int temperature_Max_Index = -1;
