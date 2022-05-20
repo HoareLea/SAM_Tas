@@ -130,11 +130,11 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            List<double> dryBulbTemperatures = zoneData.AnnualZoneResult<double>(tsdZoneArray.dryBulbTemp);
-            if(dryBulbTemperatures != null)
-            {
-                result.SetValue(SpaceSimulationResultParameter.DryBulbTemperatureProfile, new Profile("Dry Bulb Temperature", "Annual Space Values", dryBulbTemperatures));
-            }
+            //List<double> dryBulbTemperatures = zoneData.AnnualZoneResult<double>(tsdZoneArray.dryBulbTemp);
+            //if(dryBulbTemperatures != null)
+            //{
+            //    result.SetValue(SpaceSimulationResultParameter.DryBulbTemperatureProfile, new Profile("Dry Bulb Temperature", "Annual Space Values", dryBulbTemperatures));
+            //}
 
             result.SetValue(SpaceSimulationResultParameter.ZoneGuid, zoneData.zoneGUID);
 
