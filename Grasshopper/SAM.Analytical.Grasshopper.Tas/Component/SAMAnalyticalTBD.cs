@@ -109,7 +109,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             AnalyticalModel analyticalModel = null;
             index = Params.IndexOfInputParam("_analyticalModel");
-            if (index == -1 || !dataAccess.GetData(index, ref analyticalModel) || string.IsNullOrWhiteSpace(path))
+            if (index == -1 || !dataAccess.GetData(index, ref analyticalModel) || analyticalModel == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
