@@ -222,16 +222,16 @@ namespace SAM.Analytical.Grasshopper.Tas
                 count++;
             }
 
-            using (Core.Windows.SimpleProgressForm simpleProgressForm = new Core.Windows.SimpleProgressForm("SAM Workflow - TBD Update", string.Empty, count))
+            using (Core.Windows.Forms.ProgressForm progressForm = new Core.Windows.Forms.ProgressForm("SAM Workflow - TBD Update", count))
             {
-                simpleProgressForm.Increment("Opening TBD document");
+                progressForm.Update("Opening TBD document");
                 using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
                 {
                     TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
 
                     if (weatherData != null)
                     {
-                        simpleProgressForm.Increment("Updating Weather Data");
+                        progressForm.Update("Updating Weather Data");
                         Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, analyticalModel.AdjacencyCluster.BuildingHeight());
 
                         double latitude_TBD = Core.Query.Round(analyticalModel.Location.Latitude, 0.01);
@@ -246,7 +246,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                         }
                     }
 
-                    simpleProgressForm.Increment("Adding HDD and CDD Day Types");
+                    progressForm.Update("Adding HDD and CDD Day Types");
 
                     TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
 
@@ -263,19 +263,19 @@ namespace SAM.Analytical.Grasshopper.Tas
                         dayType.name = "CDD";
                     }
 
-                    simpleProgressForm.Increment("Converting to TBD");
+                    progressForm.Update("Converting to TBD");
                     Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
 
-                    simpleProgressForm.Increment("Updating Zones");
+                    progressForm.Update("Updating Zones");
                     Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
 
                     if (coolingDesignDays != null || heatingDesignDays != null)
                     {
-                        simpleProgressForm.Increment("Adding Design Days");
+                        progressForm.Update("Adding Design Days");
                         Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
                     }
 
-                    simpleProgressForm.Increment("Updating Shades");
+                    progressForm.Update("Updating Shades");
                     simulate = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
 
                     sAMTBDDocument.Save();
