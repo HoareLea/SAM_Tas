@@ -23,47 +23,47 @@ namespace SAM.Analytical.Tas
             Dictionary<string, Tuple<double, int, CoolingDesignData>> dictionary_DesignDay_Cooling = MaxValueDictionary(simulationData.CoolingDesignDatas(), tsdZoneArray.coolingLoad);
             Dictionary<string, Tuple<double, int, HeatingDesignData>> dictionary_DesignDay_Heating = MaxValueDictionary(simulationData.HeatingDesignDatas(), tsdZoneArray.heatingLoad);
 
-            BuildingData buildingData = simulationData.GetBuildingData();
-            if (buildingData != null)
-            {
-                Dictionary<string, Tuple<double, int>> dictionary = null;
+            //BuildingData buildingData = simulationData.GetBuildingData();
+            //if (buildingData != null)
+            //{
+            //    Dictionary<string, Tuple<double, int>> dictionary = null;
 
-                dictionary = ValueDictionary(buildingData, tsdZoneArray.coolingLoad);
-                if (dictionary != null && dictionary_DesignDay_Cooling != null)
-                {
-                    foreach (KeyValuePair<string, Tuple<double, int>> keyValuePair in dictionary)
-                    {
-                        if (!dictionary_DesignDay_Cooling.TryGetValue(keyValuePair.Key, out Tuple<double, int, CoolingDesignData> tuple) || tuple == null)
-                        {
-                            continue;
-                        }
+            //    dictionary = ValueDictionary(buildingData, tsdZoneArray.coolingLoad);
+            //    if (dictionary != null && dictionary_DesignDay_Cooling != null)
+            //    {
+            //        foreach (KeyValuePair<string, Tuple<double, int>> keyValuePair in dictionary)
+            //        {
+            //            if (!dictionary_DesignDay_Cooling.TryGetValue(keyValuePair.Key, out Tuple<double, int, CoolingDesignData> tuple) || tuple == null)
+            //            {
+            //                continue;
+            //            }
 
-                        if (tuple.Item1 < keyValuePair.Value.Item1)
-                        {
-                            tuple = new Tuple<double, int, CoolingDesignData>(keyValuePair.Value.Item1, keyValuePair.Value.Item2, null);
-                            dictionary_DesignDay_Cooling[keyValuePair.Key] = tuple;
-                        }
-                    }
-                }
+            //            if (tuple.Item1 < keyValuePair.Value.Item1)
+            //            {
+            //                tuple = new Tuple<double, int, CoolingDesignData>(keyValuePair.Value.Item1, keyValuePair.Value.Item2, null);
+            //                dictionary_DesignDay_Cooling[keyValuePair.Key] = tuple;
+            //            }
+            //        }
+            //    }
 
-                dictionary = ValueDictionary(buildingData, tsdZoneArray.heatingLoad);
-                if (dictionary != null && dictionary_DesignDay_Heating != null)
-                {
-                    foreach (KeyValuePair<string, Tuple<double, int>> keyValuePair in dictionary)
-                    {
-                        if (!dictionary_DesignDay_Heating.TryGetValue(keyValuePair.Key, out Tuple<double, int, HeatingDesignData> tuple) || tuple == null)
-                        {
-                            continue;
-                        }
+            //    dictionary = ValueDictionary(buildingData, tsdZoneArray.heatingLoad);
+            //    if (dictionary != null && dictionary_DesignDay_Heating != null)
+            //    {
+            //        foreach (KeyValuePair<string, Tuple<double, int>> keyValuePair in dictionary)
+            //        {
+            //            if (!dictionary_DesignDay_Heating.TryGetValue(keyValuePair.Key, out Tuple<double, int, HeatingDesignData> tuple) || tuple == null)
+            //            {
+            //                continue;
+            //            }
 
-                        if (tuple.Item1 < keyValuePair.Value.Item1)
-                        {
-                            tuple = new Tuple<double, int, HeatingDesignData>(keyValuePair.Value.Item1, keyValuePair.Value.Item2, null);
-                            dictionary_DesignDay_Heating[keyValuePair.Key] = tuple;
-                        }
-                    }
-                }
-            }
+            //            if (tuple.Item1 < keyValuePair.Value.Item1)
+            //            {
+            //                tuple = new Tuple<double, int, HeatingDesignData>(keyValuePair.Value.Item1, keyValuePair.Value.Item2, null);
+            //                dictionary_DesignDay_Heating[keyValuePair.Key] = tuple;
+            //            }
+            //        }
+            //    }
+            //}
 
             Dictionary<string, Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int>> result = new Dictionary<string, Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int>>();
             if (dictionary_DesignDay_Cooling != null)

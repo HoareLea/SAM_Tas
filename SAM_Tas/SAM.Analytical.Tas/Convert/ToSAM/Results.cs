@@ -47,6 +47,9 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            Dictionary<string, Tuple<double, int>> dictionary_Cooling = Query.ValueDictionary(buildingData, tsdZoneArray.coolingLoad);
+            Dictionary<string, Tuple<double, int>> dictionary_Heating = Query.ValueDictionary(buildingData, tsdZoneArray.heatingLoad);
+
             Dictionary<string, Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int>> designDataDictionary = Query.DesignDataDictionary(simulationData);
 
             List<List<Core.Result>> results = Enumerable.Repeat<List<Core.Result>>(null, zoneDatas.Count).ToList();
@@ -64,27 +67,40 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                SizingMethod sizingMethod = SizingMethod.Undefined;
+                double designDayTemperature;
+                double designDayRelativeHumidity;
 
-                ZoneData zoneData_Cooling = zoneData_BuildingData;
+                SizingMethod sizingMethod;
+
+                //COOLING START
+
+                Tuple<double, int> tuple_Cooling = null;
+                if (dictionary_Cooling == null || !dictionary_Cooling.TryGetValue(keyValuePair.Key, out tuple_Cooling))
+                {
+                    tuple_Cooling = null;
+                }
+
+                sizingMethod = SizingMethod.Undefined;
+                ZoneData zoneData_Cooling = null;
+                double coolingLoad = double.NaN;
+                int coolingIndex = -1;
 
                 CoolingDesignData coolingDesignData = keyValuePair.Value.Item1;
-                double coolingLoad = keyValuePair.Value.Item2;
-                int coolingIndex = keyValuePair.Value.Item3;
-                if(coolingDesignData != null)
+                if (coolingDesignData != null)
                 {
                     sizingMethod = SizingMethod.CDD;
                     zoneData_Cooling = coolingDesignData.GetZoneData(zoneData_BuildingData.zoneNumber);
+                    coolingLoad = keyValuePair.Value.Item2;
+                    coolingIndex = keyValuePair.Value.Item3;
                 }
-                else
+
+                if(tuple_Cooling != null && tuple_Cooling.Item1 > coolingLoad)
                 {
                     sizingMethod = SizingMethod.Simulation;
+                    zoneData_Cooling = zoneData_BuildingData;
+                    coolingLoad = tuple_Cooling.Item1;
+                    coolingIndex = tuple_Cooling.Item2;
                 }
-
-                ZoneData zoneData_Heating = zoneData_BuildingData;
-
-                double designDayTemperature;
-                double designDayRelativeHumidity;
 
                 designDayTemperature = double.NaN;
                 designDayRelativeHumidity = double.NaN;
@@ -113,17 +129,36 @@ namespace SAM.Analytical.Tas
                     spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayRelativeHumidity, designDayRelativeHumidity);
                 }
 
+                //COOLING END
+
+                //HEATING START
+
+                Tuple<double, int> tuple_Heating = null;
+                if (dictionary_Heating == null || !dictionary_Heating.TryGetValue(keyValuePair.Key, out tuple_Heating))
+                {
+                    tuple_Heating = null;
+                }
+
+                sizingMethod = SizingMethod.Undefined;
+                ZoneData zoneData_Heating = null;
+                double heatingLoad = double.NaN;
+                int heatingIndex = -1;
+
                 HeatingDesignData heatingDesignData = keyValuePair.Value.Item4;
-                double heatingLoad = keyValuePair.Value.Item5;
-                int heatingIndex = keyValuePair.Value.Item6;
-                if (heatingDesignData != null)
+                if(heatingDesignData != null)
                 {
                     sizingMethod = SizingMethod.HDD;
                     zoneData_Heating = heatingDesignData.GetZoneData(zoneData_BuildingData.zoneNumber);
+                    heatingLoad = keyValuePair.Value.Item5;
+                    heatingIndex = keyValuePair.Value.Item6;
                 }
-                else
+
+                if (tuple_Heating != null && tuple_Heating.Item1 > heatingLoad)
                 {
                     sizingMethod = SizingMethod.Simulation;
+                    zoneData_Cooling = zoneData_BuildingData;
+                    coolingLoad = tuple_Heating.Item1;
+                    coolingIndex = tuple_Heating.Item2;
                 }
 
                 designDayTemperature = double.NaN;
@@ -145,13 +180,15 @@ namespace SAM.Analytical.Tas
 
                 if (!double.IsNaN(designDayTemperature))
                 {
-                    spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayTemperature, designDayTemperature);
+                    spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayTemperature, designDayTemperature);
                 }
 
                 if (!double.IsNaN(designDayRelativeHumidity))
                 {
-                    spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayRelativeHumidity, designDayRelativeHumidity);
+                    spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayRelativeHumidity, designDayRelativeHumidity);
                 }
+
+                //HEATING END
 
                 if (spaceSimulationResult_Cooling != null || spaceSimulationResult_Heating != null)
                 {
