@@ -84,6 +84,8 @@ namespace SAM.Analytical.Tas
                 ZoneData zoneData_Cooling = null;
                 double coolingLoad = double.NaN;
                 int coolingIndex = -1;
+                designDayTemperature = double.NaN;
+                designDayRelativeHumidity = double.NaN;
 
                 CoolingDesignData coolingDesignData = keyValuePair.Value.Item1;
                 if (coolingDesignData != null)
@@ -92,31 +94,25 @@ namespace SAM.Analytical.Tas
                     zoneData_Cooling = coolingDesignData.GetZoneData(zoneData_BuildingData.zoneNumber);
                     coolingLoad = keyValuePair.Value.Item2;
                     coolingIndex = keyValuePair.Value.Item3;
+
+                    //TODO: Add Design Day Temperature and Design Day Relative Humidity for CDD sizing method
                 }
 
-                if(tuple_Cooling != null && tuple_Cooling.Item1 > coolingLoad)
+                if (tuple_Cooling != null && tuple_Cooling.Item1 > coolingLoad)
                 {
                     sizingMethod = SizingMethod.Simulation;
                     zoneData_Cooling = zoneData_BuildingData;
                     coolingLoad = tuple_Cooling.Item1;
                     coolingIndex = tuple_Cooling.Item2;
+                    designDayTemperature = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalTemperature);
+                    designDayRelativeHumidity = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalHumidity);
                 }
-
-                designDayTemperature = double.NaN;
-                designDayRelativeHumidity = double.NaN;
 
                 SpaceSimulationResult spaceSimulationResult_Cooling = Create.SpaceSimulationResult(zoneData_Cooling, coolingIndex, LoadType.Cooling, sizingMethod);
                 if(spaceSimulationResult_Cooling != null && coolingDesignData != null)
                 {
                     string designDayName = coolingDesignData.name;
                     spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.DesignDayName, designDayName);
-
-                    //TODO: Add Design Day Temperature and Design Day Relative Humidity for CDD sizing method
-                }
-                else
-                {
-                    designDayTemperature = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalTemperature);
-                    designDayRelativeHumidity = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalHumidity);
                 }
 
                 if(!double.IsNaN(designDayTemperature))
@@ -143,6 +139,8 @@ namespace SAM.Analytical.Tas
                 ZoneData zoneData_Heating = null;
                 double heatingLoad = double.NaN;
                 int heatingIndex = -1;
+                designDayTemperature = double.NaN;
+                designDayRelativeHumidity = double.NaN;
 
                 HeatingDesignData heatingDesignData = keyValuePair.Value.Item4;
                 if(heatingDesignData != null)
@@ -151,6 +149,8 @@ namespace SAM.Analytical.Tas
                     zoneData_Heating = heatingDesignData.GetZoneData(zoneData_BuildingData.zoneNumber);
                     heatingLoad = keyValuePair.Value.Item5;
                     heatingIndex = keyValuePair.Value.Item6;
+
+                    //TODO: Add Design Day Temperature and Design Day Relative Humidity for CDD sizing method
                 }
 
                 if (tuple_Heating != null && tuple_Heating.Item1 > heatingLoad)
@@ -159,23 +159,15 @@ namespace SAM.Analytical.Tas
                     zoneData_Cooling = zoneData_BuildingData;
                     coolingLoad = tuple_Heating.Item1;
                     coolingIndex = tuple_Heating.Item2;
+                    designDayTemperature = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalTemperature);
+                    designDayRelativeHumidity = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalHumidity);
                 }
-
-                designDayTemperature = double.NaN;
-                designDayRelativeHumidity = double.NaN;
 
                 SpaceSimulationResult spaceSimulationResult_Heating = Create.SpaceSimulationResult(zoneData_Heating, heatingIndex, LoadType.Heating, sizingMethod);
                 if (spaceSimulationResult_Heating != null && heatingDesignData != null)
                 {
                     string designDayName = heatingDesignData.name;
                     spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.DesignDayName, designDayName);
-
-                    //TODO: Add Design Day Temperature and Design Day Relative Humidity for CDD sizing method
-                }
-                else
-                {
-                    designDayTemperature = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalTemperature);
-                    designDayRelativeHumidity = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalHumidity);
                 }
 
                 if (!double.IsNaN(designDayTemperature))
