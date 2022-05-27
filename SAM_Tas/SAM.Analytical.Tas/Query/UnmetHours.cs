@@ -49,11 +49,11 @@ namespace SAM.Analytical.Tas
                 foreach (KeyValuePair<string, List<int>> aKeyValuePair in result)
                 {
                     List<int> indexes = new List<int>();
-                    foreach (int aIndex in result[aKeyValuePair.Key])
+                    foreach (int index in result[aKeyValuePair.Key])
                     {
-                        float aTemperature = buildingData.GetHourlyBuildingResult(aIndex, (int)tsdBuildingArray.externalTemperature);
-                        if (aTemperature < yearlyValues[tSDZoneArray][aKeyValuePair.Key][aIndex])
-                            indexes.Add(aIndex);
+                        float temperature = buildingData.GetHourlyBuildingResult(index, (int)tsdBuildingArray.externalTemperature);
+                        if (temperature < yearlyValues[tSDZoneArray][aKeyValuePair.Key][index])
+                            indexes.Add(index);
                     }
 
                     result[aKeyValuePair.Key] = indexes;
