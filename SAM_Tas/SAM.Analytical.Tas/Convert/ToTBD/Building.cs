@@ -80,9 +80,9 @@ namespace SAM.Analytical.Tas
                     foreach (Panel panel in panels)
                     {
                         string name_Panel = panel.Name;
-                        if (string.IsNullOrWhiteSpace(name_Panel))
+                        if (string.IsNullOrWhiteSpace(name_Panel) || panel.PanelType == PanelType.Air)
                         {
-                            continue;
+                            name_Panel = "Air";
                         }
 
                         Face3D face3D_Panel = panel.Face3D;
