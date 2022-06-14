@@ -10,6 +10,8 @@ namespace SAM.Analytical.Tas
 
             if (text_Temp == "No Type")
                 return 0;
+            if (text_Temp == "Air")
+                return 0;
             if (text_Temp == "Internal Wall")
                 return 1;
             if (text_Temp == "External Wall")
