@@ -181,6 +181,7 @@ namespace SAM.Analytical.Tas
                             buildingElement_Panel.colour = Core.Convert.ToUint(Analytical.Query.Color(panelType));
                             buildingElement_Panel.BEType = Query.BEType(panelType.Text());
                             buildingElement_Panel.AssignConstruction(construction_TBD);
+                            buildingElement_Panel.ghost = panelType == PanelType.Air ? 1 : 0;
                             buildingElements.Add(buildingElement_Panel);
                         }
 
