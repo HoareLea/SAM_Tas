@@ -7,7 +7,7 @@
             switch(panelType)
             {
                 case Analytical.PanelType.Air:
-                    return TBD.SurfaceType.tbdNullLink;
+                    return TBD.SurfaceType.tbdLink;
                 case Analytical.PanelType.Ceiling:
                     return TBD.SurfaceType.tbdLink;
                 case Analytical.PanelType.CurtainWall:

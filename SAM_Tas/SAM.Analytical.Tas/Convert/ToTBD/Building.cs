@@ -127,54 +127,58 @@ namespace SAM.Analytical.Tas
                         {
                             TBD.Construction construction_TBD = null;
 
-                            Construction construction = panel.Construction;
-                            if (construction != null)
+                            if(panel.PanelType != PanelType.Air)
                             {
-                                construction_TBD = constructions.Find(x => x.name == construction.Name);
-                                if (construction_TBD == null)
+                                Construction construction = panel.Construction;
+                                if (construction != null)
                                 {
-                                    construction_TBD = result.AddConstruction(null);
-                                    construction_TBD.name = construction.Name;
-
-                                    if(construction.Transparent(materialLibrary))
+                                    construction_TBD = constructions.Find(x => x.name == construction.Name);
+                                    if (construction_TBD == null)
                                     {
-                                        construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
-                                    }
+                                        construction_TBD = result.AddConstruction(null);
+                                        construction_TBD.name = construction.Name;
 
-                                    List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
-                                    if (constructionLayers != null && constructionLayers.Count != 0)
-                                    {
-                                        int index = 1;
-                                        foreach (ConstructionLayer constructionLayer in constructionLayers)
+                                        if (construction.Transparent(materialLibrary))
                                         {
-                                            Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
-                                            if (material == null)
-                                            {
-                                                continue;
-                                            }
+                                            construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                                        }
 
-                                            TBD.material material_TBD = construction_TBD.AddMaterial(material);
-                                            if (material_TBD != null)
+                                        List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
+                                        if (constructionLayers != null && constructionLayers.Count != 0)
+                                        {
+                                            int index = 1;
+                                            foreach (ConstructionLayer constructionLayer in constructionLayers)
                                             {
-                                                material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                index++;
+                                                Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
+                                                if (material == null)
+                                                {
+                                                    continue;
+                                                }
+
+                                                TBD.material material_TBD = construction_TBD.AddMaterial(material);
+                                                if (material_TBD != null)
+                                                {
+                                                    material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                    construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                    index++;
+                                                }
                                             }
                                         }
+
+                                        constructions.Add(construction_TBD);
                                     }
 
-                                    constructions.Add(construction_TBD);
-                                }
-
-                                if (panelType == PanelType.Undefined && construction != null)
-                                {
-                                    panelType = construction.PanelType();
-                                    if (panelType == PanelType.Undefined && construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string panelTypeString))
+                                    if (panelType == PanelType.Undefined && construction != null)
                                     {
-                                        panelType = Core.Query.Enum<PanelType>(panelTypeString);
+                                        panelType = construction.PanelType();
+                                        if (panelType == PanelType.Undefined && construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string panelTypeString))
+                                        {
+                                            panelType = Core.Query.Enum<PanelType>(panelTypeString);
+                                        }
                                     }
                                 }
                             }
+
 
                             buildingElement_Panel = result.AddBuildingElement();
                             buildingElement_Panel.name = name_Panel;
