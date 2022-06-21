@@ -108,7 +108,7 @@
     <Compile Include="Classes\GooSAMT3DDocument.cs" />
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
-    <Compile Include="Component\SAMAnalyticalCreatAdjacencyClusterByTBD.cs" />
+    <Compile Include="Component\FromTBD.cs" />
     <Compile Include="Component\TasCreateTPD.cs" />
     <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />

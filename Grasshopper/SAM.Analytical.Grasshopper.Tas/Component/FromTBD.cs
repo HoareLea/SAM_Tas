@@ -6,7 +6,7 @@ using System;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class SAMAnalyticalCreatAdjacencyClusterByTBD : GH_SAMComponent
+    public class FromTBD : GH_SAMComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -28,9 +28,9 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMAnalyticalCreatAdjacencyClusterByTBD()
-          : base("SAMAnalytical.CreateAdjacencyClusterByTBD", "SAMAnalytical.CreateAdjacencyClusterByTBD",
-              "Create AdjacencyCluster From TBD File",
+        public FromTBD()
+          : base("SAMAnalytical.FromTBD", "SAMAnalytical.FromTBD",
+              "Create AnalyticalModel From TBD File",
               "SAM", "Tas")
         {
         }
