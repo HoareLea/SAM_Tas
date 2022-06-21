@@ -21,6 +21,8 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            result.northAngle = 180;
+
             AdjacencyCluster adjacencyCluster = analyticalModel.AdjacencyCluster;
             if(adjacencyCluster == null)
             {
