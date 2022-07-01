@@ -8,34 +8,34 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<Core.Result> AddResults(this string path_TSD, AdjacencyCluster adjacencyCLuster)
+        public static List<Core.Result> AddResults(this string path_TSD, AdjacencyCluster adjacencyCluster)
         {
-            if (adjacencyCLuster == null || string.IsNullOrWhiteSpace(path_TSD))
+            if (adjacencyCluster == null || string.IsNullOrWhiteSpace(path_TSD))
                 return null;
 
             List<Core.Result> result = null;
             using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
             {
-                result = AddResults(sAMTSDDocument, adjacencyCLuster);
+                result = AddResults(sAMTSDDocument, adjacencyCluster);
             }
 
             return result;
         }
 
-        public static List<Core.Result> AddResults(this SAMTSDDocument sAMTSDDocument, AdjacencyCluster adjacencyCLuster)
+        public static List<Core.Result> AddResults(this SAMTSDDocument sAMTSDDocument, AdjacencyCluster adjacencyCluster)
         {
-            if (sAMTSDDocument == null || adjacencyCLuster == null)
+            if (sAMTSDDocument == null || adjacencyCluster == null)
                 return null;
 
-            return AddResults(sAMTSDDocument.TSDDocument, adjacencyCLuster);
+            return AddResults(sAMTSDDocument.TSDDocument, adjacencyCluster);
         }
 
-        public static List<Core.Result> AddResults(this TSDDocument tSDDocument, AdjacencyCluster adjacencyCLuster)
+        public static List<Core.Result> AddResults(this TSDDocument tSDDocument, AdjacencyCluster adjacencyCluster)
         {
-            if (tSDDocument == null || adjacencyCLuster == null)
+            if (tSDDocument == null || adjacencyCluster == null)
                 return null;
 
-            return AddResults(tSDDocument.SimulationData, adjacencyCLuster);
+            return AddResults(tSDDocument.SimulationData, adjacencyCluster);
         }
 
         public static List<Core.Result> AddResults(this SimulationData simulationData, AdjacencyCluster adjacencyCluster)
