@@ -12,6 +12,8 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            AnalyticalModel result = new AnalyticalModel(analyticalModel);
+
             string directory = System.IO.Path.GetDirectoryName(path_TBD);
             string fileName = System.IO.Path.GetFileNameWithoutExtension(path_TBD);
 
@@ -105,7 +107,7 @@ namespace SAM.Analytical.Tas
 
                         simpleProgressForm.Update("Updating T3D file");
                         t3DDocument.SetUseBEWidths(false);
-                        analyticalModel = Query.UpdateT3D(analyticalModel, t3DDocument);
+                        result = Query.UpdateT3D(result, t3DDocument);
 
                         t3DDocument.Building.latitude = float.IsNaN(latitude) ? t3DDocument.Building.latitude : latitude;
                         t3DDocument.Building.longitude = float.IsNaN(longitude) ? t3DDocument.Building.longitude : longitude;
@@ -126,24 +128,24 @@ namespace SAM.Analytical.Tas
                     hasWeatherData = tBDDocument?.Building.GetWeatherYear() != null;
 
                     simpleProgressForm.Update("Updating Facing External Elements");
-                    analyticalModel = Query.UpdateFacingExternal(analyticalModel, tBDDocument);
+                    result = Query.UpdateFacingExternal(result, tBDDocument);
 
                     simpleProgressForm.Update("Assigning Adiabatic Constructions");
                     AssignAdiabaticConstruction(tBDDocument, "Adiabatic", new string[] { "-unzoned", "-internal", "-exposed" }, false, true);
 
                     simpleProgressForm.Update("Updating Building Elements");
-                    UpdateBuildingElements(tBDDocument, analyticalModel);
+                    UpdateBuildingElements(tBDDocument, result);
 
-                    adjacencyCluster = analyticalModel.AdjacencyCluster;
+                    adjacencyCluster = result.AdjacencyCluster;
 
                     simpleProgressForm.Update("Updating Thermal Parameters");
                     UpdateThermalParameters(adjacencyCluster, tBDDocument.Building);
-                    analyticalModel = new AnalyticalModel(analyticalModel, adjacencyCluster);
+                    result = new AnalyticalModel(result, adjacencyCluster);
 
                     if (updateZones)
                     {
                         simpleProgressForm.Update("Updating Updating Zones");
-                        UpdateZones(tBDDocument.Building, analyticalModel, true);
+                        UpdateZones(tBDDocument.Building, result, true);
                     }
 
                     if (coolingDesignDays != null || heatingDesignDays != null)
@@ -159,12 +161,12 @@ namespace SAM.Analytical.Tas
 
             if (coolingDesignDays != null || heatingDesignDays != null)
             {
-                if(adjacencyCluster == null)
+                if (adjacencyCluster == null)
                 {
-                    adjacencyCluster = analyticalModel.AdjacencyCluster;
+                    adjacencyCluster = result.AdjacencyCluster;
                 }
 
-                if(adjacencyCluster != null)
+                if (adjacencyCluster != null)
                 {
                     if (coolingDesignDays != null)
                     {
@@ -184,9 +186,11 @@ namespace SAM.Analytical.Tas
                 }
             }
 
+            result = new AnalyticalModel(result, adjacencyCluster);
+
             if (!hasWeatherData)
             {
-                return new AnalyticalModel(analyticalModel, adjacencyCluster);
+                return result;
             }
 
             count = 2;
@@ -208,7 +212,7 @@ namespace SAM.Analytical.Tas
             using (Core.Windows.Forms.ProgressForm progressForm = new Core.Windows.Forms.ProgressForm("SAM Workflow - Simulation", count))
             {
                 progressForm.Update("Sizing");
-                Query.Sizing(path_TBD, analyticalModel, false, true);
+                Query.Sizing(path_TBD, result, false, true);
 
                 progressForm.Update("Opening TBD");
                 using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
@@ -233,11 +237,11 @@ namespace SAM.Analytical.Tas
 
                 if (!simulate)
                 {
-                    return new AnalyticalModel(analyticalModel);
+                    return result;
                 }
 
                 progressForm.Update("Adding Results");
-                adjacencyCluster = analyticalModel.AdjacencyCluster;
+                adjacencyCluster = result.AdjacencyCluster;
                 List<Core.Result> results = AddResults(path_TSD, adjacencyCluster);
 
                 if (unmetHours)
@@ -246,15 +250,15 @@ namespace SAM.Analytical.Tas
                     List<Core.Result> results_UnmetHours = Query.UnmetHours(path_TSD, path_TBD, 0.5);
                     if (results_UnmetHours != null && results_UnmetHours.Count > 0)
                     {
-                        foreach (Core.Result result in results_UnmetHours)
+                        foreach (Core.Result result_UnmetHours in results_UnmetHours)
                         {
-                            if (result is AdjacencyClusterSimulationResult)
+                            if (result_UnmetHours is AdjacencyClusterSimulationResult)
                             {
-                                adjacencyCluster.AddObject(result);
+                                adjacencyCluster.AddObject(result_UnmetHours);
                             }
-                            else if (result is SpaceSimulationResult)
+                            else if (result_UnmetHours is SpaceSimulationResult)
                             {
-                                SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
+                                SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result_UnmetHours;
 
                                 List<SpaceSimulationResult> spaceSimulationResults = Query.Results(results, spaceSimulationResult);
                                 if (spaceSimulationResults == null)
@@ -266,20 +270,11 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
-                AnalyticalModel analyticalModel_Temp = new AnalyticalModel(analyticalModel, adjacencyCluster);
-
-                //if (System.IO.File.Exists(path_TSD))
-                //{
-                //    string path_TPD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tpd"));
-
-                //    CreateTPD(path_TPD, path_TSD, analyticalModel_Temp);
-                //}
-
                 progressForm.Update("Updating Design Loads");
-                adjacencyCluster = UpdateDesignLoads(path_TBD, analyticalModel_Temp.AdjacencyCluster);
+                adjacencyCluster = UpdateDesignLoads(path_TBD, adjacencyCluster);
             }
 
-            return new AnalyticalModel(analyticalModel, adjacencyCluster);
+            return new AnalyticalModel(result, adjacencyCluster);
         }
     }
 }
