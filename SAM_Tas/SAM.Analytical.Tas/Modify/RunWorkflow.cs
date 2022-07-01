@@ -66,22 +66,6 @@ namespace SAM.Analytical.Tas
                             Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, adjacencyCluster.BuildingHeight());
                         }
 
-                        if(coolingDesignDays != null)
-                        {
-                            for(int i= 0; i < coolingDesignDays.Count; i++)
-                            {
-                                adjacencyCluster.AddObject(new DesignDay(coolingDesignDays[i], LoadType.Cooling));
-                            }
-                        }
-
-                        if (heatingDesignDays != null)
-                        {
-                            for (int i = 0; i < heatingDesignDays.Count; i++)
-                            {
-                                adjacencyCluster.AddObject(new DesignDay(heatingDesignDays[i], LoadType.Heating));
-                            }
-                        }
-
                         if (!string.IsNullOrWhiteSpace(guid))
                         {
                             tBDDocument.Building.GUID = guid;
@@ -171,6 +155,33 @@ namespace SAM.Analytical.Tas
                     sAMTBDDocument.Save();
                 }
 
+            }
+
+            if (coolingDesignDays != null || heatingDesignDays != null)
+            {
+                if(adjacencyCluster == null)
+                {
+                    adjacencyCluster = analyticalModel.AdjacencyCluster;
+                }
+
+                if(adjacencyCluster != null)
+                {
+                    if (coolingDesignDays != null)
+                    {
+                        for (int i = 0; i < coolingDesignDays.Count; i++)
+                        {
+                            adjacencyCluster.AddObject(new DesignDay(coolingDesignDays[i], LoadType.Cooling));
+                        }
+                    }
+
+                    if (heatingDesignDays != null)
+                    {
+                        for (int i = 0; i < heatingDesignDays.Count; i++)
+                        {
+                            adjacencyCluster.AddObject(new DesignDay(heatingDesignDays[i], LoadType.Heating));
+                        }
+                    }
+                }
             }
 
             if (!hasWeatherData)
