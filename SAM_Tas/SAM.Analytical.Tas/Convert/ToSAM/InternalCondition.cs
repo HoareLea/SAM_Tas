@@ -135,5 +135,15 @@
 
             return result;
         }
+
+        public static InternalCondition ToSAM(this TIC.InternalCondition internalCondition)
+        {
+            if(internalCondition == null)
+            {
+                return null;
+            }
+
+            return new InternalCondition(internalCondition.name);
+        }
     }
 }

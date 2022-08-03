@@ -48,5 +48,58 @@ namespace SAM.Analytical.Tas
 
             return result;
         }
+
+        public static List<TIC.InternalCondition> InternalConditions(this TIC.Document document)
+        {
+            if(document == null)
+            {
+                return null;
+            }
+
+            TIC.InternalConditionFolder internalConditionFolder = document.internalConditionRoot;
+            if(internalConditionFolder == null)
+            {
+                return null;
+            }
+
+
+            return internalConditionFolder.InternalConditions();
+        }
+
+        public static List<TIC.InternalCondition> InternalConditions(this TIC.InternalConditionFolder internalConditionFolder)
+        {
+            if(internalConditionFolder == null)
+            {
+                return null;
+            }
+
+            List<TIC.InternalCondition> result = new List<TIC.InternalCondition>();
+
+            int index;
+
+            index = 0;
+            TIC.InternalCondition internalCondition = internalConditionFolder.internalConditions(index);
+            while(internalCondition != null)
+            {
+                result.Add(internalCondition);
+                index++;
+                internalCondition = internalConditionFolder.internalConditions(index);
+            }
+
+            index = 0;
+            TIC.InternalConditionFolder internalConditionFolder_Child = internalConditionFolder.childFolders(index);
+            while(internalConditionFolder_Child != null)
+            {
+                List<TIC.InternalCondition> internalConditions = internalConditionFolder_Child?.InternalConditions();
+                if(internalConditions != null)
+                {
+                    result.AddRange(internalConditions);
+                }
+                index++;
+                internalConditionFolder_Child = internalConditionFolder.childFolders(index);
+            }
+
+            return result;
+        }
     }
 }
