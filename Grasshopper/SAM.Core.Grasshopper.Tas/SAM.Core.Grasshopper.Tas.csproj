@@ -47,6 +47,10 @@
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TIC">
+      <HintPath>..\..\references_buildonly\Interop.TIC.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="SAM.Core, Version=1.0.8027.17724, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>

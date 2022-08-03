@@ -52,6 +52,10 @@
       <HintPath>..\..\references_buildonly\Interop.TBD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TIC">
+      <HintPath>..\..\references_buildonly\Interop.TIC.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Interop.TPD">
       <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
