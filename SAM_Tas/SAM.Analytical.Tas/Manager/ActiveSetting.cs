@@ -151,9 +151,9 @@ namespace SAM.Analytical.Tas
             typeMap.Add(typeof(Panel), typeof(TAS3D.shade), "HasHorizFins", "hasHorizFins");
             typeMap.Add(typeof(Panel), typeof(TAS3D.shade), "HasVertFins", "hasVertFins");
 
+            typeMap.Add(SpaceParameter.ZoneGuid, typeof(TSD.ZoneData), "zoneGUID");
             typeMap.Add(typeof(Space), typeof(TSD.ZoneData), "ZoneNumber", "zoneNumber");
             typeMap.Add(typeof(Space), typeof(TSD.ZoneData), "Description", "description");
-            typeMap.Add(typeof(Space), typeof(TSD.ZoneData), "ZoneGuid", "zoneGUID");
             typeMap.Add(typeof(Space), typeof(TSD.ZoneData), "Volume", "volume");
             typeMap.Add(typeof(Space), typeof(TSD.ZoneData), "FloorArea", "floorArea");
             typeMap.Add(typeof(Space), typeof(TSD.ZoneData), "ConvectiveCommonRatio", "convectiveCommonRatio");

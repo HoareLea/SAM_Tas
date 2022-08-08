@@ -108,8 +108,8 @@ namespace SAM.Analytical.Tas
 
 
             Space space_New = new Space(space);
-            space_New.SetValue(SpaceParameter.FacingExternal, facingExternal);
-            space_New.SetValue(SpaceParameter.FacingExternalGlazing, facingExternalGlazing);
+            space_New.SetValue(Analytical.SpaceParameter.FacingExternal, facingExternal);
+            space_New.SetValue(Analytical.SpaceParameter.FacingExternalGlazing, facingExternalGlazing);
 
             return space_New;
         }

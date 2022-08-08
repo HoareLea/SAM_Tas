@@ -84,9 +84,9 @@ namespace SAM.Analytical.Tas
                     if (spaces_Zone == null || spaces_Zone.Count == 0)
                         continue;
 
-                    double area = buildingModel.Sum(zone, SpaceParameter.Area);
-                    double volume = buildingModel.Sum(zone, SpaceParameter.Volume);
-                    double occupancy = buildingModel.Sum(zone, SpaceParameter.Occupancy);
+                    double area = buildingModel.Sum(zone, Analytical.SpaceParameter.Area);
+                    double volume = buildingModel.Sum(zone, Analytical.SpaceParameter.Volume);
+                    double occupancy = buildingModel.Sum(zone, Analytical.SpaceParameter.Occupancy);
 
                     List<ZoneData> zoneDatas = new List<ZoneData>();
                     foreach (Space space in spaces_Zone)

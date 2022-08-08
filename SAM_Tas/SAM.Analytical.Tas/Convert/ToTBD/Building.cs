@@ -57,7 +57,7 @@ namespace SAM.Analytical.Tas
                 zone.name = space.Name;
                 zone.volume = System.Convert.ToSingle(shell.Volume());
 
-                if (space.TryGetValue(SpaceParameter.Color, out SAMColor sAMColor) && sAMColor != null)
+                if (space.TryGetValue(Analytical.SpaceParameter.Color, out SAMColor sAMColor) && sAMColor != null)
                 {
                     zone.colour = Core.Convert.ToUint(sAMColor.ToColor());
                 }

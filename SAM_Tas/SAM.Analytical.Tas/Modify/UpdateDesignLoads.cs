@@ -79,8 +79,8 @@ namespace SAM.Analytical.Tas
                 if (!zones.TryGetValue(name, out zone) || zone == null)
                     continue;
 
-                space.SetValue(SpaceParameter.DesignHeatingLoad, zone.maxHeatingLoad);
-                space.SetValue(SpaceParameter.DesignCoolingLoad, zone.maxCoolingLoad);
+                space.SetValue(Analytical.SpaceParameter.DesignHeatingLoad, zone.maxHeatingLoad);
+                space.SetValue(Analytical.SpaceParameter.DesignCoolingLoad, zone.maxCoolingLoad);
 
                 result.AddObject(space);
 

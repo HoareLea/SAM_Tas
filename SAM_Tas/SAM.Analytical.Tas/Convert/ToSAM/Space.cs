@@ -57,8 +57,8 @@ namespace SAM.Analytical.Tas
 
             double area = zone.floorArea;
 
-            result.SetValue(SpaceParameter.Area, area);
-            result.SetValue(SpaceParameter.Volume, zone.volume);
+            result.SetValue(Analytical.SpaceParameter.Area, area);
+            result.SetValue(Analytical.SpaceParameter.Volume, zone.volume);
 
             List<TBD.InternalCondition> internalConditions_TBD = zone.InternalConditions();
             if(internalConditions_TBD != null)

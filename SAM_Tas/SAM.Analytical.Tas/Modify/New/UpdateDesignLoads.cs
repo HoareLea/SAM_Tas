@@ -61,8 +61,8 @@ namespace SAM.Analytical.Tas
 
                 result.Add(space);
 
-                space.SetValue(SpaceParameter.DesignHeatingLoad, zone.maxHeatingLoad);
-                space.SetValue(SpaceParameter.DesignCoolingLoad, zone.maxCoolingLoad);
+                space.SetValue(Analytical.SpaceParameter.DesignHeatingLoad, zone.maxHeatingLoad);
+                space.SetValue(Analytical.SpaceParameter.DesignCoolingLoad, zone.maxCoolingLoad);
 
                 buildingModel.Add(space);
 

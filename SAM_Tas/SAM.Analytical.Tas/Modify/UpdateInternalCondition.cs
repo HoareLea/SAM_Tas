@@ -108,7 +108,7 @@ namespace SAM.Analytical.Tas
             }
 
             double area = double.NaN;
-            if (!space.TryGetValue(SpaceParameter.Area, out area))
+            if (!space.TryGetValue(Analytical.SpaceParameter.Area, out area))
                 area = double.NaN;
 
             profile = internalCondition.GetProfile(ProfileType.Lighting, profileLibrary);

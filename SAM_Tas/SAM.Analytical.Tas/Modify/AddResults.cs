@@ -113,9 +113,9 @@ namespace SAM.Analytical.Tas
                     if (spaces_Zone == null || spaces_Zone.Count == 0)
                         continue;
 
-                    double area = adjacencyCluster.Sum(zone, SpaceParameter.Area);
-                    double volume = adjacencyCluster.Sum(zone, SpaceParameter.Volume);
-                    double occupancy = adjacencyCluster.Sum(zone, SpaceParameter.Occupancy);
+                    double area = adjacencyCluster.Sum(zone, Analytical.SpaceParameter.Area);
+                    double volume = adjacencyCluster.Sum(zone, Analytical.SpaceParameter.Volume);
+                    double occupancy = adjacencyCluster.Sum(zone, Analytical.SpaceParameter.Occupancy);
 
                     List<ZoneData> zoneDatas = new List<ZoneData>();
                     foreach (Space space in spaces_Zone)

@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas
             }
 
             //TODO: Update [LevelName] to [Level Name]
-            if(space.TryGetValue(SpaceParameter.LevelName, out string levelName))
+            if(space.TryGetValue(Analytical.SpaceParameter.LevelName, out string levelName))
             {
                 if (!string.IsNullOrWhiteSpace(levelName))
                     values.Add(string.Format("[LevelName]={0}", levelName));
