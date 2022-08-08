@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || analyticalModel == null)
                 return null;
 
-            Building building = tBDDocument.Building;
+            TBD.Building building = tBDDocument.Building;
             if (building == null)
                 return null;
 
@@ -55,7 +55,7 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || adjacencyCluster == null)
                 return null;
 
-            Building building = tBDDocument.Building;
+            TBD.Building building = tBDDocument.Building;
             if (building == null)
                 return null;
 

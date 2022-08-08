@@ -31,7 +31,7 @@ namespace SAM.Analytical.Tas
                 return null;
 
 
-            Building building = t3DDocument?.Building;
+            TAS3D.Building building = t3DDocument?.Building;
             if (building == null)
                 return null;
 

@@ -66,6 +66,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -81,6 +82,17 @@
     <Compile Include="Classes\SAMTWDDocument.cs" />
     <Compile Include="Classes\SAMTSDDocument.cs" />
     <Compile Include="Classes\SurfaceOutputSpec.cs" />
+    <Compile Include="Classes\UKBR\Building.cs" />
+    <Compile Include="Classes\UKBR\LightingDetail.cs" />
+    <Compile Include="Classes\UKBR\LightSetup.cs" />
+    <Compile Include="Classes\UKBR\LightSetups.cs" />
+    <Compile Include="Classes\UKBR\LightingDetails.cs" />
+    <Compile Include="Classes\UKBR\ZoneGUID.cs" />
+    <Compile Include="Classes\UKBR\ZoneGUIDs.cs" />
+    <Compile Include="Classes\UKBR\UKBRData.cs" />
+    <Compile Include="Classes\UKBR\Project.cs" />
+    <Compile Include="Classes\UKBR\UKBRElement.cs" />
+    <Compile Include="Classes\UKBR\UKBRFile.cs" />
     <Compile Include="Convert\TogbXML\gbXML.cs" />
     <Compile Include="Convert\ToT3D\T3D.cs" />
     <Compile Include="Create\ParameterSet.cs" />

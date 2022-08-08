@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || apertureConstructions == null)
                 return null;
 
-            Building builidng = tBDDocument.Building;
+            TBD.Building builidng = tBDDocument.Building;
             if (builidng == null)
                 return null;
 

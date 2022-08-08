@@ -39,7 +39,7 @@ namespace SAM.Analytical.Tas
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-                Building building = tBDDocument?.Building;
+                TBD.Building building = tBDDocument?.Building;
                 if (building != null)
                 {
                     SizingType sizingType = SizingType.tbdSizing;
@@ -92,7 +92,7 @@ namespace SAM.Analytical.Tas
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-                Building building = tBDDocument?.Building;
+                TBD.Building building = tBDDocument?.Building;
                 if (building != null)
                 {
                     TBD.Construction construction = building.GetConstructionByName("Air_Glass");
@@ -159,7 +159,7 @@ namespace SAM.Analytical.Tas
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-                Building building = tBDDocument?.Building;
+                TBD.Building building = tBDDocument?.Building;
                 if (building != null)
                 {
                     Modify.UpdateSizingFactors(building, analyticalModel);

@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || analyticalModel == null)
                 return null;
 
-            Building building = tBDDocument.Building;
+            TBD.Building building = tBDDocument.Building;
             if (building == null)
                 return null;
 
@@ -80,7 +80,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<Construction> UpdateConstructions(this Building building, IEnumerable<Construction> constructions, MaterialLibrary materialLibrary)
+        public static List<Construction> UpdateConstructions(this TBD.Building building, IEnumerable<Construction> constructions, MaterialLibrary materialLibrary)
         {
             if (constructions == null || building == null)
                 return null;
@@ -115,7 +115,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<ApertureConstruction> UpdateConstructions(this Building building, IEnumerable<ApertureConstruction> apertureConstructions, MaterialLibrary materialLibrary)
+        public static List<ApertureConstruction> UpdateConstructions(this TBD.Building building, IEnumerable<ApertureConstruction> apertureConstructions, MaterialLibrary materialLibrary)
         {
             if (apertureConstructions == null || building == null)
                 return null;

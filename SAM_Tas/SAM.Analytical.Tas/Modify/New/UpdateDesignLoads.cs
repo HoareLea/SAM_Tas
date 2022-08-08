@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || buildingModel == null)
                 return null;
 
-            Building building = tBDDocument.Building;
+            TBD.Building building = tBDDocument.Building;
             if (building == null)
                 return null;
 
