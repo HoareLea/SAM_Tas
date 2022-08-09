@@ -116,6 +116,7 @@
     <Compile Include="Component\TasCreateTPD.cs" />
     <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
+    <Compile Include="Component\TasUpdateInternalConditionByPartL.cs" />
     <Compile Include="Component\TasUpdateShading.cs" />
     <Compile Include="Component\TasWorkflowgbXML.cs" />
     <Compile Include="Component\TasDesignDayNames.cs" />

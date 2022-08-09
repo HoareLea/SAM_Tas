@@ -131,6 +131,7 @@
     <Compile Include="Modify\CreateTPD.cs" />
     <Compile Include="Modify\SetAirSideController.cs" />
     <Compile Include="Modify\SetWaterSideController.cs" />
+    <Compile Include="Modify\UpdateInternalConditionByPartL.cs" />
     <Compile Include="Modify\UpdateShading.cs" />
     <Compile Include="Modify\UpdateSurfaceShades.cs" />
     <Compile Include="Modify\AddInternalCondition_HDD.cs" />
