@@ -25,6 +25,10 @@ namespace SAM.Analytical.Tas
 
             List<TIC.InternalCondition> internalConditions_TIC = Query.InternalConditions(tICDocument);
 
+            List<TBD.InternalCondition> internalConditions_TBD;
+
+            List<TBD.InternalCondition> internalConditions_TBD_New = new List<TBD.InternalCondition>();
+
             bool result = false;
             foreach (Space space in spaces)
             {
@@ -45,29 +49,34 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                if(!space.TryGetValue(SpaceParameter.ZoneGuid, out string zoneGuid) || string.IsNullOrWhiteSpace(zoneGuid))
+                TBD.zone zone = null;
+
+                if (space.TryGetValue(SpaceParameter.ZoneGuid, out string zoneGuid) && !string.IsNullOrWhiteSpace(zoneGuid))
                 {
-                    continue;
+                    zones.Find(x => x.GUID == zoneGuid);
                 }
 
-                TBD.zone zone = zones.Find(x => x.GUID == zoneGuid);
+                if (zone == null)
+                {
+                    zone = zones.Find(x => x.name == space.Name);
+                }
+
                 if(zone == null)
                 {
                     continue;
                 }
 
-                List<TBD.InternalCondition> internalConditions_TBD = Query.InternalConditions(tBDDocument);
-
+                internalConditions_TBD = Query.InternalConditions(tBDDocument);
                 TBD.InternalCondition internalCondition_TBD = null;
 
                 List<TBD.InternalCondition> internalConditions_TBD_Temp = internalConditions_TBD.FindAll(x => x.name.StartsWith(typeName));
-                if(internalConditions_TBD_Temp != null)
+                if(internalConditions_TBD_Temp != null && internalConditions_TBD_Temp.Count != 0)
                 {
                     internalConditions_TBD_Temp.Sort((x, y) => x.name.Length.CompareTo(y.name.Length));
                     internalCondition_TBD = internalConditions_TBD_Temp[0];
                 }
 
-                if(internalConditions_TBD == null)
+                if(internalCondition_TBD == null)
                 {
                     List<TIC.InternalCondition> internalConditions_TIC_Temp = internalConditions_TIC.FindAll(x => x.name.StartsWith(typeName));
                     if(internalConditions_TIC_Temp != null && internalConditions_TIC_Temp.Count != 0)
@@ -75,7 +84,7 @@ namespace SAM.Analytical.Tas
                         internalConditions_TIC_Temp.Sort((x, y) => x.name.Length.CompareTo(y.name.Length));
                         TIC.InternalCondition internalCondition_TIC = internalConditions_TIC_Temp[0];
                         dynamic @dynamic = tICDocument.ToGlobalMem(internalCondition_TIC);
-                        internalCondition_TBD = tBDDocument.Building.AddInternalConditionFromGlobal(internalCondition_TIC);
+                        internalCondition_TBD = tBDDocument.Building.AddInternalConditionFromGlobal(@dynamic);
                     }
                 }
 
@@ -84,10 +93,25 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                zone.AssignIC(internalCondition_TBD, false);
+                internalConditions_TBD_New.Add(internalCondition_TBD);
+
+                zone.AssignIC(internalCondition_TBD, true);
                 result = true;
             }
 
+            internalConditions_TBD = Query.InternalConditions(tBDDocument);
+            if(internalConditions_TBD != null)
+            {
+                foreach (TBD.InternalCondition internalCondition_TBD in internalConditions_TBD)
+                {
+                    if(internalConditions_TBD_New.Find(x => x.name == internalCondition_TBD.name) != null)
+                    {
+                        continue;
+                    }
+
+                    tBDDocument.Building.RemoveInternalCondition(internalCondition_TBD.name);
+                }
+            }
 
             return result;
         }

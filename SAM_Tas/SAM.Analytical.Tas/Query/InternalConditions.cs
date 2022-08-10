@@ -77,7 +77,7 @@ namespace SAM.Analytical.Tas
 
             int index;
 
-            index = 0;
+            index = 1;
             TIC.InternalCondition internalCondition = internalConditionFolder.internalConditions(index);
             while(internalCondition != null)
             {
@@ -86,7 +86,7 @@ namespace SAM.Analytical.Tas
                 internalCondition = internalConditionFolder.internalConditions(index);
             }
 
-            index = 0;
+            index = 1;
             TIC.InternalConditionFolder internalConditionFolder_Child = internalConditionFolder.childFolders(index);
             while(internalConditionFolder_Child != null)
             {

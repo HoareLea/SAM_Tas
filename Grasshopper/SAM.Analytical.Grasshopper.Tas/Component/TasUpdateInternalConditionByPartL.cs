@@ -74,7 +74,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            int index_Successful = Params.IndexOfInputParam("successful");
+            int index_Successful = Params.IndexOfOutputParam("successful");
             if(index_Successful != -1)
             {
                 dataAccess.SetData(index_Successful, false);
@@ -166,6 +166,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                     TIC.Document tICDocument = sAMTICDocument.Document;
 
                     result = Analytical.Tas.Modify.UpdateInternalConditionByPartL(tBDDocument, tICDocument, analyticalModel);
+                    if(result)
+                    {
+                        sAMTBDDocument.Save();
+                    }
                 }
             }
 
@@ -173,12 +177,6 @@ namespace SAM.Analytical.Grasshopper.Tas
             if(index != -1)
             {
                 dataAccess.SetData(index, new GooAnalyticalModel(analyticalModel));
-            }
-
-            index = Params.IndexOfOutputParam("path");
-            if (index != -1)
-            {
-                dataAccess.SetData(index, path_TBD_Destination);
             }
 
             index = Params.IndexOfOutputParam("path");

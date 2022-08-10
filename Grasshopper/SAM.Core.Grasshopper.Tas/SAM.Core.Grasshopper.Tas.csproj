@@ -147,6 +147,11 @@ if not exist "%25SAM_DIR%25" mkdir "%25SAM_DIR%25"
 copy "$(TargetDir)*.dll" "%25SAM_DIR%25"
 copy "%25SAM_DIR%25\$(ProjectName).dll" "%25SAM_DIR%25\$(ProjectName).gha"
 
+
+xcopy "$(SolutionDir)\files\resources" "$(APPDATA)\SAM\resources" /Y/I/E/S
+xcopy "$(SolutionDir)\files\resources" "$(USERPROFILE)\Documents\SAM\resources" /Y/D/I/E/S
+
+
 if Exist "$(SolutionDir)\files\Grasshopper\UserObjects" (
 xcopy "$(SolutionDir)\files\Grasshopper\UserObjects" "$(APPDATA)\Grasshopper\UserObjects\SAM" /Y /I /E/S
 )
