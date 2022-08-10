@@ -97,8 +97,8 @@ namespace SAM.Analytical.Tas
 
                 zone.AssignIC(internalCondition_TBD, true);
 
-                List<TBD.dayType> dayTypes = internalCondition_TBD.DayTypes();
-                if(dayTypes != null && dayTypes.Count != 0)
+                List<TBD.dayType> dayTypes = tBDDocument.Building.DayTypes();
+                if (dayTypes != null && dayTypes.Count != 0)
                 {
                     foreach(TBD.dayType dayType in dayTypes)
                     {
