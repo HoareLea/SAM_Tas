@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas
     {
         public static bool CopyFrom(this TBD.Calendar tBDCalendar, TCR.Calendar tCRCalendar)
         {
-            if (tBDCalendar == null || tBDCalendar == null)
+            if (tBDCalendar == null || tCRCalendar == null)
                 return false;
 
             tBDCalendar.name = tCRCalendar.name;
@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas
                 dayType_TBD.color = dayType.color;
                 dayType_TBD.description = dayType.description;
                 dayType_TBD.endBreak = dayType.endBreak ? 1 : 0;
-                dayType_TBD.name = dayType.name;
+                dayType_TBD.name = dayType.description;
             }
 
             for (int i = 1; i <= 365; i++)
@@ -29,7 +29,7 @@ namespace SAM.Analytical.Tas
                 TBD.day day_TBD = tBDCalendar.days(i);
                 TCR.Day day_TCR = tCRCalendar.days(i);
 
-                day_TBD.dayType = tBDCalendar.DayType(day_TCR.DayType.name);
+                day_TBD.dayType = tBDCalendar.DayType(day_TCR.DayType.description);
             }
             return true;
 
