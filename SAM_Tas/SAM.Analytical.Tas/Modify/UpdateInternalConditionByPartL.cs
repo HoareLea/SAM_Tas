@@ -96,6 +96,17 @@ namespace SAM.Analytical.Tas
                 internalConditions_TBD_New.Add(internalCondition_TBD);
 
                 zone.AssignIC(internalCondition_TBD, true);
+
+                List<TBD.dayType> dayTypes = internalCondition_TBD.DayTypes();
+                if(dayTypes != null && dayTypes.Count != 0)
+                {
+                    foreach(TBD.dayType dayType in dayTypes)
+                    {
+                        bool add = !(dayType.name == "HDD" || dayType.name == "CDD");
+                        internalCondition_TBD.SetDayType(dayType, add);
+                    }
+                }
+
                 result = true;
             }
 
@@ -112,6 +123,8 @@ namespace SAM.Analytical.Tas
                     tBDDocument.Building.RemoveInternalCondition(internalCondition_TBD.name);
                 }
             }
+
+            tBDDocument.Building.ClearDesignDays();
 
             return result;
         }
