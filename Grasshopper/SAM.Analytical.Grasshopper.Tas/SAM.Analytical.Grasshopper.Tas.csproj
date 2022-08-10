@@ -52,6 +52,10 @@
       <HintPath>..\..\references_buildonly\Interop.TBD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TCR">
+      <HintPath>..\..\references_buildonly\Interop.TCR.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Interop.TIC">
       <HintPath>..\..\references_buildonly\Interop.TIC.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -113,6 +117,7 @@
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\FromTBD.cs" />
+    <Compile Include="Component\TasCopyCalendar.cs" />
     <Compile Include="Component\TasCreateTPD.cs" />
     <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />

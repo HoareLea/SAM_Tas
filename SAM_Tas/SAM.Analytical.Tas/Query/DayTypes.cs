@@ -26,6 +26,23 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
+        public static List<TCR.DayType> DayTypes(this TCR.Calendar calendar)
+        {
+            if (calendar == null)
+                return null;
+
+            List<TCR.DayType> result = new List<TCR.DayType>();
+
+            for (int i = 1; i <= calendar.GetDayTypeCount(); i++)
+            {
+                TCR.DayType dayType = calendar.dayTypes(i);
+                if (dayType != null)
+                    result.Add(dayType);
+            }
+
+            return result;
+        }
+
         private static List<TBD.dayType> DayTypes(this TBD.Building building, int start = 0, int end = 365)
         {
             List<TBD.dayType> result = new List<TBD.dayType>();

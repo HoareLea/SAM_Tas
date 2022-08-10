@@ -7,7 +7,14 @@
             if (string.IsNullOrEmpty(name))
                 return null;
 
-            TBD.Calendar calendar = tBDDocument?.Building?.GetCalendar();
+            return DayType(tBDDocument?.Building?.GetCalendar(), name);
+        }
+
+        public static TBD.dayType DayType(this TBD.Calendar calendar, string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return null;
+
             if (calendar == null)
                 return null;
 

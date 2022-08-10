@@ -23,6 +23,12 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
+            TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
+            List<TBD.dayType> dayTypes = calendar.DayTypes();
+            if(dayTypes != null)
+            {
+            }
+
             List<TIC.InternalCondition> internalConditions_TIC = Query.InternalConditions(tICDocument);
 
             List<TBD.InternalCondition> internalConditions_TBD;
@@ -97,7 +103,7 @@ namespace SAM.Analytical.Tas
 
                 zone.AssignIC(internalCondition_TBD, true);
 
-                List<TBD.dayType> dayTypes = tBDDocument.Building.DayTypes();
+                dayTypes = tBDDocument.Building.DayTypes();
                 if (dayTypes != null && dayTypes.Count != 0)
                 {
                     foreach(TBD.dayType dayType in dayTypes)

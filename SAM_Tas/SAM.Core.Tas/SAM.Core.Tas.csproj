@@ -44,6 +44,10 @@
       <HintPath>..\..\references_buildonly\Interop.TCD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Interop.TCR">
+      <HintPath>..\..\references_buildonly\Interop.TCR.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Interop.TIC">
       <HintPath>..\..\references_buildonly\Interop.TIC.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -76,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\SAMTCRDocument.cs" />
     <Compile Include="Classes\SAMTPDDocument.cs" />
     <Compile Include="Classes\SAMTBDDocument.cs" />
     <Compile Include="Classes\SAMTICDocument.cs" />
@@ -102,6 +107,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\SAMT3DDocument.cs" />
     <Compile Include="Query\ReportGeneratorPath.cs" />
+    <Compile Include="Query\TCRDocument.cs" />
     <Compile Include="Query\TICDocument.cs" />
     <Compile Include="Query\UKBRStudio2013Path.cs" />
     <Compile Include="Query\PMVAndPPDPath.cs" />
