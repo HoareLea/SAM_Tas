@@ -10,7 +10,7 @@ namespace SAM.Analytical.Tas
         /// Updates TBD.zones in given TBD.Buiding based on provided spaces and profileLibrary
         /// </summary>
         /// <param name="building">TBD.Buidling</param>
-        /// <param name="spaces">SAM Analytical Spaces</param>
+        /// <param name="adjacencyCluster">SAM Analytical AdjacencyCluster</param>
         /// <param name="profileLibrary">ProfileLibrary which contains information about profiles used in spaces</param>
         /// <param name="includeHDD">Include Heating Design Day in the process</param>
         /// <returns>TBD.zones have been used in update process</returns>
