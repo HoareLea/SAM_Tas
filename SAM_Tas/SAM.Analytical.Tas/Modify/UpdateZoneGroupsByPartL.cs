@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas
             }
 
             List<Space> spaces = analyticalModel.GetSpaces();
-            if (spaces != null || spaces.Count == 0)
+            if (spaces == null || spaces.Count == 0)
             {
                 return null;
             }
