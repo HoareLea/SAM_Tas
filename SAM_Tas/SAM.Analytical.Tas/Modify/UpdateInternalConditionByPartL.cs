@@ -55,18 +55,7 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                TBD.zone zone = null;
-
-                if (space.TryGetValue(SpaceParameter.ZoneGuid, out string zoneGuid) && !string.IsNullOrWhiteSpace(zoneGuid))
-                {
-                    zones.Find(x => x.GUID == zoneGuid);
-                }
-
-                if (zone == null)
-                {
-                    zone = zones.Find(x => x.name == space.Name);
-                }
-
+                TBD.zone zone = space.Zone(zones);
                 if(zone == null)
                 {
                     continue;

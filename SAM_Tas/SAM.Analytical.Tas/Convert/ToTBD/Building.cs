@@ -151,7 +151,7 @@ namespace SAM.Analytical.Tas
                                             int index = 1;
                                             foreach (ConstructionLayer constructionLayer in constructionLayers)
                                             {
-                                                Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Core.Material;
+                                                Material material = analyticalModel?.MaterialLibrary?.GetMaterial(constructionLayer.Name) as Material;
                                                 if (material == null)
                                                 {
                                                     continue;
@@ -273,7 +273,7 @@ namespace SAM.Analytical.Tas
                                                 int index = 1;
                                                 foreach (ConstructionLayer constructionLayer in constructionLayers)
                                                 {
-                                                    Core.Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
+                                                    Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
                                                     if (material == null)
                                                     {
                                                         continue;

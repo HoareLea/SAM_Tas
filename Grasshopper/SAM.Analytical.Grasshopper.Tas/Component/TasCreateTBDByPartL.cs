@@ -1,12 +1,13 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
+using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasUpdateInternalConditionByPartL : GH_SAMVariableOutputParameterComponent
+    public class TasCreateTBDByPartL : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -16,7 +17,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -30,9 +31,9 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasUpdateInternalConditionByPartL()
-          : base("Tas.UpdateInternalConditionByPartL", "Tas.UpdateInternalConditionByPartL",
-              "Update InternalCondition By PartL",
+        public TasCreateTBDByPartL()
+          : base("Tas.CreateTBDByPartL", "Tas.CreateTBDByPartL",
+              "Create TBD File By PartL",
               "SAM WIP", "Tas")
         {
         }
@@ -44,8 +45,23 @@ namespace SAM.Analytical.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath { Name = "_path_TBD", NickName = "_path_TBD", Description = "Path to TBD Document", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath { Name = "path_TIC_", NickName = "path_TIC_", Description = "Path to TIC Document", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "fileName_", NickName = "fileName_", Description = "New file name for TBD Document", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
+
+                global::Grasshopper.Kernel.Parameters.Param_FilePath filePath;
+
+                filePath = new global::Grasshopper.Kernel.Parameters.Param_FilePath { Name = "path_TIC_", NickName = "path_TIC_", Description = "Path to TIC Document (Internal Conditions)", Access = GH_ParamAccess.item, Optional = true };
+                filePath.SetPersistentData(Analytical.Tas.Query.DefaultPath(Analytical.Tas.TasSettingParameter.DefaultTICFileName));
+                result.Add(new GH_SAMParam(filePath, ParamVisibility.Voluntary));
+
+                filePath = new global::Grasshopper.Kernel.Parameters.Param_FilePath { Name = "path_TCR_", NickName = "path_TCR_", Description = "Path to TCR Document (Calendar)", Access = GH_ParamAccess.item, Optional = true };
+                filePath.SetPersistentData(Analytical.Tas.Query.DefaultPath(Analytical.Tas.TasSettingParameter.DefaultTCRFileName));
+                result.Add(new GH_SAMParam(filePath, ParamVisibility.Voluntary));
+
+                global::Grasshopper.Kernel.Parameters.Param_String @string = new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_calendarName_", NickName = "_calendarName_", Description = "Calendar Name", Access = GH_ParamAccess.item };
+                @string.SetPersistentData("NCM Standard");
+
+                result.Add(new GH_SAMParam(@string, ParamVisibility.Voluntary));
+                
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "fileName_", NickName = "fileName_", Description = "New file name for TBD Document", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
                 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Run", Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(false);
@@ -123,16 +139,45 @@ namespace SAM.Analytical.Grasshopper.Tas
                 dataAccess.GetData(index, ref path_TIC);
             }
 
-
             if(string.IsNullOrWhiteSpace(path_TIC))
             {
-                path_TIC = null;
+                path_TIC = Analytical.Tas.Query.DefaultPath(Analytical.Tas.TasSettingParameter.DefaultTICFileName);
             }
 
             if (!System.IO.File.Exists(path_TIC))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "TIC File does not exists");
                 return;
+            }
+
+            string path_TCR = null;
+            index = Params.IndexOfInputParam("path_TCR_");
+            if (index != -1)
+            {
+                dataAccess.GetData(index, ref path_TCR);
+            }
+
+            if (string.IsNullOrWhiteSpace(path_TCR))
+            {
+                path_TCR = Analytical.Tas.Query.DefaultPath(Analytical.Tas.TasSettingParameter.DefaultTCRFileName);
+            }
+
+            if (!System.IO.File.Exists(path_TCR))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "TCR File does not exists");
+                return;
+            }
+
+            string calendarName = null;
+            index = Params.IndexOfInputParam("_calendarName_");
+            if (index != -1)
+            {
+                dataAccess.GetData(index, ref calendarName);
+            }
+
+            if(string.IsNullOrWhiteSpace(calendarName))
+            {
+                calendarName = "NCM Standard";
             }
 
             index = Params.IndexOfInputParam("fileName_");
@@ -158,16 +203,27 @@ namespace SAM.Analytical.Grasshopper.Tas
             System.IO.File.Copy(path_TBD, path_TBD_Destination, true);
 
             bool result = false;
-            using (Core.Tas.SAMTBDDocument sAMTBDDocument = new Core.Tas.SAMTBDDocument(path_TBD_Destination))
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD_Destination))
             {
                 TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-                using (Core.Tas.SAMTICDocument sAMTICDocument = new Core.Tas.SAMTICDocument(path_TIC, true))
+
+                TBD.Calendar calendar = sAMTBDDocument.TBDDocument?.Building?.GetCalendar();
+                if (calendar != null)
+                {
+                    using (SAMTCRDocument sAMTCRDocument = new SAMTCRDocument(path_TCR, true))
+                    {
+                        result = Analytical.Tas.Modify.CopyFrom(calendar, sAMTCRDocument.Document, calendarName);
+                    }
+                }
+
+                using (SAMTICDocument sAMTICDocument = new SAMTICDocument(path_TIC, true))
                 {
                     TIC.Document tICDocument = sAMTICDocument.Document;
 
                     result = Analytical.Tas.Modify.UpdateInternalConditionByPartL(tBDDocument, tICDocument, analyticalModel);
                     if(result)
                     {
+                        Analytical.Tas.Modify.UpdateZoneGroupsByPartL(tBDDocument, analyticalModel);
                         sAMTBDDocument.Save();
                     }
                 }

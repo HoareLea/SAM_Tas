@@ -33,6 +33,9 @@ namespace SAM.Analytical.Tas
         {
             Setting result = new Setting(Assembly.GetExecutingAssembly());
 
+            result.SetValue(TasSettingParameter.DefaultTCRFileName, "Calendars.tcr");
+            result.SetValue(TasSettingParameter.DefaultTICFileName, "NCMActivities_v6.1.b (Part L 2021).tic");
+
             TypeMap typeMap = Core.Create.TypeMap();
             //mapCluster.Add(typeof(Space), typeof(TAS3D.Zone), "Colour", "colour");
             //mapCluster.Add(typeof(Space), typeof(TAS3D.Zone), "Description", "description");

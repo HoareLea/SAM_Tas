@@ -39,5 +39,26 @@ namespace SAM.Analytical.Tas
 
             return null;
         }
+
+        public static TBD.zone Zone(this Space space, IEnumerable<TBD.zone> zones)
+        {
+            if(space == null || zones == null)
+            {
+                return null;
+            }
+
+            TBD.zone result = null;
+            if (space.TryGetValue(SpaceParameter.ZoneGuid, out string zoneGuid) && !string.IsNullOrWhiteSpace(zoneGuid))
+            {
+                result = zones.ToList().Find(x => x.GUID == zoneGuid);
+            }
+
+            if (result == null)
+            {
+                result = zones.ToList().Find(x => x.name == space.Name);
+            }
+
+            return result;
+        }
     }
 }

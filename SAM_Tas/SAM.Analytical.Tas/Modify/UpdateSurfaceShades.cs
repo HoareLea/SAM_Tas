@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            Geometry.Spatial.Face3D face3D = panel.Face3D;
+            Face3D face3D = panel.Face3D;
             if (face3D == null)
             {
                 return null;
