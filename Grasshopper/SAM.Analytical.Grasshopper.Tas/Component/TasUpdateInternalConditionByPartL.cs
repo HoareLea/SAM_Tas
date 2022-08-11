@@ -33,7 +33,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         public TasUpdateInternalConditionByPartL()
           : base("Tas.UpdateInternalConditionByPartL", "Tas.UpdateInternalConditionByPartL",
               "Update InternalCondition By PartL",
-              "SAM", "Tas")
+              "SAM WIP", "Tas")
         {
         }
 
