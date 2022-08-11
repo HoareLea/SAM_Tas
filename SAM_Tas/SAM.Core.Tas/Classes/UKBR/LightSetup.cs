@@ -37,9 +37,23 @@ namespace SAM.Core.Tas
 
         public LightingDetail LightingDetail(Guid gUID)
         {
-            int aIndex = ZoneGUIDs.ToZoneGUIDList().FindIndex(x => x.GUID == gUID);
-            if (aIndex >= 0)
-                return LightingDetails.LightingDetail(aIndex);
+            ZoneGUIDs zoneGUIDs = ZoneGUIDs;
+            if(zoneGUIDs == null)
+            {
+                return null;
+            }
+
+            int index = 0;
+            foreach(ZoneGUID zoneGUID in zoneGUIDs)
+            {
+                if(zoneGUID == null || zoneGUID.GUID != gUID)
+                {
+                    index++;
+                    continue;
+                }
+
+                return LightingDetails.LightingDetail(index);
+            }
 
             return null;
         }

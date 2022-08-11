@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace SAM.Core.Tas
 {
-    public class LightSetups : UKBRElement
+    public class LightSetups : UKBRElement, IEnumerable<LightSetup>
     {
         public static string UKBRName
         {
@@ -20,14 +21,31 @@ namespace SAM.Core.Tas
 
         }
 
-        public List<LightSetup> ToLightSetupList()
-        {
-            return xElement.Elements("LightSetup").ToList().ConvertAll(x => new LightSetup(x));
-        }
-
         public LightSetup LightSetup(string name)
         {
-            return ToLightSetupList().Find(x => x.Name == name);
+            return this.ToList().Find(x => x.Name == name);
+        }
+
+        public IEnumerator<LightSetup> GetEnumerator()
+        {
+            List<XElement> xElements = xElement?.Elements(Tas.LightSetup.UKBRName)?.ToList();
+            if (xElements == null)
+            {
+                return new List<LightSetup>().GetEnumerator();
+            }
+
+            return xElements.ConvertAll(x => new LightSetup(x)).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            List<XElement> xElements = xElement?.Elements(Tas.LightSetup.UKBRName)?.ToList();
+            if(xElements == null)
+            {
+                return new List<LightSetup>().GetEnumerator();
+            }
+
+            return xElements.ConvertAll(x => new LightSetup(x)).GetEnumerator();
         }
     }
 }

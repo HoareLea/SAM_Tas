@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace SAM.Core.Tas
 {
-    public class ZoneGUIDs : UKBRElement
+    public class ZoneGUIDs : UKBRElement, IEnumerable<ZoneGUID>
     {
         public static string UKBRName
         {
@@ -21,14 +22,31 @@ namespace SAM.Core.Tas
 
         }
 
-        public List<ZoneGUID> ToZoneGUIDList()
-        {
-            return xElement.Elements("ZoneGUID").ToList().ConvertAll(x => new ZoneGUID(x));
-        }
-
         public ZoneGUID ZoneGUID(Guid gUID)
         {
-            return ToZoneGUIDList().Find(x => x.GUID == gUID);
+            return this.ToList().Find(x => x.GUID == gUID);
+        }
+
+        public IEnumerator<ZoneGUID> GetEnumerator()
+        {
+            List<XElement> xElements = xElement?.Elements(Tas.ZoneGUID.UKBRName)?.ToList();
+            if (xElements == null)
+            {
+                return new List<ZoneGUID>().GetEnumerator();
+            }
+
+            return xElements.ConvertAll(x => new ZoneGUID(x)).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            List<XElement> xElements = xElement?.Elements(Tas.ZoneGUID.UKBRName)?.ToList();
+            if (xElements == null)
+            {
+                return new List<ZoneGUID>().GetEnumerator();
+            }
+
+            return xElements.ConvertAll(x => new ZoneGUID(x)).GetEnumerator();
         }
     }
 }

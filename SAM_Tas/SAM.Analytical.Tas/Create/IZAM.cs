@@ -25,19 +25,19 @@ namespace SAM.Analytical.Tas
             TBD.zone zone_Source = null;
             TBD.zone zone_Assign = null;
 
-            TBD.zone zone = zones.Zone(name_Direction);
+            TBD.zone zone = zones.Match(name_Direction);
             if (zone != null)
             {
                 if (from)
                 {
                     iZAM.name = string.Format("IZAM_{0}_FROM_{1}", name, name_Direction);
                     zone_Source = zone;
-                    zone_Assign = zones.Zone(name);
+                    zone_Assign = zones.Match(name);
                 }
                 else
                 {
                     iZAM.name = string.Format("IZAM_{0}_FROM_{1}", name_Direction, name);
-                    zone_Source = zones.Zone(name);
+                    zone_Source = zones.Match(name);
                     zone_Assign = zone;
                 }
 
@@ -45,7 +45,7 @@ namespace SAM.Analytical.Tas
             else
             {
                 iZAM.name = string.Format("IZAM_{0}_{1} OUTSIDE", name, directionText.ToUpper());
-                zone_Assign = zones.Zone(name);
+                zone_Assign = zones.Match(name);
 
                 if (from)
                     iZAM.fromOutside = 1;

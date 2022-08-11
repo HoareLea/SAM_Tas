@@ -65,7 +65,7 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                TBD.zone zone = space.Zone(zones);
+                TBD.zone zone = space.Match(zones);
                 if (zone == null)
                 {
                     continue;

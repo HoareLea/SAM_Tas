@@ -123,6 +123,7 @@
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
     <Compile Include="Component\TasCreateTBDByPartL.cs" />
     <Compile Include="Component\TasUpdateShading.cs" />
+    <Compile Include="Component\TasUpdateUKBRFile.cs" />
     <Compile Include="Component\TasWorkflowgbXML.cs" />
     <Compile Include="Component\TasDesignDayNames.cs" />
     <Compile Include="Component\TasCreateDesignDays.cs" />

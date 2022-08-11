@@ -89,6 +89,10 @@
     <Compile Include="Classes\SurfaceOutputSpec.cs" />
     <Compile Include="Classes\UKBR\Building.cs" />
     <Compile Include="Classes\UKBR\LightingDetail.cs" />
+    <Compile Include="Classes\UKBR\SourceSets.cs" />
+    <Compile Include="Classes\UKBR\SourceSet.cs" />
+    <Compile Include="Classes\UKBR\Zones.cs" />
+    <Compile Include="Classes\UKBR\Zone.cs" />
     <Compile Include="Classes\UKBR\LightSetup.cs" />
     <Compile Include="Classes\UKBR\LightSetups.cs" />
     <Compile Include="Classes\UKBR\LightingDetails.cs" />

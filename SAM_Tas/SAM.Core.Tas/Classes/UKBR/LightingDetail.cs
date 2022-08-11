@@ -202,7 +202,7 @@ namespace SAM.Core.Tas
             {
                 return int.Parse(xElement.Attribute("APD").Value);
             }
-            set
+            protected set
             {
                 xElement.Attribute("APD").Value = value.ToString();
             }

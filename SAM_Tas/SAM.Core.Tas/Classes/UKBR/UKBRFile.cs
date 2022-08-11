@@ -42,8 +42,17 @@ namespace SAM.Core.Tas
 
         private void GetData()
         {
+            ClearData();
+            
             ZipFile.ExtractToDirectory(path, FileTemporaryDirectory);
             xDocument = XDocument.Load(GetTemporaryFilePath());
+        }
+
+        private void ClearData()
+        {
+            if (System.IO.Directory.Exists(FileTemporaryDirectory))
+                System.IO.Directory.Delete(FileTemporaryDirectory, true);
+            xDocument = null;
         }
 
         public string FileTemporaryDirectory
@@ -62,10 +71,7 @@ namespace SAM.Core.Tas
 
         void IDisposable.Dispose()
         {
-
-            if (System.IO.Directory.Exists(FileTemporaryDirectory))
-                System.IO.Directory.Delete(FileTemporaryDirectory, true);
-            xDocument = null;
+            ClearData();
         }
 
         public UKBRData UKBRData
