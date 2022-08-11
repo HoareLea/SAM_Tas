@@ -23,6 +23,8 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            tBDDocument.Building.RemoveZoneGroups();
+
             HashSet<string> result = new HashSet<string>();
             foreach (Space space in spaces)
             {

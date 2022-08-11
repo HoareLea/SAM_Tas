@@ -11,11 +11,11 @@ namespace SAM.Analytical.Tas
 
             List<TBD.ZoneGroup> result = new List<TBD.ZoneGroup>();
 
-            TBD.ZoneGroup aZone = building.GetZoneGroup(result.Count);
-            while (aZone != null)
+            TBD.ZoneGroup zoneGroup = building.GetZoneGroup(result.Count);
+            while (zoneGroup != null)
             {
-                result.Add(aZone);
-                aZone = building.GetZoneGroup(result.Count);
+                result.Add(zoneGroup);
+                zoneGroup = building.GetZoneGroup(result.Count);
             }
 
             return result;
