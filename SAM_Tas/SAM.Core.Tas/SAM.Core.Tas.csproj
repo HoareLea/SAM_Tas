@@ -88,7 +88,11 @@
     <Compile Include="Classes\SAMTSDDocument.cs" />
     <Compile Include="Classes\SurfaceOutputSpec.cs" />
     <Compile Include="Classes\UKBR\Building.cs" />
+    <Compile Include="Classes\UKBR\HVACZoneGroups.cs" />
+    <Compile Include="Classes\UKBR\HVACZoneGroup.cs" />
     <Compile Include="Classes\UKBR\LightingDetail.cs" />
+    <Compile Include="Classes\UKBR\HVACSetup.cs" />
+    <Compile Include="Classes\UKBR\HVACSetups.cs" />
     <Compile Include="Classes\UKBR\SourceSets.cs" />
     <Compile Include="Classes\UKBR\SourceSet.cs" />
     <Compile Include="Classes\UKBR\Zones.cs" />
@@ -131,6 +135,8 @@
     <Compile Include="Query\TWDDocument.cs" />
     <Compile Include="Query\TSDDocument.cs" />
     <Compile Include="Query\T3DDocument.cs" />
+    <Compile Include="Query\Enumerator.cs" />
+    <Compile Include="Query\Value.cs" />
     <Compile Include="Query\Values.cs" />
   </ItemGroup>
   <ItemGroup>

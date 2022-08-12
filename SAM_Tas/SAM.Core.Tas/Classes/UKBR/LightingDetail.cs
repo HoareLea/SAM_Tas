@@ -4,13 +4,7 @@ namespace SAM.Core.Tas
 {
     public class LightingDetail : UKBRElement
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "LightingDetail";
-            }
-        }
+        public override string UKBRName => "LightingDetail";
 
         public LightingDetail(XElement XElement)
             : base(XElement)

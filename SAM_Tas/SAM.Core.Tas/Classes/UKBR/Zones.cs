@@ -8,16 +8,10 @@ namespace SAM.Core.Tas
 {
     public class Zones : UKBRElement, IEnumerable<Zone>
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "Zones";
-            }
-        }
+        public override string UKBRName => "Zones";
 
         public Zones(XElement xElement)
-            : base(xElement, UKBRName)
+            : base(xElement)
         {
 
         }
@@ -34,24 +28,12 @@ namespace SAM.Core.Tas
 
         public IEnumerator<Zone> GetEnumerator()
         {
-            List<XElement> xElements = xElement?.Elements(Tas.Zone.UKBRName)?.ToList();
-            if (xElements == null)
-            {
-                return new List<Zone>().GetEnumerator();
-            }
-
-            return xElements.ConvertAll(x => new Zone(x)).GetEnumerator();
+            return Query.Enumerator<Zone>(xElement);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            List<XElement> xElements = xElement?.Elements(Tas.Zone.UKBRName)?.ToList();
-            if(xElements == null)
-            {
-                return new List<Zone>().GetEnumerator();
-            }
-
-            return xElements.ConvertAll(x => new Zone(x)).GetEnumerator();
+            return Query.Enumerator<Zone>(xElement);
         }
     }
 }

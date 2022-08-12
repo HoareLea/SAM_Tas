@@ -4,6 +4,8 @@ namespace SAM.Core.Tas
 {
     public abstract class UKBRElement
     {
+        public abstract string UKBRName { get; }
+        
         protected XElement xElement;
 
         protected UKBRElement(XDocument xDocument)
@@ -11,14 +13,16 @@ namespace SAM.Core.Tas
             xElement = xDocument.Root;
         }
 
-        protected UKBRElement(XElement xElement, string name)
-        {
-            this.xElement = xElement.Element(name);
-        }
-
         protected UKBRElement(XElement xElement)
         {
-            this.xElement = xElement;
+            if (xElement?.Name == UKBRName)
+            {
+                this.xElement = xElement;
+            }
+            else
+            {
+                this.xElement = xElement.Element(UKBRName);
+            }
         }
 
     }

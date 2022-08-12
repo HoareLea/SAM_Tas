@@ -7,16 +7,10 @@ namespace SAM.Core.Tas
 {
     public class LightSetups : UKBRElement, IEnumerable<LightSetup>
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "LightSetups";
-            }
-        }
+        public override string UKBRName => "LightSetups";
 
         public LightSetups(XElement xElement)
-            : base(xElement, UKBRName)
+            : base(xElement)
         {
 
         }
@@ -28,24 +22,12 @@ namespace SAM.Core.Tas
 
         public IEnumerator<LightSetup> GetEnumerator()
         {
-            List<XElement> xElements = xElement?.Elements(Tas.LightSetup.UKBRName)?.ToList();
-            if (xElements == null)
-            {
-                return new List<LightSetup>().GetEnumerator();
-            }
-
-            return xElements.ConvertAll(x => new LightSetup(x)).GetEnumerator();
+            return Query.Enumerator<LightSetup>(xElement);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            List<XElement> xElements = xElement?.Elements(Tas.LightSetup.UKBRName)?.ToList();
-            if(xElements == null)
-            {
-                return new List<LightSetup>().GetEnumerator();
-            }
-
-            return xElements.ConvertAll(x => new LightSetup(x)).GetEnumerator();
+            return Query.Enumerator<LightSetup>(xElement);
         }
     }
 }

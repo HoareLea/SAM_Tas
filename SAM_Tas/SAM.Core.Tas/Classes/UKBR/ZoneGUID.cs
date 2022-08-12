@@ -5,13 +5,8 @@ namespace SAM.Core.Tas
 {
     public class ZoneGUID : UKBRElement
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "ZoneGUID";
-            }
-        }
+        public override string UKBRName => "ZoneGUID";
+
 
         public ZoneGUID(XElement xElement)
             : base(xElement)

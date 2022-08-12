@@ -5,13 +5,7 @@ namespace SAM.Core.Tas
 {
     public class SourceSet : UKBRElement
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "SourceSet";
-            }
-        }
+        public override string UKBRName => "SourceSet";
 
         public SourceSet(XElement xElement)
             : base(xElement)
@@ -23,7 +17,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return new Guid(xElement.Attribute("GUID").Value);
+                return Query.Value<Guid>(xElement?.Attribute("GUID"));
             }
         }
 

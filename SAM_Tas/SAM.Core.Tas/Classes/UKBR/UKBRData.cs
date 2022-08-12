@@ -4,13 +4,7 @@ namespace SAM.Core.Tas
 {
     public class UKBRData : UKBRElement
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "UKBrData";
-            }
-        }
+        public override string UKBRName => "UKBrData";
 
         public UKBRData(XDocument XDocument)
             : base(XDocument)

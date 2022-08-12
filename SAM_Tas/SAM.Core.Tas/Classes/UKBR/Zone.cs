@@ -5,13 +5,7 @@ namespace SAM.Core.Tas
 {
     public class Zone : UKBRElement
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "Zone";
-            }
-        }
+        public override string UKBRName => "Zone";
 
         public Zone(XElement xElement)
             : base(xElement)
@@ -23,7 +17,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return xElement.Attribute("Name").Value;
+                return Query.Value<string>(xElement?.Attribute("Name"));
             }
         }
 
@@ -31,7 +25,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return new Guid(xElement.Attribute("GUID").Value);
+                return Query.Value<Guid>(xElement?.Attribute("GUID"));
             }
         }
     }

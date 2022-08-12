@@ -7,16 +7,10 @@ namespace SAM.Core.Tas
 {
     public class SourceSets : UKBRElement, IEnumerable<SourceSet>
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "SourceSets";
-            }
-        }
+        public override string UKBRName => "SourceSets";
 
         public SourceSets(XElement xElement)
-            : base(xElement, UKBRName)
+            : base(xElement)
         {
 
         }
@@ -28,24 +22,12 @@ namespace SAM.Core.Tas
 
         public IEnumerator<SourceSet> GetEnumerator()
         {
-            List<XElement> xElements = xElement?.Elements(Tas.SourceSet.UKBRName)?.ToList();
-            if (xElements == null)
-            {
-                return new List<SourceSet>().GetEnumerator();
-            }
-
-            return xElements.ConvertAll(x => new SourceSet(x)).GetEnumerator();
+            return Query.Enumerator<SourceSet>(xElement);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            List<XElement> xElements = xElement?.Elements(Tas.SourceSet.UKBRName)?.ToList();
-            if(xElements == null)
-            {
-                return new List<SourceSet>().GetEnumerator();
-            }
-
-            return xElements.ConvertAll(x => new SourceSet(x)).GetEnumerator();
+            return Query.Enumerator<SourceSet>(xElement);
         }
     }
 }

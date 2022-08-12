@@ -6,16 +6,10 @@ namespace SAM.Core.Tas
 {
     public class Building : UKBRElement
     {
-        public static string UKBRName
-        {
-            get
-            {
-                return "Building";
-            }
-        }
+        public override string UKBRName => "Building";
 
         public Building(XElement xElement)
-            : base(xElement, UKBRName)
+            : base(xElement)
         {
 
         }
