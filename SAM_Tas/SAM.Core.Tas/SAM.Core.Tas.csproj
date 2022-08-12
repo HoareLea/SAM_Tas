@@ -95,6 +95,7 @@
     <Compile Include="Classes\UKBR\HVACSetups.cs" />
     <Compile Include="Classes\UKBR\SourceSets.cs" />
     <Compile Include="Classes\UKBR\SourceSet.cs" />
+    <Compile Include="Classes\UKBR\UKBRElements.cs" />
     <Compile Include="Classes\UKBR\Zones.cs" />
     <Compile Include="Classes\UKBR\Zone.cs" />
     <Compile Include="Classes\UKBR\LightSetup.cs" />

@@ -226,67 +226,67 @@ namespace SAM.Core.Tas
             }
         }
 
-        public int Country
-        {
-            get
-            {
-                return int.Parse(xElement.Attribute("Country").Value);
-            }
-            set
-            {
-                xElement.Attribute("Country").Value = value.ToString();
-            }
-        }
+        //public int Country
+        //{
+        //    get
+        //    {
+        //        return int.Parse(xElement.Attribute("Country").Value);
+        //    }
+        //    set
+        //    {
+        //        xElement.Attribute("Country").Value = value.ToString();
+        //    }
+        //}
 
-        public void SetCountry(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                Country = 0;
-                return;
-            }
+        //public void SetCountry(string value)
+        //{
+        //    if (string.IsNullOrEmpty(value))
+        //    {
+        //        Country = 0;
+        //        return;
+        //    }
 
-            string value_Temp = value.ToUpper().Trim();
-            value_Temp = value_Temp.Replace(" ", "");
-            if (string.IsNullOrEmpty(value_Temp))
-            {
-                Country = 0;
-                return;
-            }
+        //    string value_Temp = value.ToUpper().Trim();
+        //    value_Temp = value_Temp.Replace(" ", "");
+        //    if (string.IsNullOrEmpty(value_Temp))
+        //    {
+        //        Country = 0;
+        //        return;
+        //    }
 
-            if (value_Temp.Contains("ENGLAND"))
-            {
-                Country = 0;
-                return;
-            }
+        //    if (value_Temp.Contains("ENGLAND"))
+        //    {
+        //        Country = 0;
+        //        return;
+        //    }
 
-            if (value_Temp.Contains("SCOTLAND"))
-            {
-                Country = 1;
-                return;
-            }
+        //    if (value_Temp.Contains("SCOTLAND"))
+        //    {
+        //        Country = 1;
+        //        return;
+        //    }
 
-            if (value_Temp.Contains("NORTHERN"))
-            {
-                Country = 2;
-                return;
-            }
+        //    if (value_Temp.Contains("NORTHERN"))
+        //    {
+        //        Country = 2;
+        //        return;
+        //    }
 
-            if (value_Temp.Contains("REPUBLIC"))
-            {
-                Country = 3;
-                return;
-            }
+        //    if (value_Temp.Contains("REPUBLIC"))
+        //    {
+        //        Country = 3;
+        //        return;
+        //    }
 
-            if (value_Temp.Contains("WALES"))
-            {
-                Country = 4;
-                return;
-            }
+        //    if (value_Temp.Contains("WALES"))
+        //    {
+        //        Country = 4;
+        //        return;
+        //    }
 
 
-            Country = 0;
-        }
+        //    Country = 0;
+        //}
 
         public double TargetIlluminance
         {
@@ -348,17 +348,17 @@ namespace SAM.Core.Tas
             }
         }
 
-        public double AirPermeability
-        {
-            get
-            {
-                return double.Parse(xElement.Attribute("AirPermeability").Value);
-            }
-            set
-            {
-                xElement.Attribute("AirPermeability").Value = value.ToString();
-            }
-        }
+        //public double AirPermeability
+        //{
+        //    get
+        //    {
+        //        return double.Parse(xElement.Attribute("AirPermeability").Value);
+        //    }
+        //    set
+        //    {
+        //        xElement.Attribute("AirPermeability").Value = value.ToString();
+        //    }
+        //}
 
         public bool bUserDaylightFactor
         {

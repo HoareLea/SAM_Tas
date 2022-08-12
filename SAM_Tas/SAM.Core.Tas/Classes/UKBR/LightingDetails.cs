@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace SAM.Core.Tas
 {
-    public class LightingDetails : UKBRElement, IEnumerable<LightingDetail>
+    public class LightingDetails : UKBRElements<LightingDetail>
     {
         public override string UKBRName => "LightingDetails";
 
@@ -29,16 +26,6 @@ namespace SAM.Core.Tas
             }
 
             return null;
-        }
-
-        public IEnumerator<LightingDetail> GetEnumerator()
-        {
-            return Query.Enumerator<LightingDetail>(xElement);
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return Query.Enumerator<LightingDetail>(xElement);
         }
     }
 }

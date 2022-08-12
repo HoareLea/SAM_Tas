@@ -95,7 +95,7 @@ namespace SAM.Analytical.Tas
 
                     lightingDetail.SetDaylightControl(Core.Query.Description(nCMData.LightingPhotoelectricControls)?.ToUpper());
 
-                    lightingDetail.SetCountry(Core.Query.Description(nCMData.Country)?.ToUpper());
+                    //lightingDetail.SetCountry(Core.Query.Description(nCMData.Country)?.ToUpper());
 
                     lightingDetail.bBackSpaceSensor = nCMData.LightingPhotoelectricBackSpaceSensor;
 
@@ -107,7 +107,7 @@ namespace SAM.Analytical.Tas
 
                     lightingDetail.ParasiticPower = nCMData.LightingPhotoelectricParasiticPower;
 
-                    lightingDetail.AirPermeability = nCMData.AirPermeability;
+                    //lightingDetail.AirPermeability = nCMData.AirPermeability;
 
                     if (internalCondition.TryGetValue(InternalConditionParameter.LightingGainPerArea, out double lightingGainPerArea) && !double.IsNaN(lightingGainPerArea))
                     {

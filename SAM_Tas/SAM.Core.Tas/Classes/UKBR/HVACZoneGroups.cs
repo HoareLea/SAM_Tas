@@ -5,7 +5,7 @@ using System.Xml.Linq;
 
 namespace SAM.Core.Tas
 {
-    public class HVACZoneGroups : UKBRElement, IEnumerable<HVACZoneGroup>
+    public class HVACZoneGroups : UKBRElements<HVACZoneGroup>
     {
         public override string UKBRName => "ZoneGroups";
 
@@ -18,16 +18,6 @@ namespace SAM.Core.Tas
         public HVACZoneGroup HVACSetup(string name)
         {
             return this.ToList().Find(x => x.Name == name);
-        }
-
-        public IEnumerator<HVACZoneGroup> GetEnumerator()
-        {
-            return Query.Enumerator<HVACZoneGroup>(xElement);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Query.Enumerator<HVACZoneGroup>(xElement);
         }
     }
 }
