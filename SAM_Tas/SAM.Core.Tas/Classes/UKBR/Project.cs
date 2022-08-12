@@ -25,6 +25,19 @@ namespace SAM.Core.Tas
             }
         }
 
+        public ProjectFile ProjectFile
+        {
+            get
+            {
+                if (xElement == null)
+                {
+                    return null;
+                }
+
+                return new ProjectFile(xElement);
+            }
+        }
+
         public bool DoReImport
         {
             get

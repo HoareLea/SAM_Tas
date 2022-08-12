@@ -115,13 +115,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                double result = Query.Value<double>(xElement?.Attribute("AirPermeability"));
-                if(double.IsNaN(result))
-                {
-                    result = Query.Invalid<double>();
-                }
-
-                return result;
+                return Query.Value(xElement?.Attribute("AirPermeability"), Query.Invalid<double>());
             }
         }
 
@@ -129,13 +123,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                int index = Query.Value<int>(xElement?.Attribute("CIBSEBuildingType"));
-                if(index == int.MinValue)
-                {
-                    index = Query.Invalid<int>();
-                }
-
-                return index;
+                return Query.Value(xElement?.Attribute("CIBSEBuildingType"), Query.Invalid<int>());
             }
         }
 
@@ -151,13 +139,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                int index = Query.Value<int>(xElement?.Attribute("CIBSEBuildingSize"));
-                if (index == int.MinValue)
-                {
-                    index = Query.Invalid<int>();
-                }
-
-                return index;
+                return Query.Value(xElement?.Attribute("CIBSEBuildingSize"), Query.Invalid<int>());
             }
         }
 
@@ -190,6 +172,94 @@ namespace SAM.Core.Tas
             get
             {
                 return Query.Value<double>(xElement?.Attribute("AncillaryFanLoad"));
+            }
+        }
+
+        public double AncillaryPumpLoad
+        {
+            get
+            {
+                return Query.Value<double>(xElement?.Attribute("AncillaryPumpLoad"));
+            }
+        }
+
+        public double TotalVolume
+        {
+            get
+            {
+                return Query.Value<double>(xElement?.Attribute("TotalVolume"));
+            }
+        }
+
+        public int WeatherFileIndex
+        {
+            get
+            {
+                return Query.Value<int>(xElement?.Attribute("WeatherFile"));
+            }
+        }
+
+        public bool HVACMonitoring
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("HVACMonitoring"));
+            }
+        }
+
+        public bool ShowCrit3
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("ShowCrit3"));
+            }
+        }
+
+        public int TPDxSourceIndex
+        {
+            get
+            {
+                return Query.Value<int>(xElement?.Attribute("TPDxSource"));
+            }
+        }
+
+        public bool bSavePostImport
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("bSavePostImport"));
+            }
+        }
+
+        public double FoundationArea
+        {
+            get
+            {
+                return Query.Value<double>(xElement?.Attribute("FoundationArea"));
+            }
+        }
+
+        public int NumberOfStoreys
+        {
+            get
+            {
+                return Query.Value<int>(xElement?.Attribute("NumberOfStoreys"));
+            }
+        }
+
+        public int FoundationAreaCalculationMethodIndex
+        {
+            get
+            {
+                return Query.Value<int>(xElement?.Attribute("FoundationAreaCalculationMethod"));
+            }
+        }
+
+        public int LightSetupSource
+        {
+            get
+            {
+                return Query.Value<int>(xElement?.Attribute("LightSetupSource"));
             }
         }
     }
