@@ -103,7 +103,7 @@ namespace SAM.Analytical.Tas
 
                     lightingDetail.bUserDaylightFactor = nCMData.LightingDaylightFactorMethod;
 
-                    lightingDetail.IsMainsGasAvailable = nCMData.IsMainsGasAvailable;
+                    //lightingDetail.IsMainsGasAvailable = nCMData.IsMainsGasAvailable;
 
                     lightingDetail.ParasiticPower = nCMData.LightingPhotoelectricParasiticPower;
 

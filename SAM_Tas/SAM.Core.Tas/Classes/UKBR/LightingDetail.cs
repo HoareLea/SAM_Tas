@@ -444,17 +444,17 @@ namespace SAM.Core.Tas
             }
         }
 
-        public bool IsMainsGasAvailable
-        {
-            get
-            {
-                return bool.Parse(xElement.Attribute("IsMainsGasAvailable").Value);
-            }
-            set
-            {
-                xElement.Attribute("IsMainsGasAvailable").Value = value.ToString().ToLower();
-            }
-        }
+        //public bool IsMainsGasAvailable
+        //{
+        //    get
+        //    {
+        //        return bool.Parse(xElement.Attribute("IsMainsGasAvailable").Value);
+        //    }
+        //    set
+        //    {
+        //        xElement.Attribute("IsMainsGasAvailable").Value = value.ToString().ToLower();
+        //    }
+        //}
 
         public double MaintenanceFactor
         {
