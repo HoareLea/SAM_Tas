@@ -1,13 +1,10 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
-using SAM.Analytical.Tas;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
-using SAM.Weather;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {

@@ -17,7 +17,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return xElement.Attribute("Name").Value;
+                return Query.Value<string>(xElement?.Attribute("Name"));
             }
         }
 
@@ -25,6 +25,11 @@ namespace SAM.Core.Tas
         {
             get
             {
+                if(xElement == null)
+                {
+                    return null;
+                }
+
                 return new ZoneGUIDs(xElement);
             }
         }
@@ -56,6 +61,11 @@ namespace SAM.Core.Tas
         {
             get
             {
+                if(xElement == null)
+                {
+                    return null;
+                }
+
                 return new LightingDetails(xElement);
             }
         }

@@ -102,5 +102,13 @@ namespace SAM.Core.Tas
 
             return GetZones(guids);
         }
+
+        public string NCMVersion
+        {
+            get
+            {
+                return Query.Value<string>(xElement?.Attribute("NCMVersion"));
+            }
+        }
     }
 }

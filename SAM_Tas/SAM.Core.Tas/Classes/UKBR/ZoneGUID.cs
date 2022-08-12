@@ -7,7 +7,6 @@ namespace SAM.Core.Tas
     {
         public override string UKBRName => "ZoneGUID";
 
-
         public ZoneGUID(XElement xElement)
             : base(xElement)
         {
@@ -18,6 +17,11 @@ namespace SAM.Core.Tas
         {
             get
             {
+                if(string.IsNullOrWhiteSpace(xElement?.Value))
+                {
+                    return Guid.Empty;
+                }
+                
                 return new Guid(xElement.Value);
             }
         }

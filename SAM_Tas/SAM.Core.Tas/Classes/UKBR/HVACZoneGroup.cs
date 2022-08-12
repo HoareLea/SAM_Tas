@@ -17,7 +17,8 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return xElement.Attribute("Name")?.Value;
+
+                return Query.Value<string>(xElement?.Attribute("Name"));
             }
         }
 
@@ -25,13 +26,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                XAttribute xAttribute = xElement.Attribute("IsSystem");
-                if(xAttribute == null)
-                {
-                    return false;
-                }
-
-                return xElement.Attribute("IsSystem").Value?.ToUpper().Trim() == "TRUE";
+                return Query.Value<bool>(xElement?.Attribute("IsSystem"));
             }
         }
 
@@ -39,13 +34,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                XAttribute xAttribute = xElement.Attribute("GUID");
-                if (xAttribute == null || string.IsNullOrWhiteSpace(xAttribute.Value))
-                {
-                    return Guid.Empty;
-                }
-
-                return new Guid(xAttribute.Value);
+                return Query.Value<Guid>(xElement?.Attribute("GUID"));
             }
         }
     }

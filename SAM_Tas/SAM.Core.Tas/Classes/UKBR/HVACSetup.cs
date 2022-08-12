@@ -16,7 +16,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return Query.Value<string>(xElement.Attribute("Name"));
+                return Query.Value<string>(xElement?.Attribute("Name"));
             }
         }
 
@@ -24,7 +24,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return Query.Value<string>(xElement.Attribute("Description"));
+                return Query.Value<string>(xElement?.Attribute("Description"));
             }
         }
 
@@ -32,10 +32,8 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return Query.Value<bool>(xElement.Attribute("HasSimulated"));
+                return Query.Value<bool>(xElement?.Attribute("HasSimulated"));
             }
         }
-
-
     }
 }

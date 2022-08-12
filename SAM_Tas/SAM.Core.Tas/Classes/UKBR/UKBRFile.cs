@@ -78,6 +78,11 @@ namespace SAM.Core.Tas
         {
             get
             {
+                if(xDocument == null)
+                {
+                    return null;
+                }
+
                 return new UKBRData(xDocument);
             }
         }

@@ -25,6 +25,11 @@ namespace SAM.Core.Tas
         {
             get
             {
+                if(xElement == null)
+                {
+                    return null;
+                }
+
                 return new Zones(xElement);
             }
         }

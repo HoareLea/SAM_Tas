@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SAM.Weather.Tas
+﻿namespace SAM.Weather.Tas
 {
     public static partial class Query
     {

@@ -1,5 +1,4 @@
 ﻿using SAM.Core;
-using System.Collections.Generic;
 using TSD;
 
 namespace SAM.Analytical.Tas

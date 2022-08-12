@@ -10,7 +10,7 @@ namespace SAM.Core.Tas
 
         protected UKBRElement(XDocument xDocument)
         {
-            xElement = xDocument.Root;
+            xElement = xDocument?.Root;
         }
 
         protected UKBRElement(XElement xElement)
@@ -21,7 +21,7 @@ namespace SAM.Core.Tas
             }
             else
             {
-                this.xElement = xElement.Element(UKBRName);
+                this.xElement = xElement?.Element(UKBRName);
             }
         }
 

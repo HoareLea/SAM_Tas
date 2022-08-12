@@ -16,6 +16,11 @@ namespace SAM.Core.Tas
         {
             get
             {
+                if(xElement == null)
+                {
+                    return null;
+                }
+
                 return new Project(xElement);
             }
         }
@@ -24,11 +29,15 @@ namespace SAM.Core.Tas
         {
             get
             {
-                return xElement.Element("Version").Value;
+                return xElement?.Element("Version")?.Value;
             }
             set
             {
-                xElement.Element("Version").Value = value;
+                XElement xElement_Temp = xElement?.Element("Version");
+                if(xElement_Temp != null)
+                {
+                    xElement_Temp.Value = value;
+                }
             }
         }
     }
