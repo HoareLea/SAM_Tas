@@ -21,7 +21,7 @@ namespace SAM.Core.Tas
                 return new List<T>().GetEnumerator();
             }
 
-            return xElements.ConvertAll(x => Activator.CreateInstance(typeof(T), xElement) as T).GetEnumerator();
+            return xElements.ConvertAll(x => Activator.CreateInstance(typeof(T), x) as T).GetEnumerator();
         }
     }
 }
