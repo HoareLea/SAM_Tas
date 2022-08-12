@@ -110,5 +110,87 @@ namespace SAM.Core.Tas
                 return Query.Value<string>(xElement?.Attribute("NCMVersion"));
             }
         }
+
+        public double AirPermeability
+        {
+            get
+            {
+                double result = Query.Value<double>(xElement?.Attribute("AirPermeability"));
+                if(double.IsNaN(result))
+                {
+                    result = Query.Invalid<double>();
+                }
+
+                return result;
+            }
+        }
+
+        public int CIBSEBuildingTypeIndex
+        {
+            get
+            {
+                int index = Query.Value<int>(xElement?.Attribute("CIBSEBuildingType"));
+                if(index == int.MinValue)
+                {
+                    index = Query.Invalid<int>();
+                }
+
+                return index;
+            }
+        }
+
+        public int CountryIndex
+        {
+            get
+            {
+                return Query.Value<int>(xElement?.Attribute("Country"));
+            }
+        }
+
+        public int CIBSEBuildingSizeIndex
+        {
+            get
+            {
+                int index = Query.Value<int>(xElement?.Attribute("CIBSEBuildingSize"));
+                if (index == int.MinValue)
+                {
+                    index = Query.Invalid<int>();
+                }
+
+                return index;
+            }
+        }
+
+        public bool ModelNatVentVia5ACH
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("ModelNatVentVia5ACH"));
+            }
+        }
+
+        public bool DoBuildingRegsCalcs
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("DoBuildingRegsCalcs"));
+            }
+        }
+
+        public bool DoEPCCalcs
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("DoEPCCalcs"));
+            }
+        }
+
+        public double AncillaryFanLoad
+        {
+            get
+            {
+                return Query.Value<double>(xElement?.Attribute("AncillaryFanLoad"));
+            }
+        }
     }
 }

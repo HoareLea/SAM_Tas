@@ -6,59 +6,45 @@ namespace SAM.Core.Tas
     {
         public static T Value<T>(this XAttribute xAttribute)
         {
-            T result = default(T);
-
-            if (typeof(T) == typeof(double))
+            if(!Core.Query.TryGetValue(xAttribute, out T result))
             {
-                if(xAttribute == null || string.IsNullOrWhiteSpace(xAttribute.Value))
+                if(typeof(T) == typeof(System.Guid))
+                {
+                    return (T)(object)System.Guid.Empty;
+                }
+
+                if (typeof(T) == typeof(double))
                 {
                     return (T)(object)double.NaN;
                 }
 
-                if(!Core.Query.TryConvert(xAttribute?.Value, out result))
+                if (typeof(T) == typeof(int))
                 {
-                    return (T)(object)double.NaN;
+                    return (T)(object)int.MinValue;
                 }
 
-                return (T)(object)result;
+                if (typeof(T) == typeof(bool))
+                {
+                    return (T)(object)false;
+                }
             }
 
-            if (typeof(T) == typeof(string))
+            return result;
+        }
+
+        public static T Value<T>(this XAttribute xAttribute, T defaultValue)
+        {
+            if(xAttribute == null)
             {
-                if (xAttribute == null)
-                {
-                    return default(T);
-                }
-
-                if (!Core.Query.TryConvert(xAttribute?.Value, out result))
-                {
-                    return default(T);
-                }
-
-                return (T)(object)result;
+                return defaultValue;
             }
 
-            if (typeof(T) == typeof(bool))
+            if(!Core.Query.TryGetValue(xAttribute, out T result))
             {
-                if (xAttribute == null || string.IsNullOrWhiteSpace(xAttribute.Value))
-                {
-                    return default(T);
-                }
-
-                if (Core.Query.TryConvert(xAttribute.Value, out result))
-                {
-                    return (T)(object)result;
-                }
-
-                return (T)(object)(xAttribute.Value.Trim().ToUpper() == "TRUE");
+                return defaultValue;
             }
 
-            if (Core.Query.TryConvert(xAttribute?.Value, out result))
-            {
-                return (T)(object)result;
-            }
-
-            return default(T);
+            return result;
         }
     }
 }
