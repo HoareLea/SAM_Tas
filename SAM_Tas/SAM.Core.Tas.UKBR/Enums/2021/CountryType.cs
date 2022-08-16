@@ -1,4 +1,4 @@
-﻿namespace SAM.Core.Tas.UKBR
+﻿namespace SAM.Core.Tas.UKBR.v2021
 {
     public enum CountryType
     {
