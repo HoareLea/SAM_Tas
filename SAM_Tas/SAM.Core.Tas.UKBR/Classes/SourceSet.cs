@@ -201,5 +201,18 @@ namespace SAM.Core.Tas.UKBR
                 return new Zones(xElement);
             }
         }
+
+        public BuildingElements BuildingElements
+        {
+            get
+            {
+                if (xElement == null)
+                {
+                    return null;
+                }
+
+                return new BuildingElements(xElement);
+            }
+        }
     }
 }
