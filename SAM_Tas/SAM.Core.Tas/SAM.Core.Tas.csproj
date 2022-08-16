@@ -87,27 +87,6 @@
     <Compile Include="Classes\SAMTWDDocument.cs" />
     <Compile Include="Classes\SAMTSDDocument.cs" />
     <Compile Include="Classes\SurfaceOutputSpec.cs" />
-    <Compile Include="Classes\UKBR\Building.cs" />
-    <Compile Include="Classes\UKBR\HVACZoneGroups.cs" />
-    <Compile Include="Classes\UKBR\HVACZoneGroup.cs" />
-    <Compile Include="Classes\UKBR\LightingDetail.cs" />
-    <Compile Include="Classes\UKBR\HVACSetup.cs" />
-    <Compile Include="Classes\UKBR\HVACSetups.cs" />
-    <Compile Include="Classes\UKBR\ProjectFile.cs" />
-    <Compile Include="Classes\UKBR\SourceSets.cs" />
-    <Compile Include="Classes\UKBR\SourceSet.cs" />
-    <Compile Include="Classes\UKBR\UKBRElements.cs" />
-    <Compile Include="Classes\UKBR\Zones.cs" />
-    <Compile Include="Classes\UKBR\Zone.cs" />
-    <Compile Include="Classes\UKBR\LightSetup.cs" />
-    <Compile Include="Classes\UKBR\LightSetups.cs" />
-    <Compile Include="Classes\UKBR\LightingDetails.cs" />
-    <Compile Include="Classes\UKBR\ZoneGUID.cs" />
-    <Compile Include="Classes\UKBR\ZoneGUIDs.cs" />
-    <Compile Include="Classes\UKBR\UKBRData.cs" />
-    <Compile Include="Classes\UKBR\Project.cs" />
-    <Compile Include="Classes\UKBR\UKBRElement.cs" />
-    <Compile Include="Classes\UKBR\UKBRFile.cs" />
     <Compile Include="Convert\TogbXML\gbXML.cs" />
     <Compile Include="Convert\ToT3D\T3D.cs" />
     <Compile Include="Create\ParameterSet.cs" />
@@ -116,7 +95,6 @@
     <Compile Include="Modify\UpdateSurfaceOutputSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\SAMT3DDocument.cs" />
-    <Compile Include="Query\Invalid.cs" />
     <Compile Include="Query\ReportGeneratorPath.cs" />
     <Compile Include="Query\TCRDocument.cs" />
     <Compile Include="Query\TICDocument.cs" />
@@ -138,8 +116,6 @@
     <Compile Include="Query\TWDDocument.cs" />
     <Compile Include="Query\TSDDocument.cs" />
     <Compile Include="Query\T3DDocument.cs" />
-    <Compile Include="Query\Enumerator.cs" />
-    <Compile Include="Query\Value.cs" />
     <Compile Include="Query\Values.cs" />
   </ItemGroup>
   <ItemGroup>

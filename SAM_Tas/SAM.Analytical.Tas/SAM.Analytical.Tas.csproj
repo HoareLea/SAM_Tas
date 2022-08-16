@@ -306,6 +306,10 @@
     <Folder Include="Classes\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SAM.Core.Tas.UKBR\SAM.Core.Tas.UKBR.csproj">
+      <Project>{9fa85ad6-c49e-4bf7-bd25-4b55065b41ea}</Project>
+      <Name>SAM.Core.Tas.UKBR</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">
       <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
       <Name>SAM.Core.Tas</Name>

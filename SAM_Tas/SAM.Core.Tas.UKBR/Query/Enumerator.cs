@@ -3,7 +3,7 @@ using System.Xml.Linq;
 using System.Linq;
 using System;
 
-namespace SAM.Core.Tas
+namespace SAM.Core.Tas.UKBR
 {
     public static partial class Query
     {

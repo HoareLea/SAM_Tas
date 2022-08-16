@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace SAM.Core.Tas
+namespace SAM.Core.Tas.UKBR
 {
-    public class HVACZoneGroup : UKBRElement
+    public class Zone : UKBRElement
     {
-        public override string UKBRName => "ZoneGroup";
+        public override string UKBRName => "Zone";
 
-        public HVACZoneGroup(XElement xElement)
+        public Zone(XElement xElement)
             : base(xElement)
         {
 
@@ -17,16 +17,7 @@ namespace SAM.Core.Tas
         {
             get
             {
-
                 return Query.Value<string>(xElement?.Attribute("Name"));
-            }
-        }
-
-        public bool IsSystem
-        {
-            get
-            {
-                return Query.Value<bool>(xElement?.Attribute("IsSystem"));
             }
         }
 

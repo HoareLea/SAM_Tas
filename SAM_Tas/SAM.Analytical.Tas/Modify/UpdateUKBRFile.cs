@@ -1,4 +1,5 @@
 ﻿using SAM.Core.Tas;
+using SAM.Core.Tas.UKBR;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
@@ -54,13 +55,13 @@ namespace SAM.Analytical.Tas
             bool result = false;
             foreach (LightSetup lightSetup in lightSetups)
             {
-                List<Core.Tas.Zone> zones = building.GetZones(lightSetup?.ZoneGUIDs);
+                List<Core.Tas.UKBR.Zone> zones = building.GetZones(lightSetup?.ZoneGUIDs);
                 if(zones == null || zones.Count == 0)
                 {
                     continue;
                 }
 
-                foreach(Core.Tas.Zone zone in zones)
+                foreach(Core.Tas.UKBR.Zone zone in zones)
                 {
                     LightingDetail lightingDetail = lightSetup.LightingDetail(zone.GUID);
                     if(lightingDetail == null)

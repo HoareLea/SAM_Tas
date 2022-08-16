@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace SAM.Core.Tas
+namespace SAM.Core.Tas.UKBR
 {
     public class ZoneGUID : UKBRElement
     {

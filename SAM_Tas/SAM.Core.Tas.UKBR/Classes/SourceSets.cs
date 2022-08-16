@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
 
-namespace SAM.Core.Tas
+namespace SAM.Core.Tas.UKBR
 {
     public class SourceSets : UKBRElements<SourceSet>
     {

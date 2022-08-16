@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace SAM.Core.Tas
+namespace SAM.Core.Tas.UKBR
 {
     public abstract class UKBRElements<T> : UKBRElement, IEnumerable<T>  where T:UKBRElement
     {

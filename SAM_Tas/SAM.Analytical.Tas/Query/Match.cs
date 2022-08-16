@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas
             return null;
         }
 
-        public static Space Match(this Core.Tas.Zone zone, IEnumerable<Space> spaces)
+        public static Space Match(this Core.Tas.UKBR.Zone zone, IEnumerable<Space> spaces)
         {
             if(zone == null || spaces == null)
             {

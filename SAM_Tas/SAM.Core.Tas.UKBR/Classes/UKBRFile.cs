@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Xml.Linq;
-using System.IO.Compression;
 using System.Linq;
+using System.IO.Compression;
 
-namespace SAM.Core.Tas
+namespace SAM.Core.Tas.UKBR
 {
     public class UKBRFile : IDisposable
     {
