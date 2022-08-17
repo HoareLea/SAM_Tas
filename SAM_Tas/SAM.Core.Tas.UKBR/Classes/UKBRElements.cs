@@ -57,6 +57,20 @@ namespace SAM.Core.Tas.UKBR
             }
         }
 
+        public List<T> Items
+        {
+            get
+            {
+                List<T> result = new List<T>();
+                foreach(T t in this)
+                {
+                    result.Add(t);
+                }
+
+                return result;
+            }
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             return Query.Enumerator<T>(xElement);

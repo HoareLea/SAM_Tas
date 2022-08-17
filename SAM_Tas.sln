@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Weather.Grasshopper.Tas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Core.Tas.UKBR", "SAM_Tas\SAM.Core.Tas.UKBR\SAM.Core.Tas.UKBR.csproj", "{9FA85AD6-C49E-4BF7-BD25-4B55065B41EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Core.Grasshopper.Tas.UKBR", "Grasshopper\SAM.Core.Grasshopper.Tas.UKBR\SAM.Core.Grasshopper.Tas.UKBR.csproj", "{6AD97F9A-C18B-41CB-9CB7-FE0A3EF247DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{9FA85AD6-C49E-4BF7-BD25-4B55065B41EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FA85AD6-C49E-4BF7-BD25-4B55065B41EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FA85AD6-C49E-4BF7-BD25-4B55065B41EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AD97F9A-C18B-41CB-9CB7-FE0A3EF247DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AD97F9A-C18B-41CB-9CB7-FE0A3EF247DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AD97F9A-C18B-41CB-9CB7-FE0A3EF247DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AD97F9A-C18B-41CB-9CB7-FE0A3EF247DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{D7AB37F9-A953-4B62-A55B-50CB13FF768B} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
 		{10C34676-558F-4C79-8D73-D7E4AE1B06A1} = {06F63504-B0DA-4C13-8883-4F1906D72216}
 		{9FA85AD6-C49E-4BF7-BD25-4B55065B41EA} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
+		{6AD97F9A-C18B-41CB-9CB7-FE0A3EF247DC} = {06F63504-B0DA-4C13-8883-4F1906D72216}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B2CDD0F-8494-4D69-8DE1-E534BE47B358}
