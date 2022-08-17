@@ -72,6 +72,7 @@
     <Compile Include="Classes\BuildingElement.cs" />
     <Compile Include="Classes\System.cs" />
     <Compile Include="Classes\HVACZone.cs" />
+    <Compile Include="Classes\CurrentLights.cs" />
     <Compile Include="Classes\ZoneGroup.cs" />
     <Compile Include="Classes\Zone.cs" />
     <Compile Include="Classes\ZoneGUID.cs" />
