@@ -13,7 +13,7 @@ namespace SAM.Core.Tas.UKBR
 
         }
 
-        public BuildingElement BuildingElement(System.Guid guid)
+        public BuildingElement BuildingElement(global::System.Guid guid)
         {
             return this.ToList().Find(x => x.GUID == guid);
         }

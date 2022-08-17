@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace SAM.Core.Tas.UKBR
@@ -17,6 +19,44 @@ namespace SAM.Core.Tas.UKBR
         {
 
         }
+
+        public int Count
+        {
+            get
+            {
+                IEnumerable<XElement> xElements = xElement?.Elements();
+                if(xElements == null)
+                {
+                    return -1;
+                }
+
+                return xElements.Count();
+            }
+        }
+
+        public T this[int index]
+        {
+            get
+            {
+                IEnumerable<XElement> xElements = xElement?.Elements();
+                if (xElements == null)
+                {
+                    return null;
+                }
+
+                int index_Temp = 0;
+                foreach(XElement xElement in xElements)
+                {
+                    if(index_Temp == index)
+                    {
+                        return Activator.CreateInstance(typeof(T), xElement) as T;
+                    }
+                }
+
+                return null;
+            }
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             return Query.Enumerator<T>(xElement);

@@ -8,9 +8,9 @@ namespace SAM.Core.Tas.UKBR
         {
             if(!Core.Query.TryGetValue(xAttribute, out T result))
             {
-                if(typeof(T) == typeof(System.Guid))
+                if(typeof(T) == typeof(global::System.Guid))
                 {
-                    return (T)(object)System.Guid.Empty;
+                    return (T)(object)global::System.Guid.Empty;
                 }
 
                 if (typeof(T) == typeof(double))

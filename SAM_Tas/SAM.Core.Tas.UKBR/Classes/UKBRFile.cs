@@ -7,7 +7,7 @@ namespace SAM.Core.Tas.UKBR
 {
     public class UKBRFile : IDisposable
     {
-        private static string widnowsTemporaryDirectory = System.IO.Path.GetTempPath();
+        private static string widnowsTemporaryDirectory = global::System.IO.Path.GetTempPath();
         private static string fileTemporaryDirectoryName = Guid.NewGuid().ToString();
         private string path = null;
         private XDocument xDocument = null;
@@ -27,16 +27,16 @@ namespace SAM.Core.Tas.UKBR
             if (save)
                 SaveAs(path);
 
-            if (System.IO.Directory.Exists(FileTemporaryDirectory))
-                System.IO.Directory.Delete(FileTemporaryDirectory, true);
+            if (global::System.IO.Directory.Exists(FileTemporaryDirectory))
+                global::System.IO.Directory.Delete(FileTemporaryDirectory, true);
         }
 
         public void SaveAs(string path)
         {
             string aTemporaryFilePath = GetTemporaryFilePath();
             xDocument.Save(aTemporaryFilePath);
-            if (System.IO.File.Exists(path))
-                System.IO.File.Delete(path);
+            if (global::System.IO.File.Exists(path))
+                global::System.IO.File.Delete(path);
             ZipFile.CreateFromDirectory(FileTemporaryDirectory, path);
         }
 
@@ -50,8 +50,8 @@ namespace SAM.Core.Tas.UKBR
 
         private void ClearData()
         {
-            if (System.IO.Directory.Exists(FileTemporaryDirectory))
-                System.IO.Directory.Delete(FileTemporaryDirectory, true);
+            if (global::System.IO.Directory.Exists(FileTemporaryDirectory))
+                global::System.IO.Directory.Delete(FileTemporaryDirectory, true);
             xDocument = null;
         }
 
@@ -59,13 +59,13 @@ namespace SAM.Core.Tas.UKBR
         {
             get
             {
-                return System.IO.Path.Combine(widnowsTemporaryDirectory, fileTemporaryDirectoryName);
+                return global::System.IO.Path.Combine(widnowsTemporaryDirectory, fileTemporaryDirectoryName);
             }
         }
 
         public string GetTemporaryFilePath()
         {
-            string[] files = System.IO.Directory.GetFiles(FileTemporaryDirectory);
+            string[] files = global::System.IO.Directory.GetFiles(FileTemporaryDirectory);
             return files.First();
         }
 

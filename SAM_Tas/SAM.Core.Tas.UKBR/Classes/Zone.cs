@@ -28,5 +28,37 @@ namespace SAM.Core.Tas.UKBR
                 return Query.Value<Guid>(xElement?.Attribute("GUID"));
             }
         }
+
+        public bool bRemove
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("bRemove"));
+            }
+        }
+
+        public bool IsExternal
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("IsExternal"));
+            }
+        }
+
+        public bool IsOfficeStorageSpace
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("IsOfficeStorageSpace"));
+            }
+        }
+
+        public bool IsCorridorCirculationArea
+        {
+            get
+            {
+                return Query.Value<bool>(xElement?.Attribute("IsCorridorCirculationArea"));
+            }
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace SAM.Core.Tas.UKBR
             }
         }
 
-        public Zone GetZone(System.Guid guid)
+        public Zone GetZone(global::System.Guid guid, global::System.Guid? sourceSetGuid = null)
         {
             SourceSets sourceSets = SourceSets;
             if(sourceSets == null)
@@ -40,6 +40,14 @@ namespace SAM.Core.Tas.UKBR
 
             foreach(SourceSet sourceSet in sourceSets)
             {
+                if (sourceSetGuid != null && sourceSetGuid.HasValue)
+                {
+                    if (sourceSet.GUID != sourceSetGuid)
+                    {
+                        continue;
+                    }
+                }
+
                 Zones zones = sourceSet?.Zones;
                 if(zones == null)
                 {
@@ -58,7 +66,7 @@ namespace SAM.Core.Tas.UKBR
             return null;
         }
 
-        public List<Zone> GetZones(IEnumerable<System.Guid> guids, System.Guid? sourceSetGuid = null)
+        public List<Zone> GetZones(IEnumerable<global::System.Guid> guids, global::System.Guid? sourceSetGuid = null)
         {
             if(guids == null)
             {
@@ -100,9 +108,9 @@ namespace SAM.Core.Tas.UKBR
             return result;
         }
 
-        public List<Zone> GetZones(ZoneGUIDs zoneGUIDs, System.Guid? sourceSetGuid = null)
+        public List<Zone> GetZones(ZoneGUIDs zoneGUIDs, global::System.Guid? sourceSetGuid = null)
         {
-            List<System.Guid> guids = zoneGUIDs?.ToList().ConvertAll(x => x.GUID);
+            List<global::System.Guid> guids = zoneGUIDs?.ToList().ConvertAll(x => x.GUID);
             if(guids == null)
             {
                 return null;
@@ -111,7 +119,7 @@ namespace SAM.Core.Tas.UKBR
             return GetZones(guids, sourceSetGuid);
         }
 
-        public List<BuildingElement> GetBuildingElements(IEnumerable<System.Guid> guids, System.Guid? sourceSetGuid = null)
+        public List<BuildingElement> GetBuildingElements(IEnumerable<global::System.Guid> guids, global::System.Guid? sourceSetGuid = null)
         {
             if (guids == null)
             {

@@ -13,7 +13,7 @@ namespace SAM.Core.Tas.UKBR
 
         }
 
-        public SourceSet SourceSet(System.Guid guid)
+        public SourceSet SourceSet(global::System.Guid guid)
         {
             return this.ToList().Find(x => x.GUID == guid);
         }
