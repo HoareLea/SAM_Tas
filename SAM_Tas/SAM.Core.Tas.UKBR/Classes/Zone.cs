@@ -60,5 +60,13 @@ namespace SAM.Core.Tas.UKBR
                 return Query.Value<bool>(xElement?.Attribute("IsCorridorCirculationArea"));
             }
         }
+
+        public CurrentLights CurrentLights
+        {
+            get
+            {
+                return new CurrentLights(xElement);
+            }
+        }
     }
 }

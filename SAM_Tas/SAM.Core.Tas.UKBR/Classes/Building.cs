@@ -167,6 +167,11 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value<string>(xElement?.Attribute("NCMVersion"));
             }
+            set
+            {
+                Modify.SetValue(xElement, "NCMVersion", value);
+            }
+
         }
 
         public double AirPermeability
@@ -174,6 +179,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value(xElement?.Attribute("AirPermeability"), Query.Invalid<double>());
+            }
+            set
+            {
+                Modify.SetValue(xElement, "AirPermeability", value);
             }
         }
 
@@ -183,6 +192,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value(xElement?.Attribute("CIBSEBuildingType"), Query.Invalid<int>());
             }
+            set
+            {
+                Modify.SetValue(xElement, "CIBSEBuildingType", value);
+            }
         }
 
         public int CountryIndex
@@ -190,6 +203,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<int>(xElement?.Attribute("Country"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "Country", value);
             }
         }
 
@@ -199,6 +216,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value(xElement?.Attribute("CIBSEBuildingSize"), Query.Invalid<int>());
             }
+            set
+            {
+                Modify.SetValue(xElement, "CIBSEBuildingSize", value);
+            }
         }
 
         public bool ModelNatVentVia5ACH
@@ -206,6 +227,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<bool>(xElement?.Attribute("ModelNatVentVia5ACH"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "ModelNatVentVia5ACH", value);
             }
         }
 
@@ -215,6 +240,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value<bool>(xElement?.Attribute("DoBuildingRegsCalcs"));
             }
+            set
+            {
+                Modify.SetValue(xElement, "DoBuildingRegsCalcs", value);
+            }
         }
 
         public bool DoEPCCalcs
@@ -222,6 +251,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<bool>(xElement?.Attribute("DoEPCCalcs"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "DoEPCCalcs", value);
             }
         }
 
@@ -231,6 +264,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value<double>(xElement?.Attribute("AncillaryFanLoad"));
             }
+            set
+            {
+                Modify.SetValue(xElement, "AncillaryFanLoad", value);
+            }
         }
 
         public double AncillaryPumpLoad
@@ -238,6 +275,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<double>(xElement?.Attribute("AncillaryPumpLoad"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "AncillaryPumpLoad", value);
             }
         }
 
@@ -247,6 +288,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value<double>(xElement?.Attribute("TotalVolume"));
             }
+            set
+            {
+                Modify.SetValue(xElement, "TotalVolume", value);
+            }
         }
 
         public int WeatherFileIndex
@@ -254,6 +299,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<int>(xElement?.Attribute("WeatherFile"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "WeatherFile", value);
             }
         }
 
@@ -263,6 +312,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value<bool>(xElement?.Attribute("HVACMonitoring"));
             }
+            set
+            {
+                Modify.SetValue(xElement, "HVACMonitoring", value);
+            }
         }
 
         public bool ShowCrit3
@@ -270,6 +323,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<bool>(xElement?.Attribute("ShowCrit3"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "ShowCrit3", value);
             }
         }
 
@@ -279,6 +336,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value<int>(xElement?.Attribute("TPDxSource"));
             }
+            set
+            {
+                Modify.SetValue(xElement, "TPDxSource", value);
+            }
         }
 
         public bool bSavePostImport
@@ -286,6 +347,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<bool>(xElement?.Attribute("bSavePostImport"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "bSavePostImport", value);
             }
         }
 
@@ -295,6 +360,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value<double>(xElement?.Attribute("FoundationArea"));
             }
+            set
+            {
+                Modify.SetValue(xElement, "FoundationArea", value);
+            }
         }
 
         public int NumberOfStoreys
@@ -302,6 +371,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<int>(xElement?.Attribute("NumberOfStoreys"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "NumberOfStoreys", value);
             }
         }
 
@@ -311,6 +384,10 @@ namespace SAM.Core.Tas.UKBR
             {
                 return Query.Value<int>(xElement?.Attribute("FoundationAreaCalculationMethod"));
             }
+            set
+            {
+                Modify.SetValue(xElement, "FoundationAreaCalculationMethod", value);
+            }
         }
 
         public int LightSetupSource
@@ -318,6 +395,10 @@ namespace SAM.Core.Tas.UKBR
             get
             {
                 return Query.Value<int>(xElement?.Attribute("LightSetupSource"));
+            }
+            set
+            {
+                Modify.SetValue(xElement, "LightSetupSource", value);
             }
         }
     }
