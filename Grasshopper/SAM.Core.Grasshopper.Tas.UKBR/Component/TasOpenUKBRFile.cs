@@ -78,17 +78,23 @@ namespace SAM.Core.Grasshopper.Tas.UKBR
                 return;
             }
 
+            if(!System.IO.File.Exists(path))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "File does not exists");
+                return;
+            }
+
             Core.Tas.UKBR.UKBRFile uKBRFile = new Core.Tas.UKBR.UKBRFile(path);
             uKBRFile.Open();
 
-            GH_Document.SolutionEndEventHandler endHandler = null;
+            //GH_Document.SolutionEndEventHandler endHandler = null;
 
-            OnPingDocument().SolutionEnd += endHandler = (sender, args) =>
-            {
-                (sender as GH_Document).SolutionEnd -= endHandler;
-                uKBRFile.Dispose();
-                this.Phase = GH_SolutionPhase.Blank;
-            };
+            //OnPingDocument().SolutionEnd += endHandler = (sender, args) =>
+            //{
+            //    (sender as GH_Document).SolutionEnd -= endHandler;
+            //    uKBRFile.Dispose();
+            //    this.Phase = GH_SolutionPhase.Blank;
+            //};
 
             dataAccess.SetData(0, new GooUKBRFile(uKBRFile));
             dataAccess.SetData(1, true);
