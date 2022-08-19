@@ -9,7 +9,7 @@ namespace SAM.Core.Tas.UKBR
     {
         private bool disposed = false;
         
-        private static string widnowsTemporaryDirectory = global::System.IO.Path.GetTempPath();
+        private static string windowsTemporaryDirectory = global::System.IO.Path.GetTempPath();
         private static string fileTemporaryDirectoryName = Guid.NewGuid().ToString();
         private string path = null;
         private XDocument xDocument = null;
@@ -35,10 +35,11 @@ namespace SAM.Core.Tas.UKBR
 
         public void SaveAs(string path)
         {
-            string aTemporaryFilePath = GetTemporaryFilePath();
-            xDocument.Save(aTemporaryFilePath);
+            string temporaryFilePath = GetTemporaryFilePath();
+            xDocument.Save(temporaryFilePath);
             if (global::System.IO.File.Exists(path))
                 global::System.IO.File.Delete(path);
+            
             ZipFile.CreateFromDirectory(FileTemporaryDirectory, path);
         }
 
@@ -62,7 +63,7 @@ namespace SAM.Core.Tas.UKBR
         {
             get
             {
-                return global::System.IO.Path.Combine(widnowsTemporaryDirectory, fileTemporaryDirectoryName);
+                return global::System.IO.Path.Combine(windowsTemporaryDirectory, fileTemporaryDirectoryName);
             }
         }
 
