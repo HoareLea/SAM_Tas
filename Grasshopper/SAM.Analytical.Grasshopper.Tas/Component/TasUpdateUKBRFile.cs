@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -32,7 +32,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateUKBRFile()
           : base("Tas.UpdateUKBRFile", "Tas.UpdateUKBRFile",
-              "Update UKBR File",
+              "Update UKBR File (currently lighting information only!)",
               "SAM WIP", "Tas")
         {
         }
@@ -46,7 +46,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 global::Grasshopper.Kernel.Parameters.Param_FilePath filePath;
 
-                filePath = new global::Grasshopper.Kernel.Parameters.Param_FilePath { Name = "_path", NickName = "_path", Description = "UKBR File Path", Access = GH_ParamAccess.item};
+                filePath = new global::Grasshopper.Kernel.Parameters.Param_FilePath { Name = "_path_tplp2021", NickName = "_path_tplp2021", Description = "UKBR File Path (*.tplp2021)", Access = GH_ParamAccess.item};
                 result.Add(new GH_SAMParam(filePath, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Run", Access = GH_ParamAccess.item };
@@ -95,7 +95,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (!run)
                 return;
 
-            index = Params.IndexOfInputParam("_path");
+            index = Params.IndexOfInputParam("_path_tplp2021");
             string path = null;
             if (index == -1 || !dataAccess.GetData(index, ref path) || string.IsNullOrWhiteSpace(path))
             {
