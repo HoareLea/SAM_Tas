@@ -1344,6 +1344,10 @@ namespace SAM.Analytical.Tas
             exchanger.Flags = TPD.tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
             exchanger.SetPosition(160, 100);
 
+            //TODO: Test only to be REMOVED
+            TPD.SprayHumidifier sprayHumidifier = system.AddSprayHumidifier();
+            (sprayHumidifier as dynamic).SetPosition(10, 10);
+
             dynamic fan_FreashAir = system.AddFan();
             fan_FreashAir.name = "Fresh Air Fan";
             fan_FreashAir.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
