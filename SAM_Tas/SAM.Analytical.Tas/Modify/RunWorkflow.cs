@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true, bool simulate = true, bool updateZones = true)
+        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true, bool simulate = true, bool updateZones = true, int simulateFrom = 1, int simulateTo = 1)
         {
             if (analyticalModel == null || string.IsNullOrWhiteSpace(path_TBD))
             {
@@ -231,7 +231,7 @@ namespace SAM.Analytical.Tas
                     if (simulate)
                     {
                         progressForm.Update("Simulating Model");
-                        Simulate(tBDDocument, path_TSD, 1, 1);
+                        Simulate(tBDDocument, path_TSD, simulateFrom, simulateTo);
                     }
                 }
 

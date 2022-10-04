@@ -53,18 +53,23 @@ namespace SAM.Analytical.Grasshopper.Tas
                 filePath.WireDisplay = GH_ParamWireDisplay.hidden;
                 result.Add(new GH_SAMParam(filePath, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "surfaceOutputSpec_", NickName = "surfaceOutputSpec_", Description = "Surface Output Spec", Access = GH_ParamAccess.list, Optional = true };
-                result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
+
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulates the model from 1 to 365 day.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_runUnmetHours_", NickName = "_runUnmetHours_", Description = "Calculates the amount of hours that the Zone/Space will be outside of the thermostat setpoint (unmet hours).", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
-                result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
+                global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "surfaceOutputSpec_", NickName = "surfaceOutputSpec_", Description = "Surface Output Spec", Access = GH_ParamAccess.list, Optional = true };
+                result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -210,8 +215,11 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             bool simulate = false;
+            index = Params.IndexOfInputParam("_simulate_");
+            if (index != -1)
+                if (!dataAccess.GetData(index, ref simulate));
 
-            int count = 5;
+             int count = 5;
             if(weatherData != null)
             {
                 count++;
@@ -221,6 +229,8 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 count++;
             }
+
+            bool shadingUpdated = false;
 
             using (Core.Windows.Forms.ProgressForm progressForm = new Core.Windows.Forms.ProgressForm("SAM Workflow - TBD Update", count))
             {
@@ -276,13 +286,32 @@ namespace SAM.Analytical.Grasshopper.Tas
                     }
 
                     progressForm.Update("Updating Shades");
-                    simulate = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
+                    shadingUpdated = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
 
                     sAMTBDDocument.Save();
                 }
             }
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, false);
+            int simulate_From = -1;
+            int simulate_To = -1;
+
+            if (simulate)
+            {
+                simulate_From = 1;
+                simulate_To = 365;
+            }
+
+            if (shadingUpdated)
+            {
+                if(!simulate)
+                {
+                    simulate_From = 1;
+                    simulate_To = 1;
+                    simulate = true;
+                }
+            }
+
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, false, simulate_From, simulate_To);
 
             index = Params.IndexOfOutputParam("_path_TSD");
             if (index != -1)
