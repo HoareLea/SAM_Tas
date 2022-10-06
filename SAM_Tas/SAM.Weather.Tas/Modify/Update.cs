@@ -108,6 +108,11 @@ namespace SAM.Weather.Tas
             }
 
             weatherYear.Year = weatherYear_TBD.year;
+            
+            
+            //TODO: TAS MEETING Implement new way of inserting data 
+            float[] values = weatherYear_TBD.GetAnnualParameter(0);
+            weatherYear_TBD.SetAnnualParameter(values, 0);
 
             List<TBD.WeatherDay> weatherDays_TBD = weatherYear_TBD.WeatherDays();
             for(int i =0; i < weatherDays_TBD.Count; i++)
@@ -117,6 +122,8 @@ namespace SAM.Weather.Tas
                 {
                     weatherDay = new WeatherDay();
                 }
+
+  
 
                 Update(weatherDay, weatherDays_TBD[i]);
 
