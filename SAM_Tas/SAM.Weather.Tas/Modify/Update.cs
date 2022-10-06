@@ -208,16 +208,35 @@ namespace SAM.Weather.Tas
                 return false;
             }
 
-            List<TBD.WeatherDay> weatherDays_TBD =  weatherYear_TBD.WeatherDays();
-            if(weatherDays_TBD == null)
+            List<float> values_GlobalSolarRadiation = new List<float>();
+            List<float> values_DiffuseSolarRadiation = new List<float>();
+            List<float> values_CloudCover = new List<float>();
+            List<float> values_DryBulbTemperature = new List<float>();
+            List<float> values_RelativeHumidity = new List<float>();
+            List<float> values_WindSpeed = new List<float>();
+            List<float> values_WindDirection = new List<float>();
+
+            for (int i = 0; i < 365; i++)
             {
-                return false;
+                for(int j =0; j < 24; j++)
+                {
+                    values_GlobalSolarRadiation.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.GlobalSolarRadiation ,j]));
+                    values_DiffuseSolarRadiation.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.DiffuseSolarRadiation, j]));
+                    values_CloudCover.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.CloudCover, j]));
+                    values_DryBulbTemperature.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.DryBulbTemperature, j]));
+                    values_RelativeHumidity.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.RelativeHumidity, j]));
+                    values_WindSpeed.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.WindSpeed, j]));
+                    values_WindDirection.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.WindDirection, j]));
+                }
             }
 
-            for(int i = 0; i < weatherDays_TBD.Count; i++)
-            {
-                Update(weatherDays_TBD[i], weatherYear[i]);
-            }
+            weatherYear_TBD.SetAnnualParameter(values_GlobalSolarRadiation, 1);
+            weatherYear_TBD.SetAnnualParameter(values_DiffuseSolarRadiation, 2);
+            weatherYear_TBD.SetAnnualParameter(values_CloudCover, 3);
+            weatherYear_TBD.SetAnnualParameter(values_DryBulbTemperature, 4);
+            weatherYear_TBD.SetAnnualParameter(values_RelativeHumidity, 5);
+            weatherYear_TBD.SetAnnualParameter(values_WindSpeed, 6);
+            weatherYear_TBD.SetAnnualParameter(values_WindDirection, 7);
 
             return true;
         }
