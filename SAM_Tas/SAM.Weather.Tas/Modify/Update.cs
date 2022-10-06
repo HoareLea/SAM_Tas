@@ -230,13 +230,13 @@ namespace SAM.Weather.Tas
                 }
             }
 
-            weatherYear_TBD.SetAnnualParameter(values_GlobalSolarRadiation, 1);
-            weatherYear_TBD.SetAnnualParameter(values_DiffuseSolarRadiation, 2);
-            weatherYear_TBD.SetAnnualParameter(values_CloudCover, 3);
-            weatherYear_TBD.SetAnnualParameter(values_DryBulbTemperature, 4);
-            weatherYear_TBD.SetAnnualParameter(values_RelativeHumidity, 5);
-            weatherYear_TBD.SetAnnualParameter(values_WindSpeed, 6);
-            weatherYear_TBD.SetAnnualParameter(values_WindDirection, 7);
+            weatherYear_TBD.SetAnnualParameter(values_GlobalSolarRadiation.ToArray(), 1);
+            weatherYear_TBD.SetAnnualParameter(values_DiffuseSolarRadiation.ToArray(), 2);
+            weatherYear_TBD.SetAnnualParameter(values_CloudCover.ToArray(), 3);
+            weatherYear_TBD.SetAnnualParameter(values_DryBulbTemperature.ToArray(), 4);
+            weatherYear_TBD.SetAnnualParameter(values_RelativeHumidity.ToArray(), 5);
+            weatherYear_TBD.SetAnnualParameter(values_WindSpeed.ToArray(), 6);
+            weatherYear_TBD.SetAnnualParameter(values_WindDirection.ToArray(), 7);
 
             return true;
         }
