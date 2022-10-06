@@ -127,13 +127,13 @@ namespace SAM.Weather.Tas
                 weatherDays.Add(new WeatherDay());
             }
 
-            float[] values_GlobalSolarRadiation = weatherYear_TBD.GetAnnualParameter(1);
-            float[] values_DiffuseSolarRadiation = weatherYear_TBD.GetAnnualParameter(2);
-            float[] values_CloudCover = weatherYear_TBD.GetAnnualParameter(3);
-            float[] values_DryBulbTemperature = weatherYear_TBD.GetAnnualParameter(4);
-            float[] values_RelativeHumidity = weatherYear_TBD.GetAnnualParameter(5);
-            float[] values_WindSpeed = weatherYear_TBD.GetAnnualParameter(6);
-            float[] values_WindDirection = weatherYear_TBD.GetAnnualParameter(7);
+            float[] values_GlobalSolarRadiation = weatherYear_TBD.GetAnnualParameter(2);
+            float[] values_DiffuseSolarRadiation = weatherYear_TBD.GetAnnualParameter(3);
+            float[] values_CloudCover = weatherYear_TBD.GetAnnualParameter(4);
+            float[] values_DryBulbTemperature = weatherYear_TBD.GetAnnualParameter(0);
+            float[] values_RelativeHumidity = weatherYear_TBD.GetAnnualParameter(1);
+            float[] values_WindSpeed = weatherYear_TBD.GetAnnualParameter(5);
+            float[] values_WindDirection = weatherYear_TBD.GetAnnualParameter(6);
 
             //Parallel.For(0, 365, (int i) =>
             for (int i = 0; i < 365; i++)
@@ -230,13 +230,13 @@ namespace SAM.Weather.Tas
                 }
             }
 
-            weatherYear_TBD.SetAnnualParameter(values_GlobalSolarRadiation.ToArray(), 1);
-            weatherYear_TBD.SetAnnualParameter(values_DiffuseSolarRadiation.ToArray(), 5);
-            weatherYear_TBD.SetAnnualParameter(values_CloudCover.ToArray(), 2);
-            weatherYear_TBD.SetAnnualParameter(values_DryBulbTemperature.ToArray(), 3);
-            weatherYear_TBD.SetAnnualParameter(values_RelativeHumidity.ToArray(), 6);
-            weatherYear_TBD.SetAnnualParameter(values_WindSpeed.ToArray(), 7);
-            weatherYear_TBD.SetAnnualParameter(values_WindDirection.ToArray(), 4);
+            weatherYear_TBD.SetAnnualParameter(values_GlobalSolarRadiation.ToArray(), 2);
+            weatherYear_TBD.SetAnnualParameter(values_DiffuseSolarRadiation.ToArray(), 3);
+            weatherYear_TBD.SetAnnualParameter(values_CloudCover.ToArray(), 4);
+            weatherYear_TBD.SetAnnualParameter(values_DryBulbTemperature.ToArray(), 0);
+            weatherYear_TBD.SetAnnualParameter(values_RelativeHumidity.ToArray(), 1);
+            weatherYear_TBD.SetAnnualParameter(values_WindSpeed.ToArray(), 5);
+            weatherYear_TBD.SetAnnualParameter(values_WindDirection.ToArray(), 6);
 
             return true;
         }
