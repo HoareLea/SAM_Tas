@@ -1589,7 +1589,7 @@ namespace SAM.Analytical.Tas
 
             dynamic junction_FreshAir = system.AddJunction();
             junction_FreshAir.Name = "Junction Fresh Air";
-            junction_FreshAir.Description = "Junction Fresh Air 0,110";
+            junction_FreshAir.Description = "Junction Fresh Air";
             junction_FreshAir.SetPosition(0, 110);
 
             dynamic junction_ExhaustAir = system.AddJunction();

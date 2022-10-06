@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SAM.Weather.Tas
 {
@@ -102,35 +104,95 @@ namespace SAM.Weather.Tas
         /// <returns>True if data Updated</returns>
         public static bool Update(this WeatherYear weatherYear, TBD.WeatherYear weatherYear_TBD)
         {
-            if(weatherYear == null || weatherYear_TBD == null)
+            if (weatherYear == null || weatherYear_TBD == null)
             {
                 return false;
             }
 
             weatherYear.Year = weatherYear_TBD.year;
-            
-            
-            //TODO: TAS MEETING Implement new way of inserting data 
-            float[] values = weatherYear_TBD.GetAnnualParameter(0);
-            weatherYear_TBD.SetAnnualParameter(values, 0);
 
-            List<TBD.WeatherDay> weatherDays_TBD = weatherYear_TBD.WeatherDays();
-            for(int i =0; i < weatherDays_TBD.Count; i++)
+
+            //TODO: TAS MEETING Implement new way of inserting data 
+            //1.global radiation
+            //2.difuse radiation
+            //3.Cloud cover
+            //4.Dry Bulb
+            //5.Humidity
+            //6.Wind speed
+            //7.Wind direction
+
+            List<WeatherDay> weatherDays = new List<WeatherDay>();
+            for (int i = 0; i < 365; i++)
             {
-                WeatherDay weatherDay = weatherYear[i];
-                if(weatherDay == null)
+                weatherDays.Add(new WeatherDay());
+            }
+
+            float[] values_GlobalSolarRadiation = weatherYear_TBD.GetAnnualParameter(1);
+            float[] values_DiffuseSolarRadiation = weatherYear_TBD.GetAnnualParameter(2);
+            float[] values_CloudCover = weatherYear_TBD.GetAnnualParameter(3);
+            float[] values_DryBulbTemperature = weatherYear_TBD.GetAnnualParameter(4);
+            float[] values_RelativeHumidity = weatherYear_TBD.GetAnnualParameter(5);
+            float[] values_WindSpeed = weatherYear_TBD.GetAnnualParameter(6);
+            float[] values_WindDirection = weatherYear_TBD.GetAnnualParameter(7);
+
+            //Parallel.For(0, 365, (int i) =>
+            for (int i = 0; i < 365; i++)
+            {
+                WeatherDay weatherDay = weatherDays[i];
+
+                int hourIndex_Start = i * 24;
+                int hourIndex_End = hourIndex_Start + 24;
+
+                for (int hourIndex = hourIndex_Start; i < hourIndex_End; i++)
                 {
-                    weatherDay = new WeatherDay();
+                    int index = hourIndex - hourIndex_Start;
+
+                    weatherDay[WeatherDataType.GlobalSolarRadiation, index] = values_GlobalSolarRadiation[hourIndex];
+                    weatherDay[WeatherDataType.DiffuseSolarRadiation, index] = values_DiffuseSolarRadiation[hourIndex];
+                    weatherDay[WeatherDataType.CloudCover, index] = values_CloudCover[hourIndex];
+                    weatherDay[WeatherDataType.DryBulbTemperature, index] = values_DryBulbTemperature[hourIndex];
+                    weatherDay[WeatherDataType.RelativeHumidity, index] = values_RelativeHumidity[hourIndex];
+                    weatherDay[WeatherDataType.WindSpeed, index] = values_WindSpeed[hourIndex];
+                    weatherDay[WeatherDataType.WindDirection, index] = values_WindDirection[hourIndex];
                 }
 
-  
+            };//);
 
-                Update(weatherDay, weatherDays_TBD[i]);
-
-                weatherYear[i] = weatherDay;
+            for (int i = 0; i < weatherDays.Count; i++)
+            {
+                weatherYear[i] = weatherDays[i];
             }
 
             return true;
+
+            //for (int i = 0; i < 8760; i++)
+            //{
+            //    int index_Day = System.Convert.ToInt32(Math.Truncate((double)i / (double)24));
+            //    int index_Hour = i % 24;
+            //    weatherDays[index_Day][WeatherDataType.WindDirection, index_Hour] = System.Convert.ToDouble(values[i]);
+            //}
+
+            //float[] values = weatherYear_TBD.GetAnnualParameter(0);
+            //weatherYear_TBD.SetAnnualParameter(values, 0);
+
+
+            //List<TBD.WeatherDay> weatherDays_TBD = weatherYear_TBD.WeatherDays();
+            //for (int i = 0; i < weatherDays_TBD.Count; i++)
+            //{
+            //    WeatherDay weatherDay = weatherYear[i];
+            //    if (weatherDay == null)
+            //    {
+            //        weatherDay = new WeatherDay();
+            //    }
+
+
+
+            //    Update(weatherDay, weatherDays_TBD[i]);
+
+            //    weatherYear[i] = weatherDay;
+            //}
+
+            //return true;
         }
 
         /// <summary>
