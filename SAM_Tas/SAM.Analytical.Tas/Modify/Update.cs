@@ -97,6 +97,7 @@
                 designDay_TBD.SetDayType(dayType);
             }
 
+            //TODO: TAS MEETING: Discuss with Tas how to faster copy data
             return Weather.Tas.Modify.Update(designDay_TBD?.GetWeatherDay(), designDay);
         }
     }

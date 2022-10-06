@@ -174,7 +174,7 @@ namespace SAM.Analytical.Tas
                 }
 
                 TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour - 1));
-                surfaceShade.proportion = proportion;
+                surfaceShade.proportion = proportion;  //TODO: TAS MEETING: Discuss why Tas returns value below 1
                 surfaceShade.surface = zoneSurface;
 
                 result.Add(surfaceShade);
