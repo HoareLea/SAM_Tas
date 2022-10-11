@@ -297,7 +297,7 @@ namespace SAM.Analytical.Tas
 
                                     buildingElement_Aperture = result.AddBuildingElement();
                                     buildingElement_Aperture.name = name_Aperture;
-                                    buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType));
+                                    buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType, AperturePart.Pane));
                                     buildingElement_Aperture.BEType = Query.BEType(apertureType, false);
                                     buildingElement_Aperture.AssignConstruction(construction_TBD);
                                     buildingElements.Add(buildingElement_Aperture);
