@@ -111,6 +111,16 @@ namespace SAM.Weather.Tas
 
             weatherYear.Year = weatherYear_TBD.year;
 
+
+            //TODO: TAS MEETING Implement new way of inserting data 
+            //1.global radiation
+            //2.difuse radiation
+            //3.Cloud cover
+            //4.Dry Bulb
+            //5.Humidity
+            //6.Wind speed
+            //7.Wind direction
+
             List<WeatherDay> weatherDays = new List<WeatherDay>();
             for (int i = 0; i < 365; i++)
             {
@@ -125,8 +135,8 @@ namespace SAM.Weather.Tas
             float[] values_WindSpeed = weatherYear_TBD.GetAnnualParameter(5);
             float[] values_WindDirection = weatherYear_TBD.GetAnnualParameter(6);
 
-            Parallel.For(0, 365, (int i) =>
-            //for (int i = 0; i < 365; i++)
+            //Parallel.For(0, 365, (int i) =>
+            for (int i = 0; i < 365; i++)
             {
                 WeatherDay weatherDay = weatherDays[i];
 
@@ -146,7 +156,7 @@ namespace SAM.Weather.Tas
                     weatherDay[WeatherDataType.WindDirection, index] = values_WindDirection[hourIndex];
                 }
 
-            });
+            };//);
 
             for (int i = 0; i < weatherDays.Count; i++)
             {
@@ -154,6 +164,35 @@ namespace SAM.Weather.Tas
             }
 
             return true;
+
+            //for (int i = 0; i < 8760; i++)
+            //{
+            //    int index_Day = System.Convert.ToInt32(Math.Truncate((double)i / (double)24));
+            //    int index_Hour = i % 24;
+            //    weatherDays[index_Day][WeatherDataType.WindDirection, index_Hour] = System.Convert.ToDouble(values[i]);
+            //}
+
+            //float[] values = weatherYear_TBD.GetAnnualParameter(0);
+            //weatherYear_TBD.SetAnnualParameter(values, 0);
+
+
+            //List<TBD.WeatherDay> weatherDays_TBD = weatherYear_TBD.WeatherDays();
+            //for (int i = 0; i < weatherDays_TBD.Count; i++)
+            //{
+            //    WeatherDay weatherDay = weatherYear[i];
+            //    if (weatherDay == null)
+            //    {
+            //        weatherDay = new WeatherDay();
+            //    }
+
+
+
+            //    Update(weatherDay, weatherDays_TBD[i]);
+
+            //    weatherYear[i] = weatherDay;
+            //}
+
+            //return true;
         }
 
         /// <summary>

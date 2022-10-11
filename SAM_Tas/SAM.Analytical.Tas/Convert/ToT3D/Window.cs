@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using TAS3D;
 
 namespace SAM.Analytical.Tas
@@ -39,40 +38,6 @@ namespace SAM.Analytical.Tas
             }
 
             window result = building.AddWindow(aperture.Name, Query.OpeningType(aperture), colour, height, width, level);
-            if (planarBoundary3D != null)
-            {
-                Geometry.Spatial.Face3D face3D = planarBoundary3D.GetFace3D();
-
-                Geometry.Spatial.IClosedPlanar3D externalEdge3D = face3D?.GetExternalEdge3D();
-                if(externalEdge3D != null)
-                {
-                    List<Geometry.Spatial.IClosedPlanar3D> internalEdge3Ds = face3D.GetInternalEdge3Ds();
-                    if (internalEdge3Ds != null && internalEdge3Ds.Count != 0)
-                    {
-                        double area_External = externalEdge3D.GetArea();
-                        double area_Internal = 0;
-
-                        foreach(Geometry.Spatial.IClosedPlanar3D internalEdge3D in internalEdge3Ds)
-                        {
-                            if(internalEdge3D == null)
-                            {
-                                continue;
-                            }
-
-                            double area = internalEdge3D.GetArea();
-                            if(double.IsNaN(area))
-                            {
-                                continue;
-                            }
-
-                            area_Internal += area;
-                        }
-
-                        result.isPercFrame = true;
-                        result.framePerc = (area_External - area_Internal) / area_External;
-                    }
-                }
-            }
 
             return result;
         }

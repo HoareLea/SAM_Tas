@@ -237,7 +237,7 @@ namespace SAM.Analytical.Tas
                             //Colour
                             System.Drawing.Color color = global::System.Drawing.Color.Empty;
                             if (!apertureConstruction.TryGetValue(ApertureConstructionParameter.Color, out color))
-                                color = Analytical.Query.Color(apertureConstruction.ApertureType, AperturePart.Pane);
+                                color = Analytical.Query.Color(apertureConstruction.ApertureType);
 
                             if (color != global::System.Drawing.Color.Empty)
                                 window.colour = Core.Convert.ToUint(color);
