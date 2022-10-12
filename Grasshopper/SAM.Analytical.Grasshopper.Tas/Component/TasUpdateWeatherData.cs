@@ -1,10 +1,12 @@
 ﻿using Grasshopper.Kernel;
-using SAM.Weather.Grasshopper.Tas.Properties;
+using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
+using SAM.Weather;
+using SAM.Weather.Grasshopper;
 using System;
 using System.Collections.Generic;
 
-namespace SAM.Weather.Grasshopper.Tas
+namespace SAM.Analytical.Grasshopper.Tas
 {
     public class TasUpdateWeatherData : GH_SAMVariableOutputParameterComponent
     {
@@ -16,7 +18,7 @@ namespace SAM.Weather.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -46,7 +48,7 @@ namespace SAM.Weather.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTBD", NickName = "_pathTasTBD", Description = "A file path to a Tas TBD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooWeatherDataParam() { Name = "_weatherData", NickName = "_weatherData", Description = "SAM Weather Data", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "analytical_", NickName = "analytical_", Description = "SAM Analytical Object such as AdjacencyCluster or AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
@@ -122,7 +124,22 @@ namespace SAM.Weather.Grasshopper.Tas
                 return;
             }
 
-            if(!Weather.Tas.Modify.UpdateWeatherData(path_TBD, weatherData, 0))
+            double buildingHeight = 0;
+            index = Params.IndexOfInputParam("analytical_");
+            IAnalyticalObject analyticalObject = null;
+            if(index != -1 && dataAccess.GetData(index, ref analyticalObject) && analyticalObject != null)
+            {
+                if(analyticalObject is AnalyticalModel)
+                {
+                    buildingHeight = ((AnalyticalModel)analyticalObject).AdjacencyCluster.BuildingHeight();
+                }
+                else if(analyticalObject is AdjacencyCluster)
+                {
+                    buildingHeight = ((AdjacencyCluster)analyticalObject).BuildingHeight();
+                }
+            }
+
+            if (!Weather.Tas.Modify.UpdateWeatherData(path_TBD, weatherData, buildingHeight))
             {
                 weatherData = null;
             }
