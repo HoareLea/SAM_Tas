@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
@@ -13,12 +14,14 @@ namespace SAM.Analytical.Tas
 
             if(guid == null || !guid.HasValue)
             {
-                string[] values = name.Split(' ');
+                List<string> values = name.Split(' ')?.ToList();
                 if (values != null)
                 {
                     if (global::System.Guid.TryParse(values.Last(), out System.Guid guid_Temp))
                     {
                         guid = guid_Temp;
+                        values.RemoveAt(values.Count - 1);
+                        name = string.Join(" ", values)?.Trim();
                     }
                 }
             }
