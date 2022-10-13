@@ -289,20 +289,8 @@ namespace SAM.Analytical.Tas
                                 window.frameWidth = frameWidth;
                             }
 
-                            if(Analytical.Query.UniqueNameDecomposition(window.name, out string prefix, out string name, out global::System.Guid? guid, out int id ))
+                            if(UniqueNameDecomposition(window.name, out string prefix, out string name, out global::System.Guid? guid, out int id ))
                             {
-                                if(guid == null || !guid.HasValue)
-                                {
-                                    string[] values = name.Split(' ');
-                                    if(values != null )
-                                    {
-                                        if(global::System.Guid.TryParse(values.Last(), out System.Guid guid_Temp))
-                                        {
-                                            guid = guid_Temp;
-                                        }
-                                    }
-                                }
-                                
                                 if(guid  != null && guid.HasValue)
                                 {
                                     Aperture aperture = adjacencyCluster.GetAperture(guid.Value);
@@ -310,7 +298,7 @@ namespace SAM.Analytical.Tas
                                     {
                                         double frameFactor = aperture.GetFrameFactor();
                                         window.isPercFrame = true;
-                                        window.framePerc = frameFactor;
+                                        window.framePerc = frameFactor * 100;
                                     }
 
                                 }

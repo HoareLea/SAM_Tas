@@ -140,6 +140,15 @@ namespace SAM.Analytical.Tas
                     return construction;
             }
 
+            if (UniqueNameDecomposition(element.name, out string prefix, out name, out System.Guid? guid, out int id))
+            {
+                foreach (Construction construction in constructions_Temp)
+                {
+                    if (name.Equals(construction.Name.Trim()))
+                        return construction;
+                }
+            }
+
             return null;
         }
 
@@ -165,6 +174,15 @@ namespace SAM.Analytical.Tas
             {
                 if (name.EndsWith(string.Format(": {0}", apertureConstruction.Name.Trim())))
                     return apertureConstruction;
+            }
+
+            if (UniqueNameDecomposition(window.name, out string prefix, out name, out System.Guid? guid, out int id))
+            {
+                foreach (ApertureConstruction apertureConstruction in apertureConstructions_Temp)
+                {
+                    if (name.Equals(apertureConstruction.Name.Trim()))
+                        return apertureConstruction;
+                }
             }
 
             return null;
