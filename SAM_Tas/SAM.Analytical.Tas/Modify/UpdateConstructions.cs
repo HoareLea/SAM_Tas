@@ -126,8 +126,8 @@ namespace SAM.Analytical.Tas
                 if (apertureConstruction == null)
                     continue;
 
-                string uniqueName = Query.Name(apertureConstruction.UniqueName(), true, true, true, false);
-                if (string.IsNullOrWhiteSpace(uniqueName))
+                string name = Query.Name(apertureConstruction.UniqueName(), true, true, true, false);
+                if (string.IsNullOrWhiteSpace(name))
                     continue;
 
                 TBD.Construction construction_TBD = null;
@@ -136,12 +136,12 @@ namespace SAM.Analytical.Tas
 
 
                 //Pane Construction
-                string paneApertureConstructionUniqueName = apertureConstruction.PaneApertureConstructionUniqueName();
-                construction_TBD = building.GetConstructionByName(paneApertureConstructionUniqueName);
+                string paneName = Analytical.Query.PaneApertureConstructionUniqueName(name);
+                construction_TBD = building.GetConstructionByName(paneName);
                 if (construction_TBD == null)
                 {
                     construction_TBD = building.AddConstruction(null);
-                    construction_TBD.name = paneApertureConstructionUniqueName;
+                    construction_TBD.name = paneName;
                 }
 
                 constructionTypes = ConstructionTypes.tcdTransparentConstruction;
@@ -156,12 +156,12 @@ namespace SAM.Analytical.Tas
 
 
                 //Frame Construction
-                string frameApertureConstructionUniqueName = apertureConstruction.FrameApertureConstructionUniqueName();
-                construction_TBD = building.GetConstructionByName(frameApertureConstructionUniqueName);
+                string frameName = Analytical.Query.FrameApertureConstructionUniqueName(name);
+                construction_TBD = building.GetConstructionByName(frameName);
                 if (construction_TBD == null)
                 {
                     construction_TBD = building.AddConstruction(null);
-                    construction_TBD.name = frameApertureConstructionUniqueName;
+                    construction_TBD.name = frameName;
                 }
 
                 constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
