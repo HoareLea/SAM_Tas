@@ -9,7 +9,7 @@
                 return uniqueName;
             }
 
-            if (UniqueNameDecomposition(uniqueName, out string prefix, out string name, out System.Guid? guid, out int id))
+            if (!UniqueNameDecomposition(uniqueName, out string prefix, out string name, out System.Guid? guid, out int id))
             {
                 return uniqueName;
             }
