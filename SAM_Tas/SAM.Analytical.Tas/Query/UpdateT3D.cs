@@ -32,7 +32,7 @@ namespace SAM.Analytical.Tas
                 return null;
 
 
-            TAS3D.Building building = t3DDocument?.Building;
+            Building building = t3DDocument?.Building;
             if (building == null)
                 return null;
 
@@ -289,7 +289,7 @@ namespace SAM.Analytical.Tas
                                 window.frameWidth = frameWidth;
                             }
 
-                            if(UniqueNameDecomposition(window.name, out string prefix, out string name, out global::System.Guid? guid, out int id ))
+                            if(UniqueNameDecomposition(window.name, out string prefix, out string name, out System.Guid? guid, out int id ))
                             {
                                 if(guid  != null && guid.HasValue)
                                 {

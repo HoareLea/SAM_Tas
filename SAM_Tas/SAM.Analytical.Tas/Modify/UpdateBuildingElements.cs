@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || analyticalModel == null)
                 return false;
 
-            TBD.Building building = tBDDocument.Building;
+            Building building = tBDDocument.Building;
             if (building == null)
                 return false;
 
@@ -66,6 +66,40 @@ namespace SAM.Analytical.Tas
                         constructions_Temp.Sort((x, y) => System.Math.Abs(x.name.Length - name.Length).CompareTo(System.Math.Abs(y.name.Length - name.Length)));
                         construction = constructions_Temp.First();
                     }
+                }
+
+                if(construction == null)
+                {
+                    List<string> values = name.Split(' ')?.ToList();
+                    values?.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+                    if (values != null && values.Count != 0)
+                    {
+                        foreach (TBD.Construction construction_Temp in constructions)
+                        {
+                            List<string> values_Temp = construction_Temp?.name?.Split(' ')?.ToList();
+                            values_Temp?.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+                            if (values_Temp == null || values_Temp.Count == 0)
+                            {
+                                continue;
+                            }
+
+                            int count = 0;
+                            foreach (string value in values)
+                            {
+                                if (values_Temp.Contains(value))
+                                {
+                                    count++;
+                                }
+                            }
+
+                            if (count == values_Temp.Count)
+                            {
+                                construction = construction_Temp;
+                                break;
+                            }
+                        }
+                    }
+
                 }
                     
                 if (construction == null)

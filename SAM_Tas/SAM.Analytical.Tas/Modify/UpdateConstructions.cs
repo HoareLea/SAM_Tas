@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas
             if (tBDDocument == null || analyticalModel == null)
                 return null;
 
-            TBD.Building building = tBDDocument.Building;
+            Building building = tBDDocument.Building;
             if (building == null)
                 return null;
 
@@ -57,19 +57,17 @@ namespace SAM.Analytical.Tas
                     constructions_Temp.ForEach(x => result.Add(x));
             }
 
-            List<ApertureConstruction> apertureConstructions = new List<ApertureConstruction>();
-            foreach (Aperture aperture in adjacencyCluster.GetApertures())
+            List<ApertureConstruction> apertureConstructions = adjacencyCluster.GetApertureConstructions();
+            if(apertureConstructions != null)
             {
-                ApertureConstruction apertureConstruction = aperture?.ApertureConstruction;
-                if(apertureConstruction == null)
+                for(int i =0; i < apertureConstructions.Count; i++)
                 {
-                    continue;
+                    ApertureConstruction apertureConstruction = apertureConstructions[i];
+
+                    string name = Query.Name(apertureConstruction.UniqueName(), true, true, false, false);
+
+                    apertureConstructions[i] = new ApertureConstruction(apertureConstruction, name);
                 }
-
-                string name = Query.Name(aperture.UniqueName(), true, true, true, false);
-
-                apertureConstruction = new ApertureConstruction(System.Guid.NewGuid(), apertureConstruction, name);
-                apertureConstructions.Add(apertureConstruction);
             }
 
             if (apertureConstructions != null && apertureConstructions.Count != 0)
