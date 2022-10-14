@@ -2,6 +2,70 @@
 {
     public static partial class Query
     {
+        public static string Name(string uniqueName, bool includePrefix = true, bool includeName = true, bool includeGuid = true, bool includeId = true)
+        {
+            if (string.IsNullOrWhiteSpace(uniqueName))
+            {
+                return uniqueName;
+            }
+
+            if (UniqueNameDecomposition(uniqueName, out string prefix, out string name, out System.Guid? guid, out int id))
+            {
+                return uniqueName;
+            }
+
+            if (!includePrefix)
+            {
+                prefix = null;
+            }
+
+            if (!includeName)
+            {
+                name = null;
+            }
+
+            if (!includeGuid)
+            {
+                guid = null;
+            }
+
+            if (!includeId)
+            {
+                id = -1;
+            }
+
+            string result = null;
+            if (!string.IsNullOrWhiteSpace(prefix) && !name.StartsWith(prefix))
+            {
+                result = string.Format("{0}: {1}", prefix, name);
+            }
+
+
+            if (result == null)
+            {
+                result = name;
+            }
+
+            result.Trim();
+
+            if (guid != null && guid.HasValue)
+            {
+                result += string.Format(" {0}", guid);
+            }
+
+            if (id != -1)
+            {
+                result += string.Format(" [{0}]", id);
+            }
+
+            if (result.EndsWith(":"))
+            {
+                result = result.Substring(0, result.Length - 1);
+            }
+
+            return result;
+        }
+
         public static string Name(this TAS3D.Element element)
         {
             return Name(element?.name);
