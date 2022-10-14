@@ -126,6 +126,9 @@
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\InternalConditions.cs" />
     <Compile Include="Enums\Parameters\TasSettingParameter.cs" />
+    <Compile Include="Modify\RemoveUnused.cs" />
+    <Compile Include="Modify\RemoveUnusedWindows.cs" />
+    <Compile Include="Modify\RemoveUnusedElements.cs" />
     <Compile Include="Modify\UpdateUKBRFile.cs" />
     <Compile Include="Modify\UpdateZoneGroupsByPartL.cs" />
     <Compile Include="Enums\Parameters\AnalyticalModelSimulationResultParameter.cs" />

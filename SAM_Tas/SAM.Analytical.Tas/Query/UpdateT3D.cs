@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas
             if (building == null)
                 return null;
 
-            Modify.RemoveUnsusedZones(building);
+            Modify.RemoveUnused(building);
             
             double northAngle = double.NaN;
             if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
