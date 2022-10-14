@@ -105,6 +105,17 @@ namespace SAM.Analytical.Tas
                 if (construction == null)
                     continue;
 
+                switch((TBD.BuildingElementType)buildingElement.BEType)
+                {
+                    case TBD.BuildingElementType.GLAZING:
+                        buildingElement.colour = Core.Convert.ToUint(Analytical.Query.Color(ApertureType.Window, AperturePart.Pane));
+                        break;
+
+                    case TBD.BuildingElementType.FRAMEELEMENT:
+                        buildingElement.colour = Core.Convert.ToUint(Analytical.Query.Color(ApertureType.Window, AperturePart.Frame));
+                        break;
+                }
+
                 buildingElement.AssignConstruction(construction);
             }
 
