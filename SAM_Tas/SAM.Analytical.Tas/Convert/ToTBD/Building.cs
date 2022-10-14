@@ -1,5 +1,6 @@
 ﻿using SAM.Core;
 using SAM.Geometry.Spatial;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -203,6 +204,39 @@ namespace SAM.Analytical.Tas
                         {
                             bool @internal = adjacencyCluster.Internal(panel);
 
+                            Func<Face3D, TBD.zoneSurface> func = delegate (Face3D face3D)
+                            {
+                                BoundingBox3D boundingBox3D_Aperture = face3D.GetBoundingBox();
+
+                                float area = System.Convert.ToSingle(face3D.GetArea());
+
+                                TBD.zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
+                                if (zoneSurface_Aperture == null)
+                                {
+                                    return null;
+                                }
+
+                                zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation;
+                                zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
+                                zoneSurface_Aperture.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
+                                zoneSurface_Aperture.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
+                                zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D));
+
+                                zoneSurface_Aperture.type = @internal ? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
+
+                                TBD.RoomSurface roomSurface_Aperture = room.AddSurface();
+                                roomSurface_Aperture.area = zoneSurface_Aperture.area;
+                                roomSurface_Aperture.zoneSurface = zoneSurface_Aperture;
+
+                                TBD.Perimeter perimeter_Aperture = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Aperture);
+                                if (perimeter_Aperture == null)
+                                {
+                                    return null;
+                                }
+
+                                return zoneSurface_Aperture;
+                            };
+
                             foreach (Aperture aperture in apertures)
                             {
                                 string name_Aperture = aperture.Name;
@@ -211,110 +245,111 @@ namespace SAM.Analytical.Tas
                                     continue;
                                 }
 
-                                name_Aperture = string.Format("{0} -pane", aperture.Name);
+                                Dictionary<string, List<TBD.zoneSurface>> dictionary = new Dictionary<string, List<TBD.zoneSurface>>();
 
-                                Face3D face3D_Aperture = aperture.Face3D;
-                                if (face3D_Aperture == null)
+                                List<Face3D> face3Ds_Pane = aperture.GetFace3Ds(AperturePart.Pane);
+                                if(face3Ds_Pane != null)
                                 {
-                                    continue;
-                                }
-
-                                BoundingBox3D boundingBox3D_Aperture = face3D_Aperture.GetBoundingBox();
-
-                                float area = System.Convert.ToSingle(face3D_Aperture.GetArea());
-
-                                TBD.zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
-                                if(zoneSurface_Aperture == null)
-                                {
-                                    continue;
-                                }
-
-                                zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation;
-                                zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
-                                zoneSurface_Aperture.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
-                                zoneSurface_Aperture.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
-                                zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Aperture));
-                                //zoneSurface_Aperture.area = System.Convert.ToSingle(face3D_Aperture.GetArea());
-
-                                zoneSurface_Aperture.type = @internal ? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
-
-                                TBD.RoomSurface roomSurface_Aperture = room.AddSurface();
-                                roomSurface_Aperture.area = zoneSurface_Aperture.area;
-                                roomSurface_Aperture.zoneSurface = zoneSurface_Aperture;
-
-                                TBD.Perimeter perimeter_Aperture = Geometry.Tas.Convert.ToTBD(face3D_Aperture, roomSurface_Aperture);
-                                if (perimeter_Aperture == null)
-                                {
-                                    continue;
-                                }
-
-                                TBD.buildingElement buildingElement_Aperture = buildingElements.Find(x => x.name == name_Aperture);
-                                if (buildingElement_Aperture == null)
-                                {
-                                    TBD.Construction construction_TBD = null;
-
-                                    ApertureConstruction apertureConstruction = aperture.ApertureConstruction;
-                                    if (apertureConstruction != null)
+                                    string apertureName_Pane = string.Format("{0} -pane", aperture.Name);
+                                    dictionary[apertureName_Pane] = new List<TBD.zoneSurface>();
+                                    foreach (Face3D face3D in face3Ds_Pane)
                                     {
-                                        construction_TBD = constructions.Find(x => x.name == apertureConstruction.Name);
-                                        if (construction_TBD == null)
+                                        TBD.zoneSurface zoneSurface = func.Invoke(face3D);
+                                        if(zoneSurface != null)
                                         {
-                                            construction_TBD = result.AddConstruction(null);
-                                            construction_TBD.name = name_Aperture;
-
-                                            if(apertureConstruction.Transparent(materialLibrary))
-                                            {
-                                                construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
-                                            }
-
-                                            List<ConstructionLayer> constructionLayers = apertureConstruction.PaneConstructionLayers;
-                                            if (constructionLayers != null && constructionLayers.Count != 0)
-                                            {
-                                                int index = 1;
-                                                foreach (ConstructionLayer constructionLayer in constructionLayers)
-                                                {
-                                                    Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
-                                                    if (material == null)
-                                                    {
-                                                        continue;
-                                                    }
-
-                                                    TBD.material material_TBD = construction_TBD.AddMaterial(material);
-                                                    if (material_TBD != null)
-                                                    {
-                                                        material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                        construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                        index++;
-                                                    }
-                                                }
-                                            }
-
-                                            constructions.Add(construction_TBD);
+                                            dictionary[apertureName_Pane].Add(zoneSurface);
                                         }
                                     }
-
-                                    ApertureType apertureType = aperture.ApertureType;
-
-                                    buildingElement_Aperture = result.AddBuildingElement();
-                                    buildingElement_Aperture.name = name_Aperture;
-                                    buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType));
-                                    buildingElement_Aperture.BEType = Query.BEType(apertureType, false);
-                                    buildingElement_Aperture.AssignConstruction(construction_TBD);
-                                    buildingElements.Add(buildingElement_Aperture);
                                 }
 
-                                if (buildingElement_Aperture != null)
+                                List<Face3D> face3Ds_Frame = aperture.GetFace3Ds(AperturePart.Frame);
+                                if (face3Ds_Frame != null)
                                 {
-                                    zoneSurface_Aperture.buildingElement = buildingElement_Aperture;
+                                    string apertureName_Frame = string.Format("{0} -frame", aperture.Name);
+                                    dictionary[apertureName_Frame] = new List<TBD.zoneSurface>();
+                                    foreach (Face3D face3D in face3Ds_Frame)
+                                    {
+                                        TBD.zoneSurface zoneSurface = func.Invoke(face3D);
+                                        if (zoneSurface != null)
+                                        {
+                                            dictionary[apertureName_Frame].Add(zoneSurface);
+                                        }
+                                    }
                                 }
 
-                                if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<TBD.zoneSurface> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
+                                foreach(KeyValuePair<string, List<TBD.zoneSurface>> keyValuePair in dictionary)
                                 {
-                                    zoneSurfaces_Aperture = new List<TBD.zoneSurface>();
-                                    dictionary_Aperture[aperture.Guid] = zoneSurfaces_Aperture;
-                                }
+                                    TBD.buildingElement buildingElement_Aperture = buildingElements.Find(x => x.name == keyValuePair.Key);
+                                    if (buildingElement_Aperture == null)
+                                    {
+                                        TBD.Construction construction_TBD = null;
 
-                                zoneSurfaces_Aperture.Add(zoneSurface_Aperture);
+                                        ApertureConstruction apertureConstruction = aperture.ApertureConstruction;
+                                        if (apertureConstruction != null)
+                                        {
+                                            construction_TBD = constructions.Find(x => x.name == apertureConstruction.Name);
+                                            if (construction_TBD == null)
+                                            {
+                                                construction_TBD = result.AddConstruction(null);
+                                                construction_TBD.name = keyValuePair.Key;
+
+                                                if (apertureConstruction.Transparent(materialLibrary))
+                                                {
+                                                    construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                                                }
+
+                                                List<ConstructionLayer> constructionLayers = apertureConstruction.PaneConstructionLayers;
+                                                if (constructionLayers != null && constructionLayers.Count != 0)
+                                                {
+                                                    int index = 1;
+                                                    foreach (ConstructionLayer constructionLayer in constructionLayers)
+                                                    {
+                                                        Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
+                                                        if (material == null)
+                                                        {
+                                                            continue;
+                                                        }
+
+                                                        TBD.material material_TBD = construction_TBD.AddMaterial(material);
+                                                        if (material_TBD != null)
+                                                        {
+                                                            material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                            construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                            index++;
+                                                        }
+                                                    }
+                                                }
+
+                                                constructions.Add(construction_TBD);
+                                            }
+                                        }
+
+                                        ApertureType apertureType = aperture.ApertureType;
+
+                                        buildingElement_Aperture = result.AddBuildingElement();
+                                        buildingElement_Aperture.name = keyValuePair.Key;
+                                        buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType));
+                                        buildingElement_Aperture.BEType = Query.BEType(apertureType, false);
+                                        buildingElement_Aperture.AssignConstruction(construction_TBD);
+                                        buildingElements.Add(buildingElement_Aperture);
+                                    }
+
+                                    foreach(TBD.zoneSurface zoneSurface in keyValuePair.Value)
+                                    {
+                                        if (buildingElement_Aperture != null)
+                                        {
+                                            zoneSurface.buildingElement = buildingElement_Aperture;
+                                        }
+
+                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<TBD.zoneSurface> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
+                                        {
+                                            zoneSurfaces_Aperture = new List<TBD.zoneSurface>();
+                                            dictionary_Aperture[aperture.Guid] = zoneSurfaces_Aperture;
+                                        }
+
+                                        zoneSurfaces_Aperture.Add(zoneSurface);
+                                    }
+                                }
                             }
                         }
 
