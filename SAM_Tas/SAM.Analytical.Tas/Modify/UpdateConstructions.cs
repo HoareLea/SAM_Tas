@@ -126,7 +126,7 @@ namespace SAM.Analytical.Tas
                 if (apertureConstruction == null)
                     continue;
 
-                string uniqueName = Query.Name(apertureConstruction.UniqueName(), true, true, true, false);
+                string uniqueName = Query.Name(apertureConstruction.UniqueName(), true, true, false, false);
                 if (string.IsNullOrWhiteSpace(uniqueName))
                     continue;
 
