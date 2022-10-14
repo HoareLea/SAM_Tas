@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            adjacencyCluster.UpdateNormals(true);
+            adjacencyCluster = adjacencyCluster.UpdateNormals(true);
 
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces == null)
