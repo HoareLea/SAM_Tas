@@ -107,11 +107,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Convert\ToSAM\AnalyticalModel.cs" />
+    <Compile Include="Convert\ToSAM\ApertureConstruction.cs" />
     <Compile Include="Convert\ToSAM\Construction.cs" />
     <Compile Include="Convert\ToSAM\DesignDay.cs" />
     <Compile Include="Convert\ToSAM\MaterialLibrary.cs" />
     <Compile Include="Convert\ToSAM\Material.cs" />
     <Compile Include="Convert\ToSAM\PanelSimulationResult.cs" />
+    <Compile Include="Convert\ToSAM\ConstructionLayers.cs" />
     <Compile Include="Convert\ToSAM\ProfileLibrary.cs" />
     <Compile Include="Convert\ToSAM\Profile.cs" />
     <Compile Include="Convert\ToSAM\Profiles.cs" />

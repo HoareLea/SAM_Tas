@@ -11,20 +11,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            List<TBD.material> materials = construction.Materials();
-
-            List<ConstructionLayer> constructionLayers = null;
-            if(materials != null)
-            {
-                constructionLayers = new List<ConstructionLayer>();
-                for(int i=0; i < materials.Count; i++)
-                {
-                    TBD.material material = materials[i];
-                    double thickness = construction.materialWidth[i];
-
-                    constructionLayers.Add(new ConstructionLayer(material.name, thickness));
-                }
-            }
+            List<ConstructionLayer> constructionLayers = ToSAM_ConstructionLayers(construction);
 
             Construction result = new Construction(construction.name, constructionLayers);
             return result;
