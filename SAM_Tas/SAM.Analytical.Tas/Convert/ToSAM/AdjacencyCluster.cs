@@ -199,6 +199,7 @@ namespace SAM.Analytical.Tas
                         return null;
                     }
 
+                    //List<Geometry.Spatial.Polygon3D> polygon3Ds = new List<Geometry.Spatial.Polygon3D>();
                     foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
                     {
                         Geometry.Spatial.Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
@@ -206,7 +207,6 @@ namespace SAM.Analytical.Tas
                         {
                             continue;
                         }
-
                         List<Aperture> apertures = adjacencyCluster.AddApertures(apertureConstruction, new List<Geometry.Spatial.IClosedPlanar3D> { polygon3D });
                     }
                 }

@@ -17,7 +17,7 @@ namespace SAM.Analytical.Tas
             List<ConstructionLayer> constructionLayers_Frame = null;
 
             string name = construction.name?.Trim();
-            if(string.IsNullOrWhiteSpace(name))
+            if(!string.IsNullOrWhiteSpace(name))
             {
                 if (name.EndsWith(AperturePart.Frame.Sufix()))
                 {
