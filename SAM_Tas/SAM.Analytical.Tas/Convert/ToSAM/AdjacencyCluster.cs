@@ -2,6 +2,8 @@
 using SAM.Core.Tas;
 using System.Collections.Generic;
 using TSD;
+using SAM.Geometry.Spatial;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
@@ -129,13 +131,13 @@ namespace SAM.Analytical.Tas
 
                     foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
                     {
-                        Geometry.Spatial.Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
+                        Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
                         if (polygon3D == null)
                         {
                             continue;
                         }
 
-                        Panel panel = Analytical.Create.Panel(construction, panelType, new Geometry.Spatial.Face3D(polygon3D));
+                        Panel panel = Analytical.Create.Panel(construction, panelType, new Face3D(polygon3D));
                         if (panel == null)
                         {
                             continue;
@@ -145,6 +147,8 @@ namespace SAM.Analytical.Tas
                         adjacencyCluster.AddRelation(panel, space);
                     }
                 }
+
+                Dictionary<System.Guid, List<Polygon3D>> dictionary = new Dictionary<System.Guid, List<Polygon3D>>();
 
                 foreach(TBD.IZoneSurface zoneSurface in zoneSurfaces)
                 {
@@ -199,16 +203,82 @@ namespace SAM.Analytical.Tas
                         return null;
                     }
 
-                    //List<Geometry.Spatial.Polygon3D> polygon3Ds = new List<Geometry.Spatial.Polygon3D>();
                     foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
                     {
-                        Geometry.Spatial.Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
+                        Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
                         if (polygon3D == null)
                         {
                             continue;
                         }
-                        List<Aperture> apertures = adjacencyCluster.AddApertures(apertureConstruction, new List<Geometry.Spatial.IClosedPlanar3D> { polygon3D });
+
+                        if(!dictionary.TryGetValue(apertureConstruction.Guid, out List<Polygon3D> polygon3Ds) || polygon3Ds == null)
+                        {
+                            polygon3Ds = new List<Polygon3D>();
+                            dictionary[apertureConstruction.Guid] = polygon3Ds;
+                        }
+
+                        polygon3Ds.Add(polygon3D);
                     }
+                }
+
+                List<ApertureConstruction> apertureConstructions = new List<ApertureConstruction>();
+                foreach(ApertureConstruction apertureConstruction in dictionary_ApertureConstruction.Values)
+                {
+                    apertureConstructions.Add(apertureConstruction);
+                }
+
+                foreach (KeyValuePair<System.Guid, List<Polygon3D>> keyValuePair in dictionary)
+                {
+                    if(keyValuePair.Value == null || keyValuePair.Value.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    ApertureConstruction apertureConstruction = apertureConstructions.Find(x => x.Guid == keyValuePair.Key);
+                    if(apertureConstruction == null)
+                    {
+                        continue;
+                    }
+
+                    List<Polygon3D> polygon3Ds = keyValuePair.Value;
+                    polygon3Ds.Sort((x, y) => y.GetArea().CompareTo(x.GetArea()));
+
+                    List<Aperture> apertures = new List<Aperture>();
+                    while (polygon3Ds.Count > 0)
+                    {
+                        Polygon3D polygon3D = polygon3Ds[0];
+                        polygon3Ds.RemoveAt(0);
+
+                        List<Polygon3D> polygon3Ds_Temp = polygon3Ds.FindAll(x => polygon3D.Inside(x));
+
+                        Face3D face3D = null;
+                        if(polygon3Ds_Temp == null || polygon3Ds_Temp.Count == 0)
+                        {
+                            face3D = new Face3D(polygon3D);
+                        }
+                        else
+                        {
+                            polygon3Ds_Temp.Add(polygon3D);
+                            List<Face3D> face3Ds = Geometry.Spatial.Create.Face3Ds(polygon3Ds_Temp);
+                            if(face3Ds != null && face3Ds.Count != 0)
+                            {
+                                if(face3Ds.Count  > 1)
+                                {
+                                    face3Ds.Sort((x, y) => y.GetArea().CompareTo(x.GetArea()));
+                                }
+
+                                face3D = face3Ds.FirstOrDefault();
+                            }
+                        }
+
+                        polygon3Ds_Temp.ForEach(x => polygon3Ds.Remove(x));
+
+                        Aperture aperture = new Aperture(apertureConstruction, face3D);
+                        apertures.Add(aperture);
+
+                    }
+
+                    adjacencyCluster.AddApertures(apertures);
                 }
 
                 if (internalConditions != null)
