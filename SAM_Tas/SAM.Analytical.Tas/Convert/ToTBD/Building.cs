@@ -298,7 +298,7 @@ namespace SAM.Analytical.Tas
                                             if (construction_TBD == null)
                                             {
                                                 construction_TBD = result.AddConstruction(null);
-                                                construction_TBD.name = keyValuePair.Key;
+                                                construction_TBD.name = constructionName;
 
                                                 if (apertureConstruction.Transparent(materialLibrary))
                                                 {
@@ -335,8 +335,8 @@ namespace SAM.Analytical.Tas
 
                                         buildingElement_Aperture = result.AddBuildingElement();
                                         buildingElement_Aperture.name = keyValuePair.Key;
-                                        buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType));
-                                        buildingElement_Aperture.BEType = Query.BEType(apertureType, false);
+                                        buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType, keyValuePair.Value.Item1));
+                                        buildingElement_Aperture.BEType = Query.BEType(keyValuePair.Value.Item1);
                                         buildingElement_Aperture.AssignConstruction(construction_TBD);
                                         buildingElements.Add(buildingElement_Aperture);
                                     }
