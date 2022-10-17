@@ -88,7 +88,7 @@ namespace SAM.Analytical.Tas
             AdjacencyCluster adjacencyCluster = new AdjacencyCluster();
 
             Dictionary<string, Construction> dictionary_Construction = new Dictionary<string, Construction>();
-            Dictionary<string, ApertureConstruction> dictionary_ApertureConstruction = new Dictionary<string, ApertureConstruction>();
+            List<ApertureConstruction> apertureConstructions = new List<ApertureConstruction>();
 
             foreach (TBD.zone zone in building.Zones())
             {
@@ -165,14 +165,18 @@ namespace SAM.Analytical.Tas
                     }
 
                     TBD.Construction construction_TBD = buildingElement.GetConstruction();
+                    ApertureConstruction apertureConstruction = construction_TBD.ToSAM_ApertureConstruction(apertureType);
+                    int index = apertureConstructions.FindIndex(x => x.Name == apertureConstruction.Name);
 
-                    if (!dictionary_ApertureConstruction.TryGetValue(construction_TBD.GUID, out ApertureConstruction apertureConstruction) || apertureConstruction == null)
+                    if (index == -1)
                     {
-                        apertureConstruction = construction_TBD.ToSAM_ApertureConstruction(apertureType);
-                        dictionary_ApertureConstruction[construction_TBD.GUID] = apertureConstruction;
+                        index = apertureConstructions.Count;
+                        apertureConstructions.Add(apertureConstruction);
                     }
                     else
                     {
+                        apertureConstruction = apertureConstructions[index];
+
                         List<ConstructionLayer> constructionLayers = null;
 
                         constructionLayers = apertureConstruction.FrameConstructionLayers;
@@ -182,7 +186,7 @@ namespace SAM.Analytical.Tas
                             {
                                 constructionLayers = ToSAM_ConstructionLayers(construction_TBD);
                                 apertureConstruction = new ApertureConstruction(apertureConstruction, apertureConstruction.PaneConstructionLayers, constructionLayers);
-                                dictionary_ApertureConstruction[construction_TBD.GUID] = apertureConstruction;
+                                apertureConstructions[index] = apertureConstruction;
                             }
                         }
 
@@ -193,7 +197,7 @@ namespace SAM.Analytical.Tas
                             {
                                 constructionLayers = ToSAM_ConstructionLayers(construction_TBD);
                                 apertureConstruction = new ApertureConstruction(apertureConstruction, constructionLayers, apertureConstruction.FrameConstructionLayers);
-                                dictionary_ApertureConstruction[construction_TBD.GUID] = apertureConstruction;
+                                apertureConstructions[index] = apertureConstruction;
                             }
                         }
                     }
@@ -221,12 +225,6 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
-                List<ApertureConstruction> apertureConstructions = new List<ApertureConstruction>();
-                foreach(ApertureConstruction apertureConstruction in dictionary_ApertureConstruction.Values)
-                {
-                    apertureConstructions.Add(apertureConstruction);
-                }
-
                 foreach (KeyValuePair<System.Guid, List<Polygon3D>> keyValuePair in dictionary)
                 {
                     if(keyValuePair.Value == null || keyValuePair.Value.Count == 0)
@@ -249,7 +247,7 @@ namespace SAM.Analytical.Tas
                         Polygon3D polygon3D = polygon3Ds[0];
                         polygon3Ds.RemoveAt(0);
 
-                        List<Polygon3D> polygon3Ds_Temp = polygon3Ds.FindAll(x => polygon3D.Inside(x));
+                        List<Polygon3D> polygon3Ds_Temp = polygon3Ds.FindAll(x => new Face3D(polygon3D).InRange(x.InternalPoint3D()));
 
                         Face3D face3D = null;
                         if(polygon3Ds_Temp == null || polygon3Ds_Temp.Count == 0)
@@ -264,7 +262,7 @@ namespace SAM.Analytical.Tas
                             {
                                 if(face3Ds.Count  > 1)
                                 {
-                                    face3Ds.Sort((x, y) => y.GetArea().CompareTo(x.GetArea()));
+                                    face3Ds.Sort((x, y) => y.ExternalEdge2D.GetArea().CompareTo(x.ExternalEdge2D.GetArea()));
                                 }
 
                                 face3D = face3Ds.FirstOrDefault();
