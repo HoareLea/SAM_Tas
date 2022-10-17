@@ -300,7 +300,7 @@ namespace SAM.Analytical.Tas
                                                 construction_TBD = result.AddConstruction(null);
                                                 construction_TBD.name = constructionName;
 
-                                                if (apertureConstruction.Transparent(materialLibrary))
+                                                if (apertureConstruction.Transparent(materialLibrary, keyValuePair.Value.Item1))
                                                 {
                                                     construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
                                                 }

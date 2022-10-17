@@ -12,6 +12,8 @@
                     return Analytical.ApertureType.Window;
                 case 13:
                     return Analytical.ApertureType.Window;
+                case 15:
+                    return Analytical.ApertureType.Window;
             }
 
             return Analytical.ApertureType.Undefined;

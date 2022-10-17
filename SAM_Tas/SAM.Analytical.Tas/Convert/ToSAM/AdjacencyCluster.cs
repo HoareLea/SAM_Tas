@@ -120,11 +120,11 @@ namespace SAM.Analytical.Tas
 
                     TBD.Construction construction_TBD = buildingElement.GetConstruction();
 
-                    Construction construction = dictionary_Construction[construction_TBD.GUID];
-                    if (construction == null)
+                    if (!dictionary_Construction.TryGetValue(construction_TBD.GUID, out Construction construction) || construction == null)
                     {
                         construction = construction_TBD.ToSAM();
                         construction.SetValue(ConstructionParameter.DefaultPanelType, panelType);
+                        dictionary_Construction[construction_TBD.GUID] = construction;
                     }
 
                     foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
@@ -162,10 +162,10 @@ namespace SAM.Analytical.Tas
 
                     TBD.Construction construction_TBD = buildingElement.GetConstruction();
 
-                    ApertureConstruction apertureConstruction = dictionary_ApertureConstruction[construction_TBD.GUID];
-                    if (apertureConstruction == null)
+                    if (!dictionary_ApertureConstruction.TryGetValue(construction_TBD.GUID, out ApertureConstruction apertureConstruction) || apertureConstruction == null)
                     {
                         apertureConstruction = construction_TBD.ToSAM_ApertureConstruction(apertureType);
+                        dictionary_ApertureConstruction[construction_TBD.GUID] = apertureConstruction;
                     }
                     else
                     {
@@ -207,7 +207,7 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
-                        //List<Aperture> apertures = adjacencyCluster.AddApertures(apertureConstruction, new List<Geometry.Spatial.IClosedPlanar3D> { polygon3D })
+                        List<Aperture> apertures = adjacencyCluster.AddApertures(apertureConstruction, new List<Geometry.Spatial.IClosedPlanar3D> { polygon3D });
                     }
                 }
 
