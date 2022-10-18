@@ -6,15 +6,15 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<Guid> RemoveUnsusedZones(this SAMT3DDocument sAMT3DDocument)
+        public static List<Guid> RemoveUnusedZones(this SAMT3DDocument sAMT3DDocument)
         {
             if (sAMT3DDocument == null)
                 return null;
 
-            return RemoveUnsusedZones(sAMT3DDocument.T3DDocument);
+            return RemoveUnusedZones(sAMT3DDocument.T3DDocument);
         }
 
-        public static List<Guid> RemoveUnsusedZones(this TAS3D.Building building)
+        public static List<Guid> RemoveUnusedZones(this TAS3D.Building building)
         {
             List<TAS3D.Zone> zones = building?.Zones();
             if (zones == null)
@@ -29,9 +29,9 @@ namespace SAM.Analytical.Tas
             return guids;
         }
 
-        public static List<Guid> RemoveUnsusedZones(this TAS3D.T3DDocument t3DDocument)
+        public static List<Guid> RemoveUnusedZones(this TAS3D.T3DDocument t3DDocument)
         {
-            return RemoveUnsusedZones(t3DDocument?.Building);
+            return RemoveUnusedZones(t3DDocument?.Building);
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using SAM.Core.Tas;
+﻿using SAM.Core;
+using SAM.Core.Tas;
 using System.Collections.Generic;
 using TSD;
+using SAM.Geometry.Spatial;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
@@ -85,17 +88,7 @@ namespace SAM.Analytical.Tas
             AdjacencyCluster adjacencyCluster = new AdjacencyCluster();
 
             Dictionary<string, Construction> dictionary_Construction = new Dictionary<string, Construction>();
-            foreach (TBD.Construction construction_TBD in building.Constructions())
-            {
-                Construction construction = construction_TBD.ToSAM();
-                if (construction == null)
-                {
-                    continue;
-                }
-
-                dictionary_Construction[construction_TBD.GUID] = construction;
-                adjacencyCluster.AddObject(construction);
-            }
+            List<ApertureConstruction> apertureConstructions = new List<ApertureConstruction>();
 
             foreach (TBD.zone zone in building.Zones())
             {
@@ -107,34 +100,45 @@ namespace SAM.Analytical.Tas
 
                 adjacencyCluster.AddObject(space);
 
-                foreach (TBD.IZoneSurface zoneSurface in zone.ZoneSurfaces())
+                List<TBD.IZoneSurface> zoneSurfaces = zone.ZoneSurfaces();
+                if(zoneSurfaces == null)
+                {
+                    continue;
+                }
+
+                foreach(TBD.IZoneSurface zoneSurface in zoneSurfaces)
                 {
                     TBD.buildingElement buildingElement = zoneSurface.buildingElement;
-                    TBD.Construction construction_TBD = buildingElement.GetConstruction();
-
-                    PanelType panelType = Query.PanelType(buildingElement.BEType);
-
-                    Construction construction = null;
-                    if(construction_TBD != null)
+                    if(buildingElement == null)
                     {
-                        construction = dictionary_Construction[construction_TBD.GUID];
+                        continue;
                     }
 
-                    foreach(TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
+                    PanelType panelType = Query.PanelType(buildingElement.BEType);
+                    if (panelType == PanelType.Undefined)
                     {
-                        Geometry.Spatial.Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
-                        if(polygon3D == null)
+                        continue;
+                    }
+
+                    TBD.Construction construction_TBD = buildingElement.GetConstruction();
+
+                    if (!dictionary_Construction.TryGetValue(construction_TBD.GUID, out Construction construction) || construction == null)
+                    {
+                        construction = construction_TBD.ToSAM();
+                        construction.SetValue(ConstructionParameter.DefaultPanelType, panelType);
+                        dictionary_Construction[construction_TBD.GUID] = construction;
+                    }
+
+                    foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
+                    {
+                        Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
+                        if (polygon3D == null)
                         {
                             continue;
                         }
 
-                        if(panelType == PanelType.Undefined)
-                        {
-                            panelType = Analytical.Query.PanelType(polygon3D.GetPlane().Normal);
-                        }
-
-                        Panel panel = Analytical.Create.Panel(construction, panelType, new Geometry.Spatial.Face3D(polygon3D));
-                        if(panel == null)
+                        Panel panel = Analytical.Create.Panel(construction, panelType, new Face3D(polygon3D));
+                        if (panel == null)
                         {
                             continue;
                         }
@@ -142,6 +146,137 @@ namespace SAM.Analytical.Tas
                         adjacencyCluster.AddObject(panel);
                         adjacencyCluster.AddRelation(panel, space);
                     }
+                }
+
+                Dictionary<System.Guid, List<Polygon3D>> dictionary = new Dictionary<System.Guid, List<Polygon3D>>();
+
+                foreach(TBD.IZoneSurface zoneSurface in zoneSurfaces)
+                {
+                    TBD.buildingElement buildingElement = zoneSurface.buildingElement;
+                    if (buildingElement == null)
+                    {
+                        continue;
+                    }
+
+                    ApertureType apertureType = Query.ApertureType(buildingElement.BEType);
+                    if (apertureType == ApertureType.Undefined)
+                    {
+                        continue;
+                    }
+
+                    TBD.Construction construction_TBD = buildingElement.GetConstruction();
+                    ApertureConstruction apertureConstruction = construction_TBD.ToSAM_ApertureConstruction(apertureType);
+                    int index = apertureConstructions.FindIndex(x => x.Name == apertureConstruction.Name);
+
+                    if (index == -1)
+                    {
+                        index = apertureConstructions.Count;
+                        apertureConstructions.Add(apertureConstruction);
+                    }
+                    else
+                    {
+                        apertureConstruction = apertureConstructions[index];
+
+                        List<ConstructionLayer> constructionLayers = null;
+
+                        constructionLayers = apertureConstruction.FrameConstructionLayers;
+                        if (constructionLayers == null || constructionLayers.Count == 0)
+                        {
+                            if (construction_TBD.name.EndsWith(AperturePart.Frame.Sufix()))
+                            {
+                                constructionLayers = ToSAM_ConstructionLayers(construction_TBD);
+                                apertureConstruction = new ApertureConstruction(apertureConstruction, apertureConstruction.PaneConstructionLayers, constructionLayers);
+                                apertureConstructions[index] = apertureConstruction;
+                            }
+                        }
+
+                        constructionLayers = apertureConstruction.PaneConstructionLayers;
+                        if (constructionLayers == null || constructionLayers.Count == 0)
+                        {
+                            if (construction_TBD.name.EndsWith(AperturePart.Pane.Sufix()))
+                            {
+                                constructionLayers = ToSAM_ConstructionLayers(construction_TBD);
+                                apertureConstruction = new ApertureConstruction(apertureConstruction, constructionLayers, apertureConstruction.FrameConstructionLayers);
+                                apertureConstructions[index] = apertureConstruction;
+                            }
+                        }
+                    }
+
+                    if(apertureConstruction == null)
+                    {
+                        return null;
+                    }
+
+                    foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
+                    {
+                        Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
+                        if (polygon3D == null)
+                        {
+                            continue;
+                        }
+
+                        if(!dictionary.TryGetValue(apertureConstruction.Guid, out List<Polygon3D> polygon3Ds) || polygon3Ds == null)
+                        {
+                            polygon3Ds = new List<Polygon3D>();
+                            dictionary[apertureConstruction.Guid] = polygon3Ds;
+                        }
+
+                        polygon3Ds.Add(polygon3D);
+                    }
+                }
+
+                foreach (KeyValuePair<System.Guid, List<Polygon3D>> keyValuePair in dictionary)
+                {
+                    if(keyValuePair.Value == null || keyValuePair.Value.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    ApertureConstruction apertureConstruction = apertureConstructions.Find(x => x.Guid == keyValuePair.Key);
+                    if(apertureConstruction == null)
+                    {
+                        continue;
+                    }
+
+                    List<Polygon3D> polygon3Ds = keyValuePair.Value;
+                    polygon3Ds.Sort((x, y) => y.GetArea().CompareTo(x.GetArea()));
+
+                    List<Aperture> apertures = new List<Aperture>();
+                    while (polygon3Ds.Count > 0)
+                    {
+                        Polygon3D polygon3D = polygon3Ds[0];
+                        polygon3Ds.RemoveAt(0);
+
+                        List<Polygon3D> polygon3Ds_Temp = polygon3Ds.FindAll(x => new Face3D(polygon3D).InRange(x.InternalPoint3D()));
+
+                        Face3D face3D = null;
+                        if(polygon3Ds_Temp == null || polygon3Ds_Temp.Count == 0)
+                        {
+                            face3D = new Face3D(polygon3D);
+                        }
+                        else
+                        {
+                            polygon3Ds_Temp.Add(polygon3D);
+                            List<Face3D> face3Ds = Geometry.Spatial.Create.Face3Ds(polygon3Ds_Temp);
+                            if(face3Ds != null && face3Ds.Count != 0)
+                            {
+                                if(face3Ds.Count  > 1)
+                                {
+                                    face3Ds.Sort((x, y) => y.ExternalEdge2D.GetArea().CompareTo(x.ExternalEdge2D.GetArea()));
+                                }
+
+                                face3D = face3Ds.FirstOrDefault();
+                            }
+                        }
+
+                        polygon3Ds_Temp.ForEach(x => polygon3Ds.Remove(x));
+
+                        Aperture aperture = new Aperture(apertureConstruction, face3D);
+                        apertures.Add(aperture);
+
+                    }
+
+                    adjacencyCluster.AddApertures(apertures);
                 }
 
                 if (internalConditions != null)

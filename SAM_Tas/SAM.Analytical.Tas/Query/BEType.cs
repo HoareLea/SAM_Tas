@@ -68,5 +68,18 @@ namespace SAM.Analytical.Tas
 
             return -1;
         }
+
+        public static int BEType(this AperturePart aperturePart)
+        {
+            switch (aperturePart)
+            {
+                case AperturePart.Pane:
+                    return BEType("Glazing");
+                case AperturePart.Frame:
+                    return BEType("Frame");
+            }
+
+            return -1;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using SAM.Core;
 using SAM.Core.Tas;
 using System.Collections.Generic;
+using System.Linq;
 using TAS3D;
 
 namespace SAM.Analytical.Tas
@@ -31,11 +32,11 @@ namespace SAM.Analytical.Tas
                 return null;
 
 
-            TAS3D.Building building = t3DDocument?.Building;
+            Building building = t3DDocument?.Building;
             if (building == null)
                 return null;
 
-            Modify.RemoveUnsusedZones(building);
+            Modify.RemoveUnused(building);
             
             double northAngle = double.NaN;
             if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
@@ -244,11 +245,7 @@ namespace SAM.Analytical.Tas
 
 
                             //Transparent
-                            List<ConstructionLayer> constructionLayers = null;
-                            if (true)
-                                constructionLayers = apertureConstruction.PaneConstructionLayers;
-                            else
-                                constructionLayers = apertureConstruction.FrameConstructionLayers;
+                            List<ConstructionLayer> constructionLayers = apertureConstruction.PaneConstructionLayers;
 
                             window.transparent = false; //Requested by Michal 2021.03.01
                             bool transparent = false;
@@ -288,7 +285,24 @@ namespace SAM.Analytical.Tas
                             //FrameWidth
                             double frameWidth = double.NaN;
                             if(apertureConstruction.TryGetValue(ApertureConstructionParameter.DefaultFrameWidth, out frameWidth))
+                            {
                                 window.frameWidth = frameWidth;
+                            }
+
+                            if(UniqueNameDecomposition(window.name, out string prefix, out string name, out System.Guid? guid, out int id ))
+                            {
+                                if(guid  != null && guid.HasValue)
+                                {
+                                    Aperture aperture = adjacencyCluster.GetAperture(guid.Value);
+                                    if(aperture != null)
+                                    {
+                                        double frameFactor = aperture.GetFrameFactor();
+                                        window.isPercFrame = true;
+                                        window.framePerc = frameFactor * 100;
+                                    }
+
+                                }
+                            }
 
                         }
                     }
