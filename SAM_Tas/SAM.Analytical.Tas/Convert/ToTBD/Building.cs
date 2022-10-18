@@ -297,48 +297,54 @@ namespace SAM.Analytical.Tas
                                             construction_TBD = constructions.Find(x => x.name == constructionName);
                                             if (construction_TBD == null)
                                             {
-                                                construction_TBD = result.AddConstruction(null);
-                                                construction_TBD.name = constructionName;
-
-                                                if (apertureConstruction.Transparent(materialLibrary, keyValuePair.Value.Item1))
+                                                if(apertureConstruction.GetThickness(aperturePart) != 0)
                                                 {
-                                                    construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
-                                                }
+                                                    construction_TBD = result.AddConstruction(null);
+                                                    construction_TBD.name = constructionName;
 
-                                                List<ConstructionLayer> constructionLayers = apertureConstruction.GetConstructionLayers(aperturePart);
-                                                if (constructionLayers != null && constructionLayers.Count != 0)
-                                                {
-                                                    int index = 1;
-                                                    foreach (ConstructionLayer constructionLayer in constructionLayers)
+                                                    if (apertureConstruction.Transparent(materialLibrary, keyValuePair.Value.Item1))
                                                     {
-                                                        Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
-                                                        if (material == null)
-                                                        {
-                                                            continue;
-                                                        }
+                                                        construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                                                    }
 
-                                                        TBD.material material_TBD = construction_TBD.AddMaterial(material);
-                                                        if (material_TBD != null)
+                                                    List<ConstructionLayer> constructionLayers = apertureConstruction.GetConstructionLayers(aperturePart);
+                                                    if (constructionLayers != null && constructionLayers.Count != 0)
+                                                    {
+                                                        int index = 1;
+                                                        foreach (ConstructionLayer constructionLayer in constructionLayers)
                                                         {
-                                                            material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                            construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                            index++;
+                                                            Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
+                                                            if (material == null)
+                                                            {
+                                                                continue;
+                                                            }
+
+                                                            TBD.material material_TBD = construction_TBD.AddMaterial(material);
+                                                            if (material_TBD != null)
+                                                            {
+                                                                material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                                construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                                index++;
+                                                            }
                                                         }
                                                     }
-                                                }
 
-                                                constructions.Add(construction_TBD);
+                                                    constructions.Add(construction_TBD);
+                                                }
                                             }
                                         }
 
-                                        ApertureType apertureType = aperture.ApertureType;
+                                        if(construction_TBD != null)
+                                        {
+                                            ApertureType apertureType = aperture.ApertureType;
 
-                                        buildingElement_Aperture = result.AddBuildingElement();
-                                        buildingElement_Aperture.name = keyValuePair.Key;
-                                        buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType, keyValuePair.Value.Item1));
-                                        buildingElement_Aperture.BEType = Query.BEType(keyValuePair.Value.Item1);
-                                        buildingElement_Aperture.AssignConstruction(construction_TBD);
-                                        buildingElements.Add(buildingElement_Aperture);
+                                            buildingElement_Aperture = result.AddBuildingElement();
+                                            buildingElement_Aperture.name = keyValuePair.Key;
+                                            buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType, keyValuePair.Value.Item1));
+                                            buildingElement_Aperture.BEType = Query.BEType(keyValuePair.Value.Item1);
+                                            buildingElement_Aperture.AssignConstruction(construction_TBD);
+                                            buildingElements.Add(buildingElement_Aperture);
+                                        }
                                     }
 
                                     foreach(TBD.zoneSurface zoneSurface in keyValuePair.Value.Item2)
