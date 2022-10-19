@@ -134,50 +134,58 @@ namespace SAM.Analytical.Tas
                 List<ConstructionLayer> constructionLayers = null;
                 ConstructionTypes constructionTypes;
 
+                double thickness = double.NaN;
 
                 //Pane Construction
-                string paneName = Analytical.Query.PaneApertureConstructionUniqueName(name);
-                construction_TBD = building.GetConstructionByName(paneName);
-                if (construction_TBD == null)
+                thickness = apertureConstruction.GetPaneThickness();
+                if(!double.IsNaN(thickness) && thickness > 0)
                 {
-                    construction_TBD = building.AddConstruction(null);
-                    construction_TBD.name = paneName;
+                    string paneName = Analytical.Query.PaneApertureConstructionUniqueName(name);
+                    construction_TBD = building.GetConstructionByName(paneName);
+                    if (construction_TBD == null)
+                    {
+                        construction_TBD = building.AddConstruction(null);
+                        construction_TBD.name = paneName;
+                    }
+
+                    constructionTypes = ConstructionTypes.tcdTransparentConstruction;
+                    constructionLayers = apertureConstruction.PaneConstructionLayers;
+                    if (constructionLayers != null && constructionLayers.Count != 0)
+                        constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
+
+                    construction_TBD.type = constructionTypes;
+
+                    if (construction_TBD.UpdateConstruction(constructionLayers, materialLibrary))
+                        result.Add(apertureConstruction);
                 }
-
-                constructionTypes = ConstructionTypes.tcdTransparentConstruction;
-                constructionLayers = apertureConstruction.PaneConstructionLayers;
-                if (constructionLayers != null && constructionLayers.Count != 0)
-                    constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
-
-                construction_TBD.type = constructionTypes;
-
-                if (construction_TBD.UpdateConstruction(constructionLayers, materialLibrary))
-                    result.Add(apertureConstruction);
-
 
                 //Frame Construction
-                string frameName = Analytical.Query.FrameApertureConstructionUniqueName(name);
-                construction_TBD = building.GetConstructionByName(frameName);
-                if (construction_TBD == null)
+                thickness = apertureConstruction.GetFrameThickness();
+                if (!double.IsNaN(thickness) && thickness > 0)
                 {
-                    construction_TBD = building.AddConstruction(null);
-                    construction_TBD.name = frameName;
+                    string frameName = Analytical.Query.FrameApertureConstructionUniqueName(name);
+                    construction_TBD = building.GetConstructionByName(frameName);
+                    if (construction_TBD == null)
+                    {
+                        construction_TBD = building.AddConstruction(null);
+                        construction_TBD.name = frameName;
+                    }
+
+                    constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
+                    constructionLayers = apertureConstruction.FrameConstructionLayers;
+
+                    //Frame TBD.Construction cannot be empty
+                    if (constructionLayers == null || constructionLayers.Count == 0)
+                        constructionLayers = apertureConstruction.PaneConstructionLayers;
+
+                    if (constructionLayers != null && constructionLayers.Count != 0)
+                        constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
+
+                    construction_TBD.type = constructionTypes;
+
+                    if (construction_TBD.UpdateConstruction(constructionLayers, materialLibrary))
+                        result.Add(apertureConstruction);
                 }
-
-                constructionTypes = ConstructionTypes.tcdOpaqueConstruction;
-                constructionLayers = apertureConstruction.FrameConstructionLayers;
-
-                //Frame TBD.Construction cannot be empty
-                if (constructionLayers == null || constructionLayers.Count == 0)
-                    constructionLayers = apertureConstruction.PaneConstructionLayers;
-
-                if(constructionLayers != null && constructionLayers.Count != 0)
-                    constructionTypes = Query.ConstructionTypes(constructionLayers, materialLibrary);
-
-                construction_TBD.type = constructionTypes;
-
-                if (construction_TBD.UpdateConstruction(constructionLayers, materialLibrary))
-                    result.Add(apertureConstruction);
             }
 
             return result;
