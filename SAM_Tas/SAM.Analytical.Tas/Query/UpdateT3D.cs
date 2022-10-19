@@ -284,7 +284,14 @@ namespace SAM.Analytical.Tas
 
                             //FrameWidth
                             double frameWidth = double.NaN;
+                            
                             if(apertureConstruction.TryGetValue(ApertureConstructionParameter.DefaultFrameWidth, out frameWidth))
+                            {
+                                window.frameWidth = frameWidth;
+                            }
+
+                            frameWidth = apertureConstruction.GetFrameThickness();
+                            if(!double.IsNaN(frameWidth))
                             {
                                 window.frameWidth = frameWidth;
                             }

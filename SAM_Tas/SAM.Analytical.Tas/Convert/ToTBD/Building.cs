@@ -251,32 +251,42 @@ namespace SAM.Analytical.Tas
 
                                 Dictionary<string, Tuple<AperturePart, List<TBD.zoneSurface>>> dictionary = new Dictionary<string, Tuple<AperturePart, List<TBD.zoneSurface>>>();
 
-                                List<Face3D> face3Ds_Pane = aperture.GetFace3Ds(AperturePart.Pane);
-                                if(face3Ds_Pane != null)
+                                double thickness = double.NaN;
+
+                                thickness = aperture.GetThickness(AperturePart.Pane);
+                                if(!double.IsNaN(thickness) && thickness > 0)
                                 {
-                                    string apertureName_Pane = string.Format("{0} {1}", name, AperturePart.Pane.Sufix());
-                                    dictionary[apertureName_Pane] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Pane, new List<TBD.zoneSurface>());
-                                    foreach (Face3D face3D in face3Ds_Pane)
+                                    List<Face3D> face3Ds_Pane = aperture.GetFace3Ds(AperturePart.Pane);
+                                    if (face3Ds_Pane != null)
                                     {
-                                        TBD.zoneSurface zoneSurface = func.Invoke(face3D);
-                                        if(zoneSurface != null)
+                                        string apertureName_Pane = string.Format("{0} {1}", name, AperturePart.Pane.Sufix());
+                                        dictionary[apertureName_Pane] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Pane, new List<TBD.zoneSurface>());
+                                        foreach (Face3D face3D in face3Ds_Pane)
                                         {
-                                            dictionary[apertureName_Pane].Item2.Add(zoneSurface);
+                                            TBD.zoneSurface zoneSurface = func.Invoke(face3D);
+                                            if (zoneSurface != null)
+                                            {
+                                                dictionary[apertureName_Pane].Item2.Add(zoneSurface);
+                                            }
                                         }
                                     }
                                 }
 
-                                List<Face3D> face3Ds_Frame = aperture.GetFace3Ds(AperturePart.Frame);
-                                if (face3Ds_Frame != null)
+                                thickness = aperture.GetThickness(AperturePart.Frame);
+                                if (!double.IsNaN(thickness) && thickness > 0)
                                 {
-                                    string apertureName_Frame = string.Format("{0} {1}", name, AperturePart.Frame.Sufix());
-                                    dictionary[apertureName_Frame] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Frame, new List<TBD.zoneSurface>());
-                                    foreach (Face3D face3D in face3Ds_Frame)
+                                    List<Face3D> face3Ds_Frame = aperture.GetFace3Ds(AperturePart.Frame);
+                                    if (face3Ds_Frame != null)
                                     {
-                                        TBD.zoneSurface zoneSurface = func.Invoke(face3D);
-                                        if (zoneSurface != null)
+                                        string apertureName_Frame = string.Format("{0} {1}", name, AperturePart.Frame.Sufix());
+                                        dictionary[apertureName_Frame] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Frame, new List<TBD.zoneSurface>());
+                                        foreach (Face3D face3D in face3Ds_Frame)
                                         {
-                                            dictionary[apertureName_Frame].Item2.Add(zoneSurface);
+                                            TBD.zoneSurface zoneSurface = func.Invoke(face3D);
+                                            if (zoneSurface != null)
+                                            {
+                                                dictionary[apertureName_Frame].Item2.Add(zoneSurface);
+                                            }
                                         }
                                     }
                                 }
@@ -297,40 +307,37 @@ namespace SAM.Analytical.Tas
                                             construction_TBD = constructions.Find(x => x.name == constructionName);
                                             if (construction_TBD == null)
                                             {
-                                                if(apertureConstruction.GetThickness(aperturePart) != 0)
+                                                construction_TBD = result.AddConstruction(null);
+                                                construction_TBD.name = constructionName;
+
+                                                if (apertureConstruction.Transparent(materialLibrary, keyValuePair.Value.Item1))
                                                 {
-                                                    construction_TBD = result.AddConstruction(null);
-                                                    construction_TBD.name = constructionName;
+                                                    construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                                                }
 
-                                                    if (apertureConstruction.Transparent(materialLibrary, keyValuePair.Value.Item1))
+                                                List<ConstructionLayer> constructionLayers = apertureConstruction.GetConstructionLayers(aperturePart);
+                                                if (constructionLayers != null && constructionLayers.Count != 0)
+                                                {
+                                                    int index = 1;
+                                                    foreach (ConstructionLayer constructionLayer in constructionLayers)
                                                     {
-                                                        construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
-                                                    }
-
-                                                    List<ConstructionLayer> constructionLayers = apertureConstruction.GetConstructionLayers(aperturePart);
-                                                    if (constructionLayers != null && constructionLayers.Count != 0)
-                                                    {
-                                                        int index = 1;
-                                                        foreach (ConstructionLayer constructionLayer in constructionLayers)
+                                                        Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
+                                                        if (material == null)
                                                         {
-                                                            Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
-                                                            if (material == null)
-                                                            {
-                                                                continue;
-                                                            }
+                                                            continue;
+                                                        }
 
-                                                            TBD.material material_TBD = construction_TBD.AddMaterial(material);
-                                                            if (material_TBD != null)
-                                                            {
-                                                                material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                                construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                                index++;
-                                                            }
+                                                        TBD.material material_TBD = construction_TBD.AddMaterial(material);
+                                                        if (material_TBD != null)
+                                                        {
+                                                            material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                            construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                            index++;
                                                         }
                                                     }
-
-                                                    constructions.Add(construction_TBD);
                                                 }
+
+                                                constructions.Add(construction_TBD);
                                             }
                                         }
 
