@@ -108,7 +108,7 @@ namespace SAM.Analytical.Tas
                         zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
                         zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
-                        zoneSurface_Panel.reversed = true;
+                        zoneSurface_Panel.reversed = 1;
 
 
                         TBD.RoomSurface roomSurface_Panel = room.AddSurface();
@@ -153,7 +153,7 @@ namespace SAM.Analytical.Tas
                                         List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
                                         if (constructionLayers != null && constructionLayers.Count != 0)
                                         {
-                                            constructionLayers.Reverse();
+                                            //constructionLayers.Reverse();
 
                                             int index = 1;
                                             foreach (ConstructionLayer constructionLayer in constructionLayers)
