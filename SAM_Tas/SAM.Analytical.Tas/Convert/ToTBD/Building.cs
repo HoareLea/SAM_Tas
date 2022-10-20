@@ -126,7 +126,7 @@ namespace SAM.Analytical.Tas
                         Face3D face3D = panel.GetFace3D(true);
                         if(panel.PanelGroup == PanelGroup.Roof)
                         {
-                            face3D.FlipNormal();
+                            face3D.FlipNormal(false);
                         }
 
                         TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Panel);
