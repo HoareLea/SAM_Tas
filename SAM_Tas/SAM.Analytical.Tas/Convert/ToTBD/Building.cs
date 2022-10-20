@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            adjacencyCluster = adjacencyCluster.UpdateNormals(true, false);
+            adjacencyCluster = adjacencyCluster.UpdateNormals(true, true);
 
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces == null)
@@ -124,10 +124,10 @@ namespace SAM.Analytical.Tas
                         }
 
                         Face3D face3D = panel.GetFace3D(true);
-                        if(panel.PanelGroup == PanelGroup.Roof)
-                        {
-                            face3D.FlipNormal(false);
-                        }
+                        //if(panel.PanelGroup == PanelGroup.Roof)
+                        //{
+                        //    face3D.FlipNormal(false);
+                        //}
 
                         TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Panel);
                         if (perimeter_Panel == null)
