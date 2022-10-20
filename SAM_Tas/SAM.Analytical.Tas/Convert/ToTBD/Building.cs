@@ -108,10 +108,10 @@ namespace SAM.Analytical.Tas
                         zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
                         zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
-                        if (panel.PanelGroup == PanelGroup.Roof)
-                        {
-                            zoneSurface_Panel.reversed = 1;
-                        }
+                        //if (panel.PanelGroup == PanelGroup.Roof)
+                        //{
+                        //    zoneSurface_Panel.reversed = 1;
+                        //}
 
                         TBD.RoomSurface roomSurface_Panel = room.AddSurface();
                         roomSurface_Panel.area = zoneSurface_Panel.area;
@@ -123,7 +123,13 @@ namespace SAM.Analytical.Tas
                             List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(result, daysShades, zoneSurface_Panel, analyticalModel, solarFaceSimulationResult);
                         }
 
-                        TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(panel.GetFace3D(true), roomSurface_Panel);
+                        Face3D face3D = panel.GetFace3D(true);
+                        if(panel.PanelGroup == PanelGroup.Roof)
+                        {
+                            face3D.FlipNormal();
+                        }
+
+                        TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Panel);
                         if (perimeter_Panel == null)
                         {
                             continue;
@@ -212,11 +218,11 @@ namespace SAM.Analytical.Tas
                         {
                             bool @internal = adjacencyCluster.Internal(panel);
 
-                            Func<Face3D, TBD.zoneSurface> func = delegate (Face3D face3D)
+                            Func<Face3D, TBD.zoneSurface> func = delegate (Face3D face3D_ZoneSurface)
                             {
-                                BoundingBox3D boundingBox3D_Aperture = face3D.GetBoundingBox();
+                                BoundingBox3D boundingBox3D_Aperture = face3D_ZoneSurface.GetBoundingBox();
 
-                                float area = System.Convert.ToSingle(face3D.GetArea());
+                                float area = System.Convert.ToSingle(face3D_ZoneSurface.GetArea());
 
                                 TBD.zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
                                 if (zoneSurface_Aperture == null)
@@ -228,7 +234,7 @@ namespace SAM.Analytical.Tas
                                 zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
                                 zoneSurface_Aperture.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
                                 zoneSurface_Aperture.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
-                                zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D));
+                                zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_ZoneSurface));
 
                                 zoneSurface_Aperture.type = @internal ? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
 
@@ -236,7 +242,7 @@ namespace SAM.Analytical.Tas
                                 roomSurface_Aperture.area = zoneSurface_Aperture.area;
                                 roomSurface_Aperture.zoneSurface = zoneSurface_Aperture;
 
-                                TBD.Perimeter perimeter_Aperture = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Aperture);
+                                TBD.Perimeter perimeter_Aperture = Geometry.Tas.Convert.ToTBD(face3D_ZoneSurface, roomSurface_Aperture);
                                 if (perimeter_Aperture == null)
                                 {
                                     return null;
@@ -267,9 +273,9 @@ namespace SAM.Analytical.Tas
                                     {
                                         string apertureName_Pane = string.Format("{0} {1}", name, AperturePart.Pane.Sufix());
                                         dictionary[apertureName_Pane] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Pane, new List<TBD.zoneSurface>());
-                                        foreach (Face3D face3D in face3Ds_Pane)
+                                        foreach (Face3D face3D_Pane in face3Ds_Pane)
                                         {
-                                            TBD.zoneSurface zoneSurface = func.Invoke(face3D);
+                                            TBD.zoneSurface zoneSurface = func.Invoke(face3D_Pane);
                                             if (zoneSurface != null)
                                             {
                                                 dictionary[apertureName_Pane].Item2.Add(zoneSurface);
@@ -286,9 +292,9 @@ namespace SAM.Analytical.Tas
                                     {
                                         string apertureName_Frame = string.Format("{0} {1}", name, AperturePart.Frame.Sufix());
                                         dictionary[apertureName_Frame] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Frame, new List<TBD.zoneSurface>());
-                                        foreach (Face3D face3D in face3Ds_Frame)
+                                        foreach (Face3D face3D_Frame in face3Ds_Frame)
                                         {
-                                            TBD.zoneSurface zoneSurface = func.Invoke(face3D);
+                                            TBD.zoneSurface zoneSurface = func.Invoke(face3D_Frame);
                                             if (zoneSurface != null)
                                             {
                                                 //zoneSurface.reversed = 1;
