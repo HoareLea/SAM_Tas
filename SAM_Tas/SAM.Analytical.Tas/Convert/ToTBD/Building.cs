@@ -114,7 +114,7 @@ namespace SAM.Analytical.Tas
                         List<Space> spaces_Adjacent = adjacencyCluster?.GetSpaces(panel);
                         if (spaces_Adjacent != null && spaces_Adjacent.Count > 1)
                         {
-                            bool reverse = adjacencyCluster.GetIndex(spaces[0]) != index_Space;
+                            bool reverse = adjacencyCluster.GetIndex(spaces[0]) == index_Space;
                             if(reverse)
                             {
                                 zoneSurface_Panel.reversed = 1;
