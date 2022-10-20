@@ -230,7 +230,7 @@ namespace SAM.Analytical.Tas
                                     return null;
                                 }
 
-                                zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation;
+                                zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation + 180;
                                 zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
                                 zoneSurface_Aperture.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
                                 zoneSurface_Aperture.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
