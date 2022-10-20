@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            adjacencyCluster = adjacencyCluster.UpdateNormals(true, false);
+            adjacencyCluster = adjacencyCluster.UpdateNormals(true);
 
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces == null)
@@ -151,6 +151,8 @@ namespace SAM.Analytical.Tas
                                         List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
                                         if (constructionLayers != null && constructionLayers.Count != 0)
                                         {
+                                            constructionLayers.Reverse();
+
                                             int index = 1;
                                             foreach (ConstructionLayer constructionLayer in constructionLayers)
                                             {
