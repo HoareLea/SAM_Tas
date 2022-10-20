@@ -108,10 +108,10 @@ namespace SAM.Analytical.Tas
                         zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
                         zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
-                        if(panel.PanelGroup != PanelGroup.Roof)
-                        {
-                            zoneSurface_Panel.reversed = 1;
-                        }
+                        //if(panel.PanelGroup != PanelGroup.Roof)
+                        //{
+                        //    zoneSurface_Panel.reversed = 1;
+                        //}
 
                         TBD.RoomSurface roomSurface_Panel = room.AddSurface();
                         roomSurface_Panel.area = zoneSurface_Panel.area;
