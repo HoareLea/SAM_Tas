@@ -111,15 +111,15 @@ namespace SAM.Analytical.Tas
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
                         zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
 
-                        List<Space> spaces_Adjacent = adjacencyCluster?.GetSpaces(panel);
-                        if (spaces_Adjacent != null && spaces_Adjacent.Count > 1)
-                        {
-                            bool reverse = adjacencyCluster.GetIndex(spaces[0]) == index_Space;
-                            if(reverse)
-                            {
-                                zoneSurface_Panel.reversed = 1;
-                            }
-                        }
+                        //List<Space> spaces_Adjacent = adjacencyCluster?.GetSpaces(panel);
+                        //if (spaces_Adjacent != null && spaces_Adjacent.Count > 1)
+                        //{
+                        //    bool reverse = adjacencyCluster.GetIndex(spaces[0]) == index_Space;
+                        //    if(reverse)
+                        //    {
+                        //        zoneSurface_Panel.reversed = 1;
+                        //    }
+                        //}
                         //if (panel.PanelGroup == PanelGroup.Roof)
                         //{
                         //    zoneSurface_Panel.reversed = 1;
@@ -420,37 +420,37 @@ namespace SAM.Analytical.Tas
                 keyValuePair.Value[1].linkSurface = keyValuePair.Value[0];
                 keyValuePair.Value[0].linkSurface = keyValuePair.Value[1];
 
-                //if (keyValuePair.Value[0].inclination == 0 || keyValuePair.Value[0].inclination == 180)
-                //{
-                //    //float inclination = keyValuePair.Value[1].inclination;
-                //    //inclination -= 180;
-                //    //if (inclination < 0)
-                //    //{
-                //    //    inclination += 360;
-                //    //}
+                if (keyValuePair.Value[0].inclination == 0 || keyValuePair.Value[0].inclination == 180)
+                {
+                    //float inclination = keyValuePair.Value[1].inclination;
+                    //inclination -= 180;
+                    //if (inclination < 0)
+                    //{
+                    //    inclination += 360;
+                    //}
 
-                //    //keyValuePair.Value[1].inclination = inclination;
-                //    keyValuePair.Value[1].reversed = 1;
-                //}
-                //else
-                //{
-                //    float orientation = keyValuePair.Value[1].orientation;
-                //    orientation += 180;
-                //    if (orientation >= 360)
-                //    {
-                //        orientation -= 360;
-                //    }
+                    //keyValuePair.Value[1].inclination = inclination;
+                    keyValuePair.Value[1].reversed = 1;
+                }
+                else
+                {
+                    float orientation = keyValuePair.Value[1].orientation;
+                    orientation += 180;
+                    if (orientation >= 360)
+                    {
+                        orientation -= 360;
+                    }
 
-                //    keyValuePair.Value[1].orientation = orientation;
-                //    keyValuePair.Value[1].reversed = 1;
+                    keyValuePair.Value[1].orientation = orientation;
+                    keyValuePair.Value[1].reversed = 1;
 
-                //    float inclination = keyValuePair.Value[1].inclination;
-                //    if (inclination > 180)
-                //    {
-                //        inclination -= 180;
-                //    }
-                //    keyValuePair.Value[1].inclination = inclination;
-                //}
+                    float inclination = keyValuePair.Value[1].inclination;
+                    if (inclination > 180)
+                    {
+                        inclination -= 180;
+                    }
+                    keyValuePair.Value[1].inclination = inclination;
+                }
             }
 
             //foreach(KeyValuePair<Guid, List<TBD.zoneSurface>> keyValuePair in dictionary_Aperture)
