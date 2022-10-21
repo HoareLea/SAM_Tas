@@ -115,7 +115,17 @@ namespace SAM.Analytical.Tas
                         //zoneSurface_Panel.reversed = 1;
 
 
-                        zoneSurface_Panel.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(normal));
+                        float inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(normal));
+                        if(inclination == 0 || inclination == 180)
+                        {
+                            inclination -= 180;
+                            if (inclination < 0)
+                            {
+                                inclination += 360;
+                            }
+                        }
+
+                        zoneSurface_Panel.inclination = inclination;
                         
                         zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Panel.GetCentroid().Z);
                         zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
@@ -147,10 +157,10 @@ namespace SAM.Analytical.Tas
                         }
 
                         Face3D face3D = panel.GetFace3D(true);
-                        if (panel.PanelGroup == PanelGroup.Roof)
-                        {
-                            face3D.FlipNormal(false);
-                        }
+                        //if (panel.PanelGroup == PanelGroup.Roof)
+                        //{
+                        //    face3D.FlipNormal(false);
+                        //}
 
                         TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Panel);
                         if (perimeter_Panel == null)
