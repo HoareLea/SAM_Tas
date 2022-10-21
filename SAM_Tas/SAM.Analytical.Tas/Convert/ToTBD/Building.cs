@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            adjacencyCluster = adjacencyCluster.UpdateNormals(true, true);
+            adjacencyCluster = adjacencyCluster.UpdateNormals(true, false);
 
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces == null)
@@ -103,7 +103,18 @@ namespace SAM.Analytical.Tas
                         Vector3D normal = dictionary_Panel.ContainsKey(panel.Guid) ? panel.Normal.GetNegated() : panel.Normal;
 
                         TBD.zoneSurface zoneSurface_Panel = zone.AddSurface();
-                        zoneSurface_Panel.orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
+                        float orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
+                        //orientation += 180;
+                        //if (orientation >= 360)
+                        //{
+                        //    orientation -= 360;
+                        //}
+                        zoneSurface_Panel.orientation = orientation;
+
+                        //test
+                        //zoneSurface_Panel.reversed = 1;
+
+
                         zoneSurface_Panel.inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(normal));
                         
                         zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Panel.GetCentroid().Z);
@@ -136,10 +147,10 @@ namespace SAM.Analytical.Tas
                         }
 
                         Face3D face3D = panel.GetFace3D(true);
-                        //if(panel.PanelGroup == PanelGroup.Roof)
-                        //{
-                        //    face3D.FlipNormal(false);
-                        //}
+                        if (panel.PanelGroup == PanelGroup.Roof)
+                        {
+                            face3D.FlipNormal(false);
+                        }
 
                         TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Panel);
                         if (perimeter_Panel == null)
@@ -305,6 +316,8 @@ namespace SAM.Analytical.Tas
                                         dictionary[apertureName_Frame] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Frame, new List<TBD.zoneSurface>());
                                         foreach (Face3D face3D_Frame in face3Ds_Frame)
                                         {
+                                            face3D_Frame.FlipNormal(false);
+
                                             TBD.zoneSurface zoneSurface = func.Invoke(face3D_Frame);
                                             if (zoneSurface != null)
                                             {
