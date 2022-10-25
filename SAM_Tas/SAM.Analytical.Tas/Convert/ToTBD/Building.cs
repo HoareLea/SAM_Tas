@@ -31,7 +31,7 @@ namespace SAM.Analytical.Tas
             }
 
             adjacencyCluster = adjacencyCluster.UpdateNormals(true, false, false);
-            adjacencyCluster.Normalize();
+            adjacencyCluster.Normalize(true, Geometry.Orientation.Clockwise);
 
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces == null)
@@ -308,6 +308,8 @@ namespace SAM.Analytical.Tas
                                         dictionary[apertureName_Pane] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Pane, new List<TBD.zoneSurface>());
                                         foreach (Face3D face3D_Pane in face3Ds_Pane)
                                         {
+                                            face3D_Pane.FlipNormal(false);
+
                                             TBD.zoneSurface zoneSurface = func.Invoke(face3D_Pane);
                                             if (zoneSurface != null)
                                             {
@@ -327,7 +329,7 @@ namespace SAM.Analytical.Tas
                                         dictionary[apertureName_Frame] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Frame, new List<TBD.zoneSurface>());
                                         foreach (Face3D face3D_Frame in face3Ds_Frame)
                                         {
-                                            face3D_Frame.FlipNormal(false);
+                                            //face3D_Frame.FlipNormal(false);
 
                                             TBD.zoneSurface zoneSurface = func.Invoke(face3D_Frame);
                                             if (zoneSurface != null)
