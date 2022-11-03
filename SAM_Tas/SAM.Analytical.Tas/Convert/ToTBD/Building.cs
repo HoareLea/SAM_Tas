@@ -22,7 +22,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            result.northAngle = 180;
+            result.northAngle = 0; //180 changed 03.11.2022
 
             AdjacencyCluster adjacencyCluster = analyticalModel.AdjacencyCluster;
             if(adjacencyCluster == null)
@@ -105,11 +105,11 @@ namespace SAM.Analytical.Tas
 
                         TBD.zoneSurface zoneSurface_Panel = zone.AddSurface();
                         float orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
-                        //orientation += 180;
-                        //if (orientation >= 360)
-                        //{
-                        //    orientation -= 360;
-                        //}
+                        orientation += 180;
+                        if (orientation >= 360)
+                        {
+                            orientation -= 360;
+                        }
                         zoneSurface_Panel.orientation = orientation;
 
                         //test
