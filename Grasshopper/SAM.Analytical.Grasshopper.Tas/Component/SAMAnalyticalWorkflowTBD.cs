@@ -250,7 +250,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                         double latitude_WeatherData = Core.Query.Round(weatherData.Latitude, 0.01);
                         double longitude_WeatherDate = Core.Query.Round(weatherData.Longitude, 0.01);
 
-                        if(Math.Abs(latitude_TBD - latitude_WeatherData) > 0.01 || Math.Abs(longitude_TBD - longitude_WeatherDate) > 0.01)
+                        if (Math.Abs(latitude_TBD - latitude_WeatherData) > 0.01 || Math.Abs(longitude_TBD - longitude_WeatherDate) > 0.01)
                         {
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "WeatherData Longitude or Latitude mismatch");
                         }
@@ -285,8 +285,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                         Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
                     }
 
-                    progressForm.Update("Updating Shades");
-                    shadingUpdated = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
+                    //progressForm.Update("Updating Shades");
+                    //shadingUpdated = Analytical.Tas.Modify.UpdateShading(tBDDocument, analyticalModel);
 
                     sAMTBDDocument.Save();
                 }
