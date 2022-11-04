@@ -47,7 +47,7 @@ namespace SAM.Analytical.Tas
                 if (face3Ds != null && face3Ds.Count != 0)
                 {
                     double area_Temp = face3Ds.ConvertAll(x => x.GetArea()).Sum();
-                    proportion = System.Convert.ToSingle(area / face3D.GetArea());
+                    proportion = System.Convert.ToSingle(area_Temp / face3D.GetArea());
                 }
 
                 if (proportion <= tolerance)
