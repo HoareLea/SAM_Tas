@@ -42,10 +42,17 @@ namespace SAM.Analytical.Tas
 
             foreach(DateTime dateTime in dateTimes)
             {
-                double sunExposureArea = solarFaceSimulationResult.GetSunExposureArea(dateTime);
-                if(double.IsNaN(sunExposureArea) || sunExposureArea == 0)
+                List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTime);
+                float proportion = 0;
+                if (face3Ds != null && face3Ds.Count != 0)
                 {
-                    continue;
+                    double area_Temp = face3Ds.ConvertAll(x => x.GetArea()).Sum();
+                    proportion = System.Convert.ToSingle(area / face3D.GetArea());
+                }
+
+                if (proportion <= tolerance)
+                {
+                    proportion = 0;
                 }
 
                 int dayIndex = dateTime.DayOfYear;
@@ -58,11 +65,8 @@ namespace SAM.Analytical.Tas
                     daysShades.Add(daysShade);
                 }
 
-                float proportion = System.Convert.ToSingle(Core.Query.Round(sunExposureArea / area, tolerance));
-                if(proportion <= tolerance)
-                {
-                    proportion = 0;
-                }
+               // float proportion = System.Convert.ToSingle(Core.Query.Round(sunExposureArea / area, tolerance));
+
 
                 TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour));
                 surfaceShade.proportion = proportion;
