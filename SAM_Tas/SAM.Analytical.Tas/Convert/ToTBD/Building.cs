@@ -151,12 +151,6 @@ namespace SAM.Analytical.Tas
                         roomSurface_Panel.area = zoneSurface_Panel.area;
                         roomSurface_Panel.zoneSurface = zoneSurface_Panel;
 
-                        Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult = analyticalModel.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel)?.FirstOrDefault();
-                        if(solarFaceSimulationResult != null)
-                        {
-                            List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(result, daysShades, zoneSurface_Panel, analyticalModel, solarFaceSimulationResult);
-                        }
-
                         Face3D face3D = panel.GetFace3D(true);
                         //if (panel.PanelGroup == PanelGroup.Roof)
                         //{
@@ -246,6 +240,8 @@ namespace SAM.Analytical.Tas
                         }
 
                         zoneSurface_Panel.type = TBD.SurfaceType.tbdExposed;
+
+                        Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult = analyticalModel.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel)?.FirstOrDefault();
 
                         List<Aperture> apertures = panel.Apertures;
                         if (apertures != null && apertures.Count != 0)
@@ -426,6 +422,11 @@ namespace SAM.Analytical.Tas
                                     }
                                 }
                             }
+                        }
+
+                        if (solarFaceSimulationResult != null)
+                        {
+                            List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(result, daysShades, zoneSurface_Panel, analyticalModel, solarFaceSimulationResult);
                         }
 
                         zoneSurface_Panel.type = Analytical.Query.Adiabatic(panel) ? TBD.SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
