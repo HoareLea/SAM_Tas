@@ -281,6 +281,11 @@ namespace SAM.Analytical.Tas
                                     return null;
                                 }
 
+                                if (solarFaceSimulationResult != null)
+                                {
+                                    List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(result, daysShades, zoneSurface_Aperture, face3D_ZoneSurface, solarFaceSimulationResult);
+                                }
+
                                 return zoneSurface_Aperture;
                             };
 

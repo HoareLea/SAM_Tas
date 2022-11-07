@@ -26,6 +26,16 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            return UpdateSurfaceShades(building, daysShades, zoneSurface, face3D, solarFaceSimulationResult, tolerance);
+        }
+
+        public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, Face3D face3D, Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
+        {
+            if (daysShades == null || face3D == null || solarFaceSimulationResult == null || zoneSurface == null)
+            {
+                return null;
+            }
+
             double area = face3D.GetArea();
             if (double.IsNaN(area) || area == 0)
             {
@@ -40,7 +50,7 @@ namespace SAM.Analytical.Tas
                 return result;
             }
 
-            foreach(DateTime dateTime in dateTimes)
+            foreach (DateTime dateTime in dateTimes)
             {
                 List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTime);
                 float proportion = 0;
@@ -58,14 +68,14 @@ namespace SAM.Analytical.Tas
                 int dayIndex = dateTime.DayOfYear;
 
                 TBD.DaysShade daysShade = daysShades.Find(x => x.day == dayIndex);
-                if(daysShade == null)
+                if (daysShade == null)
                 {
                     daysShade = building.AddDaysShade();
                     daysShade.day = dayIndex;
                     daysShades.Add(daysShade);
                 }
 
-               // float proportion = System.Convert.ToSingle(Core.Query.Round(sunExposureArea / area, tolerance));
+                // float proportion = System.Convert.ToSingle(Core.Query.Round(sunExposureArea / area, tolerance));
 
 
                 TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour));
@@ -77,7 +87,7 @@ namespace SAM.Analytical.Tas
 
             return result;
         }
-    
+
         public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
         {
             if (daysShades == null || solarFaceSimulationResult == null || zoneSurface == null)
