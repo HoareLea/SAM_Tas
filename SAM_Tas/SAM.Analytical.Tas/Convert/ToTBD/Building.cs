@@ -347,12 +347,14 @@ namespace SAM.Analytical.Tas
                                     TBD.buildingElement buildingElement_Aperture = buildingElements.Find(x => x.name == keyValuePair.Key);
                                     if (buildingElement_Aperture == null)
                                     {
+
+                                        AperturePart aperturePart = keyValuePair.Value.Item1;
+
                                         TBD.Construction construction_TBD = null;
 
                                         ApertureConstruction apertureConstruction = aperture.ApertureConstruction;
                                         if (apertureConstruction != null)
                                         {
-                                            AperturePart aperturePart = keyValuePair.Value.Item1;
                                             string constructionName= string.Format("{0} {1}", Query.Name(aperture.UniqueName(), false, true, false, false), aperturePart.Sufix());
 
                                             construction_TBD = constructions.Find(x => x.name == constructionName);
@@ -402,6 +404,21 @@ namespace SAM.Analytical.Tas
                                             buildingElement_Aperture.BEType = Query.BEType(keyValuePair.Value.Item1);
                                             buildingElement_Aperture.AssignConstruction(construction_TBD);
                                             buildingElements.Add(buildingElement_Aperture);
+                                        }
+
+                                        if (aperturePart == AperturePart.Pane && aperture.TryGetValue(ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
+                                        {
+                                            TBD.ApertureType apertureType = result.AddApertureType(null);
+                                            apertureType.name = keyValuePair.Key;
+
+                                            if (openingProperties.TryGetValue(OpeningPropertiesParameter.Description, out string description))
+                                            {
+                                                apertureType.description = description;
+                                            }
+
+                                            TBD.profile profile = apertureType.GetProfile();
+                                            profile.value = 1;
+
                                         }
                                     }
 
