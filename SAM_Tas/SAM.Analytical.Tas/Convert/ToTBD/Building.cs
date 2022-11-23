@@ -400,7 +400,7 @@ namespace SAM.Analytical.Tas
 
                                             buildingElement_Aperture = result.AddBuildingElement();
                                             buildingElement_Aperture.name = keyValuePair.Key;
-                                            if(aperture.TryGetValue(ApertureParameter.Color, out System.Drawing.Color color))
+                                            if(aperturePart == AperturePart.Pane && aperture.TryGetValue(ApertureParameter.Color, out System.Drawing.Color color))
                                             {
                                                 buildingElement_Aperture.colour = Core.Convert.ToUint(color);
                                             }
