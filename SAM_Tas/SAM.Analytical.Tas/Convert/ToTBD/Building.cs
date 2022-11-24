@@ -414,7 +414,7 @@ namespace SAM.Analytical.Tas
                                             AperturePart aperturePart_Temp = apertureType == ApertureType.Door ? AperturePart.Frame : aperturePart;
 
                                             System.Drawing.Color color = Analytical.Query.Color(apertureType, aperturePart_Temp, aperture.Openable());
-                                            if (aperture.TryGetValue(ApertureParameter.Color, out System.Drawing.Color color_Temp) && color_Temp != System.Drawing.Color.Empty)
+                                            if (aperturePart == AperturePart.Pane && aperture.TryGetValue(ApertureParameter.Color, out System.Drawing.Color color_Temp) && color_Temp != System.Drawing.Color.Empty)
                                             {
                                                 color = color_Temp;
                                             }
