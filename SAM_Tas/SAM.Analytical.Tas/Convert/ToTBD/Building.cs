@@ -59,7 +59,13 @@ namespace SAM.Analytical.Tas
 
                 TBD.zone zone = result.AddZone();
                 zone.name = space.Name;
-                zone.volume = System.Convert.ToSingle(shell.Volume());
+                double volume = shell.Volume();
+                if(double.IsNaN(volume))
+                {
+                    volume = space.GetValue<double>(Analytical.SpaceParameter.Volume);
+                }
+
+                zone.volume = System.Convert.ToSingle(volume);
 
                 if (space.TryGetValue(Analytical.SpaceParameter.Color, out SAMColor sAMColor) && sAMColor != null)
                 {
@@ -124,6 +130,10 @@ namespace SAM.Analytical.Tas
                             {
                                 inclination += 360;
                             }
+                        }
+                        else
+                        {
+                            inclination = Math.Min(inclination, 180 - inclination);
                         }
 
                         zoneSurface_Panel.inclination = inclination;
@@ -400,14 +410,16 @@ namespace SAM.Analytical.Tas
 
                                             buildingElement_Aperture = result.AddBuildingElement();
                                             buildingElement_Aperture.name = keyValuePair.Key;
-                                            if(aperturePart == AperturePart.Pane && aperture.TryGetValue(ApertureParameter.Color, out System.Drawing.Color color))
+
+                                            AperturePart aperturePart_Temp = apertureType == ApertureType.Door ? AperturePart.Frame : aperturePart;
+
+                                            System.Drawing.Color color = Analytical.Query.Color(apertureType, aperturePart_Temp, aperture.Openable());
+                                            if (aperture.TryGetValue(ApertureParameter.Color, out System.Drawing.Color color_Temp) && color_Temp != System.Drawing.Color.Empty)
                                             {
-                                                buildingElement_Aperture.colour = Core.Convert.ToUint(color);
+                                                color = color_Temp;
                                             }
-                                            else
-                                            {
-                                                buildingElement_Aperture.colour = Core.Convert.ToUint(Analytical.Query.Color(apertureType, keyValuePair.Value.Item1));
-                                            }
+
+                                            buildingElement_Aperture.colour = Core.Convert.ToUint(color);
 
                                             buildingElement_Aperture.BEType = Query.BEType(keyValuePair.Value.Item1);
                                             buildingElement_Aperture.AssignConstruction(construction_TBD);
