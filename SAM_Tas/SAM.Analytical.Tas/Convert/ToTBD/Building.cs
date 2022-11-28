@@ -47,7 +47,7 @@ namespace SAM.Analytical.Tas
             result.ClearShadingData();
 
             Dictionary<Guid, List<TBD.zoneSurface>> dictionary_Panel = new Dictionary<Guid, List<TBD.zoneSurface>>();
-            Dictionary<Guid, List<TBD.zoneSurface>> dictionary_Aperture = new Dictionary<Guid, List<TBD.zoneSurface>>();
+            Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface>>> dictionary_Aperture = new Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface>>>();
             foreach (Space space in spaces)
             {
                 Shell shell = adjacencyCluster.Shell(space);
@@ -469,13 +469,13 @@ namespace SAM.Analytical.Tas
                                             zoneSurface.buildingElement = buildingElement_Aperture;
                                         }
 
-                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<TBD.zoneSurface> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
+                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<Tuple<AperturePart, TBD.zoneSurface>> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
                                         {
-                                            zoneSurfaces_Aperture = new List<TBD.zoneSurface>();
+                                            zoneSurfaces_Aperture = new List<Tuple<AperturePart, TBD.zoneSurface>>();
                                             dictionary_Aperture[aperture.Guid] = zoneSurfaces_Aperture;
                                         }
 
-                                        zoneSurfaces_Aperture.Add(zoneSurface);
+                                        zoneSurfaces_Aperture.Add(new Tuple<AperturePart, TBD.zoneSurface>(keyValuePair.Value.Item1, zoneSurface));
                                     }
                                 }
                             }
@@ -542,43 +542,57 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            //foreach(KeyValuePair<Guid, List<TBD.zoneSurface>> keyValuePair in dictionary_Aperture)
-            //{
-            //    if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
-            //    {
-            //        continue;
-            //    }
+            foreach (KeyValuePair<Guid, List<Tuple<AperturePart, TBD.zoneSurface>>> keyValuePair in dictionary_Aperture)
+            {
+                if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
+                {
+                    continue;
+                }
 
-            //    keyValuePair.Value[1].linkSurface = keyValuePair.Value[0];
-            //    keyValuePair.Value[0].linkSurface = keyValuePair.Value[1];
+                List<TBD.zoneSurface> zoneSurfaces = null;
 
-            //    if (keyValuePair.Value[0].inclination == 0 || keyValuePair.Value[0].inclination == 180)
-            //    {
-            //        float inclination = keyValuePair.Value[0].inclination;
-            //        inclination -= 180;
-            //        if (inclination < 0)
-            //        {
-            //            inclination += 360;
-            //        }
-
-            //        keyValuePair.Value[0].inclination = inclination;
-            //        keyValuePair.Value[0].reversed = 1;
-            //    }
-            //    else
-            //    {
-            //        float orientation = keyValuePair.Value[1].orientation;
-            //        orientation += 180;
-            //        if (orientation >= 360)
-            //        {
-            //            orientation -= 360;
-            //        }
-
-            //        keyValuePair.Value[1].orientation = orientation;
-            //        keyValuePair.Value[1].reversed = 1;
+                zoneSurfaces = keyValuePair.Value.FindAll(x => x.Item1 == AperturePart.Frame).ConvertAll(x => x.Item2);
+                if(zoneSurfaces.Count == 2)
+                {
+                    zoneSurfaces[1].linkSurface = zoneSurfaces[0];
+                    zoneSurfaces[0].linkSurface = zoneSurfaces[1];
+                }
 
 
-            //    }
-            //}
+                zoneSurfaces = keyValuePair.Value.FindAll(x => x.Item1 == AperturePart.Pane).ConvertAll(x => x.Item2);
+                if (zoneSurfaces.Count == 2)
+                {
+                    zoneSurfaces[1].linkSurface = zoneSurfaces[0];
+                    zoneSurfaces[0].linkSurface = zoneSurfaces[1];
+                }
+
+                //if (keyValuePair.Value[0].inclination == 0 || keyValuePair.Value[0].inclination == 180)
+                //{
+                //    float inclination = keyValuePair.Value[0].inclination;
+                //    inclination -= 180;
+                //    if (inclination < 0)
+                //    {
+                //        inclination += 360;
+                //    }
+
+                //    keyValuePair.Value[0].inclination = inclination;
+                //    keyValuePair.Value[0].reversed = 1;
+                //}
+                //else
+                //{
+                //    float orientation = keyValuePair.Value[1].orientation;
+                //    orientation += 180;
+                //    if (orientation >= 360)
+                //    {
+                //        orientation -= 360;
+                //    }
+
+                //    keyValuePair.Value[1].orientation = orientation;
+                //    keyValuePair.Value[1].reversed = 1;
+
+
+                //}
+            }
 
             return result;
         }
