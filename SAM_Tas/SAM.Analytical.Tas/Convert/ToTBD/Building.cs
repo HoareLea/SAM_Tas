@@ -531,7 +531,7 @@ namespace SAM.Analytical.Tas
                     }
 
                     keyValuePair.Value[1].orientation = orientation;
-                    keyValuePair.Value[1].reversed = 1;
+                    //keyValuePair.Value[1].reversed = 1;
 
                     float inclination = keyValuePair.Value[1].inclination;
                     if (inclination > 180)
