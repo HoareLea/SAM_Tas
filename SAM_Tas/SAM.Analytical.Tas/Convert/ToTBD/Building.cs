@@ -47,7 +47,7 @@ namespace SAM.Analytical.Tas
             result.ClearShadingData();
 
             Dictionary<Guid, List<TBD.zoneSurface>> dictionary_Panel = new Dictionary<Guid, List<TBD.zoneSurface>>();
-            Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface>>> dictionary_Aperture = new Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface>>>();
+            Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface, bool>>> dictionary_Aperture = new Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface, bool>>>();
             foreach (Space space in spaces)
             {
                 Shell shell = adjacencyCluster.Shell(space);
@@ -162,6 +162,10 @@ namespace SAM.Analytical.Tas
                         roomSurface_Panel.zoneSurface = zoneSurface_Panel;
 
                         Face3D face3D = panel.GetFace3D(true);
+                        if (panel.PanelGroup != PanelGroup.Roof && dictionary_Panel.ContainsKey(panel.Guid))
+                        {
+                            face3D.FlipNormal(false);
+                        }
                         //if (panel.PanelGroup == PanelGroup.Roof)
                         //{
                         //    face3D.FlipNormal(false);
@@ -270,6 +274,7 @@ namespace SAM.Analytical.Tas
                                     return null;
                                 }
 ;
+                                //zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation; 
                                 zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
                                 zoneSurface_Aperture.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
                                 zoneSurface_Aperture.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
@@ -319,7 +324,12 @@ namespace SAM.Analytical.Tas
                                         dictionary[apertureName_Pane] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Pane, new List<TBD.zoneSurface>());
                                         foreach (Face3D face3D_Pane in face3Ds_Pane)
                                         {
-                                            face3D_Pane.FlipNormal(false);
+                                            //face3D_Pane.FlipNormal(false);
+                                            //Face3D face3D_Pane_Temp = Geometry.Spatial.Query.Normalize<Face3D>(face3D_Pane, Geometry.Orientation.Clockwise);
+                                            //if (panel.PanelGroup != PanelGroup.Roof && dictionary_Panel.ContainsKey(panel.Guid))
+                                            //{
+                                            //    face3D_Pane.FlipNormal(false);
+                                            //}
 
                                             TBD.zoneSurface zoneSurface = func.Invoke(face3D_Pane);
                                             if (zoneSurface != null)
@@ -341,6 +351,11 @@ namespace SAM.Analytical.Tas
                                         foreach (Face3D face3D_Frame in face3Ds_Frame)
                                         {
                                             //face3D_Frame.FlipNormal(false);
+
+                                            //if (panel.PanelGroup != PanelGroup.Roof && dictionary_Panel.ContainsKey(panel.Guid))
+                                            //{
+                                            //    face3D_Frame.FlipNormal(false);
+                                            //}
 
                                             TBD.zoneSurface zoneSurface = func.Invoke(face3D_Frame);
                                             if (zoneSurface != null)
@@ -469,13 +484,13 @@ namespace SAM.Analytical.Tas
                                             zoneSurface.buildingElement = buildingElement_Aperture;
                                         }
 
-                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<Tuple<AperturePart, TBD.zoneSurface>> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
+                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<Tuple<AperturePart, TBD.zoneSurface, bool>> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
                                         {
-                                            zoneSurfaces_Aperture = new List<Tuple<AperturePart, TBD.zoneSurface>>();
+                                            zoneSurfaces_Aperture = new List<Tuple<AperturePart, TBD.zoneSurface, bool>>();
                                             dictionary_Aperture[aperture.Guid] = zoneSurfaces_Aperture;
                                         }
 
-                                        zoneSurfaces_Aperture.Add(new Tuple<AperturePart, TBD.zoneSurface>(keyValuePair.Value.Item1, zoneSurface));
+                                        zoneSurfaces_Aperture.Add(new Tuple<AperturePart, TBD.zoneSurface, bool>(keyValuePair.Value.Item1, zoneSurface, dictionary_Panel.ContainsKey(panel.Guid)));
                                     }
                                 }
                             }
@@ -519,6 +534,9 @@ namespace SAM.Analytical.Tas
                     //}
 
                     //keyValuePair.Value[1].inclination = inclination;
+                    
+                    //keyValuePair.Value[1].reversed = 1;
+                    keyValuePair.Value[0].reversed = 1;//MD turn off to test if internal floors are correct
                     keyValuePair.Value[1].reversed = 1;
                 }
                 else
@@ -531,7 +549,7 @@ namespace SAM.Analytical.Tas
                     }
 
                     keyValuePair.Value[1].orientation = orientation;
-                    //keyValuePair.Value[1].reversed = 1;
+                    keyValuePair.Value[1].reversed = 1;
 
                     float inclination = keyValuePair.Value[1].inclination;
                     if (inclination > 180)
@@ -542,7 +560,7 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            foreach (KeyValuePair<Guid, List<Tuple<AperturePart, TBD.zoneSurface>>> keyValuePair in dictionary_Aperture)
+            foreach (KeyValuePair<Guid, List<Tuple<AperturePart, TBD.zoneSurface, bool>>> keyValuePair in dictionary_Aperture)
             {
                 if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
                 {
@@ -564,6 +582,24 @@ namespace SAM.Analytical.Tas
                 {
                     zoneSurfaces[1].linkSurface = zoneSurfaces[0];
                     zoneSurfaces[0].linkSurface = zoneSurfaces[1];
+                }
+
+                foreach (Tuple<AperturePart, TBD.zoneSurface, bool> tuple in keyValuePair.Value)
+                {
+                    if(!tuple.Item3)
+                    {
+                        continue;
+                    }
+
+                    float orientation = tuple.Item2.orientation;
+                    orientation += 180;
+                    if (orientation >= 360)
+                    {
+                        orientation -= 360;
+                    }
+                    tuple.Item2.orientation = orientation;
+
+                    tuple.Item2.reversed = 1;
                 }
 
                 //if (keyValuePair.Value[0].inclination == 0 || keyValuePair.Value[0].inclination == 180)
