@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas
                 name_Temp = buildingElement.name;
             }
 
-            if(string.IsNullOrWhiteSpace(name))
+            if(string.IsNullOrWhiteSpace(name_Temp))
             {
                 return null;
             }
