@@ -467,34 +467,36 @@ namespace SAM.Analytical.Tas
 
                                         if (aperturePart == AperturePart.Pane && aperture.TryGetValue(ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
                                         {
-                                            TBD.ApertureType apertureType = result.AddApertureType(null);
-                                            apertureType.name = keyValuePair.Key;
+                                            TBD.ApertureType apertureType = Modify.SetApertureType(result, buildingElement_Aperture, openingProperties);
 
-                                            if (openingProperties.TryGetValue(OpeningPropertiesParameter.Description, out string description))
-                                            {
-                                                apertureType.description = description;
-                                            }
+                                            //TBD.ApertureType apertureType = result.AddApertureType(null);
+                                            //apertureType.name = keyValuePair.Key;
 
-                                            apertureType.dischargeCoefficient = (float)openingProperties.GetDischargeCoefficient();
+                                            //if (openingProperties.TryGetValue(OpeningPropertiesParameter.Description, out string description))
+                                            //{
+                                            //    apertureType.description = description;
+                                            //}
 
-                                            TBD.profile profile = apertureType.GetProfile();
-                                            profile.value = 1;
+                                            //apertureType.dischargeCoefficient = (float)openingProperties.GetDischargeCoefficient();
 
-                                            if(openingProperties.TryGetValue(OpeningPropertiesParameter.Function, out string function))
-                                            {
-                                                profile.type = TBD.ProfileTypes.ticFunctionProfile;
-                                                profile.function = function;
-                                            }
+                                            //TBD.profile profile = apertureType.GetProfile();
+                                            //profile.value = 1;
 
-                                            List<TBD.dayType> dayTypes = result.DayTypes();
-                                            if (dayTypes != null)
-                                            {
-                                                dayTypes.RemoveAll(x => x.name.Equals("HDD") || x.name.Equals("CDD"));
-                                                foreach (TBD.dayType dayType in dayTypes)
-                                                    apertureType.SetDayType(dayType, true);
-                                            }
+                                            //if(openingProperties.TryGetValue(OpeningPropertiesParameter.Function, out string function))
+                                            //{
+                                            //    profile.type = TBD.ProfileTypes.ticFunctionProfile;
+                                            //    profile.function = function;
+                                            //}
 
-                                            buildingElement_Aperture.AssignApertureType(apertureType);
+                                            //List<TBD.dayType> dayTypes = result.DayTypes();
+                                            //if (dayTypes != null)
+                                            //{
+                                            //    dayTypes.RemoveAll(x => x.name.Equals("HDD") || x.name.Equals("CDD"));
+                                            //    foreach (TBD.dayType dayType in dayTypes)
+                                            //        apertureType.SetDayType(dayType, true);
+                                            //}
+
+                                            //buildingElement_Aperture.AssignApertureType(apertureType);
 
                                         }
                                     }

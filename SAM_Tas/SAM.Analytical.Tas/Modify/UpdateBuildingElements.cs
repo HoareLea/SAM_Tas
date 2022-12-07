@@ -128,6 +128,8 @@ namespace SAM.Analytical.Tas
 
                     if(aperturePart != AperturePart.Undefined)
                     {
+                        
+                        
                         if (aperture != null)
                         {
                             buildingElement.SetColor(aperture, aperturePart);
@@ -136,6 +138,11 @@ namespace SAM.Analytical.Tas
                         {
                             buildingElement.colour = Core.Convert.ToUint(Analytical.Query.Color(ApertureType.Window, aperturePart));
                         }
+                    }
+
+                    if(aperture != null && aperturePart == AperturePart.Pane && aperture.TryGetValue(ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
+                    {
+                        TBD.ApertureType apertureType = SetApertureType(building, buildingElement, openingProperties);
                     }
                 }
 

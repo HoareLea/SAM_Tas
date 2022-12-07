@@ -1,4 +1,6 @@
-﻿namespace SAM.Analytical.Tas
+﻿using System.Collections.Generic;
+
+namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
@@ -17,6 +19,20 @@
             }
 
             return Analytical.ApertureType.Undefined;
+        }
+
+        public static TBD.ApertureType ApertureType(this TBD.buildingElement buildingElement, string name)
+        {
+            List<TBD.ApertureType> apertureTypes = buildingElement.ApertureTypes();
+
+            return apertureTypes?.Find(x => x.name == name);
+        }
+
+        public static TBD.ApertureType ApertureType(this TBD.Building building, string name)
+        {
+            List<TBD.ApertureType> apertureTypes = building.ApertureTypes();
+
+            return apertureTypes?.Find(x => x.name == name);
         }
     }
 }
