@@ -122,7 +122,6 @@ namespace SAM.Analytical.Tas
                             System.Drawing.Color color = global::System.Drawing.Color.Empty;
                             if (construction.TryGetValue(ConstructionParameter.Color, out color))
                                 element.colour = Core.Convert.ToUint(color);
-                                
 
                             //Transparent
                             bool transparent = false;
@@ -235,14 +234,26 @@ namespace SAM.Analytical.Tas
                             if (apertureConstruction == null)
                                 continue;
 
+                            Aperture aperture = null;
+                            if (UniqueNameDecomposition(window.name, out string prefix, out string name, out System.Guid? guid, out int id) && guid != null && guid.HasValue)
+                            {
+                                aperture = adjacencyCluster.GetAperture(guid.Value);
+                            }
+
                             //Colour
-                            System.Drawing.Color color = global::System.Drawing.Color.Empty;
-                            if (!apertureConstruction.TryGetValue(ApertureConstructionParameter.Color, out color))
-                                color = Analytical.Query.Color(apertureConstruction.ApertureType);
+                            if (aperture != null)
+                            {
+                                window.SetColor(aperture, AperturePart.Pane);
+                            }
+                            else
+                            {
+                                System.Drawing.Color color = global::System.Drawing.Color.Empty;
+                                if (!apertureConstruction.TryGetValue(ApertureConstructionParameter.Color, out color))
+                                    color = Analytical.Query.Color(apertureConstruction.ApertureType);
 
-                            if (color != global::System.Drawing.Color.Empty)
-                                window.colour = Core.Convert.ToUint(color);
-
+                                if (color != global::System.Drawing.Color.Empty)
+                                    window.colour = Core.Convert.ToUint(color);
+                            }
 
                             //Transparent
                             List<ConstructionLayer> constructionLayers = apertureConstruction.PaneConstructionLayers;
@@ -296,19 +307,11 @@ namespace SAM.Analytical.Tas
                                 window.frameWidth = frameWidth;
                             }
 
-                            if(UniqueNameDecomposition(window.name, out string prefix, out string name, out System.Guid? guid, out int id ))
+                            if (aperture != null)
                             {
-                                if(guid  != null && guid.HasValue)
-                                {
-                                    Aperture aperture = adjacencyCluster.GetAperture(guid.Value);
-                                    if(aperture != null)
-                                    {
-                                        double frameFactor = aperture.GetFrameFactor();
-                                        window.isPercFrame = true;
-                                        window.framePerc = frameFactor * 100;
-                                    }
-
-                                }
+                                double frameFactor = aperture.GetFrameFactor();
+                                window.isPercFrame = true;
+                                window.framePerc = frameFactor * 100;
                             }
 
                         }

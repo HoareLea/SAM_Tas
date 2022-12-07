@@ -23,6 +23,16 @@ namespace SAM.Analytical.Tas
                         values.RemoveAt(values.Count - 1);
                         name = string.Join(" ", values)?.Trim();
                     }
+                    else if(values.Count > 2)
+                    {
+                        if (global::System.Guid.TryParse(values[values.Count - 2], out guid_Temp))
+                        {
+                            guid = guid_Temp;
+                            values.RemoveAt(values.Count - 1);
+                            values.RemoveAt(values.Count - 1);
+                            name = string.Join(" ", values)?.Trim();
+                        }
+                    }
                 }
             }
 

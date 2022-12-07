@@ -105,16 +105,41 @@ namespace SAM.Analytical.Tas
                 if (construction == null)
                     continue;
 
-                switch((TBD.BuildingElementType)buildingElement.BEType)
+                TBD.BuildingElementType buildingElementType = (TBD.BuildingElementType)buildingElement.BEType;
+                if(buildingElementType == TBD.BuildingElementType.GLAZING || buildingElementType == TBD.BuildingElementType.FRAMEELEMENT)
                 {
-                    case TBD.BuildingElementType.GLAZING:
-                        buildingElement.colour = Core.Convert.ToUint(Analytical.Query.Color(ApertureType.Window, AperturePart.Pane));
-                        break;
+                    Aperture aperture = null;
+                    if(Query.UniqueNameDecomposition(buildingElement.name, out string prefix, out string name_Temp, out System.Guid? guid, out int id) && guid != null && guid.HasValue)
+                    {
+                        aperture = analyticalModel.AdjacencyCluster.GetAperture(guid.Value);
+                    }
 
-                    case TBD.BuildingElementType.FRAMEELEMENT:
-                        buildingElement.colour = Core.Convert.ToUint(Analytical.Query.Color(ApertureType.Window, AperturePart.Frame));
-                        break;
+                    AperturePart aperturePart = AperturePart.Undefined;
+                    switch (buildingElementType)
+                    {
+                        case TBD.BuildingElementType.GLAZING:
+                            aperturePart = AperturePart.Pane;
+                            break;
+
+                        case TBD.BuildingElementType.FRAMEELEMENT:
+                            aperturePart = AperturePart.Frame;
+                            break;
+                    }
+
+                    if(aperturePart != AperturePart.Undefined)
+                    {
+                        if (aperture != null)
+                        {
+                            buildingElement.SetColor(aperture, aperturePart);
+                        }
+                        else
+                        {
+                            buildingElement.colour = Core.Convert.ToUint(Analytical.Query.Color(ApertureType.Window, aperturePart));
+                        }
+                    }
                 }
+
+
 
                 buildingElement.AssignConstruction(construction);
             }
