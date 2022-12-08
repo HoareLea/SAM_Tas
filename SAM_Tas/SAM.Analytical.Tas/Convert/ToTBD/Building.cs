@@ -182,8 +182,17 @@ namespace SAM.Analytical.Tas
                             Vector3D vector3D_2 = face3D.GetPlane().Normal;
                             if(!vector3D_1.SameHalf(vector3D_2))
                             {
+
                                 face3D.FlipNormal(false);
                                 //face3D.Normalize(Geometry.Orientation.Clockwise);
+                            }
+
+                            vector3D_1 *= 0.01;
+                            Point3D point3D = face3D.GetInternalPoint3D();
+                            point3D.Move(vector3D_1);
+                            if (!shell.Inside(point3D))
+                            {
+                                face3D.FlipNormal(false);
                             }
                         }
                         
@@ -570,7 +579,7 @@ namespace SAM.Analytical.Tas
                 keyValuePair.Value[1].Item1.linkSurface = keyValuePair.Value[0].Item1;
                 keyValuePair.Value[0].Item1.linkSurface = keyValuePair.Value[1].Item1;
 
-                //Panel panel = adjacencyCluster.GetObject<Panel>(keyValuePair.Key);
+                Panel panel = adjacencyCluster.GetObject<Panel>(keyValuePair.Key);
                 //if(panel != null && panel.PanelGroup == PanelGroup.Floor)
                 //{
                 //    float inclination = keyValuePair.Value[0].Item1.inclination;
@@ -582,7 +591,6 @@ namespace SAM.Analytical.Tas
                 //    keyValuePair.Value[0].Item1.inclination = inclination;
                 //    keyValuePair.Value[1].Item1.inclination = inclination;
                 //}
-
 
                 if (keyValuePair.Value[0].Item1.inclination == 0 || keyValuePair.Value[0].Item1.inclination == 180)
                 {
@@ -622,7 +630,19 @@ namespace SAM.Analytical.Tas
                     }
 
                     keyValuePair.Value[1].Item1.orientation = orientation;
-                    keyValuePair.Value[1].Item1.reversed = 1;
+
+                    List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
+                    bool adjacent = spaces_Adjacent != null && spaces_Adjacent.Count > 1;
+
+                    if (panel.PanelGroup == PanelGroup.Floor && adjacent)
+                    {
+                        //reverse only one that are outside when test if in shell
+                        keyValuePair.Value[0].Item1.reversed = 1;
+                    }
+                    else
+                    {
+                        keyValuePair.Value[1].Item1.reversed = 1;
+                    }
 
                     float inclination = keyValuePair.Value[1].Item1.inclination;
                     if (inclination > 180)
