@@ -46,7 +46,7 @@ namespace SAM.Analytical.Tas
             List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
             result.ClearShadingData();
 
-            Dictionary<Guid, List<Tuple<TBD.zoneSurface, double>>> dictionary_Panel = new Dictionary<Guid, List<Tuple<TBD.zoneSurface, double>>>();
+            Dictionary<Guid, List<Tuple<TBD.zoneSurface, bool>>> dictionary_Panel = new Dictionary<Guid, List<Tuple<TBD.zoneSurface, bool>>>();
             Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface, bool>>> dictionary_Aperture = new Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface, bool>>>();
             foreach (Space space in spaces)
             {
@@ -175,6 +175,7 @@ namespace SAM.Analytical.Tas
 
 
                         List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
+                        bool reverse = false;
                         //if (panel.PanelGroup != PanelGroup.Roof && dictionary_Panel.ContainsKey(panel.Guid))
                         if(panel.PanelGroup == PanelGroup.Floor && spaces_Adjacent != null && spaces_Adjacent.Count > 1)
                         {
@@ -193,6 +194,7 @@ namespace SAM.Analytical.Tas
                             if (!shell.Inside(point3D))
                             {
                                 face3D.FlipNormal(false);
+                                reverse = true;
                             }
                         }
                         
@@ -558,18 +560,18 @@ namespace SAM.Analytical.Tas
 
                         zoneSurface_Panel.type = Analytical.Query.Adiabatic(panel) ? TBD.SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
 
-                        if (!dictionary_Panel.TryGetValue(panel.Guid, out List<Tuple<TBD.zoneSurface, double>> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
+                        if (!dictionary_Panel.TryGetValue(panel.Guid, out List<Tuple<TBD.zoneSurface, bool>> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
                         {
-                            zoneSurfaces_Panel = new List<Tuple<TBD.zoneSurface, double>>();
+                            zoneSurfaces_Panel = new List<Tuple<TBD.zoneSurface, bool>>();
                             dictionary_Panel[panel.Guid] = zoneSurfaces_Panel;
                         }
 
-                        zoneSurfaces_Panel.Add(new Tuple<TBD.zoneSurface, double>( zoneSurface_Panel, boundingBox3D.Min.Z));
+                        zoneSurfaces_Panel.Add(new Tuple<TBD.zoneSurface, bool>( zoneSurface_Panel, reverse));
                     }
                 }
             }
 
-            foreach (KeyValuePair<Guid, List<Tuple<TBD.zoneSurface, double>>> keyValuePair in dictionary_Panel)
+            foreach (KeyValuePair<Guid, List<Tuple<TBD.zoneSurface, bool>>> keyValuePair in dictionary_Panel)
             {
                 if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
                 {
@@ -613,9 +615,9 @@ namespace SAM.Analytical.Tas
                     //}
 
 
-                    List<Tuple<TBD.zoneSurface, double>> tuples = new List<Tuple<TBD.zoneSurface, double>>(keyValuePair.Value);
+                    //List<Tuple<TBD.zoneSurface, bool>> tuples = new List<Tuple<TBD.zoneSurface, bool>>(keyValuePair.Value);
                     //tuples.Sort((x, y) => x.Item2.CompareTo(y.Item2));
-                    tuples.Last().Item1.reversed = 1;
+                    keyValuePair.Value.Last().Item1.reversed = 1;
 
                     //keyValuePair.Value[0].Item1.reversed = 1;//MD turn off to test if internal floors are correct
                     //keyValuePair.Value[1].Item1.reversed = 1;
@@ -634,7 +636,9 @@ namespace SAM.Analytical.Tas
                     List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
                     bool adjacent = spaces_Adjacent != null && spaces_Adjacent.Count > 1;
 
-                    if (panel.PanelGroup == PanelGroup.Floor && adjacent)
+                    bool reverse = keyValuePair.Value[0].Item2;
+
+                    if (panel.PanelGroup == PanelGroup.Floor && adjacent && reverse)
                     {
                         //reverse only one that are outside when test if in shell
                         keyValuePair.Value[0].Item1.reversed = 1;
