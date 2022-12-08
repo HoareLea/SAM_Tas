@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas
             {
                 return result;
             }
-
+            
             MaterialLibrary materialLibrary = analyticalModel.MaterialLibrary;
 
             Plane plane = Plane.WorldXY;
@@ -167,13 +167,35 @@ namespace SAM.Analytical.Tas
                         roomSurface_Panel.zoneSurface = zoneSurface_Panel;
 
                         Face3D face3D = panel.GetFace3D(true);
-                        if (panel.PanelGroup != PanelGroup.Roof && dictionary_Panel.ContainsKey(panel.Guid))
+                        List<Face3D> face3Ds_FixEdges = face3D.FixEdges();
+                        if(face3Ds_FixEdges != null && face3Ds_FixEdges.Count != 0)
                         {
+                            face3D = face3Ds_FixEdges[0];
+                        }
+
+
+                        List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
+                        //if (panel.PanelGroup != PanelGroup.Roof && dictionary_Panel.ContainsKey(panel.Guid))
+                        if(panel.PanelGroup == PanelGroup.Floor && spaces_Adjacent != null && spaces_Adjacent.Count > 1)
+                        {
+                            Vector3D vector3D_1 = Vector3D.WorldZ.GetNegated();
+                            Vector3D vector3D_2 = face3D.GetPlane().Normal;
+                            if(!vector3D_1.SameHalf(vector3D_2))
+                            {
+                                face3D.FlipNormal(false);
+                                //face3D.Normalize(Geometry.Orientation.Clockwise);
+                            }
+                        }
+                        
+                        if(dictionary_Panel.ContainsKey(panel.Guid))
+                        {
+                            //face3D.SimplifyByNTS_TopologyPreservingSimplifier();
                             face3D.FlipNormal(false);
-                            face3D.Normalize(Geometry.Orientation.Clockwise);
                         }
 
                         face3D.Normalize(Geometry.Orientation.Clockwise);
+
+                        //face3D.Normalize(Geometry.Orientation.Clockwise);
                         //if (panel.PanelGroup == PanelGroup.Roof)
                         //{
                         //    face3D.FlipNormal(false);
@@ -584,7 +606,7 @@ namespace SAM.Analytical.Tas
 
 
                     List<Tuple<TBD.zoneSurface, double>> tuples = new List<Tuple<TBD.zoneSurface, double>>(keyValuePair.Value);
-                    tuples.Sort((x, y) => x.Item2.CompareTo(y.Item2));
+                    //tuples.Sort((x, y) => x.Item2.CompareTo(y.Item2));
                     tuples.Last().Item1.reversed = 1;
 
                     //keyValuePair.Value[0].Item1.reversed = 1;//MD turn off to test if internal floors are correct
