@@ -135,11 +135,12 @@ namespace SAM.Analytical.Tas
                             inclination = Math.Min(inclination, 180 - inclination);
                         }
 
-                        PanelGroup panelGroup = panel.PanelGroup;
-                        if (inclination != 0 && inclination != 180 && panelGroup == PanelGroup.Floor)
-                        {
-                            inclination = 180 - inclination;
-                        }
+                        //it should be dependant on normal
+                        //PanelGroup panelGroup = panel.PanelGroup;
+                        //if (inclination != 0 && inclination != 180 && panelGroup == PanelGroup.Floor)
+                        //{
+                        //    inclination = 180 - inclination;
+                        //}
 
                         zoneSurface_Panel.inclination = inclination;
                         
@@ -173,6 +174,12 @@ namespace SAM.Analytical.Tas
                             face3D = face3Ds_FixEdges[0];
                         }
 
+                        if (dictionary_Panel.ContainsKey(panel.Guid))
+                        {
+                            //face3D.SimplifyByNTS_TopologyPreservingSimplifier();
+                            face3D.FlipNormal(false);
+                        }
+
 
                         List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
                         bool reverse = false;
@@ -196,12 +203,6 @@ namespace SAM.Analytical.Tas
                                 face3D.FlipNormal(false);
                                 reverse = true;
                             }
-                        }
-                        
-                        if(dictionary_Panel.ContainsKey(panel.Guid))
-                        {
-                            //face3D.SimplifyByNTS_TopologyPreservingSimplifier();
-                            face3D.FlipNormal(false);
                         }
 
                         face3D.Normalize(Geometry.Orientation.Clockwise);
@@ -582,45 +583,25 @@ namespace SAM.Analytical.Tas
                 keyValuePair.Value[0].Item1.linkSurface = keyValuePair.Value[1].Item1;
 
                 Panel panel = adjacencyCluster.GetObject<Panel>(keyValuePair.Key);
-                //if(panel != null && panel.PanelGroup == PanelGroup.Floor)
-                //{
-                //    float inclination = keyValuePair.Value[0].Item1.inclination;
-                //    if (inclination < 90)
-                //    {
-                //        inclination += 90;
-                //    }
 
-                //    keyValuePair.Value[0].Item1.inclination = inclination;
-                //    keyValuePair.Value[1].Item1.inclination = inclination;
-                //}
+                bool reverse_1 = keyValuePair.Value[0].Item2;
+                bool reverse_2 = keyValuePair.Value[1].Item2;
 
                 if (keyValuePair.Value[0].Item1.inclination == 0 || keyValuePair.Value[0].Item1.inclination == 180)
                 {
-
-
-                    //float inclination = keyValuePair.Value[1].inclination;
-                    //inclination -= 180;
-                    //if (inclination < 0)
-                    //{
-                    //    inclination += 360;
-                    //}
-
-                    //keyValuePair.Value[1].inclination = inclination;
-
-                    //keyValuePair.Value[1].reversed = 1;
-
-                    //for(int i = 0; i < tuples.Count - 1; i++)
-                    //{
-                    //    tuples[i].Item1.reversed = 1;
-                    //}
-
-
-                    //List<Tuple<TBD.zoneSurface, bool>> tuples = new List<Tuple<TBD.zoneSurface, bool>>(keyValuePair.Value);
-                    //tuples.Sort((x, y) => x.Item2.CompareTo(y.Item2));
-                    keyValuePair.Value.Last().Item1.reversed = 1;
-
-                    //keyValuePair.Value[0].Item1.reversed = 1;//MD turn off to test if internal floors are correct
-                    //keyValuePair.Value[1].Item1.reversed = 1;
+                    if (reverse_1)
+                    {
+                        keyValuePair.Value[0].Item1.reversed = 1;
+                    }
+                    if (reverse_2)
+                    {
+                        //reverse only one that are outside when test if in shell
+                        keyValuePair.Value[1].Item1.reversed = 1;
+                    }
+                    if(!reverse_1 && !reverse_2)
+                    {
+                        keyValuePair.Value.Last().Item1.reversed = 1;
+                    }
                 }
                 else
                 {
@@ -636,12 +617,24 @@ namespace SAM.Analytical.Tas
                     List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
                     bool adjacent = spaces_Adjacent != null && spaces_Adjacent.Count > 1;
 
-                    bool reverse = keyValuePair.Value[0].Item2;
 
-                    if (panel.PanelGroup == PanelGroup.Floor && adjacent && reverse)
+
+                    if (panel.PanelGroup == PanelGroup.Floor && adjacent)
                     {
-                        //reverse only one that are outside when test if in shell
-                        keyValuePair.Value[0].Item1.reversed = 1;
+                        keyValuePair.Value[1].Item1.inclination = System.Math.Abs(180 - keyValuePair.Value[1].Item1.inclination);
+
+                        if (reverse_1)
+                        {
+                            //reverse only one that are outside when test if in shell
+                            keyValuePair.Value[0].Item1.reversed = 1;
+                        }
+
+
+                        if (reverse_2)
+                        {
+                            //reverse only one that are outside when test if in shell
+                            keyValuePair.Value[1].Item1.reversed = 1;
+                        }
                     }
                     else
                     {
@@ -649,7 +642,7 @@ namespace SAM.Analytical.Tas
                     }
 
                     float inclination = keyValuePair.Value[1].Item1.inclination;
-                    if (inclination > 180)
+                    while (inclination > 180)
                     {
                         inclination -= 180;
                     }
