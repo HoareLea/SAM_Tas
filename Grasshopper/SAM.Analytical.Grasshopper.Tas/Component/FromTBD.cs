@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -44,6 +44,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_pathTasTBD", "_pathTasTBD", "The string path to a TasTBD file.", GH_ParamAccess.item);
+            inputParamManager.AddBooleanParameter("_importUnused_", "_importUnused_", "Import Unused IC", GH_ParamAccess.item, false);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -62,10 +63,10 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            dataAccess.SetData(1, false);
+            dataAccess.SetData(2, false);
 
             bool run = false;
-            if (!dataAccess.GetData(1, ref run))
+            if (!dataAccess.GetData(2, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -80,9 +81,20 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            AnalyticalModel analyticalModel = null;
+            bool importUnused = false;
+            if (!dataAccess.GetData(1, ref importUnused))
+            {
+                importUnused = false;
+            }
+
+                AnalyticalModel analyticalModel = null;
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
+                if (!importUnused)
+                {
+                    Analytical.Tas.Modify.RemoveUnusedInternalConditions(sAMTBDDocument?.TBDDocument?.Building);
+                }
+
                 analyticalModel = Analytical.Tas.Convert.ToSAM(sAMTBDDocument);
             }
             dataAccess.SetData(0, analyticalModel);
