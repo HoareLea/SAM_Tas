@@ -21,6 +21,7 @@
                         material.width, 
                         material.vapourDiffusionFactor, 
                         double.NaN);
+                    result.SetValue(GasMaterialParameter.HeatTransferCoefficient, material.convectionCoefficient);
                     break;
 
                 case TBD.MaterialTypes.tcdOpaqueLayer:
