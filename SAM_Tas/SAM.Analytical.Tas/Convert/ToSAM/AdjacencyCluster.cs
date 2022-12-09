@@ -114,6 +114,9 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
+                    //Add link surface for internal Panels
+                    //zoneSurface.linkSurface
+
                     PanelType panelType = Query.PanelType(buildingElement.BEType);
                     if (panelType == PanelType.Undefined)
                     {

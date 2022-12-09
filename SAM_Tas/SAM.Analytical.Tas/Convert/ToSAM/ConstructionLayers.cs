@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas
                 for (int i = 0; i < materials.Count; i++)
                 {
                     TBD.material material = materials[i];
-                    double thickness = construction.materialWidth[i];
+                    double thickness = construction.materialWidth[i + 1];
 
                     constructionLayers.Add(new ConstructionLayer(material.name, thickness));
                 }
