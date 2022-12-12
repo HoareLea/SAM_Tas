@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TSD;
 using SAM.Geometry.Spatial;
 using System.Linq;
+using System;
 
 namespace SAM.Analytical.Tas
 {
@@ -90,8 +91,13 @@ namespace SAM.Analytical.Tas
             Dictionary<string, Construction> dictionary_Construction = new Dictionary<string, Construction>();
             List<ApertureConstruction> apertureConstructions = new List<ApertureConstruction>();
 
+            //double groundElevation = 0;
+
             Dictionary<string, Space> dictionary_Space = new Dictionary<string, Space>();
-            
+            Dictionary<string, List<Panel>> dictionary_Panel = new Dictionary<string, List<Panel>>();
+
+            //Dictionary<string, List<Tuple<string, string>>> dictionary_Relations = new Dictionary<string, List<Tuple<string, string>>>(); 
+
             foreach (TBD.zone zone in building.Zones())
             {
                 Space space = zone.ToSAM(out List<InternalCondition> internalConditions);
@@ -101,6 +107,9 @@ namespace SAM.Analytical.Tas
                 }
 
                 space.SetValue(SpaceParameter.ZoneGuid, zone.GUID);
+
+                //List<Tuple<string, string>> tuples_Relations = new List<Tuple<string, string>>();
+                //dictionary_Relations[zone.GUID] = tuples_Relations;
 
                 adjacencyCluster.AddObject(space);
 
@@ -112,7 +121,6 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                Dictionary<string, List<Panel>> dictionary_Panel = new Dictionary<string, List<Panel>>();
                 foreach(TBD.IZoneSurface zoneSurface in zoneSurfaces)
                 {
                     TBD.buildingElement buildingElement = zoneSurface.buildingElement;
@@ -120,6 +128,8 @@ namespace SAM.Analytical.Tas
                     {
                         continue;
                     }
+
+                    //tuples_Relations.Add(new Tuple<string, string>(zoneSurface?.GUID, zoneSurface?.linkSurface?.GUID));
 
                     //Add link surface for internal Panels
                     //zoneSurface.linkSurface
@@ -129,6 +139,8 @@ namespace SAM.Analytical.Tas
                     {
                         continue;
                     }
+
+                    //bool ground = Analytical.Query.Ground(panelType);
 
                     TBD.Construction construction_TBD = buildingElement.GetConstruction();
 
@@ -147,6 +159,8 @@ namespace SAM.Analytical.Tas
                         dictionary_Panel.TryGetValue(zoneSurface_Link.GUID, out panels_Link);
                     }
 
+                    bool adiabatic = zoneSurface.type == TBD.SurfaceType.tbdNullLink;
+
                     foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
                     {
                         Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
@@ -156,6 +170,11 @@ namespace SAM.Analytical.Tas
                         }
 
                         Face3D face3D = new Face3D(polygon3D);
+
+                        //if(ground)
+                        //{
+                        //    groundElevation = Math.Max(groundElevation, face3D.GetBoundingBox().Max.Z);
+                        //}
 
                         Panel panel = null;
                         if (panels_Link != null && panels_Link.Count != 0)
@@ -173,6 +192,11 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
+                        if(adiabatic)
+                        {
+                            panel.SetValue(Analytical.PanelParameter.Adiabatic, true);
+                        }
+
                         panel.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface.GUID);
 
                         adjacencyCluster.AddObject(panel);
@@ -188,7 +212,7 @@ namespace SAM.Analytical.Tas
 
                         if (zoneSurface_Link != null)
                         {
-                            if (dictionary_Space.TryGetValue(zoneSurface_Link.GUID, out Space space_Link))
+                            if (dictionary_Space.TryGetValue(zoneSurface_Link.zone.GUID, out Space space_Link))
                             {
                                 adjacencyCluster.AddRelation(panel, space_Link);
                             }
@@ -197,7 +221,7 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
-                Dictionary<System.Guid, List<Polygon3D>> dictionary = new Dictionary<System.Guid, List<Polygon3D>>();
+                Dictionary<Guid, List<Polygon3D>> dictionary = new Dictionary<Guid, List<Polygon3D>>();
 
                 foreach(TBD.IZoneSurface zoneSurface in zoneSurfaces)
                 {
@@ -274,7 +298,7 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
-                foreach (KeyValuePair<System.Guid, List<Polygon3D>> keyValuePair in dictionary)
+                foreach (KeyValuePair<Guid, List<Polygon3D>> keyValuePair in dictionary)
                 {
                     if(keyValuePair.Value == null || keyValuePair.Value.Count == 0)
                     {
@@ -337,6 +361,8 @@ namespace SAM.Analytical.Tas
                     }
                 }
             }
+
+            //adjacencyCluster.UpdatePanelTypes(groundElevation);
 
             return adjacencyCluster;
         }
