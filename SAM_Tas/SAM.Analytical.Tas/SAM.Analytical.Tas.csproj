@@ -127,6 +127,7 @@
     <Compile Include="Convert\ToTBD\Building.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\InternalConditions.cs" />
+    <Compile Include="Enums\Parameters\PanelParameter.cs" />
     <Compile Include="Enums\Parameters\TasSettingParameter.cs" />
     <Compile Include="Modify\RemoveUnusedInternalConditions.cs" />
     <Compile Include="Modify\RemoveUnused.cs" />
@@ -337,7 +338,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

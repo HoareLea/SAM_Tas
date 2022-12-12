@@ -90,6 +90,8 @@ namespace SAM.Analytical.Tas
             Dictionary<string, Construction> dictionary_Construction = new Dictionary<string, Construction>();
             List<ApertureConstruction> apertureConstructions = new List<ApertureConstruction>();
 
+            Dictionary<string, Space> dictionary_Space = new Dictionary<string, Space>();
+            
             foreach (TBD.zone zone in building.Zones())
             {
                 Space space = zone.ToSAM(out List<InternalCondition> internalConditions);
@@ -98,7 +100,11 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
+                space.SetValue(SpaceParameter.ZoneGuid, zone.GUID);
+
                 adjacencyCluster.AddObject(space);
+
+                dictionary_Space[zone.GUID] = space;
 
                 List<TBD.IZoneSurface> zoneSurfaces = zone.ZoneSurfaces();
                 if(zoneSurfaces == null)
@@ -106,6 +112,7 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
+                Dictionary<string, List<Panel>> dictionary_Panel = new Dictionary<string, List<Panel>>();
                 foreach(TBD.IZoneSurface zoneSurface in zoneSurfaces)
                 {
                     TBD.buildingElement buildingElement = zoneSurface.buildingElement;
@@ -132,6 +139,14 @@ namespace SAM.Analytical.Tas
                         dictionary_Construction[construction_TBD.GUID] = construction;
                     }
 
+                    List<Panel> panels_Link = null;
+
+                    TBD.IZoneSurface zoneSurface_Link = zoneSurface.linkSurface;
+                    if (zoneSurface_Link != null)
+                    {
+                        dictionary_Panel.TryGetValue(zoneSurface_Link.GUID, out panels_Link);
+                    }
+
                     foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
                     {
                         Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
@@ -140,14 +155,45 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
-                        Panel panel = Analytical.Create.Panel(construction, panelType, new Face3D(polygon3D));
+                        Face3D face3D = new Face3D(polygon3D);
+
+                        Panel panel = null;
+                        if (panels_Link != null && panels_Link.Count != 0)
+                        {
+                            panel = panels_Link.Find(x => face3D.InRange(x.GetInternalPoint3D()));
+                        }
+
+                        if (panel == null)
+                        {
+                            panel = Analytical.Create.Panel(construction, panelType, face3D);
+                        }
+
                         if (panel == null)
                         {
                             continue;
                         }
 
+                        panel.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface.GUID);
+
                         adjacencyCluster.AddObject(panel);
                         adjacencyCluster.AddRelation(panel, space);
+
+                        if(!dictionary_Panel.TryGetValue(zoneSurface.GUID, out List<Panel>  panels))
+                        {
+                            panels = new List<Panel>();
+                            dictionary_Panel[zoneSurface.GUID] = panels;
+                        }
+
+                        panels.Add(panel);
+
+                        if (zoneSurface_Link != null)
+                        {
+                            if (dictionary_Space.TryGetValue(zoneSurface_Link.GUID, out Space space_Link))
+                            {
+                                adjacencyCluster.AddRelation(panel, space_Link);
+                            }
+                        }
+
                     }
                 }
 
