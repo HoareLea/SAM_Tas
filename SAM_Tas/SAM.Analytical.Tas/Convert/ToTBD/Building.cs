@@ -720,6 +720,12 @@ namespace SAM.Analytical.Tas
                 //}
             }
 
+            List<Zone> zones = adjacencyCluster.GetZones();
+            if(zones != null && zones.Count != 0)
+            {
+                zones.ForEach(x => result.ZoneGroup(adjacencyCluster, x));
+            }
+
             return result;
         }
     }

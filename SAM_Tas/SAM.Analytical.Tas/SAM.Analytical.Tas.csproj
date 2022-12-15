@@ -126,6 +126,7 @@
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Convert\ToTBD\Building.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
+    <Compile Include="Create\ZoneGroup.cs" />
     <Compile Include="Create\InternalConditions.cs" />
     <Compile Include="Enums\Parameters\PanelParameter.cs" />
     <Compile Include="Enums\Parameters\TasSettingParameter.cs" />
@@ -228,6 +229,7 @@
     <Compile Include="Query\RoomSurfaces.cs" />
     <Compile Include="Modify\RemoveZoneGrups.cs" />
     <Compile Include="Query\ZoneGrups.cs" />
+    <Compile Include="Query\Zone.cs" />
     <Compile Include="Query\ZoneSurfaces.cs" />
     <Compile Include="Query\RoomShapes.cs" />
     <Compile Include="Query\Rooms.cs" />
