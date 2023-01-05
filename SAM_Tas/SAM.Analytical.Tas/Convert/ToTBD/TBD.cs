@@ -1,4 +1,5 @@
 ﻿using SAM.Core.Tas;
+using System.Collections.Generic;
 using TAS3D;
 
 namespace SAM.Analytical.Tas
@@ -37,6 +38,65 @@ namespace SAM.Analytical.Tas
                 int_autoAssignConstructions = 1;
 
             return t3DDocument.ExportNew(day_First, day_Last, step, 1, 1, 1, path_TBD, int_autoAssignConstructions, 0, 0);
+        }
+
+        public static bool ToTBD(this AnalyticalModel analyticalModel, string path, Weather.WeatherData weatherData = null, IEnumerable<DesignDay> coolingDesignDays = null, IEnumerable<DesignDay> heatingDesignDays = null)
+        {
+            if(analyticalModel == null || string.IsNullOrWhiteSpace(path))
+                {
+                return false;
+            }
+
+            if (System.IO.File.Exists(path))
+            {
+                System.IO.File.Delete(path);
+            }
+
+            Weather.WeatherData weatherData_Temp = weatherData;
+            if(weatherData_Temp == null)
+            {
+                if(!analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out weatherData_Temp, true))
+                {
+                    weatherData_Temp = null;
+                }
+            }
+            
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path))
+            {
+                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                if (weatherData_Temp != null)
+                {
+                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData_Temp, 0);
+                }
+
+                TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
+
+                List<TBD.dayType> dayTypes = Query.DayTypes(calendar);
+                if (dayTypes.Find(x => x.name == "HDD") == null)
+                {
+                    TBD.dayType dayType = calendar.AddDayType();
+                    dayType.name = "HDD";
+                }
+
+                if (dayTypes.Find(x => x.name == "CDD") == null)
+                {
+                    TBD.dayType dayType = calendar.AddDayType();
+                    dayType.name = "CDD";
+                }
+
+                ToTBD(analyticalModel, tBDDocument);
+                Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
+
+                if (coolingDesignDays != null || heatingDesignDays != null)
+                {
+                    Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
+                }
+
+                sAMTBDDocument.Save();
+            }
+
+            return true;
         }
     }
 }

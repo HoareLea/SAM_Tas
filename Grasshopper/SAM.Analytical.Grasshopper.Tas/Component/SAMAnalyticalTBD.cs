@@ -139,45 +139,47 @@ namespace SAM.Analytical.Grasshopper.Tas
                 coolingDesignDays = null;
             }
 
-            if(System.IO.File.Exists(path))
-            {
-                System.IO.File.Delete(path);
-            }
+            Analytical.Tas.Convert.ToTBD(analyticalModel, path, weatherData, coolingDesignDays, heatingDesignDays);
 
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path))
-            {
-                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+            //if(System.IO.File.Exists(path))
+            //{
+            //    System.IO.File.Delete(path);
+            //}
 
-                if (weatherData != null)
-                {
-                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, 0);
-                }
+            //using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path))
+            //{
+            //    TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
 
-                TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
+            //    if (weatherData != null)
+            //    {
+            //        Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, 0);
+            //    }
 
-                List<TBD.dayType> dayTypes = Grashopper.Tas.Query.DayTypes(calendar);
-                if(dayTypes.Find(x => x.name == "HDD") == null)
-                {
-                    TBD.dayType dayType = calendar.AddDayType();
-                    dayType.name = "HDD";
-                }
+            //    TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
 
-                if (dayTypes.Find(x => x.name == "CDD") == null)
-                {
-                    TBD.dayType dayType = calendar.AddDayType();
-                    dayType.name = "CDD";
-                }
+            //    List<TBD.dayType> dayTypes = Grashopper.Tas.Query.DayTypes(calendar);
+            //    if(dayTypes.Find(x => x.name == "HDD") == null)
+            //    {
+            //        TBD.dayType dayType = calendar.AddDayType();
+            //        dayType.name = "HDD";
+            //    }
 
-                Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
-                Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
+            //    if (dayTypes.Find(x => x.name == "CDD") == null)
+            //    {
+            //        TBD.dayType dayType = calendar.AddDayType();
+            //        dayType.name = "CDD";
+            //    }
 
-                if (coolingDesignDays != null || heatingDesignDays != null)
-                {
-                    Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
-                }
+            //    Analytical.Tas.Convert.ToTBD(analyticalModel, tBDDocument);
+            //    Analytical.Tas.Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
 
-                sAMTBDDocument.Save();
-            }
+            //    if (coolingDesignDays != null || heatingDesignDays != null)
+            //    {
+            //        Analytical.Tas.Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
+            //    }
+
+            //    sAMTBDDocument.Save();
+            //}
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
