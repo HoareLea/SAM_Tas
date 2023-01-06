@@ -87,16 +87,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 importUnused = false;
             }
 
-                AnalyticalModel analyticalModel = null;
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
-            {
-                if (!importUnused)
-                {
-                    Analytical.Tas.Modify.RemoveUnusedInternalConditions(sAMTBDDocument?.TBDDocument?.Building);
-                }
+            AnalyticalModel analyticalModel = Analytical.Tas.Convert.ToSAM(path_TBD, importUnused);
 
-                analyticalModel = Analytical.Tas.Convert.ToSAM(sAMTBDDocument);
-            }
             dataAccess.SetData(0, analyticalModel);
             dataAccess.SetData(1, analyticalModel != null);
         }

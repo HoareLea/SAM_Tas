@@ -3,7 +3,23 @@
 namespace SAM.Analytical.Tas
 {
     public static partial class Convert
-    {      
+    {
+        public static AnalyticalModel ToSAM(string path_TBD, bool importUnused)
+        {
+            AnalyticalModel result = null;
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            {
+                if (!importUnused)
+                {
+                    Modify.RemoveUnusedInternalConditions(sAMTBDDocument?.TBDDocument?.Building);
+                }
+
+                result = ToSAM(sAMTBDDocument);
+            }
+
+            return result;
+        }
+
         public static AnalyticalModel ToSAM(this SAMTBDDocument sAMTBDDocument)
         {
             if(sAMTBDDocument == null)
