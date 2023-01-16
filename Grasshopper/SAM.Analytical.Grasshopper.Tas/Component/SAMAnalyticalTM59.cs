@@ -32,8 +32,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public SAMAnalyticalTM59()
-          : base("SAMAnalytical.TBD", "SAMAnalytical.TBD",
-              "Converts SAM Analytical to TBD",
+          : base("SAMAnalytical.TBD_TM59", "SAMAnalytical.TBD_TM59",
+              "Converts SAM Analytical to TBD to run Domestic Overheating TM59",
               "SAM WIP", "Tas")
         {
         }

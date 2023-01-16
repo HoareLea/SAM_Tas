@@ -13,7 +13,8 @@ namespace SAM.Analytical.Tas.TM59
 
             XmlWriterSettings xmlWriterSettings = new XmlWriterSettings()
             {
-                OmitXmlDeclaration = false
+                OmitXmlDeclaration = false,
+                Indent = true,
             };
 
             using (XmlWriter xmlWriter = XmlWriter.Create(path, xmlWriterSettings))

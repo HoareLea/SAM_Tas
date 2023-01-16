@@ -31,7 +31,7 @@ namespace SAM.Analytical.Tas.TM59
                 }
             }
 
-            return new Building(BuildingCategory.Category_I, false, false, zones);
+            return new Building(BuildingCategory.Category_II, false, false, zones);
         }
     }
 }

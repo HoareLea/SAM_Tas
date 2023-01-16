@@ -37,14 +37,14 @@ namespace SAM.Analytical.Tas.TM59
 
             xmlWriter.WriteStartElement("DomOverheatZoneItem");
             xmlWriter.WriteElementString("Name", Name == null ? string.Empty : Name);
-            xmlWriter.WriteElementString("GUID", string.Format("{{0}}", Guid.ToString("D")));
+            xmlWriter.WriteElementString("GUID", "{" + Guid.ToString() + "}");
             xmlWriter.WriteElementString("Factor", Factor.ToString());
             xmlWriter.WriteElementString("RoomUseInt", ((int)RoomUse).ToString());
             xmlWriter.WriteElementString("RoomUse", Core.Query.Description( RoomUse));
             xmlWriter.WriteElementString("SystemTypeInt", ((int)SystemType).ToString());
             xmlWriter.WriteElementString("SystemType", Core.Query.Description(SystemType));
-            xmlWriter.WriteElementString("Export", Export.ToString());
-            xmlWriter.WriteElementString("WindSpeed", WindSpeed.ToString());
+            xmlWriter.WriteElementString("Export", Export.ToString().ToLower());
+            xmlWriter.WriteElementString("WindSpeed", WindSpeed.ToString().ToLower());
             xmlWriter.WriteEndElement();
 
             return true;

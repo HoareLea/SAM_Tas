@@ -28,14 +28,14 @@ namespace SAM.Analytical.Tas.TM59
 
             xmlWriter.WriteStartElement("DomOverheatXMLItem");
 
-            xmlWriter.WriteAttributeString("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
-            xmlWriter.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            xmlWriter.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
+            xmlWriter.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
 
             xmlWriter.WriteStartElement("NonZoneElements");
             xmlWriter.WriteElementString("SelectedBuildingCatInt", ((int)BuildingCategory).ToString());
             xmlWriter.WriteElementString("SelectedBuildingCat", Core.Query.Description(BuildingCategory));
-            xmlWriter.WriteElementString("ShowWeatherTable", ShowWeatherTable.ToString());
-            xmlWriter.WriteElementString("DayByDayBreakdown", DayByDayBreakdown.ToString());
+            xmlWriter.WriteElementString("ShowWeatherTable", ShowWeatherTable.ToString().ToLower());
+            xmlWriter.WriteElementString("DayByDayBreakdown", DayByDayBreakdown.ToString().ToLower());
             xmlWriter.WriteEndElement();
             
             if (Zones != null)
