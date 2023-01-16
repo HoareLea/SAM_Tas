@@ -166,7 +166,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 System.IO.Directory.CreateDirectory(directory_TM59);
             }
 
-            string path_TM59 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), System.IO.Path.GetFileNameWithoutExtension(path) + "DomOv.xml");
+            string path_TM59 = System.IO.Path.Combine(directory_TM59, System.IO.Path.GetFileNameWithoutExtension(path) + "DomOv.xml");
 
             TM59Manager tM59Manager = new TM59Manager(textMap);
 
