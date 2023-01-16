@@ -158,19 +158,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 coolingDesignDays = null;
             }
 
-            Analytical.Tas.Convert.ToTBD(analyticalModel, path, weatherData, coolingDesignDays, heatingDesignDays, true);
-
-            string directory_TM59 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), "Report XMLs");
-            if(!System.IO.Directory.Exists(directory_TM59))
-            {
-                System.IO.Directory.CreateDirectory(directory_TM59);
-            }
-
-            string path_TM59 = System.IO.Path.Combine(directory_TM59, System.IO.Path.GetFileNameWithoutExtension(path) + "DomOv.xml");
-
-            TM59Manager tM59Manager = new TM59Manager(textMap);
-
-            Analytical.Tas.TM59.Convert.ToXml(analyticalModel, path_TM59, tM59Manager);
+            Analytical.Tas.TM59.Convert.ToTBD(analyticalModel, path, textMap, weatherData, coolingDesignDays, heatingDesignDays);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)

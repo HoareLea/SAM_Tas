@@ -15,15 +15,15 @@ namespace SAM.Analytical.Tas.TM59
             List<Zone> zones = new List<Zone>();
 
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
-            if(adjacencyCluster != null)
+            if (adjacencyCluster != null)
             {
                 List<Space> spaces = adjacencyCluster?.GetSpaces();
-                if(spaces != null)
+                if (spaces != null)
                 {
-                    foreach(Space space in spaces)
+                    foreach (Space space in spaces)
                     {
                         Zone zone = space.ToTM59(tM59Manager);
-                        if(zone != null)
+                        if (zone != null)
                         {
                             zones.Add(zone);
                         }

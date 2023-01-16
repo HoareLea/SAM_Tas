@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace SAM.Analytical.Tas.TM59
@@ -37,7 +33,7 @@ namespace SAM.Analytical.Tas.TM59
 
             xmlWriter.WriteStartElement("DomOverheatZoneItem");
             xmlWriter.WriteElementString("Name", Name == null ? string.Empty : Name);
-            xmlWriter.WriteElementString("GUID", "{" + Guid.ToString() + "}");
+            xmlWriter.WriteElementString("GUID", "{" + Guid.ToString().ToUpper() + "}");
             xmlWriter.WriteElementString("Factor", Factor.ToString());
             xmlWriter.WriteElementString("RoomUseInt", ((int)RoomUse).ToString());
             xmlWriter.WriteElementString("RoomUse", Core.Query.Description( RoomUse));

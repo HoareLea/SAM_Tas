@@ -18,13 +18,13 @@ namespace SAM.Analytical.Tas.TM59
             }
 
 
-            string guidString = null;
-            if(!space.TryGetValue(SpaceParameter.ZoneGuid, out guidString) || string.IsNullOrWhiteSpace(guidString))
+            Guid guid = Guid.Empty; ;
+            if(!space.TryGetValue(SpaceParameter.ZoneGuid, out guid) || guid == Guid.Empty)
             {
-                guidString = space.Guid.ToString();
+                guid = space.Guid;
             }
 
-            return new Zone(System.Guid.Parse(guidString), space.Name, 1, tM59Manager.RoomUse(space), SystemType.NaturalVentilation, true, 0.1);
+            return new Zone(guid, space.Name, 1, tM59Manager.RoomUse(space), SystemType.NaturalVentilation, true, 0.1);
         }
     }
 }

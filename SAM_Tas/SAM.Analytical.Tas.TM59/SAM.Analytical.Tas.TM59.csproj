@@ -32,6 +32,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.TAS3D">
+      <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.TBD">
+      <HintPath>..\..\references_buildonly\Interop.TBD.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="SAM.Analytical, Version=1.0.8413.29863, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
@@ -39,6 +47,10 @@
     <Reference Include="SAM.Core, Version=1.0.8405.25693, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Weather, Version=1.0.8416.27687, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Weather.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Classes\Building.cs" />
     <Compile Include="Classes\Zone.cs" />
+    <Compile Include="Convert\ToTBD\TBD.cs" />
     <Compile Include="Convert\ToTM59\Zone.cs" />
     <Compile Include="Convert\ToTM59\Building.cs" />
     <Compile Include="Convert\ToXml\ToXml.cs" />
@@ -66,6 +79,16 @@
       <Project>{bf2443b1-0709-4e8c-b9ff-b8785d9253e4}</Project>
       <Name>SAM.Analytical.Tas</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">
+      <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
+      <Name>SAM.Core.Tas</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.2</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
