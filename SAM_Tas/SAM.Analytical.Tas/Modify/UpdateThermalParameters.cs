@@ -134,7 +134,7 @@ namespace SAM.Analytical.Tas
                         thermalTransmittance = Query.ThermalTransmittance(construction_TBD_Aperture, construction_TBD_Aperture.type == TBD.ConstructionTypes.tcdTransparentConstruction ? PanelType.CurtainWall : panel.PanelType);
                         if (!double.IsNaN(thermalTransmittance))
                         {
-                            aperture.SetValue(ApertureParameter.ThermalTransmittance, thermalTransmittance);
+                            aperture.SetValue(Analytical.ApertureParameter.ThermalTransmittance, thermalTransmittance);
                         }
 
                         Query.GlazingValues(construction_TBD_Aperture,
@@ -149,42 +149,42 @@ namespace SAM.Analytical.Tas
 
                         if (!double.IsNaN(lightTransmittance))
                         {
-                            aperture.SetValue(ApertureParameter.LightTransmittance, lightTransmittance);
+                            aperture.SetValue(Analytical.ApertureParameter.LightTransmittance, lightTransmittance);
                         }
 
                         if (!double.IsNaN(lightReflectance))
                         {
-                            aperture.SetValue(ApertureParameter.LightReflectance, lightReflectance);
+                            aperture.SetValue(Analytical.ApertureParameter.LightReflectance, lightReflectance);
                         }
 
                         if (!double.IsNaN(directSolarEnergyTransmittance))
                         {
-                            aperture.SetValue(ApertureParameter.DirectSolarEnergyTransmittance, directSolarEnergyTransmittance);
+                            aperture.SetValue(Analytical.ApertureParameter.DirectSolarEnergyTransmittance, directSolarEnergyTransmittance);
                         }
 
                         if (!double.IsNaN(directSolarEnergyReflectance))
                         {
-                            aperture.SetValue(ApertureParameter.DirectSolarEnergyReflectance, directSolarEnergyReflectance);
+                            aperture.SetValue(Analytical.ApertureParameter.DirectSolarEnergyReflectance, directSolarEnergyReflectance);
                         }
 
                         if (!double.IsNaN(directSolarEnergyAbsorptance))
                         {
-                            aperture.SetValue(ApertureParameter.DirectSolarEnergyAbsorptance, directSolarEnergyAbsorptance);
+                            aperture.SetValue(Analytical.ApertureParameter.DirectSolarEnergyAbsorptance, directSolarEnergyAbsorptance);
                         }
 
                         if (!double.IsNaN(totalSolarEnergyTransmittance))
                         {
-                            aperture.SetValue(ApertureParameter.TotalSolarEnergyTransmittance, totalSolarEnergyTransmittance);
+                            aperture.SetValue(Analytical.ApertureParameter.TotalSolarEnergyTransmittance, totalSolarEnergyTransmittance);
                         }
 
                         if (!double.IsNaN(pilkingtonShortWavelengthCoefficient))
                         {
-                            aperture.SetValue(ApertureParameter.PilkingtonShadingShortWavelengthCoefficient, pilkingtonShortWavelengthCoefficient);
+                            aperture.SetValue(Analytical.ApertureParameter.PilkingtonShadingShortWavelengthCoefficient, pilkingtonShortWavelengthCoefficient);
                         }
 
                         if (!double.IsNaN(pilkingtonLongWavelengthCoefficient))
                         {
-                            aperture.SetValue(ApertureParameter.PilkingtonShadingLongWavelengthCoefficient, pilkingtonLongWavelengthCoefficient);
+                            aperture.SetValue(Analytical.ApertureParameter.PilkingtonShadingLongWavelengthCoefficient, pilkingtonLongWavelengthCoefficient);
                         }
 
                         panel.RemoveAperture(aperture.Guid);

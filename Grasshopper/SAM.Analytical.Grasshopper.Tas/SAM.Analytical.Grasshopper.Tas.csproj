@@ -117,6 +117,7 @@
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\FromTBD.cs" />
+    <Compile Include="Component\SAMAnalyticalCreateTBDByTM59.cs" />
     <Compile Include="Component\SAMAnalyticalTM59.cs" />
     <Compile Include="Component\TasCopyCalendar.cs" />
     <Compile Include="Component\TasCreateTPD.cs" />

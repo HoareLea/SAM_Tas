@@ -40,7 +40,7 @@ namespace SAM.Analytical.Tas
             return t3DDocument.ExportNew(day_First, day_Last, step, 1, 1, 1, path_TBD, int_autoAssignConstructions, 0, 0);
         }
 
-        public static bool ToTBD(this AnalyticalModel analyticalModel, string path, Weather.WeatherData weatherData = null, IEnumerable<DesignDay> coolingDesignDays = null, IEnumerable<DesignDay> heatingDesignDays = null)
+        public static bool ToTBD(this AnalyticalModel analyticalModel, string path, Weather.WeatherData weatherData = null, IEnumerable<DesignDay> coolingDesignDays = null, IEnumerable<DesignDay> heatingDesignDays = null, bool updateGuids = false)
         {
             if(analyticalModel == null || string.IsNullOrWhiteSpace(path))
                 {
@@ -85,7 +85,7 @@ namespace SAM.Analytical.Tas
                     dayType.name = "CDD";
                 }
 
-                ToTBD(analyticalModel, tBDDocument);
+                ToTBD(analyticalModel, tBDDocument, updateGuids);
                 Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
 
                 if (coolingDesignDays != null || heatingDesignDays != null)

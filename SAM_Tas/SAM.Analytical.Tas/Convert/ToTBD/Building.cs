@@ -9,7 +9,7 @@ namespace SAM.Analytical.Tas
     public static partial class Convert
     {
 
-        public static TBD.Building ToTBD(this AnalyticalModel analyticalModel, TBD.TBDDocument tBDDocument)
+        public static TBD.Building ToTBD(this AnalyticalModel analyticalModel, TBD.TBDDocument tBDDocument, bool updateGuids = false)
         {
             if(analyticalModel == null)
             {
@@ -58,6 +58,13 @@ namespace SAM.Analytical.Tas
                 }
 
                 TBD.zone zone = result.AddZone();
+                if(updateGuids)
+                {
+                    Space space_Temp = new Space(space);
+                    space_Temp.SetValue(SpaceParameter.ZoneGuid, zone.GUID);
+                    analyticalModel.AddSpace(space_Temp);
+                }
+
                 zone.name = space.Name;
                 double volume = shell.Volume();
                 if(double.IsNaN(volume))
@@ -110,6 +117,10 @@ namespace SAM.Analytical.Tas
                         Vector3D normal = dictionary_Panel.ContainsKey(panel.Guid) ? panel.Normal.GetNegated() : panel.Normal;
 
                         TBD.zoneSurface zoneSurface_Panel = zone.AddSurface();
+
+                        Panel panel_Temp = Analytical.Create.Panel(panel);
+                        panel_Temp.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface_Panel.GUID);
+
                         float orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
                         orientation += 180;
                         if (orientation >= 360)
@@ -314,8 +325,9 @@ namespace SAM.Analytical.Tas
                                 if (zoneSurface_Aperture == null)
                                 {
                                     return null;
-                                }
-;
+                                };
+
+
                                 //zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation; 
                                 zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
                                 zoneSurface_Aperture.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
@@ -383,6 +395,14 @@ namespace SAM.Analytical.Tas
                                             if (zoneSurface != null)
                                             {
                                                 dictionary[apertureName_Pane].Item2.Add(zoneSurface);
+
+                                                if (updateGuids)
+                                                {
+                                                    Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
+                                                    aperture_Temp.SetValue(ApertureParameter.PaneZoneSurfaceGuid, zoneSurface.GUID);
+                                                    panel_Temp.RemoveAperture(aperture_Temp.Guid);
+                                                    panel_Temp.AddAperture(aperture_Temp);
+                                                }
                                             }
                                         }
                                     }
@@ -416,6 +436,14 @@ namespace SAM.Analytical.Tas
                                             {
                                                 //zoneSurface.reversed = 1;
                                                 dictionary[apertureName_Frame].Item2.Add(zoneSurface);
+
+                                                if (updateGuids)
+                                                {
+                                                    Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
+                                                    aperture_Temp.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface.GUID);
+                                                    panel_Temp.RemoveAperture(aperture_Temp.Guid);
+                                                    panel_Temp.AddAperture(aperture_Temp);
+                                                }
                                             }
                                         }
                                     }
@@ -499,7 +527,7 @@ namespace SAM.Analytical.Tas
 
 
 
-                                        if (aperturePart == AperturePart.Pane && aperture.TryGetValue(ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
+                                        if (aperturePart == AperturePart.Pane && aperture.TryGetValue(Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
                                         {
                                             TBD.ApertureType apertureType = Modify.SetApertureType(result, buildingElement_Aperture, openingProperties);
 
@@ -568,6 +596,11 @@ namespace SAM.Analytical.Tas
                         }
 
                         zoneSurfaces_Panel.Add(new Tuple<TBD.zoneSurface, bool>( zoneSurface_Panel, reverse));
+
+                        if (updateGuids)
+                        {
+                            analyticalModel.AddPanel(panel_Temp);
+                        }
                     }
                 }
             }
