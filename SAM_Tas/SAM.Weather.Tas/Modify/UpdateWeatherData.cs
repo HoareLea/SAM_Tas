@@ -60,7 +60,7 @@ namespace SAM.Weather.Tas
 
             building.latitude = System.Convert.ToSingle(weatherData.Latitude);
             building.longitude = System.Convert.ToSingle(weatherData.Longitude);
-            building.maxBuildingAltitude= System.Convert.ToSingle(buildingHeight);
+            building.maxBuildingAltitude = System.Convert.ToSingle(buildingHeight);
             if(weatherData.TryGetValue(WeatherDataParameter.TimeZone, out string timeZone))
             {
                 double @double = Core.Query.Double(Core.Query.UTC(timeZone));

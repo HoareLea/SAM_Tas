@@ -56,7 +56,7 @@ namespace SAM.Analytical.Tas
             Weather.WeatherData weatherData_Temp = weatherData;
             if(weatherData_Temp == null)
             {
-                if(!analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out weatherData_Temp, true))
+                if (!analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out weatherData_Temp, true))
                 {
                     weatherData_Temp = null;
                 }
@@ -68,7 +68,10 @@ namespace SAM.Analytical.Tas
 
                 if (weatherData_Temp != null)
                 {
-                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData_Temp, 0);
+                    double buildingHeight = Analytical.Query.BuildingHeight(analyticalModel.AdjacencyCluster);
+                    buildingHeight = double.IsNaN(buildingHeight) || buildingHeight < 0 ? 0 : buildingHeight;
+
+                    Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData_Temp, buildingHeight);
                 }
 
                 TBD.Calendar calendar = tBDDocument.Building.GetCalendar();

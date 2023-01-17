@@ -33,6 +33,12 @@ namespace SAM.Analytical.Tas
             adjacencyCluster = adjacencyCluster.UpdateNormals(true, false, false);
             adjacencyCluster.Normalize(true, Geometry.Orientation.Clockwise);
 
+            double buildingHeight = Analytical.Query.BuildingHeight(adjacencyCluster);
+            if(!double.IsNaN(buildingHeight) && buildingHeight > 0)
+            {
+                result.maxBuildingAltitude = (float)buildingHeight;
+            }
+
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces == null)
             {
