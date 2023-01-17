@@ -153,7 +153,7 @@ namespace SAM.Analytical.Tas.SAP
 
         public bool AddLivingArea(Guid guid)
         {
-            return LivingAreaData.Add(guid)
+            return LivingAreaData.Add(guid);
         }
 
         public bool RemoveLivingArea(Guid guid)

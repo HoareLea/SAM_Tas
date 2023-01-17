@@ -32,6 +32,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SAM.Analytical, Version=1.0.8417.19055, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core, Version=1.0.8417.19053, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Geometry, Version=1.0.8417.19054, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Convert\ToFile\File.cs" />
+    <Compile Include="Convert\ToSAP\ToSAP.cs" />
     <Compile Include="Modify\Add.cs" />
     <Compile Include="Classes\BuildingElementData.cs" />
     <Compile Include="Classes\GuidCollection.cs" />
