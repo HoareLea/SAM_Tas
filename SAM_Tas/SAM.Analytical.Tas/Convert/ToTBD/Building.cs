@@ -762,7 +762,7 @@ namespace SAM.Analytical.Tas
             List<Space> spaces_Unzoned = adjacencyCluster.GetSpaces();
             if (!string.IsNullOrEmpty(allZoneGroupName) && spaces_Unzoned != null && spaces_Unzoned.Count != 0)
             {
-                result.ZoneGroup(undefinedZoneGroupName, spaces_Unzoned, TBD.ZoneGroupType.tbdZoneSetZG);
+                result.ZoneGroup(allZoneGroupName, spaces_Unzoned, TBD.ZoneGroupType.tbdZoneSetZG);
             }
 
             List<Zone> zones = adjacencyCluster.GetZones();
