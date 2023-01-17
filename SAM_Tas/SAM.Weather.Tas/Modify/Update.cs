@@ -164,35 +164,6 @@ namespace SAM.Weather.Tas
             }
 
             return true;
-
-            //for (int i = 0; i < 8760; i++)
-            //{
-            //    int index_Day = System.Convert.ToInt32(Math.Truncate((double)i / (double)24));
-            //    int index_Hour = i % 24;
-            //    weatherDays[index_Day][WeatherDataType.WindDirection, index_Hour] = System.Convert.ToDouble(values[i]);
-            //}
-
-            //float[] values = weatherYear_TBD.GetAnnualParameter(0);
-            //weatherYear_TBD.SetAnnualParameter(values, 0);
-
-
-            //List<TBD.WeatherDay> weatherDays_TBD = weatherYear_TBD.WeatherDays();
-            //for (int i = 0; i < weatherDays_TBD.Count; i++)
-            //{
-            //    WeatherDay weatherDay = weatherYear[i];
-            //    if (weatherDay == null)
-            //    {
-            //        weatherDay = new WeatherDay();
-            //    }
-
-
-
-            //    Update(weatherDay, weatherDays_TBD[i]);
-
-            //    weatherYear[i] = weatherDay;
-            //}
-
-            //return true;
         }
 
         /// <summary>
@@ -222,7 +193,10 @@ namespace SAM.Weather.Tas
                 {
                     values_GlobalSolarRadiation.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.GlobalSolarRadiation, j]));
                     values_DiffuseSolarRadiation.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.DiffuseSolarRadiation, j]));
-                    values_CloudCover.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.CloudCover, j]));
+
+                    double cloudCover = weatherYear[i][WeatherDataType.CloudCover, j];
+                    values_CloudCover.Add(System.Convert.ToSingle(cloudCover));
+                    
                     values_DryBulbTemperature.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.DryBulbTemperature, j]));
                     values_RelativeHumidity.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.RelativeHumidity, j]));
                     values_WindSpeed.Add(System.Convert.ToSingle(weatherYear[i][WeatherDataType.WindSpeed, j]));

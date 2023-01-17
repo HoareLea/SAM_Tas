@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
@@ -17,26 +18,39 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            TBD.ZoneGroup result = building.AddZoneGroup();
-            result.name = zone_Temp.Name;
-            result.type = (int)TBD.ZoneGroupType.tbdDefaultZG;
-            if(zone_Temp.TryGetValue(ZoneParameter.ZoneCategory, out string zoneCategory))
+            List<Space> spaces = adjacencyCluster.GetRelatedObjects<Space>(zone_Temp);
+            TBD.ZoneGroup result = ZoneGroup(building, zone_Temp.Name, spaces);
+
+            if (zone_Temp.TryGetValue(ZoneParameter.ZoneCategory, out string zoneCategory))
             {
                 result.description = zoneCategory;
             }
 
-            List<Space> spaces = adjacencyCluster.GetRelatedObjects<Space>(zone_Temp);
-            if (spaces != null || spaces.Count != 0)
+            return result;
+        }
+
+        public static TBD.ZoneGroup ZoneGroup(this TBD.Building building, string name, IEnumerable<Space> spaces, TBD.ZoneGroupType zoneGroupType = TBD.ZoneGroupType.tbdDefaultZG)
+        {
+            if (building == null || spaces == null|| string.IsNullOrEmpty(name))
             {
-                foreach(Space space in spaces)
+                return null;
+            }
+
+            TBD.ZoneGroup result = building.AddZoneGroup();
+            result.name = name;
+            result.type = (int)zoneGroupType;
+
+            if (spaces != null || spaces.Count() != 0)
+            {
+                foreach (Space space in spaces)
                 {
-                    if(string.IsNullOrWhiteSpace(space?.Name))
+                    if (string.IsNullOrWhiteSpace(space?.Name))
                     {
                         continue;
                     }
 
                     TBD.zone zone_TBD = building.Zone(space.Name);
-                    if(zone_TBD == null)
+                    if (zone_TBD == null)
                     {
                         continue;
                     }
