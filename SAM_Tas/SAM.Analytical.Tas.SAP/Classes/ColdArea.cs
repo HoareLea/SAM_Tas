@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas.SAP
         public override List<string> ToStrings()
         {
             List<string> result = new List<string>();
-            result.Add(string.Format("COLDAREA =", name == null ? string.Empty : name));
+            result.Add(string.Format("COLDAREA = {0}", name == null ? string.Empty : name));
             result.AddRange(base.ToStrings());
             return result;
         }

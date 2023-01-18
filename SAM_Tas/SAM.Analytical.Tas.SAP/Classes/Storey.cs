@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas.SAP
         public List<string> ToStrings()
         {
             List<string> result = new List<string>();
-            result.Add(string.Format("STOREY =", name == null ? string.Empty : name));
+            result.Add(string.Format("STOREY = {0}", name == null ? string.Empty : name));
             result.AddRange(base.ToStrings());
             return result;
         }

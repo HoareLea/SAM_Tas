@@ -208,7 +208,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                         }
                         else
                         {
-                            successful = Analytical.Tas.SAP.Convert.ToFile(analyticalModel, path_TM59, zoneCategory, textMap);
+                            successful = Analytical.Tas.SAP.Convert.ToFile(analyticalModel, path_SAP, zoneCategory, textMap);
                         }
                         
                     }
