@@ -69,7 +69,12 @@ namespace SAM.Analytical.Tas.SAP
                     InternalCondition internalCondition = space_ColdArea.InternalCondition;
                     if(internalCondition != null && internalCondition.Name != null && internalCondition.Name.Trim().ToLower().Contains("unconditioned"))
                     {
-                        result.AddColdArea("SAM Cold Area", space_ColdArea.Guid);
+                        if (!space_ColdArea.TryGetValue(SpaceParameter.ZoneGuid, out Guid guid))
+                        {
+                            guid = space_ColdArea.Guid;
+                        }
+
+                        result.AddColdArea("SAM Cold Area", guid);
                         spaces.Add(space_ColdArea);
                     }
                 }
@@ -102,14 +107,19 @@ namespace SAM.Analytical.Tas.SAP
                     }
                 }
 
+                if (!space.TryGetValue(SpaceParameter.ZoneGuid, out Guid guid))
+                {
+                    guid = space.Guid;
+                }
+
                 if (space.TryGetValue(Analytical.SpaceParameter.LevelName, out string name) && !string.IsNullOrWhiteSpace(name))
                 {
-                    result.AddStorey(name, space.Guid);
+                    result.AddStorey(name, guid);
                 }
 
                 if(tM59Manager.IsLiving(space) || tM59Manager.IsLiving(space.InternalCondition))
                 {
-                    result.AddLivingArea(space.Guid);
+                    result.AddLivingArea(guid);
                 }
             }
 
