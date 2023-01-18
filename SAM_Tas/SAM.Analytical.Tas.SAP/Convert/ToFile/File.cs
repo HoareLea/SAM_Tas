@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SAM.Core;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.SAP
 {
@@ -19,6 +20,17 @@ namespace SAM.Analytical.Tas.SAP
 
             System.IO.File.WriteAllLines(path, strings.ToArray());
             return true;
+        }
+
+        public static bool ToFile(this AnalyticalModel analyticalModel, string path, string zoneCategory = null, TextMap textMap = null)
+        {
+            SAPData sAPData = analyticalModel?.ToSAP(zoneCategory, textMap);
+            if(sAPData == null)
+            {
+                return false;
+            }
+
+            return ToFile(sAPData, path);
         }
     }
 }

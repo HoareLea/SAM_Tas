@@ -118,6 +118,7 @@
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\FromTBD.cs" />
     <Compile Include="Component\SAMAnalyticalCreateTBDByTM59.cs" />
+    <Compile Include="Component\SAMAnalyticalSAP.cs" />
     <Compile Include="Component\SAMAnalyticalTM59.cs" />
     <Compile Include="Component\TasCopyCalendar.cs" />
     <Compile Include="Component\TasCreateTPD.cs" />
@@ -184,6 +185,10 @@
     <Folder Include="Convert\ToSAM\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas.SAP\SAM.Analytical.Tas.SAP.csproj">
+      <Project>{5ca0603e-7344-48d2-8e12-2d3d47e62630}</Project>
+      <Name>SAM.Analytical.Tas.SAP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas.TM59\SAM.Analytical.Tas.TM59.csproj">
       <Project>{4b654ca7-b9ee-40a9-b7d3-c7ffed34caa6}</Project>
       <Name>SAM.Analytical.Tas.TM59</Name>

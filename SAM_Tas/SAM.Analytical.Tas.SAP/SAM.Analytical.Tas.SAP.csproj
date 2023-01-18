@@ -71,7 +71,20 @@
     <Compile Include="Classes\SAPData.cs" />
     <Compile Include="Interfaces\INamedSAP.cs" />
     <Compile Include="Interfaces\ISAP.cs" />
+    <Compile Include="Modify\TryCreatePath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\BuildingElementType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SAM.Analytical.Tas\SAM.Analytical.Tas.csproj">
+      <Project>{bf2443b1-0709-4e8c-b9ff-b8785d9253e4}</Project>
+      <Name>SAM.Analytical.Tas</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

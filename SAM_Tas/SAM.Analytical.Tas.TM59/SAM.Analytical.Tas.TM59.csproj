@@ -71,6 +71,7 @@
     <Compile Include="Enum\BuildingCategory.cs" />
     <Compile Include="Enum\SystemType.cs" />
     <Compile Include="Enum\RoomUse.cs" />
+    <Compile Include="Modify\TryCreatePath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query\RoomUse.cs" />
   </ItemGroup>

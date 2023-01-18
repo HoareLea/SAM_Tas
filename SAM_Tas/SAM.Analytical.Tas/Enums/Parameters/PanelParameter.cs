@@ -7,5 +7,6 @@ namespace SAM.Analytical.Tas
     public enum PanelParameter
     {
         [ParameterProperties("Zone Surface Guid", "Zone Surface Guid"), ParameterValue(Core.ParameterType.String)] ZoneSurfaceGuid,
+        [ParameterProperties("BuildingElement Guid", "BuildingElement Guid"), ParameterValue(Core.ParameterType.String)] BuildingElementGuid,
     }
 }

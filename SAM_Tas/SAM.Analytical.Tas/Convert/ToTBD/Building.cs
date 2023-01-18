@@ -297,7 +297,6 @@ namespace SAM.Analytical.Tas
                                 }
                             }
 
-
                             buildingElement_Panel = result.AddBuildingElement();
                             buildingElement_Panel.name = name_Panel;
                             buildingElement_Panel.colour = Core.Convert.ToUint(Analytical.Query.Color(panelType));
@@ -310,6 +309,7 @@ namespace SAM.Analytical.Tas
                         if (buildingElement_Panel != null)
                         {
                             zoneSurface_Panel.buildingElement = buildingElement_Panel;
+                            panel_Temp.SetValue(PanelParameter.BuildingElementGuid, buildingElement_Panel.GUID);
                         }
 
                         zoneSurface_Panel.type = TBD.SurfaceType.tbdExposed;
@@ -405,6 +405,7 @@ namespace SAM.Analytical.Tas
                                                 if (updateGuids)
                                                 {
                                                     Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
+                                                    aperture_Temp.SetValue(ApertureParameter.PaneBuildingElementGuid, zoneSurface.buildingElement.GUID);
                                                     aperture_Temp.SetValue(ApertureParameter.PaneZoneSurfaceGuid, zoneSurface.GUID);
                                                     panel_Temp.RemoveAperture(aperture_Temp.Guid);
                                                     panel_Temp.AddAperture(aperture_Temp);
@@ -446,6 +447,7 @@ namespace SAM.Analytical.Tas
                                                 if (updateGuids)
                                                 {
                                                     Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
+                                                    aperture_Temp.SetValue(ApertureParameter.FrameBuildingElementGuid, zoneSurface.buildingElement.GUID);
                                                     aperture_Temp.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface.GUID);
                                                     panel_Temp.RemoveAperture(aperture_Temp.Guid);
                                                     panel_Temp.AddAperture(aperture_Temp);

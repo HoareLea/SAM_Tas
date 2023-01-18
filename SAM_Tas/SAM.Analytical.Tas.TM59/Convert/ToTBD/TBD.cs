@@ -13,13 +13,10 @@ namespace SAM.Analytical.Tas.TM59
                 return false;
             }
 
-            string directory_TM59 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), "Report XMLs");
-            if (!System.IO.Directory.Exists(directory_TM59))
+            if(!Modify.TryCreatePath(path, out string path_TM59))
             {
-                System.IO.Directory.CreateDirectory(directory_TM59);
+                return false;
             }
-
-            string path_TM59 = System.IO.Path.Combine(directory_TM59, System.IO.Path.GetFileNameWithoutExtension(path) + "DomOv.xml");
 
             return ToXml(analyticalModel, path_TM59, new TM59Manager(textMap));
         }
