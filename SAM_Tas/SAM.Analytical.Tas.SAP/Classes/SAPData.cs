@@ -34,9 +34,12 @@ namespace SAM.Analytical.Tas.SAP
             {
                 result.AddRange(StoreyData.ToStrings());
             }
+            if (LivingAreaData != null)
+            {
+                result.AddRange(LivingAreaData.ToStrings());
+            }
 
-
-            if(OptionsData != null)
+            if (OptionsData != null)
             {
                 result.AddRange(OptionsData.ToStrings());
             }
