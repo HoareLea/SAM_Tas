@@ -405,7 +405,6 @@ namespace SAM.Analytical.Tas
                                                 if (updateGuids)
                                                 {
                                                     Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
-                                                    aperture_Temp.SetValue(ApertureParameter.PaneBuildingElementGuid, zoneSurface.buildingElement.GUID);
                                                     aperture_Temp.SetValue(ApertureParameter.PaneZoneSurfaceGuid, zoneSurface.GUID);
                                                     panel_Temp.RemoveAperture(aperture_Temp.Guid);
                                                     panel_Temp.AddAperture(aperture_Temp);
@@ -447,7 +446,6 @@ namespace SAM.Analytical.Tas
                                                 if (updateGuids)
                                                 {
                                                     Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
-                                                    aperture_Temp.SetValue(ApertureParameter.FrameBuildingElementGuid, zoneSurface.buildingElement.GUID);
                                                     aperture_Temp.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface.GUID);
                                                     panel_Temp.RemoveAperture(aperture_Temp.Guid);
                                                     panel_Temp.AddAperture(aperture_Temp);
@@ -569,6 +567,16 @@ namespace SAM.Analytical.Tas
                                             //buildingElement_Aperture.AssignApertureType(apertureType);
 
                                         }
+                                    }
+
+                                    if(updateGuids && buildingElement_Aperture != null)
+                                    {
+                                        ApertureParameter apertureParameter = keyValuePair.Value.Item1 == AperturePart.Frame ? ApertureParameter.FrameBuildingElementGuid : ApertureParameter.PaneBuildingElementGuid;
+
+                                        Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
+                                        aperture_Temp.SetValue(apertureParameter, buildingElement_Aperture.GUID);
+                                        panel_Temp.RemoveAperture(aperture_Temp.Guid);
+                                        panel_Temp.AddAperture(aperture_Temp);
                                     }
 
                                     foreach(TBD.zoneSurface zoneSurface in keyValuePair.Value.Item2)
