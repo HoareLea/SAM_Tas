@@ -20,6 +20,7 @@ namespace SAM.Analytical.Tas
             {
                 result.Add(apertureType);
                 index++;
+                apertureType = buildingElement.GetApertureType(index);
             }
 
             return result;

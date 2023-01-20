@@ -59,7 +59,10 @@ namespace SAM.Analytical.Tas
                     result.SetDayType(dayType, true);
             }
 
-            buildingElement.AssignApertureType(result);
+            if(buildingElement.ApertureTypes().Find(x => x.name == result.name) == null)
+            {
+                buildingElement.AssignApertureType(result);
+            }
 
             return result;
         }
