@@ -55,6 +55,10 @@ namespace SAM.Analytical.Tas
             }
 
             TBD.WeatherYear weatherYear = building?.GetWeatherYear();
+            if(weatherYear == null)
+            {
+                return false;
+            }
 
             List<double> globalSolarRadiations = Weather.Tas.Query.AnnualParameter<double>(weatherYear, Weather.WeatherDataType.GlobalSolarRadiation);
 

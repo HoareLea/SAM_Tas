@@ -115,7 +115,7 @@ namespace SAM.Analytical.Tas
 
                         sAMT3DDocument.Save();
 
-                        simpleProgressForm.Update("Converting to TBD");
+                        simpleProgressForm.Update("T3D to TBD -> Shading");
                         Convert.ToTBD(t3DDocument, path_TBD, 1, 365, 15, true);
                     }
                 }
