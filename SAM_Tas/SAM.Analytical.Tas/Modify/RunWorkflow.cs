@@ -44,6 +44,10 @@ namespace SAM.Analytical.Tas
                 if (!string.IsNullOrWhiteSpace(path_gbXML))
                 {
                     string path_T3D = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "t3d"));
+                    if (System.IO.File.Exists(path_T3D))
+                    {
+                        System.IO.File.Delete(path_T3D);
+                    }
 
                     simpleProgressForm.Update("Extracting GUID");
                     string guid = null;
