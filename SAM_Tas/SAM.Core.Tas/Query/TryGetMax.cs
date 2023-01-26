@@ -16,6 +16,7 @@ namespace SAM.Core.Tas
                 return false;
             }
 
+            //TODO: Currently protection that protect from crushing ...confirm with Tas hwo to get Peak data if not 365 days in simulation
 
             object @object = null;
             try
