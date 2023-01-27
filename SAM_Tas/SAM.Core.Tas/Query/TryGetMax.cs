@@ -12,9 +12,22 @@ namespace SAM.Core.Tas
             max = double.NaN;
 
             if (buildingData == null || references == null || references.Count() == 0)
+            {
                 return false;
+            }
 
-            object @object = buildingData.GetPeakZoneGroupGains(new string[] { "Name:" + string.Join(":", references) }, new int[] { (int)tSDZoneArray });
+            //TODO: Currently protection that protect from crushing ...confirm with Tas hwo to get Peak data if not 365 days in simulation
+
+            object @object = null;
+            try
+            {
+                @object = buildingData.GetPeakZoneGroupGains(new string[] { "Name:" + string.Join(":", references) }, new int[] { (int)tSDZoneArray });
+            }
+            catch
+            {
+                return false;
+            }
+
             if (@object is object[,])
             {
                 object[,] table = (object[,])@object;
