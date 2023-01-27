@@ -258,8 +258,10 @@ namespace SAM.Analytical.Tas
                             //Transparent
                             List<ConstructionLayer> constructionLayers = apertureConstruction.PaneConstructionLayers;
 
-                            window.transparent = false; //Requested by Michal 2021.03.01
                             bool transparent = false;
+                            window.transparent = transparent; //Requested by Michal 2021.03.01
+                            window.internalShadows = false;
+
                             MaterialType materialType = Analytical.Query.MaterialType(constructionLayers, analyticalModel.MaterialLibrary);
                             if (materialType == MaterialType.Undefined)
                             {
