@@ -22,7 +22,7 @@ namespace SAM.Analytical.Tas
             int count = 5;
             if (!string.IsNullOrWhiteSpace(path_gbXML))
             {
-                count = count + 8;
+                count = count + 9;
             }
 
             if (updateZones)
@@ -157,6 +157,9 @@ namespace SAM.Analytical.Tas
                         simpleProgressForm.Update("Adding Design Days");
                         AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
                     }
+
+                    simpleProgressForm.Update("Creating Zone Groups");
+                    AddDefaultZoneGroups(tBDDocument?.Building, adjacencyCluster);
 
                     sAMTBDDocument.Save();
                 }

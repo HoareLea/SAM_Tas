@@ -131,6 +131,7 @@
     <Compile Include="Enums\Parameters\ApertureParameter.cs" />
     <Compile Include="Enums\Parameters\PanelParameter.cs" />
     <Compile Include="Enums\Parameters\TasSettingParameter.cs" />
+    <Compile Include="Modify\AddDefaultZoneGroups.cs" />
     <Compile Include="Modify\RemoveUnusedInternalConditions.cs" />
     <Compile Include="Modify\RemoveUnused.cs" />
     <Compile Include="Modify\RemoveUnusedWindows.cs" />

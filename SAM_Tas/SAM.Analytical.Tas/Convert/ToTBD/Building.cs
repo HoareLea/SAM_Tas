@@ -769,34 +769,7 @@ namespace SAM.Analytical.Tas
                 //}
             }
 
-            List<Space> spaces_Unzoned = adjacencyCluster.GetSpaces();
-            if (!string.IsNullOrEmpty(allZoneGroupName) && spaces_Unzoned != null && spaces_Unzoned.Count != 0)
-            {
-                result.ZoneGroup(allZoneGroupName, spaces_Unzoned, TBD.ZoneGroupType.tbdZoneSetZG);
-            }
-
-            List<Zone> zones = adjacencyCluster.GetZones();
-            if(zones != null && zones.Count != 0)
-            {
-                foreach(Zone zone in zones)
-                {
-                    result.ZoneGroup(adjacencyCluster, zone);
-
-                    List<Space> spaces_Temp = adjacencyCluster.GetSpaces(zone);
-                    if(spaces_Temp != null && spaces_Temp.Count != 0)
-                    {
-                        foreach(Space space in spaces_Temp)
-                        {
-                            spaces_Unzoned.RemoveAll(x => x.Guid == space.Guid);
-                        }
-                    }
-                }
-            }
-
-            if(!string.IsNullOrEmpty(undefinedZoneGroupName) && spaces_Unzoned != null && spaces_Unzoned.Count != 0)
-            {
-                result.ZoneGroup(undefinedZoneGroupName, spaces_Unzoned);
-            }
+            Modify.AddDefaultZoneGroups(result, adjacencyCluster, undefinedZoneGroupName, allZoneGroupName);
 
             return result;
         }
