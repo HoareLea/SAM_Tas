@@ -198,6 +198,7 @@ namespace SAM.Analytical.Tas
                         }
 
                         panel.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface.GUID);
+                        panel.SetValue(PanelParameter.BuildingElementGuid, buildingElement.GUID);
 
                         adjacencyCluster.AddObject(panel);
                         adjacencyCluster.AddRelation(panel, space);
@@ -221,7 +222,7 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
-                Dictionary<Guid, List<Polygon3D>> dictionary = new Dictionary<Guid, List<Polygon3D>>();
+                Dictionary<Guid, List<Tuple<Polygon3D, TBD.IZoneSurface>>> dictionary = new Dictionary<Guid, List<Tuple<Polygon3D, TBD.IZoneSurface>>>();
 
                 foreach(TBD.IZoneSurface zoneSurface in zoneSurfaces)
                 {
@@ -288,17 +289,17 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
-                        if(!dictionary.TryGetValue(apertureConstruction.Guid, out List<Polygon3D> polygon3Ds) || polygon3Ds == null)
+                        if(!dictionary.TryGetValue(apertureConstruction.Guid, out List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples) || tuples == null)
                         {
-                            polygon3Ds = new List<Polygon3D>();
-                            dictionary[apertureConstruction.Guid] = polygon3Ds;
+                            tuples = new List<Tuple<Polygon3D, TBD.IZoneSurface>>();
+                            dictionary[apertureConstruction.Guid] = tuples;
                         }
 
-                        polygon3Ds.Add(polygon3D);
+                        tuples.Add(new Tuple<Polygon3D, TBD.IZoneSurface>(polygon3D, zoneSurface));
                     }
                 }
 
-                foreach (KeyValuePair<Guid, List<Polygon3D>> keyValuePair in dictionary)
+                foreach (KeyValuePair<Guid, List<Tuple<Polygon3D, TBD.IZoneSurface>>> keyValuePair in dictionary)
                 {
                     if(keyValuePair.Value == null || keyValuePair.Value.Count == 0)
                     {
@@ -311,26 +312,26 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    List<Polygon3D> polygon3Ds = keyValuePair.Value;
-                    polygon3Ds.Sort((x, y) => y.GetArea().CompareTo(x.GetArea()));
+                    List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples = keyValuePair.Value;
+                    tuples.Sort((x, y) => y.Item1.GetArea().CompareTo(x.Item1.GetArea()));
 
                     List<Aperture> apertures = new List<Aperture>();
-                    while (polygon3Ds.Count > 0)
+                    while (tuples.Count > 0)
                     {
-                        Polygon3D polygon3D = polygon3Ds[0];
-                        polygon3Ds.RemoveAt(0);
+                        Polygon3D polygon3D = tuples[0].Item1;
+                        tuples.RemoveAt(0);
 
-                        List<Polygon3D> polygon3Ds_Temp = polygon3Ds.FindAll(x => new Face3D(polygon3D).InRange(x.InternalPoint3D()));
+                        List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples_Temp = tuples.FindAll(x => new Face3D(polygon3D).InRange(x.Item1.InternalPoint3D()));
 
                         Face3D face3D = null;
-                        if(polygon3Ds_Temp == null || polygon3Ds_Temp.Count == 0)
+                        if(tuples_Temp == null || tuples_Temp.Count == 0)
                         {
                             face3D = new Face3D(polygon3D);
                         }
                         else
                         {
-                            polygon3Ds_Temp.Add(polygon3D);
-                            List<Face3D> face3Ds = Geometry.Spatial.Create.Face3Ds(polygon3Ds_Temp);
+                            tuples_Temp.Add(new Tuple<Polygon3D, TBD.IZoneSurface>(polygon3D, tuples[0].Item2));
+                            List<Face3D> face3Ds = Geometry.Spatial.Create.Face3Ds(tuples_Temp.ConvertAll(x => x.Item1));
                             if(face3Ds != null && face3Ds.Count != 0)
                             {
                                 if(face3Ds.Count  > 1)
@@ -342,9 +343,80 @@ namespace SAM.Analytical.Tas
                             }
                         }
 
-                        polygon3Ds_Temp.ForEach(x => polygon3Ds.Remove(x));
+                        tuples_Temp.ForEach(x => tuples.Remove(x));
 
                         Aperture aperture = new Aperture(apertureConstruction, face3D);
+
+                        //TODO: New code added to include Aperture Guid TO BE CHECKED 2023.01.30
+                        List<TBD.IZoneSurface> zoneSurfaces_Aperture = tuples_Temp.ConvertAll(x => x.Item2);
+                        if (zoneSurfaces_Aperture != null && zoneSurfaces_Aperture.Count != 0)
+                        {
+                            TBD.IZoneSurface zoneSurface_Pane = null;
+                            TBD.IZoneSurface zoneSurface_Frame = null;
+                            foreach (TBD.IZoneSurface zoneSurface in zoneSurfaces_Aperture)
+                            {
+                                TBD.Construction construction = zoneSurface?.buildingElement?.GetConstruction();
+                                if (construction == null)
+                                {
+                                    continue;
+                                }
+
+                                string name = construction.name;
+                                if (string.IsNullOrWhiteSpace(name))
+                                {
+                                    continue;
+                                }
+
+                                if (name.EndsWith("-pane"))
+                                {
+                                    zoneSurface_Pane = zoneSurface;
+                                }
+
+                                if (name.EndsWith("-frame"))
+                                {
+                                    zoneSurface_Frame = zoneSurface;
+                                }
+
+                                if (zoneSurface_Frame != null && zoneSurface_Pane != null)
+                                {
+                                    break;
+                                }
+
+                            }
+
+                            if (zoneSurface_Frame == null)
+                            {
+                                zoneSurface_Frame = zoneSurfaces_Aperture[0];
+                            }
+
+                            if(zoneSurface_Pane == null)
+                            {
+                                zoneSurface_Pane = zoneSurfaces_Aperture[0];
+                            }
+
+                            if(zoneSurface_Frame != null)
+                            {
+                                aperture.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface_Frame.GUID);
+
+                                TBD.buildingElement buildingElement = zoneSurface_Frame.buildingElement;
+                                if(buildingElement != null)
+                                {
+                                    aperture.SetValue(ApertureParameter.FrameBuildingElementGuid, buildingElement.GUID);
+                                }
+                            }
+
+                            if (zoneSurface_Pane != null)
+                            {
+                                aperture.SetValue(ApertureParameter.PaneZoneSurfaceGuid, zoneSurface_Pane.GUID);
+
+                                TBD.buildingElement buildingElement = zoneSurface_Pane.buildingElement;
+                                if (buildingElement != null)
+                                {
+                                    aperture.SetValue(ApertureParameter.PaneBuildingElementGuid, buildingElement.GUID);
+                                }
+                            }
+                        }
+                        
                         apertures.Add(aperture);
 
                     }

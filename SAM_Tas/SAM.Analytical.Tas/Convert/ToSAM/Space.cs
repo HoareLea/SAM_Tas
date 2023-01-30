@@ -59,6 +59,7 @@ namespace SAM.Analytical.Tas
 
             result.SetValue(Analytical.SpaceParameter.Area, area);
             result.SetValue(Analytical.SpaceParameter.Volume, zone.volume);
+            result.SetValue(SpaceParameter.ZoneGuid, zone.GUID);
 
             List<TBD.InternalCondition> internalConditions_TBD = zone.InternalConditions();
             if(internalConditions_TBD != null)
