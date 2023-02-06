@@ -161,6 +161,12 @@ namespace SAM.Analytical.Tas
                     simpleProgressForm.Update("Creating Zone Groups");
                     AddDefaultZoneGroups(tBDDocument?.Building, adjacencyCluster);
 
+                    if (!string.IsNullOrWhiteSpace(path_gbXML))
+                    {
+                        simpleProgressForm.Update("Updating Aperture Types");
+                        SetApertureTypes(tBDDocument.Building, adjacencyCluster, Core.Tolerance.MacroDistance);
+                    }
+
                     sAMTBDDocument.Save();
                 }
 
