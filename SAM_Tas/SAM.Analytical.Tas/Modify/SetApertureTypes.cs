@@ -31,6 +31,10 @@ namespace SAM.Analytical.Tas
                 return;
             }
 
+            BoundingBox3D boundingBox3D_Temp = adjacencyCluster_Temp.GetPanels().BoundingBox3D();
+            BoundingBox3D boundingBox3D = adjacencyCluster_Temp.GetPanels().BoundingBox3D();
+            adjacencyCluster_Temp.Transform(Transform3D.GetTranslation(new Vector3D(boundingBox3D_Temp.GetCentroid(), boundingBox3D.GetCentroid())));
+
             List<Panel> panels_Temp = adjacencyCluster_Temp.GetPanels();
             if(panels_Temp == null || panels_Temp.Count == 0)
             {
