@@ -328,7 +328,6 @@ namespace SAM.Analytical.Tas
                     List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples = keyValuePair.Value;
                     tuples.Sort((x, y) => y.Item1.GetArea().CompareTo(x.Item1.GetArea()));
 
-                    List<Aperture> apertures = new List<Aperture>();
                     while (tuples.Count > 0)
                     {
                         Polygon3D polygon3D = tuples[0].Item1;
@@ -337,7 +336,7 @@ namespace SAM.Analytical.Tas
                         List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples_Temp = tuples.FindAll(x => new Face3D(polygon3D).InRange(x.Item1.InternalPoint3D()));
 
                         Face3D face3D = null;
-                        if(tuples_Temp == null || tuples_Temp.Count == 0)
+                        if (tuples_Temp == null || tuples_Temp.Count == 0)
                         {
                             face3D = new Face3D(polygon3D);
                         }
@@ -345,9 +344,9 @@ namespace SAM.Analytical.Tas
                         {
                             tuples_Temp.Add(new Tuple<Polygon3D, TBD.IZoneSurface>(polygon3D, tuples[0].Item2));
                             List<Face3D> face3Ds = Geometry.Spatial.Create.Face3Ds(tuples_Temp.ConvertAll(x => x.Item1));
-                            if(face3Ds != null && face3Ds.Count != 0)
+                            if (face3Ds != null && face3Ds.Count != 0)
                             {
-                                if(face3Ds.Count  > 1)
+                                if (face3Ds.Count > 1)
                                 {
                                     face3Ds.Sort((x, y) => y.ExternalEdge2D.GetArea().CompareTo(x.ExternalEdge2D.GetArea()));
                                 }
@@ -402,17 +401,17 @@ namespace SAM.Analytical.Tas
                                 zoneSurface_Frame = zoneSurfaces_Aperture[0];
                             }
 
-                            if(zoneSurface_Pane == null)
+                            if (zoneSurface_Pane == null)
                             {
                                 zoneSurface_Pane = zoneSurfaces_Aperture[0];
                             }
 
-                            if(zoneSurface_Frame != null)
+                            if (zoneSurface_Frame != null)
                             {
                                 aperture.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface_Frame.GUID);
 
                                 TBD.buildingElement buildingElement = zoneSurface_Frame.buildingElement;
-                                if(buildingElement != null)
+                                if (buildingElement != null)
                                 {
                                     aperture.SetValue(ApertureParameter.FrameBuildingElementGuid, buildingElement.GUID);
                                 }
@@ -429,12 +428,10 @@ namespace SAM.Analytical.Tas
                                 }
                             }
                         }
-                        
-                        apertures.Add(aperture);
+
+                        adjacencyCluster.AddAperture(aperture);
 
                     }
-
-                    adjacencyCluster.AddApertures(apertures);
                 }
 
                 if (internalConditions != null)
