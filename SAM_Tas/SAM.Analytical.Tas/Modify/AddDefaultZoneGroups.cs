@@ -19,7 +19,12 @@ namespace SAM.Analytical.Tas
             List<Space> spaces_Unzoned = adjacencyCluster.GetSpaces();
             if (!string.IsNullOrEmpty(allZoneGroupName) && spaces_Unzoned != null && spaces_Unzoned.Count != 0)
             {
-                TBD.ZoneGroup zoneGroup = building.ZoneGroup(allZoneGroupName, spaces_Unzoned, TBD.ZoneGroupType.tbdZoneSetZG);
+                TBD.ZoneGroup zoneGroup = building.ZoneGroups()?.Find(x => x.name == allZoneGroupName && x.type == (int)TBD.ZoneGroupType.tbdZoneSetZG);
+                if(zoneGroup == null)
+                {
+                    zoneGroup = building.ZoneGroup(allZoneGroupName, spaces_Unzoned, TBD.ZoneGroupType.tbdZoneSetZG);
+                }
+
                 if(zoneGroup != null)
                 {
                     result.Add(zoneGroup);

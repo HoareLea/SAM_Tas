@@ -106,6 +106,19 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
+                if(internalConditions != null && internalConditions.Count != 0)
+                {
+                    InternalCondition internalCondition = internalConditions.Find(x => !x.Name.EndsWith("HDD") && !x.Name.EndsWith("CDD"));
+                    if(internalCondition == null)
+                    {
+                        internalCondition = internalConditions[0];
+                    }
+
+                    space.InternalCondition = internalCondition;
+                    internalConditions.Remove(internalCondition);
+                    internalConditions.ForEach(x => adjacencyCluster.AddObject(x));
+                }
+
                 space.SetValue(SpaceParameter.ZoneGuid, zone.GUID);
 
                 //List<Tuple<string, string>> tuples_Relations = new List<Tuple<string, string>>();
