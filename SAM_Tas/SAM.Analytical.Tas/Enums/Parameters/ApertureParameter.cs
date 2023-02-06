@@ -3,7 +3,7 @@ using SAM.Core.Attributes;
 
 namespace SAM.Analytical.Tas
 {
-    [AssociatedTypes(typeof(Panel)), Description("Panel Parameter")]
+    [AssociatedTypes(typeof(Aperture)), Description("Aperture Parameter")]
     public enum ApertureParameter
     {
         [ParameterProperties("Frame Zone Surface Guid", "Frame Zone Surface Guid"), ParameterValue(Core.ParameterType.String)] FrameZoneSurfaceGuid,
