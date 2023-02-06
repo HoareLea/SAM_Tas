@@ -71,5 +71,22 @@ namespace SAM.Analytical.Tas
 
             return result;
         }
+
+        public static List<TBD.zone> Zones(this TBD.ZoneGroup zoneGroup)
+        {
+            if (zoneGroup == null)
+                return null;
+
+            List<TBD.zone> result = new List<TBD.zone>();
+
+            TBD.zone zone = zoneGroup.GetZone(result.Count);
+            while (zone != null)
+            {
+                result.Add(zone);
+                zone = zoneGroup.GetZone(result.Count);
+            }
+
+            return result;
+        }
     }
 }

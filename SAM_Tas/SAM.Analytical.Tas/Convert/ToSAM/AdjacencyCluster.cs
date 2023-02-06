@@ -447,6 +447,33 @@ namespace SAM.Analytical.Tas
                 }
             }
 
+            List<TBD.ZoneGroup> zoneGroups = building.ZoneGroups();
+            if(zoneGroups != null && zoneGroups.Count != 0)
+            {
+                foreach(TBD.ZoneGroup zoneGroup in zoneGroups)
+                {
+                    Zone zone = new Zone(zoneGroup.name);
+                    zone.SetValue(ZoneParameter.ZoneCategory, zoneGroup.description);
+
+                    adjacencyCluster.AddObject(zone);
+
+                    List<TBD.zone> zones = zoneGroup.Zones();
+                    if(zones != null)
+                    {
+                        foreach(TBD.zone zone_Temp in zones)
+                        {
+                            if(!dictionary_Space.TryGetValue(zone_Temp.GUID, out Space space))
+                            {
+                                continue;
+                            }
+
+                            adjacencyCluster.AddRelation(zone, space);
+                        }
+                    }
+
+                }
+            }
+
             //adjacencyCluster.UpdatePanelTypes(groundElevation);
 
             return adjacencyCluster;
