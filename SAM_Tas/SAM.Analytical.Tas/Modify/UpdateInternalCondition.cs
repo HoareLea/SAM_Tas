@@ -124,6 +124,12 @@ namespace SAM.Analytical.Tas
                         gain = gain / area;
 
                     Update(profile_TBD, profile, gain);
+
+                    if(internalCondition.TryGetValue(InternalConditionParameter.LightingControlFunction, out string lightingControlFunction) && !string.IsNullOrWhiteSpace(lightingControlFunction))
+                    {
+                        profile_TBD.type = TBD.ProfileTypes.ticYearlyFunctionProfile;
+                        profile_TBD.function = lightingControlFunction;
+                    }
                 }
             }
 
