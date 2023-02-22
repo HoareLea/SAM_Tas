@@ -127,7 +127,15 @@ namespace SAM.Analytical.Tas
 
                     if(internalCondition.TryGetValue(InternalConditionParameter.LightingControlFunction, out string lightingControlFunction) && !string.IsNullOrWhiteSpace(lightingControlFunction))
                     {
-                        profile_TBD.type = TBD.ProfileTypes.ticYearlyFunctionProfile;
+                        if(profile_TBD.type == TBD.ProfileTypes.ticHourlyProfile)
+                        {
+                            profile_TBD.type = TBD.ProfileTypes.ticHourlyFunctionProfile;
+                        }
+                        else if(profile_TBD.type == TBD.ProfileTypes.ticYearlyProfile)
+                        {
+                            profile_TBD.type = TBD.ProfileTypes.ticYearlyFunctionProfile;
+                        }
+
                         profile_TBD.function = lightingControlFunction;
                     }
                 }
