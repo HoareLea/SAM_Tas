@@ -134,7 +134,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                         surfaceOutputSpec.Condensation = false;
                         surfaceOutputSpec.Convection = false;
                         surfaceOutputSpec.LongWave = false;
-                        surfaceOutputSpec.Temperature = false;
+                        surfaceOutputSpec.Temperature = true;
 
                         surfaceOutputSpecs.Add(surfaceOutputSpec);
                     }
