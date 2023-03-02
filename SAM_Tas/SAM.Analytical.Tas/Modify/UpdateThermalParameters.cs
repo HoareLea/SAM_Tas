@@ -61,7 +61,8 @@ namespace SAM.Analytical.Tas
                     out double directSolarEnergyAbsorptance,
                     out double totalSolarEnergyTransmittance,
                     out double pilkingtonShortWavelengthCoefficient,
-                    out double pilkingtonLongWavelengthCoefficient);
+                    out double pilkingtonLongWavelengthCoefficient,
+                    0.0001);
 
                 if (!double.IsNaN(lightTransmittance))
                 {
@@ -145,7 +146,8 @@ namespace SAM.Analytical.Tas
                             out directSolarEnergyAbsorptance,
                             out totalSolarEnergyTransmittance,
                             out pilkingtonShortWavelengthCoefficient,
-                            out pilkingtonLongWavelengthCoefficient);
+                            out pilkingtonLongWavelengthCoefficient,
+                            0.0001);
 
                         if (!double.IsNaN(lightTransmittance))
                         {
