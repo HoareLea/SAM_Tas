@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.4";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -67,6 +67,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_runUnmetHours_", NickName = "_runUnmetHours_", Description = "Calculates the amount of hours that the Zone/Space will be outside of the thermostat setpoint (unmet hours).", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_runDaylightFactors_", NickName = "_runDaylightFactors_", Description = "Calculates Daylight Factors.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "surfaceOutputSpec_", NickName = "surfaceOutputSpec_", Description = "Surface Output Spec", Access = GH_ParamAccess.list, Optional = true };
                 result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
@@ -322,6 +326,26 @@ namespace SAM.Analytical.Grasshopper.Tas
                 string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
 
                 dataAccess.SetData(index, path_TSD);
+            }
+
+            bool calculateDaylightFactors = false;
+            index = Params.IndexOfInputParam("_runDaylightFactors_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref calculateDaylightFactors))
+                {
+                    calculateDaylightFactors = false;
+                }
+            }
+
+            if(calculateDaylightFactors && analyticalModel != null)
+            {
+                AdjacencyCluster adjacencyCluster = analyticalModel.AdjacencyCluster;
+                if(adjacencyCluster != null)
+                {
+                    adjacencyCluster.UpdateDaylightFactors();
+                    analyticalModel = new AnalyticalModel(analyticalModel, adjacencyCluster);
+                }
             }
 
             index = Params.IndexOfOutputParam("analyticalModel");
