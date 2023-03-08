@@ -46,7 +46,22 @@ namespace SAM.Analytical.Tas
 
             building.ClearDesignDays();
 
-            List<TBD.dayType> dayTypes = building.DayTypes();
+            TBD.Calendar calendar = building.GetCalendar();
+
+            List<TBD.dayType> dayTypes = Query.DayTypes(calendar);
+            if (dayTypes.Find(x => x.name == "HDD") == null)
+            {
+                TBD.dayType dayType = calendar.AddDayType();
+                dayType.name = "HDD";
+            }
+
+            if (dayTypes.Find(x => x.name == "CDD") == null)
+            {
+                TBD.dayType dayType = calendar.AddDayType();
+                dayType.name = "CDD";
+            }
+
+            dayTypes = building.DayTypes();
 
             List<Guid> result = new List<Guid>();
 
