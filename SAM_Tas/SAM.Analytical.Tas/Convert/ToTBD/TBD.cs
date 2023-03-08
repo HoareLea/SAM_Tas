@@ -38,6 +38,22 @@ namespace SAM.Analytical.Tas
             if (autoAssignConstructions)
                 int_autoAssignConstructions = 1;
 
+            if (path_TBD != null && System.IO.File.Exists(path_TBD) && !string.IsNullOrWhiteSpace(t3DDocument?.Building?.GUID))
+            {
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+                {
+                    TBD.Building building = sAMTBDDocument?.TBDDocument?.Building;
+                    if(building != null)
+                    {
+                        if(building.GUID != t3DDocument.Building.GUID)
+                        {
+                            building.GUID = t3DDocument.Building.GUID;
+                            sAMTBDDocument.Save();
+                        }
+                    }
+                }
+            }
+
             return t3DDocument.ExportNew(day_First, day_Last, step, 1, 1, 1, path_TBD, int_autoAssignConstructions, 0, 0);
         }
 
