@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SAM.Geometry.Spatial;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SAM.Analytical.Tas
@@ -114,6 +115,76 @@ namespace SAM.Analytical.Tas
             }
 
             return result;
+        }
+
+        public static Panel Match(this TBD.IZoneSurface zoneSurface, List<Panel> panels, double tolerance = SAM.Core.Tolerance.MacroDistance)
+        {
+            if (zoneSurface == null || panels == null  || panels.Count == 0)
+            {
+                return null;
+            }
+
+            foreach (Panel panel in panels)
+            {
+                if (panel == null)
+                {
+                    continue;
+                }
+
+                if (panel.TryGetValue(PanelParameter.ZoneSurfaceGuid, out string zoneSurfaceGuid) && !string.IsNullOrWhiteSpace(zoneSurfaceGuid))
+                {
+                    if (zoneSurface.GUID == zoneSurfaceGuid)
+                    {
+                        return panel;
+                    }
+                }
+            }
+
+            List<TBD.IRoomSurface> roomSurfaces = zoneSurface.RoomSurfaces();
+            if(roomSurfaces == null || roomSurfaces.Count == 0)
+            {
+                return null;
+            }
+
+            foreach(TBD.IRoomSurface roomSurface in roomSurfaces)
+            {
+                Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
+                if (polygon3D == null)
+                {
+                    continue;
+                }
+
+                Point3D point3D = polygon3D.InternalPoint3D();
+                if(point3D == null)
+                {
+                    continue;
+                }
+
+                foreach(Panel panel in panels)
+                {
+                    Face3D face3D = panel?.GetFace3D(false);
+                    if(face3D == null)
+                    {
+                        continue;
+                    }
+
+                    BoundingBox3D boundingBox3D = panel.GetBoundingBox();
+                    if(boundingBox3D == null)
+                    {
+                        continue;
+                    }
+
+                    if(boundingBox3D.InRange(boundingBox3D, tolerance))
+                    {
+                        if (face3D.InRange(point3D, tolerance))
+                        {
+                            return panel;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         public static Construction Match(this TAS3D.Element element, IEnumerable<Construction> constructions)

@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas
 
             string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
 
-            int count = 5;
+            int count = 6;
             if (!string.IsNullOrWhiteSpace(path_gbXML))
             {
                 count = count + 9;
@@ -141,6 +141,8 @@ namespace SAM.Analytical.Tas
                     UpdateBuildingElements(tBDDocument, result);
 
                     adjacencyCluster = result.AdjacencyCluster;
+                    simpleProgressForm.Update("Updating Ids");
+                    UpdateIds(adjacencyCluster, tBDDocument.Building);
 
                     simpleProgressForm.Update("Updating Thermal Parameters");
                     UpdateThermalParameters(adjacencyCluster, tBDDocument.Building);
