@@ -56,6 +56,8 @@ namespace SAM.Analytical.Tas
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces != null && spaces.Count > 0)
             {
+                adjacencyCluster.GetPanels()?.ForEach(x => adjacencyCluster.GetRelatedObjects<PanelSimulationResult>(x.Guid)?.ForEach(y => adjacencyCluster.RemoveObject<PanelSimulationResult>(y.Guid)));
+
                 foreach (Space space in spaces)
                 {
                     List<SpaceSimulationResult> spaceSimulationResults_Space = results.FindAll(x => x is SpaceSimulationResult && space.Name.Equals(x.Name)).ConvertAll(x => (SpaceSimulationResult)x);
@@ -94,7 +96,7 @@ namespace SAM.Analytical.Tas
 
                         adjacencyCluster.AddObject(panelSimulationResult);
 
-                        //Panel panel_Space = null;
+                        Panel panel_Space = null;
                         List<Panel> panels = adjacencyCluster.GetPanels(space);
                         if(panels != null && panels.Count != 0)
                         {
@@ -104,19 +106,21 @@ namespace SAM.Analytical.Tas
                                 {
                                     if(zoneSurfaceNumber.ToString() == panelSimulationResult.Reference)
                                     {
-                                        adjacencyCluster.GetRelatedObjects<PanelSimulationResult>(panel)?.ForEach(x => adjacencyCluster.RemoveObject<PanelSimulationResult>(x.Guid));
                                         adjacencyCluster.AddRelation(panel, panelSimulationResult);
-                                        //panel_Space = panel;
+                                        panel_Space = panel;
                                         break;
                                     }
                                 }
                             }
                         }
 
-                        //if(panel_Space == null)
-                        //{
-                        //    adjacencyCluster.AddRelation(space, panelSimulationResult);
-                        //}
+                        if (panel_Space == null)
+                        {
+                            //adjacencyCluster.AddRelation(space, panelSimulationResult);
+                            string spaceName = space.Name;
+                            string reference = panelSimulationResult.Reference;
+                            LoadType loadType = panelSimulationResult.LoadType();
+                        }
 
                     }
                 }
