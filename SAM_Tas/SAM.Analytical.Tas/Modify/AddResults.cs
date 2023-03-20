@@ -94,7 +94,7 @@ namespace SAM.Analytical.Tas
 
                         adjacencyCluster.AddObject(panelSimulationResult);
 
-                        Panel panel_Space = null;
+                        //Panel panel_Space = null;
                         List<Panel> panels = adjacencyCluster.GetPanels(space);
                         if(panels != null && panels.Count != 0)
                         {
@@ -106,17 +106,17 @@ namespace SAM.Analytical.Tas
                                     {
                                         adjacencyCluster.GetRelatedObjects<PanelSimulationResult>(panel)?.ForEach(x => adjacencyCluster.RemoveObject<PanelSimulationResult>(x.Guid));
                                         adjacencyCluster.AddRelation(panel, panelSimulationResult);
-                                        panel_Space = panel;
+                                        //panel_Space = panel;
                                         break;
                                     }
                                 }
                             }
                         }
 
-                        if(panel_Space == null)
-                        {
-                            adjacencyCluster.AddRelation(space, panelSimulationResult);
-                        }
+                        //if(panel_Space == null)
+                        //{
+                        //    adjacencyCluster.AddRelation(space, panelSimulationResult);
+                        //}
 
                     }
                 }
