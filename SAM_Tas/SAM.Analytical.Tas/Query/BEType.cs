@@ -73,9 +73,9 @@ namespace SAM.Analytical.Tas
         {
             switch (aperturePart)
             {
-                case AperturePart.Pane:
+                case Analytical.AperturePart.Pane:
                     return BEType("Glazing");
-                case AperturePart.Frame:
+                case Analytical.AperturePart.Frame:
                     return BEType("Frame");
             }
 

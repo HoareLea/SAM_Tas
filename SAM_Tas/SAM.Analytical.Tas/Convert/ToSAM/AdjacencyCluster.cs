@@ -410,6 +410,7 @@ namespace SAM.Analytical.Tas
                             if (zoneSurface_Frame != null)
                             {
                                 aperture.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface_Frame.GUID);
+                                aperture.SetValue(ApertureParameter.FrameZoneSurfaceNumber, zoneSurface_Frame.number);
 
                                 TBD.buildingElement buildingElement = zoneSurface_Frame.buildingElement;
                                 if (buildingElement != null)
@@ -421,6 +422,7 @@ namespace SAM.Analytical.Tas
                             if (zoneSurface_Pane != null)
                             {
                                 aperture.SetValue(ApertureParameter.PaneZoneSurfaceGuid, zoneSurface_Pane.GUID);
+                                aperture.SetValue(ApertureParameter.PaneZoneSurfaceNumber, zoneSurface_Pane.number);
 
                                 TBD.buildingElement buildingElement = zoneSurface_Pane.buildingElement;
                                 if (buildingElement != null)

@@ -37,10 +37,22 @@ namespace SAM.Analytical.Tas
                                     Panel panel = zoneSurface.Match(panels, tolerance);
                                     if(panel != null)
                                     {
-                                        panel.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface.GUID);
-                                        panel.SetValue(PanelParameter.ZoneSurfaceNumber, zoneSurface.number);
-                                        panel.SetValue(PanelParameter.BuildingElementGuid, zoneSurface.buildingElement?.GUID);
-                                        adjacencyCluster.AddObject(panel);
+                                        Core.ParameterizedSAMObject parameterizedSAMObject = panel;
+
+                                        List<Aperture> apertures = panel.Apertures;
+                                        if(apertures != null && apertures.Count != 0)
+                                        {
+                                            Aperture aperture = zoneSurface.Match(apertures, tolerance);
+                                            if(aperture != null)
+                                            {
+                                                parameterizedSAMObject = aperture;
+                                            }
+                                        }
+
+                                        parameterizedSAMObject.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface.GUID);
+                                        parameterizedSAMObject.SetValue(PanelParameter.ZoneSurfaceNumber, zoneSurface.number);
+                                        parameterizedSAMObject.SetValue(PanelParameter.BuildingElementGuid, zoneSurface.buildingElement?.GUID);
+                                        adjacencyCluster.AddObject(parameterizedSAMObject);
                                     }
                                 }
                             }

@@ -407,6 +407,7 @@ namespace SAM.Analytical.Tas
                                                 {
                                                     Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
                                                     aperture_Temp.SetValue(ApertureParameter.PaneZoneSurfaceGuid, zoneSurface.GUID);
+                                                    aperture_Temp.SetValue(ApertureParameter.PaneZoneSurfaceNumber, zoneSurface.number);
                                                     panel_Temp.RemoveAperture(aperture_Temp.Guid);
                                                     panel_Temp.AddAperture(aperture_Temp);
                                                 }
@@ -448,6 +449,7 @@ namespace SAM.Analytical.Tas
                                                 {
                                                     Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
                                                     aperture_Temp.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface.GUID);
+                                                    aperture_Temp.SetValue(ApertureParameter.FrameZoneSurfaceNumber, zoneSurface.number);
                                                     panel_Temp.RemoveAperture(aperture_Temp.Guid);
                                                     panel_Temp.AddAperture(aperture_Temp);
                                                 }

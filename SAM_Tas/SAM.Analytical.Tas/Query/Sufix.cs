@@ -6,10 +6,10 @@
         {
             switch(aperturePart)
             {
-                case AperturePart.Frame:
+                case Analytical.AperturePart.Frame:
                     return "-frame";
 
-                case AperturePart.Pane:
+                case Analytical.AperturePart.Pane:
                     return "-pane";
             }
 

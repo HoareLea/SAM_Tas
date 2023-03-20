@@ -1,4 +1,5 @@
 ﻿using SAM.Geometry.Spatial;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -117,7 +118,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static Panel Match(this TBD.IZoneSurface zoneSurface, List<Panel> panels, double tolerance = SAM.Core.Tolerance.MacroDistance)
+        public static Panel Match(this TBD.IZoneSurface zoneSurface, List<Panel> panels, double tolerance = Core.Tolerance.MacroDistance)
         {
             if (zoneSurface == null || panels == null  || panels.Count == 0)
             {
@@ -186,6 +187,95 @@ namespace SAM.Analytical.Tas
 
             return null;
         }
+
+        public static Aperture Match(this TBD.IZoneSurface zoneSurface, List<Aperture> apertures, double tolerance = Core.Tolerance.MacroDistance)
+        {
+            if (zoneSurface == null || apertures == null || apertures.Count == 0)
+            {
+                return null;
+            }
+
+            TBD.buildingElement buildingElement = zoneSurface.buildingElement;
+
+            ApertureType apertureType = ApertureType(buildingElement.BEType);
+            if (apertureType == Analytical.ApertureType.Undefined)
+            {
+                return null;
+            }
+
+            AperturePart aperturePart = AperturePart(buildingElement.BEType);
+            if (aperturePart == Analytical.AperturePart.Undefined)
+            {
+                return null;
+            }
+
+            Enum @enum = aperturePart == Analytical.AperturePart.Frame ? ApertureParameter.FrameZoneSurfaceGuid : ApertureParameter.PaneZoneSurfaceGuid;
+
+
+            foreach (Aperture aperture in apertures)
+            {
+                if (aperture == null)
+                {
+                    continue;
+                }
+
+                if (aperture.TryGetValue(@enum, out string zoneSurfaceGuid) && !string.IsNullOrWhiteSpace(zoneSurfaceGuid))
+                {
+                    if (zoneSurface.GUID == zoneSurfaceGuid)
+                    {
+                        return aperture;
+                    }
+                }
+            }
+
+            List<TBD.IRoomSurface> roomSurfaces = zoneSurface.RoomSurfaces();
+            if (roomSurfaces == null || roomSurfaces.Count == 0)
+            {
+                return null;
+            }
+
+            foreach (TBD.IRoomSurface roomSurface in roomSurfaces)
+            {
+                Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
+                if (polygon3D == null)
+                {
+                    continue;
+                }
+
+                Point3D point3D = polygon3D.InternalPoint3D();
+                if (point3D == null)
+                {
+                    continue;
+                }
+
+                foreach (Aperture aperture in apertures)
+                {
+                    List<Face3D> face3Ds_AperturePart = aperture?.GetFace3Ds(aperturePart);
+                    if(face3Ds_AperturePart != null)
+                    {
+                        foreach(Face3D face3D_AperturePart in face3Ds_AperturePart)
+                        {
+                            BoundingBox3D boundingBox3D = face3D_AperturePart.GetBoundingBox();
+                            if (boundingBox3D == null)
+                            {
+                                continue;
+                            }
+
+                            if (boundingBox3D.InRange(boundingBox3D, tolerance))
+                            {
+                                if (face3D_AperturePart.InRange(point3D, tolerance))
+                                {
+                                    return aperture;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
 
         public static Construction Match(this TAS3D.Element element, IEnumerable<Construction> constructions)
         {

@@ -243,7 +243,7 @@ namespace SAM.Analytical.Tas
                             //Colour
                             if (aperture != null)
                             {
-                                window.SetColor(aperture, AperturePart.Pane);
+                                window.SetColor(aperture, Analytical.AperturePart.Pane);
                             }
                             else
                             {
