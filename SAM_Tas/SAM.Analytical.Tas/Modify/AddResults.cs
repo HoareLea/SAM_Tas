@@ -104,6 +104,7 @@ namespace SAM.Analytical.Tas
                                 {
                                     if(zoneSurfaceNumber.ToString() == panelSimulationResult.Reference)
                                     {
+                                        adjacencyCluster.GetRelatedObjects<PanelSimulationResult>(panel)?.ForEach(x => adjacencyCluster.RemoveObject<PanelSimulationResult>(x.Guid));
                                         adjacencyCluster.AddRelation(panel, panelSimulationResult);
                                         panel_Space = panel;
                                         break;
