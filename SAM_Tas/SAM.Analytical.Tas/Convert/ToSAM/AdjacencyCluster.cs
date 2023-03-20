@@ -211,6 +211,7 @@ namespace SAM.Analytical.Tas
                         }
 
                         panel.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface.GUID);
+                        panel.SetValue(PanelParameter.ZoneSurfaceNumber, zoneSurface.number);
                         panel.SetValue(PanelParameter.BuildingElementGuid, buildingElement.GUID);
 
                         adjacencyCluster.AddObject(panel);

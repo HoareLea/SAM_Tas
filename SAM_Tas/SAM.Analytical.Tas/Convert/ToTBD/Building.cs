@@ -126,6 +126,7 @@ namespace SAM.Analytical.Tas
 
                         Panel panel_Temp = Analytical.Create.Panel(panel);
                         panel_Temp.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface_Panel.GUID);
+                        panel_Temp.SetValue(PanelParameter.ZoneSurfaceNumber, zoneSurface_Panel.number);
 
                         float orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
                         orientation += 180;

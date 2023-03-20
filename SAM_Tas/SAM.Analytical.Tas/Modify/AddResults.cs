@@ -93,7 +93,30 @@ namespace SAM.Analytical.Tas
                         }
 
                         adjacencyCluster.AddObject(panelSimulationResult);
-                        adjacencyCluster.AddRelation(space, panelSimulationResult);
+
+                        Panel panel_Space = null;
+                        List<Panel> panels = adjacencyCluster.GetPanels(space);
+                        if(panels != null && panels.Count != 0)
+                        {
+                            foreach(Panel panel in panels)
+                            {
+                                if(panel.TryGetValue(PanelParameter.ZoneSurfaceNumber, out int zoneSurfaceNumber) && zoneSurfaceNumber != -1)
+                                {
+                                    if(zoneSurfaceNumber.ToString() == panelSimulationResult.Reference)
+                                    {
+                                        adjacencyCluster.AddRelation(panel, panelSimulationResult);
+                                        panel_Space = panel;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if(panel_Space == null)
+                        {
+                            adjacencyCluster.AddRelation(space, panelSimulationResult);
+                        }
+
                     }
                 }
             }

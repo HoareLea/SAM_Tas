@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas
                 }
 
                 panelSimulationResult.SetValue(PanelSimulationResultParameter.ZoneName, zoneData.name);
-
+                
                 result.Add(panelSimulationResult);
             }
 
