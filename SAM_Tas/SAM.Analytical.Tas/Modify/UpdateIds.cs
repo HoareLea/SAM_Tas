@@ -56,29 +56,45 @@ namespace SAM.Analytical.Tas
                                     Panel panel = zoneSurface.Match(panels_Space, tolerance);
                                     if(panel != null)
                                     {
-                                        Core.ParameterizedSAMObject parameterizedSAMObject = panel;
+                                        panel.SetValue(PanelParameter.BuildingElementGuid, zoneSurface.buildingElement?.GUID);
+
+                                        Core.Tas.ZoneSurfaceReference zoneSurfaceReference_1;
 
                                         List<Aperture> apertures = panel.Apertures;
                                         if(apertures != null && apertures.Count != 0)
                                         {
-                                            Aperture aperture = zoneSurface.Match(apertures, tolerance);
+                                            Aperture aperture = zoneSurface.Match(apertures, out AperturePart aperturePart, tolerance);
                                             if(aperture != null)
                                             {
-                                                parameterizedSAMObject = aperture;
+                                                ApertureParameter apertureParameter_1 = aperturePart == AperturePart.Frame ? ApertureParameter.FrameZoneSurfaceReference_1 : ApertureParameter.PaneZoneSurfaceReference_1;
+                                                ApertureParameter apertureParameter_2 = aperturePart == AperturePart.Frame ? ApertureParameter.FrameZoneSurfaceReference_2 : ApertureParameter.PaneZoneSurfaceReference_2;
+                                                if (!aperture.TryGetValue(apertureParameter_1, out zoneSurfaceReference_1) || zoneSurfaceReference_1 == null)
+                                                {
+                                                    aperture.SetValue(apertureParameter_1, zoneSurfaceReference);
+                                                }
+                                                else
+                                                {
+                                                    aperture.SetValue(apertureParameter_2, zoneSurfaceReference);
+                                                }
+
+                                                panel.RemoveAperture(aperture.Guid);
+                                                panel.AddAperture(aperture);
+                                                adjacencyCluster.AddObject(panel);
+                                                continue;
                                             }
                                         }
 
-                                        if(!parameterizedSAMObject.TryGetValue(PanelParameter.ZoneSurfaceReference_1, out Core.Tas.ZoneSurfaceReference zoneSurfaceReference_1) || zoneSurfaceReference_1 == null)
+                                        if (!panel.TryGetValue(PanelParameter.ZoneSurfaceReference_1, out zoneSurfaceReference_1) || zoneSurfaceReference_1 == null)
                                         {
-                                            parameterizedSAMObject.SetValue(PanelParameter.ZoneSurfaceReference_1, zoneSurfaceReference);
+                                            panel.SetValue(PanelParameter.ZoneSurfaceReference_1, zoneSurfaceReference);
                                         }
                                         else
                                         {
-                                            parameterizedSAMObject.SetValue(PanelParameter.ZoneSurfaceReference_2, zoneSurfaceReference);
+                                            panel.SetValue(PanelParameter.ZoneSurfaceReference_2, zoneSurfaceReference);
                                         }
 
-                                        parameterizedSAMObject.SetValue(PanelParameter.BuildingElementGuid, zoneSurface.buildingElement?.GUID);
-                                        adjacencyCluster.AddObject(parameterizedSAMObject);
+                                        adjacencyCluster.AddObject(panel);
+
                                     }
                                 }
                             }

@@ -196,8 +196,10 @@ namespace SAM.Analytical.Tas
             return null;
         }
 
-        public static Aperture Match(this TBD.IZoneSurface zoneSurface, List<Aperture> apertures, double tolerance = Core.Tolerance.MacroDistance)
+        public static Aperture Match(this TBD.IZoneSurface zoneSurface, List<Aperture> apertures, out AperturePart aperturePart, double tolerance = Core.Tolerance.MacroDistance)
         {
+            aperturePart = Analytical.AperturePart.Undefined;
+
             if (zoneSurface == null || apertures == null || apertures.Count == 0)
             {
                 return null;
@@ -211,7 +213,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            AperturePart aperturePart = AperturePart(buildingElement.BEType);
+            aperturePart = AperturePart(buildingElement.BEType);
             if (aperturePart == Analytical.AperturePart.Undefined)
             {
                 return null;

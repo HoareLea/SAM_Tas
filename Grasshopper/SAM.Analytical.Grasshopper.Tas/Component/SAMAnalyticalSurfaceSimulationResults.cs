@@ -260,6 +260,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfOutputParam("analytical");
             if (index != -1)
                 dataAccess.SetData(index, sAMObject);
+
+            index = Params.IndexOfOutputParam("surfaceSimulationResults");
+            if (index != -1)
+                dataAccess.SetDataList(index, surfaceSimulationResults);
         }
     }
 }
