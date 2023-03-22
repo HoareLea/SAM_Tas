@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.4";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -71,9 +71,12 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults_Panels", NickName = "surfaceSimulationResults_Panels", Description = "SAM Analytical SurfaceSimulationResults for Panels", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooPanelParam() { Name = "panels", NickName = "panels", Description = "SAM Analytical Panels", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Point() { Name = "internalPoints_Panels", NickName = "internalPoints_Panels", Description = "Internal Points for Panels", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults_Apertures", NickName = "surfaceSimulationResults_Apertures", Description = "SAM Analytical SurfaceSimulationResults for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooApertureParam() { Name = "apertures", NickName = "apertures", Description = "SAM Analytical Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Point() { Name = "internalPoints_Apertures", NickName = "internalPoints_Apertures", Description = "Internal Points for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults_Apertures_Pane", NickName = "surfaceSimulationResults_Apertures_Pane", Description = "SAM Analytical SurfaceSimulationResults for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooApertureParam() { Name = "apertures_Pane", NickName = "apertures_Pane", Description = "SAM Analytical Apertures_Pane", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Point() { Name = "internalPoints_Apertures_Pane", NickName = "internalPoints_Apertures_Pane", Description = "Internal Points for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults_Apertures_Frame", NickName = "surfaceSimulationResults_Apertures_Frame", Description = "SAM Analytical SurfaceSimulationResults for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooApertureParam() { Name = "apertures_Frame", NickName = "apertures_Frame", Description = "SAM Analytical Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Point() { Name = "internalPoints_Apertures_Frame", NickName = "internalPoints_Apertures_Frame", Description = "Internal Points for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -182,7 +185,8 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             Dictionary<SurfaceSimulationResult, Panel> dictionary_Panel = new Dictionary<SurfaceSimulationResult, Panel>();
-            Dictionary<SurfaceSimulationResult, Aperture> dictionary_Aperture = new Dictionary<SurfaceSimulationResult, Aperture>();
+            Dictionary<SurfaceSimulationResult, Aperture> dictionary_Aperture_Pane = new Dictionary<SurfaceSimulationResult, Aperture>();
+            Dictionary<SurfaceSimulationResult, Aperture> dictionary_Aperture_Frame = new Dictionary<SurfaceSimulationResult, Aperture>();
 
             List<SurfaceSimulationResult> surfaceSimulationResults = adjacencyCluster.GetObjects<SurfaceSimulationResult>();
             surfaceSimulationResults.RemoveAll(x => !loadTypes.Contains(x.LoadType()));
@@ -247,10 +251,19 @@ namespace SAM.Analytical.Grasshopper.Tas
                         continue;
                     }
 
-                    Aperture aperture = Analytical.Tas.Query.Match(zoneSurfaceReference, apertures_Panel);
+                    Aperture aperture = Analytical.Tas.Query.Match(zoneSurfaceReference, apertures_Panel, out AperturePart aperturePart);
                     if (apertures.Find(x => x.Guid == aperture.Guid) != null)
                     {
-                        dictionary_Aperture[surfaceSimulationResult] = aperture;
+                        if(aperturePart == AperturePart.Pane)
+                        {
+                            dictionary_Aperture_Pane[surfaceSimulationResult] = aperture;
+                        }
+                        else if(aperturePart == AperturePart.Frame)
+                        {
+                            dictionary_Aperture_Frame[surfaceSimulationResult] = aperture;
+                        }
+
+                        
                         continue;
                     }
 
@@ -284,17 +297,29 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index != -1)
                 dataAccess.SetDataList(index, dictionary_Panel.Values);
 
-            index = Params.IndexOfOutputParam("surfaceSimulationResults_Apertures");
+            index = Params.IndexOfOutputParam("surfaceSimulationResults_Apertures_Pane");
             if (index != -1)
-                dataAccess.SetDataList(index, dictionary_Aperture.Keys);
+                dataAccess.SetDataList(index, dictionary_Aperture_Pane.Keys);
 
-            index = Params.IndexOfOutputParam("apertures");
+            index = Params.IndexOfOutputParam("apertures_Pane");
             if (index != -1)
-                dataAccess.SetDataList(index, dictionary_Aperture.Values);
+                dataAccess.SetDataList(index, dictionary_Aperture_Pane.Values);
 
-            index = Params.IndexOfOutputParam("internalPoints_Apertures");
+            index = Params.IndexOfOutputParam("internalPoints_Apertures_Pane");
             if (index != -1)
-                dataAccess.SetDataList(index, dictionary_Aperture.Values?.ToList().ConvertAll(x => Geometry.Rhino.Convert.ToRhino(x.GetFace3D().GetInternalPoint3D())));
+                dataAccess.SetDataList(index, dictionary_Aperture_Pane.Values?.ToList().ConvertAll(x => Geometry.Rhino.Convert.ToRhino(x.GetPaneFace3Ds()?.FirstOrDefault()?.GetInternalPoint3D())));
+
+            index = Params.IndexOfOutputParam("surfaceSimulationResults_Apertures_Frame");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary_Aperture_Frame.Keys);
+
+            index = Params.IndexOfOutputParam("apertures_Frame");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary_Aperture_Frame.Values);
+
+            index = Params.IndexOfOutputParam("internalPoints_Apertures_Frame");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary_Aperture_Frame.Values?.ToList().ConvertAll(x => Geometry.Rhino.Convert.ToRhino(x.GetFrameFace3D()?.GetInternalPoint3D())));
         }
     }
 }

@@ -114,7 +114,7 @@ namespace SAM.Analytical.Tas
                                 List<Aperture> apertures = panel.Apertures;
                                 if (apertures != null && apertures.Count != 0)
                                 {
-                                    Aperture aperture = Query.Match(zoneSurfaceReference, apertures);
+                                    Aperture aperture = Query.Match(zoneSurfaceReference, apertures, out AperturePart aperturePart);
                                     if(aperture != null)
                                     {
                                         adjacencyCluster.AddRelation(panel, surfaceSimulationResult);

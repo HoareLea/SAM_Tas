@@ -294,9 +294,10 @@ namespace SAM.Analytical.Tas
             return null;
         }
 
-        public static Aperture Match(this Core.Tas.ZoneSurfaceReference zoneSurfaceReference, IEnumerable<Aperture> apertures)
+        public static Aperture Match(this Core.Tas.ZoneSurfaceReference zoneSurfaceReference, IEnumerable<Aperture> apertures, out AperturePart aperturePart)
         {
-            if(zoneSurfaceReference == null || apertures == null || apertures.Count() == 0)
+            aperturePart = Analytical.AperturePart.Undefined;
+            if (zoneSurfaceReference == null || apertures == null || apertures.Count() == 0)
             {
                 return null;
             }
@@ -316,6 +317,7 @@ namespace SAM.Analytical.Tas
                 {
                     if(zoneSurfaceReference_Temp.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
                     {
+                        aperturePart = Analytical.AperturePart.Frame;
                         return aperture;
                     }
                 }
@@ -325,6 +327,7 @@ namespace SAM.Analytical.Tas
                 {
                     if (zoneSurfaceReference_Temp.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
                     {
+                        aperturePart = Analytical.AperturePart.Frame;
                         return aperture;
                     }
                 }
@@ -334,6 +337,7 @@ namespace SAM.Analytical.Tas
                 {
                     if (zoneSurfaceReference_Temp.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
                     {
+                        aperturePart = Analytical.AperturePart.Pane;
                         return aperture;
                     }
                 }
@@ -343,6 +347,7 @@ namespace SAM.Analytical.Tas
                 {
                     if (zoneSurfaceReference_Temp.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
                     {
+                        aperturePart = Analytical.AperturePart.Pane;
                         return aperture;
                     }
                 }
