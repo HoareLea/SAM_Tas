@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -70,8 +70,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam { Name = "analytical", NickName = "analytical", Description = "SAM Analytical", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults_Panels", NickName = "surfaceSimulationResults_Panels", Description = "SAM Analytical SurfaceSimulationResults for Panels", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooPanelParam() { Name = "panels", NickName = "panels", Description = "SAM Analytical Panels", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Point() { Name = "internalPoints_Panels", NickName = "internalPoints_Panels", Description = "Internal Points for Panels", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults_Apertures", NickName = "surfaceSimulationResults_Apertures", Description = "SAM Analytical SurfaceSimulationResults for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooApertureParam() { Name = "apertures", NickName = "apertures", Description = "SAM Analytical Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Point() { Name = "internalPoints_Apertures", NickName = "internalPoints_Apertures", Description = "Internal Points for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -274,6 +276,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index != -1)
                 dataAccess.SetDataList(index, dictionary_Panel.Keys);
 
+            index = Params.IndexOfOutputParam("internalPoints_Panels");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary_Panel.Values?.ToList().ConvertAll(x => Geometry.Rhino.Convert.ToRhino(x.GetFace3D(true).GetInternalPoint3D())));
+
             index = Params.IndexOfOutputParam("panels");
             if (index != -1)
                 dataAccess.SetDataList(index, dictionary_Panel.Values);
@@ -285,6 +291,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfOutputParam("apertures");
             if (index != -1)
                 dataAccess.SetDataList(index, dictionary_Aperture.Values);
+
+            index = Params.IndexOfOutputParam("internalPoints_Apertures");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary_Aperture.Values?.ToList().ConvertAll(x => Geometry.Rhino.Convert.ToRhino(x.GetFace3D().GetInternalPoint3D())));
         }
     }
 }

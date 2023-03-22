@@ -97,6 +97,9 @@
     <Reference Include="SAM.Geometry">
       <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Geometry.Rhino">
+      <HintPath>..\..\..\SAM\build\SAM.Geometry.Rhino.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Weather, Version=1.0.8038.17610, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Weather.dll</HintPath>
