@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -68,7 +68,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam { Name = "analytical", NickName = "analytical", Description = "SAM Analytical", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults", NickName = "surfaceSimulationResults", Description = "SAM Analytical SurfaceSimulationResults", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults_Panels", NickName = "surfaceSimulationResults_Panels", Description = "SAM Analytical SurfaceSimulationResults for Panels", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "panels", NickName = "panels", Description = "SAM Analytical Panels", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "surfaceSimulationResults_Apertures", NickName = "surfaceSimulationResults_Apertures", Description = "SAM Analytical SurfaceSimulationResults for Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "apertures", NickName = "apertures", Description = "SAM Analytical Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -176,6 +179,9 @@ namespace SAM.Analytical.Grasshopper.Tas
                 apertures = adjacencyCluster.GetApertures();
             }
 
+            Dictionary<SurfaceSimulationResult, Panel> dictionary_Panel = new Dictionary<SurfaceSimulationResult, Panel>();
+            Dictionary<SurfaceSimulationResult, Aperture> dictionary_Aperture = new Dictionary<SurfaceSimulationResult, Aperture>();
+
             List<SurfaceSimulationResult> surfaceSimulationResults = adjacencyCluster.GetObjects<SurfaceSimulationResult>();
             surfaceSimulationResults.RemoveAll(x => !loadTypes.Contains(x.LoadType()));
             for (int i = surfaceSimulationResults.Count - 1; i >= 0; i--)
@@ -218,6 +224,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     {
                         if (zoneSurfaceReference.SurfaceNumber == zoneSurfaceReference_1.SurfaceNumber && space_Guids_Panel.Contains(zoneSurfaceReference_1.ZoneGuid))
                         {
+                            dictionary_Panel[surfaceSimulationResult] = panel;
                             continue;
                         }
                     }
@@ -226,6 +233,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     {
                         if (zoneSurfaceReference.SurfaceNumber == zoneSurfaceReference_2.SurfaceNumber && space_Guids_Panel.Contains(zoneSurfaceReference_2.ZoneGuid))
                         {
+                            dictionary_Panel[surfaceSimulationResult] = panel;
                             continue;
                         }
                     }
@@ -240,6 +248,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     Aperture aperture = Analytical.Tas.Query.Match(zoneSurfaceReference, apertures_Panel);
                     if (apertures.Find(x => x.Guid == aperture.Guid) != null)
                     {
+                        dictionary_Aperture[surfaceSimulationResult] = aperture;
                         continue;
                     }
 
@@ -261,9 +270,21 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index != -1)
                 dataAccess.SetData(index, sAMObject);
 
-            index = Params.IndexOfOutputParam("surfaceSimulationResults");
+            index = Params.IndexOfOutputParam("surfaceSimulationResults_Panels");
             if (index != -1)
-                dataAccess.SetDataList(index, surfaceSimulationResults);
+                dataAccess.SetDataList(index, dictionary_Panel.Keys);
+
+            index = Params.IndexOfOutputParam("panels");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary_Panel.Values);
+
+            index = Params.IndexOfOutputParam("surfaceSimulationResults_Apertures");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary_Aperture.Keys);
+
+            index = Params.IndexOfOutputParam("apertures");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary_Aperture.Values);
         }
     }
 }
