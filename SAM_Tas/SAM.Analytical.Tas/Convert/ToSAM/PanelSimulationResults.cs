@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
-        public static List<PanelSimulationResult> ToSAM_PanelSimulationResults(this ZoneData zoneData, int index)
+        public static List<SurfaceSimulationResult> ToSAM_SurfaceSimulationResults(this ZoneData zoneData, int index)
         {
             List<SurfaceData> surfaceDatas = zoneData?.SurfaceDatas();
             if(surfaceDatas == null)
@@ -13,18 +13,20 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            List<PanelSimulationResult> result = new List<PanelSimulationResult>();
+            List<SurfaceSimulationResult> result = new List<SurfaceSimulationResult>();
             foreach(SurfaceData surfaceData in surfaceDatas)
             {
-                PanelSimulationResult panelSimulationResult = surfaceData?.ToSAM(index);
-                if (panelSimulationResult == null)
+                Core.Tas.ZoneSurfaceReference zoneSurfaceReference = new Core.Tas.ZoneSurfaceReference(surfaceData.surfaceNumber, zoneData.zoneGUID);
+
+                SurfaceSimulationResult surfaceSimulationResult = surfaceData?.ToSAM(index);
+                if (surfaceSimulationResult == null)
                 {
                     continue;
                 }
 
-                panelSimulationResult.SetValue(PanelSimulationResultParameter.ZoneName, zoneData.name);
+                surfaceSimulationResult.SetValue(SurfaceSimulationResultParameter.ZoneSurfaceReference, zoneSurfaceReference);
                 
-                result.Add(panelSimulationResult);
+                result.Add(surfaceSimulationResult);
             }
 
             return result;

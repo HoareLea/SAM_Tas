@@ -144,7 +144,7 @@
     <Compile Include="Enums\Parameters\AnalyticalModelSimulationResultParameter.cs" />
     <Compile Include="Enums\Parameters\SpaceSimulationResultParameter.cs" />
     <Compile Include="Enums\Parameters\SpaceParameter.cs" />
-    <Compile Include="Enums\Parameters\PanelSimulationResultParameter.cs" />
+    <Compile Include="Enums\Parameters\SurfaceSimulationResultParameter.cs" />
     <Compile Include="Enums\AirSideControllerSetup.cs" />
     <Compile Include="Enums\WaterSideControllerSetup.cs" />
     <Compile Include="Modify\AddComponents.cs" />

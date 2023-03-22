@@ -124,9 +124,12 @@ namespace SAM.Analytical.Tas
 
                         TBD.zoneSurface zoneSurface_Panel = zone.AddSurface();
 
+                        Core.Tas.ZoneSurfaceReference zoneSurfaceReference = new Core.Tas.ZoneSurfaceReference(zoneSurface_Panel.number, zone.GUID);
+
                         Panel panel_Temp = Analytical.Create.Panel(panel);
-                        panel_Temp.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface_Panel.GUID);
-                        panel_Temp.SetValue(PanelParameter.ZoneSurfaceNumber, zoneSurface_Panel.number);
+
+                        PanelParameter panelParameter = panel.HasValue(PanelParameter.ZoneSurfaceReference_1) ? PanelParameter.ZoneSurfaceReference_2 : PanelParameter.ZoneSurfaceReference_1;
+                        panel_Temp.SetValue(panelParameter, zoneSurfaceReference);
 
                         float orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
                         orientation += 180;
@@ -406,8 +409,8 @@ namespace SAM.Analytical.Tas
                                                 if (updateGuids)
                                                 {
                                                     Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
-                                                    aperture_Temp.SetValue(ApertureParameter.PaneZoneSurfaceGuid, zoneSurface.GUID);
-                                                    aperture_Temp.SetValue(ApertureParameter.PaneZoneSurfaceNumber, zoneSurface.number);
+                                                    ApertureParameter apertureParameter = aperture_Temp.HasValue(ApertureParameter.PaneZoneSurfaceReference_1) ? ApertureParameter.PaneZoneSurfaceReference_2 : ApertureParameter.PaneZoneSurfaceReference_1;
+                                                    aperture_Temp.SetValue(apertureParameter, new Core.Tas.ZoneSurfaceReference(zoneSurface.number, zone.GUID));
                                                     panel_Temp.RemoveAperture(aperture_Temp.Guid);
                                                     panel_Temp.AddAperture(aperture_Temp);
                                                 }
@@ -448,8 +451,8 @@ namespace SAM.Analytical.Tas
                                                 if (updateGuids)
                                                 {
                                                     Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
-                                                    aperture_Temp.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface.GUID);
-                                                    aperture_Temp.SetValue(ApertureParameter.FrameZoneSurfaceNumber, zoneSurface.number);
+                                                    ApertureParameter apertureParameter = aperture_Temp.HasValue(ApertureParameter.FrameZoneSurfaceReference_1) ? ApertureParameter.FrameZoneSurfaceReference_2 : ApertureParameter.FrameZoneSurfaceReference_1;
+                                                    aperture_Temp.SetValue(apertureParameter, new Core.Tas.ZoneSurfaceReference(zoneSurface.number, zone.GUID));
                                                     panel_Temp.RemoveAperture(aperture_Temp.Guid);
                                                     panel_Temp.AddAperture(aperture_Temp);
                                                 }

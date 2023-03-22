@@ -212,16 +212,16 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    List<PanelSimulationResult> panelSimulationResults = zoneData_Cooling.ToSAM_PanelSimulationResults(loadIndex);
-                    if (panelSimulationResults == null)
+                    List<SurfaceSimulationResult> surfaceSimulationResults = zoneData_Cooling.ToSAM_SurfaceSimulationResults(loadIndex);
+                    if (surfaceSimulationResults == null)
                     {
                         continue;
                     }
 
-                    foreach (PanelSimulationResult panelSimulationResult in panelSimulationResults)
+                    foreach (SurfaceSimulationResult surfaceSimulationResult in surfaceSimulationResults)
                     {
-                        panelSimulationResult.SetValue(Analytical.PanelSimulationResultParameter.LoadType, LoadType.Cooling.ToString());
-                        results[index].Add(panelSimulationResult);
+                        surfaceSimulationResult.SetValue(Analytical.SurfaceSimulationResultParameter.LoadType, LoadType.Cooling.ToString());
+                        results[index].Add(surfaceSimulationResult);
                     }
                 }
 
@@ -232,16 +232,16 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    List<PanelSimulationResult> panelSimulationResults = zoneData_Heating.ToSAM_PanelSimulationResults(loadIndex);
-                    if (panelSimulationResults == null)
+                    List<SurfaceSimulationResult> surfaceSimulationResults = zoneData_Heating.ToSAM_SurfaceSimulationResults(loadIndex);
+                    if (surfaceSimulationResults == null)
                     {
                         continue;
                     }
 
-                    foreach (PanelSimulationResult panelSimulationResult in panelSimulationResults)
+                    foreach (SurfaceSimulationResult surfaceSimulationResult in surfaceSimulationResults)
                     {
-                        panelSimulationResult.SetValue(Analytical.PanelSimulationResultParameter.LoadType, LoadType.Heating.ToString());
-                        results[index].Add(panelSimulationResult);
+                        surfaceSimulationResult.SetValue(Analytical.SurfaceSimulationResultParameter.LoadType, LoadType.Heating.ToString());
+                        results[index].Add(surfaceSimulationResult);
                     }
                 }
             }

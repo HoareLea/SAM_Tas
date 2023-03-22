@@ -86,6 +86,7 @@
     <Compile Include="Classes\SAMTICDocument.cs" />
     <Compile Include="Classes\SAMTWDDocument.cs" />
     <Compile Include="Classes\SAMTSDDocument.cs" />
+    <Compile Include="Classes\ZoneSurfaceReference.cs" />
     <Compile Include="Classes\SurfaceOutputSpec.cs" />
     <Compile Include="Convert\TogbXML\gbXML.cs" />
     <Compile Include="Convert\ToT3D\T3D.cs" />

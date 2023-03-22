@@ -56,7 +56,7 @@ namespace SAM.Analytical.Tas
             List<Space> spaces = adjacencyCluster.GetSpaces();
             if(spaces != null && spaces.Count > 0)
             {
-                adjacencyCluster.GetPanels()?.ForEach(x => adjacencyCluster.GetRelatedObjects<PanelSimulationResult>(x.Guid)?.ForEach(y => adjacencyCluster.RemoveObject<PanelSimulationResult>(y.Guid)));
+                adjacencyCluster.GetPanels()?.ForEach(x => adjacencyCluster.GetRelatedObjects<SurfaceSimulationResult>(x.Guid)?.ForEach(y => adjacencyCluster.RemoveObject<SurfaceSimulationResult>(y.Guid)));
 
                 foreach (Space space in spaces)
                 {
@@ -81,47 +81,66 @@ namespace SAM.Analytical.Tas
                         }
                     }
 
+                    if(!space.TryGetValue(SpaceParameter.ZoneGuid, out string zoneGuid) || zoneGuid == null)
+                    {
+                        continue;
+                    }
+
                     foreach(Core.Result result_Temp in results)
                     {
-                        PanelSimulationResult panelSimulationResult = result_Temp as PanelSimulationResult;
-                        if(panelSimulationResult == null)
+                        SurfaceSimulationResult surfaceSimulationResult = result_Temp as SurfaceSimulationResult;
+                        if(surfaceSimulationResult == null)
                         {
                             continue;
                         }
 
-                        if(!panelSimulationResult.TryGetValue(PanelSimulationResultParameter.ZoneName, out string zoneName) || !space.Name.Equals(zoneName))
+                        if(!surfaceSimulationResult.TryGetValue(SurfaceSimulationResultParameter.ZoneSurfaceReference, out ZoneSurfaceReference zoneSurfaceReference) || zoneSurfaceReference == null || !zoneGuid.Equals(zoneSurfaceReference.ZoneGuid))
                         {
                             continue;
                         }
 
-                        adjacencyCluster.AddObject(panelSimulationResult);
+                        adjacencyCluster.AddObject(surfaceSimulationResult);
 
-                        Panel panel_Space = null;
                         List<Panel> panels = adjacencyCluster.GetPanels(space);
                         if(panels != null && panels.Count != 0)
                         {
                             foreach(Panel panel in panels)
                             {
-                                if(panel.TryGetValue(PanelParameter.ZoneSurfaceNumber, out int zoneSurfaceNumber) && zoneSurfaceNumber != -1)
+                                if(panel == null)
                                 {
-                                    if(zoneSurfaceNumber.ToString() == panelSimulationResult.Reference)
+                                    continue;
+                                }
+
+                                List<Aperture> apertures = panel.Apertures;
+                                if (apertures != null && apertures.Count != 0)
+                                {
+                                    Aperture aperture = Query.Match(zoneSurfaceReference, apertures);
+                                    if(aperture != null)
                                     {
-                                        adjacencyCluster.AddRelation(panel, panelSimulationResult);
-                                        panel_Space = panel;
+                                        adjacencyCluster.AddRelation(panel, surfaceSimulationResult);
+                                        break;
+                                    }
+                                }
+
+                                if (panel.TryGetValue(PanelParameter.ZoneSurfaceReference_1, out ZoneSurfaceReference zoneSurfaceReference_1) && zoneSurfaceReference_1 != null)
+                                {
+                                    if(zoneSurfaceReference_1.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
+                                    {
+                                        adjacencyCluster.AddRelation(panel, surfaceSimulationResult);
+                                        break;
+                                    }
+                                }
+
+                                if (panel.TryGetValue(PanelParameter.ZoneSurfaceReference_2, out ZoneSurfaceReference zoneSurfaceReference_2) && zoneSurfaceReference_2 != null)
+                                {
+                                    if (zoneSurfaceReference_2.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
+                                    {
+                                        adjacencyCluster.AddRelation(panel, surfaceSimulationResult);
                                         break;
                                     }
                                 }
                             }
                         }
-
-                        if (panel_Space == null)
-                        {
-                            //adjacencyCluster.AddRelation(space, panelSimulationResult);
-                            string spaceName = space.Name;
-                            string reference = panelSimulationResult.Reference;
-                            LoadType loadType = panelSimulationResult.LoadType();
-                        }
-
                     }
                 }
             }

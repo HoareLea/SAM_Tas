@@ -132,9 +132,17 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                if (panel.TryGetValue(PanelParameter.ZoneSurfaceGuid, out string zoneSurfaceGuid) && !string.IsNullOrWhiteSpace(zoneSurfaceGuid))
+                if (panel.TryGetValue(PanelParameter.ZoneSurfaceReference_1, out Core.Tas.ZoneSurfaceReference zoneSurfaceReference_1) && zoneSurfaceReference_1 != null)
                 {
-                    if (zoneSurface.GUID == zoneSurfaceGuid)
+                    if(zoneSurfaceReference_1.SurfaceNumber == zoneSurface.number)
+                    {
+                        return panel;
+                    }
+                }
+
+                if (panel.TryGetValue(PanelParameter.ZoneSurfaceReference_2, out Core.Tas.ZoneSurfaceReference zoneSurfaceReference_2) && zoneSurfaceReference_2 != null)
+                {
+                    if (zoneSurfaceReference_1.SurfaceNumber == zoneSurface.number)
                     {
                         return panel;
                     }
@@ -209,8 +217,8 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            Enum @enum = aperturePart == Analytical.AperturePart.Frame ? ApertureParameter.FrameZoneSurfaceGuid : ApertureParameter.PaneZoneSurfaceGuid;
-
+            ApertureParameter apertureParameter_1 = aperturePart == Analytical.AperturePart.Frame ? ApertureParameter.FrameZoneSurfaceReference_1 : ApertureParameter.PaneZoneSurfaceReference_1;
+            ApertureParameter apertureParameter_2 = aperturePart == Analytical.AperturePart.Frame ? ApertureParameter.FrameZoneSurfaceReference_2 : ApertureParameter.PaneZoneSurfaceReference_2;
 
             foreach (Aperture aperture in apertures)
             {
@@ -219,9 +227,17 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                if (aperture.TryGetValue(@enum, out string zoneSurfaceGuid) && !string.IsNullOrWhiteSpace(zoneSurfaceGuid))
+                if (aperture.TryGetValue(apertureParameter_1, out Core.Tas.ZoneSurfaceReference zoneSurfaceReference_1) && zoneSurfaceReference_1 != null)
                 {
-                    if (zoneSurface.GUID == zoneSurfaceGuid)
+                    if (zoneSurface.number == zoneSurfaceReference_1.SurfaceNumber)
+                    {
+                        return aperture;
+                    }
+                }
+
+                if (aperture.TryGetValue(apertureParameter_2, out Core.Tas.ZoneSurfaceReference zoneSurfaceReference_2) && zoneSurfaceReference_2 != null)
+                {
+                    if (zoneSurface.number == zoneSurfaceReference_2.SurfaceNumber)
                     {
                         return aperture;
                     }
@@ -276,6 +292,62 @@ namespace SAM.Analytical.Tas
             return null;
         }
 
+        public static Aperture Match(this Core.Tas.ZoneSurfaceReference zoneSurfaceReference, IEnumerable<Aperture> apertures)
+        {
+            if(zoneSurfaceReference == null || apertures == null || apertures.Count() == 0)
+            {
+                return null;
+            }
+
+            foreach(Aperture aperture in apertures)
+            {
+                if(aperture == null)
+                {
+                    return null;
+                }
+
+                Core.Tas.ZoneSurfaceReference zoneSurfaceReference_Temp = null;
+
+
+                zoneSurfaceReference_Temp = null;
+                if (aperture.TryGetValue(ApertureParameter.FrameZoneSurfaceReference_1, out zoneSurfaceReference_Temp) && zoneSurfaceReference_Temp != null)
+                {
+                    if(zoneSurfaceReference_Temp.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
+                    {
+                        return aperture;
+                    }
+                }
+
+                zoneSurfaceReference_Temp = null;
+                if (aperture.TryGetValue(ApertureParameter.FrameZoneSurfaceReference_2, out zoneSurfaceReference_Temp) && zoneSurfaceReference_Temp != null)
+                {
+                    if (zoneSurfaceReference_Temp.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
+                    {
+                        return aperture;
+                    }
+                }
+
+                zoneSurfaceReference_Temp = null;
+                if (aperture.TryGetValue(ApertureParameter.PaneZoneSurfaceReference_1, out zoneSurfaceReference_Temp) && zoneSurfaceReference_Temp != null)
+                {
+                    if (zoneSurfaceReference_Temp.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
+                    {
+                        return aperture;
+                    }
+                }
+
+                zoneSurfaceReference_Temp = null;
+                if (aperture.TryGetValue(ApertureParameter.PaneZoneSurfaceReference_2, out zoneSurfaceReference_Temp) && zoneSurfaceReference_Temp != null)
+                {
+                    if (zoneSurfaceReference_Temp.SurfaceNumber == zoneSurfaceReference.SurfaceNumber)
+                    {
+                        return aperture;
+                    }
+                }
+            }
+
+            return null;
+        }
 
         public static Construction Match(this TAS3D.Element element, IEnumerable<Construction> constructions)
         {

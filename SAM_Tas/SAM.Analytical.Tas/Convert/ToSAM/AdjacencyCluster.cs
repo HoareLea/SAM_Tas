@@ -174,6 +174,8 @@ namespace SAM.Analytical.Tas
 
                     bool adiabatic = zoneSurface.type == TBD.SurfaceType.tbdNullLink;
 
+                    ZoneSurfaceReference zoneSurfaceReference = new ZoneSurfaceReference(zoneSurface.number, zone.GUID);
+
                     foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
                     {
                         Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
@@ -210,8 +212,8 @@ namespace SAM.Analytical.Tas
                             panel.SetValue(Analytical.PanelParameter.Adiabatic, true);
                         }
 
-                        panel.SetValue(PanelParameter.ZoneSurfaceGuid, zoneSurface.GUID);
-                        panel.SetValue(PanelParameter.ZoneSurfaceNumber, zoneSurface.number);
+                        PanelParameter panelParameter = panel.HasValue(PanelParameter.ZoneSurfaceReference_1) ? PanelParameter.ZoneSurfaceReference_2 : PanelParameter.ZoneSurfaceReference_1;
+                        panel.SetValue(panelParameter, zoneSurfaceReference);
                         panel.SetValue(PanelParameter.BuildingElementGuid, buildingElement.GUID);
 
                         adjacencyCluster.AddObject(panel);
@@ -409,8 +411,8 @@ namespace SAM.Analytical.Tas
 
                             if (zoneSurface_Frame != null)
                             {
-                                aperture.SetValue(ApertureParameter.FrameZoneSurfaceGuid, zoneSurface_Frame.GUID);
-                                aperture.SetValue(ApertureParameter.FrameZoneSurfaceNumber, zoneSurface_Frame.number);
+                                ApertureParameter apertureParameter = aperture.HasValue(ApertureParameter.FrameZoneSurfaceReference_1) ? ApertureParameter.FrameZoneSurfaceReference_2 : ApertureParameter.FrameZoneSurfaceReference_1;
+                                aperture.SetValue(apertureParameter, new ZoneSurfaceReference(zoneSurface_Frame.number, zone.GUID));
 
                                 TBD.buildingElement buildingElement = zoneSurface_Frame.buildingElement;
                                 if (buildingElement != null)
@@ -421,8 +423,8 @@ namespace SAM.Analytical.Tas
 
                             if (zoneSurface_Pane != null)
                             {
-                                aperture.SetValue(ApertureParameter.PaneZoneSurfaceGuid, zoneSurface_Pane.GUID);
-                                aperture.SetValue(ApertureParameter.PaneZoneSurfaceNumber, zoneSurface_Pane.number);
+                                ApertureParameter apertureParameter = aperture.HasValue(ApertureParameter.PaneZoneSurfaceReference_1) ? ApertureParameter.PaneZoneSurfaceReference_2 : ApertureParameter.PaneZoneSurfaceReference_1;
+                                aperture.SetValue(apertureParameter, new ZoneSurfaceReference(zoneSurface_Pane.number, zone.GUID));
 
                                 TBD.buildingElement buildingElement = zoneSurface_Pane.buildingElement;
                                 if (buildingElement != null)
