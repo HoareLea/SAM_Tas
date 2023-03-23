@@ -10,7 +10,8 @@ namespace SAM.Core.Tas
 
             try
             {
-                object @object = Marshal.GetActiveObject("T3D.Document");
+                //object @object = Marshal.GetActiveObject("T3D.Document");
+                object @object = Core.Query.ActiveObject("T3D.Document");
 
                 if (@object != null)
                 {

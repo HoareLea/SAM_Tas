@@ -10,7 +10,8 @@ namespace SAM.Core.Tas
 
             try
             {
-                object @object = Marshal.GetActiveObject("Document");
+                //object @object = Marshal.GetActiveObject("Document");
+                object @object = Core.Query.ActiveObject("Document");
 
                 if (@object != null)
                 {
