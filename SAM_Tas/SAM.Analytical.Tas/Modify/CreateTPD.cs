@@ -462,7 +462,7 @@ namespace SAM.Analytical.Tas
                         CreateTPD(energyCentre, keyValuePair.Key, keyValuePair.Value.Item1, keyValuePair.Value.Item4, keyValuePair.Value.Item3, keyValuePair.Value.Item2);
                     }
 
-                    plantRoom.SimulateEx(1, 8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)TPD.tpdSimulationData.tpdSimulationDataLoad + (int)TPD.tpdSimulationData.tpdSimulationDataPipe, 0, 0);
+                    plantRoom.SimulateEx(1, 8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)TPD.tpdSimulationData.tpdSimulationDataLoad + (int)TPD.tpdSimulationData.tpdSimulationDataPipe + (int)TPD.tpdSimulationData.tpdSimulationDataDuct + (int)TPD.tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
 
                     if(analyticalModel != null)
                     {
