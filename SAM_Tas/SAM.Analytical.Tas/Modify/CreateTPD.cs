@@ -604,7 +604,7 @@ namespace SAM.Analytical.Tas
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = "UV";
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
             dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
@@ -686,7 +686,7 @@ namespace SAM.Analytical.Tas
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = "NV";
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             dynamic zone = system.AddSystemZone();
             zone.SetPosition(offset.X + 630, offset.Y + 80);
@@ -750,7 +750,7 @@ namespace SAM.Analytical.Tas
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = name;
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             dynamic plantSchedule = energyCentre.AddSchedule(TPD.tpdScheduleType.tpdScheduleFunction);
             plantSchedule.Name = "System Schedule";
@@ -893,7 +893,7 @@ namespace SAM.Analytical.Tas
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = name;
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             dynamic plantSchedule = energyCentre.AddSchedule(TPD.tpdScheduleType.tpdScheduleFunction);
             plantSchedule.Name = "System Schedule";
@@ -1037,7 +1037,7 @@ namespace SAM.Analytical.Tas
   
             TPD.System system = plantRoom.AddSystem();
             system.Name = name;
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             dynamic junction_FreshAir = system.AddJunction();
             junction_FreshAir.Name = "Junction Fresh Air";
@@ -1315,7 +1315,7 @@ namespace SAM.Analytical.Tas
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = name;
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             //dynamic junction_Zero = system.AddJunction();
             //junction_Zero.Description = "0, 0";
@@ -1577,7 +1577,7 @@ namespace SAM.Analytical.Tas
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = name;
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             //dynamic junction_Zero = system.AddJunction();
             //junction_Zero.Description = "0, 0";
@@ -1834,7 +1834,7 @@ namespace SAM.Analytical.Tas
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = name;
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             dynamic junction_FreshAir = system.AddJunction();
             junction_FreshAir.Name = "Junction Fresh Air";
@@ -2011,7 +2011,7 @@ namespace SAM.Analytical.Tas
 
             TPD.System system = plantRoom.AddSystem();
             system.Name = name;
-            system.Multiplicity = zoneLoads.Count();
+            system.Multiplicity = 1;//zoneLoads.Count();
 
             dynamic junction_FreshAir = system.AddJunction();
             junction_FreshAir.Name = "Junction Fresh Air";
