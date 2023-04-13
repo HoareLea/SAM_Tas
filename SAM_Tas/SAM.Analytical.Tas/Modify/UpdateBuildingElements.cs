@@ -61,6 +61,11 @@ namespace SAM.Analytical.Tas
                 if(construction == null)
                 {
                     List<TBD.Construction> constructions_Temp = constructions.FindAll(x => name.EndsWith(x.name));
+                    if(constructions_Temp == null || constructions_Temp.Count == 0)
+                    {
+                        constructions_Temp = constructions.FindAll(x => !string.IsNullOrWhiteSpace(x?.name) && x.name.EndsWith(name));
+                    }
+
                     if(constructions_Temp != null && constructions_Temp.Count != 0)
                     {
                         constructions_Temp.Sort((x, y) => System.Math.Abs(x.name.Length - name.Length).CompareTo(System.Math.Abs(y.name.Length - name.Length)));
