@@ -238,7 +238,7 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
-                Dictionary<Guid, List<Tuple<Polygon3D, TBD.IZoneSurface>>> dictionary = new Dictionary<Guid, List<Tuple<Polygon3D, TBD.IZoneSurface>>>();
+                Dictionary<Guid, List<Tuple<Face3D, TBD.IZoneSurface>>> dictionary = new Dictionary<Guid, List<Tuple<Face3D, TBD.IZoneSurface>>>();
 
                 foreach(TBD.IZoneSurface zoneSurface in zoneSurfaces)
                 {
@@ -299,23 +299,23 @@ namespace SAM.Analytical.Tas
 
                     foreach (TBD.IRoomSurface roomSurface in zoneSurface.RoomSurfaces())
                     {
-                        Polygon3D polygon3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter()?.GetFace());
-                        if (polygon3D == null)
+                        Face3D face3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter());
+                        if (face3D == null)
                         {
                             continue;
                         }
 
-                        if(!dictionary.TryGetValue(apertureConstruction.Guid, out List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples) || tuples == null)
+                        if(!dictionary.TryGetValue(apertureConstruction.Guid, out List<Tuple<Face3D, TBD.IZoneSurface>> tuples) || tuples == null)
                         {
-                            tuples = new List<Tuple<Polygon3D, TBD.IZoneSurface>>();
+                            tuples = new List<Tuple<Face3D, TBD.IZoneSurface>>();
                             dictionary[apertureConstruction.Guid] = tuples;
                         }
 
-                        tuples.Add(new Tuple<Polygon3D, TBD.IZoneSurface>(polygon3D, zoneSurface));
+                        tuples.Add(new Tuple<Face3D, TBD.IZoneSurface>(face3D, zoneSurface));
                     }
                 }
 
-                foreach (KeyValuePair<Guid, List<Tuple<Polygon3D, TBD.IZoneSurface>>> keyValuePair in dictionary)
+                foreach (KeyValuePair<Guid, List<Tuple<Face3D, TBD.IZoneSurface>>> keyValuePair in dictionary)
                 {
                     if(keyValuePair.Value == null || keyValuePair.Value.Count == 0)
                     {
@@ -328,25 +328,25 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples = keyValuePair.Value;
+                    List<Tuple<Face3D, TBD.IZoneSurface>> tuples = keyValuePair.Value;
                     tuples.Sort((x, y) => y.Item1.GetArea().CompareTo(x.Item1.GetArea()));
 
                     while (tuples.Count > 0)
                     {
-                        Polygon3D polygon3D = tuples[0].Item1;
+                        Face3D face3D = tuples[0].Item1;
                         tuples.RemoveAt(0);
 
-                        List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples_Temp = tuples.FindAll(x => new Face3D(polygon3D).InRange(x.Item1.InternalPoint3D()));
+                        List<Tuple<Face3D, TBD.IZoneSurface>> tuples_Temp = tuples.FindAll(x => face3D.InRange(x.Item1.InternalPoint3D()));
 
-                        Face3D face3D = null;
+                        Face3D face3D_Temp = null;
                         if (tuples_Temp == null || tuples_Temp.Count == 0)
                         {
-                            face3D = new Face3D(polygon3D);
+                            face3D_Temp = new Face3D(face3D);
                         }
                         else
                         {
-                            tuples_Temp.Add(new Tuple<Polygon3D, TBD.IZoneSurface>(polygon3D, tuples[0].Item2));
-                            List<Face3D> face3Ds = Geometry.Spatial.Create.Face3Ds(tuples_Temp.ConvertAll(x => x.Item1));
+                            tuples_Temp.Add(new Tuple<Face3D, TBD.IZoneSurface>(face3D, tuples[0].Item2));
+                            List<Face3D> face3Ds = tuples_Temp.ConvertAll(x => x.Item1);
                             if (face3Ds != null && face3Ds.Count != 0)
                             {
                                 if (face3Ds.Count > 1)
@@ -354,13 +354,13 @@ namespace SAM.Analytical.Tas
                                     face3Ds.Sort((x, y) => y.ExternalEdge2D.GetArea().CompareTo(x.ExternalEdge2D.GetArea()));
                                 }
 
-                                face3D = face3Ds.FirstOrDefault();
+                                face3D_Temp = face3Ds.FirstOrDefault();
                             }
                         }
 
                         tuples_Temp.ForEach(x => tuples.Remove(x));
 
-                        Aperture aperture = new Aperture(apertureConstruction, face3D);
+                        Aperture aperture = new Aperture(apertureConstruction, face3D_Temp);
 
                         //TODO: New code added to include Aperture Guid TO BE CHECKED 2023.01.30
                         List<TBD.IZoneSurface> zoneSurfaces_Aperture = tuples_Temp.ConvertAll(x => x.Item2);
