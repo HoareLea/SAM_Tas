@@ -320,6 +320,8 @@ namespace SAM.Analytical.Tas
 
                         Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult = analyticalModel.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel)?.FirstOrDefault();
 
+                        bool adiabatic = Analytical.Query.Adiabatic(panel);
+
                         List<Aperture> apertures = panel.Apertures;
                         if (apertures != null && apertures.Count != 0)
                         {
@@ -345,6 +347,10 @@ namespace SAM.Analytical.Tas
                                 zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_ZoneSurface));
 
                                 zoneSurface_Aperture.type = @internal ? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
+                                if(adiabatic)
+                                {
+                                    zoneSurface_Aperture.type = TBD.SurfaceType.tbdNullLink;
+                                }
 
                                 TBD.RoomSurface roomSurface_Aperture = room.AddSurface();
                                 roomSurface_Aperture.area = zoneSurface_Aperture.area;
@@ -609,7 +615,7 @@ namespace SAM.Analytical.Tas
                             List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(result, daysShades, zoneSurface_Panel, analyticalModel, solarFaceSimulationResult);
                         }
 
-                        zoneSurface_Panel.type = Analytical.Query.Adiabatic(panel) ? TBD.SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
+                        zoneSurface_Panel.type = adiabatic ? TBD.SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
 
                         if (!dictionary_Panel.TryGetValue(panel.Guid, out List<Tuple<TBD.zoneSurface, bool>> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
                         {
