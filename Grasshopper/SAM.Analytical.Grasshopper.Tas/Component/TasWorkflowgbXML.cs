@@ -33,8 +33,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public TasWorkflowgbXML()
-          : base("Tas.Workflow", "Tas.Workflow",
-              "Runs Tas workflow",
+          : base("Tas.WorkflowgbXML", "Tas.WorkflowgbXML",
+              "Runs Tas workflow using gbXML",
               "SAM WIP", "Tas")
         {
         }

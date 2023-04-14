@@ -60,7 +60,7 @@ namespace SAM.Analytical.Tas
 
             BoundingBox3D boundingBox3D = new BoundingBox3D(panels.ConvertAll(x => x.GetBoundingBox()));
             Point3D point3D = boundingBox3D.GetCentroid();
-            point3D = new Point3D(point3D.X, point3D.Y, boundingBox3D.Min.Z);
+            point3D = new Point3D(point3D.X, point3D.Y, 0);//change without height
 
             Vector3D vector3D = new Vector3D(point3D, Point3D.Zero); 
 
