@@ -58,6 +58,13 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
+            BoundingBox3D boundingBox3D = new BoundingBox3D(panels.ConvertAll(x => x.GetBoundingBox()));
+            Point3D point3D = boundingBox3D.GetCentroid();
+            point3D = new Point3D(point3D.X, point3D.Y, boundingBox3D.Min.Z);
+
+            Vector3D vector3D = new Vector3D(point3D, Point3D.Zero); 
+
+
             for (int i = panels.Count - 1; i >= 0; i--)
             {
                 if(!Analytical.Query.Adiabatic(panels[i]))
@@ -74,6 +81,8 @@ namespace SAM.Analytical.Tas
                 {
                     continue;
                 }
+
+                face3D = face3D.GetMoved(vector3D) as Face3D;
 
                 tuples.Add(new Tuple<BoundingBox3D, Face3D>(face3D.GetBoundingBox(), face3D));
             }
