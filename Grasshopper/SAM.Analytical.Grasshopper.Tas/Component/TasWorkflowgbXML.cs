@@ -24,7 +24,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTSD;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_gbXML;
 
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
