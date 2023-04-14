@@ -189,11 +189,13 @@ namespace SAM.Analytical.Tas
                         roomSurface_Panel.zoneSurface = zoneSurface_Panel;
 
                         Face3D face3D = panel.GetFace3D(true);
-                        List<Face3D> face3Ds_FixEdges = face3D.FixEdges();
-                        if(face3Ds_FixEdges != null && face3Ds_FixEdges.Count != 0)
-                        {
-                            face3D = face3Ds_FixEdges[0];
-                        }
+
+                        //Commented on 14.04.2023
+                        //List<Face3D> face3Ds_FixEdges = face3D.FixEdges();
+                        //if(face3Ds_FixEdges != null && face3Ds_FixEdges.Count != 0)
+                        //{
+                        //    face3D = face3Ds_FixEdges[0];
+                        //}
 
                         if (dictionary_Panel.ContainsKey(panel.Guid))
                         {
