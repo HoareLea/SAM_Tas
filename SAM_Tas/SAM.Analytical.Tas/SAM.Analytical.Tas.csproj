@@ -139,6 +139,7 @@
     <Compile Include="Modify\RemoveUnusedElements.cs" />
     <Compile Include="Modify\SetApertureType.cs" />
     <Compile Include="Modify\SetColor.cs" />
+    <Compile Include="Modify\UpdateAdiabatic.cs" />
     <Compile Include="Modify\UpdateUKBRFile.cs" />
     <Compile Include="Modify\UpdateZoneGroupsByPartL.cs" />
     <Compile Include="Enums\Parameters\AnalyticalModelSimulationResultParameter.cs" />

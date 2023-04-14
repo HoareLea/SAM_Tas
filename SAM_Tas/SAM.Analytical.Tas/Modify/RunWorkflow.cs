@@ -137,6 +137,9 @@ namespace SAM.Analytical.Tas
                     simpleProgressForm.Update("Assigning Adiabatic Constructions");
                     AssignAdiabaticConstruction(tBDDocument, "Adiabatic", new string[] { "-unzoned", "-internal", "-exposed" }, false, true);
 
+                    simpleProgressForm.Update("Setting Adiabatic");
+                    UpdateAdiabatic(tBDDocument, result);
+
                     simpleProgressForm.Update("Updating Building Elements");
                     UpdateBuildingElements(tBDDocument, result);
 
