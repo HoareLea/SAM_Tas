@@ -251,6 +251,24 @@
   <ItemGroup>
     <None Include="Resources\SAM_gbXML3.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_TasTSD3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_TasTCD3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_TasTBD3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_T3D3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_Small3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SAM_TasTPD3.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

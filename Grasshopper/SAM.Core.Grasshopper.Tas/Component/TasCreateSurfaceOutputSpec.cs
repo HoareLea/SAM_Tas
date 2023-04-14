@@ -19,7 +19,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD3;
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 

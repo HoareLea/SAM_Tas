@@ -121,13 +121,25 @@
   <data name="SAM_Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SAM_Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SAM_Small3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SAM_Small3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SAM_T3D3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SAM_T3D3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="SAM_TasT3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SAM_TasT3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SAM_TasTBD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SAM_TasTBD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SAM_TasTBD3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SAM_TasTBD3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="SAM_TasTSD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SAM_TasTSD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SAM_TasTSD3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SAM_TasTSD3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
