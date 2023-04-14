@@ -116,21 +116,21 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
-                        Point3D point3D = face3D.InternalPoint3D();
+                        Point3D point3D_Temp = face3D.InternalPoint3D();
                         if (point3D == null)
                         {
                             continue;
                         }
 
-                        BoundingBox3D boundingBox3D = face3D.GetBoundingBox();
+                        BoundingBox3D boundingBox3D_Temp = face3D.GetBoundingBox();
 
-                        List<Tuple<BoundingBox3D, Face3D>> tuples_Temp = tuples.FindAll(x => x.Item1.InRange(boundingBox3D, tolerance) && x.Item1.InRange(point3D, tolerance));
+                        List<Tuple<BoundingBox3D, Face3D>> tuples_Temp = tuples.FindAll(x => x.Item1.InRange(boundingBox3D_Temp, tolerance) && x.Item1.InRange(point3D_Temp, tolerance));
                         if(tuples_Temp == null || tuples_Temp.Count == 0)
                         {
                             continue;
                         }
 
-                        Tuple<BoundingBox3D, Face3D> tuple = tuples_Temp.Find(x => x.Item2.InRange(point3D, tolerance));
+                        Tuple<BoundingBox3D, Face3D> tuple = tuples_Temp.Find(x => x.Item2.InRange(point3D_Temp, tolerance));
                         if(tuple == null)
                         {
                             continue;
