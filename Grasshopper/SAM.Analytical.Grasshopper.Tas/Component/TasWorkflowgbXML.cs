@@ -34,7 +34,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasWorkflowgbXML()
           : base("Tas.WorkflowgbXML", "Tas.WorkflowgbXML",
-              "Runs Tas workflow using gbXML",
+              "To run the Tas workflow with gbXML, make sure to generate the gbXML file beforehand. \n* Use SAMAnalytical.Check to verify that your model is error-free. ",
               "SAM WIP", "Tas")
         {
         }
