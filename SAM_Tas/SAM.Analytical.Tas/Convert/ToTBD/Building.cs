@@ -549,7 +549,7 @@ namespace SAM.Analytical.Tas
 
                                         if (aperturePart == AperturePart.Pane && aperture.TryGetValue(Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
                                         {
-                                            TBD.ApertureType apertureType = Modify.SetApertureType(result, buildingElement_Aperture, openingProperties);
+                                            List<TBD.ApertureType> apertureTypes = Modify.SetApertureTypes(result, buildingElement_Aperture, openingProperties);
 
                                             //TBD.ApertureType apertureType = result.AddApertureType(null);
                                             //apertureType.name = keyValuePair.Key;

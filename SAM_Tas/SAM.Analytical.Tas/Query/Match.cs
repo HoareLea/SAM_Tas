@@ -40,7 +40,7 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                if(!global::System.Guid.TryParse(zoneGuid, out System.Guid guid))
+                if(!global::System.Guid.TryParse(zoneGuid, out Guid guid))
                 {
                     continue;
                 }
@@ -380,7 +380,7 @@ namespace SAM.Analytical.Tas
                     return construction;
             }
 
-            if (UniqueNameDecomposition(element.name, out string prefix, out name, out System.Guid? guid, out int id))
+            if (UniqueNameDecomposition(element.name, out string prefix, out name, out Guid? guid, out int id))
             {
                 foreach (Construction construction in constructions_Temp)
                 {
@@ -416,7 +416,7 @@ namespace SAM.Analytical.Tas
                     return apertureConstruction;
             }
 
-            if (UniqueNameDecomposition(window.name, out string prefix, out name, out System.Guid? guid, out int id))
+            if (UniqueNameDecomposition(window.name, out string prefix, out name, out Guid? guid, out int id))
             {
                 foreach (ApertureConstruction apertureConstruction in apertureConstructions_Temp)
                 {

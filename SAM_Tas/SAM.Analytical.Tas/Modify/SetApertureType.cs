@@ -5,9 +5,9 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static TBD.ApertureType SetApertureType(this Building building, buildingElement buildingElement, IOpeningProperties openingProperties, string name = null)
+        public static TBD.ApertureType SetApertureType(this Building building, buildingElement buildingElement, ISingleOpeningProperties singleOpeningProperties, string name = null, int index = -1)
         {
-            if(building == null || buildingElement == null || openingProperties == null)
+            if(building == null || buildingElement == null || singleOpeningProperties == null)
             {
                 return null;
             }
@@ -23,6 +23,11 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            if(index != -1)
+            {
+                name_Temp = string.Format("{0} {1}", name_Temp, index);
+            }
+
             TBD.ApertureType result = building.ApertureType(name_Temp);
             if(result == null)
             {
@@ -35,19 +40,19 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            if (openingProperties.TryGetValue(OpeningPropertiesParameter.Description, out string description))
+            if (singleOpeningProperties.TryGetValue(OpeningPropertiesParameter.Description, out string description))
             {
                 result.description = description;
             }
 
-            result.dischargeCoefficient = (float)openingProperties.GetDischargeCoefficient();
+            result.dischargeCoefficient = (float)singleOpeningProperties.GetDischargeCoefficient();
 
             profile profile = result.GetProfile();
             profile.value = 1;
 
-            if (openingProperties.TryGetValue(OpeningPropertiesParameter.Function, out string function))
+            if (singleOpeningProperties.TryGetValue(OpeningPropertiesParameter.Function, out string function))
             {
-                profile.type = TBD.ProfileTypes.ticFunctionProfile;
+                profile.type = ProfileTypes.ticFunctionProfile;
                 profile.function = function;
             }
 
@@ -55,7 +60,7 @@ namespace SAM.Analytical.Tas
             if (dayTypes != null)
             {
                 dayTypes.RemoveAll(x => x.name.Equals("HDD") || x.name.Equals("CDD"));
-                foreach (TBD.dayType dayType in dayTypes)
+                foreach (dayType dayType in dayTypes)
                     result.SetDayType(dayType, true);
             }
 
