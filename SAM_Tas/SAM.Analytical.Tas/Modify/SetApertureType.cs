@@ -56,6 +56,31 @@ namespace SAM.Analytical.Tas
                 profile.function = function;
             }
 
+            if(singleOpeningProperties is ProfileOpeningProperties)
+            {
+                ProfileOpeningProperties profileOpeningProperties = (ProfileOpeningProperties)singleOpeningProperties;
+                Profile profile_SAM = profileOpeningProperties.Profile;
+                if(profile_SAM != null)
+                {
+                    profile.type = ProfileTypes.ticHourlyProfile;
+                    schedule schedule = building.Schedules()?.Find(x => x.name == profile_SAM.Name);
+                    if(schedule == null)
+                    {
+                        schedule = building.AddSchedule();
+                        schedule.name = profile_SAM.Name;
+                    }
+
+                    double[] values = profile_SAM.GetDailyValues();
+                    if(values != null && values.Length == 24)
+                    {
+                        for(int i=0; i < 24; i++)
+                        {
+                            schedule.values[i] = System.Convert.ToInt32(values[i]);
+                        }
+                    }
+                }
+            }
+
             List<dayType> dayTypes = building.DayTypes();
             if (dayTypes != null)
             {
