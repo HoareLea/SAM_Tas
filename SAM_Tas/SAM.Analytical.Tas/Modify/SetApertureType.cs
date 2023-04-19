@@ -49,6 +49,7 @@ namespace SAM.Analytical.Tas
 
             profile profile = result.GetProfile();
             profile.value = 1;
+            profile.factor = (float)singleOpeningProperties.GetFactor();
 
             if (singleOpeningProperties.TryGetValue(OpeningPropertiesParameter.Function, out string function))
             {
