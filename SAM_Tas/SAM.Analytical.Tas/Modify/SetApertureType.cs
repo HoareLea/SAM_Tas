@@ -63,7 +63,8 @@ namespace SAM.Analytical.Tas
                 Profile profile_SAM = profileOpeningProperties.Profile;
                 if(profile_SAM != null)
                 {
-                    profile.type = ProfileTypes.ticHourlyProfile;
+                    //profile.type = ProfileTypes.ticHourlyFunctionProfile;  //TODO: 2023-04-19 To bo implemented once Tas allow ticHourlyFunctionProfile or ticYearlyFunctionProfile
+                    profile.type = ProfileTypes.ticValueProfile;
                     schedule schedule = building.Schedules()?.Find(x => x.name == profile_SAM.Name);
                     if(schedule == null)
                     {
@@ -76,7 +77,8 @@ namespace SAM.Analytical.Tas
                     {
                         for(int i=0; i < 24; i++)
                         {
-                            schedule.values[i] = System.Convert.ToInt32(values[i]);
+                            //schedule.values[i] = ;
+                            schedule.set_values(i, System.Convert.ToInt32(values[i]));
                         }
                     }
 
