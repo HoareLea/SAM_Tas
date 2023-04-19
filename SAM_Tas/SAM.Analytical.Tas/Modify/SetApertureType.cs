@@ -51,12 +51,6 @@ namespace SAM.Analytical.Tas
             profile.value = 1;
             profile.factor = (float)singleOpeningProperties.GetFactor();
 
-            if (singleOpeningProperties.TryGetValue(OpeningPropertiesParameter.Function, out string function))
-            {
-                profile.type = ProfileTypes.ticFunctionProfile;
-                profile.function = function;
-            }
-
             if(singleOpeningProperties is ProfileOpeningProperties)
             {
                 ProfileOpeningProperties profileOpeningProperties = (ProfileOpeningProperties)singleOpeningProperties;
@@ -84,6 +78,12 @@ namespace SAM.Analytical.Tas
 
                     profile.schedule = schedule;
                 }
+            }
+
+            if (singleOpeningProperties.TryGetValue(OpeningPropertiesParameter.Function, out string function))
+            {
+                profile.type = ProfileTypes.ticFunctionProfile;
+                profile.function = function;
             }
 
             List<dayType> dayTypes = building.DayTypes();
