@@ -79,6 +79,8 @@ namespace SAM.Analytical.Tas
                             schedule.values[i] = System.Convert.ToInt32(values[i]);
                         }
                     }
+
+                    profile.schedule = schedule;
                 }
             }
 
