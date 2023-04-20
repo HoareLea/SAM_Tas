@@ -219,6 +219,22 @@ namespace SAM.Analytical.Tas
                 }
             }
 
+            profile = internalCondition.GetProfile(ProfileType.Ventilation, profileLibrary);
+            if (profile != null)
+            {
+                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticV);
+                if (profile_TBD != null)
+                {
+                    double airflow = Analytical.Query.CalculatedSupplyAirFlow(space);
+                    if (double.IsNaN(area) || area == 0 || double.IsNaN(airflow))
+                        airflow = 0;
+                    else
+                        airflow = airflow / area;
+
+                    Update(profile_TBD, profile, airflow);
+                }
+            }
+
             TBD.Thermostat thermostat = internalCondition_TBD.GetThermostat();
             if (thermostat != null)
             {

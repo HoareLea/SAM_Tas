@@ -101,6 +101,12 @@
                     result.SetValue(InternalConditionParameter.PollutantGenerationPerArea, profile_TBD.GetExtremeValue(true));
                 }
 
+                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticV);
+                if (profile_TBD != null)
+                {
+                    result.SetValue(InternalConditionParameter.VentilationProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TBD.name));
+                    result.SetValue(InternalConditionParameter.SupplyAirFlow, profile_TBD.GetExtremeValue(true));
+                }
             }
 
             TBD.Thermostat thermostat = internalCondition.GetThermostat();
@@ -217,6 +223,13 @@
                 {
                     result.SetValue(InternalConditionParameter.PollutantProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TIC.name));
                     result.SetValue(InternalConditionParameter.PollutantGenerationPerArea, profile_TIC.GetExtremeValue(true));
+                }
+
+                profile_TIC = internalGain.GetProfile((int)TBD.Profiles.ticV);
+                if (profile_TIC != null)
+                {
+                    result.SetValue(InternalConditionParameter.VentilationProfileName, string.Format("{0} [{1}]", internalCondition.name, profile_TIC.name));
+                    result.SetValue(InternalConditionParameter.SupplyAirFlow, profile_TIC.GetExtremeValue(true));
                 }
 
             }
