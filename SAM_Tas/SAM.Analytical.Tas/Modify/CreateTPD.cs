@@ -574,13 +574,13 @@ namespace SAM.Analytical.Tas
             {
                 CreateTPD_CAV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
             }
-            else if (name.StartsWith("MV"))
-            {
-                CreateTPD_MV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
-            }
             else if (name.StartsWith("MVRE"))
             {
                 CreateTPD_MVRE(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
+            }
+            else if (name.StartsWith("MV"))
+            {
+                CreateTPD_MV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
             }
             else if (name.StartsWith("DISP"))
             {
