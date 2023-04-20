@@ -96,7 +96,7 @@ namespace SAM.Analytical.Tas
 
             if (internalCondition.TryGetValue(InternalConditionParameter.SupplyAirFlowPerPerson, out double supplyAirFlowPerPerson) && !double.IsNaN(supplyAirFlowPerPerson))
             {
-                internalGain.freshAirRate = (float)supplyAirFlowPerPerson;
+                internalGain.freshAirRate = (float)supplyAirFlowPerPerson * 1000;
             }
 
             Profile profile = null;
