@@ -231,9 +231,17 @@ namespace SAM.Analytical.Tas
                 if (profile_TBD != null)
                 {
                     double value_Temp = Analytical.Query.CalculatedSupplyAirFlow(space);
-                    if(space.TryGetValue(Analytical.SpaceParameter.Volume, out double volume) && !double.IsNaN(volume) && volume > 0)
+                    if(!double.IsNaN(value_Temp))
                     {
-                        value_Temp = value_Temp / volume * 3600;
+                        if (space.TryGetValue(Analytical.SpaceParameter.Volume, out double volume) && !double.IsNaN(volume) && volume > 0)
+                        {
+                            value_Temp = value_Temp / volume * 3600;
+                        }
+                    }
+
+                    if(double.IsNaN(value_Temp))
+                    {
+                        value_Temp = 1;
                     }
 
                     Update(profile_TBD, profile, value_Temp);
