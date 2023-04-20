@@ -94,6 +94,11 @@ namespace SAM.Analytical.Tas
             if (!double.IsNaN(occupancyGainPerPerson))
                 internalGain.personGain = System.Convert.ToSingle(occupancyGainPerPerson);
 
+            if (internalCondition.TryGetValue(InternalConditionParameter.SupplyAirFlowPerPerson, out double supplyAirFlowPerPerson) && !double.IsNaN(supplyAirFlowPerPerson))
+            {
+                internalGain.freshAirRate = (float)supplyAirFlowPerPerson;
+            }
+
             Profile profile = null;
             
             profile = internalCondition.GetProfile(ProfileType.Infiltration, profileLibrary);
