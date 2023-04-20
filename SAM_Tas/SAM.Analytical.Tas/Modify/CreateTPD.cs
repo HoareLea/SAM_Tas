@@ -706,6 +706,8 @@ namespace SAM.Analytical.Tas
                 systemZone_Group.AddZoneLoad(zoneLoad);
                 systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 systemZone_Group.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
+                object flags = systemZone_Group.Flags;
+                //systemZone_Group.Flags -= TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
                     systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
