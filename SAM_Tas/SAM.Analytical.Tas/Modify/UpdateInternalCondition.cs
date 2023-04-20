@@ -225,13 +225,13 @@ namespace SAM.Analytical.Tas
                 TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticV);
                 if (profile_TBD != null)
                 {
-                    double airflow = Analytical.Query.CalculatedSupplyAirFlow(space);
-                    if (double.IsNaN(area) || area == 0 || double.IsNaN(airflow))
-                        airflow = 0;
-                    else
-                        airflow = airflow / area;
+                    double value_Temp = Analytical.Query.CalculatedSupplyAirFlow(space);
+                    if(space.TryGetValue(Analytical.SpaceParameter.Volume, out double volume) && !double.IsNaN(volume) && volume > 0)
+                    {
+                        value_Temp = value_Temp / volume * 3600;
+                    }
 
-                    Update(profile_TBD, profile, airflow);
+                    Update(profile_TBD, profile, value_Temp);
                 }
             }
 
