@@ -706,8 +706,7 @@ namespace SAM.Analytical.Tas
                 systemZone_Group.AddZoneLoad(zoneLoad);
                 systemZone_Group.FlowRate.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
                 systemZone_Group.FreshAir.Type = TPD.tpdSizedVariable.tpdSizedVariableNone;
-                object flags = systemZone_Group.Flags;
-                //systemZone_Group.Flags -= TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+
                 for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
                 {
                     systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
@@ -2149,6 +2148,17 @@ namespace SAM.Analytical.Tas
                 {
                     systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(i));
                 }
+
+                //TODO: Implement Flags   if ventilation profile Untick tpdSystemZoneFlagModelVentFlow, this will use TBD and not system
+                //object flags = systemZone_Group.Flags;
+                //systemZone_Group.Flags -= TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+                //systemZone_Group.Flags = systemZone_Group.Flags & (int)TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+                //systemZone_Group.Flags = systemZone_Group.Flags & ~(int)TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+
+                //systemZone_Group.Flags = (int)TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelInterzoneFlow;
+                systemZone_Group.Flags = systemZone_Group.Flags | ~(int)TPD.tpdSystemZoneFlags.tpdSystemZoneFlagDisplacementVent;
+                systemZone_Group.Flags = systemZone_Group.Flags | ~(int)TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelInterzoneFlow;
+                systemZone_Group.Flags = systemZone_Group.Flags | (int)TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
 
                 AddComponents(systemZone_Group as TPD.SystemZone, energyCentre, heatingSystem, coolingSystem);
 

@@ -24,7 +24,16 @@ namespace SAM.Analytical.Tas.TM59
                 guid = space.Guid;
             }
 
-            return new Zone(guid, space.Name, 1, tM59Manager.RoomUse(space), SystemType.NaturalVentilation, true, 0.1);
+            SystemType systemType = SystemType.NaturalVentilation;
+            if(internalCondition.TryGetValue(InternalConditionParameter.VentilationSystemTypeName, out string ventilationSystemTypeName))
+            {
+                if(ventilationSystemTypeName != "UU" && ventilationSystemTypeName != "NV")
+                {
+                    systemType = SystemType.MechanicalVentilation;
+                }
+            }
+
+            return new Zone(guid, space.Name, 1, tM59Manager.RoomUse(space), systemType, true, 0.1);
         }
     }
 }
