@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas.TM59
                         SystemType systemType = SystemType.Undefined;
 
                         List<VentilationSystem> ventilationSystems = adjacencyCluster.MechanicalSystems<VentilationSystem>(space);
-                        if(ventilationSystems != null && ventilationSystems.Count == 0)
+                        if(ventilationSystems != null && ventilationSystems.Count != 0)
                         {
                             VentilationSystem ventilationSystem = ventilationSystems.Find(x => x != null && x.IsMechanicalVentilation());
                             if(ventilationSystem != null)
