@@ -27,10 +27,7 @@ namespace SAM.Analytical.Tas.TM59
                         if(ventilationSystems != null && ventilationSystems.Count != 0)
                         {
                             VentilationSystem ventilationSystem = ventilationSystems.Find(x => x != null && x.IsMechanicalVentilation());
-                            if(ventilationSystem != null)
-                            {
-                                systemType = SystemType.MechanicalVentilation;
-                            }
+                            systemType = ventilationSystem == null ? SystemType.NaturalVentilation : SystemType.MechanicalVentilation;
                         }
 
                         Zone zone = space.ToTM59(tM59Manager, systemType);
