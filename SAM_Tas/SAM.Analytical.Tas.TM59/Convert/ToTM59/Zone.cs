@@ -4,7 +4,7 @@ namespace SAM.Analytical.Tas.TM59
 {
     public static partial class Convert
     {
-        public static Zone ToTM59(this Space space, TM59Manager tM59Manager)
+        public static Zone ToTM59(this Space space, TM59Manager tM59Manager, SystemType systemType = SystemType.Undefined)
         {
             if (space == null || tM59Manager == null)
             {
@@ -24,12 +24,15 @@ namespace SAM.Analytical.Tas.TM59
                 guid = space.Guid;
             }
 
-            SystemType systemType = SystemType.NaturalVentilation;
-            if(internalCondition.TryGetValue(InternalConditionParameter.VentilationSystemTypeName, out string ventilationSystemTypeName))
+            if(systemType == SystemType.Undefined)
             {
-                if(ventilationSystemTypeName != "UU" && ventilationSystemTypeName != "NV")
+                systemType = SystemType.NaturalVentilation;
+                if (internalCondition.TryGetValue(InternalConditionParameter.VentilationSystemTypeName, out string ventilationSystemTypeName))
                 {
-                    systemType = SystemType.MechanicalVentilation;
+                    if (Analytical.Query.IsMechanicalVentilation(ventilationSystemTypeName))
+                    {
+                        systemType = SystemType.MechanicalVentilation;
+                    }
                 }
             }
 

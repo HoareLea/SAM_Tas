@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Xml;
 
 namespace SAM.Analytical.Tas.TM59
 {
@@ -22,7 +21,19 @@ namespace SAM.Analytical.Tas.TM59
                 {
                     foreach (Space space in spaces)
                     {
-                        Zone zone = space.ToTM59(tM59Manager);
+                        SystemType systemType = SystemType.Undefined;
+
+                        List<VentilationSystem> ventilationSystems = adjacencyCluster.MechanicalSystems<VentilationSystem>(space);
+                        if(ventilationSystems != null && ventilationSystems.Count == 0)
+                        {
+                            VentilationSystem ventilationSystem = ventilationSystems.Find(x => x != null && x.IsMechanicalVentilation());
+                            if(ventilationSystem != null)
+                            {
+                                systemType = SystemType.MechanicalVentilation;
+                            }
+                        }
+
+                        Zone zone = space.ToTM59(tM59Manager, systemType);
                         if (zone != null)
                         {
                             zones.Add(zone);
