@@ -265,7 +265,10 @@ namespace SAM.Analytical.Tas
                     }
                     else
                     {
-                        apertureConstruction = apertureConstructions[index];
+                        apertureConstruction = new ApertureConstruction(apertureConstructions[index].Guid, apertureConstruction, apertureConstruction.Name);
+                        apertureConstructions[index] = apertureConstruction;
+
+                        //apertureConstruction = apertureConstructions[index];
 
                         List<ConstructionLayer> constructionLayers = null;
 
