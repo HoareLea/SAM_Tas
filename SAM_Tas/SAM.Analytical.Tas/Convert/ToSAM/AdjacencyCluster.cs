@@ -437,7 +437,7 @@ namespace SAM.Analytical.Tas
                             }
                         }
 
-                        adjacencyCluster.AddAperture(aperture);
+                        adjacencyCluster.AddAperture(aperture, tolerance_Distance: Tolerance.MacroDistance);
 
                     }
                 }
