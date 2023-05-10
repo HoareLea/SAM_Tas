@@ -32,8 +32,10 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            BoundingBox3D boundingBox3D_Temp = adjacencyCluster_Temp.GetPanels().BoundingBox3D();
-            BoundingBox3D boundingBox3D = adjacencyCluster.GetPanels().BoundingBox3D();
+            //in gbXML workflow building is moved (by our interpretation) TBD to 0,0,z this is model wihtout shade so to be able to match by geometry we need to remove shade 
+            //take boundin box and move building by vector, watch  if we do SAM to TBD without gbXML if we need to do it
+            BoundingBox3D boundingBox3D_Temp = adjacencyCluster_Temp.GetPanels().FindAll(x => !adjacencyCluster_Temp.Shade(x)).BoundingBox3D();
+            BoundingBox3D boundingBox3D = adjacencyCluster.GetPanels().FindAll(x => !adjacencyCluster.Shade(x)).BoundingBox3D();
             adjacencyCluster_Temp.Transform(Transform3D.GetTranslation(new Vector3D(boundingBox3D_Temp.GetCentroid(), boundingBox3D.GetCentroid())));
 
             List<Panel> panels_Temp = adjacencyCluster_Temp.GetPanels();
@@ -62,7 +64,7 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    Aperture aperture = adjacencyCluster.Apertures(point3D)?.FirstOrDefault();
+                    Aperture aperture = adjacencyCluster.Apertures(point3D, 1, SAM.Core.Tolerance.MacroDistance)?.FirstOrDefault();
                     if(aperture == null)
                     {
                         continue;
