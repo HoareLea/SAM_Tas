@@ -308,6 +308,12 @@ namespace SAM.Analytical.Tas
                             continue;
                         }
 
+                        Aperture aperture = Analytical.Query.Apertures(adjacencyCluster, polygon3D.InternalPoint3D(), 1, Tolerance.MacroDistance)?.FirstOrDefault();
+                        if(aperture != null)
+                        {
+                            continue;
+                        }
+
                         if(!dictionary.TryGetValue(apertureConstruction.Guid, out List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples) || tuples == null)
                         {
                             tuples = new List<Tuple<Polygon3D, TBD.IZoneSurface>>();
