@@ -339,7 +339,7 @@ namespace SAM.Analytical.Tas
                         Polygon3D polygon3D = tuples[0].Item1;
                         tuples.RemoveAt(0);
 
-                        List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples_Temp = tuples.FindAll(x => new Face3D(polygon3D).InRange(x.Item1.InternalPoint3D()));
+                        List<Tuple<Polygon3D, TBD.IZoneSurface>> tuples_Temp = tuples.FindAll(x => new Face3D(polygon3D).InRange(x.Item1.InternalPoint3D(), Tolerance.MacroDistance));
 
                         Face3D face3D = null;
                         if (tuples_Temp == null || tuples_Temp.Count == 0)
