@@ -129,6 +129,12 @@ namespace SAM.Analytical.Tas
 
                         if (construction_TBD_Aperture == null)
                         {
+                            string prefix = Analytical.Query.UniqueNamePrefix(aperture.ApertureType);
+                            construction_TBD_Aperture = constructions_TBD.Find(x => x.name.EndsWith( name_Aperture) && x.name.StartsWith(prefix));
+                        }
+
+                        if (construction_TBD_Aperture == null)
+                        {
                             continue;
                         }
 
