@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas.TM59
             }
 
 
-            Guid guid = Guid.Empty; ;
+            Guid guid = Guid.Empty;
             if(!space.TryGetValue(SpaceParameter.ZoneGuid, out guid) || guid == Guid.Empty)
             {
                 guid = space.Guid;
