@@ -60,10 +60,10 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            dataAccess.SetData(1, false);
+            dataAccess.SetData(0, false);
 
             bool run = false;
-            if (!dataAccess.GetData(2, ref run))
+            if (!dataAccess.GetData(1, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;

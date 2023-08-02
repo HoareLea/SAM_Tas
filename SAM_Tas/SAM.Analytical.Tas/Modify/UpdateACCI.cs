@@ -47,7 +47,7 @@ namespace SAM.Analytical.Tas
 
                 for (int i = 1; i <= 8760; i++)
                 {
-                    Range<double> dryBulbTemperatureRange = Weather.Query.DryBulbTemperatureRange(dryBulbTemperatures[i]);
+                    Range<double> dryBulbTemperatureRange = Weather.Query.DryBulbTemperatureRange(dryBulbTemperatures[i - 1]);
                     if(dryBulbTemperatureRange == null)
                     {
                         continue;
