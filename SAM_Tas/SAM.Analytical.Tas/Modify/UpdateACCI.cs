@@ -30,6 +30,11 @@ namespace SAM.Analytical.Tas
             bool result = false;
             foreach (TBD.InternalCondition internalCondition in internalConditions)
             {
+                if(internalCondition.name.EndsWith(" - HDD") || internalCondition.name.EndsWith(" - CDD") || internalCondition.name.EndsWith("New Internal Condition") )
+                {
+                    continue;
+                }
+
                 TBD.profile profile_UpperLimit = internalCondition.GetThermostat().GetProfile((int)TBD.Profiles.ticUL);
                 if (profile_UpperLimit == null)
                 {
