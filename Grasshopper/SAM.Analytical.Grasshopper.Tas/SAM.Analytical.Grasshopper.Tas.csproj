@@ -129,6 +129,7 @@
     <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
     <Compile Include="Component\TasCreateTBDByPartL.cs" />
+    <Compile Include="Component\TasUpdateACCI.cs" />
     <Compile Include="Component\TasUpdateShading.cs" />
     <Compile Include="Component\TasUpdateUKBRFile.cs" />
     <Compile Include="Component\TasUpdateWeatherData.cs" />

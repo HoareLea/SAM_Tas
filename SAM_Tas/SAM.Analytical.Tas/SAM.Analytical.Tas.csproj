@@ -195,6 +195,7 @@
     <Compile Include="Create\SpaceSimulationResult.cs" />
     <Compile Include="Modify\UpdateSizingFactors.cs" />
     <Compile Include="Modify\UpdateIds.cs" />
+    <Compile Include="Modify\UpdateACCI.cs" />
     <Compile Include="Query\AperturePart.cs" />
     <Compile Include="Query\ApertureTypes.cs" />
     <Compile Include="Query\Color.cs" />
