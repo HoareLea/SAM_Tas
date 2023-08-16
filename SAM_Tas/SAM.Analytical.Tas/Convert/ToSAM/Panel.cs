@@ -61,9 +61,7 @@ namespace SAM.Analytical.Tas
 
             PanelType panelType = Query.PanelType(surfaceData.BEType);
 
-            PlanarBoundary3D planarBoundary3D = null;
-
-            Panel panel = Analytical.Create.Panel(new Construction(surfaceData.BEName), panelType, planarBoundary3D);
+            Panel panel = Analytical.Create.Panel(new Construction(surfaceData.BEName), panelType);
             panel.Add(parameterSet);
 
             return panel;
