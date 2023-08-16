@@ -129,6 +129,7 @@
     <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
     <Compile Include="Component\TasCreateTBDByPartL.cs" />
+    <Compile Include="Component\TasTSDCreateSpaceSimulationResults_Obsolete.cs" />
     <Compile Include="Component\TasUpdateACCI.cs" />
     <Compile Include="Component\TasUpdateShading.cs" />
     <Compile Include="Component\TasUpdateUKBRFile.cs" />
@@ -150,7 +151,7 @@
     <Compile Include="Component\TasUpdateBuildingElements.cs" />
     <Compile Include="Component\TasUpdateDesignLoads.cs" />
     <Compile Include="Component\TasUpdateConstructions.cs" />
-    <Compile Include="Component\TasTSDCreateSpaceSimulationResults_Obsolete.cs" />
+    <Compile Include="Component\TasTSDQueryResultsByIndex.cs" />
     <Compile Include="Component\TasUpdateZones.cs" />
     <Compile Include="Component\TasUpdateIZAMs.cs" />
     <Compile Include="Component\TasUpdateFacingExternal.cs" />
