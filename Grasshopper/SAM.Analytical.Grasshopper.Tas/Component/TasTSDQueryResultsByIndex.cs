@@ -25,12 +25,12 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         public override string LatestComponentVersion => "1.0.0";
 
-        public override GH_Exposure Exposure => GH_Exposure.hidden;
+        public override GH_Exposure Exposure => GH_Exposure.primary;
 
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTSD3;
 
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
@@ -54,7 +54,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "spaceDataType_", NickName = "spaceDataType_", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
 
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_indexes_", NickName = "Indexes", Description = "Hour indexes", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_indexes_", NickName = "Indexes", Description = "Hour indexes", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
 
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
@@ -111,6 +111,13 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 return;
             }
 
+            string path = null;
+            if (!dataAccess.GetData(index, ref path) || string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
             List<Space> spaces = null;
             index = Params.IndexOfInputParam("_spaces_");
             if (index != -1)
@@ -139,13 +146,6 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 {
                     indexes.Add(i);
                 }
-            }
-
-            string path = null;
-            if (!dataAccess.GetData(index, ref path) || string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-                return;
             }
 
             SpaceDataType spaceDataType = SpaceDataType.Undefined;
