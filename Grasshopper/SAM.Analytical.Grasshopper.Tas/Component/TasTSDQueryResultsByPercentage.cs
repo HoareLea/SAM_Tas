@@ -22,7 +22,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -61,7 +61,13 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 @string.SetPersistentData(NumberComparisonType.GreaterOrEquals.Text());
                 result.Add(new GH_SAMParam(@string, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
+                global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = null;
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_average_", NickName = "_average_", Description = "Average Method.", Optional = true, Access = GH_ParamAccess.item };
+                boolean.SetPersistentData(true);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Binding));
 
@@ -165,6 +171,16 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 }
             }
 
+            bool average = true;
+            index = Params.IndexOfInputParam("_average_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref average))
+                {
+                    average = true;
+                }
+            }
+
             NumberComparisonType numberComparisonType = NumberComparisonType.GreaterOrEquals;
             index = Params.IndexOfInputParam("numberComparisonType_");
             if (index != -1)
@@ -243,7 +259,16 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                         }
                     }
 
-                    value = min + ((max - min) * percentage / 100);
+                    if(average)
+                    {
+                        value = min + ((max - min) * percentage / 100);
+                    }
+                    else
+                    {
+                        int index_Temp = System.Convert.ToInt32(System.Convert.ToDouble(values.Count) * (percentage / 100));
+                        values.Sort();
+                        value = values[index_Temp];
+                    }
 
                     GH_Path path_Temp = new GH_Path(i);
                     i++;
