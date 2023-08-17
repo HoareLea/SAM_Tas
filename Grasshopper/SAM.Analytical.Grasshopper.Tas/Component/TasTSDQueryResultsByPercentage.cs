@@ -266,6 +266,10 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                     else
                     {
                         int index_Temp = System.Convert.ToInt32(System.Convert.ToDouble(values.Count) * (percentage / 100));
+                        if (index_Temp >= values.Count)
+                        {
+                            index_Temp = values.Count - 1;
+                        }
                         values.Sort();
                         value = values[index_Temp];
                     }
