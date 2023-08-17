@@ -22,7 +22,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -53,7 +53,9 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "spaceDataType_", NickName = "spaceDataType_", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_Number number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_percentage_", NickName = "percentage", Description = "Percentage [0 - 100%]", Access = GH_ParamAccess.item, Optional = true };
+                global::Grasshopper.Kernel.Parameters.Param_Number number = null;
+
+                number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_percentage_", NickName = "percentage", Description = "Percentage [0 - 100%]", Access = GH_ParamAccess.item, Optional = true };
                 number.SetPersistentData(90);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
@@ -66,6 +68,9 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_average_", NickName = "_average_", Description = "Average Method.", Optional = true, Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "minValue_", NickName = "minValue_", Description = "Minimal VAlue", Access = GH_ParamAccess.item, Optional = true };
+                result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(false);
@@ -171,6 +176,16 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 }
             }
 
+            double minValue = double.NaN;
+            index = Params.IndexOfInputParam("minValue_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref minValue))
+                {
+                    minValue = double.NaN;
+                }
+            }
+
             bool average = true;
             index = Params.IndexOfInputParam("_average_");
             if (index != -1)
@@ -243,6 +258,11 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
                     foreach (double value_Temp in jArray)
                     {
+                        if(!double.IsNaN(minValue) && value_Temp <= minValue)
+                        {
+                            continue;
+                        }
+                        
                         values.Add(value_Temp);
                         if (value_Temp > max)
                         {
