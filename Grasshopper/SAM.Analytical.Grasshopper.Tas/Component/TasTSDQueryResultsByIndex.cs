@@ -1,7 +1,6 @@
 ﻿using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
 using Newtonsoft.Json.Linq;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
@@ -9,7 +8,6 @@ using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 {
@@ -23,7 +21,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -51,7 +49,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "spaceDataType_", NickName = "spaceDataType_", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
 
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_indexes_", NickName = "Indexes", Description = "Hour indexes", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
@@ -75,6 +73,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "variables", NickName = "variables", Description = "Variables", Access = GH_ParamAccess.tree }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "names", NickName = "names", Description = "names", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "spaces", NickName = "spaces", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "hours", NickName = "hours", Description = "hours", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly extracted?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
@@ -170,11 +169,11 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 sAMTSDDocument.Close();
             }
 
-            IEnumerable<string> names = spaces?.FindAll(x => x?.Name != null)?.ConvertAll(x => x.Name)?.Distinct();
-
             List<string> names_result = new List<string>();
 
             DataTree<double> dataTree_Values = new DataTree<double>();
+
+            List<Space> spaces_Result = new List<Space>();
 
             List<Space> spaces_AdjacencyCluster = adjacencyCluster?.GetSpaces();
             if (spaces_AdjacencyCluster != null || spaces_AdjacencyCluster.Count != 0)
@@ -182,9 +181,19 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 int i = 0;
                 foreach(Space space_AdjacencyCluster in spaces_AdjacencyCluster)
                 {
-                    if (names != null && !names.Contains(space_AdjacencyCluster?.Name))
+                    Space space = null;
+                    if(spaces != null)
                     {
-                        continue;
+                        space = spaces.Find(x => x.Name == space_AdjacencyCluster.Name);
+                        if(space == null)
+                        {
+                            continue;
+                        }
+                    }
+                    
+                    if(space == null)
+                    {
+                        space = space_AdjacencyCluster;
                     }
 
                     if(!space_AdjacencyCluster.TryGetValue(spaceDataType.Text(), out JArray jArray) || jArray == null)
@@ -196,6 +205,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                     i++;
 
                     names_result.Add(space_AdjacencyCluster.Name);
+                    spaces_Result.Add(space);
 
                     foreach(int index_Temp in indexes)
                     {
@@ -206,7 +216,6 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
                         dataTree_Values.Add((double)jArray[index_Temp], path_Temp);
                     }
-
                 }
             }
 
@@ -220,6 +229,12 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             if (index != -1)
             {
                 dataAccess.SetDataList(index, names_result);
+            }
+
+            index = Params.IndexOfOutputParam("spaces");
+            if (index != -1)
+            {
+                dataAccess.SetDataList(index, spaces_Result.ConvertAll(x => new GooSpace(x)));
             }
 
             index = Params.IndexOfOutputParam("hours");
