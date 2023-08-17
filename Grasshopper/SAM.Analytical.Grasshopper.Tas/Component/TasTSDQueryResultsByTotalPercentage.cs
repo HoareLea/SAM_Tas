@@ -9,20 +9,21 @@ using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
+using TPD;
 
 namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 {
-    public class TasTSDQueryResultsByPercentage : GH_SAMVariableOutputParameterComponent
+    public class TasTSDQueryResultsByTotalPercentage : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("119c2b63-0181-443e-82f0-ae3313e15f8a");
+        public override Guid ComponentGuid => new Guid("1e73032e-5f4f-4591-ac9c-2507f4392b94");
 
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.0";
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -34,9 +35,9 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasTSDQueryResultsByPercentage()
-          : base("Tas.TSDQueryResultsByPercentage", "Tas.TSDQueryResultsByPercentage",
-              "Query Results by Percentage.",
+        public TasTSDQueryResultsByTotalPercentage()
+          : base("Tas.TSDQueryResultsByTotalPercentage", "Tas.TSDQueryResultsByTotalPercentage",
+              "Query Results by Total Percentage.",
               "SAM", "Tas")
         {
         }
@@ -77,7 +78,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "values", NickName = "values", Description = "value", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "value", NickName = "value", Description = "value", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "names", NickName = "names", Description = "Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "spaces", NickName = "spaces", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
 
@@ -189,7 +190,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
             List<Space> spaces_Result = new List<Space>();
             List<string> names_Result = new List<string>();
-            List<double> values_Result = new List<double>();
+            double value_Result = double.NaN;
             
             DataTree<double> dataTree_Values_In = new DataTree<double>();
             DataTree<int> dataTree_Indexes_In = new DataTree<int>();
@@ -197,14 +198,12 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             DataTree<double> dataTree_Values_Out = new DataTree<double>();
             DataTree<int> dataTree_Indexes_Out = new DataTree<int>();
 
-
-            double value = double.NaN;
-
             List<Space> spaces_AdjacencyCluster = adjacencyCluster?.GetSpaces();
             if (spaces_AdjacencyCluster != null || spaces_AdjacencyCluster.Count != 0)
             {
-                int i = 0;
-                foreach(Space space_AdjacencyCluster in spaces_AdjacencyCluster)
+                double min = double.MaxValue;
+                double max = double.MinValue;
+                foreach (Space space_AdjacencyCluster in spaces_AdjacencyCluster)
                 {
                     Space space = null;
                     if(spaces != null)
@@ -221,17 +220,13 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                         space = space_AdjacencyCluster;
                     }
 
-                    if(!space_AdjacencyCluster.TryGetValue(spaceDataType.Text(), out JArray jArray) || jArray == null)
+                    if (!space_AdjacencyCluster.TryGetValue(spaceDataType.Text(), out JArray jArray) || jArray == null)
                     {
                         continue;
                     }
 
-                    double min = double.MaxValue;
-                    double max = double.MinValue;
-                    List<double> values = new List<double>();
-                    foreach(double value_Temp in jArray)
+                    foreach (double value_Temp in jArray)
                     {
-                        values.Add(value_Temp);
                         if(value_Temp > max)
                         {
                             max = value_Temp;
@@ -242,19 +237,43 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                             min = value_Temp;
                         }
                     }
+                }
 
-                    value = min + ((max - min) * percentage / 100);
+                value_Result = min + ((max - min) * percentage / 100);
+
+                int i = 0; 
+                foreach (Space space_AdjacencyCluster in spaces_AdjacencyCluster)
+                {
+                    Space space = null;
+                    if (spaces != null)
+                    {
+                        space = spaces.Find(x => x.Name == space_AdjacencyCluster.Name);
+                        if (space == null)
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (space == null)
+                    {
+                        space = space_AdjacencyCluster;
+                    }
+
+                    if (!space_AdjacencyCluster.TryGetValue(spaceDataType.Text(), out JArray jArray) || jArray == null)
+                    {
+                        continue;
+                    }
+
+                    spaces_Result.Add(space);
+                    names_Result.Add(space.Name);
 
                     GH_Path path_Temp = new GH_Path(i);
                     i++;
 
-                    names_Result.Add(space_AdjacencyCluster.Name);
-                    spaces_Result.Add(space);
-                    values_Result.Add(value);
-
+                    List<double> values = jArray.ToList<double>();
                     for (int j = 0; j < values.Count; j++)
                     {
-                        if(Core.Query.Compare(values[j], value, numberComparisonType))
+                        if (Core.Query.Compare(values[j], value_Result, numberComparisonType))
                         {
                             dataTree_Values_In.Add(values[j], path_Temp);
                             dataTree_Indexes_In.Add(j, path_Temp);
@@ -268,10 +287,10 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 }
             }
 
-            index = Params.IndexOfOutputParam("values");
+            index = Params.IndexOfOutputParam("value");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, values_Result);
+                dataAccess.SetData(index, value_Result);
             }
 
             index = Params.IndexOfOutputParam("names");
