@@ -63,7 +63,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = null;
 
-                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_average_", NickName = "_average_", Description = "Average Method \n*Default =True - takes max/min value and multiply by percentage to find required value. \n  If False we treat each value as point soft them and then find percentage from top/buttom", Optional = true, Access = GH_ParamAccess.item };
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_average_", NickName = "_average_", Description = "Average Method \n*Default =True - takes max/min value and multiply by percentage to find required value. \n  If False we treat each value as point, we sort whole list find percentage from list length get value and then retrieve all depends on numberComparisonType", Optional = true, Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
