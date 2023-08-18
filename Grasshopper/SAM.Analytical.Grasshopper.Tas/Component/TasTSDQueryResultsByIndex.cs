@@ -50,10 +50,8 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "spaceDataType_", NickName = "spaceDataType_", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
-
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
-                
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "spaceDataType_", NickName = "spaceDataType_", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_indexes_", NickName = "_indexes_", Description = "Hour indexes", Access = GH_ParamAccess.tree, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
@@ -173,12 +171,11 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 sAMTSDDocument.Close();
             }
 
-            List<string> names_result = new List<string>();
+            List<string> names_Result = new List<string>();
+            List<Space> spaces_Result = new List<Space>();
 
             DataTree<double> dataTree_Values = new DataTree<double>();
             DataTree<int> dataTree_Hours = new DataTree<int>();
-
-            List<Space> spaces_Result = new List<Space>();
 
             List<Space> spaces_AdjacencyCluster = adjacencyCluster?.GetSpaces();
             if (spaces_AdjacencyCluster != null)
@@ -192,12 +189,15 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 {
                     for (int i = 0; i < spaces.Count; i++)
                     {
+                        spaces_Result.Add(spaces[i]);
+                        names_Result.Add(spaces[i].Name);
+
                         if (spaces[i] == null)
                         {
                             continue;
                         }
 
-                        Space space_AdjacencyCluster = spaces_AdjacencyCluster.Find(x => x.Guid == spaces[i].Guid);
+                        Space space_AdjacencyCluster = spaces_AdjacencyCluster.Find(x => x.Name == spaces[i].Name);
                         if (space_AdjacencyCluster == null)
                         {
                             continue;
@@ -245,7 +245,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             index = Params.IndexOfOutputParam("names");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, names_result);
+                dataAccess.SetDataList(index, names_Result);
             }
 
             index = Params.IndexOfOutputParam("spaces");

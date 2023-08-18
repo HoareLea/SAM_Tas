@@ -277,6 +277,11 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                         }
                     }
 
+                    if(values == null || values.Count == 0)
+                    {
+                        continue;
+                    }
+
                     if(average)
                     {
                         value = min + ((max - min) * percentage / 100);
