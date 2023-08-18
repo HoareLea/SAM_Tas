@@ -9,6 +9,7 @@ using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 {
@@ -22,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.4";
+        public override string LatestComponentVersion => "1.0.5";
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -65,6 +66,10 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_average_", NickName = "_average_", Description = "Average Method \n*Default =True - takes max/min value and multiply by percentage to find required value. \n  If False we treat each value as point, we sort whole list find percentage from list length get value and then retrieve all depends on numberComparisonType", Optional = true, Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(true);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_unique_", NickName = "_unique_", Description = "Unique", Access = GH_ParamAccess.item, Optional = true };
+                boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
                 number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "minValue_", NickName = "minValue_", Description = "Minimal Value\n*ie In case we search for max Solar and have rooms no windows results will be zero as max and min. This input allow you to protect and seting up 0.1 will not return zeros.", Access = GH_ParamAccess.item, Optional = true };
@@ -194,6 +199,13 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 }
             }
 
+            bool unique = false;
+            index = Params.IndexOfInputParam("_unique_");
+            if (index != -1)
+            {
+                dataAccess.GetData(index, ref unique);
+            }
+
             NumberComparisonType numberComparisonType = NumberComparisonType.GreaterOrEquals;
             index = Params.IndexOfInputParam("numberComparisonType_");
             if (index != -1)
@@ -288,13 +300,19 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                     }
                     else
                     {
-                        int index_Temp = System.Convert.ToInt32(System.Convert.ToDouble(values.Count) * (percentage / 100));
-                        if (index_Temp >= values.Count)
+                        List<double> values_Temp = new List<double>(values);
+                        if (unique)
                         {
-                            index_Temp = values.Count - 1;
+                            values_Temp = values_Temp.Distinct().ToList();
                         }
-                        values.Sort();
-                        value = values[index_Temp];
+
+                        int index_Temp = System.Convert.ToInt32(System.Convert.ToDouble(values_Temp.Count) * (percentage / 100));
+                        if (index_Temp >= values_Temp.Count)
+                        {
+                            index_Temp = values_Temp.Count - 1;
+                        }
+                        values_Temp.Sort();
+                        value = values_Temp[index_Temp];
                     }
 
                     GH_Path path_Temp = new GH_Path(i);
