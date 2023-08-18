@@ -22,7 +22,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.4";
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -36,7 +36,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         public TasTSDQueryResultsByPercentage()
           : base("Tas.TSDQueryResultsByPercentage", "Tas.TSDQueryResultsByPercentage",
-              "Query Results by Percentage.",
+              "Query Results by Percentage.\n*Each space is treated indepedently. Results will be presented for all spaces. \n To avoid zeros use min value 0.1",
               "SAM", "Tas")
         {
         }
@@ -50,24 +50,24 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "spaceDataType_", NickName = "spaceDataType_", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces. In nothing connected all spaces from TSD will be used.\nYou need to connect SAM.Analytcial Spaces if you need access to area and volume", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "spaceDataType_", NickName = "spaceDataType_", Description = "Use Enum spaceDataType with variable selection.", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_Number number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_percentage_", NickName = "percentage", Description = "Percentage [0 - 100%]", Access = GH_ParamAccess.item, Optional = true };
+                global::Grasshopper.Kernel.Parameters.Param_Number number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_percentage_", NickName = "percentage", Description = "Percentage [0 - 100%]\n ie Cooling load 100% will return highest value of cooling load", Access = GH_ParamAccess.item, Optional = true };
                 number.SetPersistentData(90);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_String @string = new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "numberComparisonType_", NickName = "numberComparisonType_", Description = "Number Comparison Type", Access = GH_ParamAccess.item, Optional = true};
+                global::Grasshopper.Kernel.Parameters.Param_String @string = new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "numberComparisonType_", NickName = "numberComparisonType_", Description = "Number Comparison Type Enum", Access = GH_ParamAccess.item, Optional = true};
                 @string.SetPersistentData(NumberComparisonType.GreaterOrEquals.Text());
                 result.Add(new GH_SAMParam(@string, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = null;
 
-                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_average_", NickName = "_average_", Description = "Average Method.", Optional = true, Access = GH_ParamAccess.item };
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_average_", NickName = "_average_", Description = "Average Method \n*Default =True - takes max/min value and multiply by percentage to find required value. \n  If False we treat each value as point soft them and then find percentage from top/buttom", Optional = true, Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
-                number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "minValue_", NickName = "minValue_", Description = "Minimal VAlue", Access = GH_ParamAccess.item, Optional = true };
+                number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "minValue_", NickName = "minValue_", Description = "Minimal Value\n*ie In case we search for max Solar and have rooms no windows results will be zero as max and min. This input allow you to protect and seting up 0.1 will not return zeros.", Access = GH_ParamAccess.item, Optional = true };
                 result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
