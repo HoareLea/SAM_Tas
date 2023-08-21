@@ -130,6 +130,7 @@
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
     <Compile Include="Component\TasCreateTBDByPartL.cs" />
     <Compile Include="Component\TasTSDCreateSpaceSimulationResults_Obsolete.cs" />
+    <Compile Include="Component\TasTSDQueryZoneResultsByPercentage.cs" />
     <Compile Include="Component\TasTSDQueryZoneResultsByIndex.cs" />
     <Compile Include="Component\TasTSDQueryResultsByTotalPercentage.cs" />
     <Compile Include="Component\TasTSDQueryResultsByPercentage.cs" />
