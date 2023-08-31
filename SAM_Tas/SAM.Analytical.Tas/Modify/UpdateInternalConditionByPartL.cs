@@ -108,6 +108,7 @@ namespace SAM.Analytical.Tas
             internalConditions_TBD = Query.InternalConditions(tBDDocument);
             if(internalConditions_TBD != null)
             {
+                List<string> names = new List<string>();
                 foreach (TBD.InternalCondition internalCondition_TBD in internalConditions_TBD)
                 {
                     if(internalConditions_TBD_New.Find(x => x.name == internalCondition_TBD.name) != null)
@@ -115,7 +116,12 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    tBDDocument.Building.RemoveInternalCondition(internalCondition_TBD.name);
+                    names.Add(internalCondition_TBD.name);
+                }
+
+                foreach(string name in names)
+                {
+                    tBDDocument.Building.RemoveInternalCondition(name);
                 }
             }
 
