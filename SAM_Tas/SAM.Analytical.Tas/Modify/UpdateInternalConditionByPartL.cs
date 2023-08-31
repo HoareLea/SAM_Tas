@@ -127,6 +127,15 @@ namespace SAM.Analytical.Tas
 
             tBDDocument.Building.ClearDesignDays();
 
+            if(zones != null)
+            {
+                foreach(TBD.zone zone in zones)
+                {
+                    zone.sizeCooling = (int)TBD.SizingType.tbdSizing;
+                    zone.sizeHeating = (int)TBD.SizingType.tbdSizing;
+                }
+            }
+
             return result;
         }
     }
