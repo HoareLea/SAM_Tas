@@ -224,6 +224,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     if(result)
                     {
                         Analytical.Tas.Modify.UpdateZoneGroupsByPartL(tBDDocument, analyticalModel);
+                        Analytical.Tas.Modify.UpdateZoneGroups(tBDDocument, analyticalModel);
                         sAMTBDDocument.Save();
                     }
                 }
