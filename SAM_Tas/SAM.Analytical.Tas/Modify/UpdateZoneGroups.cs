@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
 {
@@ -35,6 +36,11 @@ namespace SAM.Analytical.Tas
 
                 string name = zone_SAM.Name;
 
+                if(!zone_SAM.TryGetValue(ZoneParameter.ZoneCategory, out string zoneCategory) || string.IsNullOrWhiteSpace(zoneCategory))
+                {
+                    zoneCategory = null;
+                }
+
                 List<TBD.ZoneGroup> zoneGroups = tBDDocument.Building.ZoneGroups();
                 if(zoneGroups != null)
                 {
@@ -48,6 +54,10 @@ namespace SAM.Analytical.Tas
                 TBD.ZoneGroup zoneGroup = tBDDocument.Building.AddZoneGroup();
                 zoneGroup.name = name;
                 zoneGroup.type = (int)TBD.ZoneGroupType.tbdDefaultZG;
+                if(zoneCategory != null)
+                {
+                    zoneGroup.description = zoneCategory;
+                }
                 
                 result.Add(zoneGroup.name);
 
