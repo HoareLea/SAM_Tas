@@ -58,6 +58,12 @@ namespace SAM.Analytical.Tas
                     values.Add(string.Format("C:{0}", coolingSystemTypeName));
                 }
 
+                string description = nCMData?.Description;
+                if(!string.IsNullOrWhiteSpace(description))
+                {
+                    values.Add(description);
+                }
+
                 string name = string.Join("_", values).Trim();
 
                 if (string.IsNullOrWhiteSpace(name))
