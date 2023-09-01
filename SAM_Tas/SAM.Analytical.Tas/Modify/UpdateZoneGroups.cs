@@ -1,26 +1,20 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using TBD;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static HashSet<string> UpdateZoneGroups(this TBD.TBDDocument tBDDocument, AnalyticalModel analyticalModel)
+        public static HashSet<string> UpdateZoneGroups(this Building building, AdjacencyCluster adjacencyCluster)
         {
-            if (tBDDocument == null || analyticalModel == null)
-            {
-                return null;
-            }
-
-            List<TBD.zone> zones_TBD = tBDDocument.Building.Zones();
+            List<TBD.zone> zones_TBD = building?.Zones();
             if (zones_TBD == null || zones_TBD.Count == 0)
             {
                 return null;
             }
 
-
-            List<Zone> zones_SAM = analyticalModel.GetZones();
-            if(zones_SAM == null || zones_SAM.Count == 0)
+            List<Zone> zones_SAM = adjacencyCluster.GetZones();
+            if (zones_SAM == null || zones_SAM.Count == 0)
             {
                 return null;
             }
@@ -29,57 +23,46 @@ namespace SAM.Analytical.Tas
 
             foreach (Zone zone_SAM in zones_SAM)
             {
-                if(string.IsNullOrWhiteSpace(zone_SAM?.Name))
+                if (string.IsNullOrWhiteSpace(zone_SAM?.Name))
                 {
                     continue;
                 }
 
                 string name = zone_SAM.Name;
 
-                if(!zone_SAM.TryGetValue(ZoneParameter.ZoneCategory, out string zoneCategory) || string.IsNullOrWhiteSpace(zoneCategory))
+                if (!zone_SAM.TryGetValue(ZoneParameter.ZoneCategory, out string zoneCategory) || string.IsNullOrWhiteSpace(zoneCategory))
                 {
                     zoneCategory = null;
                 }
 
-                List<TBD.ZoneGroup> zoneGroups = tBDDocument.Building.ZoneGroups();
-                if(zoneGroups != null)
+                List<ZoneGroup> zoneGroups = building.ZoneGroups();
+                if (zoneGroups != null)
                 {
                     int index = zoneGroups.FindIndex(x => x.name == name && x.type == (int)TBD.ZoneGroupType.tbdDefaultZG);
                     if (index != -1)
                     {
-                        tBDDocument.Building.RemoveZoneGroup(index);
+                        building.RemoveZoneGroup(index);
                     }
                 }
 
-                TBD.ZoneGroup zoneGroup = tBDDocument.Building.AddZoneGroup();
-                zoneGroup.name = name;
-                zoneGroup.type = (int)TBD.ZoneGroupType.tbdDefaultZG;
-                if(zoneCategory != null)
+                ZoneGroup zoneGroup = Create.ZoneGroup(building, adjacencyCluster, zone_SAM);
+                if(!string.IsNullOrWhiteSpace(zoneGroup?.name))
                 {
-                    zoneGroup.description = zoneCategory;
-                }
-                
-                result.Add(zoneGroup.name);
-
-                List<Space> spaces_SAM = analyticalModel.GetSpaces(zone_SAM);
-                if(spaces_SAM == null || spaces_SAM.Count == 0)
-                {
-                    continue;
-                }
-
-                foreach(Space space_SAM in spaces_SAM)
-                {
-                    TBD.zone zone = space_SAM.Match(zones_TBD);
-                    if (zone == null)
-                    {
-                        continue;
-                    }
-
-                    zoneGroup.InsertZone(zone);
+                    result.Add(zoneGroup.name);
                 }
             }
 
             return result;
+        }
+
+        public static HashSet<string> UpdateZoneGroups(this TBDDocument tBDDocument, AnalyticalModel analyticalModel)
+        {
+            if (tBDDocument == null || analyticalModel == null)
+            {
+                return null;
+            }
+
+            return UpdateZoneGroups(tBDDocument.Building, analyticalModel.AdjacencyCluster);
         }
     }
 }
