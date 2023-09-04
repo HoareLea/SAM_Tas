@@ -128,6 +128,7 @@
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\ZoneGroup.cs" />
     <Compile Include="Create\InternalConditions.cs" />
+    <Compile Include="Enums\SizingType.cs" />
     <Compile Include="Enums\Parameters\ApertureParameter.cs" />
     <Compile Include="Enums\Parameters\PanelParameter.cs" />
     <Compile Include="Enums\Parameters\TasSettingParameter.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Modify\RemoveUnusedWindows.cs" />
     <Compile Include="Modify\RemoveUnusedElements.cs" />
     <Compile Include="Modify\SetApertureType.cs" />
+    <Compile Include="Modify\SetSizingTypes.cs" />
     <Compile Include="Modify\SetColor.cs" />
     <Compile Include="Modify\UpdateAdiabatic.cs" />
     <Compile Include="Modify\UpdateUKBRFile.cs" />

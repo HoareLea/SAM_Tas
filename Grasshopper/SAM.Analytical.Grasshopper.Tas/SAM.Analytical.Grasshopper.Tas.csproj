@@ -118,6 +118,7 @@
   <ItemGroup>
     <Compile Include="Classes\GooSAMT3DDocument.cs" />
     <Compile Include="Component\SAMAnalyticalSurfaceSimulationResults.cs" />
+    <Compile Include="Component\SAMAnalyticalSizingType.cs" />
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
     <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
     <Compile Include="Component\FromTBD.cs" />

@@ -5,6 +5,7 @@ using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms.VisualStyles;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
@@ -18,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -53,6 +54,9 @@ namespace SAM.Analytical.Grasshopper.Tas
             global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "_surfaceOutputSpec", NickName = "_surfaceOutputSpec", Description = "Surface Output Spec.", Access = GH_ParamAccess.list, Optional = true };
             inputParamManager.AddParameter(genericObject);
 
+            index = inputParamManager.AddTextParameter("_sizingType_", "_sizingType_", "Sizing Type", GH_ParamAccess.item);
+            inputParamManager[index].Optional = true;
+
             inputParamManager.AddIntegerParameter("_dayFirst_", "_dayFirst_", "The first day", GH_ParamAccess.item, 1);
             inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "The last day", GH_ParamAccess.item, 365);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
@@ -75,7 +79,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(0, false);
 
             bool run = false;
-            if (!dataAccess.GetData(5, ref run))
+            if (!dataAccess.GetData(6, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -98,18 +102,30 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             int day_First = -1;
-            if (!dataAccess.GetData(3, ref day_First))
+            if (!dataAccess.GetData(4, ref day_First))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
             int day_Last = -1;
-            if (!dataAccess.GetData(4, ref day_Last))
+            if (!dataAccess.GetData(5, ref day_Last))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
+
+            Analytical.Tas.SizingType sizingType = Analytical.Tas.SizingType.Undefined;
+
+            string sizingTypeString = null;
+            if (dataAccess.GetData(3, ref sizingTypeString))
+            {
+                if(!Core.Query.TryGetEnum(sizingTypeString, out sizingType))
+                {
+                    sizingType = Analytical.Tas.SizingType.Undefined;
+                }
+            }
+
 
             List<SurfaceOutputSpec> surfaceOutputSpecs = null;
 
@@ -156,6 +172,18 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 }
             }
+
+            if(sizingType != Analytical.Tas.SizingType.Undefined)
+            {
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+                {
+                    TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
+
+                    Analytical.Tas.Modify.SetSizingTypes(tBDDocument?.Building, sizingType);
+                    sAMTBDDocument.Save();
+                }
+            }
+
             
             if (surfaceOutputSpecs != null && surfaceOutputSpecs.Count > 0)
             {

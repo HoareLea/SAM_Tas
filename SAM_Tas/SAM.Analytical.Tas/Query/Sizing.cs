@@ -42,7 +42,7 @@ namespace SAM.Analytical.Tas
                 Building building = tBDDocument?.Building;
                 if (building != null)
                 {
-                    SizingType sizingType = SizingType.tbdSizing;
+                    TBD.SizingType sizingType = TBD.SizingType.tbdSizing;
 
                     List<zone> zones = building.Zones();
                     foreach (zone zone in zones)
@@ -129,7 +129,7 @@ namespace SAM.Analytical.Tas
                     }
                     else
                     {
-                        SizingType sizingType = SizingType.tbdDesignSizingOnly;
+                        TBD.SizingType sizingType = TBD.SizingType.tbdDesignSizingOnly;
 
                         List<zone> zones = building.Zones();
                         foreach (zone zone in zones)
@@ -191,7 +191,7 @@ namespace SAM.Analytical.Tas
             if (zones == null)
                 return false;
 
-            SizingType sizingType = SizingType.tbdDesignSizingOnly;
+            TBD.SizingType sizingType = TBD.SizingType.tbdDesignSizingOnly;
 
             List<Tuple<zone, TBD.InternalCondition, double>> tuples = new List<Tuple<zone, TBD.InternalCondition, double>>();
             foreach (zone zone in zones)
@@ -253,7 +253,7 @@ namespace SAM.Analytical.Tas
                         dictionary[tuple.Item1] = tuple.Item1.maxHeatingLoad;
             }
 
-            sizingType = SizingType.tbdNoSizing;
+            sizingType = TBD.SizingType.tbdNoSizing;
             foreach (KeyValuePair<zone, double> keyValuePair in dictionary)
             {
                 zone zone = keyValuePair.Key;

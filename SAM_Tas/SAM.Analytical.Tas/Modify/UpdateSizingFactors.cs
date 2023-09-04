@@ -73,13 +73,13 @@ namespace SAM.Analytical.Tas
                 
                 if(!double.IsNaN(coolingSizingFactor_Zone))
                 {
-                    zone.sizeCooling = (int)SizingType.tbdNoSizing;
+                    zone.sizeCooling = (int)TBD.SizingType.tbdNoSizing;
                     zone.maxCoolingLoad = System.Convert.ToSingle(zone.maxCoolingLoad * coolingSizingFactor_Zone);
                 }
 
                 if (!double.IsNaN(heatingSizingFactor_Zone))
                 {
-                    zone.sizeHeating = (int)SizingType.tbdNoSizing;
+                    zone.sizeHeating = (int)TBD.SizingType.tbdNoSizing;
                     zone.maxHeatingLoad = System.Convert.ToSingle(zone.maxHeatingLoad * heatingSizingFactor_Zone);
                 }
             }
