@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true, bool simulate = true, bool updateZones = true, int simulateFrom = 1, int simulateTo = 1)
+        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true, bool simulate = true, bool sizing = true, bool updateZones = true, int simulateFrom = 1, int simulateTo = 1)
         {
             if (analyticalModel == null || string.IsNullOrWhiteSpace(path_TBD))
             {
@@ -227,10 +227,20 @@ namespace SAM.Analytical.Tas
                 count++;
             }
 
+            if(!sizing)
+            {
+                count--;
+            }
+
             using (Core.Windows.Forms.ProgressForm progressForm = new Core.Windows.Forms.ProgressForm("SAM Workflow - Simulation", count))
             {
-                progressForm.Update("Sizing");
-                Query.Sizing(path_TBD, result, false, true);
+
+                if(sizing)
+                {
+                    progressForm.Update("Sizing");
+                    Query.Sizing(path_TBD, result, false, true);
+                }
+
 
                 progressForm.Update("Opening TBD");
                 using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))

@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -58,6 +58,16 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
 
+                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulates the model from 1 to 365 day.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_sizing_", NickName = "_sizing_", Description = "Sizing", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
                 global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "surfaceOutputSpec_", NickName = "surfaceOutputSpec_", Description = "Surface Output Spec", Access = GH_ParamAccess.list, Optional = true };
                 result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
 
@@ -66,9 +76,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_tolerance_", NickName = "_tolerance_", Description = "Tolerance", Access = GH_ParamAccess.item };
                 number.SetPersistentData(Core.Tolerance.Distance);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
-
-
-                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_runUnmetHours_", NickName = "_runUnmetHours_", Description = "Calculates the amount of hours that the Zone/Space will be outside of the thermostat setpoint (unmet hours).", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -155,7 +162,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             List<DesignDay> heatingDesignDays = new List<DesignDay>();
             index = Params.IndexOfInputParam("heatingDesignDays_");
-            if(index == -1 || !dataAccess.GetDataList(index, heatingDesignDays) || heatingDesignDays == null || heatingDesignDays.Count == 0)
+            if (index == -1 || !dataAccess.GetDataList(index, heatingDesignDays) || heatingDesignDays == null || heatingDesignDays.Count == 0)
             {
                 heatingDesignDays = null;
             }
@@ -214,13 +221,35 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            bool simulate = false;
+            index = Params.IndexOfInputParam("_simulate_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref simulate))
+                {
+                    simulate = false;
+                }
+            }
+
+
+            bool sizing = true;
+            index = Params.IndexOfInputParam("_sizing_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref sizing))
+                {
+                    sizing = true;
+                }
+            }
+
+
             bool unmetHours = false;
             index = Params.IndexOfInputParam("_runUnmetHours_");
             if (index != -1)
                 if (!dataAccess.GetData(index, ref unmetHours))
                     unmetHours = true;
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, path_gbXML, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, true, true, simulateTo: 365);
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, path_gbXML, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, sizing, true, simulateTo: 365);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)

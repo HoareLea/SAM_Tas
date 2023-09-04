@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.4";
+        public override string LatestComponentVersion => "1.0.5";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -62,6 +62,10 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulates the model from 1 to 365 day.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_sizing_", NickName = "_sizing_", Description = "Sizing", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_runUnmetHours_", NickName = "_runUnmetHours_", Description = "Calculates the amount of hours that the Zone/Space will be outside of the thermostat setpoint (unmet hours).", Access = GH_ParamAccess.item };
@@ -221,9 +225,26 @@ namespace SAM.Analytical.Grasshopper.Tas
             bool simulate = false;
             index = Params.IndexOfInputParam("_simulate_");
             if (index != -1)
-                if (!dataAccess.GetData(index, ref simulate));
+            {
+                if (!dataAccess.GetData(index, ref simulate))
+                {
+                    simulate = false;
+                }
+            }
+                
 
-             int count = 5;
+            bool sizing = true;
+            index = Params.IndexOfInputParam("_sizing_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref sizing))
+                {
+                    sizing = true;
+                }
+            }
+
+
+            int count = 5;
             if(weatherData != null)
             {
                 count++;
@@ -315,7 +336,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, false, simulate_From, simulate_To);
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, sizing, false, simulate_From, simulate_To);
 
             index = Params.IndexOfOutputParam("_path_TSD");
             if (index != -1)
