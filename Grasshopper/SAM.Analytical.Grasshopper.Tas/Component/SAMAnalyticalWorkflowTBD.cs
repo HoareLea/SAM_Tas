@@ -336,7 +336,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, sizing, false, simulate_From, simulate_To);
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, sizing, false, false, simulate_From, simulate_To);
 
             index = Params.IndexOfOutputParam("_path_TSD");
             if (index != -1)

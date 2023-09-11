@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true, bool simulate = true, bool sizing = true, bool updateZones = true, int simulateFrom = 1, int simulateTo = 1)
+        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true, bool simulate = true, bool sizing = true, bool updateZones = true, bool useBEWidths = false, int simulateFrom = 1, int simulateTo = 1)
         {
             if (analyticalModel == null || string.IsNullOrWhiteSpace(path_TBD))
             {
@@ -110,7 +110,7 @@ namespace SAM.Analytical.Tas
                         t3DDocument.TogbXML(path_gbXML, true, true, true);
 
                         simpleProgressForm.Update("Updating T3D file");
-                        t3DDocument.SetUseBEWidths(false);
+                        t3DDocument.SetUseBEWidths(useBEWidths);
                         result = Query.UpdateT3D(result, t3DDocument);
 
                         t3DDocument.Building.latitude = float.IsNaN(latitude) ? t3DDocument.Building.latitude : latitude;

@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.4";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -65,6 +65,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulates the model from 1 to 365 day.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_useBEthickness_", NickName = "_useBEthickness_", Description = "If True Building Element thickness will be applied in T3D. Default False.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
@@ -232,6 +236,16 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
 
+            bool useBEWidths = false;
+            index = Params.IndexOfInputParam("_useBEthickness_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref useBEWidths))
+                {
+                    simulate = false;
+                }
+            }
+
             bool sizing = true;
             index = Params.IndexOfInputParam("_sizing_");
             if (index != -1)
@@ -249,7 +263,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 if (!dataAccess.GetData(index, ref unmetHours))
                     unmetHours = true;
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, path_gbXML, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, sizing, true, simulateTo: 365);
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, path_gbXML, weatherData, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, sizing, true, useBEWidths, simulateTo: 365);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
