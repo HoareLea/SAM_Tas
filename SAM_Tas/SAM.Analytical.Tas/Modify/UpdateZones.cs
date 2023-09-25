@@ -58,7 +58,7 @@ namespace SAM.Analytical.Tas
                 if (!dictionary_Zones.TryGetValue(name, out zone) || zone == null)
                     continue;
 
-                zone = building.UpdateZone(zone, space, profileLibrary);
+                zone = building.UpdateZone(zone, space, profileLibrary, adjacencyCluster);
 
                 VentilationSystem ventilationSystem = adjacencyCluster.GetRelatedObjects<VentilationSystem>(space)?.FirstOrDefault();
                 if(ventilationSystem != null)

@@ -4,7 +4,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static TBD.InternalCondition AddInternalCondition(this TBD.Building building, Space space, ProfileLibrary profileLibrary)
+        public static TBD.InternalCondition AddInternalCondition(this TBD.Building building, Space space, ProfileLibrary profileLibrary, AdjacencyCluster adjacencyCluster = null)
         {
             if (building == null || space == null || profileLibrary == null)
                 return null;
@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas
                     internalCondition.SetDayType(dayType, true);
             }
 
-            UpdateInternalCondition(internalCondition, space, profileLibrary);
+            UpdateInternalCondition(internalCondition, space, profileLibrary, adjacencyCluster);
 
             return internalCondition; 
         }

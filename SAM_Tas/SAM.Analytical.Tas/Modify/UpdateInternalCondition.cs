@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static bool UpdateInternalCondition(this TBD.InternalCondition internalCondition_TBD, Space space, ProfileLibrary profileLibrary)
+        public static bool UpdateInternalCondition(this TBD.InternalCondition internalCondition_TBD, Space space, ProfileLibrary profileLibrary, AdjacencyCluster adjacencyCluster = null)
         {
             if (space == null || internalCondition_TBD == null)
                 return false;
@@ -21,26 +22,56 @@ namespace SAM.Analytical.Tas
             TBD.Emitter emitter = null;
             double value = double.NaN;
 
+            HeatingSystem heatingSystem = adjacencyCluster?.MechanicalSystems<HeatingSystem>(space)?.FirstOrDefault();
+            
             emitter = internalCondition_TBD.GetHeatingEmitter();
             if(emitter != null)
             {
                 emitter.name = internalCondition.GetSystemTypeName<HeatingSystemType>();
-                
-                if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmitterRadiantProportion, out value))
-                    emitter.radiantProportion = System.Convert.ToSingle(value);
 
-                if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmitterCoefficient, out value))
+                HeatingSystemType heatingSystemType = heatingSystem?.Type as HeatingSystemType;
+                if(heatingSystemType != null && heatingSystemType.TryGetValue(HeatingSystemTypeParameter.RadiantProportion, out value) && !double.IsNaN(value))
+                {
+                    emitter.radiantProportion = System.Convert.ToSingle(value);
+                }
+                
+                if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmitterRadiantProportion, out value) && !double.IsNaN(value))
+                {
+                    emitter.radiantProportion = System.Convert.ToSingle(value);
+                }
+
+                if (heatingSystemType != null && heatingSystemType.TryGetValue(HeatingSystemTypeParameter.ViewCoefficient, out value) && !double.IsNaN(value))
+                {
                     emitter.viewCoefficient = System.Convert.ToSingle(value);
+                }
+
+                if (internalCondition.TryGetValue(InternalConditionParameter.HeatingEmitterCoefficient, out value) && !double.IsNaN(value))
+                {
+                    emitter.viewCoefficient = System.Convert.ToSingle(value);
+                }
             }
+
+            CoolingSystem coolingSystem = adjacencyCluster?.MechanicalSystems<CoolingSystem>(space)?.FirstOrDefault();
 
             emitter = internalCondition_TBD.GetCoolingEmitter();
             if (emitter != null)
             {
                 emitter.name = internalCondition.GetSystemTypeName<CoolingSystemType>();
 
+                CoolingSystemType coolingSystemType = coolingSystem?.Type as CoolingSystemType;
+                if (coolingSystemType != null && coolingSystemType.TryGetValue(CoolingSystemTypeParameter.RadiantProportion, out value) && !double.IsNaN(value))
+                {
+                    emitter.radiantProportion = System.Convert.ToSingle(value);
+                }
+
                 if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmitterRadiantProportion, out value))
                 {
                     emitter.radiantProportion = System.Convert.ToSingle(value);
+                }
+
+                if (coolingSystemType != null && coolingSystemType.TryGetValue(CoolingSystemTypeParameter.ViewCoefficient, out value) && !double.IsNaN(value))
+                {
+                    emitter.viewCoefficient = System.Convert.ToSingle(value);
                 }
 
                 if (internalCondition.TryGetValue(InternalConditionParameter.CoolingEmitterCoefficient, out value))
