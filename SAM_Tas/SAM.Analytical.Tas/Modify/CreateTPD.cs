@@ -1059,21 +1059,21 @@ namespace SAM.Analytical.Tas
             exchanger.Flags = TPD.tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
             exchanger.SetPosition(160, 100);
 
-            dynamic fan_FreashAir = system.AddFan();
-            fan_FreashAir.name = "Fresh Air Fan";
-            fan_FreashAir.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
-            fan_FreashAir.DesignFlowRate.Value = 150;
-            fan_FreashAir.OverallEfficiency.Value = 1;
-            fan_FreashAir.Pressure = 1000;
-            fan_FreashAir.HeatGainFactor = 0;
-            fan_FreashAir.SetElectricalGroup1(electricalGroup_Fans);
-            fan_FreashAir.PartLoad.Value = 0;
-            fan_FreashAir.PartLoad.ClearModifiers();
-            fan_FreashAir.SetSchedule(plantSchedule_System);
-            fan_FreashAir.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
-            fan_FreashAir.SetPosition(390, 100);
+            dynamic fan_FreshAir = system.AddFan();
+            fan_FreshAir.name = "Fresh Air Fan";
+            fan_FreshAir.Description = ventilationSystem?.GetValue<string>(VentilationSystemParameter.SupplyUnitName);
+            fan_FreshAir.DesignFlowRate.Value = 150;
+            fan_FreshAir.OverallEfficiency.Value = 1;
+            fan_FreshAir.Pressure = 1000;
+            fan_FreshAir.HeatGainFactor = 0;
+            fan_FreshAir.SetElectricalGroup1(electricalGroup_Fans);
+            fan_FreshAir.PartLoad.Value = 0;
+            fan_FreshAir.PartLoad.ClearModifiers();
+            fan_FreshAir.SetSchedule(plantSchedule_System);
+            fan_FreshAir.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+            fan_FreshAir.SetPosition(390, 100);
 
-            TPD.ProfileDataModifierTable profileDataModifierTable_FreshAir = fan_FreashAir.PartLoad.AddModifierTable();
+            TPD.ProfileDataModifierTable profileDataModifierTable_FreshAir = fan_FreshAir.PartLoad.AddModifierTable();
             profileDataModifierTable_FreshAir.Name = "Fan Part Load Curve";
             profileDataModifierTable_FreshAir.SetVariable(1, TPD.tpdProfileDataVariableType.tpdProfileDataVariablePartload);
             profileDataModifierTable_FreshAir.Multiplier = TPD.tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
@@ -1164,8 +1164,8 @@ namespace SAM.Analytical.Tas
             system.AddDuct(optimiser, 1, coolingCoil, 1);
             system.AddDuct(coolingCoil, 1, heatingCoil, 1);
 
-            TPD.Duct duct_OffCoils = system.AddDuct(heatingCoil, 1, fan_FreashAir, 1);
-            system.AddDuct(fan_FreashAir, 1, damper, 1);
+            TPD.Duct duct_OffCoils = system.AddDuct(heatingCoil, 1, fan_FreshAir, 1);
+            system.AddDuct(fan_FreshAir, 1, damper, 1);
             system.AddDuct(damper, 1, systemZone, 1);
 
             TPD.Duct duct_ZoneOut = system.AddDuct(systemZone, 1, fan_Return, 1);

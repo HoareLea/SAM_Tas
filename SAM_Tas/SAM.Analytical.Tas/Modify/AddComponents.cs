@@ -27,12 +27,12 @@
 
             Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil_Heating, out bool dXCoil_Cooling, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
             
-            if (radiator)
+            if (radiator)  //TODO: 2023-09-25 allow other Zone component as Under Floor Heating Floor etc...read from Zone Internal Condition Heating Emitter Name
             {
                 dynamic radiator_Group = systemZone.AddRadiator();
-                radiator_Group.Name = "RAD";
+                radiator_Group.Name = heatingSystem.Name;
                 radiator_Group.SetSchedule(plantSchedule_System);
-                radiator_Group.Description = "Radiator";
+                radiator_Group.Description = heatingSystem.Type?.Description;
                 radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(1));
                 radiator_Group.Duty.SizeFraction = 1.25;//per AHRAE
@@ -43,12 +43,14 @@
             {
                 dynamic chilledBeam_Group = systemZone.AddChilledBeam();
                 chilledBeam_Group.Flags = chilledBeam_Heating ? 1 : 0;
-                chilledBeam_Group.Name = "Chilled Beam";
-                chilledBeam_Group.Description = "CHB";
+
                 chilledBeam_Group.SetSchedule(plantSchedule_System);
 
                 if (chilledBeam_Cooling)
                 {
+                    chilledBeam_Group.Name = coolingSystem.Name;
+                    chilledBeam_Group.Description = coolingSystem.Type?.Description;
+
                     chilledBeam_Group.SetCoolingGroup(coolingGroup);
                     chilledBeam_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     chilledBeam_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
@@ -57,6 +59,9 @@
 
                 if (chilledBeam_Heating)
                 {
+                    chilledBeam_Group.Name = heatingSystem.Name;
+                    chilledBeam_Group.Description = heatingSystem.Type?.Description;
+
                     chilledBeam_Group.SetHeatingGroup(heatingGroup);
                     chilledBeam_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     chilledBeam_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
