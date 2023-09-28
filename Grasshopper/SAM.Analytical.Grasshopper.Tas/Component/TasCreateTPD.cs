@@ -122,7 +122,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             analyticalModel = analyticalModel == null ? null : new AnalyticalModel(analyticalModel);
 
-            Analytical.Tas.Modify.CreateTPD(path_TPD, path_TSD, analyticalModel);
+            Analytical.Tas.Create.TPD(path_TPD, path_TSD, analyticalModel);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)

@@ -198,37 +198,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            string path_TBD_Destination = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path_TBD), fileName);
-
-            System.IO.File.Copy(path_TBD, path_TBD_Destination, true);
-
-            bool result = false;
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD_Destination))
-            {
-                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-
-                TBD.Calendar calendar = sAMTBDDocument.TBDDocument?.Building?.GetCalendar();
-                if (calendar != null)
-                {
-                    using (SAMTCRDocument sAMTCRDocument = new SAMTCRDocument(path_TCR, true))
-                    {
-                        result = Analytical.Tas.Modify.CopyFrom(calendar, sAMTCRDocument.Document, calendarName);
-                    }
-                }
-
-                using (SAMTICDocument sAMTICDocument = new SAMTICDocument(path_TIC, true))
-                {
-                    TIC.Document tICDocument = sAMTICDocument.Document;
-
-                    result = Analytical.Tas.Modify.UpdateInternalConditionByPartL(tBDDocument, tICDocument, analyticalModel);
-                    if(result)
-                    {
-                        Analytical.Tas.Modify.UpdateZoneGroupsByPartL(tBDDocument, analyticalModel);
-                        Analytical.Tas.Modify.UpdateZoneGroups(tBDDocument, analyticalModel);
-                        sAMTBDDocument.Save();
-                    }
-                }
-            }
+            bool result = Analytical.Tas.Create.TBD_ByPartL(analyticalModel, path_TBD, out string path_TBD_Destination, path_TCR, path_TIC, fileName, calendarName);
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if(index != -1)

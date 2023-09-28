@@ -17,11 +17,11 @@
                     // extra 1 = setpoint
                     // extra 2 = control band
                     plantController.Band = extra2;
-                    plantController.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    plantController.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     plantController.Gradient = 1;
                     plantController.Max = 1;
                     plantController.Min = 0;
-                    plantController.SensorType = TPD.tpdSensorType.tpdLoadSensor;
+                    plantController.SensorType = global::TPD.tpdSensorType.tpdLoadSensor;
                     plantController.Setpoint = extra1;
                     break;
                 case WaterSideControllerSetup.TemperatureLowZero:
@@ -29,11 +29,11 @@
                     // extra 1 = setpoint
                     // extra 2 = control band
                     plantController.Band = extra2;
-                    plantController.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    plantController.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     plantController.Gradient = 1;
                     plantController.Max = 1;
                     plantController.Min = 0;
-                    plantController.SensorType = TPD.tpdSensorType.tpdTempSensor;
+                    plantController.SensorType = global::TPD.tpdSensorType.tpdTempSensor;
                     plantController.Setpoint = extra1;
                     break;
 
@@ -41,8 +41,8 @@
                     // temperature difference arc1 minus arc2
                     // extra 1 = setpoint
                     // extra 2 = control band
-                    plantController.ControlType = TPD.tpdControlType.tpdControlDifference;
-                    plantController.SensorType = TPD.tpdSensorType.tpdTempSensor;
+                    plantController.ControlType = global::TPD.tpdControlType.tpdControlDifference;
+                    plantController.SensorType = global::TPD.tpdSensorType.tpdTempSensor;
                     plantController.Setpoint = extra1;
                     plantController.Band = extra2;
                     plantController.Gradient = 1;

@@ -126,6 +126,7 @@
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Convert\ToTBD\Building.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
+    <Compile Include="Create\TBD.cs" />
     <Compile Include="Create\ZoneGroup.cs" />
     <Compile Include="Create\InternalConditions.cs" />
     <Compile Include="Enums\SizingType.cs" />
@@ -153,7 +154,7 @@
     <Compile Include="Enums\WaterSideControllerSetup.cs" />
     <Compile Include="Modify\AddComponents.cs" />
     <Compile Include="Modify\CopyFrom.cs" />
-    <Compile Include="Modify\CreateTPD.cs" />
+    <Compile Include="Create\TPD.cs" />
     <Compile Include="Modify\RemoveDayTypes.cs" />
     <Compile Include="Modify\SetAirSideController.cs" />
     <Compile Include="Modify\SetWaterSideController.cs" />

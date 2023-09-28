@@ -17,12 +17,12 @@
                     // extra 1 = offset
                     // extra 2 = control band  
                     controller.Band = extra2;
-                    controller.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     controller.Gradient = 1;
                     controller.Max = 1;
                     controller.Min = 0;
-                    controller.SensorType = TPD.tpdSensorType.tpdThermostatSensor;
-                    controller.SensorPresetType = TPD.tpdSensorPresetType.tpdUpperLimit;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdThermostatSensor;
+                    controller.SensorPresetType = global::TPD.tpdSensorPresetType.tpdUpperLimit;
                     controller.Setpoint = extra1;
                     break;
                 case AirSideControllerSetup.ThermLL:
@@ -30,12 +30,12 @@
                     // extra 1 = offset
                     // extra 2 = control band        
                     controller.Band = extra2;
-                    controller.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     controller.Gradient = -1;
                     controller.Max = 1;
                     controller.Min = 0;
-                    controller.SensorType = TPD.tpdSensorType.tpdThermostatSensor;
-                    controller.SensorPresetType = TPD.tpdSensorPresetType.tpdLowerLimit;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdThermostatSensor;
+                    controller.SensorPresetType = global::TPD.tpdSensorPresetType.tpdLowerLimit;
                     controller.Setpoint = extra1;
                     break;
                 case AirSideControllerSetup.TempHighZero:
@@ -43,11 +43,11 @@
                     // extra 1 = setpoint
                     // extra 2 = control band
                     controller.Band = extra2;
-                    controller.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     controller.Gradient = -1;
                     controller.Max = 1;
                     controller.Min = 0;
-                    controller.SensorType = TPD.tpdSensorType.tpdTempSensor;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdTempSensor;
                     controller.Setpoint = extra1;
                     break;
                 case AirSideControllerSetup.TempLowZero:
@@ -55,39 +55,39 @@
                     // extra 1 = setpoint
                     // extra 2 = control band
                     controller.Band = extra2;
-                    controller.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     controller.Gradient = 1;
                     controller.Max = 1;
                     controller.Min = 0;
-                    controller.SensorType = TPD.tpdSensorType.tpdTempSensor;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdTempSensor;
                     controller.Setpoint = extra1;
                     break;
                 case AirSideControllerSetup.TempPassThrough:
                     // temperature pass through
                     // extra 1 = offset
-                    controller.ControlType = TPD.tpdControlType.tpdControlPassThrough;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlPassThrough;
                     controller.Setpoint = extra1;
-                    controller.SensorType = TPD.tpdSensorType.tpdTempSensor;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdTempSensor;
                     break;
                 case AirSideControllerSetup.ThermBothL:
                     // thermostat: both upper and lower limits
                     // extra 1 = min value
                     // extra 2 = control band
                     controller.Band = extra2;
-                    controller.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     controller.Gradient = -1;
                     controller.Max = 1;
                     controller.Min = extra1;
-                    controller.SensorType = TPD.tpdSensorType.tpdThermostatSensor;
-                    controller.SensorPresetType = TPD.tpdSensorPresetType.tpdLowerAndUpperLimit;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdThermostatSensor;
+                    controller.SensorPresetType = global::TPD.tpdSensorPresetType.tpdLowerAndUpperLimit;
                     controller.Setpoint = 0;
                     break;
                 case AirSideControllerSetup.Press:
                     // pressure (note gradient not specified)
                     // extra 1 = setpoint
                     // extra 2 = control band
-                    controller.ControlType = TPD.tpdControlType.tpdControlNormal;
-                    controller.SensorType = TPD.tpdSensorType.tpdPressureSensor;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlNormal;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdPressureSensor;
                     controller.Setpoint = extra1;
                     controller.Band = extra2;
                     controller.Min = 0;
@@ -95,7 +95,7 @@
                     break;
                 case AirSideControllerSetup.AlwaysReturnOne:
                     // always return one (fresh air only mixing box)
-                    controller.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     controller.Min = 1;
                     controller.Max = 1;
                     controller.Setpoint = 0;
@@ -104,8 +104,8 @@
                     // temperature difference arc1 minus arc2
                     // extra 1 = setpoint
                     // extra 2 = control band
-                    controller.ControlType = TPD.tpdControlType.tpdControlDifference;
-                    controller.SensorType = TPD.tpdSensorType.tpdTempSensor;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlDifference;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdTempSensor;
                     controller.Setpoint = extra1;
                     controller.Band = extra2;
                     controller.Gradient = 1;
@@ -117,11 +117,11 @@
                     // extra 1 = setpoint
                     // extra 2 = control band
                     controller.Band = extra2;
-                    controller.ControlType = TPD.tpdControlType.tpdControlNormal;
+                    controller.ControlType = global::TPD.tpdControlType.tpdControlNormal;
                     controller.Gradient = 1;
                     controller.Max = 1;
                     controller.Min = 0;
-                    controller.SensorType = TPD.tpdSensorType.tpdEnthalpySensor;
+                    controller.SensorType = global::TPD.tpdSensorType.tpdEnthalpySensor;
                     controller.Setpoint = extra1;
                     break;
             }
