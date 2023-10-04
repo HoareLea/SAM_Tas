@@ -123,6 +123,7 @@
     <Compile Include="Convert\ToSAM\InternalCondition.cs" />
     <Compile Include="Convert\ToSAM\PanelSimulationResults.cs" />
     <Compile Include="Convert\ToSAM\Results.cs" />
+    <Compile Include="Convert\ToSAM\NCMNameCollection.cs" />
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Convert\ToTBD\Building.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
