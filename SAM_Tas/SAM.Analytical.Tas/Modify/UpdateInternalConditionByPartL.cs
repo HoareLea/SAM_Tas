@@ -49,8 +49,8 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                string typeName = nCMData.Type;
-                if(string.IsNullOrWhiteSpace(typeName))
+                string name = nCMData.Name;
+                if(string.IsNullOrWhiteSpace(name))
                 {
                     continue;
                 }
@@ -64,7 +64,7 @@ namespace SAM.Analytical.Tas
                 internalConditions_TBD = Query.InternalConditions(tBDDocument);
                 TBD.InternalCondition internalCondition_TBD = null;
 
-                List<TBD.InternalCondition> internalConditions_TBD_Temp = internalConditions_TBD.FindAll(x => x.name.StartsWith(typeName));
+                List<TBD.InternalCondition> internalConditions_TBD_Temp = internalConditions_TBD.FindAll(x => x.name.StartsWith(name));
                 if(internalConditions_TBD_Temp != null && internalConditions_TBD_Temp.Count != 0)
                 {
                     internalConditions_TBD_Temp.Sort((x, y) => x.name.Length.CompareTo(y.name.Length));
@@ -73,7 +73,7 @@ namespace SAM.Analytical.Tas
 
                 if(internalCondition_TBD == null)
                 {
-                    List<TIC.InternalCondition> internalConditions_TIC_Temp = internalConditions_TIC.FindAll(x => x.name.StartsWith(typeName));
+                    List<TIC.InternalCondition> internalConditions_TIC_Temp = internalConditions_TIC.FindAll(x => x.name.StartsWith(name));
                     if(internalConditions_TIC_Temp != null && internalConditions_TIC_Temp.Count != 0)
                     {
                         internalConditions_TIC_Temp.Sort((x, y) => x.name.Length.CompareTo(y.name.Length));
