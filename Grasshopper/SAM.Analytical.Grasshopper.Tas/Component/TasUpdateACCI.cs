@@ -15,7 +15,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -29,8 +29,30 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasUpdateACCI()
           : base("Tas.UpdateACCI", "Tas.UpdateACCI",
-              "Updates ACCI.",
-              "SAM", "Tas")
+        "https://accim.readthedocs.io/en/latest/4_detailed%20use.html\n" +
+        "Adopted 2->INT ASHRAE55->80->3->Adap. Limits   Horizont. Extended\n" +
+        "https://htmlpreview.github.io/?https://github.com/dsanchez-garcia/accim/blob/master/accim/docs/html_files/full_setpoint_table.html\n\n" +
+        "1. Input Parameter:\n" +
+        "   - dryBulbTemperature (External Weather Data): The dry bulb temperature from the weather data, which is used to calculate the upper and lower limits.\n" +
+        "\n" +
+        "2. Conditions:\n" +
+        "   - Within Range (10°C to 33.5°C):\n" +
+        "     - If the dryBulbTemperature is between 10°C and 33.5°C, inclusive, the following equations are used to calculate the upper and lower limits:\n" +
+        "       - upperLimit = (dryBulbTemperature * 0.31) + 17.8 + 3.5\n" +
+        "       - lowerLimit = (dryBulbTemperature * 0.31) + 17.8 - 3.5\n" +
+        "   - Below Range (< 10°C):\n" +
+        "     - If the dryBulbTemperature is below 10°C, a fixed dry bulb temperature of 10°C is used in the equations to calculate the upper and lower limits:\n" +
+        "       - upperLimit = (10 * 0.31) + 17.8 + 3.5\n" +
+        "       - lowerLimit = (10 * 0.31) + 17.8 - 3.5\n" +
+        "   - Above Range (> 33.5°C):\n" +
+        "     - If the dryBulbTemperature is above 33.5°C, a fixed dry bulb temperature of 33.5°C is used in the equations to calculate the upper and lower limits:\n" +
+        "       - upperLimit = (33.5 * 0.31) + 17.8 + 3.5\n" +
+        "       - lowerLimit = (33.5 * 0.31) + 17.8 - 3.5\n" +
+        "\n" +
+        "3. Output Parameters:\n" +
+        "   - upperLimit: The calculated upper limit value.\n" +
+        "   - lowerLimit: The calculated lower limit value.",
+        "SAM", "Tas")
         {
         }
 
