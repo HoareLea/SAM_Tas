@@ -30,7 +30,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         public TasUpdateACCI()
           : base("Tas.UpdateACCI", "Tas.UpdateACCI",
         "https://accim.readthedocs.io/en/latest/4_detailed%20use.html\n" +
-        "Adopted 2->INT ASHRAE55->80->3->Adap. Limits   Horizont. Extended\n" +
+        "https://github.com/dsanchez-garcia/accim/blob/master/accim/sample_files/jupyter_notebooks/addAccis/using_addAccis.ipynb\n" +
+        "Adopted 2->INT ASHRAE55->90->3->Adap. Limits   Horizont. Extended\n" +
         "https://htmlpreview.github.io/?https://github.com/dsanchez-garcia/accim/blob/master/accim/docs/html_files/full_setpoint_table.html\n\n" +
         "1. Input Parameter:\n" +
         "   - dryBulbTemperature (External Weather Data): The dry bulb temperature from the weather data, which is used to calculate the upper and lower limits.\n" +
