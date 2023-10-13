@@ -5,7 +5,7 @@ using System;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasUpdateACCI : GH_SAMComponent
+    public class TasUpdateAdaptiveSetpointACCI : GH_SAMComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -27,8 +27,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasUpdateACCI()
-          : base("Tas.UpdateACCI", "Tas.UpdateACCI",
+        public TasUpdateAdaptiveSetpointACCI()
+          : base("Tas.UpdateAdaptiveSetpointACCI", "Tas.UpdateAdaptiveSetpointACCI",
         "https://accim.readthedocs.io/en/latest/4_detailed%20use.html\n" +
         "https://github.com/dsanchez-garcia/accim/blob/master/accim/sample_files/jupyter_notebooks/addAccis/using_addAccis.ipynb\n" +
         "Adopted 2->INT ASHRAE55->90->3->Adap. Limits   Horizont. Extended\n" +

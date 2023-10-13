@@ -135,7 +135,7 @@
     <Compile Include="Component\TasTSDQueryZoneResultsByIndex.cs" />
     <Compile Include="Component\TasTSDQueryResultsByTotalPercentage.cs" />
     <Compile Include="Component\TasTSDQueryResultsByPercentage.cs" />
-    <Compile Include="Component\TasUpdateACCI.cs" />
+    <Compile Include="Component\TasUpdateAdaptiveSetpointACCI.cs" />
     <Compile Include="Component\TasUpdateShading.cs" />
     <Compile Include="Component\TasUpdateUKBRFile.cs" />
     <Compile Include="Component\TasUpdateWeatherData.cs" />
