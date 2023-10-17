@@ -99,6 +99,7 @@
     <Compile Include="Query\ReportGeneratorPath.cs" />
     <Compile Include="Query\TCRDocument.cs" />
     <Compile Include="Query\TICDocument.cs" />
+    <Compile Include="Query\UKBRStudio2021Path.cs" />
     <Compile Include="Query\UKBRStudio2013Path.cs" />
     <Compile Include="Query\PMVAndPPDPath.cs" />
     <Compile Include="Query\IDFWizardPath.cs" />
