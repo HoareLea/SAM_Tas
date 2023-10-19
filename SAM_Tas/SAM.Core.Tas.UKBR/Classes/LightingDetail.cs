@@ -156,13 +156,19 @@ namespace SAM.Core.Tas.UKBR
                 return;
             }
 
-            if (value_Temp.Contains("NONE"))
+            if (value_Temp.Contains("MANUAL") && value_Temp.Contains("ON") && value_Temp.Contains("OFF"))
             {
                 APD = 0;
                 return;
             }
 
-            if (value_Temp.Contains("MANUAL") && value_Temp.Contains("AUTO"))
+            if (value_Temp.Contains("MANUAL") && value_Temp.Contains("ON") && value_Temp.Contains("OFF") && value_Temp.Contains("AUTO"))
+            {
+                APD = 5;
+                return;
+            }
+
+            if (value_Temp.Contains("MANUAL") && value_Temp.Contains("AUTO") && value_Temp.Contains("OFF"))
             {
                 APD = 4;
                 return;
