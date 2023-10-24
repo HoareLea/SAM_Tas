@@ -1,6 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
+using SAM.Core;
 using SAM.Core.Grasshopper;
 using System;
 using System.Collections.Generic;
@@ -142,7 +143,6 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index == -1 || !dataAccess.GetData(index, ref minThickness_Temp))
             {
                 minThickness_Temp = minThickness;
-                return;
             }
 
             double maxThickness_Temp = maxThickness;
@@ -150,14 +150,20 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index == -1 || !dataAccess.GetData(index, ref maxThickness_Temp))
             {
                 maxThickness_Temp = maxThickness;
-                return;
             }
-
-            LayerThicknessCalculationData layerThicknessCalculationData = new LayerThicknessCalculationData(constructionName, layerIndex, thermalTransmittance, heatFlowDirection, external);
 
             index = Params.IndexOfOutputParam("layerThicknessCalculationData");
             if (index != -1)
             {
+                if (string.IsNullOrWhiteSpace(constructionName) || double.IsNaN(thermalTransmittance) || heatFlowDirection == HeatFlowDirection.Undefined)
+                {
+                    dataAccess.SetData(index, null);
+                    return;
+                }
+
+                LayerThicknessCalculationData layerThicknessCalculationData = new LayerThicknessCalculationData(constructionName, layerIndex, thermalTransmittance, heatFlowDirection, external);
+                layerThicknessCalculationData.ThicknessRange = new Range<double>(minThickness_Temp, maxThickness_Temp);
+
                 dataAccess.SetData(index, new GooLayerThicknessCalculationData(layerThicknessCalculationData));
             }
         }
