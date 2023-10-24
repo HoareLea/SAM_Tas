@@ -20,5 +20,22 @@ namespace SAM.Analytical.Tas
 
             return result;
         }
+
+        public static List<TCD.material> Materials(this TCD.Construction construction)
+        {
+            List<TCD.material> result = new List<TCD.material>();
+
+            int index = 1;
+            TCD.material material = construction.materials(index);
+            while (material != null)
+            {
+                result.Add(material);
+                index++;
+
+                material = construction.materials(index);
+            }
+
+            return result;
+        }
     }
 }

@@ -180,7 +180,7 @@ copy "%25SAM_DIR%25\$(ProjectName).dll" "%25SAM_DIR%25\$(ProjectName).gha"
     <FallbackCulture>en-US</FallbackCulture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartProgram>C:\Program Files\Rhino 6\System\Rhino.exe</StartProgram>
+    <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
     <StartArguments>
     </StartArguments>
     <StartAction>Program</StartAction>

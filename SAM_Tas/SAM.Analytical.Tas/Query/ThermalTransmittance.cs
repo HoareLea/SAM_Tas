@@ -1,4 +1,5 @@
-﻿using TBD;
+﻿using SAM.Core;
+using TBD;
 
 namespace SAM.Analytical.Tas
 {
@@ -79,8 +80,9 @@ namespace SAM.Analytical.Tas
 
             float[] values = Array<float>(@object);
             if (values == null || values.Length == 0)
+            {
                 return double.NaN;
-
+            }
 
             int index = -1;
             switch (panelType)
@@ -126,6 +128,45 @@ namespace SAM.Analytical.Tas
             }
 
             return index == -1 || values.Length <= index ? double.NaN : Core.Query.Round(values[index], tolerance);
+        }
+    
+        public static double ThermalTransmittance(this TCD.Construction construction, HeatFlowDirection heatFlowDirection, bool external, double tolerance = Tolerance.MacroDistance)
+        {
+            if(construction == null || heatFlowDirection == HeatFlowDirection.Undefined)
+            {
+                return double.NaN;
+            }
+
+            object @object = construction?.GetUValue();
+            if (@object == null)
+            {
+                return double.NaN;
+            }
+
+            float[] values = Array<float>(@object);
+            if (values == null || values.Length == 0)
+            {
+                return double.NaN;
+            }
+
+            int index = -1;
+            switch (heatFlowDirection)
+            {
+                case HeatFlowDirection.Down:
+                    index = 2;
+                    break;
+
+                case HeatFlowDirection.Up:
+                    index = external ? 4 : 5;
+                    break;
+
+                case HeatFlowDirection.Horizontal:
+                    index = external ? 0 : 3;
+                    break;
+            }
+
+            return index == -1 || values.Length <= index ? double.NaN : Core.Query.Round(values[index], tolerance);
+
         }
     }
 }

@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\SAMTCRDocument.cs" />
+    <Compile Include="Classes\SAMTCDDocument.cs" />
     <Compile Include="Classes\SAMTPDDocument.cs" />
     <Compile Include="Classes\SAMTBDDocument.cs" />
     <Compile Include="Classes\SAMTICDocument.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Classes\SAMT3DDocument.cs" />
     <Compile Include="Query\ReportGeneratorPath.cs" />
     <Compile Include="Query\TCRDocument.cs" />
+    <Compile Include="Query\TCDDocument.cs" />
     <Compile Include="Query\TICDocument.cs" />
     <Compile Include="Query\UKBRStudio2021Path.cs" />
     <Compile Include="Query\UKBRStudio2013Path.cs" />

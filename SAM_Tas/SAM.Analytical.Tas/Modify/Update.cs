@@ -1,4 +1,8 @@
-﻿namespace SAM.Analytical.Tas
+﻿using SAM.Core;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
@@ -99,6 +103,84 @@
 
             //TODO: TAS MEETING: Discuss with Tas how to faster copy data
             return Weather.Tas.Modify.Update(designDay_TBD?.GetWeatherDay(), designDay);
+        }
+
+        public static bool Update(this ConstructionManager constructionManager, LayerThicknessCalculationResult layerThicknessCalculationResult)
+        {
+            if(constructionManager == null || layerThicknessCalculationResult == null)
+            {
+                return false;
+            }
+
+            double thickness = layerThicknessCalculationResult.Thickness;
+            if (double.IsNaN(thickness))
+            {
+                return false;
+            }
+
+            thickness = Core.Query.Round(thickness, Tolerance.MacroDistance);
+
+            Construction construction = constructionManager.GetConstructions(layerThicknessCalculationResult.ConstructionName, Core.TextComparisonType.Equals, true)?.FirstOrDefault();
+            if(construction == null)
+            {
+                return false;
+            }
+
+            List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
+            if(constructionLayers == null || constructionLayers.Count == 0)
+            {
+                return false;
+            } 
+
+            int layerIndex = layerThicknessCalculationResult.LayerIndex;
+            if(constructionLayers.Count <= layerIndex)
+            {
+                return false;
+            }
+
+            ConstructionLayer constructionLayer = constructionLayers[layerIndex];
+            if(constructionLayer == null)
+            {
+                return false;
+            }
+
+            string materialName = string.Format("{0}_{1}m", constructionLayer.Name, thickness);
+            IMaterial material = constructionManager.GetMaterial(materialName);
+            if(material == null)
+            {
+                material = constructionManager.GetMaterial(constructionLayer.Name);
+                if (material == null)
+                {
+                    return false;
+                }
+            }
+
+            if(!material.TryGetValue(Core.MaterialParameter.DefaultThickness, out double defaultThickness))
+            {
+                if(layerThicknessCalculationResult.Thickness == defaultThickness)
+                {
+                    return true;
+                }
+            }
+
+            if(material.Name != materialName && material is Material)
+            {
+                string description =  ((Material)material).Description;
+
+                material = Core.Create.Material((Material)material, materialName, materialName, description);
+            }
+
+            material.SetValue(Core.MaterialParameter.DefaultThickness, thickness);
+
+            constructionLayers[layerIndex] = new ConstructionLayer(materialName, thickness);
+
+            construction = new Construction(construction, constructionLayers);
+
+            constructionManager.Add(construction);
+
+            constructionManager.Add(material);
+
+            return true;
         }
     }
 }

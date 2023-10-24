@@ -106,6 +106,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\LayerThicknessCalculationResult.cs" />
+    <Compile Include="Classes\LayerThicknessCalculationData.cs" />
+    <Compile Include="Classes\ThermalTransmittanceCalculator.cs" />
     <Compile Include="Convert\ToSAM\AnalyticalModel.cs" />
     <Compile Include="Convert\ToSAM\ApertureConstruction.cs" />
     <Compile Include="Convert\ToSAM\Construction.cs" />
@@ -126,6 +129,8 @@
     <Compile Include="Convert\ToSAM\NCMNameCollection.cs" />
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Convert\ToTBD\Building.cs" />
+    <Compile Include="Convert\ToTCD\Construction.cs" />
+    <Compile Include="Convert\ToTCD\Material.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\TBD.cs" />
     <Compile Include="Create\ZoneGroup.cs" />
@@ -329,9 +334,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\SAM.Core.Tas.UKBR\SAM.Core.Tas.UKBR.csproj">
       <Project>{9fa85ad6-c49e-4bf7-bd25-4b55065b41ea}</Project>

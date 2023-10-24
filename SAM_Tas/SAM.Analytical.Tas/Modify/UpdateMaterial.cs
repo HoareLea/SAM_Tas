@@ -1,15 +1,156 @@
 ﻿using SAM.Core;
+using TCD;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static bool UpdateMaterial(this TBD.material material_TBD, IMaterial material)
+        public static bool UpdateMaterial(this TBD.material material_TBD, Core.IMaterial material)
         {
             if (material == null || material_TBD == null)
                 return false;
 
             return UpdateMaterial(material_TBD, material as dynamic);
+        }
+
+        public static bool UpdateMaterial(this material material_TCD, Core.IMaterial material)
+        {
+            if (material == null || material_TCD == null)
+            {
+                return false;
+            }
+
+            material_TCD.name = material.Name;
+            if (material is Material)
+            {
+                if (material is OpaqueMaterial)
+                {
+                    OpaqueMaterial opaqueMaterial = (OpaqueMaterial)material;
+
+                    material_TCD.type = (int)MaterialTypes.tcdOpaqueLayer;
+                    material_TCD.conductivity = System.Convert.ToSingle(opaqueMaterial.ThermalConductivity);
+                    material_TCD.description = opaqueMaterial.Description;
+                    material_TCD.specificHeat = System.Convert.ToSingle(opaqueMaterial.SpecificHeatCapacity);
+                    material_TCD.density = System.Convert.ToSingle(opaqueMaterial.Density);
+
+                    if (opaqueMaterial.TryGetValue(OpaqueMaterialParameter.ExternalSolarReflectance, out double externalSolarReflectance) && !double.IsNaN(externalSolarReflectance))
+                    {
+                        material_TCD.externalSolarReflectance = System.Convert.ToSingle(externalSolarReflectance);
+                    }
+
+                    if (opaqueMaterial.TryGetValue(OpaqueMaterialParameter.InternalSolarReflectance, out double internalSolarReflectance) && !double.IsNaN(internalSolarReflectance))
+                    {
+                        material_TCD.internalSolarReflectance = System.Convert.ToSingle(internalSolarReflectance);
+                    }
+
+                    if (opaqueMaterial.TryGetValue(OpaqueMaterialParameter.ExternalLightReflectance, out double externalLightReflectance) && !double.IsNaN(externalLightReflectance))
+                    {
+                        material_TCD.externalLightReflectance = System.Convert.ToSingle(externalLightReflectance);
+                    }
+
+                    if (opaqueMaterial.TryGetValue(OpaqueMaterialParameter.InternalLightReflectance, out double internalLightReflectance) && !double.IsNaN(internalLightReflectance))
+                    {
+                        material_TCD.internalLightReflectance = System.Convert.ToSingle(internalLightReflectance);
+                    }
+
+                    if (opaqueMaterial.TryGetValue(OpaqueMaterialParameter.ExternalEmissivity, out double externalEmissivity) && !double.IsNaN(externalEmissivity))
+                    {
+                        material_TCD.externalEmissivity = System.Convert.ToSingle(externalEmissivity);
+                    }
+
+                    if (opaqueMaterial.TryGetValue(OpaqueMaterialParameter.InternalEmissivity, out double internalEmissivity) && !double.IsNaN(internalEmissivity))
+                    {
+                        material_TCD.internalEmissivity = System.Convert.ToSingle(internalEmissivity);
+                    }
+                }
+                else if (material is TransparentMaterial)
+                {
+                    TransparentMaterial transparentMaterial = (TransparentMaterial)material;
+
+                    material_TCD.type = (int)TCD.MaterialTypes.tcdTransparentLayer;
+                    material_TCD.conductivity = System.Convert.ToSingle(transparentMaterial.ThermalConductivity);
+                    material_TCD.description = transparentMaterial.Description;
+                    material_TCD.specificHeat = System.Convert.ToSingle(transparentMaterial.SpecificHeatCapacity);
+                    material_TCD.density = System.Convert.ToSingle(transparentMaterial.Density);
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.SolarTransmittance, out double solarTransmittance) && !double.IsNaN(solarTransmittance))
+                    {
+                        material_TCD.solarTransmittance = System.Convert.ToSingle(solarTransmittance);
+                    }
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.ExternalSolarReflectance, out double externalSolarReflectance) && !double.IsNaN(externalSolarReflectance))
+                    {
+                        material_TCD.externalSolarReflectance = System.Convert.ToSingle(externalSolarReflectance);
+                    }
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.InternalSolarReflectance, out double internalSolarReflectance) && !double.IsNaN(internalSolarReflectance))
+                    {
+                        material_TCD.internalSolarReflectance = System.Convert.ToSingle(internalSolarReflectance);
+                    }
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.LightTransmittance, out double lightTransmittance) && !double.IsNaN(lightTransmittance))
+                    {
+                        material_TCD.lightTransmittance = System.Convert.ToSingle(lightTransmittance);
+                    }
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.ExternalLightReflectance, out double externalLightReflectance) && !double.IsNaN(externalLightReflectance))
+                    {
+                        material_TCD.externalLightReflectance = System.Convert.ToSingle(externalLightReflectance);
+                    }
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.InternalLightReflectance, out double internalLightReflectance) && !double.IsNaN(internalLightReflectance))
+                    {
+                        material_TCD.internalLightReflectance = System.Convert.ToSingle(internalLightReflectance);
+                    }
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.ExternalEmissivity, out double externalEmissivity) && !double.IsNaN(externalEmissivity))
+                    {
+                        material_TCD.externalEmissivity = System.Convert.ToSingle(externalEmissivity);
+                    }
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.InternalEmissivity, out double internalEmissivity) && !double.IsNaN(internalEmissivity))
+                    {
+                        material_TCD.internalEmissivity = System.Convert.ToSingle(internalEmissivity);
+                    }
+
+                    if (transparentMaterial.TryGetValue(TransparentMaterialParameter.IsBlind, out bool isBlind))
+                    {
+                        material_TCD.isBlind = isBlind;
+                    }
+
+                }
+                else if (material is GasMaterial)
+                {
+                    GasMaterial gasMaterial = (GasMaterial)material;
+
+                    material_TCD.type = (int)TCD.MaterialTypes.tcdGasLayer;
+                    material_TCD.conductivity = System.Convert.ToSingle(gasMaterial.ThermalConductivity);
+                    material_TCD.description = gasMaterial.Description;
+                    material_TCD.specificHeat = System.Convert.ToSingle(gasMaterial.SpecificHeatCapacity);
+                    material_TCD.density = System.Convert.ToSingle(gasMaterial.Density);
+
+                    if (gasMaterial.TryGetValue(GasMaterialParameter.HeatTransferCoefficient, out double heatTransferCoefficient) && !double.IsNaN(heatTransferCoefficient))
+                    {
+                        material_TCD.convectionCoefficient = System.Convert.ToSingle(heatTransferCoefficient);
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                if (material.TryGetValue(Core.MaterialParameter.DefaultThickness, out double thickness) && !double.IsNaN(thickness))
+                {
+                    material_TCD.width = System.Convert.ToSingle(thickness);
+                }
+
+                if (material.TryGetValue(MaterialParameter.VapourDiffusionFactor, out double vapourDiffusionFactor) && !double.IsNaN(vapourDiffusionFactor))
+                {
+                    material_TCD.vapourDiffusionFactor = System.Convert.ToSingle(vapourDiffusionFactor);
+                }
+            }
+
+            return true;
         }
 
         public static bool UpdateMaterial(this TBD.material material, GasMaterial gasMaterial)
