@@ -19,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -69,6 +69,8 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooConstructionManagerParam() { Name = "constructionManager", NickName = "constructionManager", Description = "SAM Analytical ConstructionManager", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooLayerThicknessCalculationResultParam() { Name = "in", NickName = "in", Description = "Valid Layer Thickness Calculation Result", Access = GH_ParamAccess.list }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new GooLayerThicknessCalculationResultParam() { Name = "out", NickName = "out", Description = "Invalid Layer Thickness Calculation Result", Access = GH_ParamAccess.list }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -123,9 +125,49 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            List<LayerThicknessCalculationResult> layerThicknessCalculationResults_In = new List<LayerThicknessCalculationResult>();
+            List<LayerThicknessCalculationResult> layerThicknessCalculationResults_Out = new List<LayerThicknessCalculationResult>();
+            foreach(LayerThicknessCalculationResult layerThicknessCalculationResult in layerThicknessCalculationResults)
+            {
+                if(layerThicknessCalculationResult == null)
+                {
+                    continue;
+                }
+
+                double calculatedThermalTransmittance = layerThicknessCalculationResult.CalculatedThermalTransmittance;
+                if (double.IsNaN(calculatedThermalTransmittance))
+                {
+                    layerThicknessCalculationResults_Out.Add(layerThicknessCalculationResult);
+                    continue;
+                }
+
+                List<LayerThicknessCalculationResult> layerThicknessCalculationResults_Temp = layerThicknessCalculationResult.ThermalTransmittance < layerThicknessCalculationResult.CalculatedThermalTransmittance + Tolerance.MacroDistance? layerThicknessCalculationResults_In : layerThicknessCalculationResults_Out;
+
+                layerThicknessCalculationResults_Temp.Add(layerThicknessCalculationResult);
+            }
+
             index = Params.IndexOfOutputParam("constructionManager");
             if (index != -1)
+            {
                 dataAccess.SetData(index, constructionManager);
+            }
+
+            index = Params.IndexOfOutputParam("in");
+            if (index != -1)
+            {
+                dataAccess.SetDataList(index, layerThicknessCalculationResults_In.ConvertAll(x => new GooLayerThicknessCalculationResult(x)));
+            }
+
+            if(layerThicknessCalculationResults_Out != null && layerThicknessCalculationResults_Out.Count > 0)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Some of the results do not meet thermal transmittance (U-value) criteria");
+            }
+
+            index = Params.IndexOfOutputParam("out");
+            if (index != -1)
+            {
+                dataAccess.SetDataList(index, layerThicknessCalculationResults_Out.ConvertAll(x => new GooLayerThicknessCalculationResult(x)));
+            }
 
             if (index_successful != -1)
             {

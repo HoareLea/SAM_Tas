@@ -2,26 +2,31 @@
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
-using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class GooLayerThicknessCalculationData : GH_Goo<LayerThicknessCalculationData>
+    public class GooLayerThicknessCalculationResult : GH_Goo<LayerThicknessCalculationResult>
     {
         public override bool IsValid => Value != null;
 
-        public GooLayerThicknessCalculationData(LayerThicknessCalculationData layerThicknessCalculationData)
+        public GooLayerThicknessCalculationResult()
+            : base()
         {
-            Value = layerThicknessCalculationData;
+
+        }
+        public GooLayerThicknessCalculationResult(LayerThicknessCalculationResult layerThicknessCalculationResult)
+            :base()
+        {
+            Value = layerThicknessCalculationResult;
         }
         
         public override string TypeName
         {
             get
             {
-                return typeof(LayerThicknessCalculationData).FullName;
+                return typeof(LayerThicknessCalculationResult).FullName;
             }
         }
 
@@ -29,18 +34,18 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             get
             {
-                return typeof(LayerThicknessCalculationData).FullName.Replace(".", " ");
+                return typeof(LayerThicknessCalculationResult).FullName.Replace(".", " ");
             }
         }
 
         public override IGH_Goo Duplicate()
         {
-            return new GooLayerThicknessCalculationData(Value);
+            return new GooLayerThicknessCalculationResult(Value);
         }
 
         public override string ToString()
         {
-            return typeof(LayerThicknessCalculationData).Name;
+            return typeof(LayerThicknessCalculationResult).Name;
         }
 
         public override bool CastFrom(object source)
@@ -65,23 +70,23 @@ namespace SAM.Analytical.Grasshopper.Tas
         }
     }
 
-    public class GooLayerThicknessCalculationDataParam : GH_PersistentParam<GooLayerThicknessCalculationData>
+    public class GooLayerThicknessCalculationResultParam : GH_PersistentParam<GooLayerThicknessCalculationResult>
     {
-        public override Guid ComponentGuid => new Guid("d1145ce7-d393-40f7-ade7-5cf02f085922");
+        public override Guid ComponentGuid => new Guid("6b8d9a23-d379-4725-b1c2-43f18d591ccb");
 
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
-        public GooLayerThicknessCalculationDataParam()
-            : base(typeof(LayerThicknessCalculationData).Name, typeof(LayerThicknessCalculationData).Name, typeof(LayerThicknessCalculationData).FullName.Replace(".", " "), "Params", "SAM")
+        public GooLayerThicknessCalculationResultParam()
+            : base(typeof(LayerThicknessCalculationData).Name, typeof(LayerThicknessCalculationResult).Name, typeof(LayerThicknessCalculationResult).FullName.Replace(".", " "), "Params", "SAM")
         {
         }
 
-        protected override GH_GetterResult Prompt_Plural(ref List<GooLayerThicknessCalculationData> values)
+        protected override GH_GetterResult Prompt_Plural(ref List<GooLayerThicknessCalculationResult> values)
         {
             throw new NotImplementedException();
         }
 
-        protected override GH_GetterResult Prompt_Singular(ref GooLayerThicknessCalculationData value)
+        protected override GH_GetterResult Prompt_Singular(ref GooLayerThicknessCalculationResult value)
         {
             throw new NotImplementedException();
         }

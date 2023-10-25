@@ -3,11 +3,12 @@ using SAM.Core;
 
 namespace SAM.Analytical.Tas
 {
-    public class LayerThicknessCalculationResult :Result
+    public class LayerThicknessCalculationResult : Result
     {
         private string constructionName;
         private int layerIndex;
         private double thermalTransmittance;
+        private double calculatedThermalTransmittance;
         private double thickness;
 
         public LayerThicknessCalculationResult(JObject jObject)
@@ -17,24 +18,26 @@ namespace SAM.Analytical.Tas
         }
 
         public LayerThicknessCalculationResult(LayerThicknessCalculationResult layerThicknessCalculationResult)
-         :base(layerThicknessCalculationResult)
+            :base(layerThicknessCalculationResult)
         {
             if(layerThicknessCalculationResult != null)
             {
                 constructionName = layerThicknessCalculationResult.ConstructionName;
                 layerIndex = layerThicknessCalculationResult.LayerIndex;
                 thermalTransmittance = layerThicknessCalculationResult.ThermalTransmittance;
+                calculatedThermalTransmittance = layerThicknessCalculationResult.CalculatedThermalTransmittance;
                 thickness = layerThicknessCalculationResult.Thickness;
             }
         }
 
-        public LayerThicknessCalculationResult(string source, string constructionName, int layerIndex, double thickness, double thermalTransmittance)
+        public LayerThicknessCalculationResult(string source, string constructionName, int layerIndex, double thickness, double thermalTransmittance, double calculatedThermalTransmittance)
             : base(constructionName, source, constructionName)
         {
             this.constructionName = constructionName;
             this.layerIndex = layerIndex;
             this.thickness = thickness;
             this.thermalTransmittance = thermalTransmittance;
+            this.calculatedThermalTransmittance = calculatedThermalTransmittance;
         }
 
         public double Thickness
@@ -69,6 +72,14 @@ namespace SAM.Analytical.Tas
             }
         }
 
+        public double CalculatedThermalTransmittance
+        {
+            get
+            {
+                return calculatedThermalTransmittance;
+            }
+        }
+
         public override bool FromJObject(JObject jObject)
         {
             if(!base.FromJObject(jObject))
@@ -89,6 +100,11 @@ namespace SAM.Analytical.Tas
             if (jObject.ContainsKey("ThermalTransmittance"))
             {
                 thermalTransmittance = jObject.Value<double>("ThermalTransmittance");
+            }
+
+            if (jObject.ContainsKey("CalculatedThermalTransmittance"))
+            {
+                calculatedThermalTransmittance = jObject.Value<double>("CalculatedThermalTransmittance");
             }
 
             if (jObject.ContainsKey("Thickness"))
@@ -117,6 +133,11 @@ namespace SAM.Analytical.Tas
             if(!double.IsNaN(thermalTransmittance))
             {
                 result.Add("ThermalTransmittance", thermalTransmittance);
+            }
+
+            if (!double.IsNaN(calculatedThermalTransmittance))
+            {
+                result.Add("CalculatedThermalTransmittance", calculatedThermalTransmittance);
             }
 
             if (!double.IsNaN(thickness))
