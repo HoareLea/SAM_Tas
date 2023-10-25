@@ -158,27 +158,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            switch(panelType.PanelGroup())
+            thermalTransmittance = Analytical.Tas.Query.ThermalTransmittance(panelType, out heatFlowDirection, out bool external_Temp);
+            if(!double.IsNaN(thermalTransmittance))
             {
-                case PanelGroup.Wall:
-                    thermalTransmittance = 0.24;
-                    heatFlowDirection = HeatFlowDirection.Horizontal;
-                    break;
-
-                case PanelGroup.Roof:
-                    thermalTransmittance = 0.16;
-                    heatFlowDirection = HeatFlowDirection.Up;
-                    break;
-
-                case PanelGroup.Floor:
-                    thermalTransmittance = 0.14;
-                    heatFlowDirection = HeatFlowDirection.Down;
-                    break;
-            }
-
-            if(panelType != PanelType.Undefined)
-            {
-                external = panelType.External();
+                external = external_Temp;
             }
 
             string constructionName_Temp = null;
@@ -212,7 +195,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            bool external_Temp = false;
+            external_Temp = false;
             index = Params.IndexOfInputParam("external_");
             if (index != -1 && dataAccess.GetData(index, ref external_Temp))
             {

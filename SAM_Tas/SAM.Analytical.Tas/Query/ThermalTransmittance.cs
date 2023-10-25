@@ -168,5 +168,54 @@ namespace SAM.Analytical.Tas
             return index == -1 || values.Length <= index ? double.NaN : Core.Query.Round(values[index], tolerance);
 
         }
+
+        public static double ThermalTransmittance(this PanelType panelType, out HeatFlowDirection heatFlowDirection, out bool external)
+        {
+            heatFlowDirection = HeatFlowDirection.Undefined;
+            external = false;
+
+            if(panelType == Analytical.PanelType.Undefined)
+            {
+                return double.NaN;
+            }
+
+            double result = double.NaN;
+            switch (panelType.PanelGroup())
+            {
+                case PanelGroup.Wall:
+                    result = 0.24;
+                    heatFlowDirection = HeatFlowDirection.Horizontal;
+                    break;
+
+                case PanelGroup.Roof:
+                    result = 0.16;
+                    heatFlowDirection = HeatFlowDirection.Up;
+                    break;
+
+                case PanelGroup.Floor:
+                    result = 0.14;
+                    heatFlowDirection = HeatFlowDirection.Down;
+                    break;
+            }
+
+            if (panelType != Analytical.PanelType.Undefined)
+            {
+                switch (panelType)
+                {
+                    case Analytical.PanelType.Wall:
+                    case Analytical.PanelType.Roof:
+                    case Analytical.PanelType.Floor:
+                        external = true;
+                        break;
+
+                    default:
+                        external = panelType.External();
+                        break;
+                }
+            }
+
+            return result;
+
+        }
     }
 }
