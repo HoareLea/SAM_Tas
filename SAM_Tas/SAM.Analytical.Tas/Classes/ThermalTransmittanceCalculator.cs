@@ -39,13 +39,13 @@ namespace SAM.Analytical.Tas
             Construction construction = constructionManager.GetConstructions(layerThicknessCalculationData.ConstructionName, Core.TextComparisonType.Equals, true)?.FirstOrDefault();
             if (construction == null)
             {
-                return new LayerThicknessCalculationResult(layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN);
+                return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN);
             }
 
             TCD.Construction construction_TCD = construction.ToTCD(document, constructionManager);
             if (construction_TCD == null)
             {
-                return new LayerThicknessCalculationResult(layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN);
+                return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN);
             }
 
             LayerThicknessCalculationResult layerThicknessCalculationResult = null;
@@ -53,13 +53,13 @@ namespace SAM.Analytical.Tas
             List<TCD.material> materials = construction_TCD.Materials();
             if(materials == null || materials.Count <= layerThicknessCalculationData.LayerIndex)
             {
-                return new LayerThicknessCalculationResult(layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN);
+                return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN);
             }
 
             TCD.material material = materials[layerThicknessCalculationData.LayerIndex];
             if(material == null)
             {
-                return new LayerThicknessCalculationResult(layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN);
+                return new LayerThicknessCalculationResult(Query.Source(),layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN);
             }
 
             HeatFlowDirection heatFlowDirection = layerThicknessCalculationData.HeatFlowDirection;
@@ -75,7 +75,7 @@ namespace SAM.Analytical.Tas
 
             double thermalTransmittance = func.Invoke(thickness);
 
-            return new LayerThicknessCalculationResult(layerThicknessCalculationData.ConstructionName, layerThicknessCalculationData.LayerIndex, thickness, thermalTransmittance);
+            return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, layerThicknessCalculationData.LayerIndex, thickness, thermalTransmittance);
         }
 
         public List<LayerThicknessCalculationResult> Calculate(IEnumerable<LayerThicknessCalculationData> layerThicknessCalculationDatas)

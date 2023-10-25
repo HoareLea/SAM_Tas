@@ -120,6 +120,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\GooLayerThicknessCalculationResult.cs" />
     <Compile Include="Classes\GooLayerThicknessCalculationData.cs" />
     <Compile Include="Classes\GooSAMT3DDocument.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateThicknesses.cs" />
