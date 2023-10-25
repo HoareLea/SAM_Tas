@@ -53,9 +53,9 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new GooConstructionParam() { Name = "_construction", NickName = "_construction", Description = "Construction Name", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooMaterialLibraryParam() { Name = "_materialLibrary", NickName = "_materialLibrary", Description = "Material Library", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "thermalTransmittance_", NickName = "thermalTransmittance_", Description = "Thermal Transmittance U-value", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "constructionName_", NickName = "constructionName_", Description = "Construction Name", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "layerIndex_", NickName = "layerIndex_", Description = "Layer Index", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "thermalTransmittance_", NickName = "thermalTransmittance_", Description = "Thermal Transmittance", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "heatFlowDirection_", NickName = "heatFlowDirection_", Description = "HeatFlowDirection", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "external_", NickName = "external_", Description = "External", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
 
@@ -161,17 +161,17 @@ namespace SAM.Analytical.Grasshopper.Tas
             switch(panelType.PanelGroup())
             {
                 case PanelGroup.Wall:
-                    thermalTransmittance = 0.3;
+                    thermalTransmittance = 0.24;
                     heatFlowDirection = HeatFlowDirection.Horizontal;
                     break;
 
                 case PanelGroup.Roof:
-                    thermalTransmittance = 0.18;
+                    thermalTransmittance = 0.16;
                     heatFlowDirection = HeatFlowDirection.Up;
                     break;
 
                 case PanelGroup.Floor:
-                    thermalTransmittance = 0.25;
+                    thermalTransmittance = 0.14;
                     heatFlowDirection = HeatFlowDirection.Down;
                     break;
             }
@@ -182,28 +182,28 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             string constructionName_Temp = null;
-            index = Params.IndexOfInputParam("_constructionName");
+            index = Params.IndexOfInputParam("constructionName_");
             if (index != -1 && dataAccess.GetData(index, ref constructionName_Temp) && !string.IsNullOrWhiteSpace(constructionName_Temp))
             {
                 constructionName = constructionName_Temp;
             }
 
             int layerIndex_Temp = -1;
-            index = Params.IndexOfInputParam("_layerIndex");
+            index = Params.IndexOfInputParam("layerIndex_");
             if (index != -1 && dataAccess.GetData(index, ref layerIndex_Temp) && layerIndex_Temp != -1)
             {
                 layerIndex = layerIndex_Temp;
             }
 
             double thermalTransmittance_Temp = double.NaN;
-            index = Params.IndexOfInputParam("_thermalTransmittance");
+            index = Params.IndexOfInputParam("thermalTransmittance_");
             if (index != -1 && dataAccess.GetData(index, ref thermalTransmittance_Temp) && !double.IsNaN(thermalTransmittance_Temp))
             {
                 thermalTransmittance = thermalTransmittance_Temp;
             }
 
             string string_HeatFlowDirection = null; 
-            index = Params.IndexOfInputParam("_heatFlowDirection");
+            index = Params.IndexOfInputParam("heatFlowDirection_");
             if (index != -1 && dataAccess.GetData(index, ref string_HeatFlowDirection) && !string.IsNullOrWhiteSpace(string_HeatFlowDirection))
             {
                 if(Core.Query.TryGetEnum(string_HeatFlowDirection, out HeatFlowDirection heatFlowDirection_Temp))
@@ -213,21 +213,21 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             bool external_Temp = false;
-            index = Params.IndexOfInputParam("_external");
+            index = Params.IndexOfInputParam("external_");
             if (index != -1 && dataAccess.GetData(index, ref external_Temp))
             {
                 external = external_Temp; 
             }
 
             double minThickness_Temp = minThickness;
-            index = Params.IndexOfInputParam("_minThickness_");
+            index = Params.IndexOfInputParam("minThickness_");
             if (index == -1 || !dataAccess.GetData(index, ref minThickness_Temp))
             {
                 minThickness_Temp = minThickness;
             }
 
             double maxThickness_Temp = maxThickness;
-            index = Params.IndexOfInputParam("_maxThickness_");
+            index = Params.IndexOfInputParam("maxThickness_");
             if (index == -1 || !dataAccess.GetData(index, ref maxThickness_Temp))
             {
                 maxThickness_Temp = maxThickness;

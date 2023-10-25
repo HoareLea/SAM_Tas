@@ -153,11 +153,11 @@ namespace SAM.Analytical.Tas
             switch (heatFlowDirection)
             {
                 case HeatFlowDirection.Down:
-                    index = 2;
+                    index = external ? 2 : 5;
                     break;
 
                 case HeatFlowDirection.Up:
-                    index = external ? 4 : 5;
+                    index = external ? 1 : 4;
                     break;
 
                 case HeatFlowDirection.Horizontal:
