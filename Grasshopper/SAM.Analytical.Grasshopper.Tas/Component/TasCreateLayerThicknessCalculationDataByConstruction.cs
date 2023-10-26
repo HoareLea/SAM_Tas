@@ -94,12 +94,6 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             int index;
 
-            string constructionName = null;
-            int layerIndex = -1;
-            double thermalTransmittance = double.NaN;
-            HeatFlowDirection heatFlowDirection = HeatFlowDirection.Undefined;
-            bool? external = null;
-
             MaterialLibrary materialLibrary = null;
             index = Params.IndexOfInputParam("_materialLibrary");
             if (index == -1 || !dataAccess.GetData(index, ref materialLibrary) || materialLibrary == null)
@@ -116,73 +110,33 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            constructionName = construction.Name;
 
-            List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
-            if(constructionLayers != null && constructionLayers.Count != 0)
+            LayerThicknessCalculationData layerThicknessCalculationData = Analytical.Tas.Create.LayerThicknessCalculationData(construction, materialLibrary);
+            if(layerThicknessCalculationData == null)
             {
-                double min = double.MaxValue;
-                int index_Temp = -1;
-                for (int i = 0; i < constructionLayers.Count; i++)
-                {
-                    Material material = materialLibrary?.GetMaterial(constructionLayers[i]?.Name) as Material;
-                    if(material == null)
-                    {
-                        continue;
-                    }
-
-                    if (constructionLayers[i].Thickness < 0.01)
-                    {
-                        continue;
-                    }
-
-                    if(material.ThermalConductivity < min)
-                    {
-                        index_Temp = i;
-                        min = material.ThermalConductivity;
-                    }
-                }
-
-                if(index_Temp != -1)
-                {
-                    layerIndex = index_Temp;
-                }
-            }
-
-            PanelType panelType = PanelType.Undefined;
-            if (construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string string_PanelType))
-            {
-                if(!Core.Query.TryGetEnum(string_PanelType, out panelType))
-                {
-                    panelType = PanelType.Undefined;
-                }
-            }
-
-            thermalTransmittance = Analytical.Tas.Query.ThermalTransmittance(panelType, out heatFlowDirection, out bool external_Temp);
-            if(!double.IsNaN(thermalTransmittance))
-            {
-                external = external_Temp;
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
             }
 
             string constructionName_Temp = null;
             index = Params.IndexOfInputParam("constructionName_");
             if (index != -1 && dataAccess.GetData(index, ref constructionName_Temp) && !string.IsNullOrWhiteSpace(constructionName_Temp))
             {
-                constructionName = constructionName_Temp;
+                layerThicknessCalculationData.ConstructionName = constructionName_Temp;
             }
 
             int layerIndex_Temp = -1;
             index = Params.IndexOfInputParam("layerIndex_");
             if (index != -1 && dataAccess.GetData(index, ref layerIndex_Temp) && layerIndex_Temp != -1)
             {
-                layerIndex = layerIndex_Temp;
+                layerThicknessCalculationData.LayerIndex = layerIndex_Temp;
             }
 
             double thermalTransmittance_Temp = double.NaN;
             index = Params.IndexOfInputParam("thermalTransmittance_");
             if (index != -1 && dataAccess.GetData(index, ref thermalTransmittance_Temp) && !double.IsNaN(thermalTransmittance_Temp))
             {
-                thermalTransmittance = thermalTransmittance_Temp;
+                layerThicknessCalculationData.ThermalTransmittance = thermalTransmittance_Temp;
             }
 
             string string_HeatFlowDirection = null; 
@@ -191,15 +145,15 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 if(Core.Query.TryGetEnum(string_HeatFlowDirection, out HeatFlowDirection heatFlowDirection_Temp))
                 {
-                    heatFlowDirection = heatFlowDirection_Temp;
+                    layerThicknessCalculationData.HeatFlowDirection = heatFlowDirection_Temp;
                 }
             }
 
-            external_Temp = false;
+            bool external_Temp = false;
             index = Params.IndexOfInputParam("external_");
             if (index != -1 && dataAccess.GetData(index, ref external_Temp))
             {
-                external = external_Temp; 
+                layerThicknessCalculationData.External = external_Temp; 
             }
 
             double minThickness_Temp = minThickness;
@@ -216,17 +170,16 @@ namespace SAM.Analytical.Grasshopper.Tas
                 maxThickness_Temp = maxThickness;
             }
 
+            layerThicknessCalculationData.ThicknessRange = new Range<double>(minThickness_Temp, maxThickness_Temp);
+
             index = Params.IndexOfOutputParam("layerThicknessCalculationData");
             if (index != -1)
             {
-                if (string.IsNullOrWhiteSpace(constructionName) || double.IsNaN(thermalTransmittance) || heatFlowDirection == HeatFlowDirection.Undefined || external == null || !external.HasValue)
+                if (string.IsNullOrWhiteSpace(layerThicknessCalculationData.ConstructionName) || double.IsNaN(layerThicknessCalculationData.ThermalTransmittance) || layerThicknessCalculationData.HeatFlowDirection == HeatFlowDirection.Undefined)
                 {
                     dataAccess.SetData(index, null);
                     return;
                 }
-
-                LayerThicknessCalculationData layerThicknessCalculationData = new LayerThicknessCalculationData(constructionName, layerIndex, thermalTransmittance, heatFlowDirection, external.Value);
-                layerThicknessCalculationData.ThicknessRange = new Range<double>(minThickness_Temp, maxThickness_Temp);
 
                 dataAccess.SetData(index, new GooLayerThicknessCalculationData(layerThicknessCalculationData));
             }

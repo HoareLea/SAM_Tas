@@ -8,13 +8,13 @@ namespace SAM.Analytical.Tas
 {
     public class ThermalTransmittanceCalculator
     {
-        private ConstructionManager constructionManager;
+        public ConstructionManager ConstructionManager { get; set; } = null;
 
         public double Tolerance { get; set; } = Core.Tolerance.MacroDistance;
 
         public ThermalTransmittanceCalculator(ConstructionManager constructionManager)
         {
-            this.constructionManager = constructionManager;
+            ConstructionManager = constructionManager;
         }
 
         private LayerThicknessCalculationResult Calculate(LayerThicknessCalculationData layerThicknessCalculationData, TCD.Document document)
@@ -36,13 +36,13 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            Construction construction = constructionManager.GetConstructions(layerThicknessCalculationData.ConstructionName, Core.TextComparisonType.Equals, true)?.FirstOrDefault();
+            Construction construction = ConstructionManager.GetConstructions(layerThicknessCalculationData.ConstructionName, Core.TextComparisonType.Equals, true)?.FirstOrDefault();
             if (construction == null)
             {
                 return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, thermalTransmittance, double.NaN);
             }
 
-            TCD.Construction construction_TCD = construction.ToTCD(document, constructionManager);
+            TCD.Construction construction_TCD = construction.ToTCD(document, ConstructionManager);
             if (construction_TCD == null)
             {
                 return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, thermalTransmittance, double.NaN);
@@ -80,7 +80,7 @@ namespace SAM.Analytical.Tas
 
         public List<LayerThicknessCalculationResult> Calculate(IEnumerable<LayerThicknessCalculationData> layerThicknessCalculationDatas)
         {
-            if(constructionManager == null || layerThicknessCalculationDatas == null || layerThicknessCalculationDatas.Count() == 0)
+            if(ConstructionManager == null || layerThicknessCalculationDatas == null || layerThicknessCalculationDatas.Count() == 0)
             {
                 return null;
             }

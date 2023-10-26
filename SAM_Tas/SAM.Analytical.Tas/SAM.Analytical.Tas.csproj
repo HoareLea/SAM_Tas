@@ -132,6 +132,7 @@
     <Compile Include="Convert\ToTCD\Construction.cs" />
     <Compile Include="Convert\ToTCD\Material.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
+    <Compile Include="Create\LayerThicknessCalculationData.cs" />
     <Compile Include="Create\TBD.cs" />
     <Compile Include="Create\ZoneGroup.cs" />
     <Compile Include="Create\InternalConditions.cs" />
