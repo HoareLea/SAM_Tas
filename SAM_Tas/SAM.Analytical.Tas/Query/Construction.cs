@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TSD;
 
 namespace SAM.Analytical.Tas
@@ -81,6 +82,16 @@ namespace SAM.Analytical.Tas
             }
 
             return null;
+        }
+    
+        public static Construction Construction(this LayerThicknessCalculationResult layerThicknessCalculationResult, ConstructionManager constructionManager)
+        {
+            if (layerThicknessCalculationResult == null || constructionManager == null)
+            {
+                return null;
+            }
+
+            return constructionManager.GetConstructions(layerThicknessCalculationResult.ConstructionName)?.FirstOrDefault();
         }
     }
 }

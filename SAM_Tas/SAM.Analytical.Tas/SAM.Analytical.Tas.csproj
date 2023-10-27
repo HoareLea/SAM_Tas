@@ -211,6 +211,7 @@
     <Compile Include="Query\AperturePart.cs" />
     <Compile Include="Query\ApertureTypes.cs" />
     <Compile Include="Query\Color.cs" />
+    <Compile Include="Query\ConstructionLayer.cs" />
     <Compile Include="Query\Material.cs" />
     <Compile Include="Query\Sufix.cs" />
     <Compile Include="Query\UniqueNameDecomposition.cs" />

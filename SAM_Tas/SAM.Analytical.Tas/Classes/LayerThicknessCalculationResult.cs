@@ -9,6 +9,7 @@ namespace SAM.Analytical.Tas
         private int layerIndex;
         private double thermalTransmittance;
         private double calculatedThermalTransmittance;
+        private double initialThermalTransmittance;
         private double thickness;
 
         public LayerThicknessCalculationResult(JObject jObject)
@@ -22,20 +23,22 @@ namespace SAM.Analytical.Tas
         {
             if(layerThicknessCalculationResult != null)
             {
-                constructionName = layerThicknessCalculationResult.ConstructionName;
-                layerIndex = layerThicknessCalculationResult.LayerIndex;
-                thermalTransmittance = layerThicknessCalculationResult.ThermalTransmittance;
-                calculatedThermalTransmittance = layerThicknessCalculationResult.CalculatedThermalTransmittance;
-                thickness = layerThicknessCalculationResult.Thickness;
+                constructionName = layerThicknessCalculationResult.constructionName;
+                layerIndex = layerThicknessCalculationResult.layerIndex;
+                thermalTransmittance = layerThicknessCalculationResult.thermalTransmittance;
+                calculatedThermalTransmittance = layerThicknessCalculationResult.calculatedThermalTransmittance;
+                initialThermalTransmittance = layerThicknessCalculationResult.initialThermalTransmittance;
+                thickness = layerThicknessCalculationResult.thickness;
             }
         }
 
-        public LayerThicknessCalculationResult(string source, string constructionName, int layerIndex, double thickness, double thermalTransmittance, double calculatedThermalTransmittance)
+        public LayerThicknessCalculationResult(string source, string constructionName, int layerIndex, double thickness, double initialThermalTransmittance, double thermalTransmittance, double calculatedThermalTransmittance)
             : base(constructionName, source, constructionName)
         {
             this.constructionName = constructionName;
             this.layerIndex = layerIndex;
             this.thickness = thickness;
+            this.initialThermalTransmittance = initialThermalTransmittance;
             this.thermalTransmittance = thermalTransmittance;
             this.calculatedThermalTransmittance = calculatedThermalTransmittance;
         }
@@ -61,6 +64,14 @@ namespace SAM.Analytical.Tas
             get
             {
                 return layerIndex;
+            }
+        }
+
+        public double InitialThermalTransmittance
+        {
+            get
+            {
+                return initialThermalTransmittance;
             }
         }
 
@@ -97,6 +108,11 @@ namespace SAM.Analytical.Tas
                 layerIndex = jObject.Value<int>("LayerIndex");
             }
 
+            if (jObject.ContainsKey("InitialThermalTransmittance"))
+            {
+                initialThermalTransmittance = jObject.Value<double>("InitialThermalTransmittance");
+            }
+
             if (jObject.ContainsKey("ThermalTransmittance"))
             {
                 thermalTransmittance = jObject.Value<double>("ThermalTransmittance");
@@ -130,7 +146,12 @@ namespace SAM.Analytical.Tas
 
             result.Add("LayerIndex", layerIndex);
 
-            if(!double.IsNaN(thermalTransmittance))
+            if (!double.IsNaN(initialThermalTransmittance))
+            {
+                result.Add("InitialThermalTransmittance", initialThermalTransmittance);
+            }
+
+            if (!double.IsNaN(thermalTransmittance))
             {
                 result.Add("ThermalTransmittance", thermalTransmittance);
             }

@@ -13,24 +13,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            Construction construction = constructionManager.GetConstructions(layerThicknessCalculationResult.ConstructionName)?.FirstOrDefault();
-            if(construction == null)
-            {
-                return null;
-            }
-
-            List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
-            if(constructionLayers == null || constructionLayers.Count == 0)
-            {
-                return null;
-            }
-
-            if(constructionLayers.Count <= layerThicknessCalculationResult.LayerIndex)
-            {
-                return null;
-            }
-
-            string name = constructionLayers[layerThicknessCalculationResult.LayerIndex]?.Name;
+            string name = ConstructionLayer(layerThicknessCalculationResult, constructionManager)?.Name;
             if(string.IsNullOrWhiteSpace(name))
             {
                 return null;
