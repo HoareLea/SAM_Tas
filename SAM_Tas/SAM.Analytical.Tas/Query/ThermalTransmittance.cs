@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static double ThermalTransmittance(this buildingElement buildingElement, double tolerance = Core.Tolerance.MacroDistance)
+        public static double ThermalTransmittance(this buildingElement buildingElement, double tolerance = Tolerance.MacroDistance)
         {
             TBD.Construction construction = buildingElement?.GetConstruction();
             if (construction == null)
@@ -69,7 +69,7 @@ namespace SAM.Analytical.Tas
             return index == -1 || values.Length <= index ? double.NaN : Core.Query.Round(values[index], tolerance);
         }
 
-        public static double ThermalTransmittance(this TBD.Construction construction, PanelType panelType, double tolerance = Core.Tolerance.MacroDistance)
+        public static double ThermalTransmittance(this TBD.Construction construction, PanelType panelType, double tolerance = Tolerance.MacroDistance)
         {
             object @object = construction?.GetUValue();
             if(@object == null)
@@ -77,59 +77,20 @@ namespace SAM.Analytical.Tas
                 return double.NaN;
             }
 
+            return ThermalTransmittance(Array<float>(@object), panelType, tolerance);
+        }
 
-            float[] values = Array<float>(@object);
-            if (values == null || values.Length == 0)
+        public static double ThermalTransmittance(this TCD.Construction construction, PanelType panelType, double tolerance = Tolerance.MacroDistance)
+        {
+            object @object = construction?.GetUValue();
+            if (@object == null)
             {
                 return double.NaN;
             }
 
-            int index = -1;
-            switch (panelType)
-            {
-                case Analytical.PanelType.Shade:
-                case Analytical.PanelType.SolarPanel:
-                case Analytical.PanelType.Undefined:
-                    index = -1;
-                    break;
-
-                case Analytical.PanelType.UndergroundWall:
-                case Analytical.PanelType.WallExternal:
-                    index = 0;
-                    break;
-
-                case Analytical.PanelType.Roof:
-                    index = 1;
-                    break;
-
-                case Analytical.PanelType.UndergroundCeiling:
-                case Analytical.PanelType.UndergroundSlab:
-                case Analytical.PanelType.SlabOnGrade:
-                case Analytical.PanelType.FloorExposed:
-                    index = 2;
-                    break;
-
-                case Analytical.PanelType.WallInternal:
-                    index = 3;
-                    break;
-
-                case Analytical.PanelType.Ceiling:
-                    index = 4;
-                    break;
-
-                case Analytical.PanelType.FloorInternal:
-                case Analytical.PanelType.FloorRaised:
-                    index = 5;
-                    break;
-
-                case Analytical.PanelType.CurtainWall:
-                    index = 6;
-                    break;
-            }
-
-            return index == -1 || values.Length <= index ? double.NaN : Core.Query.Round(values[index], tolerance);
+            return ThermalTransmittance(Array<float>(@object), panelType, tolerance);
         }
-    
+
         public static double ThermalTransmittance(this TCD.Construction construction, HeatFlowDirection heatFlowDirection, bool external, double tolerance = Tolerance.MacroDistance)
         {
             if(construction == null || heatFlowDirection == HeatFlowDirection.Undefined)
@@ -216,6 +177,59 @@ namespace SAM.Analytical.Tas
 
             return result;
 
+        }
+
+        private static double ThermalTransmittance(float[] values, PanelType panelType, double tolerance = Tolerance.MacroDistance)
+        {
+            if (values == null || values.Length == 0)
+            {
+                return double.NaN;
+            }
+
+            int index = -1;
+            switch (panelType)
+            {
+                case Analytical.PanelType.Shade:
+                case Analytical.PanelType.SolarPanel:
+                case Analytical.PanelType.Undefined:
+                    index = -1;
+                    break;
+
+                case Analytical.PanelType.UndergroundWall:
+                case Analytical.PanelType.WallExternal:
+                    index = 0;
+                    break;
+
+                case Analytical.PanelType.Roof:
+                    index = 1;
+                    break;
+
+                case Analytical.PanelType.UndergroundCeiling:
+                case Analytical.PanelType.UndergroundSlab:
+                case Analytical.PanelType.SlabOnGrade:
+                case Analytical.PanelType.FloorExposed:
+                    index = 2;
+                    break;
+
+                case Analytical.PanelType.WallInternal:
+                    index = 3;
+                    break;
+
+                case Analytical.PanelType.Ceiling:
+                    index = 4;
+                    break;
+
+                case Analytical.PanelType.FloorInternal:
+                case Analytical.PanelType.FloorRaised:
+                    index = 5;
+                    break;
+
+                case Analytical.PanelType.CurtainWall:
+                    index = 6;
+                    break;
+            }
+
+            return index == -1 || values.Length <= index ? double.NaN : Core.Query.Round(values[index], tolerance);
         }
     }
 }

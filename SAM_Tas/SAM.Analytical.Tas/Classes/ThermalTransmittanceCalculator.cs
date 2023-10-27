@@ -85,51 +85,20 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            string directory = System.IO.Path.GetTempPath();
-            if(!System.IO.Directory.Exists(directory))
-            {
-                return null;
-            }
-
-            directory = System.IO.Path.Combine(directory, "SAM");
-            if (!System.IO.Directory.Exists(directory))
-            {
-                System.IO.Directory.CreateDirectory(directory);
-            }
-
-            string fileName = Guid.NewGuid().ToString("N") + ".tcd";
-
-            string path = System.IO.Path.Combine(directory, fileName);
-
             List<LayerThicknessCalculationResult> result = new List<LayerThicknessCalculationResult>();
-            
-            try
-            {
-                using (SAMTCDDocument sAMTCDDocument = new SAMTCDDocument())
-                {
-                    if(sAMTCDDocument.Create(path))
-                    {
-                        TCD.Document document = sAMTCDDocument.Document;
-                        foreach (LayerThicknessCalculationData layerThicknessCalculationData in layerThicknessCalculationDatas)
-                        {
-                            LayerThicknessCalculationResult layerThicknessCalculationResult = Calculate(layerThicknessCalculationData, document);
-                            result.Add(layerThicknessCalculationResult);
 
-                        }
-                    }
-                }
-            }
-            catch
+            Action<TCD.Document> action = new Action<TCD.Document>(x =>
             {
 
-            }
-            finally
-            {
-                if(System.IO.File.Exists(path))
+                foreach (LayerThicknessCalculationData layerThicknessCalculationData in layerThicknessCalculationDatas)
                 {
-                    System.IO.File.Delete(path);
+                    LayerThicknessCalculationResult layerThicknessCalculationResult = Calculate(layerThicknessCalculationData, x);
+                    result.Add(layerThicknessCalculationResult);
+
                 }
-            }
+            });
+
+            Modify.Run(action);
 
             return result;
         }

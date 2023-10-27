@@ -33,17 +33,90 @@
                 return;
             }
 
-            object @object = construction.GetGlazingValues();
-            float[] values = Array<float>(@object);
+            GlazingValues(Array<float>(construction.GetGlazingValues()),
+                out lightTransmittance,
+                out lightReflectance,
+                out directSolarEnergyTransmittance,
+                out directSolarEnergyReflectance,
+                out directSolarEnergyAbsorptance,
+                out totalSolarEnergyTransmittance,
+                out pilkingtonShortWavelengthCoefficient,
+                out pilkingtonLongWavelengthCoefficient,
+                tolerance);
+        }
+
+        public static void GlazingValues(this TCD.Construction construction,
+            out double lightTransmittance,
+            out double lightReflectance,
+            out double directSolarEnergyTransmittance,
+            out double directSolarEnergyReflectance,
+            out double directSolarEnergyAbsorptance,
+            out double totalSolarEnergyTransmittance,
+            out double pilkingtonShortWavelengthCoefficient,
+            out double pilkingtonLongWavelengthCoefficient,
+            double tolerance = Core.Tolerance.MacroDistance)
+        {
+            lightTransmittance = double.NaN;
+            lightReflectance = double.NaN;
+            directSolarEnergyTransmittance = double.NaN;
+            directSolarEnergyReflectance = double.NaN;
+            directSolarEnergyAbsorptance = double.NaN;
+            totalSolarEnergyTransmittance = double.NaN;
+            pilkingtonShortWavelengthCoefficient = double.NaN;
+            pilkingtonLongWavelengthCoefficient = double.NaN;
+
+            if (construction == null)
+            {
+                return;
+            }
+
+            TCD.ConstructionTypes constructionTypes = construction.type;
+            if (constructionTypes != TCD.ConstructionTypes.tcdTransparentConstruction)
+            {
+                return;
+            }
+
+            GlazingValues(Array<float>(construction.GetGlazingValues()),
+                out lightTransmittance,
+                out lightReflectance,
+                out directSolarEnergyTransmittance,
+                out directSolarEnergyReflectance,
+                out directSolarEnergyAbsorptance,
+                out totalSolarEnergyTransmittance,
+                out pilkingtonShortWavelengthCoefficient,
+                out pilkingtonLongWavelengthCoefficient,
+                tolerance);
+        }
+
+        private static void GlazingValues(this float[] values,
+            out double lightTransmittance,
+            out double lightReflectance,
+            out double directSolarEnergyTransmittance,
+            out double directSolarEnergyReflectance,
+            out double directSolarEnergyAbsorptance,
+            out double totalSolarEnergyTransmittance,
+            out double pilkingtonShortWavelengthCoefficient,
+            out double pilkingtonLongWavelengthCoefficient,
+            double tolerance = Core.Tolerance.MacroDistance)
+        {
+            lightTransmittance = double.NaN;
+            lightReflectance = double.NaN;
+            directSolarEnergyTransmittance = double.NaN;
+            directSolarEnergyReflectance = double.NaN;
+            directSolarEnergyAbsorptance = double.NaN;
+            totalSolarEnergyTransmittance = double.NaN;
+            pilkingtonShortWavelengthCoefficient = double.NaN;
+            pilkingtonLongWavelengthCoefficient = double.NaN;
+
             if (values == null || values.Length == 0)
             {
                 return;
             }
 
-            if(values.Length > 0)
+            if (values.Length > 0)
             {
                 lightTransmittance = Core.Query.Round(values[0], tolerance);
-                if(values.Length > 1)
+                if (values.Length > 1)
                 {
                     lightReflectance = Core.Query.Round(values[1], tolerance);
                     if (values.Length > 2)
