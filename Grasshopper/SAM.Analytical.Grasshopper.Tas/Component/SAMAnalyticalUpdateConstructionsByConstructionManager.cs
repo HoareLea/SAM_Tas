@@ -33,8 +33,12 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public SAMAnalyticalUpdateConstructionsByConstructionManager()
           : base("SAMAnalytical.UpdateConstructionsByConstructionManager", "SAMAnalytical.UpdateConstructionsByConstructionManager",
-              "Update Constructions By ConstructionManager",
-              "SAM WIP", "Tas")
+            @"Update Constructions in Analytical Model By ConstructionManager
+
+* Please note construction manager is Constructions merged with materials
+  Construction names must match Construction in Analytical Model",
+                "SAM WIP",
+                "Tas")
         {
         }
 

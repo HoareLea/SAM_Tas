@@ -33,7 +33,11 @@
                 return;
             }
 
-            GlazingValues(Array<float>(construction.GetGlazingValues()),
+            object values_Temp = construction.GetGlazingValues();
+
+            float[] values = Array<float>(values_Temp);
+
+            GlazingValues(values,
                 out lightTransmittance,
                 out lightReflectance,
                 out directSolarEnergyTransmittance,
@@ -76,7 +80,11 @@
                 return;
             }
 
-            GlazingValues(Array<float>(construction.GetGlazingValues()),
+            object values_Temp = construction.GetGlazingValues();
+
+            float[] values = Array<float>(values_Temp);
+
+            GlazingValues(values,
                 out lightTransmittance,
                 out lightReflectance,
                 out directSolarEnergyTransmittance,
