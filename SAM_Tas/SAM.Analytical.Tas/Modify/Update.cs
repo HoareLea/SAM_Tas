@@ -241,13 +241,13 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
-            string initialApertureConstructionName = apertureConstructionCalculationResult.InitialConstructionName;
+            string initialApertureConstructionName = apertureConstructionCalculationResult.InitialApertureConstructionName;
             if (initialApertureConstructionName == null)
             {
                 return false;
             }
 
-            string apertureConstructionName = apertureConstructionCalculationResult.ConstructionName;
+            string apertureConstructionName = apertureConstructionCalculationResult.ApertureConstructionName;
             if (apertureConstructionName == null)
             {
                 return false;

@@ -5,11 +5,11 @@ namespace SAM.Analytical.Tas
 {
     public class ApertureConstructionCalculationResult : Result, IApertureConstructionCalculationResult
     {
-        private string initialConstructionName = null;
+        private string initialApertureConstructionName = null;
         private double initialPaneThermalTransmittance = double.NaN;
         private double initialFrameThermalTransmittance = double.NaN;
 
-        private string constructionName;
+        private string apertureConstructionName;
         private double paneThermalTransmittance;
         private double frameThermalTransmittance;
 
@@ -27,11 +27,11 @@ namespace SAM.Analytical.Tas
         {
             if(apertureConstructionCalculationResult != null)
             {
-                initialConstructionName = apertureConstructionCalculationResult.initialConstructionName;
+                initialApertureConstructionName = apertureConstructionCalculationResult.initialApertureConstructionName;
                 initialPaneThermalTransmittance = apertureConstructionCalculationResult.initialPaneThermalTransmittance;
                 initialFrameThermalTransmittance = apertureConstructionCalculationResult.initialFrameThermalTransmittance;
 
-                constructionName = apertureConstructionCalculationResult.constructionName;
+                apertureConstructionName = apertureConstructionCalculationResult.apertureConstructionName;
                 paneThermalTransmittance = apertureConstructionCalculationResult.paneThermalTransmittance;
                 frameThermalTransmittance = apertureConstructionCalculationResult.frameThermalTransmittance;
 
@@ -42,21 +42,21 @@ namespace SAM.Analytical.Tas
 
         public ApertureConstructionCalculationResult(
             string source, 
-            string initialConstructionName, 
+            string initialApertureConstructionName, 
             double initialPaneThermalTransmittance, 
             double initialFrameThermalTransmittance, 
-            string constructionName, 
+            string apertureConstructionName, 
             double paneThermalTransmittance,
             double frameThermalTransmittance,
             double calculatedPaneThermalTransmittance,
             double calculatedFrameThermalTransmittance)
-            : base(constructionName, source, constructionName)
+            : base(apertureConstructionName, source, apertureConstructionName)
         {
-            this.initialConstructionName = initialConstructionName;
+            this.initialApertureConstructionName = initialApertureConstructionName;
             this.initialPaneThermalTransmittance = initialPaneThermalTransmittance;
             this.initialFrameThermalTransmittance = initialFrameThermalTransmittance;
 
-            this.constructionName = constructionName;
+            this.apertureConstructionName = apertureConstructionName;
             this.paneThermalTransmittance = paneThermalTransmittance;
             this.frameThermalTransmittance = frameThermalTransmittance;
 
@@ -64,11 +64,11 @@ namespace SAM.Analytical.Tas
             this.calculatedFrameThermalTransmittance = calculatedFrameThermalTransmittance;
         }
 
-        public string InitialConstructionName
+        public string InitialApertureConstructionName
         {
             get
             {
-                return initialConstructionName;
+                return initialApertureConstructionName;
             }
         }
 
@@ -88,11 +88,11 @@ namespace SAM.Analytical.Tas
             }
         }
 
-        public string ConstructionName
+        public string ApertureConstructionName
         {
             get
             {
-                return constructionName;
+                return apertureConstructionName;
             }
         }
 
@@ -135,9 +135,9 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
-            if (jObject.ContainsKey("InitialConstructionName"))
+            if (jObject.ContainsKey("InitialApertureConstructionName"))
             {
-                initialConstructionName = jObject.Value<string>("InitialConstructionName");
+                initialApertureConstructionName = jObject.Value<string>("InitialApertureConstructionName");
             }
 
             if (jObject.ContainsKey("InitialPaneThermalTransmittance"))
@@ -150,9 +150,9 @@ namespace SAM.Analytical.Tas
                 initialFrameThermalTransmittance = jObject.Value<double>("InitialFrameThermalTransmittance");
             }
 
-            if (jObject.ContainsKey("ConstructionName"))
+            if (jObject.ContainsKey("ApertureConstructionName"))
             {
-                constructionName = jObject.Value<string>("ConstructionName");
+                apertureConstructionName = jObject.Value<string>("ApertureConstructionName");
             }
 
             if (jObject.ContainsKey("PaneThermalTransmittance"))
@@ -186,9 +186,9 @@ namespace SAM.Analytical.Tas
                 return result;
             }
 
-            if (initialConstructionName != null)
+            if (initialApertureConstructionName != null)
             {
-                result.Add("InitialConstructionName", initialConstructionName);
+                result.Add("InitialApertureConstructionName", initialApertureConstructionName);
             }
 
             if (!double.IsNaN(initialPaneThermalTransmittance))
@@ -201,9 +201,9 @@ namespace SAM.Analytical.Tas
                 result.Add("InitialFrameThermalTransmittance", initialFrameThermalTransmittance);
             }
 
-            if (constructionName != null)
+            if (apertureConstructionName != null)
             {
-                result.Add("ConstructionName", constructionName);
+                result.Add("ApertureConstructionName", apertureConstructionName);
             }
 
             if (!double.IsNaN(paneThermalTransmittance))

@@ -137,6 +137,7 @@
     <Compile Include="Component\SAMAnalyticalSAP.cs" />
     <Compile Include="Component\SAMAnalyticalTM59.cs" />
     <Compile Include="Component\TasCopyCalendar.cs" />
+    <Compile Include="Component\TasCreateApertureConstructionCalculationData.cs" />
     <Compile Include="Component\TasCreateConstructionCalculationData.cs" />
     <Compile Include="Component\TasCreateLayerThicknessCalculationDataByConstruction.cs" />
     <Compile Include="Component\TasCreateTCD.cs" />
