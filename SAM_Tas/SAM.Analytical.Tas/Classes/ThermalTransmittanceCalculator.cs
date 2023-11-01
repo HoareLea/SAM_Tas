@@ -200,7 +200,23 @@ namespace SAM.Analytical.Tas
             {
                 return null;
             }
+
             TCD.Construction construction_TCD = null;
+
+            string initialConstructionName = constructionCalculationData.ConstructionName;
+            double initialThermalTransmittance = double.NaN;
+            if (initialConstructionName != null)
+            {
+                Construction construction = ConstructionManager.GetConstructions(initialConstructionName)?.FirstOrDefault();
+                if (construction != null)
+                {
+                    construction_TCD = construction.ToTCD(document, ConstructionManager);
+                    if (construction_TCD != null)
+                    {
+                        initialThermalTransmittance = Query.ThermalTransmittance(construction_TCD, heatFlowDirection, external, Tolerance);
+                    }
+                }
+            }
 
             List<Tuple<TCD.Construction, double>> tuples = new List<Tuple<TCD.Construction, double>>();
             foreach(string constructionName_Temp in constructionNames)
@@ -239,28 +255,13 @@ namespace SAM.Analytical.Tas
 
             if (tuples == null || tuples.Count == 0)
             {
-                return null;
+                return new ConstructionCalculationResult(Query.Source(), initialConstructionName, initialThermalTransmittance, null, thermalTransmittance, double.NaN);
             }
 
             tuples.Sort((x, y) => x.Item2.CompareTo(y.Item2));
 
             string constructionName = tuples[0].Item1?.name;
             double calculatedThermalTransmittance = tuples[0].Item2;
-
-            string initialConstructionName = constructionCalculationData.ConstructionName;
-            double initialThermalTransmittance = double.NaN;
-            if (initialConstructionName != null)
-            {
-                Construction construction = ConstructionManager.GetConstructions(initialConstructionName)?.FirstOrDefault();
-                if (construction != null)
-                {
-                    construction_TCD = construction.ToTCD(document, ConstructionManager);
-                    if (construction_TCD != null)
-                    {
-                        initialThermalTransmittance = Query.ThermalTransmittance(construction_TCD, heatFlowDirection, external, Tolerance);
-                    }
-                }
-            }
 
             return new ConstructionCalculationResult(Query.Source(), initialConstructionName, initialThermalTransmittance, constructionName, thermalTransmittance, calculatedThermalTransmittance);
         }
