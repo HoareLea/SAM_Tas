@@ -127,7 +127,6 @@
     <Compile Include="Classes\GooSAMT3DDocument.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateConstructions.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateThicknesses.cs" />
-    <Compile Include="Component\SAMAnalyticalUpdateConstructionsByConstructionManager.cs" />
     <Compile Include="Component\SAMAnalyticalSurfaceSimulationResults.cs" />
     <Compile Include="Component\SAMAnalyticalSizingType.cs" />
     <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
