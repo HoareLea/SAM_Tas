@@ -3,7 +3,7 @@ using SAM.Core;
 
 namespace SAM.Analytical.Tas
 {
-    public class LayerThicknessCalculationResult : Result
+    public class LayerThicknessCalculationResult : Result, IConstructionCalculationResult
     {
         private string constructionName;
         private int layerIndex;

@@ -118,7 +118,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 TCD.Document document = sAMTCDDocument.Document;
                 foreach(Construction construction in constructionManager.Constructions)
                 {
-                    TCD.Construction construction_TCD = construction.ToTCD(document, constructionManager);
+                    TCD.Construction construction_TCD = Analytical.Tas.Convert.ToTCD(construction, document, constructionManager);
                 }
 
                 sAMTCDDocument.Save();

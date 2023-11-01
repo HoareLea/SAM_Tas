@@ -120,9 +120,12 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\GooThermalTransmittanceCalculationResult.cs" />
+    <Compile Include="Classes\GooThermalTransmittanceCalculationData.cs" />
     <Compile Include="Classes\GooLayerThicknessCalculationData.cs" />
     <Compile Include="Classes\GooLayerThicknessCalculationResult.cs" />
     <Compile Include="Classes\GooSAMT3DDocument.cs" />
+    <Compile Include="Component\SAMAnalyticalCalculateConstructions.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateThicknesses.cs" />
     <Compile Include="Component\SAMAnalyticalUpdateConstructionsByConstructionManager.cs" />
     <Compile Include="Component\SAMAnalyticalSurfaceSimulationResults.cs" />
@@ -134,6 +137,7 @@
     <Compile Include="Component\SAMAnalyticalSAP.cs" />
     <Compile Include="Component\SAMAnalyticalTM59.cs" />
     <Compile Include="Component\TasCopyCalendar.cs" />
+    <Compile Include="Component\TasCreateConstructionCalculationData.cs" />
     <Compile Include="Component\TasCreateLayerThicknessCalculationDataByConstruction.cs" />
     <Compile Include="Component\TasCreateTCD.cs" />
     <Compile Include="Component\TasCreateLayerThicknessCalculationData.cs" />

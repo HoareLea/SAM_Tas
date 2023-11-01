@@ -105,6 +105,16 @@ namespace SAM.Analytical.Tas
             return Weather.Tas.Modify.Update(designDay_TBD?.GetWeatherDay(), designDay);
         }
 
+        public static bool Update(this ConstructionManager constructionManager, IThermalTransmittanceCalculationResult thermalTransmittanceCalculationResult)
+        {
+            if (constructionManager == null || thermalTransmittanceCalculationResult == null)
+            {
+                return false;
+            }
+
+            return Update(constructionManager, thermalTransmittanceCalculationResult as dynamic);
+        }
+
         public static bool Update(this ConstructionManager constructionManager, LayerThicknessCalculationResult layerThicknessCalculationResult)
         {
             if(constructionManager == null || layerThicknessCalculationResult == null)
@@ -181,6 +191,83 @@ namespace SAM.Analytical.Tas
             constructionManager.Add(material);
 
             return true;
+        }
+
+        public static bool Update(this ConstructionManager constructionManager, ConstructionCalculationResult constructionCalculationResult)
+        {
+            if(constructionManager == null || constructionCalculationResult == null)
+            {
+                return false;
+            }
+
+            string initialConstructionName = constructionCalculationResult.InitialConstructionName;
+            if(initialConstructionName == null)
+            {
+                return false;
+            }
+
+            string constructionName = constructionCalculationResult.ConstructionName;
+            if(constructionName == null)
+            {
+                return false;
+            }
+
+            Construction initialConstruction = constructionManager.GetConstructions(initialConstructionName)?.FirstOrDefault();
+            if(initialConstruction == null)
+            {
+                return false;
+            }
+
+            Construction construction = constructionManager.GetConstructions(constructionName)?.FirstOrDefault();
+            if(construction == null)
+            {
+                return false;
+            }
+
+            Construction construction_Updated = new Construction(initialConstruction.Guid, construction, initialConstruction.Name);
+
+            return constructionManager.Add(construction_Updated);
+        }
+
+        public static bool Update(this ConstructionManager constructionManager, ApertureConstructionCalculationResult apertureConstructionCalculationResult)
+        {
+            if (constructionManager == null || apertureConstructionCalculationResult == null)
+            {
+                return false;
+            }
+
+            if (constructionManager == null || apertureConstructionCalculationResult == null)
+            {
+                return false;
+            }
+
+            string initialApertureConstructionName = apertureConstructionCalculationResult.InitialConstructionName;
+            if (initialApertureConstructionName == null)
+            {
+                return false;
+            }
+
+            string apertureConstructionName = apertureConstructionCalculationResult.ConstructionName;
+            if (apertureConstructionName == null)
+            {
+                return false;
+            }
+
+            ApertureConstruction initialApertureConstruction = constructionManager.GetApertureConstructions(initialApertureConstructionName)?.FirstOrDefault();
+            if (initialApertureConstruction == null)
+            {
+                return false;
+            }
+
+            ApertureConstruction apertureConstruction = constructionManager.GetApertureConstructions(apertureConstructionName)?.FirstOrDefault();
+            if (apertureConstruction == null)
+            {
+                return false;
+            }
+
+            ApertureConstruction apertureConstruction_Updated = new ApertureConstruction(initialApertureConstruction.Guid, apertureConstruction, initialApertureConstruction.Name);
+
+            return constructionManager.Add(apertureConstruction_Updated);
         }
     }
 }

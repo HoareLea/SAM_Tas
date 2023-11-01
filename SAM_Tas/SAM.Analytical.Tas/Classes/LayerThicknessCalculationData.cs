@@ -3,7 +3,7 @@ using SAM.Core;
 
 namespace SAM.Analytical.Tas
 {
-    public class LayerThicknessCalculationData: IJSAMObject
+    public class LayerThicknessCalculationData: IConstructionCalculationData
     {
         public string ConstructionName { get; set; }
         public int LayerIndex { get; set; }

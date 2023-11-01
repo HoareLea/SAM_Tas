@@ -9,15 +9,15 @@ using System.Drawing;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasCreateLayerThicknessCalculationData : GH_SAMVariableOutputParameterComponent
+    public class TasCreateConstructionCalculationData : GH_SAMVariableOutputParameterComponent
     {
-        private static double minThickness = Tolerance.MacroDistance;
+        private static double minThickness = Core.Tolerance.MacroDistance;
         private static double maxThickness = 1;
 
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("3c8cad89-80e9-42c8-8de2-9bea8803ee0f");
+        public override Guid ComponentGuid => new Guid("9502b082-68de-4131-852f-4b4722ba167e");
 
         /// <summary>
         /// The latest version of this component
@@ -35,9 +35,9 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasCreateLayerThicknessCalculationData()
-          : base("Tas.CreateLayerThicknessCalculationData", "Tas.CreateLayerThicknessCalculationData",
-              "Tas Create LayerThicknessCalculationData",
+        public TasCreateConstructionCalculationData()
+          : base("Tas.CreateConstructionCalculationData", "Tas.CreateConstructionCalculationData",
+              "Tas Create ConstructionCalculationData",
               "SAM WIP", "Tas")
         {
         }
@@ -50,8 +50,8 @@ namespace SAM.Analytical.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_constructionName", NickName = "_constructionName", Description = "Construction Name", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_layerIndex", NickName = "_layerIndex", Description = "Layer Index", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_sourceConstructionName", NickName = "_sourceConstructionName", Description = "Source Construction Name", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_destinationConstructionNames", NickName = "_destinationConstructionNames", Description = "Destination Construction Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_thermalTransmittance", NickName = "_thermalTransmittance", Description = "Thermal Transmittance", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_heatFlowDirection", NickName = "_heatFlowDirection", Description = "HeatFlowDirection", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_external", NickName = "_external", Description = "External", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
@@ -78,7 +78,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooLayerThicknessCalculationDataParam() { Name = "layerThicknessCalculationData", NickName = "layerThicknessCalculationData", Description = "LayerThicknessCalculationData", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooThermalTransmittanceCalculationDataParam() { Name = "constructionCalculationData", NickName = "constructionCalculationData", Description = "ConstructionCalculationData", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -92,16 +92,16 @@ namespace SAM.Analytical.Grasshopper.Tas
             int index;
 
             string constructionName = null;
-            index = Params.IndexOfInputParam("_constructionName");
+            index = Params.IndexOfInputParam("_sourceConstructionName");
             if (index == -1 || !dataAccess.GetData(index, ref constructionName) || string.IsNullOrWhiteSpace(constructionName))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            int layerIndex = -1;
-            index = Params.IndexOfInputParam("_layerIndex");
-            if (index == -1 || !dataAccess.GetData(index, ref layerIndex) || layerIndex == -1)
+            List<string> constructionNames = new List<string>();
+            index = Params.IndexOfInputParam("_destinationConstructionNames");
+            if (index == -1 || !dataAccess.GetDataList(index, constructionNames) || constructionNames == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -152,7 +152,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 maxThickness_Temp = maxThickness;
             }
 
-            index = Params.IndexOfOutputParam("layerThicknessCalculationData");
+            index = Params.IndexOfOutputParam("constructionCalculationData");
             if (index != -1)
             {
                 if (string.IsNullOrWhiteSpace(constructionName) || double.IsNaN(thermalTransmittance) || heatFlowDirection == HeatFlowDirection.Undefined)
@@ -161,10 +161,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                     return;
                 }
 
-                LayerThicknessCalculationData layerThicknessCalculationData = new LayerThicknessCalculationData(constructionName, layerIndex, thermalTransmittance, heatFlowDirection, external);
-                layerThicknessCalculationData.ThicknessRange = new Range<double>(minThickness_Temp, maxThickness_Temp);
+                ConstructionCalculationData constructionCalculationData = new ConstructionCalculationData(constructionName, constructionNames, thermalTransmittance, heatFlowDirection, external);
+                constructionCalculationData.ThicknessRange = new Range<double>(minThickness_Temp, maxThickness_Temp);
 
-                dataAccess.SetData(index, new GooLayerThicknessCalculationData(layerThicknessCalculationData));
+                dataAccess.SetData(index, new GooThermalTransmittanceCalculationData(constructionCalculationData));
             }
         }
     }

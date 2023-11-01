@@ -106,6 +106,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ApertureConstructionCalculationData.cs" />
+    <Compile Include="Classes\ConstructionCalculationData.cs" />
+    <Compile Include="Classes\ApertureConstructionCalculationResult.cs" />
+    <Compile Include="Classes\ConstructionCalculationResult.cs" />
     <Compile Include="Classes\LayerThicknessCalculationResult.cs" />
     <Compile Include="Classes\LayerThicknessCalculationData.cs" />
     <Compile Include="Classes\ThermalTransmittanceCalculator.cs" />
@@ -129,6 +133,7 @@
     <Compile Include="Convert\ToSAM\NCMNameCollection.cs" />
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Convert\ToTBD\Building.cs" />
+    <Compile Include="Convert\ToTCD\Constructions.cs" />
     <Compile Include="Convert\ToTCD\Construction.cs" />
     <Compile Include="Convert\ToTCD\Material.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
@@ -140,6 +145,12 @@
     <Compile Include="Enums\Parameters\ApertureParameter.cs" />
     <Compile Include="Enums\Parameters\PanelParameter.cs" />
     <Compile Include="Enums\Parameters\TasSettingParameter.cs" />
+    <Compile Include="Interfaces\IApertureConstructionCalculationData.cs" />
+    <Compile Include="Interfaces\IApertureConstructionCalculationResult.cs" />
+    <Compile Include="Interfaces\IThermalTransmittanceCalculationResult.cs" />
+    <Compile Include="Interfaces\IThermalTransmittanceCalculationData.cs" />
+    <Compile Include="Interfaces\IConstructionCalculationResult.cs" />
+    <Compile Include="Interfaces\IConstructionCalculationData.cs" />
     <Compile Include="Modify\Run.cs" />
     <Compile Include="Modify\SetApertureTypes.cs" />
     <Compile Include="Modify\AddDefaultZoneGroups.cs" />
