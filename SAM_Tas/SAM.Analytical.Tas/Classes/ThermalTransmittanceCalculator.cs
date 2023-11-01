@@ -49,11 +49,48 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            ApertureType apertureType = ApertureType.Undefined;
+
+            string initialApertureConstructionName = apertureConstructionCalculationData.ApertureConstructionName;
+            double initialPaneThermalTransmittance = double.NaN;
+            double initialFrameThermalTransmittance = double.NaN;
+            if (initialApertureConstructionName != null)
+            {
+                ApertureConstruction apertureConstruction = ConstructionManager.GetApertureConstructions(initialApertureConstructionName)?.FirstOrDefault();
+                if (apertureConstruction != null)
+                {
+                    apertureType = apertureConstruction.ApertureType;
+
+                    List<TCD.Construction> constructions = apertureConstruction.ToTCD_Constructions(document, ConstructionManager);
+                    if (constructions != null)
+                    {
+                        TCD.Construction construction = null;
+
+                        construction = constructions.Find(x => x.name.EndsWith("-pane"));
+                        if (construction != null)
+                        {
+                            initialPaneThermalTransmittance = Query.ThermalTransmittance(construction, heatFlowDirection, external, Tolerance);
+                        }
+
+                        construction = constructions.Find(x => x.name.EndsWith("-frame"));
+                        if (construction != null)
+                        {
+                            initialFrameThermalTransmittance = Query.ThermalTransmittance(construction, heatFlowDirection, external, Tolerance);
+                        }
+                    }
+                }
+            }
+
             List<Tuple<ApertureConstruction, double, double, double>> tuples = new List<Tuple<ApertureConstruction, double, double, double>>();
             foreach (string apertureConstructionName_Temp in apertureConstructionNames)
             {
                 ApertureConstruction apertureConstruction = ConstructionManager.GetApertureConstructions(apertureConstructionName_Temp)?.FirstOrDefault();
                 if(apertureConstruction == null)
+                {
+                    continue;
+                }
+
+                if(apertureType != ApertureType.Undefined && apertureType != apertureConstruction.ApertureType)
                 {
                     continue;
                 }
@@ -129,33 +166,6 @@ namespace SAM.Analytical.Tas
             }
 
             tuples.Sort((x, y) => x.Item3.CompareTo(y.Item3));
-            string initialApertureConstructionName = apertureConstructionCalculationData.ApertureConstructionName;
-            double initialPaneThermalTransmittance = double.NaN;
-            double initialFrameThermalTransmittance = double.NaN;
-            if (initialApertureConstructionName != null)
-            {
-                ApertureConstruction apertureConstruction = ConstructionManager.GetApertureConstructions(initialApertureConstructionName)?.FirstOrDefault();
-                if (apertureConstruction != null)
-                {
-                    List<TCD.Construction> constructions = apertureConstruction.ToTCD_Constructions(document, ConstructionManager);
-                    if (constructions != null)
-                    {
-                        TCD.Construction construction = null;
-
-                        construction = constructions.Find(x => x.name.EndsWith("-pane"));
-                        if (construction != null)
-                        {
-                            initialPaneThermalTransmittance = Query.ThermalTransmittance(construction, heatFlowDirection, external, Tolerance);
-                        }
-
-                        construction = constructions.Find(x => x.name.EndsWith("-frame"));
-                        if (construction != null)
-                        {
-                            initialFrameThermalTransmittance = Query.ThermalTransmittance(construction, heatFlowDirection, external, Tolerance);
-                        }
-                    }
-                }
-            }
 
             return new ApertureConstructionCalculationResult(Query.Source(), initialApertureConstructionName, initialPaneThermalTransmittance, initialFrameThermalTransmittance, tuples[0].Item1.Name, apertureConstructionCalculationData.PaneThermalTransmittance, apertureConstructionCalculationData.FrameThermalTransmittance, tuples[0].Item2, tuples[0].Item3);
         }
