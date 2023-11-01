@@ -6,6 +6,7 @@ namespace SAM.Analytical.Tas
 {
     public class ApertureConstructionCalculationData : IApertureConstructionCalculationData
     {
+        public ApertureType ApertureType { get; set; } = ApertureType.Undefined;
         public string ApertureConstructionName { get; set; }
         public HashSet<string> ApertureConstructionNames { get; set; }
         public double PaneThermalTransmittance { get; set; }
@@ -28,6 +29,7 @@ namespace SAM.Analytical.Tas
         {
             if(apertureConstructionCalculationData != null)
             {
+                ApertureType = apertureConstructionCalculationData.ApertureType;
                 ApertureConstructionName = apertureConstructionCalculationData.ApertureConstructionName;
                 ApertureConstructionNames = apertureConstructionCalculationData.ApertureConstructionNames == null ? null : new HashSet<string>(apertureConstructionCalculationData.ApertureConstructionNames);
                 PaneThermalTransmittance = apertureConstructionCalculationData.PaneThermalTransmittance;
@@ -38,8 +40,10 @@ namespace SAM.Analytical.Tas
             }
         }
 
-        public ApertureConstructionCalculationData(string apertureConstrcutionName, IEnumerable<string> apertureConstructionNames, double paneThermalTransmittance, double frameThermalTransmittance, HeatFlowDirection heatFlowDirection, bool external)
+        public ApertureConstructionCalculationData(ApertureType apertureType, string apertureConstrcutionName, IEnumerable<string> apertureConstructionNames, double paneThermalTransmittance, double frameThermalTransmittance, HeatFlowDirection heatFlowDirection, bool external)
         {
+            ApertureType = apertureType;
+            
             ApertureConstructionName = apertureConstrcutionName;
 
             if(apertureConstructionNames != null)
@@ -62,6 +66,11 @@ namespace SAM.Analytical.Tas
             if(jObject == null)
             {
                 return false;
+            }
+
+            if (jObject.ContainsKey("ApertureType"))
+            {
+                ApertureType = Core.Query.Enum<ApertureType>(jObject.Value<string>("ApertureType"));
             }
 
             if (jObject.ContainsKey("ApertureConstructionName"))
@@ -113,6 +122,11 @@ namespace SAM.Analytical.Tas
             if(ApertureConstructionName != null)
             {
                 jObject.Add("ApertureConstructionName", ApertureConstructionName);
+            }
+
+            if(ApertureType != ApertureType.Undefined)
+            {
+                jObject.Add("ApertureType", ApertureType.ToString());
             }
 
             if(ApertureConstructionNames != null)

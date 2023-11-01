@@ -253,13 +253,13 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
-            ApertureConstruction initialApertureConstruction = constructionManager.GetApertureConstructions(initialApertureConstructionName)?.FirstOrDefault();
+            ApertureConstruction initialApertureConstruction = constructionManager.GetApertureConstructions(apertureConstructionCalculationResult.ApertureType, initialApertureConstructionName)?.FirstOrDefault();
             if (initialApertureConstruction == null)
             {
                 return false;
             }
 
-            ApertureConstruction apertureConstruction = constructionManager.GetApertureConstructions(apertureConstructionName)?.FirstOrDefault();
+            ApertureConstruction apertureConstruction = constructionManager.GetApertureConstructions(apertureConstructionCalculationResult.ApertureType, apertureConstructionName)?.FirstOrDefault();
             if (apertureConstruction == null)
             {
                 return false;

@@ -11,7 +11,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 {
     public class TasCreateApertureConstructionCalculationData : GH_SAMVariableOutputParameterComponent
     {
-        private static double minThickness = Core.Tolerance.MacroDistance;
+        private static double minThickness = Tolerance.MacroDistance;
         private static double maxThickness = 1;
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -50,6 +50,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_apertureType", NickName = "_apertureType", Description = "SAM Analytical ApertureType", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_sourceConstructionName", NickName = "_sourceConstructionName", Description = "Source Construction Name", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_destinationConstructionNames", NickName = "_destinationConstructionNames", Description = "Destination Construction Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "paneThermalTransmittance_", NickName = "paneThermalTransmittance_", Description = "Pane Thermal Transmittance", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
@@ -91,6 +92,18 @@ namespace SAM.Analytical.Grasshopper.Tas
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
             int index;
+
+            ApertureType apertureType = ApertureType.Undefined;
+
+            string string_ApertureType = null;
+            index = Params.IndexOfInputParam("_apertureType");
+            if (index == -1 || !dataAccess.GetData(index, ref string_ApertureType) || string.IsNullOrWhiteSpace(string_ApertureType))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
+            apertureType = Core.Query.Enum<ApertureType>(string_ApertureType);
 
             string apertureConstructionName = null;
             index = Params.IndexOfInputParam("_sourceConstructionName");
@@ -165,7 +178,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 maxThickness_Temp = maxThickness;
             }
 
-            index = Params.IndexOfOutputParam("constructionCalculationData");
+            index = Params.IndexOfOutputParam("apertureConstructionCalculationData");
             if (index != -1)
             {
                 if (string.IsNullOrWhiteSpace(apertureConstructionName) || double.IsNaN(paneThermalTransmittance) || heatFlowDirection == HeatFlowDirection.Undefined)
@@ -174,7 +187,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     return;
                 }
 
-                ApertureConstructionCalculationData apertureConstructionCalculationData = new ApertureConstructionCalculationData(apertureConstructionName, apertureConstructionNames, paneThermalTransmittance, frameThermalTransmittance, heatFlowDirection, external);
+                ApertureConstructionCalculationData apertureConstructionCalculationData = new ApertureConstructionCalculationData(apertureType, apertureConstructionName, apertureConstructionNames, paneThermalTransmittance, frameThermalTransmittance, heatFlowDirection, external);
                 apertureConstructionCalculationData.ThicknessRange = new Range<double>(minThickness_Temp, maxThickness_Temp);
 
                 dataAccess.SetData(index, new GooThermalTransmittanceCalculationData(apertureConstructionCalculationData));

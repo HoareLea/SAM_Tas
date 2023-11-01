@@ -5,6 +5,8 @@ namespace SAM.Analytical.Tas
 {
     public class ApertureConstructionCalculationResult : Result, IApertureConstructionCalculationResult
     {
+        private ApertureType apertureType = ApertureType.Undefined;
+        
         private string initialApertureConstructionName = null;
         private double initialPaneThermalTransmittance = double.NaN;
         private double initialFrameThermalTransmittance = double.NaN;
@@ -27,6 +29,8 @@ namespace SAM.Analytical.Tas
         {
             if(apertureConstructionCalculationResult != null)
             {
+                apertureType = apertureConstructionCalculationResult.apertureType;
+
                 initialApertureConstructionName = apertureConstructionCalculationResult.initialApertureConstructionName;
                 initialPaneThermalTransmittance = apertureConstructionCalculationResult.initialPaneThermalTransmittance;
                 initialFrameThermalTransmittance = apertureConstructionCalculationResult.initialFrameThermalTransmittance;
@@ -42,6 +46,7 @@ namespace SAM.Analytical.Tas
 
         public ApertureConstructionCalculationResult(
             string source, 
+            ApertureType apertureType,
             string initialApertureConstructionName, 
             double initialPaneThermalTransmittance, 
             double initialFrameThermalTransmittance, 
@@ -52,6 +57,8 @@ namespace SAM.Analytical.Tas
             double calculatedFrameThermalTransmittance)
             : base(apertureConstructionName, source, apertureConstructionName)
         {
+            this.apertureType = apertureType;
+
             this.initialApertureConstructionName = initialApertureConstructionName;
             this.initialPaneThermalTransmittance = initialPaneThermalTransmittance;
             this.initialFrameThermalTransmittance = initialFrameThermalTransmittance;
@@ -62,6 +69,14 @@ namespace SAM.Analytical.Tas
 
             this.calculatedPaneThermalTransmittance = calculatedPaneThermalTransmittance;
             this.calculatedFrameThermalTransmittance = calculatedFrameThermalTransmittance;
+        }
+
+        public ApertureType ApertureType
+        {
+            get
+            {
+                return apertureType;
+            }
         }
 
         public string InitialApertureConstructionName
@@ -135,6 +150,11 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
+            if (jObject.ContainsKey("ApertureType"))
+            {
+                apertureType = Core.Query.Enum<ApertureType>(jObject.Value<string>("ApertureType"));
+            }
+
             if (jObject.ContainsKey("InitialApertureConstructionName"))
             {
                 initialApertureConstructionName = jObject.Value<string>("InitialApertureConstructionName");
@@ -184,6 +204,11 @@ namespace SAM.Analytical.Tas
             if(result == null )
             {
                 return result;
+            }
+
+            if(apertureType != ApertureType.Undefined)
+            {
+                result.Add("ApertureType", apertureType.ToString());
             }
 
             if (initialApertureConstructionName != null)

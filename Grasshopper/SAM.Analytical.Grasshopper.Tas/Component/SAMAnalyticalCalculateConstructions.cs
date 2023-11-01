@@ -179,7 +179,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if (!double.IsNaN(calculatedFrameThermalTransmittance))
                     {
-                        if(apertureConstructionCalculationResult.FrameThermalTransmittance > calculatedFrameThermalTransmittance - Tolerance.MacroDistance)
+                        if(apertureConstructionCalculationResult.FrameThermalTransmittance < calculatedFrameThermalTransmittance + Tolerance.MacroDistance)
                         {
                             thermalTransmittanceCalculationResults_Out.Add(thermalTransmittanceCalculationResult);
                             continue;
@@ -188,7 +188,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if (!double.IsNaN(calculatedPaneThermalTransmittance))
                     {
-                        if (apertureConstructionCalculationResult.PaneThermalTransmittance > calculatedPaneThermalTransmittance - Tolerance.MacroDistance)
+                        if (apertureConstructionCalculationResult.PaneThermalTransmittance < calculatedPaneThermalTransmittance + Tolerance.MacroDistance)
                         {
                             thermalTransmittanceCalculationResults_Out.Add(thermalTransmittanceCalculationResult);
                             continue;
