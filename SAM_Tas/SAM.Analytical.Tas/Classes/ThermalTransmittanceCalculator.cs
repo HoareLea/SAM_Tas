@@ -416,6 +416,16 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
+        public IThermalTransmittanceCalculationResult Calculate(IThermalTransmittanceCalculationData thermalTransmittanceCalculationData)
+        {
+            if (thermalTransmittanceCalculationData == null)
+            {
+                return null;
+            }
+
+            return Calculate(new List<IThermalTransmittanceCalculationData>() { thermalTransmittanceCalculationData })?.FirstOrDefault();
+        }
+
         public LayerThicknessCalculationResult Calculate(LayerThicknessCalculationData layerThicknessCalculationData)
         {
             if(layerThicknessCalculationData == null)
