@@ -60,7 +60,7 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            thermalTransmittance = Analytical.Tas.Query.ThermalTransmittance(panelType, out heatFlowDirection, out bool external_Temp);
+            thermalTransmittance = Query.ThermalTransmittance(panelType, out heatFlowDirection, out bool external_Temp);
             if (!double.IsNaN(thermalTransmittance))
             {
                 external = external_Temp;
