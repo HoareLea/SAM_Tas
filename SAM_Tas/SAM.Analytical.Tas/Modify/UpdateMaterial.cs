@@ -62,6 +62,11 @@ namespace SAM.Analytical.Tas
                     {
                         material_TCD.internalEmissivity = System.Convert.ToSingle(internalEmissivity);
                     }
+
+                    if (opaqueMaterial.TryGetValue(OpaqueMaterialParameter.IgnoreThermalTransmittanceCalculations, out bool ignoreThermalTransmittanceCalculations))
+                    {
+                        material_TCD.isBlind = ignoreThermalTransmittanceCalculations;
+                    }
                 }
                 else if (material is TransparentMaterial)
                 {

@@ -110,6 +110,11 @@ namespace SAM.Analytical.Tas
                 return double.NaN;
             }
 
+            if(construction.type == TCD.ConstructionTypes.tcdTransparentConstruction)
+            {
+                return values[6];
+            }
+
             int index = -1;
             switch (heatFlowDirection)
             {

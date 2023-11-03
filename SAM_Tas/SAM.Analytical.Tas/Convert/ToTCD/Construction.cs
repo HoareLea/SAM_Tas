@@ -62,6 +62,7 @@ namespace SAM.Analytical.Tas
                     }
 
                     IMaterial material = materialLibrary.GetMaterial(constructionLayer.Name);
+
                     TCD.material material_TCD = result.AddMaterial();
                     if(material_TCD != null)
                     {

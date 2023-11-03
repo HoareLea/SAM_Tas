@@ -41,7 +41,7 @@
                         material.externalLightReflectance, 
                         material.externalEmissivity, 
                         material.internalEmissivity, 
-                        false);
+                        material.isBlind == 1);
                     break;
 
                 case TBD.MaterialTypes.tcdOpaqueMaterial:

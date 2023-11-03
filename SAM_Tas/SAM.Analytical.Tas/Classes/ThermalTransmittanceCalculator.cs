@@ -162,7 +162,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            tuples.Sort((x, y) => x.Item3.CompareTo(y.Item3));
+            tuples.Sort((x, y) => y.Item3.CompareTo(x.Item3));
 
             return new ApertureConstructionCalculationResult(Query.Source(), apertureConstructionCalculationData.ApertureType, initialApertureConstructionName, initialPaneThermalTransmittance, initialFrameThermalTransmittance, tuples[0].Item1.Name, apertureConstructionCalculationData.PaneThermalTransmittance, apertureConstructionCalculationData.FrameThermalTransmittance, tuples[0].Item2, tuples[0].Item3);
         }
@@ -262,7 +262,7 @@ namespace SAM.Analytical.Tas
                 return new ConstructionCalculationResult(Query.Source(), initialConstructionName, initialThermalTransmittance, null, thermalTransmittance, double.NaN);
             }
 
-            tuples.Sort((x, y) => x.Item2.CompareTo(y.Item2));
+            tuples.Sort((x, y) => y.Item2.CompareTo(x.Item2));
 
             string constructionName = tuples[0].Item1?.name;
             double calculatedThermalTransmittance = tuples[0].Item2;
