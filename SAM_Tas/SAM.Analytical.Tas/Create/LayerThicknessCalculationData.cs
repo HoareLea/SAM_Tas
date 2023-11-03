@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Create
     {
-        public static LayerThicknessCalculationData LayerThicknessCalculationData(Construction construction, MaterialLibrary materialLibrary)
+        public static LayerThicknessCalculationData LayerThicknessCalculationData(this Construction construction, MaterialLibrary materialLibrary)
         {
             if(construction == null)
             {
