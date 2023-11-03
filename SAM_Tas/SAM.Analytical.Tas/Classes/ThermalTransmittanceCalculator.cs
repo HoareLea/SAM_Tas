@@ -108,18 +108,21 @@ namespace SAM.Analytical.Tas
 
                 double[] calculatedThermalTransmittances = new double[] { 0, 0 };
 
-                double calculatedPaneThermalTransmittance = double.NaN;
+                TCD.Construction construction_TCD = null;
 
-                double paneThermalTransmittance = apertureConstructionCalculationData.PaneThermalTransmittance;
-                if(!double.IsNaN(paneThermalTransmittance))
+                double calculatedPaneThermalTransmittance = double.NaN;
+                double displayPaneThermalTransmittance = double.NaN;
+                construction_TCD = constructions.Find(x => x.name.EndsWith("-pane"));
+                if (construction_TCD != null)
                 {
-                    TCD.Construction construction_TCD = constructions.Find(x => x.name.EndsWith("-pane"));
-                    if(construction_TCD != null)
+                    displayPaneThermalTransmittance = Query.ThermalTransmittance(construction_TCD, heatFlowDirection, external, Tolerance);
+                    if (!double.IsNaN(displayPaneThermalTransmittance))
                     {
-                        calculatedPaneThermalTransmittance = Query.ThermalTransmittance(construction_TCD, heatFlowDirection, external, Tolerance);
-                        if(!double.IsNaN(calculatedPaneThermalTransmittance))
+                        double paneThermalTransmittance = apertureConstructionCalculationData.PaneThermalTransmittance;
+                        if (!double.IsNaN(paneThermalTransmittance))
                         {
-                            if(calculatedPaneThermalTransmittance > paneThermalTransmittance + Tolerance)
+                            calculatedPaneThermalTransmittance = displayPaneThermalTransmittance;
+                            if (calculatedPaneThermalTransmittance > paneThermalTransmittance + Tolerance)
                             {
                                 continue;
                             }
@@ -129,17 +132,18 @@ namespace SAM.Analytical.Tas
                 }
 
                 double calculatedFrameThermalTransmittance = double.NaN;
-
-                double frameThermalTransmittance = apertureConstructionCalculationData.FrameThermalTransmittance;
-                if (!double.IsNaN(frameThermalTransmittance))
+                double displayFrameThermalTransmittance = double.NaN;
+                construction_TCD = constructions.Find(x => x.name.EndsWith("-frame"));
+                if (construction_TCD != null)
                 {
-                    TCD.Construction construction_TCD = constructions.Find(x => x.name.EndsWith("-frame"));
-                    if (construction_TCD != null)
+                    displayFrameThermalTransmittance = Query.ThermalTransmittance(construction_TCD, heatFlowDirection, external, Tolerance);
+                    if (!double.IsNaN(displayFrameThermalTransmittance))
                     {
-                        calculatedFrameThermalTransmittance = Query.ThermalTransmittance(construction_TCD, heatFlowDirection, external, Tolerance);
-                        if (!double.IsNaN(calculatedFrameThermalTransmittance))
+                        double frameThermalTransmittance = apertureConstructionCalculationData.FrameThermalTransmittance;
+                        if (!double.IsNaN(frameThermalTransmittance))
                         {
-                            if(calculatedFrameThermalTransmittance > frameThermalTransmittance + Tolerance)
+                            calculatedFrameThermalTransmittance = displayFrameThermalTransmittance;
+                            if (calculatedFrameThermalTransmittance > frameThermalTransmittance + Tolerance)
                             {
                                 continue;
                             }
@@ -150,7 +154,7 @@ namespace SAM.Analytical.Tas
 
                 double calculatedThermalTransmittance = calculatedThermalTransmittances[0] > 0 && calculatedThermalTransmittances[1] > 0 ? (0.8 * calculatedThermalTransmittances[0]) + (0.2 * calculatedThermalTransmittances[1]) : calculatedThermalTransmittances[0] + calculatedThermalTransmittances[1];
 
-                tuples.Add(new Tuple<ApertureConstruction, double, double, double>(apertureConstruction, calculatedPaneThermalTransmittance, calculatedFrameThermalTransmittance, calculatedThermalTransmittance));
+                tuples.Add(new Tuple<ApertureConstruction, double, double, double>(apertureConstruction, displayPaneThermalTransmittance, displayFrameThermalTransmittance, calculatedThermalTransmittance));
             }
 
             if (tuples == null || tuples.Count == 0)
