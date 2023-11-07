@@ -1,7 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
-using SAM.Core.Tas;
 using System;
 
 namespace SAM.Analytical.Grasshopper.Tas

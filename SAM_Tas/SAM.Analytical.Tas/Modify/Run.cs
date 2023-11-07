@@ -1,8 +1,5 @@
-﻿using SAM.Core;
-using SAM.Core.Tas;
+﻿using SAM.Core.Tas;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SAM.Analytical.Tas
 {

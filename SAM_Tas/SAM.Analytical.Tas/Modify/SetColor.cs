@@ -1,8 +1,4 @@
-﻿using SAM.Core;
-using SAM.Core.Tas;
-using System;
-using System.Collections.Generic;
-using TBD;
+﻿using TBD;
 
 namespace SAM.Analytical.Tas
 {

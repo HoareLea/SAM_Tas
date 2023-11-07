@@ -1,18 +1,15 @@
 ﻿using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Geometry.SpatialTrees;
 using Newtonsoft.Json.Linq;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
 using SAM.Core;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
-using SAM.Core.Tas.UKBR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TSD;
 
 namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 {

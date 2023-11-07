@@ -139,6 +139,7 @@
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\ApertureConstructionCalculationData.cs" />
     <Compile Include="Create\LayerThicknessCalculationData.cs" />
+    <Compile Include="Create\Log.cs" />
     <Compile Include="Create\TBD.cs" />
     <Compile Include="Create\ZoneGroup.cs" />
     <Compile Include="Create\InternalConditions.cs" />

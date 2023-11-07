@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SAM.Core.Tas.UKBR.v2021
+﻿namespace SAM.Core.Tas.UKBR.v2021
 {
     public static partial class Query
     {

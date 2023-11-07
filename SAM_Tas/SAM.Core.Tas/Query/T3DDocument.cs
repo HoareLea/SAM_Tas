@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace SAM.Core.Tas
+﻿namespace SAM.Core.Tas
 {
     public static partial class Query
     {

@@ -2,7 +2,6 @@
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
-using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 
