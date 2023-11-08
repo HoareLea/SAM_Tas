@@ -16,5 +16,18 @@ namespace SAM.Analytical.Tas
             Construction result = new Construction(construction.name, constructionLayers);
             return result;
         }
+
+        public static Construction ToSAM(this TCD.Construction construction)
+        {
+            if (construction == null)
+            {
+                return null;
+            }
+
+            List<ConstructionLayer> constructionLayers = ToSAM_ConstructionLayers(construction);
+
+            Construction result = new Construction(construction.name, constructionLayers);
+            return result;
+        }
     }
 }

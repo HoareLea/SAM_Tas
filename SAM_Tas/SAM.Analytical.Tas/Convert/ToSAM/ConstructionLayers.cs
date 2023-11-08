@@ -28,5 +28,30 @@ namespace SAM.Analytical.Tas
 
             return constructionLayers;
         }
+
+        public static List<ConstructionLayer> ToSAM_ConstructionLayers(this TCD.Construction construction)
+        {
+            if (construction == null)
+            {
+                return null;
+            }
+
+            List<TCD.material> materials = construction.Materials();
+
+            List<ConstructionLayer> constructionLayers = null;
+            if (materials != null)
+            {
+                constructionLayers = new List<ConstructionLayer>();
+                for (int i = 0; i < materials.Count; i++)
+                {
+                    TCD.material material = materials[i];
+                    double thickness = construction.materialWidth[i + 1];
+
+                    constructionLayers.Add(new ConstructionLayer(material.name, thickness));
+                }
+            }
+
+            return constructionLayers;
+        }
     }
 }

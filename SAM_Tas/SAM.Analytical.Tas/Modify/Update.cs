@@ -1,6 +1,7 @@
 ﻿using SAM.Core;
 using System.Collections.Generic;
 using System.Linq;
+using TCD;
 
 namespace SAM.Analytical.Tas
 {
@@ -155,7 +156,7 @@ namespace SAM.Analytical.Tas
             }
 
             string materialName = string.Format("{0}_{1}m", constructionLayer.Name, thickness);
-            IMaterial material = constructionManager.GetMaterial(materialName);
+            Core.IMaterial material = constructionManager.GetMaterial(materialName);
             if(material == null)
             {
                 material = constructionManager.GetMaterial(constructionLayer.Name);
@@ -268,6 +269,66 @@ namespace SAM.Analytical.Tas
             ApertureConstruction apertureConstruction_Updated = new ApertureConstruction(initialApertureConstruction.Guid, apertureConstruction, initialApertureConstruction.Name);
 
             return constructionManager.Add(apertureConstruction_Updated);
+        }
+
+        public static bool Update(this ConstructionManager constructionManager, TCD.ConstructionFolder constructionFolder, Category category = null)
+        {
+            if(constructionManager == null || constructionFolder == null)
+            {
+                return false;
+            }
+
+            bool result = false;
+
+            Category category_Temp = Core.Create.Category(constructionFolder.name, category);
+
+            int index;
+
+            index = 0;
+            TCD.Construction construction_TCD = constructionFolder.constructions(index);
+            while(construction_TCD != null)
+            {
+                Construction construction = construction_TCD.ToSAM();
+                if(construction != null)
+                {
+                    List<Core.IMaterial> materials = construction_TCD.ToSAM_Materials();
+                    if (materials != null)
+                    {
+                        materials.ForEach(x => constructionManager.Add(x));
+                    }
+
+                    constructionManager.Add(construction);
+                    result = true;
+                }
+
+                construction.SetValue(AnalyticalObjectParameter.Category, category_Temp);
+
+                index++;
+                construction_TCD = constructionFolder.constructions(index);
+            }
+
+            index = 0;
+            TCD.ConstructionFolder constructionFolder_Child = constructionFolder.childFolders(index);
+            while(constructionFolder_Child != null)
+            {
+                Update(constructionManager, constructionFolder, category_Temp);
+                index++;
+                constructionFolder_Child = constructionFolder.childFolders(index);
+            }
+
+            return result;
+        }
+
+        public static bool Update(this ConstructionManager constructionManager, TCD.MaterialFolder materialFolder)
+        {
+            if (constructionManager == null || materialFolder == null)
+            {
+                return false;
+            }
+
+            bool result = false;
+
+            return result;
         }
     }
 }

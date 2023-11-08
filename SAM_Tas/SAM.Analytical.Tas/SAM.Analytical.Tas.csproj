@@ -113,10 +113,12 @@
     <Compile Include="Classes\LayerThicknessCalculationResult.cs" />
     <Compile Include="Classes\LayerThicknessCalculationData.cs" />
     <Compile Include="Classes\ThermalTransmittanceCalculator.cs" />
+    <Compile Include="Convert\ToSAM\ConstructionManager.cs" />
     <Compile Include="Convert\ToSAM\AnalyticalModel.cs" />
     <Compile Include="Convert\ToSAM\ApertureConstruction.cs" />
     <Compile Include="Convert\ToSAM\Construction.cs" />
     <Compile Include="Convert\ToSAM\DesignDay.cs" />
+    <Compile Include="Convert\ToSAM\Materials.cs" />
     <Compile Include="Convert\ToSAM\MaterialLibrary.cs" />
     <Compile Include="Convert\ToSAM\Material.cs" />
     <Compile Include="Convert\ToSAM\PanelSimulationResult.cs" />
