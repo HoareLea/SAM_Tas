@@ -1,6 +1,8 @@
 ﻿using SAM.Core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using TBD;
 using TCD;
 
 namespace SAM.Analytical.Tas
@@ -271,7 +273,7 @@ namespace SAM.Analytical.Tas
             return constructionManager.Add(apertureConstruction_Updated);
         }
 
-        public static bool Update(this ConstructionManager constructionManager, TCD.ConstructionFolder constructionFolder, Category category = null)
+        public static bool Update(this ConstructionManager constructionManager, ConstructionFolder constructionFolder, Category category = null)
         {
             if(constructionManager == null || constructionFolder == null)
             {
@@ -284,13 +286,15 @@ namespace SAM.Analytical.Tas
 
             int index;
 
-            index = 0;
+            index = 1;
             TCD.Construction construction_TCD = constructionFolder.constructions(index);
             while(construction_TCD != null)
             {
                 Construction construction = construction_TCD.ToSAM();
                 if(construction != null)
                 {
+                    construction.SetValue(ParameterizedSAMObjectParameter.Category, category_Temp);
+
                     List<Core.IMaterial> materials = construction_TCD.ToSAM_Materials();
                     if (materials != null)
                     {
@@ -301,17 +305,15 @@ namespace SAM.Analytical.Tas
                     result = true;
                 }
 
-                construction.SetValue(AnalyticalObjectParameter.Category, category_Temp);
-
                 index++;
                 construction_TCD = constructionFolder.constructions(index);
             }
 
-            index = 0;
+            index = 1;
             TCD.ConstructionFolder constructionFolder_Child = constructionFolder.childFolders(index);
             while(constructionFolder_Child != null)
             {
-                Update(constructionManager, constructionFolder, category_Temp);
+                Update(constructionManager, constructionFolder_Child, category_Temp);
                 index++;
                 constructionFolder_Child = constructionFolder.childFolders(index);
             }
@@ -319,7 +321,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static bool Update(this ConstructionManager constructionManager, TCD.MaterialFolder materialFolder)
+        public static bool Update(this ConstructionManager constructionManager, MaterialFolder materialFolder, Category category = null)
         {
             if (constructionManager == null || materialFolder == null)
             {
@@ -327,6 +329,35 @@ namespace SAM.Analytical.Tas
             }
 
             bool result = false;
+
+            Category category_Temp = Core.Create.Category(materialFolder.name, category);
+
+            int index;
+
+            index = 1;
+            TCD.material material_TCD = materialFolder.materials(index);
+            while (material_TCD != null)
+            {
+                Core.IMaterial material = material_TCD.ToSAM();
+                if (material != null)
+                {
+                    material.SetValue(ParameterizedSAMObjectParameter.Category, category_Temp);
+                    constructionManager.Add(material);
+                    result = true;
+                }
+
+                index++;
+                material_TCD = materialFolder.materials(index);
+            }
+
+            index = 1;
+            TCD.MaterialFolder materialFolder_Child = materialFolder.childFolders(index);
+            while (materialFolder_Child != null)
+            {
+                Update(constructionManager, materialFolder_Child, category_Temp);
+                index++;
+                materialFolder_Child = materialFolder_Child.childFolders(index);
+            }
 
             return result;
         }

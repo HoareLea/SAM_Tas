@@ -137,6 +137,7 @@
     <Compile Include="Convert\ToTBD\Building.cs" />
     <Compile Include="Convert\ToTCD\Constructions.cs" />
     <Compile Include="Convert\ToTCD\Construction.cs" />
+    <Compile Include="Convert\ToTCD\ConstructionFolder.cs" />
     <Compile Include="Convert\ToTCD\Material.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\ApertureConstructionCalculationData.cs" />

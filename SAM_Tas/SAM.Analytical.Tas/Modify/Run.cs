@@ -1,11 +1,13 @@
-﻿using SAM.Core.Tas;
+﻿using SAM.Core;
+using SAM.Core.Tas;
 using System;
+using System.Dynamic;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-         public static bool Run(Action<TCD.Document> action)
+        public static bool Run(Action<TCD.Document> action)
         {
             if (action == null)
             {
@@ -31,6 +33,34 @@ namespace SAM.Analytical.Tas
             bool result = false;
             try
             {
+                result = Run(path, action);
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                if (System.IO.File.Exists(path))
+                {
+                    System.IO.File.Delete(path);
+                }
+            }
+
+            return result;
+        }
+
+        public static bool Run(string path, Action<TCD.Document> action)
+        {
+            if(string.IsNullOrWhiteSpace(path) || action == null)
+            {
+                return false;
+            }
+
+            bool result = false;
+
+            try
+            {
                 using (SAMTCDDocument sAMTCDDocument = new SAMTCDDocument())
                 {
                     if (sAMTCDDocument.Create(path))
@@ -46,12 +76,35 @@ namespace SAM.Analytical.Tas
             {
 
             }
-            finally
+
+            return result;
+        }
+
+        public static bool Run(string path, Action<SAMTCDDocument> action)
+        {
+            if (string.IsNullOrWhiteSpace(path) || action == null)
             {
-                if (System.IO.File.Exists(path))
+                return false;
+            }
+
+            bool result = false;
+
+            try
+            {
+                using (SAMTCDDocument sAMTCDDocument = new SAMTCDDocument())
                 {
-                    System.IO.File.Delete(path);
+                    if (sAMTCDDocument.Create(path))
+                    {
+                        TCD.Document document = sAMTCDDocument.Document;
+                        action.Invoke(sAMTCDDocument);
+                        result = true;
+
+                    }
                 }
+            }
+            catch
+            {
+
             }
 
             return result;

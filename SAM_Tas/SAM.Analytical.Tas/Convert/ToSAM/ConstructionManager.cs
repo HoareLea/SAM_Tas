@@ -35,8 +35,8 @@ namespace SAM.Analytical.Tas
 
             ConstructionManager result = new ConstructionManager();
 
-            result.Update(document.constructionRoot);
             result.Update(document.materialRoot);
+            result.Update(document.constructionRoot);
 
             return result;
         }

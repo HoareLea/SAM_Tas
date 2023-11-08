@@ -14,6 +14,13 @@ namespace SAM.Analytical.Tas
             List<ConstructionLayer> constructionLayers = ToSAM_ConstructionLayers(construction);
 
             Construction result = new Construction(construction.name, constructionLayers);
+            
+            string description = construction.description;
+            if (!string.IsNullOrEmpty(description))
+            {
+                result.SetValue(ConstructionParameter.Description, description);
+            }
+
             return result;
         }
 
@@ -27,6 +34,13 @@ namespace SAM.Analytical.Tas
             List<ConstructionLayer> constructionLayers = ToSAM_ConstructionLayers(construction);
 
             Construction result = new Construction(construction.name, constructionLayers);
+
+            string description = construction.description;
+            if(!string.IsNullOrEmpty(description))
+            {
+                result.SetValue(ConstructionParameter.Description, description);
+            }
+
             return result;
         }
     }
