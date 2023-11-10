@@ -9,7 +9,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static bool Update(this TBD.profile profile_TBD, Profile profile, double factor)
+        public static bool Update(this profile profile_TBD, Profile profile, double factor)
         {
             if (profile_TBD == null || profile == null || profile.Count == -1)
                 return false;
@@ -56,7 +56,7 @@ namespace SAM.Analytical.Tas
             return true;
         }
 
-        public static bool Update(this TBD.CoolingDesignDay coolingDesignDay_TBD, DesignDay designDay, TBD.dayType dayType = null, int repetitions = 30)
+        public static bool Update(this CoolingDesignDay coolingDesignDay_TBD, DesignDay designDay, dayType dayType = null, int repetitions = 30)
         {
             if(coolingDesignDay_TBD == null || designDay == null)
             {
@@ -72,7 +72,7 @@ namespace SAM.Analytical.Tas
             return true;
         }
 
-        public static bool Update(this TBD.HeatingDesignDay heatingDesignDay_TBD, DesignDay designDay, TBD.dayType dayType = null, int repetitions = 30)
+        public static bool Update(this HeatingDesignDay heatingDesignDay_TBD, DesignDay designDay, dayType dayType = null, int repetitions = 30)
         {
             if (heatingDesignDay_TBD == null || designDay == null)
             {
@@ -88,7 +88,7 @@ namespace SAM.Analytical.Tas
             return true;
         }
 
-        public static bool Update(this TBD.DesignDay designDay_TBD, DesignDay designDay, TBD.dayType dayType = null, int repetitions = 30)
+        public static bool Update(this TBD.DesignDay designDay_TBD, DesignDay designDay, dayType dayType = null, int repetitions = 30)
         {
             if(designDay_TBD == null)
             {
@@ -108,6 +108,12 @@ namespace SAM.Analytical.Tas
             return Weather.Tas.Modify.Update(designDay_TBD?.GetWeatherDay(), designDay);
         }
 
+        public static bool Update(this ConstructionFolder constructionFolder, ConstructionManager constructionManager, ApertureConstruction apertureConstruction)
+        {
+            List<TCD.Construction> constructions = Convert.ToTCD_Constructions(apertureConstruction, constructionFolder, constructionManager);
+            return constructions != null && constructions.Count > 0;
+        }
+        
         public static bool Update(this ConstructionManager constructionManager, IThermalTransmittanceCalculationResult thermalTransmittanceCalculationResult)
         {
             if (constructionManager == null || thermalTransmittanceCalculationResult == null)
