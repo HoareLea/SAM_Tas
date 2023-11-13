@@ -18,7 +18,13 @@ namespace SAM.Analytical.Tas
             string description = construction.description;
             if (!string.IsNullOrEmpty(description))
             {
-                result.SetValue(ConstructionParameter.Description, description);
+                result.SetValue(Analytical.ConstructionParameter.Description, description);
+            }
+
+            double additionalHeatTransfer = construction.additionalHeatTransfer;
+            if (!double.IsNaN(additionalHeatTransfer) && additionalHeatTransfer != 0)
+            {
+                result.SetValue(ConstructionParameter.AdditionalHeatTransfer, additionalHeatTransfer);
             }
 
             return result;
@@ -38,7 +44,13 @@ namespace SAM.Analytical.Tas
             string description = construction.description;
             if(!string.IsNullOrEmpty(description))
             {
-                result.SetValue(ConstructionParameter.Description, description);
+                result.SetValue(Analytical.ConstructionParameter.Description, description);
+            }
+
+            double additionalHeatTransfer = construction.additionalHeatTransfer;
+            if(!double.IsNaN(additionalHeatTransfer) && additionalHeatTransfer != 0)
+            {
+                result.SetValue(ConstructionParameter.AdditionalHeatTransfer, additionalHeatTransfer);
             }
 
             return result;

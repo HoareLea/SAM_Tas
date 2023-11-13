@@ -52,7 +52,7 @@ namespace SAM.Analytical.Tas
             }
 
             PanelType panelType = PanelType.Undefined;
-            if (construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string string_PanelType))
+            if (construction.TryGetValue(Analytical.ConstructionParameter.DefaultPanelType, out string string_PanelType))
             {
                 if (!Core.Query.TryGetEnum(string_PanelType, out panelType))
                 {

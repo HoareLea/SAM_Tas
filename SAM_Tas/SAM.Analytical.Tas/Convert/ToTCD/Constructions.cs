@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            if (!apertureConstruction.TryGetValue(ApertureConstructionParameter.Description, out string description) || string.IsNullOrWhiteSpace(description))
+            if (!apertureConstruction.TryGetValue(Analytical.ApertureConstructionParameter.Description, out string description) || string.IsNullOrWhiteSpace(description))
             {
                 description = null;
             }
@@ -72,6 +72,11 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
+                if(apertureConstruction.TryGetValue(ApertureConstructionParameter.AdditionalHeatTransfer, out double additionalHeatTransfer) && !double.IsNaN(additionalHeatTransfer))
+                {
+                    construction.additionalHeatTransfer = System.Convert.ToSingle(additionalHeatTransfer);
+                }
+
                 result.Add(construction);
             }
 
@@ -98,6 +103,11 @@ namespace SAM.Analytical.Tas
                         Modify.UpdateMaterial(material_TCD, material);
                         material_TCD.width = System.Convert.ToSingle(constructionLayer.Thickness);
                     }
+                }
+
+                if (apertureConstruction.TryGetValue(ApertureConstructionParameter.AdditionalHeatTransfer, out double additionalHeatTransfer) && !double.IsNaN(additionalHeatTransfer))
+                {
+                    construction.additionalHeatTransfer = System.Convert.ToSingle(additionalHeatTransfer);
                 }
 
                 result.Add(construction);

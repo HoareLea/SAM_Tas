@@ -107,7 +107,7 @@ namespace SAM.Analytical.Tas
                             //Update Element
 
                             //Thickness
-                            double thickness = construction.GetValue<double>(ConstructionParameter.DefaultThickness);
+                            double thickness = construction.GetValue<double>(Analytical.ConstructionParameter.DefaultThickness);
                             if (double.IsNaN(thickness) || thickness == 0)
                                 thickness = construction.GetThickness();
 
@@ -119,7 +119,7 @@ namespace SAM.Analytical.Tas
 
                             //Colour
                             System.Drawing.Color color = global::System.Drawing.Color.Empty;
-                            if (construction.TryGetValue(ConstructionParameter.Color, out color))
+                            if (construction.TryGetValue(Analytical.ConstructionParameter.Color, out color))
                                 element.colour = Core.Convert.ToUint(color);
 
                             //Transparent
@@ -128,7 +128,7 @@ namespace SAM.Analytical.Tas
                             if (materialType == MaterialType.Undefined)
                             {
                                 materialType = MaterialType.Opaque;
-                                if(construction.TryGetValue(ConstructionParameter.Transparent, out transparent))
+                                if(construction.TryGetValue(Analytical.ConstructionParameter.Transparent, out transparent))
                                     element.transparent = transparent;
                             }
                             else
@@ -138,7 +138,7 @@ namespace SAM.Analytical.Tas
 
                             //InternalShadows
                             bool internalShadows = false;
-                            if(construction.TryGetValue(ConstructionParameter.IsInternalShadow, out internalShadows))
+                            if(construction.TryGetValue(Analytical.ConstructionParameter.IsInternalShadow, out internalShadows))
                                 element.internalShadows = internalShadows;
                             else
                                 element.internalShadows = element.transparent;
@@ -155,7 +155,7 @@ namespace SAM.Analytical.Tas
                             else
                             {
                                 
-                                if(!construction.TryGetValue(ConstructionParameter.DefaultPanelType, out string_BEType))
+                                if(!construction.TryGetValue(Analytical.ConstructionParameter.DefaultPanelType, out string_BEType))
                                     string_BEType = null;
                             }
 
@@ -193,12 +193,12 @@ namespace SAM.Analytical.Tas
 
                             //Ground
                             bool ground = false;
-                            if (construction.TryGetValue(ConstructionParameter.IsGround, out ground))
+                            if (construction.TryGetValue(Analytical.ConstructionParameter.IsGround, out ground))
                                 element.ground = ground;
 
                             //Air
                             bool air = false;
-                            if(construction.TryGetValue(ConstructionParameter.IsAir, out air))
+                            if(construction.TryGetValue(Analytical.ConstructionParameter.IsAir, out air))
                                 element.ghost = air;
 
                             List<Panel> panels = adjacencyCluster.GetPanels(construction);
@@ -247,7 +247,7 @@ namespace SAM.Analytical.Tas
                             else
                             {
                                 System.Drawing.Color color = global::System.Drawing.Color.Empty;
-                                if (!apertureConstruction.TryGetValue(ApertureConstructionParameter.Color, out color))
+                                if (!apertureConstruction.TryGetValue(Analytical.ApertureConstructionParameter.Color, out color))
                                     color = Analytical.Query.Color(apertureConstruction.ApertureType);
 
                                 if (color != global::System.Drawing.Color.Empty)
@@ -265,7 +265,7 @@ namespace SAM.Analytical.Tas
                             if (materialType == MaterialType.Undefined)
                             {
                                 materialType = MaterialType.Opaque;
-                                if (apertureConstruction.TryGetValue(ApertureConstructionParameter.Transparent, out transparent))
+                                if (apertureConstruction.TryGetValue(Analytical.ApertureConstructionParameter.Transparent, out transparent))
                                     window.transparent = transparent;
                             }
                             else
@@ -279,7 +279,7 @@ namespace SAM.Analytical.Tas
                                 //InternalShadows
                                 window.internalShadows = false; //Requested by Michal 2021.03.01
                                 bool internalShadows = false;
-                                if (apertureConstruction.TryGetValue(ApertureConstructionParameter.IsInternalShadow, out internalShadows))
+                                if (apertureConstruction.TryGetValue(Analytical.ApertureConstructionParameter.IsInternalShadow, out internalShadows))
                                 {
                                     window.internalShadows = internalShadows;
                                 }
@@ -297,7 +297,7 @@ namespace SAM.Analytical.Tas
                             //FrameWidth
                             double frameWidth = double.NaN;
                             
-                            if(apertureConstruction.TryGetValue(ApertureConstructionParameter.DefaultFrameWidth, out frameWidth))
+                            if(apertureConstruction.TryGetValue(Analytical.ApertureConstructionParameter.DefaultFrameWidth, out frameWidth))
                             {
                                 window.frameWidth = frameWidth;
                             }

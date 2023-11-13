@@ -146,6 +146,8 @@
     <Compile Include="Create\TBD.cs" />
     <Compile Include="Create\ZoneGroup.cs" />
     <Compile Include="Create\InternalConditions.cs" />
+    <Compile Include="Enums\Parameters\ApertureConstructionParameter.cs" />
+    <Compile Include="Enums\Parameters\ConstructionParameter.cs" />
     <Compile Include="Enums\SizingType.cs" />
     <Compile Include="Enums\Parameters\ApertureParameter.cs" />
     <Compile Include="Enums\Parameters\PanelParameter.cs" />

@@ -160,7 +160,7 @@ namespace SAM.Analytical.Tas
                     if (!dictionary_Construction.TryGetValue(construction_TBD.GUID, out Construction construction) || construction == null)
                     {
                         construction = construction_TBD.ToSAM();
-                        construction.SetValue(ConstructionParameter.DefaultPanelType, panelType);
+                        construction.SetValue(Analytical.ConstructionParameter.DefaultPanelType, panelType);
                         dictionary_Construction[construction_TBD.GUID] = construction;
                     }
 

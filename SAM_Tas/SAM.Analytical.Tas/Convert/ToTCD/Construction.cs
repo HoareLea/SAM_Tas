@@ -45,11 +45,15 @@ namespace SAM.Analytical.Tas
 
             result.type = transparent ? TCD.ConstructionTypes.tcdTransparentConstruction : TCD.ConstructionTypes.tcdOpaqueConstruction;
 
-            if(construction.TryGetValue(ConstructionParameter.Description, out string description) && !string.IsNullOrWhiteSpace(description))
+            if(construction.TryGetValue(Analytical.ConstructionParameter.Description, out string description) && !string.IsNullOrWhiteSpace(description))
             {
                 result.description = description;
             }
 
+            if (construction.TryGetValue(ConstructionParameter.AdditionalHeatTransfer, out double additionalHeatTransfer) && !double.IsNaN(additionalHeatTransfer))
+            {
+                result.additionalHeatTransfer = System.Convert.ToSingle(additionalHeatTransfer);
+            }
 
             List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
             if(constructionLayers != null && constructionLayers.Count != 0)
