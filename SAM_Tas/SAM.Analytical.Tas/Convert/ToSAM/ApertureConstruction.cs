@@ -44,14 +44,14 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static ApertureConstruction ToSAM_ApertureConstruction(this TCD.Construction construction, ApertureType apertureType)
+        public static ApertureConstruction ToSAM_ApertureConstruction(this TCD.Construction construction, ApertureType apertureType, double tolerance = Core.Tolerance.MacroDistance)
         {
             if (construction == null)
             {
                 return null;
             }
 
-            List<ConstructionLayer> constructionLayers = ToSAM_ConstructionLayers(construction);
+            List<ConstructionLayer> constructionLayers = ToSAM_ConstructionLayers(construction, tolerance);
 
             List<ConstructionLayer> constructionLayers_Pane = null;
             List<ConstructionLayer> constructionLayers_Frame = null;

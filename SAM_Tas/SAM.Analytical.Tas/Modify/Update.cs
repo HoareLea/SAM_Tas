@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using TBD;
 using TCD;
 
@@ -114,17 +115,22 @@ namespace SAM.Analytical.Tas
             return constructions != null && constructions.Count > 0;
         }
         
-        public static bool Update(this ConstructionManager constructionManager, IThermalTransmittanceCalculationResult thermalTransmittanceCalculationResult)
+        public static bool Update(this ConstructionManager constructionManager, IThermalTransmittanceCalculationResult thermalTransmittanceCalculationResult, double tolerance = Tolerance.MacroDistance)
         {
             if (constructionManager == null || thermalTransmittanceCalculationResult == null)
             {
                 return false;
             }
 
+            if(thermalTransmittanceCalculationResult is LayerThicknessCalculationResult)
+            {
+                return Update(constructionManager, (LayerThicknessCalculationResult)thermalTransmittanceCalculationResult, tolerance);
+            }
+
             return Update(constructionManager, thermalTransmittanceCalculationResult as dynamic);
         }
 
-        public static bool Update(this ConstructionManager constructionManager, LayerThicknessCalculationResult layerThicknessCalculationResult)
+        public static bool Update(this ConstructionManager constructionManager, LayerThicknessCalculationResult layerThicknessCalculationResult, double tolerance = Tolerance.MacroDistance)
         {
             if(constructionManager == null || layerThicknessCalculationResult == null)
             {
@@ -137,9 +143,9 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
-            thickness = Core.Query.Round(thickness, Tolerance.MacroDistance);
+            thickness = Core.Query.Round(thickness, tolerance);
 
-            Construction construction = constructionManager.GetConstructions(layerThicknessCalculationResult.ConstructionName, Core.TextComparisonType.Equals, true)?.FirstOrDefault();
+            Construction construction = constructionManager.GetConstructions(layerThicknessCalculationResult.ConstructionName, TextComparisonType.Equals, true)?.FirstOrDefault();
             if(construction == null)
             {
                 return false;
@@ -279,7 +285,7 @@ namespace SAM.Analytical.Tas
             return constructionManager.Add(apertureConstruction_Updated);
         }
 
-        public static bool Update(this ConstructionManager constructionManager, ConstructionFolder constructionFolder, Category category = null)
+        public static bool Update(this ConstructionManager constructionManager, ConstructionFolder constructionFolder, Category category = null, double tolerance = Tolerance.MacroDistance)
         {
             if(constructionManager == null || constructionFolder == null)
             {
@@ -296,7 +302,7 @@ namespace SAM.Analytical.Tas
             TCD.Construction construction_TCD = constructionFolder.constructions(index);
             while(construction_TCD != null)
             {
-                Construction construction = construction_TCD.ToSAM();
+                Construction construction = construction_TCD.ToSAM(tolerance);
                 if(construction != null)
                 {
                     construction.SetValue(ParameterizedSAMObjectParameter.Category, category_Temp);
@@ -319,7 +325,7 @@ namespace SAM.Analytical.Tas
             TCD.ConstructionFolder constructionFolder_Child = constructionFolder.childFolders(index);
             while(constructionFolder_Child != null)
             {
-                Update(constructionManager, constructionFolder_Child, category_Temp);
+                Update(constructionManager, constructionFolder_Child, category_Temp, tolerance);
                 index++;
                 constructionFolder_Child = constructionFolder.childFolders(index);
             }

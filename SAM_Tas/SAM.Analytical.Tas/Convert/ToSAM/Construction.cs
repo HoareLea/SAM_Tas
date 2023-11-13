@@ -24,14 +24,14 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static Construction ToSAM(this TCD.Construction construction)
+        public static Construction ToSAM(this TCD.Construction construction, double tolerance = Core.Tolerance.MicroDistance)
         {
             if (construction == null)
             {
                 return null;
             }
 
-            List<ConstructionLayer> constructionLayers = ToSAM_ConstructionLayers(construction);
+            List<ConstructionLayer> constructionLayers = ToSAM_ConstructionLayers(construction, tolerance);
 
             Construction result = new Construction(construction.name, constructionLayers);
 

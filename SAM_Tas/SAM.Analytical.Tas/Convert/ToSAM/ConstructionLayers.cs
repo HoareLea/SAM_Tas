@@ -33,7 +33,7 @@ namespace SAM.Analytical.Tas
             return constructionLayers;
         }
 
-        public static List<ConstructionLayer> ToSAM_ConstructionLayers(this TCD.Construction construction)
+        public static List<ConstructionLayer> ToSAM_ConstructionLayers(this TCD.Construction construction, double tolerance = Core.Tolerance.MacroDistance)
         {
             if (construction == null)
             {
@@ -54,6 +54,8 @@ namespace SAM.Analytical.Tas
                     {
                         thickness = material.width;
                     }
+
+                    thickness = Core.Query.Round(thickness, tolerance);
 
                     constructionLayers.Add(new ConstructionLayer(material.name, thickness));
                 }

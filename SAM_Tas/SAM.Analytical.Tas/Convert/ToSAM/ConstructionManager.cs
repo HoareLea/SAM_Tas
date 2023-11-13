@@ -4,29 +4,29 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
-        public static ConstructionManager ToSAM_ConstructionManager(string path_TCD)
+        public static ConstructionManager ToSAM_ConstructionManager(string path_TCD, double tolerance = Core.Tolerance.MacroDistance)
         {
             ConstructionManager result = null;
             using (SAMTCDDocument sAMTCDDocument = new SAMTCDDocument(path_TCD))
             {
-                result = ToSAM(sAMTCDDocument);
+                result = ToSAM(sAMTCDDocument, tolerance);
             }
 
             return result;
         }
 
-        public static ConstructionManager ToSAM(this SAMTCDDocument sAMTCDDocument)
+        public static ConstructionManager ToSAM(this SAMTCDDocument sAMTCDDocument, double tolerance = Core.Tolerance.MacroDistance)
         {
             if(sAMTCDDocument == null)
             {
                 return null;
             }
 
-            return ToSAM(sAMTCDDocument.Document);
+            return ToSAM(sAMTCDDocument.Document, tolerance);
 
         }
 
-        public static ConstructionManager ToSAM(this TCD.Document document)
+        public static ConstructionManager ToSAM(this TCD.Document document, double tolerance = Core.Tolerance.MacroDistance)
         {
             if(document == null)
             {
@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas
             ConstructionManager result = new ConstructionManager();
 
             result.Update(document.materialRoot);
-            result.Update(document.constructionRoot);
+            result.Update(document.constructionRoot, tolerance: tolerance);
 
             return result;
         }

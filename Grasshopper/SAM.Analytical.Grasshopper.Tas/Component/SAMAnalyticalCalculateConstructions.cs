@@ -10,6 +10,8 @@ namespace SAM.Analytical.Grasshopper.Tas
 {
     public class SAMAnalyticalCalculateConstructions : GH_SAMVariableOutputParameterComponent
     {
+        private double tolerance = 0.0001;
+        
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
@@ -120,7 +122,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 constructionManager = new ConstructionManager(constructionManager);
                 foreach(IThermalTransmittanceCalculationResult layerThicknessCalculationResult in thermalTransmittanceCalculationResults)
                 {
-                    constructionManager.Update(layerThicknessCalculationResult);
+                    constructionManager.Update(layerThicknessCalculationResult, tolerance);
                 }
             }
 
