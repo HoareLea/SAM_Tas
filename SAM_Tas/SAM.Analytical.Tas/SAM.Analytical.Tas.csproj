@@ -135,6 +135,7 @@
     <Compile Include="Convert\ToSAM\NCMNameCollection.cs" />
     <Compile Include="Convert\ToT3D\New\Window.cs" />
     <Compile Include="Convert\ToTBD\Building.cs" />
+    <Compile Include="Convert\ToTCD\MaterialFolder.cs" />
     <Compile Include="Convert\ToTCD\Constructions.cs" />
     <Compile Include="Convert\ToTCD\Construction.cs" />
     <Compile Include="Convert\ToTCD\ConstructionFolder.cs" />
