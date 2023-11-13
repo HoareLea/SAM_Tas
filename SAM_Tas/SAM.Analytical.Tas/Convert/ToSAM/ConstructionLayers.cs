@@ -21,6 +21,10 @@ namespace SAM.Analytical.Tas
                 {
                     TBD.material material = materials[i];
                     double thickness = construction.materialWidth[i + 1];
+                    if (double.IsNaN(thickness) || thickness == 0.0)
+                    {
+                        thickness = material.width;
+                    }
 
                     constructionLayers.Add(new ConstructionLayer(material.name, thickness));
                 }
@@ -46,6 +50,10 @@ namespace SAM.Analytical.Tas
                 {
                     TCD.material material = materials[i];
                     double thickness = construction.materialWidth[i + 1];
+                    if(double.IsNaN(thickness) || thickness == 0.0)
+                    {
+                        thickness = material.width;
+                    }
 
                     constructionLayers.Add(new ConstructionLayer(material.name, thickness));
                 }
