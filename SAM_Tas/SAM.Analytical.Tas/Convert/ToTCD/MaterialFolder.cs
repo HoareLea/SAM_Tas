@@ -42,6 +42,11 @@ namespace SAM.Analytical.Tas
             {
                 if(result.name == category.Name)
                 {
+                    if (category.SubCategory != null)
+                    {
+                        return ToTCD_MaterialFolder(category.SubCategory, result);
+                    }
+
                     return result;
                 }
 

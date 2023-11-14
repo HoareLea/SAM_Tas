@@ -149,7 +149,7 @@ namespace SAM.Analytical.Tas
                     material_TCD.width = System.Convert.ToSingle(thickness);
                 }
 
-                if (material.TryGetValue(MaterialParameter.VapourDiffusionFactor, out double vapourDiffusionFactor) && !double.IsNaN(vapourDiffusionFactor))
+                if (material.TryGetValue(Analytical.MaterialParameter.VapourDiffusionFactor, out double vapourDiffusionFactor) && !double.IsNaN(vapourDiffusionFactor))
                 {
                     material_TCD.vapourDiffusionFactor = System.Convert.ToSingle(vapourDiffusionFactor);
                 }
@@ -168,7 +168,7 @@ namespace SAM.Analytical.Tas
             material.description = gasMaterial.Description;
             material.width = System.Convert.ToSingle(gasMaterial.GetValue<double>(Core.MaterialParameter.DefaultThickness));
             material.convectionCoefficient = System.Convert.ToSingle(gasMaterial.GetValue<double>(GasMaterialParameter.HeatTransferCoefficient));
-            material.vapourDiffusionFactor = System.Convert.ToSingle(gasMaterial.GetValue<double>(MaterialParameter.VapourDiffusionFactor));
+            material.vapourDiffusionFactor = System.Convert.ToSingle(gasMaterial.GetValue<double>(Analytical.MaterialParameter.VapourDiffusionFactor));
 
             return true;
         }
@@ -183,7 +183,7 @@ namespace SAM.Analytical.Tas
             material.description = transparentMaterial.Description;
             material.width = System.Convert.ToSingle(transparentMaterial.GetValue<double>(Core.MaterialParameter.DefaultThickness));
             material.conductivity = System.Convert.ToSingle(transparentMaterial.ThermalConductivity);
-            material.vapourDiffusionFactor = System.Convert.ToSingle(transparentMaterial.GetValue<double>(MaterialParameter.VapourDiffusionFactor));
+            material.vapourDiffusionFactor = System.Convert.ToSingle(transparentMaterial.GetValue<double>(Analytical.MaterialParameter.VapourDiffusionFactor));
             material.solarTransmittance = System.Convert.ToSingle(transparentMaterial.GetValue<double>(TransparentMaterialParameter.SolarTransmittance));
             material.externalSolarReflectance = System.Convert.ToSingle(transparentMaterial.GetValue<double>(TransparentMaterialParameter.ExternalSolarReflectance));
             material.internalSolarReflectance = System.Convert.ToSingle(transparentMaterial.GetValue<double>(TransparentMaterialParameter.InternalSolarReflectance));
@@ -213,7 +213,7 @@ namespace SAM.Analytical.Tas
             material.conductivity = System.Convert.ToSingle(opaqueMaterial.ThermalConductivity);
             material.specificHeat = System.Convert.ToSingle(opaqueMaterial.SpecificHeatCapacity);
             material.density = System.Convert.ToSingle(opaqueMaterial.Density);
-            material.vapourDiffusionFactor = System.Convert.ToSingle(opaqueMaterial.GetValue<double>(MaterialParameter.VapourDiffusionFactor));
+            material.vapourDiffusionFactor = System.Convert.ToSingle(opaqueMaterial.GetValue<double>(Analytical.MaterialParameter.VapourDiffusionFactor));
             material.externalSolarReflectance = System.Convert.ToSingle(opaqueMaterial.GetValue<double>(OpaqueMaterialParameter.ExternalSolarReflectance));
             material.internalSolarReflectance = System.Convert.ToSingle(opaqueMaterial.GetValue<double>(OpaqueMaterialParameter.InternalSolarReflectance));
             material.externalLightReflectance = System.Convert.ToSingle(opaqueMaterial.GetValue<double>(OpaqueMaterialParameter.ExternalLightReflectance));

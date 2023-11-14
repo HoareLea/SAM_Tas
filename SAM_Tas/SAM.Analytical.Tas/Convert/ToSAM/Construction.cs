@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static Construction ToSAM(this TCD.Construction construction, double tolerance = Core.Tolerance.MicroDistance)
+        public static Construction ToSAM(this TCD.Construction construction, double tolerance = Core.Tolerance.MacroDistance)
         {
             if (construction == null)
             {

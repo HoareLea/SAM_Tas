@@ -89,7 +89,7 @@
             return result;
         }
 
-        public static Core.IMaterial ToSAM(this TCD.material material)
+        public static Core.IMaterial ToSAM(this TCD.material material, string name = null)
         {
             if (material == null)
             {
@@ -101,7 +101,7 @@
             {
                 case TBD.MaterialTypes.tcdGasLayer:
                     result = Analytical.Create.GasMaterial(
-                        material.name,
+                        name == null ? material.name : name,
                         string.Empty,
                         material.name,
                         material.description,
@@ -113,7 +113,7 @@
 
                 case TBD.MaterialTypes.tcdOpaqueLayer:
                     result = Analytical.Create.OpaqueMaterial(
-                        material.name,
+                        name == null ? material.name : name,
                         string.Empty,
                         material.name,
                         material.description,
@@ -133,7 +133,7 @@
 
                 case TBD.MaterialTypes.tcdOpaqueMaterial:
                     result = Analytical.Create.OpaqueMaterial(
-                        material.name,
+                        name == null ? material.name : name,
                         string.Empty,
                         material.name,
                         material.description,
@@ -153,7 +153,7 @@
 
                 case TBD.MaterialTypes.tcdTransparentLayer:
                     result = Analytical.Create.TransparentMaterial(
-                        material.name,
+                        name == null ? material.name : name,
                         string.Empty,
                         material.name,
                         material.description,

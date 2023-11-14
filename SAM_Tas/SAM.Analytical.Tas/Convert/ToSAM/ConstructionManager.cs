@@ -33,10 +33,13 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            ConstructionManager result = new ConstructionManager();
+            TCDDatabase tCDDatabase = new TCDDatabase(document);
 
-            result.Update(document.materialRoot);
-            result.Update(document.constructionRoot, tolerance: tolerance);
+            ConstructionManager result = new ConstructionManager();
+            tCDDatabase.Update(result);
+
+            //result.Update(document.materialRoot);
+            //result.Update(document.constructionRoot, tolerance: tolerance);
 
             return result;
         }
