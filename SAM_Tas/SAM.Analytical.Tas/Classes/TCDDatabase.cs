@@ -1,8 +1,6 @@
 ﻿using SAM.Core;
 using System.Collections.Generic;
-using System.Linq;
 using TCD;
-using TPD;
 
 namespace SAM.Analytical.Tas
 {
@@ -197,7 +195,12 @@ namespace SAM.Analytical.Tas
 
             }
 
-            Construction result = new Construction(uniqueName, constructionLayers);   
+            Construction result = new Construction(uniqueName, constructionLayers);
+            
+            if(constructionCategories != null && constructionCategories.TryGetValue(construction.GUID, out Category category) && category != null)
+            {
+                result.SetValue(ParameterizedSAMObjectParameter.Category, new Category(category));
+            }
 
             string description = construction.description;
             if (!string.IsNullOrEmpty(description))
@@ -237,6 +240,11 @@ namespace SAM.Analytical.Tas
 
             result = material.ToSAM(uniqueName);
             constructionManager.Add(result);
+
+            if (materialCategories != null && materialCategories.TryGetValue(uniqueName, out Category category) && category != null)
+            {
+                result.SetValue(ParameterizedSAMObjectParameter.Category, new Category(category));
+            }
 
             return result;
         }
