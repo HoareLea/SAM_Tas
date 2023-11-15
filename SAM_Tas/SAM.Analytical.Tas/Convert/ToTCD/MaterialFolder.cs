@@ -11,7 +11,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            if(category.Name == document.constructionRoot.name)
+            if(category.Name == document.materialRoot.name)
             {
                 if(category.SubCategory == null)
                 {

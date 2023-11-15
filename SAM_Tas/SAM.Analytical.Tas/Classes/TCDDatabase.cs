@@ -239,12 +239,13 @@ namespace SAM.Analytical.Tas
             }
 
             result = material.ToSAM(uniqueName);
-            constructionManager.Add(result);
 
-            if (materialCategories != null && materialCategories.TryGetValue(uniqueName, out Category category) && category != null)
+            if (materialCategories != null && materialCategories.TryGetValue(material.UniqueId(), out Category category) && category != null)
             {
                 result.SetValue(ParameterizedSAMObjectParameter.Category, new Category(category));
             }
+
+            constructionManager.Add(result);
 
             return result;
         }
