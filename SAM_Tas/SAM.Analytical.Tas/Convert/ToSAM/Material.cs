@@ -1,4 +1,6 @@
-﻿namespace SAM.Analytical.Tas
+﻿using SAM.Core;
+
+namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
@@ -18,10 +20,17 @@
                         string.Empty, 
                         material.name, 
                         material.description, 
+                        material.conductivity,
+                        material.specificHeat,
+                        material.density,
+                        material.dynamicViscosity,
                         material.width, 
                         material.vapourDiffusionFactor, 
                         double.NaN);
                     result.SetValue(GasMaterialParameter.HeatTransferCoefficient, material.convectionCoefficient);
+
+
+
                     break;
 
                 case TBD.MaterialTypes.tcdOpaqueLayer:
@@ -105,6 +114,10 @@
                         string.Empty,
                         material.name,
                         material.description,
+                        material.conductivity,
+                        material.specificHeat,
+                        material.density,
+                        material.dynamicViscosity,
                         material.width,
                         material.vapourDiffusionFactor,
                         double.NaN);
