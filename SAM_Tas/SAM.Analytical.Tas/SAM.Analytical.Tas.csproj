@@ -110,6 +110,8 @@
     <Compile Include="Classes\ConstructionCalculationData.cs" />
     <Compile Include="Classes\ApertureConstructionCalculationResult.cs" />
     <Compile Include="Classes\ConstructionCalculationResult.cs" />
+    <Compile Include="Classes\GlazingCalculationResult.cs" />
+    <Compile Include="Classes\GlazingCalculationData.cs" />
     <Compile Include="Classes\TCDDatabase.cs" />
     <Compile Include="Classes\LayerThicknessCalculationResult.cs" />
     <Compile Include="Classes\LayerThicknessCalculationData.cs" />

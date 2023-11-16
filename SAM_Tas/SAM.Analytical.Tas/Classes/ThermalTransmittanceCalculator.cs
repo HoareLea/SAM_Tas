@@ -1,4 +1,5 @@
 ﻿using SAM.Core;
+using SAM.Core.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -330,6 +331,58 @@ namespace SAM.Analytical.Tas
             double calculatedThermalTransmittance = func.Invoke(thickness);
 
             return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, layerThicknessCalculationData.LayerIndex, thickness, initialThermalTransmittance, thermalTransmittance, calculatedThermalTransmittance);
+        }
+
+        private GlazingCalculationResult Calculate(GlazingCalculationData solarTransmittanceCalculationData, TCD.Document document)
+        {
+            if(solarTransmittanceCalculationData == null || document == null || ConstructionManager == null)
+            {
+                return null;
+            }
+
+            TCD.Construction construction_TCD = null;
+
+            Construction construction = ConstructionManager.Constructions?.Find(x => x.Guid == solarTransmittanceCalculationData.ConstructionGuid);
+            if(construction != null)
+            {
+                construction_TCD = construction.ToTCD(document, ConstructionManager);
+            }
+
+            if(construction_TCD == null)
+            {
+                ApertureConstruction apertureConstruction = ConstructionManager.ApertureConstructions?.Find(x => x.Guid == solarTransmittanceCalculationData.ConstructionGuid);
+                construction_TCD = apertureConstruction?.ToTCD_Constructions(document, ConstructionManager)?.Find(x => x.name.EndsWith("-pane"));
+            }
+
+            if(construction_TCD == null)
+            {
+                return null;
+            }
+
+            construction_TCD.GlazingValues(
+                out double lightTransmittance, 
+                out double lightReflectance, 
+                out double directSolarEnergyTransmittance, 
+                out double directSolarEnergyReflectance, 
+                out double directSolarEnergyAbosrtptance, 
+                out double totalSolarEnergyTransmittance, 
+                out double pilkingtonShortWavelengthCoefficient, 
+                out double pilkingtonLongWavelengthCoefficient, 
+                Tolerance);
+
+            object @object = construction_TCD?.GetUValue();
+            if (@object == null)
+            {
+                return new GlazingCalculationResult(solarTransmittanceCalculationData.ConstructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, double.NaN);
+            }
+
+            float[] values = Query.Array<float>(@object);
+            if (values == null || values.Length <= 6)
+            {
+                return new GlazingCalculationResult(solarTransmittanceCalculationData.ConstructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, double.NaN);
+            }
+
+            return new GlazingCalculationResult(solarTransmittanceCalculationData.ConstructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, values[6]);
         }
 
         public List<LayerThicknessCalculationResult> Calculate(IEnumerable<LayerThicknessCalculationData> layerThicknessCalculationDatas)
