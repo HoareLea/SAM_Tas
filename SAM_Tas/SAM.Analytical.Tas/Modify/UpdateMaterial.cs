@@ -133,6 +133,7 @@ namespace SAM.Analytical.Tas
                     material_TCD.description = gasMaterial.Description;
                     material_TCD.specificHeat = System.Convert.ToSingle(gasMaterial.SpecificHeatCapacity);
                     material_TCD.density = System.Convert.ToSingle(gasMaterial.Density);
+                    material_TCD.dynamicViscosity = System.Convert.ToSingle(gasMaterial.DynamicViscosity);
 
                     if (gasMaterial.TryGetValue(GasMaterialParameter.HeatTransferCoefficient, out double heatTransferCoefficient) && !double.IsNaN(heatTransferCoefficient))
                     {
@@ -169,6 +170,11 @@ namespace SAM.Analytical.Tas
             material.width = System.Convert.ToSingle(gasMaterial.GetValue<double>(Core.MaterialParameter.DefaultThickness));
             material.convectionCoefficient = System.Convert.ToSingle(gasMaterial.GetValue<double>(GasMaterialParameter.HeatTransferCoefficient));
             material.vapourDiffusionFactor = System.Convert.ToSingle(gasMaterial.GetValue<double>(Analytical.MaterialParameter.VapourDiffusionFactor));
+            
+            material.conductivity = System.Convert.ToSingle(gasMaterial.ThermalConductivity);
+            material.density = System.Convert.ToSingle(gasMaterial.Density);
+            material.specificHeat = System.Convert.ToSingle(gasMaterial.SpecificHeatCapacity);
+            material.dynamicViscosity = System.Convert.ToSingle(gasMaterial.DynamicViscosity);
 
             return true;
         }
