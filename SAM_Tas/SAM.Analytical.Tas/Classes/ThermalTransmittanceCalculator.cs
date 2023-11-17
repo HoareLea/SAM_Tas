@@ -333,16 +333,16 @@ namespace SAM.Analytical.Tas
             return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, layerThicknessCalculationData.LayerIndex, thickness, initialThermalTransmittance, thermalTransmittance, calculatedThermalTransmittance);
         }
 
-        private GlazingCalculationResult Calculate(GlazingCalculationData solarTransmittanceCalculationData, TCD.Document document)
+        private GlazingCalculationResult Calculate(Guid constructionGuid, TCD.Document document)
         {
-            if(solarTransmittanceCalculationData == null || document == null || ConstructionManager == null)
+            if(constructionGuid == Guid.Empty || document == null || ConstructionManager == null)
             {
                 return null;
             }
 
             TCD.Construction construction_TCD = null;
 
-            Construction construction = ConstructionManager.Constructions?.Find(x => x.Guid == solarTransmittanceCalculationData.ConstructionGuid);
+            Construction construction = ConstructionManager.Constructions?.Find(x => x.Guid == constructionGuid);
             if(construction != null)
             {
                 construction_TCD = construction.ToTCD(document, ConstructionManager);
@@ -350,7 +350,7 @@ namespace SAM.Analytical.Tas
 
             if(construction_TCD == null)
             {
-                ApertureConstruction apertureConstruction = ConstructionManager.ApertureConstructions?.Find(x => x.Guid == solarTransmittanceCalculationData.ConstructionGuid);
+                ApertureConstruction apertureConstruction = ConstructionManager.ApertureConstructions?.Find(x => x.Guid == constructionGuid);
                 construction_TCD = apertureConstruction?.ToTCD_Constructions(document, ConstructionManager)?.Find(x => x.name.EndsWith("-pane"));
             }
 
@@ -373,16 +373,16 @@ namespace SAM.Analytical.Tas
             object @object = construction_TCD?.GetUValue();
             if (@object == null)
             {
-                return new GlazingCalculationResult(solarTransmittanceCalculationData.ConstructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, double.NaN);
+                return new GlazingCalculationResult(constructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, 0);
             }
 
             float[] values = Query.Array<float>(@object);
             if (values == null || values.Length <= 6)
             {
-                return new GlazingCalculationResult(solarTransmittanceCalculationData.ConstructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, double.NaN);
+                return new GlazingCalculationResult(constructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, 0);
             }
 
-            return new GlazingCalculationResult(solarTransmittanceCalculationData.ConstructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, values[6]);
+            return new GlazingCalculationResult(constructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, values[6]);
         }
 
         public List<LayerThicknessCalculationResult> Calculate(IEnumerable<LayerThicknessCalculationData> layerThicknessCalculationDatas)
@@ -492,5 +492,71 @@ namespace SAM.Analytical.Tas
             return Calculate(new LayerThicknessCalculationData[] { layerThicknessCalculationData })?.FirstOrDefault();
         }
 
+        public List<GlazingCalculationResult> Calculate(IEnumerable<Guid> guids = null)
+        {
+            if (ConstructionManager == null)
+            {
+                return null;
+            }
+
+            List<Guid> guids_Temp = guids == null ? null : new List<Guid>(guids);
+            if(guids_Temp == null)
+            {
+                guids_Temp = new List<Guid>();
+
+                List<Construction> constructions = ConstructionManager.Constructions;
+                if (constructions != null)
+                {
+                    foreach(Construction construction in constructions)
+                    {
+                        if(construction == null)
+                        {
+                            continue;
+                        }
+
+                        guids_Temp.Add(construction.Guid);
+                    }
+                }
+
+                List<ApertureConstruction> apertureConstructions = ConstructionManager.ApertureConstructions;
+                if (apertureConstructions != null)
+                {
+                    foreach (ApertureConstruction apertureConstruction in apertureConstructions)
+                    {
+                        if (apertureConstruction == null)
+                        {
+                            continue;
+                        }
+
+                        guids_Temp.Add(apertureConstruction.Guid);
+                    }
+                }
+            }
+
+            List<GlazingCalculationResult> result = new List<GlazingCalculationResult>();
+            if(guids_Temp == null || guids_Temp.Count == 0)
+            {
+                return result;
+            }
+
+            Action<TCD.Document> action = new Action<TCD.Document>(x =>
+            {
+
+                foreach (Guid guid in guids_Temp)
+                {
+                    GlazingCalculationResult glazingCalculationResult = Calculate(guid, x);
+                    if(glazingCalculationResult == null)
+                    {
+                        continue;
+                    }
+
+                    result.Add(glazingCalculationResult);
+                }
+            });
+
+            Modify.Run(action);
+
+            return result;
+        }
     }
 }
