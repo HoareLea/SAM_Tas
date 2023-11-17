@@ -145,6 +145,7 @@
     <Compile Include="Convert\ToTCD\Material.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\ApertureConstructionCalculationData.cs" />
+    <Compile Include="Create\GlazingCalculationData.cs" />
     <Compile Include="Create\LayerThicknessCalculationData.cs" />
     <Compile Include="Create\Log.cs" />
     <Compile Include="Create\TBD.cs" />

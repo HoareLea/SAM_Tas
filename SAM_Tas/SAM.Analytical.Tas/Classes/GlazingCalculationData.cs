@@ -5,10 +5,10 @@ namespace SAM.Analytical.Tas
 {
     public class GlazingCalculationData : IJSAMObject
     {
-        public System.Guid ConstructionGuid { get; set; }
-        public double TotalSolarEnergyTransmittance { get; set; }
+        public System.Guid ConstructionGuid { get; set; } = System.Guid.Empty;
+        public double TotalSolarEnergyTransmittance { get; set; } = double.NaN;
         public Range<double> TotalSolarEnergyTransmittanceRange { get; set; } = new Range<double>(-0.2, 0);
-        public double LightTransmittance { get; set; }
+        public double LightTransmittance { get; set; } = double.NaN;
         public Range<double> LightTransmittanceRange { get; set; } = new Range<double>(-0.2, 0);
         public Range<double> ThicknessRange { get; set; } = new Range<double>(0.001, 1);
 
