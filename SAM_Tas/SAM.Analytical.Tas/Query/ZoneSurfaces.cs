@@ -6,6 +6,11 @@ namespace SAM.Analytical.Tas
     {
         public static List<TBD.IZoneSurface> ZoneSurfaces(this TBD.zone zone)
         {
+           if(zone == null)
+            {
+                return null;
+            }
+            
             List<TBD.IZoneSurface> result = new List<TBD.IZoneSurface>();
 
             int index = 0;
