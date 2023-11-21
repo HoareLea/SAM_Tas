@@ -45,6 +45,20 @@ namespace SAM.Analytical.Tas
             ThicknessRange = thicknessRange == null ? null : new Range<double>(thicknessRange);
         }
 
+        public double Factor
+        {
+            get
+            {
+                double? value = Query.Factor(TotalSolarEnergyTransmittance, LightTransmittance);
+                if (value == null || !value.HasValue)
+                {
+                    return double.NaN;
+                }
+
+                return value.Value;
+            }
+        }
+
         public bool FromJObject(JObject jObject)
         {
             if(jObject == null)

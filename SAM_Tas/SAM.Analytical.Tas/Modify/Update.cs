@@ -373,5 +373,84 @@ namespace SAM.Analytical.Tas
 
             return result;
         }
+
+        public static bool Update(this ConstructionManager constructionManager, System.Guid source, System.Guid destination, bool replace)
+        {
+            IAnalyticalObject analyticalObject_Source = constructionManager.Constructions?.Find(x => x.Guid == source);
+            if (analyticalObject_Source == null)
+            {
+                analyticalObject_Source = constructionManager.ApertureConstructions?.Find(x => x.Guid == source);
+            }
+
+            if (analyticalObject_Source == null)
+            {
+                return false;
+            }
+
+            IAnalyticalObject analyticalObject_Destination = constructionManager.Constructions?.Find(x => x.Guid == destination);
+            if (analyticalObject_Destination == null)
+            {
+                analyticalObject_Destination = constructionManager.ApertureConstructions?.Find(x => x.Guid == destination);
+            }
+
+            if (analyticalObject_Destination == null)
+            {
+                return false;
+            }
+
+            if(replace && analyticalObject_Destination.GetType() == analyticalObject_Source.GetType())
+            {
+                if(analyticalObject_Source is Construction)
+                {
+                    Construction construction_Source = analyticalObject_Source as Construction;
+                    Construction construction_Destionation = analyticalObject_Destination as Construction;
+
+                    Construction construction_Updated = new Construction(construction_Destionation.Guid, construction_Source, construction_Destionation.Name);
+
+                    return constructionManager.Add(construction_Updated);
+                }
+                else if (analyticalObject_Source is ApertureConstruction)
+                {
+                    ApertureConstruction apertureConstruction_Source = analyticalObject_Source as ApertureConstruction;
+                    ApertureConstruction apertureConstruction_Destionation = analyticalObject_Destination as ApertureConstruction;
+
+                    ApertureConstruction apertureConstruction_Updated = new ApertureConstruction(apertureConstruction_Destionation.Guid, apertureConstruction_Source, apertureConstruction_Destionation.Name);
+
+                    return constructionManager.Add(apertureConstruction_Updated);
+                }
+
+                return false;
+            }
+            else
+            {
+                List<ConstructionLayer> constructionLayers = null;
+                if(analyticalObject_Source is Construction)
+                {
+                    constructionLayers = ((Construction)analyticalObject_Source).ConstructionLayers;
+
+                }
+                else if(analyticalObject_Source is ApertureConstruction)
+                {
+                    constructionLayers = ((ApertureConstruction)analyticalObject_Source).PaneConstructionLayers;
+                }
+                else
+                {
+                    return false;
+                }
+
+                if(analyticalObject_Destination is Construction)
+                {
+                    Construction construction_Updated = new Construction((Construction)analyticalObject_Destination, constructionLayers);
+                    return constructionManager.Add(construction_Updated);
+                }
+                else if(analyticalObject_Destination is ApertureConstruction)
+                {
+                    ApertureConstruction apertureConstruction_Updated = new ApertureConstruction((ApertureConstruction)analyticalObject_Destination, constructionLayers);
+                    return constructionManager.Add(apertureConstruction_Updated);
+                }
+            }
+
+            return false;
+        }
     }
 }

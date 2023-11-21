@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public class GlazingCalculationResult : Result
     {
-        private double solarTransmittance;
+        private double totalSolarEnergyTransmittance;
         private double lightTransmittance;
         private double thermalTransmittance;
 
@@ -21,25 +21,25 @@ namespace SAM.Analytical.Tas
         {
             if(solarTransmittanceCalculationResult != null)
             {
-                solarTransmittance = solarTransmittanceCalculationResult.solarTransmittance;
+                totalSolarEnergyTransmittance = solarTransmittanceCalculationResult.totalSolarEnergyTransmittance;
                 lightTransmittance = solarTransmittanceCalculationResult.lightTransmittance;
                 thermalTransmittance = solarTransmittanceCalculationResult.thermalTransmittance;
             }
         }
 
-        public GlazingCalculationResult(System.Guid constructionGuid, string source, double solarTransmittance, double lightTransmittance, double thermalTransmittance)
+        public GlazingCalculationResult(System.Guid constructionGuid, string source, double totalSolarEnergyTransmittance, double lightTransmittance, double thermalTransmittance)
             : base(typeof(GlazingCalculationResult).ToString(), source, constructionGuid.ToString())
         {
-            this.solarTransmittance = solarTransmittance;
+            this.totalSolarEnergyTransmittance = totalSolarEnergyTransmittance;
             this.thermalTransmittance = thermalTransmittance;
             this.lightTransmittance = lightTransmittance;
         }
 
-        public double SolarTransmittance
+        public double TotalSolarEnergyTransmittance
         {
             get
             {
-                return solarTransmittance;
+                return totalSolarEnergyTransmittance;
             }
         }
 
@@ -59,6 +59,20 @@ namespace SAM.Analytical.Tas
             }
         }
 
+        public double Factor
+        {
+            get
+            {
+                double? value = Query.Factor(TotalSolarEnergyTransmittance, LightTransmittance);
+                if(value == null || !value.HasValue)
+                {
+                    return double.NaN;
+                }
+
+                return value.Value;
+            }
+        }
+
         public override bool FromJObject(JObject jObject)
         {
             if (jObject == null)
@@ -72,9 +86,9 @@ namespace SAM.Analytical.Tas
                 return result;
             }
 
-            if(jObject.ContainsKey("SolarTransmittance"))
+            if(jObject.ContainsKey("TotalSolarEnergyTransmittance"))
             {
-                solarTransmittance = jObject.Value<double>("SolarTransmittance");
+                totalSolarEnergyTransmittance = jObject.Value<double>("TotalSolarEnergyTransmittance");
             }
 
             if (jObject.ContainsKey("LightTransmittance"))
@@ -98,9 +112,9 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            if (!double.IsNaN(solarTransmittance))
+            if (!double.IsNaN(TotalSolarEnergyTransmittance))
             {
-                jObject.Add("SolarTransmittance", solarTransmittance);
+                jObject.Add("TotalSolarEnergyTransmittance", totalSolarEnergyTransmittance);
             }
 
             if (!double.IsNaN(lightTransmittance))
