@@ -234,6 +234,7 @@
     <Compile Include="Modify\UpdateACCI.cs" />
     <Compile Include="Query\AperturePart.cs" />
     <Compile Include="Query\ApertureTypes.cs" />
+    <Compile Include="Query\Score.cs" />
     <Compile Include="Query\Factor.cs" />
     <Compile Include="Query\Color.cs" />
     <Compile Include="Query\ConstructionLayer.cs" />
