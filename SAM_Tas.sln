@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.87
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SAM_Tas", "SAM_Tas", "{24011B5A-B3AF-4632-AB18-E8DB0F450C24}"
 EndProject
@@ -32,6 +32,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.TM59", "SAM_Tas\SAM.Analytical.Tas.TM59\SAM.Analytical.Tas.TM59.csproj", "{4B654CA7-B9EE-40A9-B7D3-C7FFED34CAA6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.SAP", "SAM_Tas\SAM.Analytical.Tas.SAP\SAM.Analytical.Tas.SAP.csproj", "{5CA0603E-7344-48D2-8E12-2D3D47E62630}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.TPD", "SAM_Tas\SAM.Analytical.Tas.TPD\SAM.Analytical.Tas.TPD.csproj", "{93A77EB6-BA52-429F-A985-E399E5873932}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,10 @@ Global
 		{5CA0603E-7344-48D2-8E12-2D3D47E62630}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CA0603E-7344-48D2-8E12-2D3D47E62630}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CA0603E-7344-48D2-8E12-2D3D47E62630}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93A77EB6-BA52-429F-A985-E399E5873932}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93A77EB6-BA52-429F-A985-E399E5873932}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93A77EB6-BA52-429F-A985-E399E5873932}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93A77EB6-BA52-429F-A985-E399E5873932}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +110,7 @@ Global
 		{6AD97F9A-C18B-41CB-9CB7-FE0A3EF247DC} = {06F63504-B0DA-4C13-8883-4F1906D72216}
 		{4B654CA7-B9EE-40A9-B7D3-C7FFED34CAA6} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
 		{5CA0603E-7344-48D2-8E12-2D3D47E62630} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
+		{93A77EB6-BA52-429F-A985-E399E5873932} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B2CDD0F-8494-4D69-8DE1-E534BE47B358}
