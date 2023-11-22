@@ -1,0 +1,13 @@
+SimulationError {
+ErrorMessage = "Error";
+}
+
+IO {
+NumberFormat = Double;
+}
+
+SimulationStart {
+Command = "cmd /c \"start  /WAIT /MIN \"\" \"C:\\Program Files\\Environmental Design Solutions Ltd\\Tas\\TasGenOpt\\TasGenExecute.exe\" \"C:\\Users\\DengusiakM\\Desktop\\SAM\\2023-11-21_GenOpt1\" "; 
+WriteInputFileExtension = true;
+}
+

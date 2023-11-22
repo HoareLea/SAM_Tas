@@ -1,0 +1,1 @@
+NorthAngle,0,0,360, 12,System.Double

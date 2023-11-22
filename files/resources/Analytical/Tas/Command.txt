@@ -1,0 +1,23 @@
+Vary {
+Parameter {
+Name = NorthAngle;
+Min =  0;
+Ini =  0;
+Max =  360;
+Step =  12;
+}
+
+}
+
+OptimizationSettings{
+MaxIte = 2000;
+MaxEqualResults = 100;
+WriteStepNumber = false;
+UnitsOfExecution = 0;
+}
+
+Algorithm{
+Main = GoldenSection;
+AbsDiffFunction = 0.1;
+}
+

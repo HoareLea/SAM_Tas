@@ -1,0 +1,46 @@
+/*
+* ----------Enter your Tas Script here. ------------
+* This script will get executed multiple times. 
+* Press F1 for help and examples. 
+*
+*/
+
+
+
+//Open the 3D modeller (hidden)
+TAS3D.T3DDocument my3DDocument = new TAS3D.T3DDocument();
+
+//Make a variable to store the path to our file
+string pathToFile =TasFiles.getFiles(TasGenComm.TasFiles.TasExtension.T3D)["Building1.t3d"].FullPath;
+string newPathToFile = TasExtensions.CopyToCurrentDirectory(pathToFile,true);
+
+//Open our file
+bool fileOpenedOK = my3DDocument.Open(newPathToFile);
+
+//Check the file opened successfully
+if(!fileOpenedOK) throw new Exception("The file could not be opened!");
+
+//Set the north angle
+my3DDocument.Building.northAngle = Variables["NorthAngle"].VariableValue;
+
+//Initialise and perform daylight calculation
+my3DDocument.DaylightInitCalculation(1,1,1,0);
+my3DDocument.DaylightSkyCloudiness(TAS3D.DaylightSkyCloudiness.t3dClear);
+my3DDocument.DaylightSkyandSun(TAS3D.DaylightSunSky.t3dSunAndSky);
+my3DDocument.DaylightAccuracy(TAS3D.DaylightAccuracyType.t3dPreview,0);
+my3DDocument.DaylightCalculationTime(212,14,30);
+my3DDocument.DaylightCalculation(0);
+my3DDocument.DaylightSaveCalculation(1); // added 1
+
+//Get the daylight factor for the first zone
+TAS3D.Zone FirstZone = my3DDocument.Building.GetZone(1);
+double daylightFactor = my3DDocument.GetDaylightFactor(FirstZone);
+
+//Close our t3d file
+System.Runtime.InteropServices.Marshal.ReleaseComObject(my3DDocument);
+//-------------------------------------------------------------
+//Set our output variables
+ScriptOutput.SetValue("DaylightFactor",daylightFactor);
+
+//Function
+ScriptOutput.SetValue("Result",1.0/daylightFactor);
