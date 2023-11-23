@@ -21,7 +21,19 @@ namespace SAM.Analytical.Tas.OptGen
 
         protected override string GetText()
         {
-            return base.GetText();
+            if(values == null)
+            {
+                return null;
+            }
+
+            List<string> texts = new List<string>();
+            foreach(T value in values)
+            {
+                texts.Add(value.Text);
+            }
+
+
+            return string.Format("\n", texts);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace SAM.Analytical.Tas.OptGen
+﻿using System.Collections.Generic;
+
+namespace SAM.Analytical.Tas.OptGen
 {
     [Attributes.Name("Parameter")]
     public class Parameter

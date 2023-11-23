@@ -2,7 +2,7 @@
 
 namespace SAM.Analytical.Tas.OptGen
 {
-    public class ConfigFile : IOptGenFile
+    public class ConfigFile : OptGenFile
     {
         [Attributes.Name("Simulation")]
         public Simulation Simulation { get; set; }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SAM.Analytical.Tas.OptGen.Interfaces;
 
 namespace SAM.Analytical.Tas.OptGen
 {
-    public interface IOptGenFile
+    public interface IOptGenFile : IOptGenObject
     {
     }
 }

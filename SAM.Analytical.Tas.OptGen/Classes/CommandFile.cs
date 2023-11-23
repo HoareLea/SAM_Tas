@@ -2,7 +2,7 @@
 
 namespace SAM.Analytical.Tas.OptGen
 {
-    public class CommandFile: IOptGenFile
+    public class CommandFile: OptGenFile
     {
         [Attributes.Name("OptimizationSettings")]
         public OptimizationSettings OptimizationSettings { get; set; }

@@ -1,5 +1,6 @@
 ﻿namespace SAM.Analytical.Tas.OptGen
 {
+    [Attributes.Name("OptimizationSettings")]
     public class OptimizationSettings : OptGenObject
     {
         [Attributes.Name("MaxIter")]

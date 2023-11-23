@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SAM.Analytical.Tas.OptGen.Interfaces
+namespace SAM.Analytical.Tas.OptGen
 {
-    public interface IOptGenObject
+    public enum NumberFormat
     {
-        string Text { get; }
-
+        Double,
     }
 }

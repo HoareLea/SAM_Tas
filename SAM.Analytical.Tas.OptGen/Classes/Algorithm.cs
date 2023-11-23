@@ -1,5 +1,6 @@
 ﻿namespace SAM.Analytical.Tas.OptGen
 {
+    [Attributes.Name("Algorithm")]
     public class Algorithm : OptGenObject
     {
         [Attributes.Name("AbsDiffFunction")]
