@@ -35,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.SAP", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.TPD", "SAM_Tas\SAM.Analytical.Tas.TPD\SAM.Analytical.Tas.TPD.csproj", "{93A77EB6-BA52-429F-A985-E399E5873932}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.OptGen", "SAM.Analytical.Tas.OptGen\SAM.Analytical.Tas.OptGen.csproj", "{C586179C-2D45-43FC-BDD9-BC4A8D85EC7D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.OptGen", "SAM_Tas\SAM.Analytical.Tas.OptGen\SAM.Analytical.Tas.OptGen.csproj", "{C586179C-2D45-43FC-BDD9-BC4A8D85EC7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

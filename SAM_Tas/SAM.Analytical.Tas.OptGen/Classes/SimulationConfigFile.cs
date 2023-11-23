@@ -10,7 +10,5 @@
 
         [Attributes.Name("SimulationStart")]
         public SimulationStart SimulationStart { get; set; }
-
-
     }
 }
