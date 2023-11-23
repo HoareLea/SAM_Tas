@@ -1,0 +1,145 @@
+{
+  "$type": "TasGenOpt.TabControls.tcSimulate.SimulateViewModel, TasGenOpt",
+  "Algorithms": [
+    {
+      "$type": "TasGenOpt.GenConfigFile.Algorithms.GPSHookeJeeves, TasGenOpt",
+      "AlgorithmName": "GPSHookeJeeves",
+      "AlgorithmType": 0,
+      "MeshSizeDivider": 2,
+      "InitialMeshSizeExponent": 0,
+      "MeshSizeExponentIncrement": 1,
+      "NumberOfStepReduction": 4
+    },
+    {
+      "$type": "TasGenOpt.GenCommandFile.Algorithms.MultiStartGPS, TasGenOpt",
+      "AlgorithmName": "GPSCoordinateSearch",
+      "AlgorithmType": 1,
+      "Seed": 0,
+      "NumberOfInitialPoint": 0,
+      "MeshSizeDivider": 0,
+      "InitialMeshSizeExponent": 0,
+      "MeshSizeExponentIncrement": 0,
+      "NumberOfStepReduction": 0
+    },
+    {
+      "$type": "TasGenOpt.GenCommandFile.Algorithms.DiscreteArmijoGradient, TasGenOpt",
+      "AlgorithmName": "DiscreteArmijoGradient",
+      "AlgorithmType": 2,
+      "Alpha": 0.0,
+      "Beta": 0.0,
+      "Gamma": 0.0,
+      "K0": 0,
+      "KStar": 0,
+      "LMax": 0,
+      "Kappa": 0,
+      "EpsilonM": 0.0,
+      "EpsilonX": 0.0
+    },
+    {
+      "$type": "TasGenOpt.GenCommandFile.Algorithms.PS.ParticleStormIntertia, TasGenOpt",
+      "AlgorithmName": "PSOIW",
+      "AlgorithmType": 3,
+      "InitialIntertiaWeight": 0.0,
+      "FinalIntertiaWeight": 0.0,
+      "NeighborhoodTopology": 0,
+      "NeighborhoodSize": 0,
+      "NumberOfParticle": 0,
+      "NumberOfGeneration": 0,
+      "Seed": 0,
+      "CognitiveAcceleration": 0.0,
+      "SocialAcceleration": 0.0,
+      "MaxVelocityGainContinuous": 0.0,
+      "MaxVelocityDiscrete": 0.0
+    },
+    {
+      "$type": "TasGenOpt.GenCommandFile.Algorithms.PS.ParticleStormConstriction, TasGenOpt",
+      "AlgorithmName": "PSOCC",
+      "AlgorithmType": 4,
+      "ConstrictionGain": 0.0,
+      "NeighborhoodTopology": 0,
+      "NeighborhoodSize": 0,
+      "NumberOfParticle": 0,
+      "NumberOfGeneration": 0,
+      "Seed": 0,
+      "CognitiveAcceleration": 0.0,
+      "SocialAcceleration": 0.0,
+      "MaxVelocityGainContinuous": 0.0,
+      "MaxVelocityDiscrete": 0.0
+    },
+    {
+      "$type": "TasGenOpt.GenCommandFile.Algorithms.PS.ParticleStormMesh, TasGenOpt",
+      "AlgorithmName": "PSOCCMesh",
+      "AlgorithmType": 4,
+      "ConstrictionGain": 0.0,
+      "MeshSizeDivider": 0,
+      "InitialMeshSizeExponent": 0,
+      "NeighborhoodTopology": 0,
+      "NeighborhoodSize": 0,
+      "NumberOfParticle": 0,
+      "NumberOfGeneration": 0,
+      "Seed": 0,
+      "CognitiveAcceleration": 0.0,
+      "SocialAcceleration": 0.0,
+      "MaxVelocityGainContinuous": 0.0,
+      "MaxVelocityDiscrete": 0.0
+    },
+    {
+      "$type": "TasGenOpt.GenCommandFile.Algorithms.HybridGeneralizedPSPO, TasGenOpt",
+      "AlgorithmName": "GPSPSOCCHJ",
+      "AlgorithmType": 6,
+      "ConstrictionGain": 0.0,
+      "MeshSizeDivider": 0,
+      "InitialMeshSizeExponent": 0,
+      "MeshSizeExponentIncrement": 0,
+      "NumberOfStepReduction": 0,
+      "NeighborhoodTopology": 0,
+      "NeighborhoodSize": 0,
+      "NumberOfParticle": 0,
+      "NumberOfGeneration": 0,
+      "Seed": 0,
+      "CognitiveAcceleration": 0.0,
+      "SocialAcceleration": 0.0,
+      "MaxVelocityGainContinuous": 0.0,
+      "MaxVelocityDiscrete": 0.0
+    },
+    {
+      "$type": "TasGenOpt.GenConfigFile.Algorithms.NelderMeadONeillcs, TasGenOpt",
+      "AlgorithmName": "NelderMeadONeill",
+      "AlgorithmType": 7,
+      "Accuracy": 0.0,
+      "StepSizeFactor": 0.0,
+      "BlockRestartCheck": 0,
+      "ModifyStoppingCriterion": false
+    },
+    {
+      "$type": "TasGenOpt.GenConfigFile.Algorithms.GoldenSection, TasGenOpt",
+      "AlgorithmName": "GoldenSection",
+      "AlgorithmType": 8,
+      "AbsDiffFunction": 0.1
+    },
+    {
+      "$type": "TasGenOpt.GenConfigFile.Algorithms.FibonacciDivision, TasGenOpt",
+      "AlgorithmName": "Fibonacci",
+      "AlgorithmType": 9,
+      "IntervalReduction": 0.0
+    },
+    {
+      "$type": "TasGenOpt.GenConfigFile.Algorithms.Parametric, TasGenOpt",
+      "AlgorithmName": "Parametric",
+      "AlgorithmType": 10,
+      "StopAtError": false
+    },
+    {
+      "$type": "TasGenOpt.GenConfigFile.Algorithms.Mesh, TasGenOpt",
+      "AlgorithmName": "Mesh",
+      "AlgorithmType": 11,
+      "StopAtError": false
+    }
+  ],
+  "SelectedAlgorithm": {
+    "$type": "TasGenOpt.GenConfigFile.Algorithms.GoldenSection, TasGenOpt",
+    "AlgorithmName": "GoldenSection",
+    "AlgorithmType": 8,
+    "AbsDiffFunction": 0.1
+  }
+}
