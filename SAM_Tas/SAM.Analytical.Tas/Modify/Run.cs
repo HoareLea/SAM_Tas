@@ -1,7 +1,5 @@
-﻿using SAM.Core;
-using SAM.Core.Tas;
+﻿using SAM.Core.Tas;
 using System;
-using System.Dynamic;
 
 namespace SAM.Analytical.Tas
 {

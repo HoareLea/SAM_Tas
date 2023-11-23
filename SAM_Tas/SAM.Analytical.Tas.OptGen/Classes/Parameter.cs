@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace SAM.Analytical.Tas.OptGen
+﻿namespace SAM.Analytical.Tas.OptGen
 {
     [Attributes.Name("Parameter")]
-    public class Parameter
+    public class Parameter : OptGenObject
     {
         [Attributes.Name("Name")]
         public string Name { get; set; } = "NorthAngle";

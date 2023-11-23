@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SAM.Analytical.Tas.OptGen
+﻿namespace SAM.Analytical.Tas.OptGen
 {
     [Attributes.Name("Optimization")]
     public class Optimization : OptGenObject

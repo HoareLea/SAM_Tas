@@ -1,6 +1,6 @@
 ﻿namespace SAM.Analytical.Tas.OptGen
 {
-    public class ScriptFile : OptGenObject, IOptGenFile
+    public class ScriptFile : OptGenFile
     {
         private string text;
 

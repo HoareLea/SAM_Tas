@@ -2,7 +2,6 @@
 using SAM.Analytical.Tas.OptGen.Interfaces;
 using System;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace SAM.Analytical.Tas.OptGen
 {

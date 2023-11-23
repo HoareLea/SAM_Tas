@@ -2,7 +2,7 @@
 
 namespace SAM.Analytical.Tas.OptGen
 {
-    public class ParameterFile : OptGenObject, IOptGenFile
+    public class ParameterFile : OptGenFile
     {
         private List<Parameter> parameters = new List<Parameter>();
 
@@ -39,7 +39,7 @@ namespace SAM.Analytical.Tas.OptGen
                     continue;
                 }
 
-                List<string> values = new List<string>() { parameter.Name, parameter.Min.ToString(), parameter.Initial.ToString(), parameter.Max.ToString(), parameter.Step.ToString(), typeof(double).Name.ToString() };
+                List<string> values = new List<string>() { parameter.Name, parameter.Min.ToString(), parameter.Initial.ToString(), parameter.Max.ToString(), parameter.Step.ToString(), typeof(double).FullName.ToString() };
 
                 texts.Add(string.Format("{0}", string.Join(",", values)));
             }

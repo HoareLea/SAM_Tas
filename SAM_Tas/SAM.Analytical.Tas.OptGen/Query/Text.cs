@@ -1,6 +1,5 @@
 ﻿using SAM.Analytical.Tas.OptGen.Attributes;
 using SAM.Analytical.Tas.OptGen.Interfaces;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -24,22 +23,24 @@ namespace SAM.Analytical.Tas.OptGen
                     continue;
                 }
 
+                string text = optGenObject.Text;
+                if (text == null)
+                {
+                    continue;
+                }
+
                 NameAttribute nameAttribute = Query.NameAttribute(optGenObject);
                 if(nameAttribute == null || string.IsNullOrWhiteSpace(nameAttribute.Name))
                 {
-                    continue;
+                    texts.Add(text);
                 }
-
-                string text = optGenObject.Text;
-                if(text == null)
+                else
                 {
-                    continue;
+                    texts.Add(string.Format("{0} {{\n{1}\n}}", nameAttribute.Name, text));
                 }
-
-                texts.Add(string.Format("{0} {\n{1}\n}", nameAttribute.Name, text));
             }
 
-            return string.Join("\n", texts);
+            return string.Format("{0}\n", string.Join("\n", texts));
         }
     }
 }

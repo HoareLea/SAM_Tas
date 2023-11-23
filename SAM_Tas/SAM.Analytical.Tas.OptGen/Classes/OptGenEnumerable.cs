@@ -1,13 +1,12 @@
 ﻿using SAM.Analytical.Tas.OptGen.Interfaces;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.OptGen
 {
-    public class OptGenEnumerable<T> : OptGenObject, IEnumerable<T> where T : IOptGenObject
+    public abstract class OptGenEnumerable<T> : OptGenObject, IEnumerable<T> where T : IOptGenObject
     {
-        private List<T> values;
+        protected List<T> values = new List<T>();
 
         public IEnumerator<T> GetEnumerator()
         {
@@ -33,7 +32,7 @@ namespace SAM.Analytical.Tas.OptGen
             }
 
 
-            return string.Format("\n", texts);
+            return string.Join("\n", texts);
         }
     }
 }

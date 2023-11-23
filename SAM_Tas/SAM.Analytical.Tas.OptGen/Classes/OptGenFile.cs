@@ -1,6 +1,6 @@
 ﻿namespace SAM.Analytical.Tas.OptGen
 {
-    public class OptGenFile : OptGenObject, IOptGenFile
+    public abstract class OptGenFile : OptGenObject, IOptGenFile
     {
         public bool Save(string path)
         {

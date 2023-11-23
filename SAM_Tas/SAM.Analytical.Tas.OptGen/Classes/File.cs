@@ -33,7 +33,7 @@ namespace SAM.Analytical.Tas.OptGen
                 }
             }
 
-            return string.Format("{0} {\n{1}\n}", FileType.ToString(), string.Join("\n", texts));
+            return string.Format("{0} {{\n{1}\n}}", FileType.ToString(), string.Join("\n", texts));
         }
     }
 }

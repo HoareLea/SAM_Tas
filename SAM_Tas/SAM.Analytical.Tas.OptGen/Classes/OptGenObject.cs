@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace SAM.Analytical.Tas.OptGen
 {
-    public class OptGenObject : IOptGenObject
+    public abstract class OptGenObject : IOptGenObject
     {
         public string Text
         {
@@ -45,19 +45,27 @@ namespace SAM.Analytical.Tas.OptGen
                 string text = null;
                 if(value is IOptGenObject)
                 {
-                    text = string.Format("{0} {\n {1}\n}\n", nameAttribute.Name, ((IOptGenObject)value).Text);
+                    text = string.Format("{0} {{\n{1}\n}}\n", nameAttribute.Name, ((IOptGenObject)value).Text);
                 }
-                if(value is IEnumerable)
+                else if(value is IEnumerable && !(value is string))
                 {
                     text = Query.Text((IEnumerable)value);
                     if(text != null)
                     {
-                        text = string.Format("{0} {\n {1}\n}\n", nameAttribute.Name, text);
+                        text = string.Format("{0} {{\n{1}\n}}\n", nameAttribute.Name, text);
                     }
                 }
                 else
                 {
-                    text = string.Format("{0} = {1};", nameAttribute.Name, value.ToString());
+                    value = value is bool ? value.ToString().ToLower() : value.ToString();
+
+                    QuotedValueAttribute quotedValueAttribute = Query.QuotedValueAttribute(propertyInfo);
+                    if(quotedValueAttribute != null)
+                    {
+                        value = string.Format("\"{0}\"", value);
+                    }
+
+                    text = string.Format("{0} = {1};", nameAttribute.Name, value);
                 }
 
                 if(string.IsNullOrWhiteSpace(text))
