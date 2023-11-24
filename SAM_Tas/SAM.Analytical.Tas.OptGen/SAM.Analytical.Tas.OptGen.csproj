@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Attributes\QuotedValueAttribute.cs" />
     <Compile Include="Attributes\NameAttribute.cs" />
+    <Compile Include="Classes\GPSCoordinateSearchAlgorithm.cs" />
     <Compile Include="Classes\GPSHookeJeevesAlgorithm.cs" />
     <Compile Include="Classes\GoldenSectionAlgorithm.cs" />
     <Compile Include="Classes\OptGenDocument.cs" />
