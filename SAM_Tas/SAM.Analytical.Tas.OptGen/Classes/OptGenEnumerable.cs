@@ -1,5 +1,4 @@
-﻿using SAM.Analytical.Tas.OptGen.Interfaces;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.OptGen

@@ -1,5 +1,4 @@
 ﻿using SAM.Analytical.Tas.OptGen.Attributes;
-using SAM.Analytical.Tas.OptGen.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 

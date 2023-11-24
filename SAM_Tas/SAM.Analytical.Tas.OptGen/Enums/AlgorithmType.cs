@@ -2,6 +2,17 @@
 {
     public enum AlgorithmType
     {
-        GoldenSection
+        GPSHookeJeeves,
+        GPSCoordinateSearch,
+        DiscreteArmijoGradient,
+        PSOIW,
+        PSOCC,
+        PSOCCMesh,
+        GPSPSOCCHJ,
+        NelderMeadONeill,
+        GoldenSection,
+        Fibonacci,
+        Parametric,
+        Mesh
     }
 }

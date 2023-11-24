@@ -2,16 +2,16 @@
 {
     public class ScriptFile : OptGenFile
     {
-        private string text;
+        private Script script;
 
         public ScriptFile(string text) 
         {
-            this.text = text;
+            this.script = new Script(text);
         }
 
         protected override string GetText() 
         { 
-            return text; 
+            return script.Text; 
         }
     }
 }
