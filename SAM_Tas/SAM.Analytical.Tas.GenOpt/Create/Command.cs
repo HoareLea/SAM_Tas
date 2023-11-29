@@ -9,7 +9,7 @@
                 return null;
             }
 
-            return string.Format("cmd /c \\\"start  /WAIT /MIN \\\"\\\" \\\"{0}\\\" \\\"{1}\\\" ", Query.TasGenExecutePath(), directory);
+            return string.Format("cmd /c \\\"start  /WAIT /MIN \\\"\\\" \\\"{0}\\\" \\\"{1}\\\" ", Query.TasGenOptExecutePath(), directory);
 
         }
     }

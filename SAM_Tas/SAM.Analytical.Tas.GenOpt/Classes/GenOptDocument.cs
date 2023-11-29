@@ -5,6 +5,8 @@ namespace SAM.Analytical.Tas.GenOpt
 {
     public class GenOptDocument
     {
+        private string configFileName = "Config.ini";
+        
         private string directory = null;
 
         private Script script = new Script(string.Empty);
@@ -86,7 +88,7 @@ namespace SAM.Analytical.Tas.GenOpt
             ConfigFile configFile = ConfigFile;
             if (configFile != null)
             {
-                string path = System.IO.Path.Combine(directory, "config.ini");
+                string path = System.IO.Path.Combine(directory, configFileName);
                 if (!string.IsNullOrWhiteSpace(path))
                 {
                     scriptFile.Save(path);
