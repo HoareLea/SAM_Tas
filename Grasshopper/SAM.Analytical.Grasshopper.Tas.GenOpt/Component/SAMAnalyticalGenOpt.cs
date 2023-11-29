@@ -60,9 +60,7 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
                 algorithm.SetPersistentData(new GoldenSectionAlgorithm());
                 result.Add(new GH_SAMParam(algorithm, ParamVisibility.Binding));
 
-                Param_Boolean @boolean;
-
-                @boolean = new Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
+                Param_Boolean  @boolean = new Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
@@ -96,6 +94,20 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
             }
 
             int index;
+
+            index = Params.IndexOfInputParam("_run");
+
+            bool run = false;
+            if (index == -1 || !dataAccess.GetData(index, ref run))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
+            if (!run)
+            {
+                return;
+            }
 
             string path = null;
             index = Params.IndexOfInputParam("_scriptPath");
