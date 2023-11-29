@@ -1,0 +1,16 @@
+﻿using System.Collections.Generic;
+
+namespace SAM.Analytical.Tas.GenOpt
+{
+    public class CommandFile: GenOptFile
+    {
+        [Attributes.Name("OptimizationSettings")]
+        public OptimizationSettings OptimizationSettings { get; set; }
+
+        [Attributes.Name("Algorithm")]
+        public Algorithm Algorithm { get; set; }
+
+        [Attributes.Name("Vary")]
+        public List<IParameter> Parameters { get; set; }
+    }
+}
