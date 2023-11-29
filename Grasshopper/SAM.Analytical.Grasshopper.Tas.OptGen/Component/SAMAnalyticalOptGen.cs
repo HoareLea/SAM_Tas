@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.OptGen
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD3;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_OptGen;
 
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
