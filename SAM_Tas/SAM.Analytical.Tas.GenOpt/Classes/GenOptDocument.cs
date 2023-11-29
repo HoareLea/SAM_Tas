@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SAM.Analytical.Tas.GenOpt
@@ -6,7 +7,8 @@ namespace SAM.Analytical.Tas.GenOpt
     public class GenOptDocument
     {
         private string configFileName = "Config.ini";
-        
+        private string executableFileName = "GenOpt.bat";
+
         private string directory = null;
 
         private Script script = new Script(string.Empty);
@@ -125,7 +127,28 @@ namespace SAM.Analytical.Tas.GenOpt
                 }
             }
 
-            return true;
+            bool result = false;
+
+            ExecutableFile executableFile = ExecutableFile;
+            if(executableFile != null)
+            {
+                string path = System.IO.Path.Combine(directory, executableFileName);
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    executableFile.Save(path);
+
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo(path);
+                    Process process = Process.Start(processStartInfo);
+                    process.WaitForExit();
+                    process.Close();
+
+                    result = true;
+                }
+            }
+
+
+
+            return result;
         }
 
         bool IsValid()
@@ -148,6 +171,14 @@ namespace SAM.Analytical.Tas.GenOpt
             set
             {
                 directory = value;
+            }
+        }
+
+        public ExecutableFile ExecutableFile
+        {
+            get
+            {
+                return new ExecutableFile(Query.TasGenOptJavaPath(), configFileName);
             }
         }
 

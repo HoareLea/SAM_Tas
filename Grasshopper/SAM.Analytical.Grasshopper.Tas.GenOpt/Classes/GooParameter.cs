@@ -91,7 +91,7 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
                 return false;
             }
 
-            if(typeof(Y) == Value?.GetType())
+            if(typeof(Y).IsAssignableFrom(Value?.GetType()))
             {
                 target = (Y)(object)Value;
                 return true;
