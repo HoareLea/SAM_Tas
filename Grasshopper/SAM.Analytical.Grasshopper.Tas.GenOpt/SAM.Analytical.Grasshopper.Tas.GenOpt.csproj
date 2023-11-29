@@ -69,6 +69,7 @@
     <Compile Include="Classes\GooObjective.cs" />
     <Compile Include="Classes\GooParameter.cs" />
     <Compile Include="Classes\GooAlgorithm.cs" />
+    <Compile Include="Component\SAMAnalyticalParametricAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalGenOptGoldenSectionAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalGenOpt.cs" />
     <Compile Include="Kernel\AssemblyInfo.cs" />
