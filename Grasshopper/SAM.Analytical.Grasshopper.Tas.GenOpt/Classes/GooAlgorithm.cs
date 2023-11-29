@@ -52,6 +52,18 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
 
         public override bool CastFrom(object source)
         {
+            object source_Temp = source;
+            if (source_Temp is IGH_Goo)
+            {
+                source_Temp = (source as dynamic).Value;
+            }
+
+            if(source_Temp is IAlgorithm)
+            {
+                Value = (IAlgorithm)source_Temp;
+                return true;
+            }
+
             return base.CastFrom(source);
         }
 
