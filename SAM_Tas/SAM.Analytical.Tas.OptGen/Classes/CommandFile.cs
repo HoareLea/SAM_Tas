@@ -11,6 +11,6 @@ namespace SAM.Analytical.Tas.OptGen
         public Algorithm Algorithm { get; set; }
 
         [Attributes.Name("Vary")]
-        public List<Parameter> Parameters { get; set; }
+        public List<IParameter> Parameters { get; set; }
     }
 }

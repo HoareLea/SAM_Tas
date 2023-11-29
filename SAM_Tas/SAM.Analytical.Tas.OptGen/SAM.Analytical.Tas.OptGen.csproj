@@ -49,6 +49,8 @@
     <Compile Include="Classes\OptGenDocument.cs" />
     <Compile Include="Classes\Algorithm.cs" />
     <Compile Include="Classes\IO.cs" />
+    <Compile Include="Classes\NumberParameter.cs" />
+    <Compile Include="Classes\TemplateFile.cs" />
     <Compile Include="Classes\Script.cs" />
     <Compile Include="Classes\SimulationStart.cs" />
     <Compile Include="Classes\SimulationError.cs" />
@@ -67,15 +69,19 @@
     <Compile Include="Classes\OptimizationSettings.cs" />
     <Compile Include="Classes\CommandFile.cs" />
     <Compile Include="Classes\Parameter.cs" />
+    <Compile Include="Create\Command.cs" />
+    <Compile Include="Create\Files.cs" />
     <Compile Include="Create\ParameterFile.cs" />
     <Compile Include="Enums\AlgorithmType.cs" />
     <Compile Include="Enums\NumberFormat.cs" />
     <Compile Include="Enums\FileType.cs" />
+    <Compile Include="Interfaces\IParameter.cs" />
     <Compile Include="Interfaces\IAlgorithm.cs" />
     <Compile Include="Interfaces\IOptGenFile.cs" />
     <Compile Include="Interfaces\IOptGenObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query\QuotedValueAttribute.cs" />
+    <Compile Include="Query\TasGenExecutePath.cs" />
     <Compile Include="Query\Text.cs" />
     <Compile Include="Query\NameAttribute.cs" />
   </ItemGroup>

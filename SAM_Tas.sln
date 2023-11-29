@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.TPD", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Tas.OptGen", "SAM_Tas\SAM.Analytical.Tas.OptGen\SAM.Analytical.Tas.OptGen.csproj", "{C586179C-2D45-43FC-BDD9-BC4A8D85EC7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Grasshopper.Tas.OptGen", "Grasshopper\SAM.Analytical.Grasshopper.Tas.OptGen\SAM.Analytical.Grasshopper.Tas.OptGen.csproj", "{FFF18B3E-2C47-4557-9BD9-9E888AA82180}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{C586179C-2D45-43FC-BDD9-BC4A8D85EC7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C586179C-2D45-43FC-BDD9-BC4A8D85EC7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C586179C-2D45-43FC-BDD9-BC4A8D85EC7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFF18B3E-2C47-4557-9BD9-9E888AA82180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFF18B3E-2C47-4557-9BD9-9E888AA82180}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFF18B3E-2C47-4557-9BD9-9E888AA82180}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFF18B3E-2C47-4557-9BD9-9E888AA82180}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{5CA0603E-7344-48D2-8E12-2D3D47E62630} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
 		{93A77EB6-BA52-429F-A985-E399E5873932} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
 		{C586179C-2D45-43FC-BDD9-BC4A8D85EC7D} = {24011B5A-B3AF-4632-AB18-E8DB0F450C24}
+		{FFF18B3E-2C47-4557-9BD9-9E888AA82180} = {06F63504-B0DA-4C13-8883-4F1906D72216}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B2CDD0F-8494-4D69-8DE1-E534BE47B358}

@@ -2,11 +2,11 @@
 
 namespace SAM.Analytical.Tas.OptGen
 {
-    public class ParameterFile : OptGenFile
+    public class TemplateFile : OptGenFile
     {
         private List<IParameter> parameters = new List<IParameter>();
 
-        public ParameterFile(IEnumerable<IParameter> parameters)
+        public TemplateFile(IEnumerable<IParameter> parameters)
         {
             if(parameters != null)
             {
@@ -24,25 +24,23 @@ namespace SAM.Analytical.Tas.OptGen
 
         protected override string GetText()
         {
-            if (parameters == null)
+            if(parameters == null)
             {
                 return null;
             }
 
             List<string> texts = new List<string>();
-            foreach (IParameter parameter in parameters)
+            foreach(IParameter parameter in parameters)
             {
-                if (parameter == null)
+                if(parameter == null)
                 {
                     continue;
                 }
-
-                if(parameter is NumberParameter)
+                if (parameter is NumberParameter)
                 {
                     NumberParameter numberParameter = (NumberParameter)parameter;
-                    
-                    List<string> values = new List<string>() { numberParameter.Name, numberParameter.Initial.ToString(), numberParameter.Min.ToString(), numberParameter.Max.ToString(), numberParameter.Step.ToString(), typeof(double).FullName.ToString() };
 
+                    List<string> values = new List<string>() { numberParameter.Name, string.Format("%{0}%", numberParameter.Name), numberParameter.Min.ToString(), numberParameter.Max.ToString(), numberParameter.Step.ToString(), typeof(double).FullName.ToString() };
                     texts.Add(string.Format("{0}", string.Join(",", values)));
                 }
 

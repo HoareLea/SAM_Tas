@@ -10,6 +10,12 @@ namespace SAM.Analytical.Tas.OptGen
         private List<string> names = new List<string>();
         private List<string> delimiters = new List<string>();
 
+
+        public ObjectiveFunctionLocation()
+        {
+
+        }
+
         public ObjectiveFunctionLocation(IEnumerable<string> names, IEnumerable<string>delimiters)
         {
             if(names != null && delimiters != null)
@@ -38,6 +44,13 @@ namespace SAM.Analytical.Tas.OptGen
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(delimiter))
             {
                 return false;
+            }
+
+            int index = names.IndexOf(name);
+            if(index != -1)
+            {
+                delimiters[index] = delimiter;
+                return true;
             }
 
             names.Add(name);
