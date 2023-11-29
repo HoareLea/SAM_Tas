@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\GooParameter.cs" />
     <Compile Include="Classes\GooAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalOptGen.cs" />
     <Compile Include="Kernel\AssemblyInfo.cs" />
