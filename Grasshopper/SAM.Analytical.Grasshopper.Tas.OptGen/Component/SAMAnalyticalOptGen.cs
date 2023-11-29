@@ -56,7 +56,7 @@ namespace SAM.Analytical.Grasshopper.Tas.OptGen
                 Param_FilePath objectives = new Param_FilePath() { Name = "_objectives", NickName = "_objectives", Description = "Objectives", Access = GH_ParamAccess.list, Optional = true };
                 result.Add(new GH_SAMParam(objectives, ParamVisibility.Binding));
 
-                Param_FilePath algorithm = new Param_FilePath() { Name = "_algorithm", NickName = "_algorithm", Description = "Algorithm", Access = GH_ParamAccess.item, Optional = true };
+                GooAlgorithmParam algorithm = new GooAlgorithmParam() { Name = "_algorithm", NickName = "_algorithm", Description = "Algorithm", Access = GH_ParamAccess.item, Optional = true };
                 result.Add(new GH_SAMParam(algorithm, ParamVisibility.Binding));
 
                 Param_Boolean @boolean;

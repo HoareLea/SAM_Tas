@@ -1,6 +1,6 @@
 ﻿namespace SAM.Analytical.Tas.OptGen
 {
-    internal interface IAlgorithm : IOptGenObject
+    public interface IAlgorithm : IOptGenObject
     {
         AlgorithmType AlgorithmType { get; }
     }

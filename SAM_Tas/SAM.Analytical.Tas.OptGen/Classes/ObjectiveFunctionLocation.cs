@@ -7,9 +7,7 @@ namespace SAM.Analytical.Tas.OptGen
     [Attributes.Name("ObjectiveFunctionLocation")]
     public class ObjectiveFunctionLocation : OptGenObject
     {
-        private List<string> names = new List<string>();
-        private List<string> delimiters = new List<string>();
-
+        private List<Objective> objectives = new List<Objective>();
 
         public ObjectiveFunctionLocation()
         {
@@ -46,15 +44,29 @@ namespace SAM.Analytical.Tas.OptGen
                 return false;
             }
 
-            int index = names.IndexOf(name);
-            if(index != -1)
+            return Add(new Objective(name, delimiter));
+        }
+
+        public bool Add(Objective objective)
+        {
+            if(objective == null || string.IsNullOrEmpty(objective.Name))
             {
-                delimiters[index] = delimiter;
+                return false;
+            }
+
+            if (objectives == null)
+            {
+                objectives = new List<Objective>();
+            }
+
+            Objective objective_Existing = objectives?.Find(x => x.Name == objective.Name);
+            if (objective_Existing != null)
+            {
+                objective_Existing.Delimiter = objective.Delimiter;
                 return true;
             }
 
-            names.Add(name);
-            delimiters.Add(delimiter);
+            objectives.Add(objective);
             return true;
         }
 
@@ -70,23 +82,21 @@ namespace SAM.Analytical.Tas.OptGen
 
         protected override string GetText()
         {
-            if(names == null || delimiters == null)
+            if(objectives == null)
             {
                 return null;
             }
 
-            int count = Math.Min(names.Count, delimiters.Count);
-
             List<string> texts = new List<string>();
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < objectives.Count; i++)
             {
-                string name = names[i];
+                string name = objectives[i].Name;
                 if(string.IsNullOrWhiteSpace(name))
                 {
                     continue;
                 }
 
-                string delimiter = delimiters[i];
+                string delimiter = objectives[i].Delimiter;
                 if (string.IsNullOrWhiteSpace(delimiter))
                 {
                     continue;

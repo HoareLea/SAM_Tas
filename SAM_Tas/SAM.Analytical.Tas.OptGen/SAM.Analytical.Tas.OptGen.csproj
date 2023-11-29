@@ -50,6 +50,7 @@
     <Compile Include="Classes\Algorithm.cs" />
     <Compile Include="Classes\IO.cs" />
     <Compile Include="Classes\NumberParameter.cs" />
+    <Compile Include="Classes\Objective.cs" />
     <Compile Include="Classes\TemplateFile.cs" />
     <Compile Include="Classes\Script.cs" />
     <Compile Include="Classes\SimulationStart.cs" />
