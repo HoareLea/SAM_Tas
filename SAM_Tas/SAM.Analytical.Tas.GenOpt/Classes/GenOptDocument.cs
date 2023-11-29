@@ -303,6 +303,43 @@ namespace SAM.Analytical.Tas.GenOpt
             return true;
         }
 
+        public bool AddParameter(IParameter parameter)
+        {
+            if (string.IsNullOrWhiteSpace(parameter?.Name))
+            {
+                return false;
+            }
+
+            if (parameters == null)
+            {
+                parameters = new List<IParameter>();
+            }
+
+            IParameter parameter_Existing = parameters.Find(x => x.Name == parameter.Name);
+            if (parameter_Existing != null)
+            {
+                parameters.Remove(parameter_Existing);
+            }
+
+            parameters.Add(parameter);
+            return true;
+        }
+
+        public bool AddObjective(Objective objective)
+        {
+            if (string.IsNullOrWhiteSpace(objective?.Name))
+            {
+                return false;
+            }
+
+            if (objectiveFunctionLocation == null)
+            {
+                objectiveFunctionLocation = new ObjectiveFunctionLocation();
+            }
+
+            return objectiveFunctionLocation.Add(objective);
+        }
+
         public bool AddObjective(string name, string delimiter)
         {
             if (string.IsNullOrWhiteSpace(name))

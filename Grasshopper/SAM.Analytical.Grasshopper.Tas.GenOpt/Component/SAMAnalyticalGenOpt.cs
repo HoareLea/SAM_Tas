@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -50,13 +50,14 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
                 Param_FilePath filePath = new Param_FilePath() { Name = "_scriptPath", NickName = "_scriptPath", Description = "Script path", Access = GH_ParamAccess.item };
                 result.Add(new GH_SAMParam(filePath, ParamVisibility.Binding));
 
-                Param_FilePath parameters = new Param_FilePath() { Name = "_parameters", NickName = "_parameters", Description = "Parameter", Access = GH_ParamAccess.list, Optional = true };
+                GooParameterParam parameters = new GooParameterParam() { Name = "_parameters", NickName = "_parameters", Description = "Parameter", Access = GH_ParamAccess.list};
                 result.Add(new GH_SAMParam(parameters, ParamVisibility.Binding));
 
-                Param_FilePath objectives = new Param_FilePath() { Name = "_objectives", NickName = "_objectives", Description = "Objectives", Access = GH_ParamAccess.list, Optional = true };
+                GooObjectiveParam objectives = new GooObjectiveParam() { Name = "_objectives", NickName = "_objectives", Description = "Objectives", Access = GH_ParamAccess.list};
                 result.Add(new GH_SAMParam(objectives, ParamVisibility.Binding));
 
-                GooAlgorithmParam algorithm = new GooAlgorithmParam() { Name = "_algorithm", NickName = "_algorithm", Description = "Algorithm", Access = GH_ParamAccess.item, Optional = true };
+                GooAlgorithmParam algorithm = new GooAlgorithmParam() { Name = "_algorithm_", NickName = "_algorithm_", Description = "Algorithm_", Access = GH_ParamAccess.item, Optional = true };
+                algorithm.SetPersistentData(new GoldenSectionAlgorithm());
                 result.Add(new GH_SAMParam(algorithm, ParamVisibility.Binding));
 
                 Param_Boolean @boolean;
@@ -104,13 +105,27 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
                 return;
             }
 
+            List<Objective> objectives = new List<Objective>();
+            index = Params.IndexOfInputParam("_objectives");
+            if (index == -1 || !dataAccess.GetDataList(index, objectives) || objectives == null || objectives.Count == 0)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
 
+            List<IParameter> parameters = new List<IParameter>();
+            index = Params.IndexOfInputParam("_parameters");
+            if (index == -1 || !dataAccess.GetDataList(index, parameters) || parameters == null || parameters.Count == 0)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
 
             GenOptDocument genOptDocument = new GenOptDocument(System.IO.Path.GetDirectoryName(path));
             genOptDocument.AddScript(System.IO.File.ReadAllText(path));
-            genOptDocument.AddObjective("DaylightFactor");
-            genOptDocument.AddObjective("Result");
-            genOptDocument.AddParameter("NorthAngle", 0, 0, 360, 12);
+            objectives?.ForEach(x => genOptDocument.AddObjective(x));
+            parameters?.ForEach(x => genOptDocument.AddParameter(x));
+
             genOptDocument.Run();
 
             if (index_Successful != -1)

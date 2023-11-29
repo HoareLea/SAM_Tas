@@ -7,28 +7,28 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas.GenOpt
 {
-    public class GooParameter : GH_Goo<IParameter>
+    public class GooObjective : GH_Goo<Objective>
     {
         public override bool IsValid => Value != null;
 
 
-        public GooParameter()
+        public GooObjective()
             :base()
         {
 
         }
 
-        public GooParameter(IParameter parameter)
+        public GooObjective(Objective objective)
             :base()
         {
-            Value = parameter;
+            Value = objective;
         }
         
         public override string TypeName
         {
             get
             {
-                return Value != null ? Value.GetType().FullName : typeof(Parameter).FullName;
+                return Value != null ? Value.GetType().FullName : typeof(Objective).FullName;
             }
         }
 
@@ -36,18 +36,18 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
         {
             get
             {
-                return typeof(Parameter).FullName.Replace(".", " ");
+                return typeof(Objective).FullName.Replace(".", " ");
             }
         }
 
         public override IGH_Goo Duplicate()
         {
-            return new GooParameter(Value);
+            return new GooObjective(Value);
         }
 
         public override string ToString()
         {
-            return typeof(Parameter).Name;
+            return typeof(Objective).Name;
         }
 
         public override bool CastFrom(object source)
@@ -60,27 +60,10 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
 
             if (source_Temp is string)
             {
-                string @string = (string)source_Temp;
-                if (@string.Contains(","))
-                {
-                    string[] values = @string.Split(',');
-                    if (values.Length > 5)
-                    {
-                        string name = values[0]?.Trim();
-                        if (!string.IsNullOrWhiteSpace(name) &&
-                            double.TryParse(values[1], out double initial) &&
-                            double.TryParse(values[2], out double min) &&
-                            double.TryParse(values[3], out double max) &&
-                            double.TryParse(values[4], out double step))
-                        {
-                            Value = new NumberParameter() { Name = name, Initial = initial, Min = min, Max = max, Step = step };
-                            return true;
-                        }
-                    }
-
-                }
+                Value = new Objective((string)source_Temp);
+                return true;
             }
-
+            
             return base.CastFrom(source);
         }
 
@@ -101,23 +84,23 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
         }
     }
 
-    public class GooParameterParam : GH_PersistentParam<GooParameter>
+    public class GooObjectiveParam : GH_PersistentParam<GooObjective>
     {
-        public override Guid ComponentGuid => new Guid("6f222653-57cb-437c-80fe-b5ba318a4183");
+        public override Guid ComponentGuid => new Guid("efa8de4a-5379-44c1-a01d-b6f21fabc2bc");
 
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
-        public GooParameterParam()
+        public GooObjectiveParam()
             : base(typeof(Parameter).Name, typeof(Parameter).Name, typeof(Parameter).FullName.Replace(".", " "), "Params", "SAM")
         {
         }
 
-        protected override GH_GetterResult Prompt_Plural(ref List<GooParameter> values)
+        protected override GH_GetterResult Prompt_Plural(ref List<GooObjective> values)
         {
             throw new NotImplementedException();
         }
 
-        protected override GH_GetterResult Prompt_Singular(ref GooParameter value)
+        protected override GH_GetterResult Prompt_Singular(ref GooObjective value)
         {
             throw new NotImplementedException();
         }
