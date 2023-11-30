@@ -40,7 +40,6 @@ namespace SAM.Analytical.Tas.GenOpt
                     continue;
                 }
 
-                int index = int.MaxValue;
                 IndexAttribute indexAttribute = propertyInfo.IndexAttribute();
                 if (indexAttribute == null)
                 {
@@ -48,7 +47,7 @@ namespace SAM.Analytical.Tas.GenOpt
                     continue;
                 }
 
-                tuples.Add(new Tuple<int, PropertyInfo>(index, propertyInfo));
+                tuples.Add(new Tuple<int, PropertyInfo>(indexAttribute.Index, propertyInfo));
             }
 
             if(tuples.Count > 1)
