@@ -3,7 +3,7 @@
     [Attributes.Name("OptimizationSettings")]
     public class OptimizationSettings : GenOptObject
     {
-        [Attributes.Name("MaxIter")]
+        [Attributes.Name("MaxIte")]
         public int MaxIterations { get; set; } = 2000;
 
         [Attributes.Name("MaxEqualResults")]

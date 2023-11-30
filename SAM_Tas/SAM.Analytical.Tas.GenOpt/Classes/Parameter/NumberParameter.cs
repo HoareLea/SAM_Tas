@@ -3,7 +3,7 @@
     [Attributes.Name("Parameter")]
     public class NumberParameter : Parameter
     {
-        [Attributes.Name("Int")]
+        [Attributes.Name("Ini")]
         public double Initial { get; set; } = 0;
 
         [Attributes.Name("Min")]

@@ -4,13 +4,13 @@ namespace SAM.Analytical.Tas.GenOpt
 {
     public class CommandFile: GenOptFile
     {
-        [Attributes.Name("OptimizationSettings")]
+        [Attributes.Name("Vary"), Attributes.Index(0)]
+        public List<IParameter> Parameters { get; set; }
+
+        [Attributes.Name("OptimizationSettings"), Attributes.Index(1)]
         public OptimizationSettings OptimizationSettings { get; set; }
 
-        [Attributes.Name("Algorithm")]
+        [Attributes.Name("Algorithm"), Attributes.Index(2)]
         public Algorithm Algorithm { get; set; }
-
-        [Attributes.Name("Vary")]
-        public List<IParameter> Parameters { get; set; }
     }
 }
