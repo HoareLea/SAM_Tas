@@ -84,7 +84,7 @@ namespace SAM.Analytical.Tas.GenOpt
                 string path = GetPath(FileType.Command);
                 if (!string.IsNullOrWhiteSpace(path))
                 {
-                    scriptFile.Save(path);
+                    commandFile.Save(path);
                 }
             }
 
@@ -94,7 +94,7 @@ namespace SAM.Analytical.Tas.GenOpt
                 string path = System.IO.Path.Combine(directory, configFileName);
                 if (!string.IsNullOrWhiteSpace(path))
                 {
-                    scriptFile.Save(path);
+                    configFile.Save(path);
                 }
             }
 
@@ -156,8 +156,6 @@ namespace SAM.Analytical.Tas.GenOpt
                     result = true;
                 }
             }
-
-
 
             return result;
         }
