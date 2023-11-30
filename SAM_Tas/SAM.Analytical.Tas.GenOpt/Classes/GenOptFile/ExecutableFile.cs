@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.GenOpt
 
             List<string> texts = new List<string>();
             texts.Add("@echo off");
-            texts.Add(string.Format("java -classpath \"{0}\" {1} {2}", javaPath, className, configFilePath));
+            texts.Add(string.Format("java -classpath \"{0}\" {1} \"{2}\"", javaPath, className, configFilePath));
             if(pause)
             {
                 texts.Add("pause");

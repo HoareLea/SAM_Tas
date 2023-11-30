@@ -25,6 +25,7 @@ namespace SAM.Analytical.Tas.GenOpt
             }
 
             List<Tuple<int, PropertyInfo>> tuples = new List<Tuple<int, PropertyInfo>>();
+            List<PropertyInfo> propertyInfos_Last = new List<PropertyInfo>();
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
                 NameAttribute nameAttribute = propertyInfo.NameAttribute();
@@ -41,23 +42,25 @@ namespace SAM.Analytical.Tas.GenOpt
 
                 int index = int.MaxValue;
                 IndexAttribute indexAttribute = propertyInfo.IndexAttribute();
-                if (indexAttribute != null)
+                if (indexAttribute == null)
                 {
-                    index = indexAttribute.Index;
+                    propertyInfos_Last.Add(propertyInfo);
+                    continue;
                 }
 
                 tuples.Add(new Tuple<int, PropertyInfo>(index, propertyInfo));
             }
 
-            if(tuples == null || tuples.Count == 0)
+            if(tuples.Count > 1)
             {
-                return null;
+                tuples.Sort((x, y) => x.Item1.CompareTo(y.Item1));
             }
 
-            tuples.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+            List<PropertyInfo> propertyInfos_Filtered = tuples.ConvertAll(x => x.Item2);
+            propertyInfos_Filtered.AddRange(propertyInfos_Last);
 
             List<string> texts = new List<string>();
-            foreach(PropertyInfo propertyInfo in tuples.ConvertAll(x => x.Item2))
+            foreach(PropertyInfo propertyInfo in propertyInfos_Filtered)
             {
                 string name = propertyInfo.NameAttribute()?.Name;
                 if (string.IsNullOrWhiteSpace(name))
