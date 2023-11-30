@@ -187,7 +187,13 @@ namespace SAM.Analytical.Tas.GenOpt
         {
             get
             {
-                return new ExecutableFile(Query.TasGenOptJavaPath(), configFileName);
+                string directory = GetDirectory();
+                if (string.IsNullOrWhiteSpace(directory) || !System.IO.Directory.Exists(directory))
+                {
+                    return null;
+                }
+
+                return new ExecutableFile(Query.TasGenOptJavaPath(), System.IO.Path.Combine(directory, configFileName));
             }
         }
 
