@@ -8,6 +8,7 @@ namespace SAM.Analytical.Tas.GenOpt
     {
         private string configFileName = "Config.ini";
         private string executableFileName = "GenOpt.bat";
+        private string outputFileName = "TasOutputs.txt";
 
         private string directory = null;
 
@@ -127,6 +128,16 @@ namespace SAM.Analytical.Tas.GenOpt
                 }
             }
 
+            OutputFile outputFile = OutputFile;
+            if (outputFile != null)
+            {
+                string path = System.IO.Path.Combine(directory, outputFileName);
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    outputFile.Save(path);
+                }
+            }
+
             bool result = false;
 
             ExecutableFile executableFile = ExecutableFile;
@@ -243,6 +254,14 @@ namespace SAM.Analytical.Tas.GenOpt
             get
             {
                 return new ScriptFile(script);
+            }
+        }
+
+        public OutputFile OutputFile
+        {
+            get
+            {
+                return new OutputFile(objectiveFunctionLocation);
             }
         }
 

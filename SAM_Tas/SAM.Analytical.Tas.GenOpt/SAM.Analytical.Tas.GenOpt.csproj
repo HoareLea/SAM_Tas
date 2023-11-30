@@ -44,6 +44,7 @@
     <Compile Include="Attributes\QuotedValueAttribute.cs" />
     <Compile Include="Attributes\NameAttribute.cs" />
     <Compile Include="Classes\MeshAlgorithm.cs" />
+    <Compile Include="Classes\OutputFile.cs" />
     <Compile Include="Classes\ParametricAlgorithm.cs" />
     <Compile Include="Classes\GPSCoordinateSearchAlgorithm.cs" />
     <Compile Include="Classes\GPSHookeJeevesAlgorithm.cs" />

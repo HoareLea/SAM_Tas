@@ -80,6 +80,14 @@ namespace SAM.Analytical.Tas.GenOpt
             return Add(name, string.Format("{0}::", name));
         }
 
+        public List<Objective> Objectives
+        {
+            get
+            {
+                return objectives;
+            }
+        }
+
         protected override string GetText()
         {
             if(objectives == null)
