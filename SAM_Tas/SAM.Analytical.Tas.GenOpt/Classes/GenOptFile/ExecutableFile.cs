@@ -7,11 +7,13 @@ namespace SAM.Analytical.Tas.GenOpt
         private string javaPath = null;
         private string className = "genopt.GenOpt";
         private string configFileName = "config.ini";
+        private bool pause = true;
 
-        public ExecutableFile(string javaPath, string configFileName)
+        public ExecutableFile(string javaPath, string configFileName, bool pause = true)
         {
             this.javaPath = javaPath;
             this.configFileName = configFileName;
+            this.pause = pause;
         }
 
         protected override string GetText()
@@ -24,6 +26,10 @@ namespace SAM.Analytical.Tas.GenOpt
             List<string> texts = new List<string>();
             texts.Add("@echo off");
             texts.Add(string.Format("java -classpath \"{0}\" {1} {2}", javaPath, className, configFileName));
+            if(pause)
+            {
+                texts.Add("pause");
+            }
 
             return string.Join("\n", texts);
         }
