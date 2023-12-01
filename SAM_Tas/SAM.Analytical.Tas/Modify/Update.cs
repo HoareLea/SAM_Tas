@@ -403,7 +403,7 @@ namespace SAM.Analytical.Tas
                     Construction construction_Source = analyticalObject_Source as Construction;
                     Construction construction_Destionation = analyticalObject_Destination as Construction;
 
-                    Construction construction_Updated = new Construction(construction_Destionation.Guid, construction_Source, construction_Destionation.Name);
+                    Construction construction_Updated = new Construction(construction_Destionation.Guid, construction_Source, construction_Source.Name);
 
                     return constructionManager.Add(construction_Updated);
                 }
@@ -412,7 +412,7 @@ namespace SAM.Analytical.Tas
                     ApertureConstruction apertureConstruction_Source = analyticalObject_Source as ApertureConstruction;
                     ApertureConstruction apertureConstruction_Destionation = analyticalObject_Destination as ApertureConstruction;
 
-                    ApertureConstruction apertureConstruction_Updated = new ApertureConstruction(apertureConstruction_Destionation.Guid, apertureConstruction_Source, apertureConstruction_Destionation.Name);
+                    ApertureConstruction apertureConstruction_Updated = new ApertureConstruction(apertureConstruction_Destionation.Guid, apertureConstruction_Source, apertureConstruction_Source.Name);
 
                     return constructionManager.Add(apertureConstruction_Updated);
                 }
