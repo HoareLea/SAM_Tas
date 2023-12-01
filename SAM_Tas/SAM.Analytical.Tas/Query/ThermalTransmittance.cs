@@ -93,7 +93,7 @@ namespace SAM.Analytical.Tas
 
         public static double ThermalTransmittance(this TCD.Construction construction, HeatFlowDirection heatFlowDirection, bool external, double tolerance = Tolerance.MacroDistance)
         {
-            if(construction == null || heatFlowDirection == HeatFlowDirection.Undefined)
+            if(construction == null || heatFlowDirection == Analytical.HeatFlowDirection.Undefined)
             {
                 return double.NaN;
             }
@@ -118,15 +118,15 @@ namespace SAM.Analytical.Tas
             int index = -1;
             switch (heatFlowDirection)
             {
-                case HeatFlowDirection.Down:
+                case Analytical.HeatFlowDirection.Down:
                     index = external ? 2 : 5;
                     break;
 
-                case HeatFlowDirection.Up:
+                case Analytical.HeatFlowDirection.Up:
                     index = external ? 1 : 4;
                     break;
 
-                case HeatFlowDirection.Horizontal:
+                case Analytical.HeatFlowDirection.Horizontal:
                     index = external ? 0 : 3;
                     break;
             }
@@ -137,7 +137,7 @@ namespace SAM.Analytical.Tas
 
         public static double ThermalTransmittance(this PanelType panelType, out HeatFlowDirection heatFlowDirection, out bool external)
         {
-            heatFlowDirection = HeatFlowDirection.Undefined;
+            heatFlowDirection = Analytical.HeatFlowDirection.Undefined;
             external = false;
 
             if(panelType == Analytical.PanelType.Undefined)
@@ -150,17 +150,17 @@ namespace SAM.Analytical.Tas
             {
                 case PanelGroup.Wall:
                     result = 0.24;
-                    heatFlowDirection = HeatFlowDirection.Horizontal;
+                    heatFlowDirection = Analytical.HeatFlowDirection.Horizontal;
                     break;
 
                 case PanelGroup.Roof:
                     result = 0.16;
-                    heatFlowDirection = HeatFlowDirection.Up;
+                    heatFlowDirection = Analytical.HeatFlowDirection.Up;
                     break;
 
                 case PanelGroup.Floor:
                     result = 0.14;
-                    heatFlowDirection = HeatFlowDirection.Down;
+                    heatFlowDirection = Analytical.HeatFlowDirection.Down;
                     break;
             }
 

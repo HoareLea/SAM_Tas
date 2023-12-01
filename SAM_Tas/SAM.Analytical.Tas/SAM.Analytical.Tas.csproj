@@ -110,6 +110,8 @@
     <Compile Include="Classes\ConstructionCalculationData.cs" />
     <Compile Include="Classes\ApertureConstructionCalculationResult.cs" />
     <Compile Include="Classes\ConstructionCalculationResult.cs" />
+    <Compile Include="Classes\ThermalTransmittances.cs" />
+    <Compile Include="Classes\ThermalTransmittanceCalculationResult.cs" />
     <Compile Include="Classes\GlazingCalculationResult.cs" />
     <Compile Include="Classes\GlazingCalculationData.cs" />
     <Compile Include="Classes\TCDDatabase.cs" />
@@ -149,6 +151,7 @@
     <Compile Include="Create\LayerThicknessCalculationData.cs" />
     <Compile Include="Create\Log.cs" />
     <Compile Include="Create\TBD.cs" />
+    <Compile Include="Create\ThermalTransmittances.cs" />
     <Compile Include="Create\ZoneGroup.cs" />
     <Compile Include="Create\InternalConditions.cs" />
     <Compile Include="Enums\Parameters\ApertureConstructionParameter.cs" />
@@ -232,6 +235,8 @@
     <Compile Include="Modify\UpdateSizingFactors.cs" />
     <Compile Include="Modify\UpdateIds.cs" />
     <Compile Include="Modify\UpdateACCI.cs" />
+    <Compile Include="Query\HeatFlowDirection.cs" />
+    <Compile Include="Query\Key.cs" />
     <Compile Include="Query\AperturePart.cs" />
     <Compile Include="Query\ApertureTypes.cs" />
     <Compile Include="Query\Score.cs" />

@@ -134,7 +134,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             ThermalTransmittanceCalculator thermalTransmittanceCalculator = new ThermalTransmittanceCalculator(constructionManager);
-            List<GlazingCalculationResult> glazingCalculationResults = thermalTransmittanceCalculator.Calculate(guids);
+            List<GlazingCalculationResult> glazingCalculationResults = thermalTransmittanceCalculator.CalculateGlazing(guids);
 
             analyticalObjects = null;
             if(glazingCalculationResults != null)

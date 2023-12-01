@@ -332,7 +332,60 @@ namespace SAM.Analytical.Tas
             return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, layerThicknessCalculationData.LayerIndex, thickness, initialThermalTransmittance, thermalTransmittance, calculatedThermalTransmittance);
         }
 
-        private GlazingCalculationResult Calculate(Guid constructionGuid, TCD.Document document)
+        private ThermalTransmittanceCalculationResult Calculate(Guid constructionGuid, TCD.Document document)
+        {
+            if (constructionGuid == Guid.Empty || document == null || ConstructionManager == null)
+            {
+                return null;
+            }
+
+            TCD.Construction construction_TCD = null;
+
+            Construction construction = ConstructionManager.Constructions?.Find(x => x.Guid == constructionGuid);
+            if (construction != null)
+            {
+                construction_TCD = construction.ToTCD(document, ConstructionManager);
+            }
+
+            if (construction_TCD == null)
+            {
+                ApertureConstruction apertureConstruction = ConstructionManager.ApertureConstructions?.Find(x => x.Guid == constructionGuid);
+                construction_TCD = apertureConstruction?.ToTCD_Constructions(document, ConstructionManager)?.Find(x => x.name.EndsWith("-pane"));
+            }
+
+            if (construction_TCD == null)
+            {
+                return null;
+            }
+
+            construction_TCD.GlazingValues(
+                out double lightTransmittance,
+                out double lightReflectance,
+                out double directSolarEnergyTransmittance,
+                out double directSolarEnergyReflectance,
+                out double directSolarEnergyAbosrtptance,
+                out double totalSolarEnergyTransmittance,
+                out double pilkingtonShortWavelengthCoefficient,
+                out double pilkingtonLongWavelengthCoefficient,
+                Tolerance);
+
+            ThermalTransmittances thermalTransmittances = Create.ThermalTransmittances(construction_TCD);
+
+            return new ThermalTransmittanceCalculationResult(
+                constructionGuid, 
+                Query.Source(),
+                lightTransmittance,
+                lightReflectance,
+                directSolarEnergyTransmittance,
+                directSolarEnergyReflectance,
+                directSolarEnergyAbosrtptance,
+                totalSolarEnergyTransmittance, 
+                pilkingtonShortWavelengthCoefficient,
+                pilkingtonLongWavelengthCoefficient,
+                thermalTransmittances);
+        }
+
+        private GlazingCalculationResult CalculateGlazing(Guid constructionGuid, TCD.Document document)
         {
             if(constructionGuid == Guid.Empty || document == null || ConstructionManager == null)
             {
@@ -491,7 +544,7 @@ namespace SAM.Analytical.Tas
             return Calculate(new LayerThicknessCalculationData[] { layerThicknessCalculationData })?.FirstOrDefault();
         }
 
-        public List<GlazingCalculationResult> Calculate(IEnumerable<Guid> guids = null)
+        public List<GlazingCalculationResult> CalculateGlazing(IEnumerable<Guid> guids = null)
         {
             if (ConstructionManager == null)
             {
@@ -543,13 +596,79 @@ namespace SAM.Analytical.Tas
 
                 foreach (Guid guid in guids_Temp)
                 {
-                    GlazingCalculationResult glazingCalculationResult = Calculate(guid, x);
+                    GlazingCalculationResult glazingCalculationResult = CalculateGlazing(guid, x);
                     if(glazingCalculationResult == null)
                     {
                         continue;
                     }
 
                     result.Add(glazingCalculationResult);
+                }
+            });
+
+            Modify.Run(action);
+
+            return result;
+        }
+
+        public List<ThermalTransmittanceCalculationResult> Calculate(IEnumerable<Guid> guids = null)
+        {
+            if (ConstructionManager == null)
+            {
+                return null;
+            }
+
+            List<Guid> guids_Temp = guids == null ? null : new List<Guid>(guids);
+            if (guids_Temp == null)
+            {
+                guids_Temp = new List<Guid>();
+
+                List<Construction> constructions = ConstructionManager.Constructions;
+                if (constructions != null)
+                {
+                    foreach (Construction construction in constructions)
+                    {
+                        if (construction == null)
+                        {
+                            continue;
+                        }
+
+                        guids_Temp.Add(construction.Guid);
+                    }
+                }
+
+                List<ApertureConstruction> apertureConstructions = ConstructionManager.ApertureConstructions;
+                if (apertureConstructions != null)
+                {
+                    foreach (ApertureConstruction apertureConstruction in apertureConstructions)
+                    {
+                        if (apertureConstruction == null)
+                        {
+                            continue;
+                        }
+
+                        guids_Temp.Add(apertureConstruction.Guid);
+                    }
+                }
+            }
+
+            List<ThermalTransmittanceCalculationResult> result = new List<ThermalTransmittanceCalculationResult>();
+            if (guids_Temp == null || guids_Temp.Count == 0)
+            {
+                return result;
+            }
+
+            Action<TCD.Document> action = new Action<TCD.Document>(x =>
+            {
+                foreach (Guid guid in guids_Temp)
+                {
+                    ThermalTransmittanceCalculationResult thermalTransmittanceCalculationResult = Calculate(guid, x);
+                    if (thermalTransmittanceCalculationResult == null)
+                    {
+                        continue;
+                    }
+
+                    result.Add(thermalTransmittanceCalculationResult);
                 }
             });
 
