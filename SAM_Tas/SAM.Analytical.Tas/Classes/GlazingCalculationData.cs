@@ -7,9 +7,9 @@ namespace SAM.Analytical.Tas
     {
         public System.Guid ConstructionGuid { get; set; } = System.Guid.Empty;
         public double TotalSolarEnergyTransmittance { get; set; } = double.NaN;
-        public Range<double> TotalSolarEnergyTransmittanceRange { get; set; } = new Range<double>(-0.2, 0);
+        public Range<double> TotalSolarEnergyTransmittanceRange { get; set; } = new Range<double>(-0.02, 0);
         public double LightTransmittance { get; set; } = double.NaN;
-        public Range<double> LightTransmittanceRange { get; set; } = new Range<double>(-0.2, 0);
+        public Range<double> LightTransmittanceRange { get; set; } = new Range<double>(-0.02, 0);
         public Range<double> ThicknessRange { get; set; } = new Range<double>(0.001, 1);
 
         public GlazingCalculationData()
