@@ -3,7 +3,7 @@
     public class MultiStartGPSAlgorithm : Algorithm
     {
         [Attributes.Name("Main"), Attributes.Index(0)]
-        public override AlgorithmType AlgorithmType { get; } = AlgorithmType.Parametric;
+        public override AlgorithmType AlgorithmType { get; } = AlgorithmType.GPSCoordinateSearch;
 
         [Attributes.Name("Seed"), Attributes.Index(1)]
         public double Seed { get; set; } = 0;
