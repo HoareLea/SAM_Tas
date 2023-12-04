@@ -11,13 +11,20 @@ namespace SAM.Core.Tas
                 return false;
             }
 
-            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\EDSL\TasManager\CurrentProject", true);
-            if (registryKey == null)
+            RegistryKey registryKey_CurrentProject = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\EDSL\TasManager\CurrentProject", true);
+            if (registryKey_CurrentProject == null)
             {
                 return false;
             }
 
-            registryKey.SetValue("Path", directory);
+            RegistryKey registryKey_TasData = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\EDSL\TasManager\TasData", true);
+            if (registryKey_TasData == null)
+            {
+                return false;
+            }
+
+            registryKey_CurrentProject.SetValue("Path", directory);
+            registryKey_TasData.SetValue("Path", directory);
             return true;
 
         }
