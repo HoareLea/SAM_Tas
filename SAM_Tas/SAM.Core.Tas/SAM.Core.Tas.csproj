@@ -93,6 +93,7 @@
     <Compile Include="Convert\ToT3D\T3D.cs" />
     <Compile Include="Create\ParameterSet.cs" />
     <Compile Include="Manager\ActiveSetting.cs" />
+    <Compile Include="Modify\SetProjectDirectory.cs" />
     <Compile Include="Modify\AssignSurfaceOutputSpecs.cs" />
     <Compile Include="Modify\UpdateSurfaceOutputSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

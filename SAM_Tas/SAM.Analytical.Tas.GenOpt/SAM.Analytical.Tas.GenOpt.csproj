@@ -94,5 +94,11 @@
     <Compile Include="Query\Text.cs" />
     <Compile Include="Query\NameAttribute.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">
+      <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
+      <Name>SAM.Core.Tas</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

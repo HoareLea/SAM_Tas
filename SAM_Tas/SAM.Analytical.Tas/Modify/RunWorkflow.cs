@@ -39,6 +39,8 @@ namespace SAM.Analytical.Tas
 
             bool hasWeatherData = false;
 
+            Core.Tas.Modify.SetProjectDirectory(directory);
+
             using (Core.Windows.Forms.ProgressForm simpleProgressForm = new Core.Windows.Forms.ProgressForm("SAM Workflow - Preparing TBD", count))
             {
                 if (!string.IsNullOrWhiteSpace(path_gbXML))

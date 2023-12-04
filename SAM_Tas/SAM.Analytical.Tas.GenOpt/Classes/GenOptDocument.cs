@@ -140,6 +140,8 @@ namespace SAM.Analytical.Tas.GenOpt
 
             bool result = false;
 
+            Core.Tas.Modify.SetProjectDirectory(directory);
+
             ExecutableFile executableFile = ExecutableFile;
             if(executableFile != null)
             {
