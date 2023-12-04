@@ -32,7 +32,7 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public SAMAnalyticalGPSHookeJeevesAlgorithm()
-          : base("SAMAnalytical.GPSHookeJeevesAlgorith", "SAMAnalytical.GPSHookeJeevesAlgorith",
+          : base("SAMAnalytical.GPSHookeJeevesAlgorithm", "SAMAnalytical.GPSHookeJeevesAlgorithm",
               "SAM Analytical GenOpt GPSHookeJeeves Algorithm",
               "SAM WIP", "Tas")
         {

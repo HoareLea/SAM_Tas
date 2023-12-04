@@ -46,6 +46,7 @@
     <Compile Include="Attributes\NameAttribute.cs" />
     <Compile Include="Classes\Algorithm\MeshAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\MultiStartGPSAlgorithm.cs" />
+    <Compile Include="Classes\Algorithm\FibonacciDivisionAlgorithm.cs" />
     <Compile Include="Classes\GenOptFile\OutputFile.cs" />
     <Compile Include="Classes\Algorithm\ParametricAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\GPSCoordinateSearchAlgorithm.cs" />

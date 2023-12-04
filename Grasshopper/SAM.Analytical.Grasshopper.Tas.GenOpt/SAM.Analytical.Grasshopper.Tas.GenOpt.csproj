@@ -54,6 +54,7 @@
     <Compile Include="Component\SAMAnalyticalGPSHookeJeevesAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalMultiStartGPSAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalMeshAlgorithm.cs" />
+    <Compile Include="Component\SAMAnalyticalFibonacciDivisionAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalParametricAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalGenOptGoldenSectionAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalGenOpt.cs" />
