@@ -47,8 +47,10 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
 
+                ParametricAlgorithm parametricAlgorithm = new ParametricAlgorithm();
+
                 Param_Boolean @boolean = new Param_Boolean() { Name = "_stopAtError_", NickName = "_stopAtError_", Description = "Stop At Error", Optional = true, Access = GH_ParamAccess.item };
-                @boolean.SetPersistentData(false);
+                @boolean.SetPersistentData(parametricAlgorithm.StopAtError);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 return result.ToArray();

@@ -47,8 +47,10 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
 
+                GoldenSectionAlgorithm goldenSectionAlgorithm = new GoldenSectionAlgorithm();
+
                 Param_Number number = new Param_Number() { Name = "_absDiffFunction_", NickName = "_absDiffFunction_", Description = "Abs Diff Function", Optional = true, Access = GH_ParamAccess.item };
-                number.SetPersistentData(0.1);
+                number.SetPersistentData(goldenSectionAlgorithm.AbsDiffFunction);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
                 return result.ToArray();

@@ -50,28 +50,30 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
                 Param_Number number = null;
                 Param_Integer integer = null;
 
+                MultiStartGPSAlgorithm multiStartGPSAlgorithm = new MultiStartGPSAlgorithm();
+
                 number = new Param_Number() { Name = "_seed_", NickName = "_seed_", Description = "Seed", Optional = true, Access = GH_ParamAccess.item };
-                number.SetPersistentData(0);
+                number.SetPersistentData(multiStartGPSAlgorithm.Seed);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
                 integer = new Param_Integer() { Name = "_numberOfInitialPoint_", NickName = "_numberOfInitialPoint_", Description = "Number Of Initial Point", Optional = true, Access = GH_ParamAccess.item };
-                integer.SetPersistentData(0);
+                integer.SetPersistentData(multiStartGPSAlgorithm.NumberOfInitialPoint);
                 result.Add(new GH_SAMParam(integer, ParamVisibility.Binding));
 
                 number = new Param_Number() { Name = "_meshSizeDivider_", NickName = "_meshSizeDivider_", Description = "Mesh Size Divider", Optional = true, Access = GH_ParamAccess.item };
-                number.SetPersistentData(0);
+                number.SetPersistentData(multiStartGPSAlgorithm.MeshSizeDivider);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
                 number = new Param_Number() { Name = "_initialMeshSizeExponent_", NickName = "_initialMeshSizeExponent_", Description = "Initial Mesh Size Exponent", Optional = true, Access = GH_ParamAccess.item };
-                number.SetPersistentData(0);
+                number.SetPersistentData(multiStartGPSAlgorithm.InitialMeshSizeExponent);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
                 number = new Param_Number() { Name = "_meshSizeExponentIncrement_", NickName = "_meshSizeExponentIncrement_", Description = "Mesh Size Exponent Increment", Optional = true, Access = GH_ParamAccess.item };
-                number.SetPersistentData(0);
+                number.SetPersistentData(multiStartGPSAlgorithm.MeshSizeExponentIncrement);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
                 integer = new Param_Integer() { Name = "_numberOfStepReduction_", NickName = "_numberOfStepReduction_", Description = "Number Of Step Reduction", Optional = true, Access = GH_ParamAccess.item };
-                integer.SetPersistentData(0);
+                integer.SetPersistentData(multiStartGPSAlgorithm.NumberOfStepReduction);
                 result.Add(new GH_SAMParam(integer, ParamVisibility.Binding));
 
                 return result.ToArray();

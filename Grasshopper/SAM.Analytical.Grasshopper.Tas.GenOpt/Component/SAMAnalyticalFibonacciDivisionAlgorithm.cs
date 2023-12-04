@@ -47,8 +47,10 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
 
+                FibonacciDivisionAlgorithm fibonacciDivisionAlgorithm = new FibonacciDivisionAlgorithm();
+
                 Param_Number number = new Param_Number() { Name = "_intervalReduction_", NickName = "_intervalReduction_", Description = "Interval Reduction", Optional = true, Access = GH_ParamAccess.item };
-                number.SetPersistentData(false);
+                number.SetPersistentData(fibonacciDivisionAlgorithm.IntervalReduction);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
                 return result.ToArray();
