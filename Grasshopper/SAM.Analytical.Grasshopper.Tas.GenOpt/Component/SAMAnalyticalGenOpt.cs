@@ -133,7 +133,15 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
                 return;
             }
 
+            Algorithm algorithm = null;
+            index = Params.IndexOfInputParam("_algorithm_");
+            if (index == -1 || !dataAccess.GetData(index, ref algorithm) || algorithm == null)
+            {
+                algorithm = new GoldenSectionAlgorithm();
+            }
+
             GenOptDocument genOptDocument = new GenOptDocument(System.IO.Path.GetDirectoryName(path));
+            genOptDocument.Algorithm = algorithm;
             genOptDocument.AddScript(System.IO.File.ReadAllText(path));
             objectives?.ForEach(x => genOptDocument.AddObjective(x));
             parameters?.ForEach(x => genOptDocument.AddParameter(x));
