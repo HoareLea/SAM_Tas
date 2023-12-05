@@ -7,7 +7,5 @@
 
         [Attributes.Name("StopAtError"), Attributes.Index(1)]
         public bool StopAtError { get; set; } = false;
-
-
     }
 }

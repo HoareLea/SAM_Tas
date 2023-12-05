@@ -48,6 +48,7 @@
     <Compile Include="Classes\Algorithm\MultiStartGPSAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\FibonacciDivisionAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\DiscreteArmijoGradientAlgorithm.cs" />
+    <Compile Include="Classes\Algorithm\NelderMeadONeillcsAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\ParticleStormConstrictionAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\HybridGeneralizedPSPO.cs" />
     <Compile Include="Classes\Algorithm\ParticleStormMeshAlgorithm.cs" />
