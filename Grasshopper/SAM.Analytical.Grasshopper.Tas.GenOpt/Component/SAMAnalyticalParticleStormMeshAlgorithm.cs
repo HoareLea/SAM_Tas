@@ -13,7 +13,7 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("4531c9e1-0654-4b40-8cab-12ecc50ee65d");
+        public override Guid ComponentGuid => new Guid("5ceb67c5-1c11-4e2d-9f11-95c018befacf");
 
         /// <summary>
         /// The latest version of this component
