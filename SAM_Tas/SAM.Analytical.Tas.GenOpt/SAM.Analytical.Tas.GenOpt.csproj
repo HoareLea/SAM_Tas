@@ -50,7 +50,7 @@
     <Compile Include="Classes\Algorithm\DiscreteArmijoGradientAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\NelderMeadONeillcsAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\ParticleStormConstrictionAlgorithm.cs" />
-    <Compile Include="Classes\Algorithm\HybridGeneralizedPSPO.cs" />
+    <Compile Include="Classes\Algorithm\HybridGeneralizedPSPOAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\ParticleStormMeshAlgorithm.cs" />
     <Compile Include="Classes\Algorithm\ParticleStormIntertiaAlgorithm.cs" />
     <Compile Include="Classes\GenOptFile\OutputFile.cs" />
