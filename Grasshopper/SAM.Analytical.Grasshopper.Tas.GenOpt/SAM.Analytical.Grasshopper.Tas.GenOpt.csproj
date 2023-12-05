@@ -51,6 +51,7 @@
     <Compile Include="Classes\GooObjective.cs" />
     <Compile Include="Classes\GooParameter.cs" />
     <Compile Include="Classes\GooAlgorithm.cs" />
+    <Compile Include="Component\SAMAnalyticalParticleStormMeshAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalParticleStormConstrictionAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalParticleStormIntertiaAlgorithm.cs" />
     <Compile Include="Component\SAMAnalyticalGPSHookeJeevesAlgorithm.cs" />
