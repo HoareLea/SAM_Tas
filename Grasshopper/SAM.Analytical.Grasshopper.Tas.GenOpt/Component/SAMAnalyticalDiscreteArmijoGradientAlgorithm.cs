@@ -63,10 +63,6 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
                 number.SetPersistentData(discreteArmijoGradientAlgorithm.Gamma);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
 
-                number = new Param_Number() { Name = "_gamma_", NickName = "_gamma_", Description = "Gamma", Optional = true, Access = GH_ParamAccess.item };
-                number.SetPersistentData(discreteArmijoGradientAlgorithm.Gamma);
-                result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
-
                 number = new Param_Number() { Name = "_k0_", NickName = "_k0_", Description = "K0", Optional = true, Access = GH_ParamAccess.item };
                 number.SetPersistentData(discreteArmijoGradientAlgorithm.K0);
                 result.Add(new GH_SAMParam(number, ParamVisibility.Binding));
