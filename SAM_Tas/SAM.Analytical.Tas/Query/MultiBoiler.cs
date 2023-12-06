@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static TPD.MultiBoiler MultiBoiler(this TPD.PlantRoom plantRoom, string name)
+        public static global::TPD.MultiBoiler MultiBoiler(this global::TPD.PlantRoom plantRoom, string name)
         {
             if (plantRoom is null || string.IsNullOrWhiteSpace(name))
             {
@@ -11,7 +11,7 @@
 
             for (int i = 1; i <= plantRoom.GetComponentCount(); i++)
             {
-                TPD.MultiBoiler multiBoiler = plantRoom.GetComponent(i) as TPD.MultiBoiler;
+                global::TPD.MultiBoiler multiBoiler = plantRoom.GetComponent(i) as global::TPD.MultiBoiler;
                 if(multiBoiler == null)
                 {
                     continue;

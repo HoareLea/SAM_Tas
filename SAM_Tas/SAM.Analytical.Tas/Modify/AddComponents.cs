@@ -2,14 +2,14 @@
 {
     public static partial class Modify
     {
-        public static void AddComponents(this TPD.SystemZone systemZone, TPD.EnergyCentre energyCentre, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
+        public static void AddComponents(this global::TPD.SystemZone systemZone, global::TPD.EnergyCentre energyCentre, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
             if(systemZone == null || energyCentre == null)
             {
                 return;
             }
 
-            TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
+            global::TPD.PlantRoom plantRoom = energyCentre?.PlantRoom("Main PlantRoom");
             if (plantRoom == null)
             {
                 return;
@@ -23,7 +23,7 @@
 
             dynamic coolingGroup = plantRoom.CoolingGroup("Cooling Circuit Group");
 
-            TPD.RefrigerantGroup refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
+            global::TPD.RefrigerantGroup refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
 
             Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil_Heating, out bool dXCoil_Cooling, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
             

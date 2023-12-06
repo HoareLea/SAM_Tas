@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static TPD.DHWGroup DHWGroup(this TPD.PlantRoom plantRoom, string name)
+        public static global::TPD.DHWGroup DHWGroup(this global::TPD.PlantRoom plantRoom, string name)
         {
             if (plantRoom is null || string.IsNullOrWhiteSpace(name))
             {
@@ -11,7 +11,7 @@
 
             for (int i = 1; i <= plantRoom.GetDHWGroupCount(); i++)
             {
-                TPD.DHWGroup dHWGroup = plantRoom.GetDHWGroup(i);
+                global::TPD.DHWGroup dHWGroup = plantRoom.GetDHWGroup(i);
                 if(dHWGroup == null)
                 {
                     continue;

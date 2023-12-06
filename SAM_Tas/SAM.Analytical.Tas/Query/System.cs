@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static TPD.System System(this TPD.PlantRoom plantRoom, string name)
+        public static global::TPD.System System(this global::TPD.PlantRoom plantRoom, string name)
         {
             if (plantRoom is null || string.IsNullOrWhiteSpace(name))
             {
@@ -11,7 +11,7 @@
 
             for (int i = 1; i <= plantRoom.GetSystemCount(); i++)
             {
-                TPD.System system = plantRoom.GetSystem(i);
+                global::TPD.System system = plantRoom.GetSystem(i);
                 if(system == null)
                 {
                     continue;

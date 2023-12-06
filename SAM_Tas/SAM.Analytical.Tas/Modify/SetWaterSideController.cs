@@ -2,7 +2,7 @@
 {
     public static partial class Modify
     {
-        public static void SetWaterSideController(this TPD.PlantController plantController, WaterSideControllerSetup waterSideControllerSetup, double extra1 = 0, double extra2 = 0)
+        public static void SetWaterSideController(this global::TPD.PlantController plantController, WaterSideControllerSetup waterSideControllerSetup, double extra1 = 0, double extra2 = 0)
         {
             if(waterSideControllerSetup == WaterSideControllerSetup.Undefined)
             {

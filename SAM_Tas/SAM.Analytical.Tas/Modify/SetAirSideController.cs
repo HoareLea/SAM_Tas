@@ -2,7 +2,7 @@
 {
     public static partial class Modify
     {
-        public static void SetAirSideController(this TPD.Controller controller, AirSideControllerSetup airSideControllerSetup, double extra1 = 0, double extra2 = 0)
+        public static void SetAirSideController(this global::TPD.Controller controller, AirSideControllerSetup airSideControllerSetup, double extra1 = 0, double extra2 = 0)
         {
             if(airSideControllerSetup == AirSideControllerSetup.Undefined)
             {

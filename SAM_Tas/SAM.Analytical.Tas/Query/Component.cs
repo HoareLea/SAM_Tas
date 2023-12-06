@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static T Component<T>(this TPD.PlantRoom plantRoom, string name)
+        public static T Component<T>(this global::TPD.PlantRoom plantRoom, string name)
         {
             if (plantRoom is null || string.IsNullOrWhiteSpace(name))
             {
@@ -11,7 +11,7 @@
 
             for (int i = 1; i <= plantRoom.GetComponentCount(); i++)
             {
-                TPD.PlantComponent plantComponent = plantRoom.GetComponent(i);
+                global::TPD.PlantComponent plantComponent = plantRoom.GetComponent(i);
                 if(!(plantComponent is T))
                 {
                     continue;

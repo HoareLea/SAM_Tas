@@ -35,6 +35,13 @@
       <HintPath>..\..\..\SAM_UI\references_buildonly\Interop.TPD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core, Version=1.0.8740.23897, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,7 +52,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\SpaceSystemCalculationResult.cs" />
+    <Compile Include="Convert\ToSAM\SpaceSystemCalculationResult.cs" />
+    <Compile Include="Create\IndexedDoubles.cs" />
+    <Compile Include="Enums\ResultsDataSeries.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\EndHour.cs" />
+    <Compile Include="Query\ZoneComponents.cs" />
+    <Compile Include="Query\StartHour.cs" />
+    <Compile Include="Query\ZoneLoads.cs" />
+    <Compile Include="Query\SystemComponents.cs" />
+    <Compile Include="Query\SystemZones.cs" />
+    <Compile Include="Query\Systems.cs" />
+    <Compile Include="Query\PlantRooms.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

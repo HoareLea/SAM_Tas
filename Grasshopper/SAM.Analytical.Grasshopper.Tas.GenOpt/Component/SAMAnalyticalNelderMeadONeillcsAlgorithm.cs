@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
-using Newtonsoft.Json.Linq;
 using SAM.Analytical.Grasshopper.Tas.GenOpt.Properties;
 using SAM.Analytical.Tas.GenOpt;
 using SAM.Core.Grasshopper;

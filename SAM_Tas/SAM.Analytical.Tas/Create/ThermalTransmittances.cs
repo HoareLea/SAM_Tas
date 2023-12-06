@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace SAM.Analytical.Tas
+﻿namespace SAM.Analytical.Tas
 {
     public static partial class Create
     {

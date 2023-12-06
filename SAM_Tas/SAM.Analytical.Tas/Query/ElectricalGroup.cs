@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static TPD.ElectricalGroup ElectricalGroup(this TPD.PlantRoom plantRoom, string name)
+        public static global::TPD.ElectricalGroup ElectricalGroup(this global::TPD.PlantRoom plantRoom, string name)
         {
             if (plantRoom is null || string.IsNullOrWhiteSpace(name))
             {
@@ -11,7 +11,7 @@
 
             for (int i = 1; i <= plantRoom.GetElectricalGroupCount(); i++)
             {
-                TPD.ElectricalGroup electricalGroup = plantRoom.GetElectricalGroup(i);
+                global::TPD.ElectricalGroup electricalGroup = plantRoom.GetElectricalGroup(i);
                 if(electricalGroup == null)
                 {
                     continue;

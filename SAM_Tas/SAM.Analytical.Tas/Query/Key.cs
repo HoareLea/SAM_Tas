@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TSD;
-
-namespace SAM.Analytical.Tas
+﻿namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
