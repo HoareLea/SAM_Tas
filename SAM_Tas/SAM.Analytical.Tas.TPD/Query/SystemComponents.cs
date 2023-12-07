@@ -16,15 +16,14 @@ namespace SAM.Analytical.Tas.TPD
 
             List<T> result = new List<T>();
 
-            SystemComponent systemComponent = system.GetComponent(index);
-            while(systemComponent != null)
+            int count = system.GetComponentCount();
+            for (int i = 1; i <= count; i++)
             {
+                SystemComponent systemComponent = system.GetComponent(i);
                 if (systemComponent is T)
                 {
                     result.Add((T)systemComponent);
                 }
-                index++;
-                systemComponent = system.GetComponent(index);
             }
 
             return result;
@@ -42,15 +41,14 @@ namespace SAM.Analytical.Tas.TPD
 
             List<T> result = new List<T>();
 
-            SystemComponent systemComponent = componentGroup.GetComponent(index);
-            while (systemComponent != null)
+            int count = componentGroup.GetComponentCount();
+            for (int i = 1; i <= count; i++)
             {
+                SystemComponent systemComponent = componentGroup.GetComponent(i);
                 if (systemComponent is T)
                 {
                     result.Add((T)systemComponent);
                 }
-                index++;
-                systemComponent = componentGroup.GetComponent(index);
             }
 
             return result;

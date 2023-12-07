@@ -16,16 +16,14 @@ namespace SAM.Analytical.Tas.TPD
 
             List<T> result = new List<T>();
 
-            ZoneComponent zoneComponent = systemZone.GetZoneComponent(index);
-            while(zoneComponent != null)
+            int count = systemZone.GetZoneComponentCount();
+            for (int i = 1; i <= count; i++)
             {
-                if(zoneComponent is T)
+                ZoneComponent zoneComponent = systemZone.GetZoneComponent(index);
+                if (zoneComponent is T)
                 {
                     result.Add((T)zoneComponent);
                 }
-
-                index++;
-                zoneComponent = systemZone.GetZoneComponent(index);
             }
 
             return result;

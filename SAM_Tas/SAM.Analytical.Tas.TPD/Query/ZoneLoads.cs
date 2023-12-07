@@ -26,12 +26,11 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ZoneLoad> result = new List<ZoneLoad>();
 
-            ZoneLoad zoneLoad = systemComponent.GetZoneLoad(index);
-            while (zoneLoad != null)
+            int count = systemComponent.GetZoneLoadCount();
+            for (int i = 1; i <= count; i++)
             {
+                ZoneLoad zoneLoad = systemComponent.GetZoneLoad(index);
                 result.Add(zoneLoad);
-                index++;
-                zoneLoad = systemComponent.GetZoneLoad(index);
             }
 
             return result;

@@ -16,12 +16,11 @@ namespace SAM.Analytical.Tas.TPD
 
             List<global::TPD.System> result = new List<global::TPD.System>();
 
-            global::TPD.System system = plantRoom.GetSystem(index);
-            while(system != null)
+            int count = plantRoom.GetSystemCount();
+            for (int i = 1; i <= count; i++)
             {
+                global::TPD.System system = plantRoom.GetSystem(index);
                 result.Add(system);
-                index++;
-                system = plantRoom.GetSystem(index);
             }
 
             return result;
