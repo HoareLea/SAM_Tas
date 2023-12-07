@@ -12,9 +12,25 @@ namespace SAM.Core.Tas
 
         }
 
-        public SAMTPDDocument(string path)
+        public SAMTPDDocument(string path, bool readOnly = false)
         {
-            TPDDocument.Create(path);
+            if(System.IO.File.Exists(path))
+            {
+                if(readOnly)
+                {
+                    TPDDocument.OpenReadOnly(path);
+                }
+                else
+                {
+                    TPDDocument.Open(path);
+                }
+            }
+            else
+            {
+                TPDDocument.Create(path);
+            }
+            
+            
         }
 
         public TPD.TPDDoc TPDDocument
