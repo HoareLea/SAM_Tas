@@ -53,11 +53,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\SpaceSystemCalculationResult.cs" />
+    <Compile Include="Convert\ToSAM\SpaceSystemCalculationResults.cs" />
     <Compile Include="Convert\ToSAM\SpaceSystemCalculationResult.cs" />
     <Compile Include="Create\IndexedDoubles.cs" />
-    <Compile Include="Enums\ResultsDataSeries.cs" />
+    <Compile Include="Enums\ChilledBeamWithHeatingDataType.cs" />
+    <Compile Include="Enums\ChilledBeamDataType.cs" />
+    <Compile Include="Enums\EquipmentType.cs" />
+    <Compile Include="Enums\DXCoilUnitDataType.cs" />
+    <Compile Include="Enums\FanCoilUnitDataType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\UniqueId.cs" />
     <Compile Include="Query\EndHour.cs" />
+    <Compile Include="Query\Source.cs" />
     <Compile Include="Query\ZoneComponents.cs" />
     <Compile Include="Query\StartHour.cs" />
     <Compile Include="Query\ZoneLoads.cs" />
@@ -68,6 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">
+      <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
+      <Name>SAM.Core.Tas</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
