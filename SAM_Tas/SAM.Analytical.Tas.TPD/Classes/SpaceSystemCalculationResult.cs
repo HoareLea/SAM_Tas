@@ -26,7 +26,24 @@ namespace SAM.Analytical.Tas.TPD
         public SpaceSystemCalculationResult(SpaceSystemCalculationResult spaceSystemCalculationResult)
             : base(spaceSystemCalculationResult)
         {
+            if(spaceSystemCalculationResult != null)
+            {
+                area= spaceSystemCalculationResult.area;
+                volume= spaceSystemCalculationResult.volume;
 
+                heatingDuty= spaceSystemCalculationResult.heatingDuty;
+                coolingDuty = spaceSystemCalculationResult.coolingDuty;
+                designFlowRate= spaceSystemCalculationResult.designFlowRate;
+
+                if (spaceSystemCalculationResult.dictionary != null)
+                {
+                    dictionary = new Dictionary<string, IndexedDoubles>();
+                    foreach (KeyValuePair<string, IndexedDoubles> keyValuePair in spaceSystemCalculationResult.dictionary)
+                    {
+                        dictionary[keyValuePair.Key] = keyValuePair.Value == null ? null : new IndexedDoubles(keyValuePair.Value);
+                    }
+                }
+            }
         }
 
         public SpaceSystemCalculationResult(string uniqueId, string name, string source, double area, double volume, double heatingDuty, double coolingDuty, double designFlowRate, Dictionary<string, IndexedDoubles> dictionary)

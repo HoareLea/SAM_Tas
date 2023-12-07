@@ -82,7 +82,7 @@ namespace SAM.Analytical.Tas.TPD
             int start = tPDDoc.StartHour();
             int end = tPDDoc.EndHour();
 
-            if(start == -1 || end == -1 || end > start)
+            if(start == -1 || end == -1 || end < start)
             {
                 return result;
             }

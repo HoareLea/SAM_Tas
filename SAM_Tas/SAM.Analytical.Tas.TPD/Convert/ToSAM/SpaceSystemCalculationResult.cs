@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            IEnumerable<FanCoilUnitDataType> fanCoilUnitDataTypes_Temp = fanCoilUnitDataTypes == null ? System.Enum.GetValues(typeof(FanCoilUnitDataType)).Cast<FanCoilUnitDataType>() : fanCoilUnitDataTypes;
+            IEnumerable<FanCoilUnitDataType> fanCoilUnitDataTypes_Temp = fanCoilUnitDataTypes == null || fanCoilUnitDataTypes.Length == 0 ? System.Enum.GetValues(typeof(FanCoilUnitDataType)).Cast<FanCoilUnitDataType>() : fanCoilUnitDataTypes;
 
             Dictionary<string, IndexedDoubles> dictionary = new Dictionary<string, IndexedDoubles>();
 
@@ -56,9 +56,9 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
 
-                    heatingDuty = double.IsNaN(heatingDuty) ? System.Convert.ToDouble(fanCoilUnit.HeatingDuty) : heatingDuty + System.Convert.ToDouble(fanCoilUnit.HeatingDuty);
-                    coolingDuty = double.IsNaN(coolingDuty) ? System.Convert.ToDouble(fanCoilUnit.CoolingDuty) : coolingDuty + System.Convert.ToDouble(fanCoilUnit.CoolingDuty);
-                    designFlowRate = double.IsNaN(designFlowRate) ? System.Convert.ToDouble(fanCoilUnit.DesignFlowRate) : designFlowRate + System.Convert.ToDouble(fanCoilUnit.DesignFlowRate);
+                    heatingDuty = double.IsNaN(heatingDuty) ? System.Convert.ToDouble((fanCoilUnit.HeatingDuty as dynamic).Value) : heatingDuty + System.Convert.ToDouble(fanCoilUnit.HeatingDuty);
+                    coolingDuty = double.IsNaN(coolingDuty) ? System.Convert.ToDouble((fanCoilUnit.CoolingDuty as dynamic).Value) : coolingDuty + System.Convert.ToDouble(fanCoilUnit.CoolingDuty);
+                    designFlowRate = double.IsNaN(designFlowRate) ? System.Convert.ToDouble((fanCoilUnit.DesignFlowRate as dynamic).Value) : designFlowRate + System.Convert.ToDouble(fanCoilUnit.DesignFlowRate);
                 }
             }
 

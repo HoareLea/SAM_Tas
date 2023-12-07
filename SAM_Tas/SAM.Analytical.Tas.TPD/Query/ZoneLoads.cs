@@ -24,12 +24,14 @@ namespace SAM.Analytical.Tas.TPD
 
             int index = 1;
 
+            dynamic @dynamic = systemComponent;
+
             List<ZoneLoad> result = new List<ZoneLoad>();
 
-            int count = systemComponent.GetZoneLoadCount();
+            int count = @dynamic.GetZoneLoadCount();
             for (int i = 1; i <= count; i++)
             {
-                ZoneLoad zoneLoad = systemComponent.GetZoneLoad(index);
+                ZoneLoad zoneLoad = @dynamic.GetZoneLoad(index);
                 result.Add(zoneLoad);
             }
 

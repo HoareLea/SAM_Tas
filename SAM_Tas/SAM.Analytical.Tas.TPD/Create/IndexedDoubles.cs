@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Core;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -32,14 +33,20 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            object @object = ((SystemComponent)zoneComponent).GetResultsData(tpdResultsPeriod, tpdCombinerType, (int)fanCoilUnitDataType, start, end - start);
-            if (@object == null)
+            object @object = (zoneComponent as dynamic).GetResultsData(tpdResultsPeriod, tpdCombinerType, (int)fanCoilUnitDataType, start, end - start);
+            IEnumerable enumerable = @object as IEnumerable;
+            if (enumerable == null)
             {
                 return null;
             }
 
-
+            int index = start - 1;
             IndexedDoubles result = new IndexedDoubles();
+            foreach(float value in enumerable)
+            {
+                result[index] = System.Convert.ToDouble(value);
+                index++;
+            }
 
             return result;
         }
