@@ -63,9 +63,10 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
 
-                    heatingDuty = double.IsNaN(heatingDuty) ? System.Convert.ToDouble((fanCoilUnit.HeatingDuty as dynamic).Value) : heatingDuty + System.Convert.ToDouble(fanCoilUnit.HeatingDuty);
-                    coolingDuty = double.IsNaN(coolingDuty) ? System.Convert.ToDouble((fanCoilUnit.CoolingDuty as dynamic).Value) : coolingDuty + System.Convert.ToDouble(fanCoilUnit.CoolingDuty);
-                    designFlowRate = double.IsNaN(designFlowRate) ? System.Convert.ToDouble((fanCoilUnit.DesignFlowRate as dynamic).Value) : designFlowRate + System.Convert.ToDouble(fanCoilUnit.DesignFlowRate);
+                    int designConditionCount = fanCoilUnit.HeatingDuty.GetDesignConditionCount();
+                    heatingDuty = double.IsNaN(heatingDuty) ? System.Convert.ToDouble((fanCoilUnit.HeatingDuty as dynamic).Value) : heatingDuty + System.Convert.ToDouble((fanCoilUnit.HeatingDuty as dynamic).Value);
+                    coolingDuty = double.IsNaN(coolingDuty) ? System.Convert.ToDouble((fanCoilUnit.CoolingDuty as dynamic).Value) : coolingDuty + System.Convert.ToDouble((fanCoilUnit.CoolingDuty as dynamic).Value);
+                    designFlowRate = double.IsNaN(designFlowRate) ? System.Convert.ToDouble((fanCoilUnit.DesignFlowRate as dynamic).Value) : designFlowRate + System.Convert.ToDouble((fanCoilUnit.DesignFlowRate as dynamic).Value);
                 }
             }
 
