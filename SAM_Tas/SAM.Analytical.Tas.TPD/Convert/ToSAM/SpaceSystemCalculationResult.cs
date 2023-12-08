@@ -28,6 +28,13 @@ namespace SAM.Analytical.Tas.TPD
             double coolingDuty = double.NaN;
             double designFlowRate = double.NaN;
 
+            
+            ProfileData profileData = systemZone.TemperatureSetpoint;
+            if(profileData != null)
+            {
+                double value = profileData.Value;
+            }
+
             List<FanCoilUnit> fanCoilUnits = systemZone.ZoneComponents<ZoneComponent>()?.FindAll(x => x is FanCoilUnit)?.ConvertAll(x => (FanCoilUnit)x);
             if (fanCoilUnits != null)
             {
