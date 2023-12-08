@@ -6,8 +6,13 @@ namespace SAM.Analytical.Tas.TPD
     public static partial class Query
     {
         public static List<PlantRoom> PlantRooms(this TPDDoc tPDDoc)
-        { 
-            if(tPDDoc == null)
+        {
+            return PlantRooms(tPDDoc?.EnergyCentre);
+        }
+
+        public static List<PlantRoom> PlantRooms(this EnergyCentre energyCentre)
+        {
+            if (energyCentre == null)
             {
                 return null;
             }
@@ -16,12 +21,12 @@ namespace SAM.Analytical.Tas.TPD
 
             List<PlantRoom> result = new List<PlantRoom>();
 
-            PlantRoom plantRoom = tPDDoc.EnergyCentre.GetPlantRoom(index);
-            while(plantRoom != null)
+            PlantRoom plantRoom = energyCentre.GetPlantRoom(index);
+            while (plantRoom != null)
             {
                 result.Add(plantRoom);
                 index++;
-                plantRoom = tPDDoc.EnergyCentre.GetPlantRoom(index);
+                plantRoom = energyCentre.GetPlantRoom(index);
             }
 
             return result;

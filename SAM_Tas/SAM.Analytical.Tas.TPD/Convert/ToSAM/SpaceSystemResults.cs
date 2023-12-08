@@ -6,14 +6,14 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static List<SpaceSystemCalculationResult> ToSAM_SpaceSystemCalculationResults(string path_TPD)
+        public static List<SystemSpaceResult> ToSAM_SpaceSystemResults(string path_TPD)
         {
             if(string.IsNullOrWhiteSpace(path_TPD))
             {
                 return null;
             }
 
-            List<SpaceSystemCalculationResult> result = null;
+            List<SystemSpaceResult> result = null;
             using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
             {
 
@@ -23,24 +23,24 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static List<SpaceSystemCalculationResult> ToSAM_SpaceSystemCalculationResults(this SAMTPDDocument sAMTPDDocument)
+        public static List<SystemSpaceResult> ToSAM_SpaceSystemCalculationResults(this SAMTPDDocument sAMTPDDocument)
         {
             if (sAMTPDDocument == null)
             {
                 return null;
             }
 
-            return ToSAM_SpaceSystemCalculationResults(sAMTPDDocument.TPDDocument);
+            return ToSAM_SpaceSystemResults(sAMTPDDocument.TPDDocument);
         }
 
-        public static List<SpaceSystemCalculationResult> ToSAM_SpaceSystemCalculationResults(this TPDDoc tPDDoc)
+        public static List<SystemSpaceResult> ToSAM_SpaceSystemResults(this TPDDoc tPDDoc)
         {
             if (tPDDoc == null)
             {
                 return null;
             }
 
-            List<SpaceSystemCalculationResult> result = new List<SpaceSystemCalculationResult>();
+            List<SystemSpaceResult> result = new List<SystemSpaceResult>();
 
             List<PlantRoom> plantRooms = tPDDoc.PlantRooms();
             if(plantRooms == null)
@@ -89,7 +89,7 @@ namespace SAM.Analytical.Tas.TPD
 
             foreach (SystemZone systemZone in systemZones)
             {
-                SpaceSystemCalculationResult spaceSystemCalculationResults = systemZone?.ToSAM_SpaceSystemCalculationResult(start, end);
+                SystemSpaceResult spaceSystemCalculationResults = systemZone?.ToSAM_SpaceSystemResult(start, end);
                 result.Add(spaceSystemCalculationResults);
             }
 

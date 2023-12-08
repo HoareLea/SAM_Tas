@@ -7,12 +7,12 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
-    public class SAMAnalyticalTPDResults : GH_SAMVariableOutputParameterComponent
+    public class FromTPD : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("5067b4f1-3a24-4acc-9b0b-c863209be8ca");
+        public override Guid ComponentGuid => new Guid("c88b33fb-5c8f-442e-bd43-d9a2809c2bc2");
 
         /// <summary>
         /// The latest version of this component
@@ -30,9 +30,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMAnalyticalTPDResults()
-          : base("SAMAnalytical.TPDResults", "SAMAnalytical.TPDResults",
-              "Converts SAM Analytical to TPD Results",
+        public FromTPD()
+          : base("SAMAnalytical.FromTPD", "SAMAnalytical.FromTPD",
+              "Converts from TPD to SystemModel",
               "SAM WIP", "Tas")
         {
         }
@@ -65,7 +65,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooResultParam() { Name = "results", NickName = "results", Description = "SAM Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooSystemModelParam() { Name = "systemModel", NickName = "systemModel", Description = "SAM Analytical SystemModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -78,7 +78,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
             int index_successful = Params.IndexOfOutputParam("successful");
-            if(index_successful != -1)
+            if (index_successful != -1)
             {
                 dataAccess.SetData(index_successful, false);
             }
@@ -101,15 +101,15 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            List<SystemSpaceResult> spaceSystemCalculationResults = Analytical.Tas.TPD.Convert.ToSAM_SpaceSystemResults(path);
+            SystemModel systemModel = Analytical.Tas.TPD.Convert.ToSAM(path);
 
-            index = Params.IndexOfOutputParam("results");
+            index = Params.IndexOfOutputParam("systemModel");
             if (index != -1)
-                dataAccess.SetDataList(index, spaceSystemCalculationResults?.ConvertAll(x => new GooResult(x)));
+                dataAccess.SetData(index, new GooSystemModel(systemModel));
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, spaceSystemCalculationResults != null);
+                dataAccess.SetData(index_successful, systemModel != null);
             }
         }
     }
