@@ -88,6 +88,7 @@
     <Compile Include="Enums\FanCoilUnitDataType.cs" />
     <Compile Include="Enums\Parameters\SystemObjectParameter.cs" />
     <Compile Include="Interfaces\ISystemEquipment.cs" />
+    <Compile Include="Interfaces\IController.cs" />
     <Compile Include="Interfaces\ISystemObject.cs" />
     <Compile Include="Interfaces\ISystemEquipmentResult.cs" />
     <Compile Include="Interfaces\ISystemResult.cs" />
