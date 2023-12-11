@@ -1,8 +1,5 @@
 ﻿using TPD;
 using System.Linq;
-using SAM.Core;
-using System.Collections.Generic;
-using System.Collections;
 
 namespace SAM.Analytical.Tas.TPD
 {

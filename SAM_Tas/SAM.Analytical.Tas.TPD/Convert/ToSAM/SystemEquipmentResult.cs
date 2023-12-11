@@ -21,6 +21,16 @@ namespace SAM.Analytical.Tas.TPD
                 return ((Radiator)zoneComponent).ToSAM_SystemRadiatorResult(start, end);
             }
 
+            if (zoneComponent is DXCoilUnit)
+            {
+                return ((DXCoilUnit)zoneComponent).ToSAM_SystemDXCoilUnitResult(start, end);
+            }
+
+            if (zoneComponent is ChilledBeam)
+            {
+                return ((ChilledBeam)zoneComponent).ToSAM_SystemChilledBeamResult(start, end);
+            }
+
             return null;
         }
     }

@@ -53,6 +53,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\SystemEquipment.cs" />
+    <Compile Include="Classes\SystemDXCoilUnit.cs" />
+    <Compile Include="Classes\SystemDXCoilUnitResult.cs" />
+    <Compile Include="Classes\SystemChilledBeam.cs" />
+    <Compile Include="Classes\SystemChilledBeamResult.cs" />
     <Compile Include="Classes\SystemRadiatorResult.cs" />
     <Compile Include="Classes\SystemRadiator.cs" />
     <Compile Include="Classes\SystemFanCoilUnitResult.cs" />
@@ -61,6 +65,10 @@
     <Compile Include="Classes\SystemSpaceResult.cs" />
     <Compile Include="Classes\SystemIndexedResult.cs" />
     <Compile Include="Classes\SystemModel.cs" />
+    <Compile Include="Convert\ToSAM\SystemDXCoilUnit.cs" />
+    <Compile Include="Convert\ToSAM\SystemDXCoilUnitResult.cs" />
+    <Compile Include="Convert\ToSAM\SystemChilledBeam.cs" />
+    <Compile Include="Convert\ToSAM\SystemChilledBeamResult.cs" />
     <Compile Include="Convert\ToSAM\SystemRadiatorResult.cs" />
     <Compile Include="Convert\ToSAM\SystemEquipmentResult.cs" />
     <Compile Include="Convert\ToSAM\SystemFanCoilUnitResult.cs" />

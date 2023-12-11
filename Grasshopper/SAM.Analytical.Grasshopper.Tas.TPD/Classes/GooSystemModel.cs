@@ -26,6 +26,14 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         {
             return new GooSystemModel(Value);
         }
+
+        public override string TypeName
+        {
+            get
+            {
+                return Value == null ? typeof(SystemModel).Name : Value.GetType().Name;
+            }
+        }
     }
 
     public class GooSystemModelParam : GH_PersistentParam<GooSystemModel>
