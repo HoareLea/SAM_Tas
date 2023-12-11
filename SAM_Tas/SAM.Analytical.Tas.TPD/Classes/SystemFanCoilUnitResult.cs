@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
-    public class SystemFanCoilUnitResult : SystemIndexedResult
+    public class SystemFanCoilUnitResult : SystemIndexedResult, ISystemEquipmentResult
     {
         public SystemFanCoilUnitResult(string uniqueId, string name, string source, Dictionary<FanCoilUnitDataType, IndexedDoubles> dictionary) 
             :base(uniqueId, name, source, Query.Dictionary(dictionary))

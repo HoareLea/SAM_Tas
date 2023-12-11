@@ -103,6 +103,14 @@ namespace SAM.Analytical.Tas.TPD
                     }
 
                     result.Add(systemEquipment, systemSpace);
+
+                    ISystemEquipmentResult systemEquipmentResult = zoneComponent.ToSAM_SystemEquipmentResult(start, end);
+                    if (systemEquipmentResult == null)
+                    {
+                        continue;
+                    }
+
+                    result.Add(systemEquipmentResult, systemEquipment);
                 }
 
                 SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(start, end);

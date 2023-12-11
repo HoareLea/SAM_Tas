@@ -9,10 +9,6 @@ namespace SAM.Analytical.Tas.TPD
         private double area;
         private double volume;
 
-        private double heatingDuty;
-        private double coolingDuty;
-        private double designFlowRate;
-
         public SystemSpaceResult(JObject jObject)
             : base(jObject)
         {
@@ -27,22 +23,14 @@ namespace SAM.Analytical.Tas.TPD
             {
                 area= spaceSystemResult.area;
                 volume= spaceSystemResult.volume;
-
-                heatingDuty= spaceSystemResult.heatingDuty;
-                coolingDuty = spaceSystemResult.coolingDuty;
-                designFlowRate= spaceSystemResult.designFlowRate;
             }
         }
 
-        public SystemSpaceResult(string uniqueId, string name, string source, double area, double volume, double heatingDuty, double coolingDuty, double designFlowRate, Dictionary<string, IndexedDoubles> dictionary)
+        public SystemSpaceResult(string uniqueId, string name, string source, double area, double volume, Dictionary<string, IndexedDoubles> dictionary)
             : base(name, source, uniqueId, dictionary)
         {
             this.area = area;
             this.volume = volume;
-            
-            this.heatingDuty = heatingDuty;
-            this.coolingDuty = coolingDuty;
-            this.designFlowRate = designFlowRate;
         }
 
         public double Area
@@ -58,30 +46,6 @@ namespace SAM.Analytical.Tas.TPD
             get
             {
                 return volume;
-            }
-        }
-
-        public double HeatingDuty
-        {
-            get
-            {
-                return heatingDuty;
-            }
-        }
-
-        public double CoolingDuty
-        {
-            get
-            {
-                return coolingDuty;
-            }
-        }
-
-        public double DesignFlowRate
-        {
-            get
-            {
-                return designFlowRate;
             }
         }
         
@@ -103,21 +67,6 @@ namespace SAM.Analytical.Tas.TPD
                 volume = jObject.Value<double>("Volume");
             }
 
-            if (jObject.ContainsKey("HeatingDuty"))
-            {
-                heatingDuty = jObject.Value<double>("HeatingDuty");
-            }
-
-            if (jObject.ContainsKey("CoolingDuty"))
-            {
-                coolingDuty = jObject.Value<double>("CoolingDuty");
-            }
-
-            if (jObject.ContainsKey("DesignFlowRate"))
-            {
-                designFlowRate = jObject.Value<double>("DesignFlowRate");
-            }
-
             return result;
         }
 
@@ -137,21 +86,6 @@ namespace SAM.Analytical.Tas.TPD
             if (double.IsNaN(volume))
             {
                 jObject.Add("Volume", volume);
-            }
-
-            if (double.IsNaN(heatingDuty))
-            {
-                jObject.Add("HeatingDuty", heatingDuty);
-            }
-
-            if (double.IsNaN(coolingDuty))
-            {
-                jObject.Add("CoolingDuty", coolingDuty);
-            }
-
-            if (double.IsNaN(designFlowRate))
-            {
-                jObject.Add("DesignFlowRate", designFlowRate);
             }
 
             return jObject;

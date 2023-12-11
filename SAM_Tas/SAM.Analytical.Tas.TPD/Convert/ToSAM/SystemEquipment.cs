@@ -16,6 +16,11 @@ namespace SAM.Analytical.Tas.TPD
                 return ((FanCoilUnit)zoneComponent).ToSAM();
             }
 
+            if (zoneComponent is Radiator)
+            {
+                return ((Radiator)zoneComponent).ToSAM();
+            }
+
             return null;
         }
     }

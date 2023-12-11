@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas.TPD
             int count = systemZone.GetZoneComponentCount();
             for (int i = 1; i <= count; i++)
             {
-                ZoneComponent zoneComponent = systemZone.GetZoneComponent(index);
+                ZoneComponent zoneComponent = systemZone.GetZoneComponent(i);
                 if (zoneComponent is T)
                 {
                     result.Add((T)zoneComponent);

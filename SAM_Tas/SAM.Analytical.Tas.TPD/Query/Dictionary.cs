@@ -21,5 +21,18 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static Dictionary<string, IndexedDoubles> Dictionary(this Enum @enum, IndexedDoubles indexedDoubles)
+        {
+            if (indexedDoubles == null || @enum == null)
+            {
+                return null;
+            }
+
+            Dictionary<string, IndexedDoubles> result = new Dictionary<string, IndexedDoubles>();
+            result[@enum.ToString()] = indexedDoubles;
+
+            return result;
+        }
     }
 }

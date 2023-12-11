@@ -62,6 +62,34 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
+        public bool Add(ISystemEquipmentResult systemEquipmentResult, ISystemEquipment systemEquipment = null)
+        {
+            ISystemEquipmentResult systemEquipmentResult_Temp = systemEquipmentResult?.Clone();
+            if (systemEquipmentResult_Temp == null)
+            {
+                return false;
+            }
+
+            if (relationCluster == null)
+            {
+                relationCluster = new RelationCluster();
+            }
+
+            bool result = relationCluster.AddObject(systemEquipmentResult_Temp);
+            if (!result)
+            {
+                return result;
+            }
+
+            if (!relationCluster.Contains(systemEquipment))
+            {
+                Add(systemEquipment);
+            }
+
+            relationCluster.AddRelation(systemEquipment, systemEquipmentResult_Temp);
+            return true;
+        }
+
         public bool Add(SystemSpaceResult systemSpaceResult, SystemSpace systemSpace = null)
         {
             SystemSpaceResult systemSpaceResult_Temp = systemSpaceResult?.Clone();
