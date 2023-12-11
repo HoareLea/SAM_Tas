@@ -57,6 +57,19 @@ namespace SAM.Analytical.Tas.TPD
             }
         }
 
+        public IndexedDoubles this[string key]
+        {
+            get
+            {
+                if(key == null || dictionary == null)
+                {
+                    return null;
+                }
+
+                return dictionary[key];
+            }
+        }
+
         public override bool FromJObject(JObject jObject)
         {
             bool result = base.FromJObject(jObject);

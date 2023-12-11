@@ -26,8 +26,8 @@ namespace SAM.Analytical.Tas.TPD
             }
         }
 
-        public SystemSpaceResult(string uniqueId, string name, string source, double area, double volume, Dictionary<string, IndexedDoubles> dictionary)
-            : base(name, source, uniqueId, dictionary)
+        public SystemSpaceResult(string uniqueId, string name, string source, double area, double volume, Dictionary<SystemSpaceDataType, IndexedDoubles> dictionary)
+            : base(name, source, uniqueId, Query.Dictionary(dictionary))
         {
             this.area = area;
             this.volume = volume;

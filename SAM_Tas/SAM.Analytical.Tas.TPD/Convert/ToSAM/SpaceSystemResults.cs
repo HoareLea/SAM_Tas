@@ -89,7 +89,7 @@ namespace SAM.Analytical.Tas.TPD
 
             foreach (SystemZone systemZone in systemZones)
             {
-                SystemSpaceResult spaceSystemCalculationResults = systemZone?.ToSAM_SpaceSystemResult(start, end);
+                SystemSpaceResult spaceSystemCalculationResults = systemZone?.ToSAM_SpaceSystemResult(null, start, end);
                 result.Add(spaceSystemCalculationResults);
             }
 

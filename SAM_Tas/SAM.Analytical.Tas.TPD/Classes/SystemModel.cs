@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using SAM.Core;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -138,6 +140,11 @@ namespace SAM.Analytical.Tas.TPD
             return GetSystemEquipments<ISystemEquipment>();
         }
 
+        public List<T> GetSystemEquipments<T>(SystemSpace systemSpace) where T : ISystemEquipment
+        {
+            return relationCluster.GetRelatedObjects<T>(systemSpace).ConvertAll(x => x.Clone());
+        }
+
         public List<ISystemResult> GetSystemResults(ISystemObject systemObject)
         {
             return GetSystemResults<ISystemResult>(systemObject);
@@ -156,6 +163,17 @@ namespace SAM.Analytical.Tas.TPD
         public List<T> GetSystemResults<T>() where T : ISystemResult
         {
             return relationCluster?.GetObjects<T>()?.ConvertAll(x => Core.Query.Clone(x));
+        }
+
+        public T Find<T>(Func<T, bool> func) where T : ISystemObject, IJSAMObject
+        {
+            T t = relationCluster.GetObjects<T>(func).FirstOrDefault();
+            if(t == null)
+            {
+                return t;
+            }
+
+            return t.Clone();
         }
 
         public List<ISystemResult> GetSystemResults()

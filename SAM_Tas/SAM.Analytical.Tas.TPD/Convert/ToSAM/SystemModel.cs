@@ -113,7 +113,7 @@ namespace SAM.Analytical.Tas.TPD
                     result.Add(systemEquipmentResult, systemEquipment);
                 }
 
-                SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(start, end);
+                SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(result, start, end);
                 if(systemSpaceResult != null)
                 {
                     result.Add(systemSpaceResult, systemSpace);

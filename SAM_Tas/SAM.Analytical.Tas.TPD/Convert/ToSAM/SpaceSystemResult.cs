@@ -1,11 +1,13 @@
 ﻿using TPD;
 using System.Linq;
+using System.Collections.Generic;
+using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemSpaceResult ToSAM_SpaceSystemResult(this SystemZone systemZone, int start, int end, params FanCoilUnitDataType[] fanCoilUnitDataTypes)
+        public static SystemSpaceResult ToSAM_SpaceSystemResult(this SystemZone systemZone, SystemModel systemModel, int start, int end, params SystemSpaceDataType[] systemSpaceDataTypes)
         {
             if (systemZone == null)
             {
@@ -18,57 +20,48 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            return new SystemSpaceResult(zoneLoad.GUID, zoneLoad.Name, Query.Source(), zoneLoad.FloorArea, zoneLoad.Volume, null);
+            Dictionary<SystemSpaceDataType, IndexedDoubles> dictionary = new Dictionary<SystemSpaceDataType, IndexedDoubles>();
 
-            //IEnumerable<FanCoilUnitDataType> fanCoilUnitDataTypes_Temp = fanCoilUnitDataTypes == null || fanCoilUnitDataTypes.Length == 0 ? System.Enum.GetValues(typeof(FanCoilUnitDataType)).Cast<FanCoilUnitDataType>() : fanCoilUnitDataTypes;
+            SystemSpace systemSpace = systemModel.Find<SystemSpace>(x => x.Reference() == zoneLoad.GUID);
+            if(systemSpace != null)
+            {
+                List<ISystemEquipment> systemEquipments = systemModel.GetSystemEquipments<ISystemEquipment>(systemSpace);
+                if(systemEquipments != null)
+                {
+                    IEnumerable<SystemSpaceDataType> SystemSpaceDataTypes_Temp = systemSpaceDataTypes == null || systemSpaceDataTypes.Length == 0 ? System.Enum.GetValues(typeof(SystemSpaceDataType)).Cast<SystemSpaceDataType>() : systemSpaceDataTypes;
 
-            //Dictionary<string, IndexedDoubles> dictionary = new Dictionary<string, IndexedDoubles>();
+                    dictionary = new Dictionary<SystemSpaceDataType, IndexedDoubles>();
 
-            //double heatingDuty = double.NaN;
-            //double coolingDuty = double.NaN;
-            //double designFlowRate = double.NaN;
+                    foreach(ISystemEquipment systemEquipment in systemEquipments)
+                    {
+                        List<ISystemEquipmentResult> systemEquipmentResults = systemModel.GetSystemResults<ISystemEquipmentResult>(systemEquipment);
+                        if(systemEquipmentResults != null && systemEquipmentResults.Count != 0)
+                        {
+                            foreach(ISystemEquipmentResult systemEquipmentResult in systemEquipmentResults)
+                            {
+                                foreach (SystemSpaceDataType systemSpaceDataType in SystemSpaceDataTypes_Temp)
+                                {
+                                    IndexedDoubles indexedDoubles = Query.IndexedDoubles(systemEquipmentResult, systemSpaceDataType);
+                                    if(indexedDoubles != null)
+                                    {
+                                        if(!dictionary.TryGetValue(systemSpaceDataType, out IndexedDoubles indexedDoubles_Temp) || indexedDoubles_Temp == null)
+                                        {
+                                            dictionary[systemSpaceDataType] = indexedDoubles;
+                                        }
+                                        else
+                                        {
+                                            indexedDoubles_Temp.Sum(indexedDoubles);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-            //ProfileData profileData = systemZone.TemperatureSetpoint;
-            //if(profileData != null)
-            //{
-            //    double value = profileData.Value;
-            //}
-
-            //List<FanCoilUnit> fanCoilUnits = systemZone.ZoneComponents<ZoneComponent>()?.FindAll(x => x is FanCoilUnit)?.ConvertAll(x => (FanCoilUnit)x);
-            //if (fanCoilUnits != null)
-            //{
-            //    foreach (FanCoilUnit fanCoilUnit in fanCoilUnits)
-            //    {
-            //        if (fanCoilUnitDataTypes_Temp != null && fanCoilUnitDataTypes_Temp.Count() != 0)
-            //        {
-            //            foreach (FanCoilUnitDataType fanCoilUnitDataType in fanCoilUnitDataTypes_Temp)
-            //            {
-            //                IndexedDoubles indexedDoubles = Create.IndexedDoubles((ZoneComponent)fanCoilUnit, fanCoilUnitDataType, start, end);
-            //                if (indexedDoubles == null)
-            //                {
-            //                    continue;
-            //                }
-
-            //                string uniqueId = Query.UniqueId(EquipmentType.FanCoilUnit, fanCoilUnitDataType);
-
-            //                if (!dictionary.TryGetValue(uniqueId, out IndexedDoubles indexedDoubles_Temp) || indexedDoubles_Temp == null)
-            //                {
-            //                    dictionary[uniqueId] = indexedDoubles;
-            //                }
-            //                else
-            //                {
-            //                    indexedDoubles_Temp.Sum(indexedDoubles);
-            //                }
-            //            }
-            //        }
-
-            //        heatingDuty = double.IsNaN(heatingDuty) ? System.Convert.ToDouble((fanCoilUnit.HeatingDuty as dynamic).Value) : heatingDuty + System.Convert.ToDouble(fanCoilUnit.HeatingDuty);
-            //        coolingDuty = double.IsNaN(coolingDuty) ? System.Convert.ToDouble((fanCoilUnit.CoolingDuty as dynamic).Value) : coolingDuty + System.Convert.ToDouble(fanCoilUnit.CoolingDuty);
-            //        designFlowRate = double.IsNaN(designFlowRate) ? System.Convert.ToDouble((fanCoilUnit.DesignFlowRate as dynamic).Value) : designFlowRate + System.Convert.ToDouble(fanCoilUnit.DesignFlowRate);
-            //    }
-            //}
-
-            //return new SystemSpaceResult(zoneLoad.GUID, zoneLoad.Name, Query.Source(), zoneLoad.FloorArea, zoneLoad.Volume, heatingDuty, coolingDuty, designFlowRate, dictionary);
+            SystemSpaceResult result = new SystemSpaceResult(zoneLoad.GUID, zoneLoad.Name, Query.Source(), zoneLoad.FloorArea, zoneLoad.Volume, dictionary);
+            return result;
         }
     }
 }
