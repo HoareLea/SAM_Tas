@@ -58,6 +58,7 @@
     <Compile Include="Classes\SystemChilledBeam.cs" />
     <Compile Include="Classes\SystemChilledBeamResult.cs" />
     <Compile Include="Classes\SystemModelConversionSettings.cs" />
+    <Compile Include="Classes\SystemPlantRoom.cs" />
     <Compile Include="Classes\SystemRadiatorResult.cs" />
     <Compile Include="Classes\SystemRadiator.cs" />
     <Compile Include="Classes\SystemFanCoilUnitResult.cs" />

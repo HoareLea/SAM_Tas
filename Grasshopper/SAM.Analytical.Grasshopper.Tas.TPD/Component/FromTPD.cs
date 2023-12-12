@@ -55,15 +55,15 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 @boolean.SetPersistentData(systemModelConversionSettings.Simulate);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
 
-                global::Grasshopper.Kernel.Parameters.Param_Number number = null;
+                global::Grasshopper.Kernel.Parameters.Param_Integer integer = null;
 
-                number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_startHour_", NickName = "_startHour_", Description = "Simulation start hour", Access = GH_ParamAccess.item };
-                number.SetPersistentData(systemModelConversionSettings.StartHour);
-                result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
+                integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_startHour_", NickName = "_startHour_", Description = "Simulation start hour", Access = GH_ParamAccess.item };
+                integer.SetPersistentData(systemModelConversionSettings.StartHour);
+                result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
 
-                number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_endHour_", NickName = "_endHour_", Description = "Simulation end hour", Access = GH_ParamAccess.item };
-                number.SetPersistentData(systemModelConversionSettings.EndHour);
-                result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
+                integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHour_", NickName = "_endHour_", Description = "Simulation end hour", Access = GH_ParamAccess.item };
+                integer.SetPersistentData(systemModelConversionSettings.EndHour);
+                result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
