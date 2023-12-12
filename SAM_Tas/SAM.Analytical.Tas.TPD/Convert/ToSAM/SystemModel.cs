@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemModel ToSAM(string path_TPD)
+        public static SystemModel ToSAM(string path_TPD, SystemModelConversionSettings systemModelConversionSettings  = null)
         {
             if (string.IsNullOrWhiteSpace(path_TPD))
             {
@@ -17,23 +17,23 @@ namespace SAM.Analytical.Tas.TPD
             using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
             {
 
-                result = ToSAM(sAMTPDDocument);
+                result = ToSAM(sAMTPDDocument, systemModelConversionSettings);
             }
 
             return result;
         }
 
-        public static SystemModel ToSAM(this SAMTPDDocument sAMTPDDocument)
+        public static SystemModel ToSAM(this SAMTPDDocument sAMTPDDocument, SystemModelConversionSettings systemModelConversionSettings = null)
         {
             if (sAMTPDDocument == null)
             {
                 return null;
             }
 
-            return ToSAM(sAMTPDDocument.TPDDocument);
+            return ToSAM(sAMTPDDocument.TPDDocument, systemModelConversionSettings);
         }
 
-        public static SystemModel ToSAM(this TPDDoc tPDDoc)
+        public static SystemModel ToSAM(this TPDDoc tPDDoc, SystemModelConversionSettings systemModelConversionSettings = null)
         {
             EnergyCentre energyCentre = tPDDoc?.EnergyCentre;
             if(energyCentre == null)
@@ -49,12 +49,22 @@ namespace SAM.Analytical.Tas.TPD
                 return result;
             }
 
+            if(systemModelConversionSettings == null)
+            {
+                systemModelConversionSettings = new SystemModelConversionSettings();
+            }
+
             int start = tPDDoc.StartHour();
             int end = tPDDoc.EndHour();
 
             List<SystemZone> systemZones = new List<SystemZone>();
             foreach (PlantRoom plantRoom in plantRooms)
             {
+                if (systemModelConversionSettings.Simulate)
+                {
+                    plantRoom.SimulateEx(systemModelConversionSettings.StartHour + 1, systemModelConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)global::TPD.tpdSimulationData.tpdSimulationDataLoad + (int)global::TPD.tpdSimulationData.tpdSimulationDataPipe + (int)global::TPD.tpdSimulationData.tpdSimulationDataDuct + (int)global::TPD.tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
+                }
+
                 List<global::TPD.System> systems = plantRoom?.Systems();
                 if (systems == null)
                 {

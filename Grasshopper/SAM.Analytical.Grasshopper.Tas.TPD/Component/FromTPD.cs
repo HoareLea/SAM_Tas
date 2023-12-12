@@ -17,7 +17,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -48,6 +48,22 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                SystemModelConversionSettings systemModelConversionSettings = new SystemModelConversionSettings();
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulate before collecting data", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(systemModelConversionSettings.Simulate);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
+
+                global::Grasshopper.Kernel.Parameters.Param_Number number = null;
+
+                number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_startHour_", NickName = "_startHour_", Description = "Simulation start hour", Access = GH_ParamAccess.item };
+                number.SetPersistentData(systemModelConversionSettings.StartHour);
+                result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
+
+                number = new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_endHour_", NickName = "_endHour_", Description = "Simulation end hour", Access = GH_ParamAccess.item };
+                number.SetPersistentData(systemModelConversionSettings.EndHour);
+                result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -91,7 +107,32 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 run = false;
 
             if (!run)
+            {
                 return;
+            }
+
+            SystemModelConversionSettings systemModelConversionSettings = new SystemModelConversionSettings();
+
+            bool simulate = systemModelConversionSettings.Simulate;
+            index = Params.IndexOfInputParam("_simulate_");
+            if (index != -1 && dataAccess.GetData(index, ref simulate))
+            {
+                systemModelConversionSettings.Simulate = simulate;
+            }
+
+            int startHour = systemModelConversionSettings.StartHour;
+            index = Params.IndexOfInputParam("_startHour_");
+            if (index != -1 && dataAccess.GetData(index, ref startHour))
+            {
+                systemModelConversionSettings.StartHour = startHour;
+            }
+
+            int endHour = systemModelConversionSettings.EndHour;
+            index = Params.IndexOfInputParam("_endHour_");
+            if (index != -1 && dataAccess.GetData(index, ref endHour))
+            {
+                systemModelConversionSettings.EndHour = endHour;
+            }
 
             string path = null;
             index = Params.IndexOfInputParam("_path_TPD");
@@ -101,7 +142,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            SystemModel systemModel = Analytical.Tas.TPD.Convert.ToSAM(path);
+            SystemModel systemModel = Analytical.Tas.TPD.Convert.ToSAM(path, systemModelConversionSettings);
 
             index = Params.IndexOfOutputParam("systemModel");
             if (index != -1)
