@@ -125,9 +125,87 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
+        public bool Add(SystemPlantRoom systemPlantRoom, IEnumerable<ISystemEquipment> systemEquipments)
+        {
+            SystemPlantRoom systemPlantRoom_Temp = systemPlantRoom?.Clone();
+            if (systemPlantRoom_Temp == null)
+            {
+                return false;
+            }
+
+            if (relationCluster == null)
+            {
+                relationCluster = new RelationCluster();
+            }
+
+            bool result = relationCluster.AddObject(systemPlantRoom_Temp);
+            if (!result)
+            {
+                return result;
+            }
+
+            if (systemEquipments == null || systemEquipments.Count() == 0)
+            {
+                return result;
+            }
+
+            foreach(ISystemEquipment systemEquipment in systemEquipments)
+            {
+                if (!relationCluster.Contains(systemEquipment))
+                {
+                    Add(systemEquipment);
+                }
+
+                relationCluster.AddRelation(systemPlantRoom, systemEquipment);
+            }
+
+            return true;
+        }
+
+        public List<SystemPlantRoom> GetSystemPlantRooms()
+        {
+            return relationCluster?.GetObjects<SystemPlantRoom>()?.ConvertAll(x => new SystemPlantRoom(x));
+        }
+
         public List<SystemSpace> GetSystemSpaces()
         {
             return relationCluster?.GetObjects<SystemSpace>()?.ConvertAll(x => new SystemSpace(x));
+        }
+
+        public List<SystemSpace> GetSystemSpaces(SystemPlantRoom systemPlantRoom)
+        {
+            if(systemPlantRoom == null)
+            {
+                return null;
+            }
+
+            List<ISystemEquipment> systemEquipments = relationCluster.GetRelatedObjects<ISystemEquipment>(systemPlantRoom);
+            if(systemEquipments == null || systemEquipments.Count == 0)
+            {
+                return null;
+            }
+
+            List<SystemSpace> result = new List<SystemSpace>();
+            foreach(ISystemEquipment systemEquipment in systemEquipments)
+            {
+                List<SystemSpace> systemSpaces = relationCluster.GetRelatedObjects<SystemSpace>(systemEquipment);
+                if(systemSpaces == null)
+                {
+                    continue;
+                }
+
+                foreach(SystemSpace systemSpace in systemSpaces)
+                {
+                    if(result.Find(x => x.Guid == systemSpace.Guid) != null)
+                    {
+                        continue;
+                    }
+
+                    result.Add(systemSpace);
+                }
+            }
+
+            return result.ConvertAll(x => x.Clone());
         }
 
         public List<T> GetSystemEquipments<T>() where T : ISystemEquipment

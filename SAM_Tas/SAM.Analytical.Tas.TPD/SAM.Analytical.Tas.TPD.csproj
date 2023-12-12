@@ -71,6 +71,7 @@
     <Compile Include="Convert\ToSAM\SystemDXCoilUnitResult.cs" />
     <Compile Include="Convert\ToSAM\SystemChilledBeam.cs" />
     <Compile Include="Convert\ToSAM\SystemChilledBeamResult.cs" />
+    <Compile Include="Convert\ToSAM\SystemPlantRoom.cs" />
     <Compile Include="Convert\ToSAM\SystemRadiatorResult.cs" />
     <Compile Include="Convert\ToSAM\SystemEquipmentResult.cs" />
     <Compile Include="Convert\ToSAM\SystemFanCoilUnitResult.cs" />

@@ -57,7 +57,6 @@ namespace SAM.Analytical.Tas.TPD
             int start = tPDDoc.StartHour();
             int end = tPDDoc.EndHour();
 
-            List<SystemZone> systemZones = new List<SystemZone>();
             foreach (PlantRoom plantRoom in plantRooms)
             {
                 if (systemModelConversionSettings.Simulate)
@@ -65,12 +64,15 @@ namespace SAM.Analytical.Tas.TPD
                     plantRoom.SimulateEx(systemModelConversionSettings.StartHour + 1, systemModelConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)global::TPD.tpdSimulationData.tpdSimulationDataLoad + (int)global::TPD.tpdSimulationData.tpdSimulationDataPipe + (int)global::TPD.tpdSimulationData.tpdSimulationDataDuct + (int)global::TPD.tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
                 }
 
+                SystemPlantRoom systemPlantRoom = plantRoom.ToSAM();
+
                 List<global::TPD.System> systems = plantRoom?.Systems();
                 if (systems == null)
                 {
                     continue;
                 }
 
+                List<ISystemEquipment> systemEquipments = new List<ISystemEquipment>();
                 foreach (global::TPD.System system in systems)
                 {
                     if (system == null)
@@ -78,57 +80,53 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-                    List<SystemZone> systemZones_Temp = system.SystemZones();
-                    if (systemZones_Temp == null || systemZones_Temp.Count == 0)
+                    List<SystemZone> systemZones = system.SystemZones();
+                    if (systemZones == null || systemZones.Count == 0)
                     {
                         continue;
                     }
 
-                    systemZones.AddRange(systemZones_Temp);
-                }
-            }
-
-            if (systemZones == null || systemZones.Count == 0)
-            {
-                return result;
-            }
-
-            foreach(SystemZone systemZone in systemZones)
-            {
-                SystemSpace systemSpace = systemZone.ToSAM();
-                if(systemSpace == null)
-                {
-                    continue;
-                }
-
-                result.Add(systemSpace);
-
-                List<ZoneComponent> zoneComponents = Query.ZoneComponents<ZoneComponent>(systemZone);
-                foreach(ZoneComponent zoneComponent in zoneComponents)
-                {
-                    SystemEquipment systemEquipment = zoneComponent.ToSAM();
-                    if(systemEquipment == null)
+                    foreach (SystemZone systemZone in systemZones)
                     {
-                        continue;
+                        SystemSpace systemSpace = systemZone.ToSAM();
+                        if (systemSpace == null)
+                        {
+                            continue;
+                        }
+
+                        result.Add(systemSpace);
+
+                        List<ZoneComponent> zoneComponents = Query.ZoneComponents<ZoneComponent>(systemZone);
+                        foreach (ZoneComponent zoneComponent in zoneComponents)
+                        {
+                            SystemEquipment systemEquipment = zoneComponent.ToSAM();
+                            if (systemEquipment == null)
+                            {
+                                continue;
+                            }
+
+                            result.Add(systemEquipment, systemSpace);
+
+                            systemEquipments.Add(systemEquipment);
+
+                            ISystemEquipmentResult systemEquipmentResult = zoneComponent.ToSAM_SystemEquipmentResult(start, end);
+                            if (systemEquipmentResult == null)
+                            {
+                                continue;
+                            }
+
+                            result.Add(systemEquipmentResult, systemEquipment);
+                        }
+
+                        SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(result, start, end);
+                        if (systemSpaceResult != null)
+                        {
+                            result.Add(systemSpaceResult, systemSpace);
+                        }
                     }
-
-                    result.Add(systemEquipment, systemSpace);
-
-                    ISystemEquipmentResult systemEquipmentResult = zoneComponent.ToSAM_SystemEquipmentResult(start, end);
-                    if (systemEquipmentResult == null)
-                    {
-                        continue;
-                    }
-
-                    result.Add(systemEquipmentResult, systemEquipment);
                 }
 
-                SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(result, start, end);
-                if(systemSpaceResult != null)
-                {
-                    result.Add(systemSpaceResult, systemSpace);
-                }
-
+                result.Add(systemPlantRoom, systemEquipments);
             }
 
             return result;

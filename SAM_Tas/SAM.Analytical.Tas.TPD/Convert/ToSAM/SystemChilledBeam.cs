@@ -17,7 +17,7 @@ namespace SAM.Analytical.Tas.TPD
 
             double heatingEfficiency = chilledBeam.HeatingEfficiency.Value;
 
-            SystemChilledBeam result = new SystemChilledBeam(string.Empty) 
+            SystemChilledBeam result = new SystemChilledBeam((chilledBeam as dynamic).Name) 
             {
                 CoolingDuty = coolingDuty,
                 HeatingDuty = heatingDuty,

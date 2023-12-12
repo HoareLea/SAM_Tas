@@ -53,7 +53,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulate before collecting data", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(systemModelConversionSettings.Simulate);
-                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Integer integer = null;
 

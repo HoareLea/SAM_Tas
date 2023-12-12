@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas.TPD
             double heatingEfficiency = fanCoilUnit.HeatingEfficiency.Value;
             double overallEfficiency = fanCoilUnit.OverallEfficiency.Value;
 
-            SystemFanCoilUnit result = new SystemFanCoilUnit(string.Empty) 
+            SystemFanCoilUnit result = new SystemFanCoilUnit((fanCoilUnit as dynamic).Name) 
             { 
                 Pressure = fanCoilUnit.Pressure,
                 CoolingDuty = coolingDuty,

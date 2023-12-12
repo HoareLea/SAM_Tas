@@ -14,7 +14,7 @@ namespace SAM.Analytical.Tas.TPD
             double duty = System.Convert.ToDouble((radiator.Duty as dynamic).Value);
             double efficiency = System.Convert.ToDouble((radiator.Efficiency as dynamic).Value);
 
-            SystemRadiator result = new SystemRadiator(string.Empty) 
+            SystemRadiator result = new SystemRadiator((radiator as dynamic).Name) 
             { 
                 Duty = duty,
                 Efficiency = efficiency,

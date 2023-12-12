@@ -57,8 +57,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\GooSystemSpace.cs" />
+    <Compile Include="Classes\GooSystemPlantRoom.cs" />
     <Compile Include="Classes\GooSystemObject.cs" />
     <Compile Include="Classes\GooSystemModel.cs" />
+    <Compile Include="Component\SAMAnalyticalSystemSpacesBySystemPlantRoom.cs" />
     <Compile Include="Component\FromTPD.cs" />
     <Compile Include="Component\SAMAnalyticalSystemModelRelatedObjects.cs" />
     <Compile Include="Component\SAMAnalyticalTPDResults.cs" />

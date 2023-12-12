@@ -17,7 +17,7 @@ namespace SAM.Analytical.Tas.TPD
 
             double overallEfficiency = dXCoilUnit.OverallEfficiency.Value;
 
-            SystemDXCoilUnit result = new SystemDXCoilUnit(string.Empty) 
+            SystemDXCoilUnit result = new SystemDXCoilUnit((dXCoilUnit as dynamic).Name) 
             {
                 CoolingDuty = coolingDuty,
                 HeatingDuty = heatingDuty,
