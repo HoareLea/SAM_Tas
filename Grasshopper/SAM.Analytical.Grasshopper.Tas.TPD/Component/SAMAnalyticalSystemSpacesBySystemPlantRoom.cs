@@ -48,11 +48,6 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 result.Add(new GH_SAMParam(new GooSystemModelParam() { Name = "_systemModel", NickName = "_systemModel", Description = "SystemModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooSystemPlantRoomParam() { Name = "_systemPlantRoom", NickName = "_systemPlantRoom", Description = "SystemPlantRoom", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
-                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
-                @boolean.SetPersistentData(false);
-                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
-
                 return result.ToArray();
             }
         }
@@ -66,7 +61,6 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooSystemSpaceParam() { Name = "systemSpaces", NickName = "systemSpaces", Description = "SAM Analytical SystemSpace", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
         }
@@ -77,25 +71,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            int index_successful = Params.IndexOfOutputParam("successful");
-            if (index_successful != -1)
-            {
-                dataAccess.SetData(index_successful, false);
-            }
-
             int index;
-
-            bool run = false;
-            index = Params.IndexOfInputParam("_run");
-            if (index == -1 || !dataAccess.GetData(index, ref run))
-            {
-                run = false;
-            }
-
-            if (!run)
-            {
-                return;
-            }
 
             SystemModel systemModel = null;
             index = Params.IndexOfInputParam("_systemModel");
@@ -119,11 +95,6 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             if (index != -1)
             {
                 dataAccess.SetDataList(index, systemSpaces?.ConvertAll(x => new GooSystemSpace(x)));
-            }
-
-            if (index_successful != -1)
-            {
-                dataAccess.SetData(index_successful, systemModel != null);
             }
         }
     }
