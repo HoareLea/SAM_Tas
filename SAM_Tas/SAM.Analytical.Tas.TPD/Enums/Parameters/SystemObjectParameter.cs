@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
-using SAM.Analytical.Tas.TPD;
 using SAM.Core.Attributes;
+using SAM.Core.Systems;
 
-namespace SAM.Analytical.Tas
+namespace SAM.Analytical.Tas.TPD
 {
     [AssociatedTypes(typeof(ISystemObject)), Description("System Object Parameter")]
     public enum SystemObjectParameter

@@ -38,9 +38,15 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Analytical.Systems">
+      <HintPath>..\..\..\SAM_Systems\build\SAM.Analytical.Systems.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Core, Version=1.0.8740.23897, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core.Systems">
+      <HintPath>..\..\..\SAM_Systems\build\SAM.Core.Systems.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,21 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\SystemEquipment.cs" />
-    <Compile Include="Classes\SystemDXCoilUnit.cs" />
-    <Compile Include="Classes\SystemDXCoilUnitResult.cs" />
-    <Compile Include="Classes\SystemChilledBeam.cs" />
-    <Compile Include="Classes\SystemChilledBeamResult.cs" />
     <Compile Include="Classes\SystemModelConversionSettings.cs" />
-    <Compile Include="Classes\SystemPlantRoom.cs" />
-    <Compile Include="Classes\SystemRadiatorResult.cs" />
-    <Compile Include="Classes\SystemRadiator.cs" />
-    <Compile Include="Classes\SystemFanCoilUnitResult.cs" />
-    <Compile Include="Classes\SystemFanCoilUnit.cs" />
-    <Compile Include="Classes\SystemSpace.cs" />
-    <Compile Include="Classes\SystemSpaceResult.cs" />
-    <Compile Include="Classes\SystemIndexedResult.cs" />
-    <Compile Include="Classes\SystemModel.cs" />
     <Compile Include="Convert\ToSAM\SystemDXCoilUnit.cs" />
     <Compile Include="Convert\ToSAM\SystemDXCoilUnitResult.cs" />
     <Compile Include="Convert\ToSAM\SystemChilledBeam.cs" />
@@ -83,29 +75,14 @@
     <Compile Include="Convert\ToSAM\SpaceSystemResults.cs" />
     <Compile Include="Convert\ToSAM\SpaceSystemResult.cs" />
     <Compile Include="Create\IndexedDoubles.cs" />
-    <Compile Include="Enums\ChilledBeamWithHeatingDataType.cs" />
-    <Compile Include="Enums\ChilledBeamDataType.cs" />
-    <Compile Include="Enums\SpaceDataType.cs" />
-    <Compile Include="Enums\EquipmentType.cs" />
-    <Compile Include="Enums\DXCoilUnitDataType.cs" />
-    <Compile Include="Enums\RadiatorDataType.cs" />
-    <Compile Include="Enums\FanCoilUnitDataType.cs" />
     <Compile Include="Enums\Parameters\SystemObjectParameter.cs" />
-    <Compile Include="Interfaces\ISystemEquipment.cs" />
-    <Compile Include="Interfaces\IController.cs" />
-    <Compile Include="Interfaces\ISystemObject.cs" />
-    <Compile Include="Interfaces\ISystemEquipmentResult.cs" />
-    <Compile Include="Interfaces\ISystemResult.cs" />
     <Compile Include="Modify\SetReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query\IndexedDoubles.cs" />
     <Compile Include="Query\Reference.cs" />
-    <Compile Include="Query\UniqueId.cs" />
     <Compile Include="Query\EndHour.cs" />
     <Compile Include="Query\Source.cs" />
     <Compile Include="Query\ZoneComponents.cs" />
     <Compile Include="Query\StartHour.cs" />
-    <Compile Include="Query\Dictionary.cs" />
     <Compile Include="Query\ZoneLoads.cs" />
     <Compile Include="Query\SystemComponents.cs" />
     <Compile Include="Query\SystemZones.cs" />
@@ -120,6 +97,9 @@
       <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
       <Name>SAM.Core.Tas</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,10 +1,11 @@
-﻿using TPD;
+﻿using SAM.Core.Systems;
+using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static ISystemEquipmentResult ToSAM_SystemEquipmentResult(this ZoneComponent zoneComponent, int start, int end)
+        public static ISystemComponentResult ToSAM_SystemEquipmentResult(this ZoneComponent zoneComponent, int start, int end)
         {
             if (zoneComponent == null)
             {

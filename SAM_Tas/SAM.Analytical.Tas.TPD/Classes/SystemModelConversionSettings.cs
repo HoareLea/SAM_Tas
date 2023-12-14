@@ -3,28 +3,28 @@ using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
-    public class SystemModelConversionSettings : IJSAMObject
+    public class SystemEnergyCentreConversionSettings : IJSAMObject
     {
         public bool Simulate { get; set; } = true;
         public int StartHour { get; set; } = 0;
         public int EndHour { get; set; } = 8759;
 
-        public SystemModelConversionSettings() 
+        public SystemEnergyCentreConversionSettings() 
         { 
         }
 
-        public SystemModelConversionSettings(JObject jObject)
+        public SystemEnergyCentreConversionSettings(JObject jObject)
         {
             FromJObject(jObject);
         }
 
-        public SystemModelConversionSettings(SystemModelConversionSettings systemModelConversionSettings)
+        public SystemEnergyCentreConversionSettings(SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings)
         {
-            if (systemModelConversionSettings != null)
+            if (systemEnergyCentreConversionSettings != null)
             {
-                Simulate = systemModelConversionSettings.Simulate;
-                StartHour = systemModelConversionSettings.StartHour;
-                EndHour = systemModelConversionSettings.EndHour;
+                Simulate = systemEnergyCentreConversionSettings.Simulate;
+                StartHour = systemEnergyCentreConversionSettings.StartHour;
+                EndHour = systemEnergyCentreConversionSettings.EndHour;
             }
         }
 

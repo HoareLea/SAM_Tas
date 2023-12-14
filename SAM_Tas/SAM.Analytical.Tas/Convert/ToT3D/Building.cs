@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas
 
         }
 
-        public static Building ToT3D(this RelationCluster relationCluster, Building building)
+        public static Building ToT3D(this AdjacencyCluster relationCluster, Building building)
         {
             if (building == null || relationCluster == null)
                 return null;
