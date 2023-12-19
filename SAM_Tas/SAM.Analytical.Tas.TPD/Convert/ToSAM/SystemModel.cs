@@ -106,7 +106,9 @@ namespace SAM.Analytical.Tas.TPD
                                 continue;
                             }
 
-                            systemPlantRoom.Add(systemSpaceComponent, systemSpace);
+                            systemPlantRoom.Add(systemSpaceComponent);
+
+                            systemPlantRoom.Connect(systemSpaceComponent, systemSpace);
 
                             ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemEquipmentResult(start, end);
                             if (systemComponentResult == null)
@@ -114,13 +116,16 @@ namespace SAM.Analytical.Tas.TPD
                                 continue;
                             }
 
-                            systemPlantRoom.Add(systemComponentResult, systemSpaceComponent);
+                            systemPlantRoom.Add(systemComponentResult);
+
+                            systemPlantRoom.Connect(systemComponentResult, systemSpaceComponent);
                         }
 
                         SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, start, end);
                         if (systemSpaceResult != null)
                         {
-                            systemPlantRoom.Add(systemSpaceResult, systemSpace);
+                            systemPlantRoom.Add(systemSpaceResult);
+                            systemPlantRoom.Connect(systemSpaceResult, systemSpace);
                         }
                     }
                 }

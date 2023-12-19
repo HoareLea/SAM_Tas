@@ -1,6 +1,6 @@
 ﻿using TPD;
 using System.Linq;
-using SAM.Core.Systems;
+using SAM.Analytical.Systems;
 
 namespace SAM.Analytical.Tas.TPD
 {
