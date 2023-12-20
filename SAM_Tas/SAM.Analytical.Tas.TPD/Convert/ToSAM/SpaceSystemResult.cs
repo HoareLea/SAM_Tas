@@ -16,6 +16,8 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            string reference = (systemZone as dynamic).GUID;
+
             ZoneLoad zoneLoad = systemZone.ZoneLoads()?.FirstOrDefault();
             if (zoneLoad == null)
             {
@@ -24,7 +26,7 @@ namespace SAM.Analytical.Tas.TPD
 
             Dictionary<SystemSpaceDataType, IndexedDoubles> dictionary = new Dictionary<SystemSpaceDataType, IndexedDoubles>();
 
-            SystemSpace systemSpace = systemPlantRoom.Find<SystemSpace>(x => x.Reference() == zoneLoad.GUID);
+            SystemSpace systemSpace = systemPlantRoom.Find<SystemSpace>(x => x.Reference() == reference);
             if(systemSpace != null)
             {
                 List<ISystemSpaceComponent> systemSpaceComponents = systemPlantRoom.GetSystemSpaceComponents<ISystemSpaceComponent>(systemSpace);
@@ -62,7 +64,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            SystemSpaceResult result = new SystemSpaceResult(zoneLoad.GUID, zoneLoad.Name, Query.Source(), zoneLoad.FloorArea, zoneLoad.Volume, dictionary);
+            SystemSpaceResult result = new SystemSpaceResult(reference, zoneLoad.Name, Query.Source(), zoneLoad.FloorArea, zoneLoad.Volume, dictionary);
             return result;
         }
     }

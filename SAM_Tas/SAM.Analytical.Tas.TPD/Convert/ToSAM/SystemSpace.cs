@@ -20,7 +20,8 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             SystemSpace result = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume);
-            result.SetReference(zoneLoad.GUID);
+
+            Modify.SetReference(result, (systemZone as dynamic).GUID);
 
             return result;
         }

@@ -12,13 +12,15 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            dynamic @dynamic = chilledBeam;
+
             double coolingDuty = System.Convert.ToDouble((chilledBeam.CoolingDuty as dynamic).Value);
             double heatingDuty = System.Convert.ToDouble((chilledBeam.HeatingDuty as dynamic).Value);
             double designFlowRate = System.Convert.ToDouble((chilledBeam.DesignFlowRate as dynamic).Value);
 
             double heatingEfficiency = chilledBeam.HeatingEfficiency.Value;
 
-            SystemChilledBeam result = new SystemChilledBeam((chilledBeam as dynamic).Name) 
+            SystemChilledBeam result = new SystemChilledBeam(@dynamic.Name) 
             {
                 CoolingDuty = coolingDuty,
                 HeatingDuty = heatingDuty,

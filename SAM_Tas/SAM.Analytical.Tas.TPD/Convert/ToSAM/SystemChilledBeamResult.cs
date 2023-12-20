@@ -39,7 +39,6 @@ namespace SAM.Analytical.Tas.TPD
 
             string reference = Query.Reference((ZoneComponent)chilledBeam);
 
-
             SystemChilledBeamResult result = new SystemChilledBeamResult(reference, string.Empty, Query.Source(), dictionary);
             
             return result;

@@ -146,7 +146,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
             SystemEnergyCentre systemEnergyCentre = Analytical.Tas.TPD.Convert.ToSAM(path, systemEnergyCentreConversionSettings);
 
-            index = Params.IndexOfOutputParam("systemModel");
+            index = Params.IndexOfOutputParam("systemEnergyCentre");
             if (index != -1)
                 dataAccess.SetData(index, new GooSystemEnergyCentre(systemEnergyCentre));
 

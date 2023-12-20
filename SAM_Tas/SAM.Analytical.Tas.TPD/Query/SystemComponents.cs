@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static List<T> SystemComponents<T>(this global::TPD.System system) where T : SystemComponent
+        public static List<T> SystemComponents<T>(this global::TPD.System system, bool includeNested = false) where T : SystemComponent
         { 
             if(system == null)
             {
@@ -24,13 +24,22 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     result.Add((T)systemComponent);
                 }
+
+                if (includeNested && systemComponent is ComponentGroup)
+                {
+                    List<T> ts = SystemComponents<T>((ComponentGroup)systemComponent, includeNested);
+                    if (ts != null)
+                    {
+                        result.AddRange(ts);
+                    }
+                }
             }
 
             return result;
 
         }
 
-        public static List<T> SystemComponents<T>(ComponentGroup componentGroup) where T : SystemComponent
+        public static List<T> SystemComponents<T>(ComponentGroup componentGroup, bool includeNested = false) where T : SystemComponent
         {
             if(componentGroup == null)
             {
@@ -48,6 +57,15 @@ namespace SAM.Analytical.Tas.TPD
                 if (systemComponent is T)
                 {
                     result.Add((T)systemComponent);
+                }
+
+                if(includeNested  && systemComponent is ComponentGroup)
+                {
+                    List<T> ts = SystemComponents<T>((ComponentGroup)systemComponent, includeNested);
+                    if(ts != null)
+                    {
+                        result.AddRange(ts);
+                    }
                 }
             }
 

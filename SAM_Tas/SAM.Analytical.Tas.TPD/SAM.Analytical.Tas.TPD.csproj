@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CustomMarshalers" />
     <Reference Include="Interop.TPD">
       <HintPath>..\..\..\SAM_UI\references_buildonly\Interop.TPD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -59,27 +60,38 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\SystemModelConversionSettings.cs" />
+    <Compile Include="Convert\ToSAM\AirSystem.cs" />
+    <Compile Include="Convert\ToSAM\SystemCoolingCoil.cs" />
+    <Compile Include="Convert\ToSAM\SystemDamper.cs" />
+    <Compile Include="Convert\ToSAM\SystemHeatingCoil.cs" />
+    <Compile Include="Convert\ToSAM\SystemFan.cs" />
+    <Compile Include="Convert\ToSAM\SystemExchanger.cs" />
+    <Compile Include="Convert\ToSAM\SystemJunction.cs" />
     <Compile Include="Convert\ToSAM\SystemDXCoilUnit.cs" />
     <Compile Include="Convert\ToSAM\SystemDXCoilUnitResult.cs" />
     <Compile Include="Convert\ToSAM\SystemChilledBeam.cs" />
     <Compile Include="Convert\ToSAM\SystemChilledBeamResult.cs" />
     <Compile Include="Convert\ToSAM\SystemPlantRoom.cs" />
     <Compile Include="Convert\ToSAM\SystemRadiatorResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemEquipmentResult.cs" />
+    <Compile Include="Convert\ToSAM\SystemComponentResult.cs" />
     <Compile Include="Convert\ToSAM\SystemFanCoilUnitResult.cs" />
     <Compile Include="Convert\ToSAM\SystemRadiator.cs" />
     <Compile Include="Convert\ToSAM\SystemFanCoilUnit.cs" />
-    <Compile Include="Convert\ToSAM\SystemEquipment.cs" />
+    <Compile Include="Convert\ToSAM\SystemSpaceComponent.cs" />
+    <Compile Include="Convert\ToSAM\AirSystemGroup.cs" />
     <Compile Include="Convert\ToSAM\SystemSpace.cs" />
     <Compile Include="Convert\ToSAM\SystemModel.cs" />
     <Compile Include="Convert\ToSAM\SpaceSystemResults.cs" />
     <Compile Include="Convert\ToSAM\SpaceSystemResult.cs" />
     <Compile Include="Create\IndexedDoubles.cs" />
     <Compile Include="Enums\Parameters\SystemObjectParameter.cs" />
+    <Compile Include="Modify\Connect.cs" />
+    <Compile Include="Modify\Add.cs" />
     <Compile Include="Modify\SetReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query\Reference.cs" />
     <Compile Include="Query\EndHour.cs" />
+    <Compile Include="Query\Ducts.cs" />
     <Compile Include="Query\Source.cs" />
     <Compile Include="Query\ZoneComponents.cs" />
     <Compile Include="Query\StartHour.cs" />
