@@ -54,7 +54,9 @@ namespace SAM.Analytical.Tas.TPD
                                 continue;
                             }
 
-                            systemPlantRoom.Connect(systemComponent_1, systemComponent_2, airSystem, direction);
+                            //TODO: Match In/Out direction of components
+
+                            systemPlantRoom.Connect(systemComponent_1, systemComponent_2, airSystem);
                         }
                     }
                 }
