@@ -1,4 +1,5 @@
 ﻿using SAM.Analytical.Systems;
+using SAM.Core;
 using SAM.Core.Systems;
 using System.Collections.Generic;
 using TPD;
@@ -54,9 +55,21 @@ namespace SAM.Analytical.Tas.TPD
                                 continue;
                             }
 
+                            int index_1 = Core.Systems.Query.FindIndex(systemPlantRoom, systemComponent_1, new SystemType(airSystem), ConnectorStatus.Unconnected, direction);
+                            if(index_1 == -1)
+                            {
+                                continue;
+                            }
+
+                            int index_2 = Core.Systems.Query.FindIndex(systemPlantRoom, systemComponent_2, new SystemType(airSystem), ConnectorStatus.Unconnected, direction.Opposite());
+                            if(index_2 == -1)
+                            {
+                                continue;
+                            }
+
                             //TODO: Match In/Out direction of components
 
-                            systemPlantRoom.Connect(systemComponent_1, systemComponent_2, airSystem);
+                            systemPlantRoom.Connect(systemComponent_1, systemComponent_2, airSystem, index_1, index_2);
                         }
                     }
                 }
