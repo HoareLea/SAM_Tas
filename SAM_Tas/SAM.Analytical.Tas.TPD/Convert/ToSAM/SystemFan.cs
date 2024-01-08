@@ -15,6 +15,7 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = fan;
 
             SystemFan result = new SystemFan(@dynamic.Name);
+            result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
 
             return result;

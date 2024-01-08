@@ -14,7 +14,8 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = heatingCoil;
 
-            SystemHeatingCoil result = new SystemHeatingCoil(@dynamic.Name);
+            SystemHeatingCoil result = new SystemHeatingCoil(dynamic.Name);
+            result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
 
             return result;

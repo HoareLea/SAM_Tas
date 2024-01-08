@@ -16,6 +16,7 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = junction;
 
             SystemJunction result = new SystemJunction(@dynamic.Name);
+            result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
 
             return result;
