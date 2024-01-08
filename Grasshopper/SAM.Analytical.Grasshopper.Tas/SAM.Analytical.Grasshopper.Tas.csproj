@@ -125,6 +125,7 @@
     <Compile Include="Classes\GooLayerThicknessCalculationData.cs" />
     <Compile Include="Classes\GooLayerThicknessCalculationResult.cs" />
     <Compile Include="Classes\GooSAMT3DDocument.cs" />
+    <Compile Include="Component\SAMAnalyticalCalculateThermalTransmittance.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateGlazing.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateConstructions.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateThicknesses.cs" />
