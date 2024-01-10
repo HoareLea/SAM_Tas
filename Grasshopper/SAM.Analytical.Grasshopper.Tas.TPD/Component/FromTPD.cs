@@ -1,4 +1,5 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
@@ -188,7 +189,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            IEnumerable<string> paths =  Params.Input[0]?.VolatileData?.AllData(true)?.OfType<string>();
+            IEnumerable<object> paths =  Params.Input[0]?.VolatileData?.AllData(true);
             if(paths == null || paths.Count() == 0)
             {
                 return;
@@ -196,14 +197,20 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
             string path = null;
 
-            foreach(string path_Temp in paths)
+            foreach(object path_Temp in paths)
             {
-                if(string.IsNullOrWhiteSpace(path_Temp) || !System.IO.File.Exists(path_Temp))
+                string value = path_Temp?.ToString();
+                if(path_Temp is IGH_Goo)
+                {
+                    value = (path_Temp as dynamic)?.Value;
+                }
+
+                if(string.IsNullOrWhiteSpace(value) || !System.IO.File.Exists(value))
                 {
                     continue;
                 }
 
-                path = path_Temp;
+                path = value;
                 break;
             }
 
