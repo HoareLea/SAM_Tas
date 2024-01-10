@@ -21,7 +21,19 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = systemZone as dynamic;
 
-            SystemSpace result = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume, systemZone.FlowRate.Value, systemZone.FreshAir.Value);
+            double flowRate = double.NaN;
+            if(systemZone.FlowRate.Type != tpdSizedVariable.tpdSizedVariableNone)
+            {
+                flowRate = systemZone.FlowRate.Value;
+            }
+
+            double freshAirRate = double.NaN;
+            if (systemZone.FreshAir.Type != tpdSizedVariable.tpdSizedVariableNone)
+            {
+                freshAirRate = systemZone.FreshAir.Value;
+            }
+
+            SystemSpace result = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume, flowRate, freshAirRate);
             result.Description = dynamic.Description;
             Modify.SetReference(result, dynamic.GUID);
 
