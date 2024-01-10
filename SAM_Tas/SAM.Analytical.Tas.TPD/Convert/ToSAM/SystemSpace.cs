@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = systemZone as dynamic;
 
-            SystemSpace result = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume);
+            SystemSpace result = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume, systemZone.FlowRate.Value, systemZone.FreshAir.Value);
             result.Description = dynamic.Description;
             Modify.SetReference(result, dynamic.GUID);
 
