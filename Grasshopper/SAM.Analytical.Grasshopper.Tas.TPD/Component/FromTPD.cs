@@ -6,6 +6,9 @@ using SAM.Core.Grasshopper.Systems;
 using SAM.Core.Systems;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
@@ -25,7 +28,6 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// Provides an Icon for the component.
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTPD;
-
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
@@ -154,6 +156,63 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 dataAccess.SetData(index_successful, systemEnergyCentre != null);
             }
+        }
+
+        public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+        {
+            base.AppendAdditionalMenuItems(menu);
+            GH_DocumentObject.Menu_AppendSeparator(menu);
+            AppendOpenTPDAdditionalMenuItem(this, menu);
+        }
+
+        public ToolStripMenuItem AppendOpenTPDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
+        {
+            if (!(gH_SAMComponent is GH_Component gH_Component))
+            {
+                return null;
+            }
+
+            ToolStripMenuItem toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_Small);
+            if (toolStripMenuItem != null)
+            {
+                toolStripMenuItem.Tag = gH_Component.InstanceGuid;
+            }
+
+            return toolStripMenuItem;
+        }
+
+        private void OnOpenTPDComponentClick(object sender, EventArgs e)
+        {
+            if (Params.Input == null || Params.Input.Count == 0)
+            {
+                return;
+            }
+
+            IEnumerable<string> paths =  Params.Input[0]?.VolatileData?.AllData(true)?.OfType<string>();
+            if(paths == null || paths.Count() == 0)
+            {
+                return;
+            }
+
+            string path = null;
+
+            foreach(string path_Temp in paths)
+            {
+                if(string.IsNullOrWhiteSpace(path_Temp) || !System.IO.File.Exists(path_Temp))
+                {
+                    continue;
+                }
+
+                path = path_Temp;
+                break;
+            }
+
+            if(string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+
+            Process.Start(path);
         }
     }
 }
