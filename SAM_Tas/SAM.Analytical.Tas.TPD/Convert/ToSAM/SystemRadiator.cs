@@ -1,4 +1,5 @@
-﻿using TPD;
+﻿using SAM.Analytical.Systems;
+using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -11,15 +12,18 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            dynamic @dynamic = radiator as dynamic;
+
             double duty = System.Convert.ToDouble((radiator.Duty as dynamic).Value);
             double efficiency = System.Convert.ToDouble((radiator.Efficiency as dynamic).Value);
 
-            SystemRadiator result = new SystemRadiator((radiator as dynamic).Name) 
+            SystemRadiator result = new SystemRadiator(dynamic.Name) 
             { 
                 Duty = duty,
                 Efficiency = efficiency,
             };
-            
+
+            result.Description = dynamic.Description;
             result.SetReference(((ZoneComponent)radiator).Reference());
 
             return result;

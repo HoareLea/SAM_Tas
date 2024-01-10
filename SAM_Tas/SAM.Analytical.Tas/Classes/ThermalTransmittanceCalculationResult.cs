@@ -3,7 +3,7 @@ using SAM.Core;
 
 namespace SAM.Analytical.Tas
 {
-    public class ThermalTransmittanceCalculationResult : Result
+    public class ThermalTransmittanceCalculationResult : Result, IThermalTransmittanceCalculationResult
     {
         private double lightTransmittance;
         private double lightReflectance;

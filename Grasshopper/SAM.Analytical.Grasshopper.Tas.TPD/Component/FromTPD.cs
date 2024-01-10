@@ -2,6 +2,8 @@
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
+using SAM.Core.Grasshopper.Systems;
+using SAM.Core.Systems;
 using System;
 using System.Collections.Generic;
 
@@ -32,7 +34,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// </summary>
         public FromTPD()
           : base("SAMAnalytical.FromTPD", "SAMAnalytical.FromTPD",
-              "Converts from TPD to SystemModel",
+              "Converts from TPD to SystemEnergyCentre",
               "SAM WIP", "Tas")
         {
         }
@@ -49,20 +51,20 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
-                SystemModelConversionSettings systemModelConversionSettings = new SystemModelConversionSettings();
+                SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulate before collecting data", Access = GH_ParamAccess.item };
-                @boolean.SetPersistentData(systemModelConversionSettings.Simulate);
+                @boolean.SetPersistentData(systemEnergyCentreConversionSettings.Simulate);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Integer integer = null;
 
                 integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_startHour_", NickName = "_startHour_", Description = "Simulation start hour", Access = GH_ParamAccess.item };
-                integer.SetPersistentData(systemModelConversionSettings.StartHour);
+                integer.SetPersistentData(systemEnergyCentreConversionSettings.StartHour);
                 result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
 
                 integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHour_", NickName = "_endHour_", Description = "Simulation end hour", Access = GH_ParamAccess.item };
-                integer.SetPersistentData(systemModelConversionSettings.EndHour);
+                integer.SetPersistentData(systemEnergyCentreConversionSettings.EndHour);
                 result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
@@ -81,7 +83,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooSystemModelParam() { Name = "systemModel", NickName = "systemModel", Description = "SAM Analytical SystemModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooSystemEnergyCentreParam() { Name = "systemEnergyCentre", NickName = "systemEnergyCentre", Description = "SAM Core Systems SystemEnergyCentre", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -111,27 +113,27 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            SystemModelConversionSettings systemModelConversionSettings = new SystemModelConversionSettings();
+            SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
 
-            bool simulate = systemModelConversionSettings.Simulate;
+            bool simulate = systemEnergyCentreConversionSettings.Simulate;
             index = Params.IndexOfInputParam("_simulate_");
             if (index != -1 && dataAccess.GetData(index, ref simulate))
             {
-                systemModelConversionSettings.Simulate = simulate;
+                systemEnergyCentreConversionSettings.Simulate = simulate;
             }
 
-            int startHour = systemModelConversionSettings.StartHour;
+            int startHour = systemEnergyCentreConversionSettings.StartHour;
             index = Params.IndexOfInputParam("_startHour_");
             if (index != -1 && dataAccess.GetData(index, ref startHour))
             {
-                systemModelConversionSettings.StartHour = startHour;
+                systemEnergyCentreConversionSettings.StartHour = startHour;
             }
 
-            int endHour = systemModelConversionSettings.EndHour;
+            int endHour = systemEnergyCentreConversionSettings.EndHour;
             index = Params.IndexOfInputParam("_endHour_");
             if (index != -1 && dataAccess.GetData(index, ref endHour))
             {
-                systemModelConversionSettings.EndHour = endHour;
+                systemEnergyCentreConversionSettings.EndHour = endHour;
             }
 
             string path = null;
@@ -142,15 +144,15 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            SystemModel systemModel = Analytical.Tas.TPD.Convert.ToSAM(path, systemModelConversionSettings);
+            SystemEnergyCentre systemEnergyCentre = Analytical.Tas.TPD.Convert.ToSAM(path, systemEnergyCentreConversionSettings);
 
-            index = Params.IndexOfOutputParam("systemModel");
+            index = Params.IndexOfOutputParam("systemEnergyCentre");
             if (index != -1)
-                dataAccess.SetData(index, new GooSystemModel(systemModel));
+                dataAccess.SetData(index, new GooSystemEnergyCentre(systemEnergyCentre));
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, systemModel != null);
+                dataAccess.SetData(index_successful, systemEnergyCentre != null);
             }
         }
     }

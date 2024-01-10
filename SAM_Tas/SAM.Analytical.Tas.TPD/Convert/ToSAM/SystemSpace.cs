@@ -1,5 +1,6 @@
 ﻿using TPD;
 using System.Linq;
+using SAM.Analytical.Systems;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -18,8 +19,11 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            dynamic @dynamic = systemZone as dynamic;
+
             SystemSpace result = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume);
-            result.SetReference(zoneLoad.GUID);
+            result.Description = dynamic.Description;
+            Modify.SetReference(result, dynamic.GUID);
 
             return result;
         }

@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
-        public static RelationCluster ToSAM(this TAS3D.Building building)
+        public static RelationCluster<IJSAMObject> ToSAM(this TAS3D.Building building)
         {
             if (building == null)
                 return null;
@@ -14,7 +14,7 @@ namespace SAM.Analytical.Tas
 
             Dictionary<string, ISAMObject> dictionary = null;
 
-            RelationCluster result = new RelationCluster();
+            RelationCluster<IJSAMObject> result = new RelationCluster<IJSAMObject>();
 
             dictionary = new Dictionary<string, ISAMObject>();
 

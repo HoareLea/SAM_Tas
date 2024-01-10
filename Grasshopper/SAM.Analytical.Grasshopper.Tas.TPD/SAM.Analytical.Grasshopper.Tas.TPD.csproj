@@ -38,12 +38,26 @@
       <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="SAM.Analytical.Grasshopper.Systems">
+      <HintPath>..\..\..\SAM_Systems\build\SAM.Analytical.Grasshopper.Systems.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Analytical.Systems, Version=1.0.8748.21283, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM_Systems\build\SAM.Analytical.Systems.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Core, Version=1.0.8740.39759, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Core.Grasshopper">
       <HintPath>..\..\..\SAM\build\SAM.Core.Grasshopper.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core.Grasshopper.Systems">
+      <HintPath>..\..\..\SAM_Systems\build\SAM.Core.Grasshopper.Systems.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core.Systems, Version=1.0.8748.21282, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM_Systems\build\SAM.Core.Systems.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,13 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\GooSystemSpace.cs" />
-    <Compile Include="Classes\GooSystemPlantRoom.cs" />
-    <Compile Include="Classes\GooSystemObject.cs" />
-    <Compile Include="Classes\GooSystemModel.cs" />
-    <Compile Include="Component\SAMAnalyticalSystemSpacesBySystemPlantRoom.cs" />
     <Compile Include="Component\FromTPD.cs" />
-    <Compile Include="Component\SAMAnalyticalSystemModelRelatedObjects.cs" />
     <Compile Include="Component\SAMAnalyticalTPDResults.cs" />
     <Compile Include="Kernel\AssemblyInfo.cs" />
     <Compile Include="Kernel\AssemblyPriority.cs" />
@@ -110,6 +118,9 @@
       <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
       <Name>SAM.Core.Tas</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

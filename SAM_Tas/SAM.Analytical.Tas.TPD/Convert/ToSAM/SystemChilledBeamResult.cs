@@ -1,4 +1,5 @@
-﻿using SAM.Core;
+﻿using SAM.Analytical.Systems;
+using SAM.Core;
 using System.Collections.Generic;
 using System.Linq;
 using TPD;
@@ -37,7 +38,6 @@ namespace SAM.Analytical.Tas.TPD
 
 
             string reference = Query.Reference((ZoneComponent)chilledBeam);
-
 
             SystemChilledBeamResult result = new SystemChilledBeamResult(reference, string.Empty, Query.Source(), dictionary);
             

@@ -1,39 +1,43 @@
 ﻿using TPD;
 using System.Collections.Generic;
 using SAM.Core.Tas;
+using SAM.Core.Systems;
+using SAM.Analytical.Systems;
+using System.Reflection;
+using System;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemModel ToSAM(string path_TPD, SystemModelConversionSettings systemModelConversionSettings  = null)
+        public static SystemEnergyCentre ToSAM(string path_TPD, SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = null)
         {
             if (string.IsNullOrWhiteSpace(path_TPD))
             {
                 return null;
             }
 
-            SystemModel result = null;
+            SystemEnergyCentre result = null;
             using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
             {
 
-                result = ToSAM(sAMTPDDocument, systemModelConversionSettings);
+                result = ToSAM(sAMTPDDocument, systemEnergyCentreConversionSettings);
             }
 
             return result;
         }
 
-        public static SystemModel ToSAM(this SAMTPDDocument sAMTPDDocument, SystemModelConversionSettings systemModelConversionSettings = null)
+        public static SystemEnergyCentre ToSAM(this SAMTPDDocument sAMTPDDocument, SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = null)
         {
             if (sAMTPDDocument == null)
             {
                 return null;
             }
 
-            return ToSAM(sAMTPDDocument.TPDDocument, systemModelConversionSettings);
+            return ToSAM(sAMTPDDocument.TPDDocument, systemEnergyCentreConversionSettings);
         }
 
-        public static SystemModel ToSAM(this TPDDoc tPDDoc, SystemModelConversionSettings systemModelConversionSettings = null)
+        public static SystemEnergyCentre ToSAM(this TPDDoc tPDDoc, SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = null)
         {
             EnergyCentre energyCentre = tPDDoc?.EnergyCentre;
             if(energyCentre == null)
@@ -41,7 +45,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            SystemModel result = new SystemModel(energyCentre.Name);
+            SystemEnergyCentre result = new SystemEnergyCentre(energyCentre.Name);
 
             List<PlantRoom> plantRooms = tPDDoc.PlantRooms();
             if (plantRooms == null)
@@ -49,9 +53,9 @@ namespace SAM.Analytical.Tas.TPD
                 return result;
             }
 
-            if(systemModelConversionSettings == null)
+            if(systemEnergyCentreConversionSettings == null)
             {
-                systemModelConversionSettings = new SystemModelConversionSettings();
+                systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
             }
 
             int start = tPDDoc.StartHour();
@@ -59,9 +63,9 @@ namespace SAM.Analytical.Tas.TPD
 
             foreach (PlantRoom plantRoom in plantRooms)
             {
-                if (systemModelConversionSettings.Simulate)
+                if (systemEnergyCentreConversionSettings.Simulate)
                 {
-                    plantRoom.SimulateEx(systemModelConversionSettings.StartHour + 1, systemModelConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)global::TPD.tpdSimulationData.tpdSimulationDataLoad + (int)global::TPD.tpdSimulationData.tpdSimulationDataPipe + (int)global::TPD.tpdSimulationData.tpdSimulationDataDuct + (int)global::TPD.tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
+                    plantRoom.SimulateEx(systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)global::TPD.tpdSimulationData.tpdSimulationDataLoad + (int)global::TPD.tpdSimulationData.tpdSimulationDataPipe + (int)global::TPD.tpdSimulationData.tpdSimulationDataDuct + (int)global::TPD.tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
                 }
 
                 SystemPlantRoom systemPlantRoom = plantRoom.ToSAM();
@@ -72,61 +76,60 @@ namespace SAM.Analytical.Tas.TPD
                     continue;
                 }
 
-                List<ISystemEquipment> systemEquipments = new List<ISystemEquipment>();
                 foreach (global::TPD.System system in systems)
                 {
-                    if (system == null)
-                    {
-                        continue;
-                    }
+                    systemPlantRoom.Add(system, tPDDoc);
 
-                    List<SystemZone> systemZones = system.SystemZones();
-                    if (systemZones == null || systemZones.Count == 0)
-                    {
-                        continue;
-                    }
+                    //List<SystemZone> systemZones = system.SystemZones();
+                    //if (systemZones == null || systemZones.Count == 0)
+                    //{
+                    //    continue;
+                    //}
 
-                    foreach (SystemZone systemZone in systemZones)
-                    {
-                        SystemSpace systemSpace = systemZone.ToSAM();
-                        if (systemSpace == null)
-                        {
-                            continue;
-                        }
+                    //foreach (SystemZone systemZone in systemZones)
+                    //{
+                    //    SystemSpace systemSpace = systemZone.ToSAM();
+                    //    if (systemSpace == null)
+                    //    {
+                    //        continue;
+                    //    }
 
-                        result.Add(systemSpace);
+                    //    systemPlantRoom.Add(systemSpace);
 
-                        List<ZoneComponent> zoneComponents = Query.ZoneComponents<ZoneComponent>(systemZone);
-                        foreach (ZoneComponent zoneComponent in zoneComponents)
-                        {
-                            SystemEquipment systemEquipment = zoneComponent.ToSAM();
-                            if (systemEquipment == null)
-                            {
-                                continue;
-                            }
+                    //    List<ZoneComponent> zoneComponents = Query.ZoneComponents<ZoneComponent>(systemZone);
+                    //    foreach (ZoneComponent zoneComponent in zoneComponents)
+                    //    {
+                    //        ISystemSpaceComponent systemSpaceComponent = zoneComponent.ToSAM();
+                    //        if (systemSpaceComponent == null)
+                    //        {
+                    //            continue;
+                    //        }
 
-                            result.Add(systemEquipment, systemSpace);
+                    //        systemPlantRoom.Add(systemSpaceComponent);
 
-                            systemEquipments.Add(systemEquipment);
+                    //        systemPlantRoom.Connect(systemSpaceComponent, systemSpace);
 
-                            ISystemEquipmentResult systemEquipmentResult = zoneComponent.ToSAM_SystemEquipmentResult(start, end);
-                            if (systemEquipmentResult == null)
-                            {
-                                continue;
-                            }
+                    //        ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemEquipmentResult(start, end);
+                    //        if (systemComponentResult == null)
+                    //        {
+                    //            continue;
+                    //        }
 
-                            result.Add(systemEquipmentResult, systemEquipment);
-                        }
+                    //        systemPlantRoom.Add(systemComponentResult);
 
-                        SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(result, start, end);
-                        if (systemSpaceResult != null)
-                        {
-                            result.Add(systemSpaceResult, systemSpace);
-                        }
-                    }
+                    //        systemPlantRoom.Connect(systemComponentResult, systemSpaceComponent);
+                    //    }
+
+                    //    SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, start, end);
+                    //    if (systemSpaceResult != null)
+                    //    {
+                    //        systemPlantRoom.Add(systemSpaceResult);
+                    //        systemPlantRoom.Connect(systemSpaceResult, systemSpace);
+                    //    }
+                    //}
                 }
 
-                result.Add(systemPlantRoom, systemEquipments);
+                result.Add(systemPlantRoom);
             }
 
             return result;

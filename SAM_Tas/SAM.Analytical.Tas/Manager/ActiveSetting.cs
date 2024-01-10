@@ -118,17 +118,17 @@ namespace SAM.Analytical.Tas
             typeMap.Add(typeof(Aperture), typeof(TAS3D.window), "SAM_BuildingElementGUID", "GUID");
 
 
-            typeMap.Add(typeof(RelationCluster), typeof(TAS3D.Building), "Description", "description");
-            typeMap.Add(typeof(RelationCluster), typeof(TAS3D.Building), "Latitude", "latitude");  //this is based on SAM_FutureWeatherFile
-            typeMap.Add(typeof(RelationCluster), typeof(TAS3D.Building), "Longitude", "longitude");//this is based on SAM_FutureWeatherFile
+            typeMap.Add(typeof(IRelationCluster), typeof(TAS3D.Building), "Description", "description");
+            typeMap.Add(typeof(IRelationCluster), typeof(TAS3D.Building), "Latitude", "latitude");  //this is based on SAM_FutureWeatherFile
+            typeMap.Add(typeof(IRelationCluster), typeof(TAS3D.Building), "Longitude", "longitude");//this is based on SAM_FutureWeatherFile
             //mapCluster.Add(typeof(RelationCluster), typeof(TAS3D.Building), "NorthAngle", "northAngle");
-            typeMap.Add(typeof(RelationCluster), typeof(TAS3D.Building), "TimeZone", "timeZone");//this is based on SAM_FutureWeatherFile
-            typeMap.Add(typeof(RelationCluster), typeof(TAS3D.Building), "GUID", "GUID");
-            typeMap.Add(typeof(RelationCluster), typeof(TAS3D.Building), "Year", "year");//this is based on SAM_FutureWeatherFile
+            typeMap.Add(typeof(IRelationCluster), typeof(TAS3D.Building), "TimeZone", "timeZone");//this is based on SAM_FutureWeatherFile
+            typeMap.Add(typeof(IRelationCluster), typeof(TAS3D.Building), "GUID", "GUID");
+            typeMap.Add(typeof(IRelationCluster), typeof(TAS3D.Building), "Year", "year");//this is based on SAM_FutureWeatherFile
 
             //new Revit Type added by MD 2020-07-22
-            typeMap.Add(typeof(RelationCluster), typeof(TAS3D.Building), "SAM_NorthAngle", "northAngle");
-            typeMap.Add(typeof(RelationCluster), typeof(TAS3D.Building), "SAM_Elevation", "elevation"); //not sure if exisit already
+            typeMap.Add(typeof(IRelationCluster), typeof(TAS3D.Building), "SAM_NorthAngle", "northAngle");
+            typeMap.Add(typeof(IRelationCluster), typeof(TAS3D.Building), "SAM_Elevation", "elevation"); //not sure if exisit already
 
             
 

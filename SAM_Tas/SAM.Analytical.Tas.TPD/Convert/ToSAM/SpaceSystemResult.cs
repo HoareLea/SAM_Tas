@@ -2,17 +2,21 @@
 using System.Linq;
 using System.Collections.Generic;
 using SAM.Core;
+using SAM.Analytical.Systems;
+using SAM.Core.Systems;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemSpaceResult ToSAM_SpaceSystemResult(this SystemZone systemZone, SystemModel systemModel, int start, int end, params SystemSpaceDataType[] systemSpaceDataTypes)
+        public static SystemSpaceResult ToSAM_SpaceSystemResult(this SystemZone systemZone, SystemPlantRoom systemPlantRoom, int start, int end, params SystemSpaceDataType[] systemSpaceDataTypes)
         {
             if (systemZone == null)
             {
                 return null;
             }
+
+            string reference = (systemZone as dynamic).GUID;
 
             ZoneLoad zoneLoad = systemZone.ZoneLoads()?.FirstOrDefault();
             if (zoneLoad == null)
@@ -22,26 +26,26 @@ namespace SAM.Analytical.Tas.TPD
 
             Dictionary<SystemSpaceDataType, IndexedDoubles> dictionary = new Dictionary<SystemSpaceDataType, IndexedDoubles>();
 
-            SystemSpace systemSpace = systemModel.Find<SystemSpace>(x => x.Reference() == zoneLoad.GUID);
+            SystemSpace systemSpace = systemPlantRoom.Find<SystemSpace>(x => x.Reference() == reference);
             if(systemSpace != null)
             {
-                List<ISystemEquipment> systemEquipments = systemModel.GetSystemEquipments<ISystemEquipment>(systemSpace);
-                if(systemEquipments != null)
+                List<ISystemSpaceComponent> systemSpaceComponents = systemPlantRoom.GetSystemSpaceComponents<ISystemSpaceComponent>(systemSpace);
+                if(systemSpaceComponents != null)
                 {
                     IEnumerable<SystemSpaceDataType> SystemSpaceDataTypes_Temp = systemSpaceDataTypes == null || systemSpaceDataTypes.Length == 0 ? System.Enum.GetValues(typeof(SystemSpaceDataType)).Cast<SystemSpaceDataType>() : systemSpaceDataTypes;
 
                     dictionary = new Dictionary<SystemSpaceDataType, IndexedDoubles>();
 
-                    foreach(ISystemEquipment systemEquipment in systemEquipments)
+                    foreach(ISystemSpaceComponent systemSpaceComponent in systemSpaceComponents)
                     {
-                        List<ISystemEquipmentResult> systemEquipmentResults = systemModel.GetSystemResults<ISystemEquipmentResult>(systemEquipment);
-                        if(systemEquipmentResults != null && systemEquipmentResults.Count != 0)
+                        List<ISystemComponentResult> systemComponentResults = systemPlantRoom.GetSystemResults<ISystemComponentResult>(systemSpaceComponent);
+                        if(systemComponentResults != null && systemComponentResults.Count != 0)
                         {
-                            foreach(ISystemEquipmentResult systemEquipmentResult in systemEquipmentResults)
+                            foreach(ISystemComponentResult systemComponentResult in systemComponentResults)
                             {
                                 foreach (SystemSpaceDataType systemSpaceDataType in SystemSpaceDataTypes_Temp)
                                 {
-                                    IndexedDoubles indexedDoubles = Query.IndexedDoubles(systemEquipmentResult, systemSpaceDataType);
+                                    IndexedDoubles indexedDoubles = Systems.Query.IndexedDoubles(systemComponentResult, systemSpaceDataType);
                                     if(indexedDoubles != null)
                                     {
                                         if(!dictionary.TryGetValue(systemSpaceDataType, out IndexedDoubles indexedDoubles_Temp) || indexedDoubles_Temp == null)
@@ -60,7 +64,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            SystemSpaceResult result = new SystemSpaceResult(zoneLoad.GUID, zoneLoad.Name, Query.Source(), zoneLoad.FloorArea, zoneLoad.Volume, dictionary);
+            SystemSpaceResult result = new SystemSpaceResult(reference, zoneLoad.Name, Query.Source(), zoneLoad.FloorArea, zoneLoad.Volume, dictionary);
             return result;
         }
     }

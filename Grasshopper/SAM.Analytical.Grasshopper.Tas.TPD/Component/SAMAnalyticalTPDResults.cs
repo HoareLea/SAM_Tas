@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
+using SAM.Analytical.Systems;
 using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
 using System;
@@ -7,12 +8,12 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
-    public class SAMAnalyticalTPDResults : GH_SAMVariableOutputParameterComponent
+    public class SAMAnalyticalSystemResults : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("5067b4f1-3a24-4acc-9b0b-c863209be8ca");
+        public override Guid ComponentGuid => new Guid("75d9f6aa-f407-4b79-908a-51666a287e15");
 
         /// <summary>
         /// The latest version of this component
@@ -30,9 +31,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMAnalyticalTPDResults()
-          : base("SAMAnalytical.TPDResults", "SAMAnalytical.TPDResults",
-              "Converts SAM Analytical to TPD Results",
+        public SAMAnalyticalSystemResults()
+          : base("SAMAnalytical.SystemResults", "SAMAnalytical.SystemResults",
+              "Converts SAM Analytical to System Results",
               "SAM WIP", "Tas")
         {
         }
@@ -101,15 +102,15 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            List<SystemSpaceResult> spaceSystemCalculationResults = Analytical.Tas.TPD.Convert.ToSAM_SpaceSystemResults(path);
+            List<SystemSpaceResult> systemSpaceResults = Analytical.Tas.TPD.Convert.ToSAM_SpaceSystemResults(path);
 
             index = Params.IndexOfOutputParam("results");
             if (index != -1)
-                dataAccess.SetDataList(index, spaceSystemCalculationResults?.ConvertAll(x => new GooResult(x)));
+                dataAccess.SetDataList(index, systemSpaceResults?.ConvertAll(x => new GooResult(x)));
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, spaceSystemCalculationResults != null);
+                dataAccess.SetData(index_successful, systemSpaceResults != null);
             }
         }
     }

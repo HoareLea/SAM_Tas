@@ -4,7 +4,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemEquipment ToSAM(this ZoneComponent zoneComponent)
+        public static Core.Systems.ISystemSpaceComponent ToSAM(this ZoneComponent zoneComponent)
         {
             if (zoneComponent == null)
             {

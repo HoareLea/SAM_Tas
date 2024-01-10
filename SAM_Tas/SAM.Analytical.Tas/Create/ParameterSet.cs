@@ -32,7 +32,7 @@ namespace SAM.Analytical.Tas
 
         public static ParameterSet ParameterSet(this Setting setting, Building building)
         {
-            return Core.Tas.Create.ParameterSet(setting, building, typeof(RelationCluster), typeof(Building));
+            return Core.Tas.Create.ParameterSet(setting, building, typeof(IRelationCluster), typeof(Building));
         }
 
         public static ParameterSet ParameterSet(this Setting setting, zoneSet zoneSet)
