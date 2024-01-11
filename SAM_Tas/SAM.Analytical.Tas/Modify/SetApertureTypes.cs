@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TBD;
+using SAM.Geometry.Object.Spatial;
 
 namespace SAM.Analytical.Tas
 {

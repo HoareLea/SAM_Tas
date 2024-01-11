@@ -131,7 +131,7 @@ namespace SAM.Analytical.Tas
                         PanelParameter panelParameter = panel.HasValue(PanelParameter.ZoneSurfaceReference_1) ? PanelParameter.ZoneSurfaceReference_2 : PanelParameter.ZoneSurfaceReference_1;
                         panel_Temp.SetValue(panelParameter, zoneSurfaceReference);
 
-                        float orientation = System.Convert.ToSingle(Geometry.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
+                        float orientation = System.Convert.ToSingle(Geometry.Object.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
                         orientation += 180;
                         if (orientation >= 360)
                         {
