@@ -66,10 +66,13 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
             SystemSpace systemSpace = systemZone.ToSAM();
             systemPlantRoom.Add(systemSpace);
 
-            SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, tPDDoc.StartHour(), tPDDoc.EndHour());
+            SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, start, end);
             systemPlantRoom.Add(systemSpaceResult);
 
             systemPlantRoom.Connect(systemSpaceResult, systemSpace);
@@ -88,6 +91,18 @@ namespace SAM.Analytical.Tas.TPD
                 systemPlantRoom.Add(systemSpaceComponent);
 
                 result.Add(systemSpaceComponent);
+
+                ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemComponentResult(start, end);
+                if (systemComponentResult == null)
+                {
+                    continue;
+                }
+
+                systemPlantRoom.Add(systemComponentResult);
+
+                systemPlantRoom.Connect(systemComponentResult, systemSpaceComponent);
+
+                result.Add(systemComponentResult);
             }
 
             foreach(ISystemJSAMObject systemJSAMObject in result)

@@ -33,7 +33,16 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            object @object = (zoneComponent as dynamic).GetResultsData(tpdResultsPeriod, tpdCombinerType, System.Convert.ToInt32(@enum), start, end - start);
+            object @object = null;
+            try
+            {
+                @object = (zoneComponent as dynamic).GetResultsData(tpdResultsPeriod, tpdCombinerType, System.Convert.ToInt32(@enum), start, end - start);
+            }
+            catch(Exception exception)
+            {
+                return null;
+            }
+
             IEnumerable enumerable = @object as IEnumerable;
             if (enumerable == null)
             {
