@@ -14,14 +14,30 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            object @object = systemComponent.GetResultsData(tpdResultsPeriod, tpdCombinerType, System.Convert.ToInt32(@enum), start, end - start);
-            if(@object == null)
+
+            object @object = null;
+            try
+            {
+                @object = (systemComponent as dynamic).GetResultsData(tpdResultsPeriod, tpdCombinerType, System.Convert.ToInt32(@enum), start, end - start);
+            }
+            catch (Exception exception)
             {
                 return null;
             }
 
+            IEnumerable enumerable = @object as IEnumerable;
+            if (enumerable == null)
+            {
+                return null;
+            }
 
+            int index = start - 1;
             IndexedDoubles result = new IndexedDoubles();
+            foreach (float value in enumerable)
+            {
+                result[index] = System.Convert.ToDouble(value);
+                index++;
+            }
 
             return result;
         }
