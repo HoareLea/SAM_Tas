@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas
 
             if (profile.Count == 1)
             {
-                profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
+                profile_TBD.type = ProfileTypes.ticValueProfile;
                 profile_TBD.factor = System.Convert.ToSingle(factor);
                 profile_TBD.value = System.Convert.ToSingle(profile.GetValues()[0]);
                 return true;
@@ -26,7 +26,7 @@ namespace SAM.Analytical.Tas
 
             if(profile.Count <= 24)
             {
-                profile_TBD.type = TBD.ProfileTypes.ticHourlyProfile;
+                profile_TBD.type = ProfileTypes.ticHourlyProfile;
                 profile_TBD.factor = System.Convert.ToSingle(factor);
 
                 for (int i = 0; i <= 23; i++)
@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas
                 return true;
             }
 
-            profile_TBD.type = TBD.ProfileTypes.ticYearlyProfile;
+            profile_TBD.type = ProfileTypes.ticYearlyProfile;
             profile_TBD.factor = System.Convert.ToSingle(factor);
 
             //object yearlyValues_TBD = profile_TBD.GetYearlyValues();

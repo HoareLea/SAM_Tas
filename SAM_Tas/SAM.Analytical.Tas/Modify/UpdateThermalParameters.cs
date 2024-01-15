@@ -493,7 +493,7 @@ namespace SAM.Analytical.Tas
 
             });
 
-            Modify.Run(action);
+            Run(action);
 
             return result;
         }

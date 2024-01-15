@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            IEnumerable<FanCoilUnitDataType> fanCoilUnitDataTypes_Temp = fanCoilUnitDataTypes == null || fanCoilUnitDataTypes.Length == 0 ? System.Enum.GetValues(typeof(FanCoilUnitDataType)).Cast<FanCoilUnitDataType>() : fanCoilUnitDataTypes;
+            IEnumerable<FanCoilUnitDataType> fanCoilUnitDataTypes_Temp = fanCoilUnitDataTypes == null || fanCoilUnitDataTypes.Length == 0 ? Enum.GetValues(typeof(FanCoilUnitDataType)).Cast<FanCoilUnitDataType>() : fanCoilUnitDataTypes;
 
 
             Dictionary<FanCoilUnitDataType, IndexedDoubles> dictionary = new Dictionary<FanCoilUnitDataType, IndexedDoubles>();

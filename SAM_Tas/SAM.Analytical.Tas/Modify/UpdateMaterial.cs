@@ -72,7 +72,7 @@ namespace SAM.Analytical.Tas
                 {
                     TransparentMaterial transparentMaterial = (TransparentMaterial)material;
 
-                    material_TCD.type = (int)TCD.MaterialTypes.tcdTransparentLayer;
+                    material_TCD.type = (int)MaterialTypes.tcdTransparentLayer;
                     material_TCD.conductivity = System.Convert.ToSingle(transparentMaterial.ThermalConductivity);
                     material_TCD.description = transparentMaterial.Description;
                     material_TCD.specificHeat = System.Convert.ToSingle(transparentMaterial.SpecificHeatCapacity);
@@ -128,7 +128,7 @@ namespace SAM.Analytical.Tas
                 {
                     GasMaterial gasMaterial = (GasMaterial)material;
 
-                    material_TCD.type = (int)TCD.MaterialTypes.tcdGasLayer;
+                    material_TCD.type = (int)MaterialTypes.tcdGasLayer;
                     material_TCD.conductivity = System.Convert.ToSingle(gasMaterial.ThermalConductivity);
                     material_TCD.description = gasMaterial.Description;
                     material_TCD.specificHeat = System.Convert.ToSingle(gasMaterial.SpecificHeatCapacity);

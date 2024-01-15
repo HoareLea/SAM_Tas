@@ -130,7 +130,7 @@ namespace SAM.Analytical.Tas.SAP
                     continue;
                 }
 
-                if(!panel.TryGetValue(Tas.PanelParameter.BuildingElementGuid, out Guid guid) || guid == Guid.Empty)
+                if(!panel.TryGetValue(PanelParameter.BuildingElementGuid, out Guid guid) || guid == Guid.Empty)
                 {
                     guid = panel.Guid;
                 }

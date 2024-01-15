@@ -288,7 +288,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            Construction construction = ConstructionManager.GetConstructions(layerThicknessCalculationData.ConstructionName, Core.TextComparisonType.Equals, true)?.FirstOrDefault();
+            Construction construction = ConstructionManager.GetConstructions(layerThicknessCalculationData.ConstructionName, TextComparisonType.Equals, true)?.FirstOrDefault();
             if (construction == null)
             {
                 return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, double.NaN, thermalTransmittance, double.NaN);

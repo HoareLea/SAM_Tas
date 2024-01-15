@@ -40,7 +40,7 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                if(!global::System.Guid.TryParse(zoneGuid, out Guid guid))
+                if(!Guid.TryParse(zoneGuid, out Guid guid))
                 {
                     continue;
                 }

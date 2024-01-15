@@ -684,7 +684,7 @@ namespace SAM.Analytical.Tas
 
                     if (panel.PanelGroup == PanelGroup.Floor && adjacent)
                     {
-                        keyValuePair.Value[1].Item1.inclination = System.Math.Abs(180 - keyValuePair.Value[1].Item1.inclination);
+                        keyValuePair.Value[1].Item1.inclination = Math.Abs(180 - keyValuePair.Value[1].Item1.inclination);
 
                         if (reverse_1)
                         {

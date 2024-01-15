@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas
                 List<ZoneGroup> zoneGroups = building.ZoneGroups();
                 if (zoneGroups != null)
                 {
-                    int index = zoneGroups.FindIndex(x => x.name == name && x.type == (int)TBD.ZoneGroupType.tbdDefaultZG);
+                    int index = zoneGroups.FindIndex(x => x.name == name && x.type == (int)ZoneGroupType.tbdDefaultZG);
                     if (index != -1)
                     {
                         building.RemoveZoneGroup(index);

@@ -40,14 +40,14 @@ namespace SAM.Analytical.Tas.TPD
 
                 Core.Systems.ISystemComponent systemComponent_1 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_1);
 
-                foreach (Core.Direction direction in new Core.Direction[] { Core.Direction.In, Core.Direction.Out})
+                foreach (Core.Direction direction in new Core.Direction[] { Direction.In, Direction.Out})
                 {
                     List<Duct> ducts = Query.Ducts(systemComponent, direction);
                     if (ducts != null)
                     {
                         foreach (Duct duct in ducts)
                         {
-                            string reference_2 = (direction == Core.Direction.In ? duct.GetUpstreamComponent() as dynamic : duct.GetDownstreamComponent() as dynamic)?.GUID;
+                            string reference_2 = (direction == Direction.In ? duct.GetUpstreamComponent() as dynamic : duct.GetDownstreamComponent() as dynamic)?.GUID;
 
                             Core.Systems.ISystemComponent systemComponent_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
                             if (systemComponent_2 == null)

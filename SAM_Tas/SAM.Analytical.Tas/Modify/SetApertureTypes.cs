@@ -65,13 +65,13 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    Aperture aperture = adjacencyCluster.Apertures(point3D, 1, SAM.Core.Tolerance.MacroDistance)?.FirstOrDefault();
+                    Aperture aperture = adjacencyCluster.Apertures(point3D, 1, Core.Tolerance.MacroDistance)?.FirstOrDefault();
                     if(aperture == null)
                     {
                         continue;
                     }
 
-                    if(!aperture.TryGetValue(SAM.Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties) || openingProperties == null)
+                    if(!aperture.TryGetValue(Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties) || openingProperties == null)
                     {
                         continue;
                     }

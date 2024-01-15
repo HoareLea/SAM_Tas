@@ -11,7 +11,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 {
     public class TasCreateConstructionCalculationData : GH_SAMVariableOutputParameterComponent
     {
-        private static double minThickness = Core.Tolerance.MacroDistance;
+        private static double minThickness = Tolerance.MacroDistance;
         private static double maxThickness = 1;
 
         /// <summary>

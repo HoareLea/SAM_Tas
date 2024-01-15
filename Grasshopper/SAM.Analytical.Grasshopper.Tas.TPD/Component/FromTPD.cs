@@ -162,7 +162,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
         {
             base.AppendAdditionalMenuItems(menu);
-            GH_DocumentObject.Menu_AppendSeparator(menu);
+            Menu_AppendSeparator(menu);
             AppendOpenTPDAdditionalMenuItem(this, menu);
         }
 

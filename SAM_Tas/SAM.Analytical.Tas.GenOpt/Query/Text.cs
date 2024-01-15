@@ -28,7 +28,7 @@ namespace SAM.Analytical.Tas.GenOpt
                     continue;
                 }
 
-                NameAttribute nameAttribute = Query.NameAttribute(genOptObject);
+                NameAttribute nameAttribute = NameAttribute(genOptObject);
                 if(nameAttribute == null || string.IsNullOrWhiteSpace(nameAttribute.Name))
                 {
                     texts.Add(text);

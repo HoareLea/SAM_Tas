@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            IEnumerable<SystemSpaceDataType> systemSpaceDataTypes_Temp = systemSpaceDataTypes == null || systemSpaceDataTypes.Length == 0 ? System.Enum.GetValues(typeof(SystemSpaceDataType)).Cast<SystemSpaceDataType>() : systemSpaceDataTypes;
+            IEnumerable<SystemSpaceDataType> systemSpaceDataTypes_Temp = systemSpaceDataTypes == null || systemSpaceDataTypes.Length == 0 ? Enum.GetValues(typeof(SystemSpaceDataType)).Cast<SystemSpaceDataType>() : systemSpaceDataTypes;
 
             Dictionary<SystemSpaceDataType, IndexedDoubles> dictionary = new Dictionary<SystemSpaceDataType, IndexedDoubles>();
             foreach (SystemSpaceDataType systemSpaceDataType in systemSpaceDataTypes_Temp)
