@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas.TPD
             object @object = null;
             try
             {
-                @object = (systemComponent as dynamic).GetResultsData(tpdResultsPeriod, tpdCombinerType, System.Convert.ToInt32(@enum), start, end - start);
+                @object = (systemComponent as dynamic).GetResultsData(tpdResultsPeriod, tpdCombinerType, System.Convert.ToInt32(@enum), start, end - start + 1);
             }
             catch (Exception exception)
             {
@@ -52,7 +52,7 @@ namespace SAM.Analytical.Tas.TPD
             object @object = null;
             try
             {
-                @object = (zoneComponent as dynamic).GetResultsData(tpdResultsPeriod, tpdCombinerType, System.Convert.ToInt32(@enum), start, end - start);
+                @object = (zoneComponent as dynamic).GetResultsData(tpdResultsPeriod, tpdCombinerType, System.Convert.ToInt32(@enum), start, end - start + 1);
             }
             catch(Exception exception)
             {
