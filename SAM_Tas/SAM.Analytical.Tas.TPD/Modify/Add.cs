@@ -129,10 +129,18 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
             SystemAirJunction systemAirJunction = junction.ToSAM();
             systemPlantRoom.Add(systemAirJunction);
 
-            return new List<ISystemJSAMObject>() { systemAirJunction };
+            SystemAirJunctionResult systemAirJunctionResult = junction.ToSAM_SystemAirJunctionResult(start, end);
+            systemPlantRoom.Add(systemAirJunctionResult);
+
+            systemPlantRoom.Connect(systemAirJunctionResult, systemAirJunction);
+
+            return new List<ISystemJSAMObject>() { systemAirJunction, systemAirJunctionResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Exchanger exchanger, TPDDoc tPDDoc)
@@ -185,6 +193,8 @@ namespace SAM.Analytical.Tas.TPD
             SystemCoolingCoilResult systemCoolingCoilResult = coolingCoil.ToSAM_SystemCoolingCoilResult(start, end);
             systemPlantRoom.Add(systemCoolingCoilResult);
 
+            systemPlantRoom.Connect(systemCoolingCoilResult, systemCoolingCoil);
+
             return new List<ISystemJSAMObject>() { systemCoolingCoil, systemCoolingCoilResult };
         }
 
@@ -203,6 +213,8 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemHeatingCoilResult systemHeatingCoilResult = heatingCoil.ToSAM_SystemHeatingCoilResult(start, end);
             systemPlantRoom.Add(systemHeatingCoilResult);
+
+            systemPlantRoom.Connect(systemHeatingCoilResult, systemHeatingCoil);
 
             return new List<ISystemJSAMObject>() { systemHeatingCoil, systemHeatingCoilResult };
         }
