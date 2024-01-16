@@ -1,12 +1,11 @@
 ﻿using TPD;
-using SAM.Core.Systems;
-using SAM.Core;
+using SAM.Analytical.Systems;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemJunction ToSAM(this Junction junction)
+        public static SystemAirJunction ToSAM(this Junction junction)
         {
             if (junction == null)
             {
@@ -15,7 +14,7 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = junction;
 
-            SystemJunction result = new SystemJunction(@dynamic.Name);
+            SystemAirJunction result = new SystemAirJunction(@dynamic.Name);
             result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
 

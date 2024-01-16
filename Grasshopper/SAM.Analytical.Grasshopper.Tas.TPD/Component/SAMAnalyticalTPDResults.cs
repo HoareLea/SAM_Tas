@@ -1,7 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Systems;
-using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
 using System;
 using System.Collections.Generic;

@@ -69,7 +69,7 @@
     <Compile Include="Convert\ToSAM\SystemHeatingCoil.cs" />
     <Compile Include="Convert\ToSAM\SystemFan.cs" />
     <Compile Include="Convert\ToSAM\SystemExchanger.cs" />
-    <Compile Include="Convert\ToSAM\SystemJunction.cs" />
+    <Compile Include="Convert\ToSAM\SystemAirJunction.cs" />
     <Compile Include="Convert\ToSAM\SystemDXCoilUnit.cs" />
     <Compile Include="Convert\ToSAM\SystemDXCoilUnitResult.cs" />
     <Compile Include="Convert\ToSAM\SystemChilledBeam.cs" />

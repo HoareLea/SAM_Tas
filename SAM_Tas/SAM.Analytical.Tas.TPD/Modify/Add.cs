@@ -129,10 +129,10 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            SystemJunction systemJunction = junction.ToSAM();
-            systemPlantRoom.Add(systemJunction);
+            SystemAirJunction systemAirJunction = junction.ToSAM();
+            systemPlantRoom.Add(systemAirJunction);
 
-            return new List<ISystemJSAMObject>() { systemJunction };
+            return new List<ISystemJSAMObject>() { systemAirJunction };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Exchanger exchanger, TPDDoc tPDDoc)
