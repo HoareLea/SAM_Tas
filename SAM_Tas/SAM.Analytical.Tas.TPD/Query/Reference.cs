@@ -73,7 +73,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            return systemComponent.GUID;
+            return (systemComponent as dynamic).GUID;
         }
     }
 }
