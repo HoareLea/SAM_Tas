@@ -176,10 +176,16 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
             SystemCoolingCoil systemCoolingCoil = coolingCoil.ToSAM();
             systemPlantRoom.Add(systemCoolingCoil);
 
-            return new List<ISystemJSAMObject>() { systemCoolingCoil };
+            SystemCoolingCoilResult systemCoolingCoilResult = coolingCoil.ToSAM_SystemCoolingCoilResult(start, end);
+            systemPlantRoom.Add(systemCoolingCoilResult);
+
+            return new List<ISystemJSAMObject>() { systemCoolingCoil, systemCoolingCoilResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HeatingCoil heatingCoil, TPDDoc tPDDoc)
