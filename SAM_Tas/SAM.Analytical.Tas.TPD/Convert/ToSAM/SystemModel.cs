@@ -58,8 +58,8 @@ namespace SAM.Analytical.Tas.TPD
                 systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            //int start = tPDDoc.StartHour();
+            //int end = tPDDoc.EndHour();
 
             foreach (PlantRoom plantRoom in plantRooms)
             {

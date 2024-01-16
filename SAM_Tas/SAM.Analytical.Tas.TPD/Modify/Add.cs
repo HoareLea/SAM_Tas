@@ -150,15 +150,23 @@ namespace SAM.Analytical.Tas.TPD
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Fan fan, TPDDoc tPDDoc)
         {
-            if (systemPlantRoom == null || fan == null)
+            if (systemPlantRoom == null || fan == null || tPDDoc == null)
             {
                 return null;
             }
 
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
             SystemFan systemFan = fan.ToSAM();
             systemPlantRoom.Add(systemFan);
 
-            return new List<ISystemJSAMObject>() { systemFan };
+            SystemFanResult systemFanResult = fan.ToSAM_SystemFanResult(start, end);
+            systemPlantRoom.Add(systemFanResult);
+
+            systemPlantRoom.Connect(systemFanResult, systemFan);
+
+            return new List<ISystemJSAMObject>() { systemFan, systemFanResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, CoolingCoil coolingCoil, TPDDoc tPDDoc)
@@ -181,10 +189,16 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
             SystemHeatingCoil systemHeatingCoil = heatingCoil.ToSAM();
             systemPlantRoom.Add(systemHeatingCoil);
 
-            return new List<ISystemJSAMObject>() { systemHeatingCoil };
+            SystemHeatingCoilResult systemHeatingCoilResult = heatingCoil.ToSAM_SystemHeatingCoilResult(start, end);
+            systemPlantRoom.Add(systemHeatingCoilResult);
+
+            return new List<ISystemJSAMObject>() { systemHeatingCoil, systemHeatingCoilResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Damper damper, TPDDoc tPDDoc)
