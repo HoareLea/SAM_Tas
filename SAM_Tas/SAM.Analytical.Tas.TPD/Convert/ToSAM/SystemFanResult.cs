@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             Dictionary<FanDataType, IndexedDoubles> dictionary = new Dictionary<FanDataType, IndexedDoubles>();
             foreach (FanDataType fanDataType in fanDataTypes_Temp)
             {
-                IndexedDoubles indexedDoubles = Create.IndexedDoubles((ZoneComponent)fan, fanDataType, start, end);
+                IndexedDoubles indexedDoubles = Create.IndexedDoubles((SystemComponent)fan, fanDataType, start, end);
                 if (indexedDoubles == null)
                 {
                     continue;
@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            string reference = Query.Reference((ZoneComponent)fan);
+            string reference = Query.Reference((SystemComponent)fan);
 
             SystemFanResult result = new SystemFanResult(reference, string.Empty, Query.Source(), dictionary);
             

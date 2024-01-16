@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             Dictionary<CoolingCoilDataType, IndexedDoubles> dictionary = new Dictionary<CoolingCoilDataType, IndexedDoubles>();
             foreach (CoolingCoilDataType coolingCoilDataType in coolingCoilDataTypes_Temp)
             {
-                IndexedDoubles indexedDoubles = Create.IndexedDoubles((ZoneComponent)coolingCoil, coolingCoilDataType, start, end);
+                IndexedDoubles indexedDoubles = Create.IndexedDoubles((SystemComponent)coolingCoil, coolingCoilDataType, start, end);
                 if (indexedDoubles == null)
                 {
                     continue;
@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            string reference = Query.Reference((ZoneComponent)coolingCoil);
+            string reference = Query.Reference((SystemComponent)coolingCoil);
 
             SystemCoolingCoilResult result = new SystemCoolingCoilResult(reference, string.Empty, Query.Source(), dictionary);
             

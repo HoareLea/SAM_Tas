@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             Dictionary<HeatingCoilDataType, IndexedDoubles> dictionary = new Dictionary<HeatingCoilDataType, IndexedDoubles>();
             foreach (HeatingCoilDataType heatingCoilDataType in heatingCoilDataTypes_Temp)
             {
-                IndexedDoubles indexedDoubles = Create.IndexedDoubles((ZoneComponent)heatingCoil, heatingCoilDataType, start, end);
+                IndexedDoubles indexedDoubles = Create.IndexedDoubles((SystemComponent)heatingCoil, heatingCoilDataType, start, end);
                 if (indexedDoubles == null)
                 {
                     continue;
@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            string reference = Query.Reference((ZoneComponent)heatingCoil);
+            string reference = Query.Reference((SystemComponent)heatingCoil);
 
             SystemHeatingCoilResult result = new SystemHeatingCoilResult(reference, string.Empty, Query.Source(), dictionary);
             

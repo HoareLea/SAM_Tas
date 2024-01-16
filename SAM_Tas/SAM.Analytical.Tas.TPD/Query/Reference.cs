@@ -65,5 +65,15 @@ namespace SAM.Analytical.Tas.TPD
 
             return string.Format("[{0}]::[{1}]", zoneLoad.GUID, index);
         }
+
+        public static string Reference(this global::TPD.SystemComponent systemComponent)
+        {
+            if(systemComponent == null)
+            {
+                return null;
+            }
+
+            return systemComponent.GUID;
+        }
     }
 }
