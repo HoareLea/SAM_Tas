@@ -63,6 +63,7 @@
     <Compile Include="Convert\ToSAM\AirSystem.cs" />
     <Compile Include="Convert\ToSAM\SystemCoolingCoilResult.cs" />
     <Compile Include="Convert\ToSAM\SystemAirJunctionResult.cs" />
+    <Compile Include="Convert\ToSAM\SystemExchangerResult.cs" />
     <Compile Include="Convert\ToSAM\SystemHeatingCoilResult.cs" />
     <Compile Include="Convert\ToSAM\SystemFanResult.cs" />
     <Compile Include="Convert\ToSAM\SystemCoolingCoil.cs" />

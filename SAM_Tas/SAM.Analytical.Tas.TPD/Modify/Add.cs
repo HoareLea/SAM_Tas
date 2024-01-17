@@ -150,10 +150,18 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
             SystemExchanger systemExchanger = exchanger.ToSAM();
             systemPlantRoom.Add(systemExchanger);
 
-            return new List<ISystemJSAMObject>() { systemExchanger };
+            SystemExchangerResult systemExchangerResult = exchanger.ToSAM_SystemExchangerResult(start, end);
+            systemPlantRoom.Add(systemExchangerResult);
+
+            systemPlantRoom.Connect(systemExchangerResult, systemExchanger);
+
+            return new List<ISystemJSAMObject>() { systemExchanger, systemExchangerResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Fan fan, TPDDoc tPDDoc)
