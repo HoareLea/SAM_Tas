@@ -64,6 +64,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (SteamHumidifier)systemComponent, tPDDoc);
             }
 
+            if (systemComponent is SprayHumidifier)
+            {
+                return Add(systemPlantRoom, (SprayHumidifier)systemComponent, tPDDoc);
+            }
+
             //List<System.Type> types = Core.Query.Types(systemComponent, @"C:\Users\jakub\GitHub\HoareLea\SAM_Tas\references_buildonly\Interop.TPD.dll"); 
 
             return null;
@@ -214,12 +219,33 @@ namespace SAM.Analytical.Tas.TPD
             SystemSteamHumidifier systemSteamHumidifier = steamHumidifier.ToSAM();
             systemPlantRoom.Add(systemSteamHumidifier);
 
-            SystemSteamHumidifierResult systemAirJunctionResult = steamHumidifier.ToSAM_SystemSteamHumidifierResult(start, end);
-            systemPlantRoom.Add(systemAirJunctionResult);
+            SystemSteamHumidifierResult systemSteamHumidifierResult = steamHumidifier.ToSAM_SystemSteamHumidifierResult(start, end);
+            systemPlantRoom.Add(systemSteamHumidifierResult);
 
-            systemPlantRoom.Connect(systemAirJunctionResult, systemSteamHumidifier);
+            systemPlantRoom.Connect(systemSteamHumidifierResult, systemSteamHumidifier);
 
-            return new List<ISystemJSAMObject>() { systemSteamHumidifier, systemAirJunctionResult };
+            return new List<ISystemJSAMObject>() { systemSteamHumidifier, systemSteamHumidifierResult };
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SprayHumidifier sprayHumidifier, TPDDoc tPDDoc)
+        {
+            if (systemPlantRoom == null || sprayHumidifier == null)
+            {
+                return null;
+            }
+
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
+            SystemSprayHumidifier systemSprayHumidifier = sprayHumidifier.ToSAM();
+            systemPlantRoom.Add(systemSprayHumidifier);
+
+            SystemSprayHumidifierResult systemSprayHumidifierResult = sprayHumidifier.ToSAM_SystemSprayHumidifierResult(start, end);
+            systemPlantRoom.Add(systemSprayHumidifierResult);
+
+            systemPlantRoom.Connect(systemSprayHumidifierResult, systemSprayHumidifier);
+
+            return new List<ISystemJSAMObject>() { systemSprayHumidifier, systemSprayHumidifierResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Exchanger exchanger, TPDDoc tPDDoc)
