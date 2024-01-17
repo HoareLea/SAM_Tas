@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemSprayHumidifier ToSAM_SystemSprayHumidifier(this SprayHumidifier sprayHumidifier)
+        public static SystemDirectEvaporativeCooler ToSAM_SystemDirectEvaporativeCooler(this SprayHumidifier sprayHumidifier)
         {
             if (sprayHumidifier == null)
             {
@@ -14,7 +14,7 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = sprayHumidifier;
 
-            SystemSprayHumidifier result = new SystemSprayHumidifier(@dynamic.Name);
+            SystemDirectEvaporativeCooler result = new SystemDirectEvaporativeCooler(@dynamic.Name);
             result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
 

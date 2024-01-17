@@ -237,15 +237,42 @@ namespace SAM.Analytical.Tas.TPD
             int start = tPDDoc.StartHour();
             int end = tPDDoc.EndHour();
 
-            SystemSprayHumidifier systemSprayHumidifier = sprayHumidifier.ToSAM();
-            systemPlantRoom.Add(systemSprayHumidifier);
+            Core.Systems.ISystemComponent systemComponent = null;
+            ISystemComponentResult systemComponentResult = null;
 
-            SystemSprayHumidifierResult systemSprayHumidifierResult = sprayHumidifier.ToSAM_SystemSprayHumidifierResult(start, end);
-            systemPlantRoom.Add(systemSprayHumidifierResult);
+            switch (sprayHumidifier.Flags)
+            {
+                case 1:
+                    systemComponent = sprayHumidifier.ToSAM_SystemSprayHumidifier();
+                    systemComponentResult = sprayHumidifier.ToSAM_SystemSprayHumidifierResult(start, end);
+                    break;
 
-            systemPlantRoom.Connect(systemSprayHumidifierResult, systemSprayHumidifier);
+                case 0:
+                    systemComponent = sprayHumidifier.ToSAM_SystemDirectEvaporativeCooler();
+                    systemComponentResult = sprayHumidifier.ToSAM_SystemDirectEvaporativeCoolerResult(start, end);
+                    break;
+            }
 
-            return new List<ISystemJSAMObject>() { systemSprayHumidifier, systemSprayHumidifierResult };
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            if (systemComponent != null)
+            {
+                systemPlantRoom.Add(systemComponent);
+                result.Add(systemComponent);
+            }
+
+            if (systemComponentResult != null)
+            {
+                systemPlantRoom.Add(systemComponentResult);
+                result.Add(systemComponentResult);
+            }
+
+            if (systemComponent != null && systemComponentResult != null)
+            {
+                systemPlantRoom.Connect(systemComponentResult, systemComponent);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Exchanger exchanger, TPDDoc tPDDoc)
