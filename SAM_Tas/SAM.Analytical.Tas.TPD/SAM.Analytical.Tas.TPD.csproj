@@ -61,6 +61,8 @@
   <ItemGroup>
     <Compile Include="Classes\SystemModelConversionSettings.cs" />
     <Compile Include="Convert\ToSAM\AirSystem.cs" />
+    <Compile Include="Convert\ToSAM\SystemMixingBoxResult.cs" />
+    <Compile Include="Convert\ToSAM\SystemMixingBox.cs" />
     <Compile Include="Convert\ToSAM\SystemCoolingCoilResult.cs" />
     <Compile Include="Convert\ToSAM\SystemAirJunctionResult.cs" />
     <Compile Include="Convert\ToSAM\SystemExchangerResult.cs" />

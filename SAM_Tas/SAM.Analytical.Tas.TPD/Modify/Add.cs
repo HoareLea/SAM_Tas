@@ -54,9 +54,57 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (Damper)systemComponent, tPDDoc);
             }
 
+            if (systemComponent is Optimiser)
+            {
+                return Add(systemPlantRoom, (Optimiser)systemComponent, tPDDoc);
+            }
+
             //List<System.Type> types = Core.Query.Types(systemComponent, @"C:\Users\jakub\GitHub\HoareLea\SAM_Tas\references_buildonly\Interop.TPD.dll"); 
 
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Optimiser optimiser, TPDDoc tPDDoc)
+        {
+            if (systemPlantRoom == null || optimiser == null)
+            {
+                return null;
+            }
+
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
+            Core.Systems.ISystemComponent systemComponent = null;
+            ISystemComponentResult systemComponentResult = null;
+
+            switch(optimiser.Flags)
+            {
+                case 1:
+                    systemComponent = optimiser.ToSAM_SystemMixingBox();
+                    systemComponentResult = optimiser.ToSAM_SystemMixingBoxResult(start, end);
+                    break;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            if (systemComponent != null)
+            {
+                systemPlantRoom.Add(systemComponent);
+                result.Add(systemComponent);
+            }
+
+            if(systemComponentResult != null)
+            {
+                systemPlantRoom.Add(systemComponentResult);
+                result.Add(systemComponentResult);
+            }
+
+            if(systemComponent != null && systemComponentResult != null)
+            {
+                systemPlantRoom.Connect(systemComponentResult, systemComponent);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SystemZone systemZone, TPDDoc tPDDoc)
