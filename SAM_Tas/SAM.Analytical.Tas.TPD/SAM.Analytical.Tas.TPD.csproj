@@ -39,14 +39,16 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SAM.Analytical.Systems">
+    <Reference Include="SAM.Analytical.Systems, Version=1.0.8782.21016, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM_Systems\build\SAM.Analytical.Systems.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Core, Version=1.0.8740.23897, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SAM.Core.Systems">
+    <Reference Include="SAM.Core.Systems, Version=1.0.8782.21016, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM_Systems\build\SAM.Core.Systems.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -63,6 +65,8 @@
     <Compile Include="Convert\ToSAM\AirSystem.cs" />
     <Compile Include="Convert\ToSAM\SystemEconomiser.cs" />
     <Compile Include="Convert\ToSAM\SystemEconomiserResult.cs" />
+    <Compile Include="Convert\ToSAM\SystemSteamHumidifierResult.cs" />
+    <Compile Include="Convert\ToSAM\SystemSteamHumidifier.cs" />
     <Compile Include="Convert\ToSAM\SystemMixingBoxResult.cs" />
     <Compile Include="Convert\ToSAM\SystemMixingBox.cs" />
     <Compile Include="Convert\ToSAM\SystemCoolingCoilResult.cs" />

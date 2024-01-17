@@ -59,6 +59,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (Optimiser)systemComponent, tPDDoc);
             }
 
+            if (systemComponent is SteamHumidifier)
+            {
+                return Add(systemPlantRoom, (SteamHumidifier)systemComponent, tPDDoc);
+            }
+
             //List<System.Type> types = Core.Query.Types(systemComponent, @"C:\Users\jakub\GitHub\HoareLea\SAM_Tas\references_buildonly\Interop.TPD.dll"); 
 
             return null;
@@ -194,6 +199,27 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Connect(systemAirJunctionResult, systemAirJunction);
 
             return new List<ISystemJSAMObject>() { systemAirJunction, systemAirJunctionResult };
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SteamHumidifier steamHumidifier, TPDDoc tPDDoc)
+        {
+            if (systemPlantRoom == null || steamHumidifier == null)
+            {
+                return null;
+            }
+
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
+            SystemSteamHumidifier systemSteamHumidifier = steamHumidifier.ToSAM();
+            systemPlantRoom.Add(systemSteamHumidifier);
+
+            SystemSteamHumidifierResult systemAirJunctionResult = steamHumidifier.ToSAM_SystemSteamHumidifierResult(start, end);
+            systemPlantRoom.Add(systemAirJunctionResult);
+
+            systemPlantRoom.Connect(systemAirJunctionResult, systemSteamHumidifier);
+
+            return new List<ISystemJSAMObject>() { systemSteamHumidifier, systemAirJunctionResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Exchanger exchanger, TPDDoc tPDDoc)
