@@ -83,6 +83,11 @@ namespace SAM.Analytical.Tas.TPD
                     systemComponent = optimiser.ToSAM_SystemMixingBox();
                     systemComponentResult = optimiser.ToSAM_SystemMixingBoxResult(start, end);
                     break;
+
+                case 0:
+                    systemComponent = optimiser.ToSAM_SystemEconomiser();
+                    systemComponentResult = optimiser.ToSAM_SystemEconomiserResult(start, end);
+                    break;
             }
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
