@@ -34,6 +34,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (Exchanger)systemComponent, tPDDoc);
             }
 
+            if (systemComponent is DesiccantWheel)
+            {
+                return Add(systemPlantRoom, (DesiccantWheel)systemComponent, tPDDoc);
+            }
+
             if (systemComponent is Fan)
             {
                 return Add(systemPlantRoom, (Fan)systemComponent, tPDDoc);
@@ -294,6 +299,27 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Connect(systemExchangerResult, systemExchanger);
 
             return new List<ISystemJSAMObject>() { systemExchanger, systemExchangerResult };
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, DesiccantWheel desiccantWheel, TPDDoc tPDDoc)
+        {
+            if (systemPlantRoom == null || desiccantWheel == null)
+            {
+                return null;
+            }
+
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
+            SystemDesiccantWheel systemDesiccantWheel= desiccantWheel.ToSAM();
+            systemPlantRoom.Add(systemDesiccantWheel);
+
+            SystemDesiccantWheelResult systemDesiccantWheelResult = desiccantWheel.ToSAM_SystemDesiccantWheelResult(start, end);
+            systemPlantRoom.Add(systemDesiccantWheelResult);
+
+            systemPlantRoom.Connect(systemDesiccantWheelResult, systemDesiccantWheel);
+
+            return new List<ISystemJSAMObject>() { systemDesiccantWheel, systemDesiccantWheelResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Fan fan, TPDDoc tPDDoc)
