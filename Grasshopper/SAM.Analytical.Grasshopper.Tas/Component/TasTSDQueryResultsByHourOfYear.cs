@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 {
-    public class TasTSDQueryResultsByIndex : GH_SAMVariableOutputParameterComponent
+    public class TasTSDQueryResultsByHourOfYear : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -22,7 +22,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.4";
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -34,9 +34,9 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasTSDQueryResultsByIndex()
-          : base("Tas.TSDQueryResultsByIndex", "Tas.TSDQueryResultsByIndex",
-              "Query Results by Index.",
+        public TasTSDQueryResultsByHourOfYear()
+          : base("Tas.TSDQueryResultsByHourOfYear", "Tas.TSDQueryResultsByHourOfYear",
+              "Query Results by HourOfYear.",
               "SAM", "Tas")
         {
         }
@@ -52,7 +52,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces. In nothing connected all spaces from TSD will be used.\nYou need to connect SAM.Analytcial Spaces if you need access to area and volume", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "spaceDataType_", NickName = "spaceDataType_", Description = "Use Enum spaceDataType with variable selection.", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_indexes_", NickName = "_indexes_", Description = "Hour indexes", Access = GH_ParamAccess.tree, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_hourOfYear_", NickName = "_hourOfYear_", Description = "Hour of Year indexes", Access = GH_ParamAccess.tree, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(false);
@@ -130,7 +130,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             }
 
             GH_Structure<GH_Integer> indexes = null;
-            index = Params.IndexOfInputParam("_indexes_");
+            index = Params.IndexOfInputParam("_hourOfYear_");
             if (index != -1)
             {
                 if (!dataAccess.GetDataTree(index, out indexes))

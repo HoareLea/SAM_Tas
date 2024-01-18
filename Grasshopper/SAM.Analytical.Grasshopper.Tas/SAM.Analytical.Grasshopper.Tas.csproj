@@ -149,7 +149,7 @@
     <Compile Include="Component\TasCreateTBDByPartL.cs" />
     <Compile Include="Component\TasTSDCreateSpaceSimulationResults_Obsolete.cs" />
     <Compile Include="Component\TasTSDQueryZoneResultsByPercentage.cs" />
-    <Compile Include="Component\TasTSDQueryZoneResultsByIndex.cs" />
+    <Compile Include="Component\TasTSDQueryZoneResultsByHourOfYear.cs" />
     <Compile Include="Component\TasTSDQueryResultsByTotalPercentage.cs" />
     <Compile Include="Component\TasTSDQueryResultsByPercentage.cs" />
     <Compile Include="Component\TasUpdateAdaptiveSetpointACCI.cs" />
@@ -173,7 +173,7 @@
     <Compile Include="Component\TasUpdateBuildingElements.cs" />
     <Compile Include="Component\TasUpdateDesignLoads.cs" />
     <Compile Include="Component\TasUpdateConstructions.cs" />
-    <Compile Include="Component\TasTSDQueryResultsByIndex.cs" />
+    <Compile Include="Component\TasTSDQueryResultsByHourOfYear.cs" />
     <Compile Include="Component\TasUpdateZones.cs" />
     <Compile Include="Component\TasUpdateIZAMs.cs" />
     <Compile Include="Component\TasUpdateFacingExternal.cs" />
