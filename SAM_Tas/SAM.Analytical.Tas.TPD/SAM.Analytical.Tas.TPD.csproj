@@ -65,9 +65,11 @@
     <Compile Include="Convert\ToSAM\AirSystem.cs" />
     <Compile Include="Convert\ToSAM\SystemDesiccantWheelResult.cs" />
     <Compile Include="Convert\ToSAM\SystemEconomiser.cs" />
+    <Compile Include="Convert\ToSAM\SystemDXCoilResult.cs" />
     <Compile Include="Convert\ToSAM\SystemEconomiserResult.cs" />
     <Compile Include="Convert\ToSAM\SystemDirectEvaporativeCooler.cs" />
     <Compile Include="Convert\ToSAM\SystemDesiccantWheel.cs" />
+    <Compile Include="Convert\ToSAM\SystemDXCoil.cs" />
     <Compile Include="Convert\ToSAM\SystemSprayHumidifier.cs" />
     <Compile Include="Convert\ToSAM\SystemDirectEvaporativeCoolerResult.cs" />
     <Compile Include="Convert\ToSAM\SystemSprayHumidifierResult.cs" />

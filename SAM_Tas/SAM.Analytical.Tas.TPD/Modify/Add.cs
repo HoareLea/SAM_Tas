@@ -74,6 +74,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (SprayHumidifier)systemComponent, tPDDoc);
             }
 
+            if (systemComponent is DXCoil)
+            {
+                return Add(systemPlantRoom, (DXCoil)systemComponent, tPDDoc);
+            }
+
             //List<System.Type> types = Core.Query.Types(systemComponent, @"C:\Users\jakub\GitHub\HoareLea\SAM_Tas\references_buildonly\Interop.TPD.dll"); 
 
             return null;
@@ -209,6 +214,27 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Connect(systemAirJunctionResult, systemAirJunction);
 
             return new List<ISystemJSAMObject>() { systemAirJunction, systemAirJunctionResult };
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, DXCoil dXCoil, TPDDoc tPDDoc)
+        {
+            if (systemPlantRoom == null || dXCoil == null)
+            {
+                return null;
+            }
+
+            int start = tPDDoc.StartHour();
+            int end = tPDDoc.EndHour();
+
+            SystemDXCoil systemDXCoil = dXCoil.ToSAM();
+            systemPlantRoom.Add(systemDXCoil);
+
+            SystemDXCoilResult systemDXCoilResult = dXCoil.ToSAM_SystemDXCoilResult(start, end);
+            systemPlantRoom.Add(systemDXCoilResult);
+
+            systemPlantRoom.Connect(systemDXCoilResult, systemDXCoil);
+
+            return new List<ISystemJSAMObject>() { systemDXCoil, systemDXCoilResult };
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SteamHumidifier steamHumidifier, TPDDoc tPDDoc)
