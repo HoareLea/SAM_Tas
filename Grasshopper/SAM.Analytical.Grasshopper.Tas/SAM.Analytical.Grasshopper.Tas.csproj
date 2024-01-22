@@ -128,6 +128,7 @@
     <Compile Include="Component\SAMAnalyticalCalculateThermalTransmittance.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateGlazing.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateConstructions.cs" />
+    <Compile Include="Component\TasUpdateIZAMs.cs" />
     <Compile Include="Component\SAMAnalyticalCalculateThicknesses.cs" />
     <Compile Include="Component\SAMAnalyticalSurfaceSimulationResults.cs" />
     <Compile Include="Component\SAMAnalyticalSizingType.cs" />
@@ -175,7 +176,7 @@
     <Compile Include="Component\TasUpdateConstructions.cs" />
     <Compile Include="Component\TasTSDQueryResultsByHourOfYear.cs" />
     <Compile Include="Component\TasUpdateZones.cs" />
-    <Compile Include="Component\TasUpdateIZAMs.cs" />
+    <Compile Include="Component\TasUpdateIZAMsBySpaceParameter.cs" />
     <Compile Include="Component\TasUpdateFacingExternal.cs" />
     <Compile Include="Component\TasUpdateT3D.cs" />
     <Compile Include="Kernel\AssemblyPriority.cs" />

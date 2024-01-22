@@ -178,6 +178,7 @@
     <Compile Include="Modify\SetSizingTypes.cs" />
     <Compile Include="Modify\SetColor.cs" />
     <Compile Include="Modify\UpdateAdiabatic.cs" />
+    <Compile Include="Modify\UpdateIZAMs.cs" />
     <Compile Include="Modify\UpdateUKBRFile.cs" />
     <Compile Include="Modify\UpdateZoneGroups.cs" />
     <Compile Include="Modify\UpdateZoneGroupsByPartL.cs" />
@@ -299,7 +300,7 @@
     <Compile Include="Modify\UpdateMaterial.cs" />
     <Compile Include="Modify\UpdateConstruction.cs" />
     <Compile Include="Modify\UpdateConstructions.cs" />
-    <Compile Include="Modify\UpdateIZAMs.cs" />
+    <Compile Include="Modify\UpdateIZAMsBySpaceParameter.cs" />
     <Compile Include="Modify\RemoveSchedules.cs" />
     <Compile Include="Modify\AssignBuildingElementType.cs" />
     <Compile Include="Modify\AssignRooflightBuilidingElementType.cs" />

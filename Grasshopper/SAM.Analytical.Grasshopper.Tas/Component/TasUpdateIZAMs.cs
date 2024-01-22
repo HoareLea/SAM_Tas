@@ -1,27 +1,30 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
+using SAM.Analytical.Tas;
+using SAM.Core;
 using SAM.Core.Grasshopper;
 using System;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasUpdateIZAMs : GH_SAMComponent
+    public class TasUpdateIZAMs : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("ab1b03ff-b279-4676-beaa-4c9af8f6e7a1");
+        public override Guid ComponentGuid => new Guid("3531e850-b04d-4ec7-9712-a718fb227874");
 
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.0";
 
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD3;
+
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
@@ -29,32 +32,45 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public TasUpdateIZAMs()
-          : base("Tas.UpdateIZAMs", "Tas.UpdateIZAMs",
-              "Updates the IZAMs in a TasTBD file.",
-              "SAM", "Tas")
+          : base("SAMAnalytical.UpdateIZAMs", "SAMAnalytical.UpdateIZAMs",
+              "Update IZAMs",
+              "SAM WIP", "Tas")
         {
         }
 
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_InputParamManager inputParamManager)
+        protected override GH_SAMParam[] Inputs
         {
-            //int aIndex = -1;
-            //Param_Boolean booleanParameter = null;
+            get
+            {
+                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "_analytical", NickName = "_analytical", Description = "SAM Analytical Object such as AdjacencyCluster or AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_tBDPath", NickName = "_tBDPath", Description = "TBD File Path", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
-            inputParamManager.AddTextParameter("_pathTasTBD", "pathTasTBD", "The string path to TasTBD file.", GH_ParamAccess.item);
-            inputParamManager.AddParameter(new GooSpaceParam(), "_spaces", "_spaces", "The SAM analytical spaces", GH_ParamAccess.list);
-            inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
+                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
+                return result.ToArray();
+            }
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_OutputParamManager outputParamManager)
+        protected override GH_SAMParam[] Outputs
         {
-            outputParamManager.AddTextParameter("names", "names", "The names of the inputted spaces.", GH_ParamAccess.list);
-            outputParamManager.AddBooleanParameter("successful", "successful", "Correctly imported?", GH_ParamAccess.item);
+            get
+            {
+                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "analytical", NickName = "analytical", Description = "SAM Analytical Object such as AdjacencyCluster or AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                return result.ToArray();
+            }
         }
 
         /// <summary>
@@ -63,35 +79,76 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            dataAccess.SetData(1, false);
+            int index_successful = Params.IndexOfOutputParam("successful");
+            if (index_successful != -1)
+            {
+                dataAccess.SetData(index_successful, false);
+            }
+
+            int index;
 
             bool run = false;
-            if (!dataAccess.GetData(2, ref run))
+            index = Params.IndexOfInputParam("_run");
+            if (index == -1 || !dataAccess.GetData(index, ref run))
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                run = false;
+            }
+
+            if (!run)
+            {
                 return;
             }
-            if (!run)
-                return;
 
             string path_TBD = null;
-            if (!dataAccess.GetData(0, ref path_TBD) || string.IsNullOrWhiteSpace(path_TBD))
+            index = Params.IndexOfInputParam("_tBDPath");
+            if (index == -1 || !dataAccess.GetData(index, ref path_TBD) || path_TBD == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            List<Space> spaces = new List<Space>();
-            if (!dataAccess.GetDataList(1, spaces))
+            IAnalyticalObject analyticalObject = null;
+            index = Params.IndexOfInputParam("_analytical");
+            if (index == -1 || !dataAccess.GetData(index, ref analyticalObject) || analyticalObject == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            List<string> names = Analytical.Tas.Modify.UpdateIZAMs(path_TBD, spaces);
+            AdjacencyCluster adjacencyCluster = analyticalObject is AdjacencyCluster ? (AdjacencyCluster)analyticalObject : (analyticalObject as AnalyticalModel)?.AdjacencyCluster;
+            if(adjacencyCluster == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
 
-            dataAccess.SetDataList(0, names);
-            dataAccess.SetData(1, names != null);
+            bool result = false;
+
+            List<string> names = Analytical.Tas.Modify.UpdateIZAMs(path_TBD, adjacencyCluster);
+            result = names != null && names.Count > 0;
+
+            if (adjacencyCluster != null)
+            {
+                if (analyticalObject is AnalyticalModel)
+                {
+                    analyticalObject = new AnalyticalModel((AnalyticalModel)analyticalObject, adjacencyCluster);
+                }
+                else if(analyticalObject is AdjacencyCluster)
+                {
+                    analyticalObject = new AdjacencyCluster(adjacencyCluster);
+                }
+            }
+
+            index = Params.IndexOfOutputParam("analytical");
+            if (index != -1)
+            {
+                dataAccess.SetData(index, analyticalObject);
+            }
+
+            if (index_successful != -1)
+            {
+                dataAccess.SetData(index_successful, result);
+            }
         }
     }
 }

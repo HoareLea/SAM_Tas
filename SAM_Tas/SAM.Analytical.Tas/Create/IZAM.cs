@@ -19,8 +19,10 @@ namespace SAM.Analytical.Tas
 
             TBD.IZAM iZAM = building.AddIZAM(null);
 
-            foreach (TBD.dayType aDayType in dayTypes)
-                iZAM.SetDayType(aDayType, true);
+            foreach (TBD.dayType dayType in dayTypes)
+            {
+                iZAM.SetDayType(dayType, true);
+            }
 
             TBD.zone zone_Source = null;
             TBD.zone zone_Assign = null;
