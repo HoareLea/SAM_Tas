@@ -78,7 +78,15 @@ namespace SAM.Analytical.Tas
 
                 TBD.InternalCondition internalCondition = building.AddIC(null);
                 internalCondition.name = string.Format("{0}", airHandlingUnitAirMovement.Name);
+                foreach (dayType dayType in dayTypes)
+                {
+                    internalCondition.SetDayType(dayType, true);
+                }
+
+
                 Thermostat thermostat = internalCondition.GetThermostat();
+
+
                 if(thermostat != null)
                 {
                     Profile heating = airHandlingUnitAirMovement.Heating;
@@ -130,6 +138,11 @@ namespace SAM.Analytical.Tas
                     IZAM iZAM = building.AddIZAM(null);
                     iZAM.name = string.Format("IZAM {0} FROM OUTSIDE", airHandlingUnitAirMovement.Name);
                     result.Add(iZAM.name);
+
+                    foreach (dayType dayType in dayTypes)
+                    {
+                        iZAM.SetDayType(dayType, true);
+                    }
 
                     profile profile = iZAM.GetProfile();
                     profile.Update(airFlow, 1);
