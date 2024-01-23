@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TBD;
 using System.Linq;
 using SAM.Core;
+using SAM.Geometry.Object.Spatial;
 
 namespace SAM.Analytical.Tas
 {
@@ -65,6 +66,14 @@ namespace SAM.Analytical.Tas
 
             List<string> result = new List<string>();
 
+            double elevation = 0;
+            Geometry.Spatial.BoundingBox3D boundingBox3D = adjacencyCluster?.GetPanels()?.BoundingBox3D(1);
+            if(boundingBox3D != null)
+            {
+                elevation = boundingBox3D.Min.Z;
+            }
+
+
             foreach (AirHandlingUnit airHandlingUnit in airHandlingUnits)
             {
                 AirHandlingUnitAirMovement airHandlingUnitAirMovement = adjacencyCluster.GetRelatedObjects<AirHandlingUnitAirMovement>(airHandlingUnit)?.FirstOrDefault();
@@ -73,7 +82,18 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                zone zone = building.AddZone();
+                AdjacencyCluster adjacencyCluster_Temp = Create.AdjacencyCluster(elevation);
+                elevation += 4;
+
+                Update(building, adjacencyCluster_Temp, Analytical.Query.DefaultMaterialLibrary(), true);
+
+                Space space = adjacencyCluster_Temp.GetSpaces().FirstOrDefault();
+
+                zones = building.Zones();
+                zone zone = zones.Match(space.Name, false, true);
+
+
+                //zone zone = building.AddZone();
                 zone.name = airHandlingUnitAirMovement.Name;
 
                 TBD.InternalCondition internalCondition = building.AddIC(null);

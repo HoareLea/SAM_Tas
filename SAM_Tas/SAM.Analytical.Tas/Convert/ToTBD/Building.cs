@@ -41,8 +41,8 @@ namespace SAM.Analytical.Tas
             //List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
             result.ClearShadingData();
 
-            adjacencyCluster = adjacencyCluster.UpdateNormals(true, false, false);
-            adjacencyCluster.Normalize(true, Geometry.Orientation.Clockwise);
+            //adjacencyCluster = adjacencyCluster.UpdateNormals(true, false, false);
+            //adjacencyCluster.Normalize(true, Geometry.Orientation.Clockwise);
 
             Modify.Update(result, adjacencyCluster, materialLibrary, updateGuids);
 

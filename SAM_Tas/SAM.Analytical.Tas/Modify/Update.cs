@@ -322,7 +322,7 @@ namespace SAM.Analytical.Tas
             }
 
             index = 1;
-            TCD.ConstructionFolder constructionFolder_Child = constructionFolder.childFolders(index);
+            ConstructionFolder constructionFolder_Child = constructionFolder.childFolders(index);
             while(constructionFolder_Child != null)
             {
                 Update(constructionManager, constructionFolder_Child, category_Temp, tolerance);
@@ -363,7 +363,7 @@ namespace SAM.Analytical.Tas
             }
 
             index = 1;
-            TCD.MaterialFolder materialFolder_Child = materialFolder.childFolders(index);
+            MaterialFolder materialFolder_Child = materialFolder.childFolders(index);
             while (materialFolder_Child != null)
             {
                 Update(constructionManager, materialFolder_Child, category_Temp);
@@ -374,7 +374,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static bool Update(this ConstructionManager constructionManager, System.Guid source, System.Guid destination, bool replace)
+        public static bool Update(this ConstructionManager constructionManager, Guid source, Guid destination, bool replace)
         {
             IAnalyticalObject analyticalObject_Source = constructionManager.Constructions?.Find(x => x.Guid == source);
             if (analyticalObject_Source == null)
@@ -453,7 +453,7 @@ namespace SAM.Analytical.Tas
             return false;
         }
 
-        public static void Update(this TBD.Building building, AdjacencyCluster adjacencyCluster, MaterialLibrary materialLibrary, bool updateGuids = false)
+        public static void Update(this Building building, AdjacencyCluster adjacencyCluster, MaterialLibrary materialLibrary, bool updateGuids = false)
         {
             adjacencyCluster = adjacencyCluster.UpdateNormals(true, false, false);
             adjacencyCluster.Normalize(true, Geometry.Orientation.Clockwise);
@@ -464,12 +464,12 @@ namespace SAM.Analytical.Tas
                 return;
             }
 
-            List<TBD.DaysShade> daysShades = new List<TBD.DaysShade>();
+            List<DaysShade> daysShades = new List<DaysShade>();
 
             Plane plane = Plane.WorldXY;
 
-            Dictionary<Guid, List<Tuple<TBD.zoneSurface, bool>>> dictionary_Panel = new Dictionary<Guid, List<Tuple<TBD.zoneSurface, bool>>>();
-            Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface, bool>>> dictionary_Aperture = new Dictionary<Guid, List<Tuple<AperturePart, TBD.zoneSurface, bool>>>();
+            Dictionary<Guid, List<Tuple<zoneSurface, bool>>> dictionary_Panel = new Dictionary<Guid, List<Tuple<zoneSurface, bool>>>();
+            Dictionary<Guid, List<Tuple<AperturePart, zoneSurface, bool>>> dictionary_Aperture = new Dictionary<Guid, List<Tuple<AperturePart, zoneSurface, bool>>>();
             foreach (Space space in spaces)
             {
                 Shell shell = adjacencyCluster.Shell(space);
@@ -479,7 +479,7 @@ namespace SAM.Analytical.Tas
                     return;
                 }
 
-                TBD.zone zone = building.AddZone();
+                zone zone = building.AddZone();
                 if (updateGuids)
                 {
                     Space space_Temp = new Space(space);
@@ -510,9 +510,9 @@ namespace SAM.Analytical.Tas
                     zone.length = System.Convert.ToSingle(face3Ds.ConvertAll(x => Geometry.Tas.Query.Length(x)).Sum());
                 }
 
-                TBD.room room = zone.AddRoom();
+                room room = zone.AddRoom();
 
-                List<TBD.buildingElement> buildingElements = building.BuildingElements();
+                List<buildingElement> buildingElements = building.BuildingElements();
                 List<TBD.Construction> constructions = building.Constructions();
 
                 int index_Space = adjacencyCluster.GetIndex(space);
@@ -538,7 +538,7 @@ namespace SAM.Analytical.Tas
 
                         Vector3D normal = dictionary_Panel.ContainsKey(panel.Guid) ? panel.Normal.GetNegated() : panel.Normal;
 
-                        TBD.zoneSurface zoneSurface_Panel = zone.AddSurface();
+                        zoneSurface zoneSurface_Panel = zone.AddSurface();
 
                         Core.Tas.ZoneSurfaceReference zoneSurfaceReference = new Core.Tas.ZoneSurfaceReference(zoneSurface_Panel.number, zone.GUID);
 
@@ -576,7 +576,7 @@ namespace SAM.Analytical.Tas
                         zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
                         zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
 
-                        TBD.RoomSurface roomSurface_Panel = room.AddSurface();
+                        RoomSurface roomSurface_Panel = room.AddSurface();
                         roomSurface_Panel.area = zoneSurface_Panel.area;
                         roomSurface_Panel.zoneSurface = zoneSurface_Panel;
 
@@ -611,7 +611,7 @@ namespace SAM.Analytical.Tas
 
                         face3D.Normalize(Geometry.Orientation.Clockwise);
 
-                        TBD.Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Panel);
+                        Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Panel);
                         if (perimeter_Panel == null)
                         {
                             continue;
@@ -619,7 +619,7 @@ namespace SAM.Analytical.Tas
 
                         PanelType panelType = panel.PanelType;
 
-                        TBD.buildingElement buildingElement_Panel = buildingElements.Find(x => x.name == name_Panel);
+                        buildingElement buildingElement_Panel = buildingElements.Find(x => x.name == name_Panel);
                         if (buildingElement_Panel == null)
                         {
                             TBD.Construction construction_TBD = null;
@@ -702,13 +702,13 @@ namespace SAM.Analytical.Tas
                         {
                             bool @internal = adjacencyCluster.Internal(panel);
 
-                            Func<Face3D, TBD.zoneSurface> func = delegate (Face3D face3D_ZoneSurface)
+                            Func<Face3D, zoneSurface> func = delegate (Face3D face3D_ZoneSurface)
                             {
                                 BoundingBox3D boundingBox3D_Aperture = face3D_ZoneSurface.GetBoundingBox();
 
                                 float area = System.Convert.ToSingle(face3D_ZoneSurface.GetArea());
 
-                                TBD.zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
+                                zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
                                 if (zoneSurface_Aperture == null)
                                 {
                                     return null;
@@ -727,11 +727,11 @@ namespace SAM.Analytical.Tas
                                     zoneSurface_Aperture.type = TBD.SurfaceType.tbdNullLink;
                                 }
 
-                                TBD.RoomSurface roomSurface_Aperture = room.AddSurface();
+                                RoomSurface roomSurface_Aperture = room.AddSurface();
                                 roomSurface_Aperture.area = zoneSurface_Aperture.area;
                                 roomSurface_Aperture.zoneSurface = zoneSurface_Aperture;
 
-                                TBD.Perimeter perimeter_Aperture = Geometry.Tas.Convert.ToTBD(face3D_ZoneSurface, roomSurface_Aperture);
+                                Perimeter perimeter_Aperture = Geometry.Tas.Convert.ToTBD(face3D_ZoneSurface, roomSurface_Aperture);
                                 if (perimeter_Aperture == null)
                                 {
                                     return null;
@@ -739,7 +739,7 @@ namespace SAM.Analytical.Tas
 
                                 if (solarFaceSimulationResult != null)
                                 {
-                                    List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(building, daysShades, zoneSurface_Aperture, face3D_ZoneSurface, solarFaceSimulationResult);
+                                    List<SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(building, daysShades, zoneSurface_Aperture, face3D_ZoneSurface, solarFaceSimulationResult);
                                 }
 
                                 return zoneSurface_Aperture;
@@ -755,7 +755,7 @@ namespace SAM.Analytical.Tas
 
                                 string name = Query.Name(aperture.UniqueName(), false, true, true, false);
 
-                                Dictionary<string, Tuple<AperturePart, List<TBD.zoneSurface>>> dictionary = new Dictionary<string, Tuple<AperturePart, List<TBD.zoneSurface>>>();
+                                Dictionary<string, Tuple<AperturePart, List<zoneSurface>>> dictionary = new Dictionary<string, Tuple<AperturePart, List<zoneSurface>>>();
 
                                 double thickness = double.NaN;
 
@@ -766,7 +766,7 @@ namespace SAM.Analytical.Tas
                                     if (face3Ds_Pane != null)
                                     {
                                         string apertureName_Pane = string.Format("{0} {1}", name, AperturePart.Pane.Sufix());
-                                        dictionary[apertureName_Pane] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Pane, new List<TBD.zoneSurface>());
+                                        dictionary[apertureName_Pane] = new Tuple<AperturePart, List<zoneSurface>>(AperturePart.Pane, new List<zoneSurface>());
                                         foreach (Face3D face3D_Pane in face3Ds_Pane)
                                         {
                                             // here we added fix so Pane/Frame on secnd side will be correctyl shaded...
@@ -776,7 +776,7 @@ namespace SAM.Analytical.Tas
                                             }
                                             face3D_Pane.Normalize(Geometry.Orientation.Clockwise);
 
-                                            TBD.zoneSurface zoneSurface = func.Invoke(face3D_Pane);
+                                            zoneSurface zoneSurface = func.Invoke(face3D_Pane);
                                             if (zoneSurface != null)
                                             {
                                                 dictionary[apertureName_Pane].Item2.Add(zoneSurface);
@@ -801,7 +801,7 @@ namespace SAM.Analytical.Tas
                                     if (face3Ds_Frame != null)
                                     {
                                         string apertureName_Frame = string.Format("{0} {1}", name, AperturePart.Frame.Sufix());
-                                        dictionary[apertureName_Frame] = new Tuple<AperturePart, List<TBD.zoneSurface>>(AperturePart.Frame, new List<TBD.zoneSurface>());
+                                        dictionary[apertureName_Frame] = new Tuple<AperturePart, List<zoneSurface>>(AperturePart.Frame, new List<zoneSurface>());
                                         foreach (Face3D face3D_Frame in face3Ds_Frame)
                                         {
                                             // here we added fix so Pane/Frame on secnd side will be correctyl shaded...
@@ -811,7 +811,7 @@ namespace SAM.Analytical.Tas
                                             }
                                             face3D_Frame.Normalize(Geometry.Orientation.Clockwise);
 
-                                            TBD.zoneSurface zoneSurface = func.Invoke(face3D_Frame);
+                                            zoneSurface zoneSurface = func.Invoke(face3D_Frame);
                                             if (zoneSurface != null)
                                             {
                                                 //zoneSurface.reversed = 1;
@@ -830,9 +830,9 @@ namespace SAM.Analytical.Tas
                                     }
                                 }
 
-                                foreach (KeyValuePair<string, Tuple<AperturePart, List<TBD.zoneSurface>>> keyValuePair in dictionary)
+                                foreach (KeyValuePair<string, Tuple<AperturePart, List<zoneSurface>>> keyValuePair in dictionary)
                                 {
-                                    TBD.buildingElement buildingElement_Aperture = buildingElements.Find(x => x.name == keyValuePair.Key);
+                                    buildingElement buildingElement_Aperture = buildingElements.Find(x => x.name == keyValuePair.Key);
                                     if (buildingElement_Aperture == null)
                                     {
 
@@ -914,20 +914,20 @@ namespace SAM.Analytical.Tas
                                         panel_Temp.AddAperture(aperture_Temp);
                                     }
 
-                                    foreach (TBD.zoneSurface zoneSurface in keyValuePair.Value.Item2)
+                                    foreach (zoneSurface zoneSurface in keyValuePair.Value.Item2)
                                     {
                                         if (buildingElement_Aperture != null)
                                         {
                                             zoneSurface.buildingElement = buildingElement_Aperture;
                                         }
 
-                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<Tuple<AperturePart, TBD.zoneSurface, bool>> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
+                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<Tuple<AperturePart, zoneSurface, bool>> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
                                         {
-                                            zoneSurfaces_Aperture = new List<Tuple<AperturePart, TBD.zoneSurface, bool>>();
+                                            zoneSurfaces_Aperture = new List<Tuple<AperturePart, zoneSurface, bool>>();
                                             dictionary_Aperture[aperture.Guid] = zoneSurfaces_Aperture;
                                         }
 
-                                        zoneSurfaces_Aperture.Add(new Tuple<AperturePart, TBD.zoneSurface, bool>(keyValuePair.Value.Item1, zoneSurface, dictionary_Panel.ContainsKey(panel.Guid)));
+                                        zoneSurfaces_Aperture.Add(new Tuple<AperturePart, zoneSurface, bool>(keyValuePair.Value.Item1, zoneSurface, dictionary_Panel.ContainsKey(panel.Guid)));
                                     }
                                 }
                             }
@@ -935,18 +935,18 @@ namespace SAM.Analytical.Tas
 
                         if (solarFaceSimulationResult != null)
                         {
-                            List<TBD.SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(building, daysShades, zoneSurface_Panel, adjacencyCluster, solarFaceSimulationResult);
+                            List<SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(building, daysShades, zoneSurface_Panel, adjacencyCluster, solarFaceSimulationResult);
                         }
 
                         zoneSurface_Panel.type = adiabatic ? TBD.SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
 
-                        if (!dictionary_Panel.TryGetValue(panel.Guid, out List<Tuple<TBD.zoneSurface, bool>> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
+                        if (!dictionary_Panel.TryGetValue(panel.Guid, out List<Tuple<zoneSurface, bool>> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
                         {
-                            zoneSurfaces_Panel = new List<Tuple<TBD.zoneSurface, bool>>();
+                            zoneSurfaces_Panel = new List<Tuple<zoneSurface, bool>>();
                             dictionary_Panel[panel.Guid] = zoneSurfaces_Panel;
                         }
 
-                        zoneSurfaces_Panel.Add(new Tuple<TBD.zoneSurface, bool>(zoneSurface_Panel, reverse));
+                        zoneSurfaces_Panel.Add(new Tuple<zoneSurface, bool>(zoneSurface_Panel, reverse));
 
                         if (updateGuids)
                         {
@@ -956,7 +956,7 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            foreach (KeyValuePair<Guid, List<Tuple<TBD.zoneSurface, bool>>> keyValuePair in dictionary_Panel)
+            foreach (KeyValuePair<Guid, List<Tuple<zoneSurface, bool>>> keyValuePair in dictionary_Panel)
             {
                 if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
                 {
@@ -1034,14 +1034,14 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            foreach (KeyValuePair<Guid, List<Tuple<AperturePart, TBD.zoneSurface, bool>>> keyValuePair in dictionary_Aperture)
+            foreach (KeyValuePair<Guid, List<Tuple<AperturePart, zoneSurface, bool>>> keyValuePair in dictionary_Aperture)
             {
                 if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
                 {
                     continue;
                 }
 
-                List<TBD.zoneSurface> zoneSurfaces = null;
+                List<zoneSurface> zoneSurfaces = null;
 
                 zoneSurfaces = keyValuePair.Value.FindAll(x => x.Item1 == AperturePart.Frame).ConvertAll(x => x.Item2);
                 if (zoneSurfaces.Count == 2)
@@ -1058,7 +1058,7 @@ namespace SAM.Analytical.Tas
                     zoneSurfaces[0].linkSurface = zoneSurfaces[1];
                 }
 
-                foreach (Tuple<AperturePart, TBD.zoneSurface, bool> tuple in keyValuePair.Value)
+                foreach (Tuple<AperturePart, zoneSurface, bool> tuple in keyValuePair.Value)
                 {
                     if (!tuple.Item3)
                     {
