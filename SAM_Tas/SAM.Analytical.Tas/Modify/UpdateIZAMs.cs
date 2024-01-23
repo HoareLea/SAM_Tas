@@ -19,7 +19,9 @@ namespace SAM.Analytical.Tas
             {
                 result = UpdateIZAMs(sAMTBDDocument, adjacencyCluster);
                 if (result != null)
+                {
                     sAMTBDDocument.Save();
+                }
             }
 
             return result;
@@ -60,6 +62,8 @@ namespace SAM.Analytical.Tas
 
             List<dayType> dayTypes = building.DayTypes();
             dayTypes.RemoveAll(x => x.name.Equals("CDD") || x.name.Equals("HDD"));
+
+            List<string> result = new List<string>();
 
             foreach (AirHandlingUnit airHandlingUnit in airHandlingUnits)
             {
@@ -125,6 +129,7 @@ namespace SAM.Analytical.Tas
                 {
                     IZAM iZAM = building.AddIZAM(null);
                     iZAM.name = string.Format("IZAM {0} FROM OUTSIDE", airHandlingUnitAirMovement.Name);
+                    result.Add(iZAM.name);
 
                     profile profile = iZAM.GetProfile();
                     profile.Update(airFlow, 1);
@@ -167,6 +172,8 @@ namespace SAM.Analytical.Tas
 
                     string name = string.Format("IZAM {0}", sAMObject_From.Name);
                     name = sAMObject_To == null ? string.Format("{0} TO OUTSIDE", name) : string.Format("{0} TO {1}", name, sAMObject_To.Name);
+                    iZAM.name = name;
+                    result.Add(iZAM.name);
 
                     profile profile = iZAM.GetProfile();
                     profile.Update(spaceAirMovement.AirFlow, 1);
@@ -175,7 +182,7 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            return null;
+            return result;
         }
     }
 }
