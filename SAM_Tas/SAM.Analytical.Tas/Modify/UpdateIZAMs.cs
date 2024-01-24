@@ -93,10 +93,13 @@ namespace SAM.Analytical.Tas
 
                 zones = building.Zones();
                 zone zone = zones.Match(space.Name, false, true);
+                if(zone == null)
+                {
+                    continue;
+                }
 
-
-                //zone zone = building.AddZone();
                 zone.name = airHandlingUnit.Name;
+                zone.sizeHeating = (int)TBD.SizingType.tbdSizing;
 
                 TBD.InternalCondition internalCondition = building.AddIC(null);
                 internalCondition.name = string.Format("{0}", airHandlingUnitAirMovement.Name);
@@ -181,6 +184,8 @@ namespace SAM.Analytical.Tas
                 {
                     continue;
                 }
+
+                zone.sizeHeating = (int)TBD.SizingType.tbdNoSizing;
 
                 List<SpaceAirMovement> spaceAirMovements = adjacencyCluster.GetRelatedObjects<SpaceAirMovement>(space);
                 if (spaceAirMovements == null || spaceAirMovements.Count == 0)
