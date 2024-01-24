@@ -14,6 +14,10 @@ namespace SAM.Analytical.Tas
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
                 result = Simulate(sAMTBDDocument, path_TSD, day_First, day_Last);
+                if(result)
+                {
+                    sAMTBDDocument.Save();
+                }
             }
 
             return result;
