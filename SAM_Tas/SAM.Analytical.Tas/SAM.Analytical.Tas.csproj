@@ -169,6 +169,7 @@
     <Compile Include="Interfaces\IThermalTransmittanceCalculationData.cs" />
     <Compile Include="Interfaces\IConstructionCalculationResult.cs" />
     <Compile Include="Interfaces\IConstructionCalculationData.cs" />
+    <Compile Include="Modify\ApplySystemSizingMethod.cs" />
     <Compile Include="Modify\Run.cs" />
     <Compile Include="Modify\SetApertureTypes.cs" />
     <Compile Include="Modify\AddDefaultZoneGroups.cs" />

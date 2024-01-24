@@ -26,7 +26,7 @@ namespace SAM.Analytical.Tas
             {
                 string path_TBD_Uncapped = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + global::System.IO.Path.GetExtension(path_TBD));
                 global::System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
-                Sizing_ApplyAirGlass(path_TBD, sizingSettings);
+                Sizing_ApplyAirGlass(path_TBD, sizingSettings, analyticalModel);
             }
 
             if(sizingSettings.GenerateHDDCDDFile)
@@ -52,7 +52,6 @@ namespace SAM.Analytical.Tas
             }
 
             AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
-            List<Space> spaces = adjacencyCluster?.GetSpaces();
 
             bool result = false;
 
@@ -67,34 +66,9 @@ namespace SAM.Analytical.Tas
                     List<zone> zones = building.Zones();
                     foreach (zone zone in zones)
                     {
-                        if (sizingSettings.SystemSizingMethod && spaces != null)
+                        if (sizingSettings.SystemSizingMethod && Modify.ApplySystemSizingMethod(zone, adjacencyCluster))
                         {
-                            Space space = spaces.Match(zone.name, true, false);
-                            if (space == null)
-                            {
-                                space = spaces.Match(zone.name, false, true);
-                            }
-
-                            if (space != null)
-                            {
-                                List<MechanicalSystem> mechanicalSystems = adjacencyCluster.GetRelatedObjects<MechanicalSystem>(space);
-                                if (mechanicalSystems?.Find(x => x.Name == "UC") != null || mechanicalSystems?.Find(x => x.Name == "UH") != null)
-                                {
-                                    if(mechanicalSystems?.Find(x => x.Name == "UC") != null)
-                                    {
-                                        zone.sizeCooling = (int)TBD.SizingType.tbdNoSizing;
-                                        zone.maxCoolingLoad = 0;
-                                    }
-
-                                    if(mechanicalSystems?.Find(x => x.Name == "UH") != null)
-                                    {
-                                        zone.sizeHeating = (int)TBD.SizingType.tbdNoSizing;
-                                        zone.maxHeatingLoad = 0;
-                                    }
-
-                                    continue;
-                                }
-                            }
+                            continue;
                         }
 
                         zone.sizeCooling = (int)sizingType;
@@ -127,7 +101,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_ApplyAirGlass(string path_TBD, SizingSettings sizingSettings)
+        private static bool Sizing_ApplyAirGlass(string path_TBD, SizingSettings sizingSettings, AnalyticalModel analyticalModel)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
             {
@@ -175,17 +149,26 @@ namespace SAM.Analytical.Tas
                         buildingElement.AssignConstruction(construction);
                     }
 
+                    
+
                     if (sizingSettings.ExcludePositiveInternalGains)
                     {
-                        Sizing_ExcludePositiveInternalGains(tBDDocument);
+                        Sizing_ExcludePositiveInternalGains(tBDDocument, sizingSettings, analyticalModel);
                     }
                     else
                     {
+                        AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
+
                         TBD.SizingType sizingType = TBD.SizingType.tbdDesignSizingOnly;
 
                         List<zone> zones = building.Zones();
                         foreach (zone zone in zones)
                         {
+                            if (sizingSettings.SystemSizingMethod && Modify.ApplySystemSizingMethod(zone, adjacencyCluster))
+                            {
+                                continue;
+                            }
+
                             zone.sizeCooling = (int)sizingType;
                             zone.sizeHeating = (int)sizingType;
                         }
@@ -234,7 +217,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_ExcludePositiveInternalGains(this TBDDocument tBDDocument)
+        private static bool Sizing_ExcludePositiveInternalGains(this TBDDocument tBDDocument, SizingSettings sizingSettings, AnalyticalModel analyticalModel = null)
         {
             if (tBDDocument == null)
                 return false;
@@ -245,9 +228,16 @@ namespace SAM.Analytical.Tas
 
             TBD.SizingType sizingType = TBD.SizingType.tbdDesignSizingOnly;
 
+            AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
+
             List<Tuple<zone, TBD.InternalCondition, double>> tuples = new List<Tuple<zone, TBD.InternalCondition, double>>();
             foreach (zone zone in zones)
             {
+                if (sizingSettings.SystemSizingMethod && Modify.ApplySystemSizingMethod(zone, adjacencyCluster))
+                {
+                    continue;
+                }
+
                 zone.sizeHeating = (int)sizingType;
                 zone.sizeCooling = (int)sizingType;
 
