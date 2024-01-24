@@ -216,9 +216,7 @@ namespace SAM.Analytical.Tas
 
                     zone.AssignIZAM(iZAM, true);
 
-
-
-                    if (sAMObject_From != null)
+                    if (sAMObject_From != null && sAMObject_From.Guid != space.Guid)
                     {
                         zone zone_From = zones.Match(sAMObject_From.Name, false, true);
                         if(zone_From != null)

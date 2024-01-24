@@ -195,7 +195,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                                 SpaceSimulationResult spaceSimulationResult = (SpaceSimulationResult)result;
 
                                 List<SpaceSimulationResult> spaceSimulationResults = Analytical.Tas.Query.Results(results, spaceSimulationResult);
-                                if (spaceSimulationResults == null)
+                                if (spaceSimulationResults == null || spaceSimulationResults.Count == 0)//if (spaceSimulationResults == null)
                                     results.Add(spaceSimulationResult);
                                 else
                                     spaceSimulationResults.ForEach(x => Core.Modify.Copy(spaceSimulationResult, x, SpaceSimulationResultParameter.UnmetHourFirstIndex, SpaceSimulationResultParameter.UnmetHours, SpaceSimulationResultParameter.OccupiedUnmetHours));
