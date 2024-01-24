@@ -118,7 +118,7 @@ namespace SAM.Analytical.Tas
                         }
                     }
 
-                    tBDDocument.sizing(0);// to be moved to correct places
+                    tBDDocument.sizing(0);// new 24.01.2024
                     sAMTBDDocument.Save();
                     result = true;
                 }
