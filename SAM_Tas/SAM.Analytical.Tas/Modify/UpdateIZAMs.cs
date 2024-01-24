@@ -67,11 +67,13 @@ namespace SAM.Analytical.Tas
 
             List<string> result = new List<string>();
 
+            double height = 2;
+
             double elevation = 0;
             Geometry.Spatial.BoundingBox3D boundingBox3D = adjacencyCluster?.GetPanels()?.BoundingBox3D(1);
             if(boundingBox3D != null)
             {
-                elevation = boundingBox3D.Min.Z - 1;
+                elevation = boundingBox3D.Min.Z - height -  1;
             }
 
             foreach (AirHandlingUnit airHandlingUnit in airHandlingUnits)
@@ -82,8 +84,8 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                AdjacencyCluster adjacencyCluster_Temp = Create.AdjacencyCluster(elevation);
-                elevation += 4;
+                AdjacencyCluster adjacencyCluster_Temp = Create.AdjacencyCluster(elevation, 3, height, 3);
+                elevation -= height - 1;
 
                 Update(building, adjacencyCluster_Temp, Analytical.Query.DefaultMaterialLibrary(), true);
 
@@ -206,6 +208,7 @@ namespace SAM.Analytical.Tas
                     string name = string.Format("IZAM {0}", sAMObject_From.Name);
                     name = sAMObject_To == null ? string.Format("{0} TO OUTSIDE", name) : string.Format("{0} TO {1}", name, sAMObject_To.Name);
                     iZAM.name = name;
+                    iZAM.fromOutside = 0;
                     result.Add(iZAM.name);
 
                     profile profile = iZAM.GetProfile();
@@ -213,12 +216,13 @@ namespace SAM.Analytical.Tas
 
                     zone.AssignIZAM(iZAM, true);
 
-                    if(sAMObject_From != null)
+
+
+                    if (sAMObject_From != null)
                     {
                         zone zone_From = zones.Match(sAMObject_From.Name, false, true);
                         if(zone_From != null)
                         {
-                            iZAM.fromOutside = 0;
                             iZAM.SetSourceZone(zone_From);
                         }
                     }
