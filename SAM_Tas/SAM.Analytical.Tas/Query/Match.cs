@@ -62,6 +62,57 @@ namespace SAM.Analytical.Tas
             return null;
         }
 
+        public static Space Match(this IEnumerable<Space> spaces, string name, bool caseSensitive = true, bool trim = false)
+        {
+            if (spaces == null || spaces.Count() == 0)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return null;
+            }
+
+            string name_Temp = name;
+
+            if (trim)
+            {
+                name_Temp = name_Temp.Trim();
+            }
+
+            if (!caseSensitive)
+            {
+                name_Temp = name_Temp.ToUpper();
+            }
+
+            foreach (Space space in spaces)
+            {
+                string name_Space = space?.Name;
+                if (string.IsNullOrWhiteSpace(name_Space))
+                {
+                    continue;
+                }
+
+                if (trim)
+                {
+                    name_Space = name_Space.Trim();
+                }
+
+                if (!caseSensitive)
+                {
+                    name_Space = name_Space.ToUpper();
+                }
+
+                if (name_Space.Equals(name_Temp))
+                {
+                    return space;
+                }
+            }
+
+            return null;
+        }
+
         public static TBD.zone Match(this IEnumerable<TBD.zone> zones, string name, bool caseSensitive = true, bool trim = false)
         {
             if (zones == null || zones.Count() == 0)

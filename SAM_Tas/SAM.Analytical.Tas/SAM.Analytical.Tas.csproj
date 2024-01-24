@@ -110,6 +110,7 @@
     <Compile Include="Classes\ConstructionCalculationData.cs" />
     <Compile Include="Classes\ApertureConstructionCalculationResult.cs" />
     <Compile Include="Classes\ConstructionCalculationResult.cs" />
+    <Compile Include="Classes\SizingSettings.cs" />
     <Compile Include="Classes\ThermalTransmittances.cs" />
     <Compile Include="Classes\ThermalTransmittanceCalculationResult.cs" />
     <Compile Include="Classes\GlazingCalculationResult.cs" />

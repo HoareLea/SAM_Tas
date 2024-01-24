@@ -8,31 +8,51 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static bool Sizing(this string path_TBD, AnalyticalModel analyticalModel = null, bool excludeOutdoorAir = false, bool excludePositiveInternalGains = false)
+        public static bool Sizing(this string path_TBD, SizingSettings sizingSettings, AnalyticalModel analyticalModel = null)
         {
             if (string.IsNullOrWhiteSpace(path_TBD))
+            {
                 return false;
+            }
 
-            if (!Sizing_PrepareDocument(path_TBD, excludeOutdoorAir))
+            if (!Sizing_PrepareDocument(path_TBD, sizingSettings, analyticalModel))
+            {
                 return false;
+            }
 
             string directory = global::System.IO.Path.GetDirectoryName(path_TBD);
 
-            string path_TBD_Uncapped = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + global::System.IO.Path.GetExtension(path_TBD));
-            global::System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
-            Sizing_ApplyAirGlass(path_TBD, excludePositiveInternalGains);
+            if(sizingSettings.GenerateUncappedFile)
+            {
+                string path_TBD_Uncapped = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + global::System.IO.Path.GetExtension(path_TBD));
+                global::System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
+                Sizing_ApplyAirGlass(path_TBD, sizingSettings);
+            }
 
-            string path_TBD_HDDCDD = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + global::System.IO.Path.GetExtension(path_TBD));
-            global::System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
-            Sizing_ApplyOversizingFactors(path_TBD, analyticalModel);
+            if(sizingSettings.GenerateHDDCDDFile)
+            {
+                string path_TBD_HDDCDD = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + global::System.IO.Path.GetExtension(path_TBD));
+                global::System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
+                Sizing_ApplyOversizingFactors(path_TBD, sizingSettings, analyticalModel);
+            }
 
             return true;
         }
 
-        private static bool Sizing_PrepareDocument(string path_TBD, bool excludeOutdoorAir = true)
+        private static bool Sizing_PrepareDocument(string path_TBD, SizingSettings sizingSettings, AnalyticalModel analyticalModel = null)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
+            {
                 return false;
+            }
+
+            if(sizingSettings == null)
+            {
+                sizingSettings = new SizingSettings();
+            }
+
+            AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
+            List<Space> spaces = adjacencyCluster?.GetSpaces();
 
             bool result = false;
 
@@ -47,6 +67,28 @@ namespace SAM.Analytical.Tas
                     List<zone> zones = building.Zones();
                     foreach (zone zone in zones)
                     {
+                        if (sizingSettings.SystemSizingMethod && spaces != null)
+                        {
+                            Space space = spaces.Match(zone.name, true, false);
+                            if (space == null)
+                            {
+                                space = spaces.Match(zone.name, false, true);
+                            }
+
+                            if (space != null)
+                            {
+                                List<MechanicalSystem> mechanicalSystems = adjacencyCluster.GetRelatedObjects<MechanicalSystem>(space);
+                                if (mechanicalSystems?.Find(x => x.Name == "UC") != null || mechanicalSystems?.Find(x => x.Name == "UH") != null)
+                                {
+                                    zone.sizeCooling = (int)TBD.SizingType.tbdNoSizing;
+                                    zone.sizeHeating = (int)TBD.SizingType.tbdNoSizing;
+                                    zone.maxCoolingLoad = 0;
+                                    zone.maxHeatingLoad = 0;
+                                    continue;
+                                }
+                            }
+                        }
+
                         zone.sizeCooling = (int)sizingType;
                         zone.sizeHeating = (int)sizingType;
                         zone.maxCoolingLoad = 0;
@@ -59,18 +101,12 @@ namespace SAM.Analytical.Tas
                         TBD.InternalCondition internalCondition = building.GetIC(i);
                         if (internalCondition.name.EndsWith("HDD"))
                         {
-                            if (excludeOutdoorAir)
+                            if (sizingSettings.ExcludeOutdoorAir)
                             {
                                 profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
                                 if (profile != null)
                                     profile.factor = 0;
                             }
-
-                            //while (internalCondition.GetZone(0) != null)
-                            //{
-                            //    zone zone = internalCondition.GetZone(0);
-                            //    zone.AssignIC(internalCondition, false);
-                            //}
                         }
                     }
 
@@ -82,10 +118,17 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_ApplyAirGlass(string path_TBD, bool excludePositiveInternalGains = false)
+        private static bool Sizing_ApplyAirGlass(string path_TBD, SizingSettings sizingSettings)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
+            {
                 return false;
+            }
+
+            if(sizingSettings == null)
+            {
+                sizingSettings = new SizingSettings();
+            }
 
             bool result = false;
 
@@ -123,7 +166,7 @@ namespace SAM.Analytical.Tas
                         buildingElement.AssignConstruction(construction);
                     }
 
-                    if (excludePositiveInternalGains)
+                    if (sizingSettings.ExcludePositiveInternalGains)
                     {
                         Sizing_ExcludePositiveInternalGains(tBDDocument);
                     }
@@ -149,7 +192,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_ApplyOversizingFactors(string path_TBD, AnalyticalModel analyticalModel = null)
+        private static bool Sizing_ApplyOversizingFactors(string path_TBD, SizingSettings sizingSettings, AnalyticalModel analyticalModel = null)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
                 return false;

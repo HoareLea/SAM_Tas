@@ -240,7 +240,7 @@ namespace SAM.Analytical.Tas
                 if(sizing)
                 {
                     progressForm.Update("Sizing");
-                    Query.Sizing(path_TBD, result, false, true);
+                    Query.Sizing(path_TBD, new SizingSettings() { ExcludeOutdoorAir = false, ExcludePositiveInternalGains = true }, result);
                 }
 
 
