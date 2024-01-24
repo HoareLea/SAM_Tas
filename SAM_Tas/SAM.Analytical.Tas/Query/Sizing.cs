@@ -80,10 +80,18 @@ namespace SAM.Analytical.Tas
                                 List<MechanicalSystem> mechanicalSystems = adjacencyCluster.GetRelatedObjects<MechanicalSystem>(space);
                                 if (mechanicalSystems?.Find(x => x.Name == "UC") != null || mechanicalSystems?.Find(x => x.Name == "UH") != null)
                                 {
-                                    zone.sizeCooling = (int)TBD.SizingType.tbdNoSizing;
-                                    zone.sizeHeating = (int)TBD.SizingType.tbdNoSizing;
-                                    zone.maxCoolingLoad = 0;
-                                    zone.maxHeatingLoad = 0;
+                                    if(mechanicalSystems?.Find(x => x.Name == "UC") != null)
+                                    {
+                                        zone.sizeCooling = (int)TBD.SizingType.tbdNoSizing;
+                                        zone.maxCoolingLoad = 0;
+                                    }
+
+                                    if(mechanicalSystems?.Find(x => x.Name == "UH") != null)
+                                    {
+                                        zone.sizeHeating = (int)TBD.SizingType.tbdNoSizing;
+                                        zone.maxHeatingLoad = 0;
+                                    }
+
                                     continue;
                                 }
                             }
@@ -95,13 +103,13 @@ namespace SAM.Analytical.Tas
                         zone.maxHeatingLoad = 0;
                     }
 
-                    List<TBD.InternalCondition> internalConditions = building.InternalConditions();
-                    for (int i = internalConditions.Count - 1; i >= 0; i--)
+                    if (sizingSettings.ExcludeOutdoorAir)
                     {
-                        TBD.InternalCondition internalCondition = building.GetIC(i);
-                        if (internalCondition.name.EndsWith("HDD"))
+                        List<TBD.InternalCondition> internalConditions = building.InternalConditions();
+                        for (int i = internalConditions.Count - 1; i >= 0; i--)
                         {
-                            if (sizingSettings.ExcludeOutdoorAir)
+                            TBD.InternalCondition internalCondition = building.GetIC(i);
+                            if (internalCondition.name.EndsWith("HDD"))
                             {
                                 profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
                                 if (profile != null)
@@ -110,6 +118,7 @@ namespace SAM.Analytical.Tas
                         }
                     }
 
+                    tBDDocument.sizing(0);// to be moved to correct places
                     sAMTBDDocument.Save();
                     result = true;
                 }
