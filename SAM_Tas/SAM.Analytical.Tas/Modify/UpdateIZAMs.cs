@@ -4,6 +4,7 @@ using TBD;
 using System.Linq;
 using SAM.Core;
 using SAM.Geometry.Object.Spatial;
+using System;
 
 namespace SAM.Analytical.Tas
 {
@@ -70,9 +71,8 @@ namespace SAM.Analytical.Tas
             Geometry.Spatial.BoundingBox3D boundingBox3D = adjacencyCluster?.GetPanels()?.BoundingBox3D(1);
             if(boundingBox3D != null)
             {
-                elevation = boundingBox3D.Min.Z;
+                elevation = boundingBox3D.Min.Z - 1;
             }
-
 
             foreach (AirHandlingUnit airHandlingUnit in airHandlingUnits)
             {
@@ -94,7 +94,7 @@ namespace SAM.Analytical.Tas
 
 
                 //zone zone = building.AddZone();
-                zone.name = airHandlingUnitAirMovement.Name;
+                zone.name = airHandlingUnit.Name;
 
                 TBD.InternalCondition internalCondition = building.AddIC(null);
                 internalCondition.name = string.Format("{0}", airHandlingUnitAirMovement.Name);
@@ -103,9 +103,7 @@ namespace SAM.Analytical.Tas
                     internalCondition.SetDayType(dayType, true);
                 }
 
-
                 Thermostat thermostat = internalCondition.GetThermostat();
-
 
                 if(thermostat != null)
                 {
@@ -156,6 +154,7 @@ namespace SAM.Analytical.Tas
                 if(airFlow != null)
                 {
                     IZAM iZAM = building.AddIZAM(null);
+                    iZAM.fromOutside = 1;
                     iZAM.name = string.Format("IZAM {0} FROM OUTSIDE", airHandlingUnitAirMovement.Name);
                     result.Add(iZAM.name);
 
@@ -172,6 +171,7 @@ namespace SAM.Analytical.Tas
 
             }
 
+            List<Tuple<IZAM, SAMObject>> tuples = new List<Tuple<IZAM, SAMObject>>();
             foreach(Space space in spaces)
             {
                 zone zone = zones.Match(space.Name, false, true);
@@ -212,6 +212,16 @@ namespace SAM.Analytical.Tas
                     profile.Update(spaceAirMovement.AirFlow, 1);
 
                     zone.AssignIZAM(iZAM, true);
+
+                    if(sAMObject_From != null)
+                    {
+                        zone zone_From = zones.Match(sAMObject_From.Name, false, true);
+                        if(zone_From != null)
+                        {
+                            iZAM.fromOutside = 0;
+                            iZAM.SetSourceZone(zone_From);
+                        }
+                    }
                 }
             }
 
