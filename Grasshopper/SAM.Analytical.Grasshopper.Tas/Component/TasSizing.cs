@@ -78,7 +78,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(0, false);
 
             bool run = false;
-            if (!dataAccess.GetData(4, ref run))
+            if (!dataAccess.GetData(7, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
