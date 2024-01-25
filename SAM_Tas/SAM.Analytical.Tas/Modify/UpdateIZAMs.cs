@@ -155,8 +155,8 @@ namespace SAM.Analytical.Tas
                     zone.AssignIC(internalCondition, true);
                 }
 
-                Profile airFlow = Analytical.Query.AirFlow(adjacencyCluster, airHandlingUnitAirMovement);
-                if(airFlow != null)
+                double airFlow = Analytical.Query.AirFlow(adjacencyCluster, airHandlingUnitAirMovement, out Profile profile_AirHandlingUnit);
+                if(profile_AirHandlingUnit != null)
                 {
                     IZAM iZAM = building.AddIZAM(null);
                     iZAM.fromOutside = 1;
@@ -169,7 +169,7 @@ namespace SAM.Analytical.Tas
                     }
 
                     profile profile = iZAM.GetProfile();
-                    profile.Update(airFlow, 1);
+                    profile.Update(profile_AirHandlingUnit, airFlow);
 
                     zone.AssignIZAM(iZAM, true);
                 }
@@ -217,7 +217,7 @@ namespace SAM.Analytical.Tas
                     result.Add(iZAM.name);
 
                     profile profile = iZAM.GetProfile();
-                    profile.Update(spaceAirMovement.AirFlow, 1);
+                    profile.Update(spaceAirMovement.Profile, spaceAirMovement.AirFlow);
 
                     zone.AssignIZAM(iZAM, true);
 
