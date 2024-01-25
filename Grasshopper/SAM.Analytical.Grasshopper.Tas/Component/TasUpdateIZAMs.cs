@@ -101,7 +101,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfInputParam("_tBDPath");
             if (index == -1 || !dataAccess.GetData(index, ref path_TBD) || path_TBD == null)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                //AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
@@ -109,14 +109,14 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfInputParam("_analytical");
             if (index == -1 || !dataAccess.GetData(index, ref analyticalObject) || analyticalObject == null)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                //AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
             AdjacencyCluster adjacencyCluster = analyticalObject is AdjacencyCluster ? (AdjacencyCluster)analyticalObject : (analyticalObject as AnalyticalModel)?.AdjacencyCluster;
             if(adjacencyCluster == null)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                //AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
