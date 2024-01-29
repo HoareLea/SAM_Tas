@@ -2,6 +2,7 @@
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using System;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
@@ -15,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -66,6 +67,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             //Param_Boolean booleanParameter = null;
 
             inputParamManager.AddTextParameter("_pathTasTBD", "pathTasTBD", "The string path to TasTBD file.", GH_ParamAccess.item);
+
+            GooSpaceParam spaceParam = new GooSpaceParam() { Name = "spaces_", NickName = "spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list, Optional = true };
+            inputParamManager.AddParameter(spaceParam);
+            
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -86,7 +91,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(0, false);
 
             bool run = false;
-            if (!dataAccess.GetData(1, ref run))
+            if (!dataAccess.GetData(2, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -101,7 +106,13 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            bool result = Analytical.Tas.Modify.UpdateACCI(path_TBD);
+            List<Space> spaces = new List<Space>();
+            if (!dataAccess.GetDataList(1, spaces) || spaces.Count == 0)
+            {
+                spaces = null;
+            }
+
+            bool result = Analytical.Tas.Modify.UpdateACCI(path_TBD, spaces?.ConvertAll(x => x?.Name));
 
             dataAccess.SetData(0, result);
         }

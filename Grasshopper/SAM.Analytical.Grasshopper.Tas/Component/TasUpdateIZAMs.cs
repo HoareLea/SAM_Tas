@@ -17,7 +17,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -50,7 +50,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
-                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_removeVentilation", NickName = "_removeVentilation", Description = "Remove Ventilation.", Access = GH_ParamAccess.item };
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_removeVentilation_", NickName = "_removeVentilation_", Description = "Remove Ventilation.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
@@ -119,7 +119,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             bool removeVentilation = true;
-            index = Params.IndexOfInputParam("_removeVentilation");
+            index = Params.IndexOfInputParam("_removeVentilation_");
             if (index != -1)
             {
                 if(!dataAccess.GetData(index, ref removeVentilation))

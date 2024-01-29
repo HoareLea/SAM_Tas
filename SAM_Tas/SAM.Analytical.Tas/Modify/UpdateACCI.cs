@@ -1,12 +1,13 @@
 ﻿using SAM.Core;
 using SAM.Core.Tas;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static bool UpdateACCI(this TBD.Building building)
+        public static bool UpdateACCI(this TBD.Building building, IEnumerable<string> spaceNames)
         {
             if (building == null)
             {
@@ -32,6 +33,28 @@ namespace SAM.Analytical.Tas
                 if(internalCondition.name.EndsWith(" - HDD") || internalCondition.name.EndsWith(" - CDD") || internalCondition.name.EndsWith("New Internal Condition") )
                 {
                     continue;
+                }
+
+                if(spaceNames != null && spaceNames.Count() == 0)
+                {
+                    bool contains = false;                    
+                    List<TBD.zone> zones = internalCondition.Zones();
+                    if(zones != null)
+                    {
+                        foreach(TBD.zone zone in zones)
+                        {
+                            if(spaceNames.Contains(zone?.name))
+                            {
+                                contains = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(!contains)
+                    {
+                        continue;
+                    }
                 }
 
                 TBD.profile profile_UpperLimit = internalCondition.GetThermostat().GetProfile((int)TBD.Profiles.ticUL);
@@ -67,15 +90,15 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static bool UpdateACCI(this SAMTBDDocument sAMTBDDocument)
+        public static bool UpdateACCI(this SAMTBDDocument sAMTBDDocument, IEnumerable<string> spaceNames)
         {
             if (sAMTBDDocument == null)
                 return false;
 
-            return UpdateACCI(sAMTBDDocument.TBDDocument?.Building);
+            return UpdateACCI(sAMTBDDocument.TBDDocument?.Building, spaceNames);
         }
 
-        public static bool UpdateACCI(string path_TBD)
+        public static bool UpdateACCI(string path_TBD, IEnumerable<string> spaceNames)
         {
             if (string.IsNullOrWhiteSpace(path_TBD))
             {
@@ -86,7 +109,7 @@ namespace SAM.Analytical.Tas
 
             using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
             {
-                result = UpdateACCI(sAMTBDDocument);
+                result = UpdateACCI(sAMTBDDocument, spaceNames);
                 if (result)
                 {
                     sAMTBDDocument.Save();
