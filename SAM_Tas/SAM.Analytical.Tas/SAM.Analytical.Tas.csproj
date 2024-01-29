@@ -181,6 +181,7 @@
     <Compile Include="Modify\SetSizingTypes.cs" />
     <Compile Include="Modify\SetColor.cs" />
     <Compile Include="Modify\UpdateAdiabatic.cs" />
+    <Compile Include="Modify\RemoveVentilationGains.cs" />
     <Compile Include="Modify\UpdateIZAMs.cs" />
     <Compile Include="Modify\UpdateUKBRFile.cs" />
     <Compile Include="Modify\UpdateZoneGroups.cs" />
