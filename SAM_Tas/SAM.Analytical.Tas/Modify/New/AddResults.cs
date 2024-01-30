@@ -45,7 +45,7 @@ namespace SAM.Analytical.Tas
             List<Core.Result> result = null; 
 
             //get simulaton data from Tas for individal SAM Space
-            List<Core.Result> results = Convert.ToSAM(simulationData);
+            List<Core.Result> results = Convert.ToSAM_Results(simulationData);
             if (results == null)
                 return result;
 

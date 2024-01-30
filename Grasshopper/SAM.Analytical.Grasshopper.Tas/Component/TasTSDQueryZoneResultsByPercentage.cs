@@ -242,7 +242,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             AdjacencyCluster adjacencyCluster = null;
             using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path, true))
             {
-                adjacencyCluster = sAMTSDDocument.ToSAM(new SpaceDataType[] { spaceDataType });
+                adjacencyCluster = sAMTSDDocument.ToSAM_AdjacencyCluster(new SpaceDataType[] { spaceDataType });
                 sAMTSDDocument.Close();
             }
 

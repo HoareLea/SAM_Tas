@@ -8,7 +8,7 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
-        public static List<Core.Result> ToSAM(string path_TSD)
+        public static List<Core.Result> ToSAM_Results(string path_TSD)
         {
             if (string.IsNullOrWhiteSpace(path_TSD) || !System.IO.File.Exists(path_TSD))
                 return null;
@@ -17,22 +17,22 @@ namespace SAM.Analytical.Tas
 
             using (SAMTSDDocument sAMTBDDocument = new SAMTSDDocument(path_TSD, true))
             {
-                result = ToSAM(sAMTBDDocument);
+                result = ToSAM_Results(sAMTBDDocument);
             }
 
             return result;
         }
 
-        public static List<Core.Result> ToSAM(this SAMTSDDocument sAMTSDDocument)
+        public static List<Core.Result> ToSAM_Results(this SAMTSDDocument sAMTSDDocument)
         {
             if (sAMTSDDocument == null)
                 return null;
 
-            return ToSAM(sAMTSDDocument.TSDDocument?.SimulationData);
+            return ToSAM_Results(sAMTSDDocument.TSDDocument?.SimulationData);
         }
 
         //Pull/Convert data for Spaces (in Tas they call them Zones) but not for SAM Zones (in Tas ZoneGroups)
-        public static List<Core.Result> ToSAM(SimulationData simulationData)
+        public static List<Core.Result> ToSAM_Results(SimulationData simulationData)
         {
             //buildingData is is yearly dynamic simulation data
             BuildingData buildingData = simulationData?.GetBuildingData();

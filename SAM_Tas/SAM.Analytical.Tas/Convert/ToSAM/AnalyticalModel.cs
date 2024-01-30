@@ -4,6 +4,57 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
+        public static AnalyticalModel ToSAM(string path_TSD, TSDConversionSettings tSDConversionSettings)
+        {
+            AnalyticalModel result = null;
+            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD))
+            {
+                result = ToSAM(sAMTSDDocument, tSDConversionSettings);
+            }
+
+            return result;
+        }
+
+        public static AnalyticalModel ToSAM(this SAMTSDDocument sAMTSDDocument, TSDConversionSettings tSDConversionSettings)
+        {
+            if (sAMTSDDocument == null)
+            {
+                return null;
+            }
+
+            return ToSAM(sAMTSDDocument.TSDDocument, tSDConversionSettings);
+
+        }
+
+        public static AnalyticalModel ToSAM(this TSD.TSDDocument tSDDocument, TSDConversionSettings tSDConversionSettings)
+        {
+            TSD.BuildingData buildingData = tSDDocument?.SimulationData?.GetBuildingData();
+            if (buildingData == null)
+            {
+                return null;
+            }
+
+            if(tSDConversionSettings == null)
+            {
+                tSDConversionSettings = new TSDConversionSettings();
+            }
+
+            AdjacencyCluster adjacencyCluster = ToSAM_AdjacencyCluster(buildingData, tSDConversionSettings.SpaceDataTypes, tSDConversionSettings.PanelDataTypes, tSDConversionSettings.SpaceNames);
+
+            AnalyticalModel result = new AnalyticalModel(buildingData.name, buildingData.description, null, null, adjacencyCluster);
+
+            if(tSDConversionSettings.ConvertWeaterData)
+            {
+                Weather.WeatherData weatherData = Weather.Tas.Convert.ToSAM_WeatherData(tSDDocument.SimulationData);
+                if (weatherData != null)
+                {
+                    result.SetValue(AnalyticalModelParameter.WeatherData, weatherData);
+                }
+            }
+
+            return result;
+        }
+
         public static AnalyticalModel ToSAM(string path_TBD, bool importUnused)
         {
             AnalyticalModel result = null;
