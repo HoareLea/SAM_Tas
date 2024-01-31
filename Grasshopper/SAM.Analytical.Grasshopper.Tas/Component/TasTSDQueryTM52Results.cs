@@ -1,6 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
+using SAM.Core;
 using SAM.Core.Grasshopper;
 using System;
 using System.Collections.Generic;
@@ -79,7 +80,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "spaces", NickName = "spaces", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooResultParam() { Name = "spaceTM52Results", NickName = "spaceTM52Results", Description = "SAM Space TM52 Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "indoorComfortTemperatures", NickName = "indoorComfortTemperatures", Description = "Indoor Comfort Temperatures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooIndexedObjectsParam() { Name = "indoorComfortTemperatures", NickName = "indoorComfortTemperatures", Description = "Indoor Comfort Temperatures", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly extracted?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
@@ -207,7 +208,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
             List<SpaceTM52Result> spaceTM52Results = overheatingCalculator.Calculate(spaces_Result);
 
-            List<double> indoorComfortTemperatures = overheatingCalculator.GetIndoorComfortTemperatures();
+            IndexedDoubles indoorComfortTemperatures = overheatingCalculator.GetIndoorComfortTemperatures();
 
             index = Params.IndexOfOutputParam("spaces");
             if (index != -1)
@@ -224,7 +225,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             index = Params.IndexOfOutputParam("indoorComfortTemperatures");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, indoorComfortTemperatures);
+                dataAccess.SetData(index, indoorComfortTemperatures);
             }
 
             if (index_Successful != -1)

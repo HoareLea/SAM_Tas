@@ -25,13 +25,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            List<double> values = GetIndoorComfortTemperatures();
-            if (values == null)
-            {
-                return null;
-            }
-
-            IndexedDoubles indoorComfortTemperatures = new IndexedDoubles(values);
+            IndexedDoubles indoorComfortTemperatures = GetIndoorComfortTemperatures();
 
             List<SpaceTM52Result> result = new List<SpaceTM52Result>();
             foreach (Space space in spaces)
@@ -90,7 +84,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public List<double> GetIndoorComfortTemperatures(Period period = Period.Hourly)
+        public IndexedDoubles GetIndoorComfortTemperatures(Period period = Period.Hourly)
         {
             if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
             {
@@ -103,13 +97,18 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            List<double> values = Analytical.Query.IndoorComfortTemperatures(weatherYear, TM52BuildingCategory);
+            int startDayIndex = Core.Query.DayOfYear(StartHourOfYear);
+            int endDayIndex = Core.Query.DayOfYear(EndHourOfYear);
+
+            List<double> values = Analytical.Query.IndoorComfortTemperatures(weatherYear, TM52BuildingCategory, startDayIndex, endDayIndex);
             if (values == null || values.Count == 0)
             {
                 return null;
             }
 
-            return values.Repeat(period, Period.Daily);
+            IndexedDoubles result = new IndexedDoubles(values, startDayIndex);
+
+            return result.Repeat(period, Period.Daily);
         }
     }
 }
