@@ -79,7 +79,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "spaces", NickName = "spaces", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooResultParam() { Name = "spaceTM52Results", NickName = "spaceTM52Results", Description = "SAM Space TM52 Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "indoorComfortTemperatures ", NickName = "indoorComfortTemperatures", Description = "Indoor Comfort Temperatures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "indoorComfortTemperatures", NickName = "indoorComfortTemperatures", Description = "Indoor Comfort Temperatures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
 
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly extracted?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
@@ -171,7 +171,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
             TSDConversionSettings tSDConversionSettings = new TSDConversionSettings()
             {
-                SpaceDataTypes = new HashSet<SpaceDataType>() { SpaceDataType.ResultantTemperature },
+                SpaceDataTypes = new HashSet<SpaceDataType>() { SpaceDataType.ResultantTemperature, SpaceDataType.OccupantSensibleGain },
                 SpaceNames = spaces == null ? null : new HashSet<string>(spaces.ConvertAll(x => x?.Name)),
                 ConvertWeaterData = true,
             };
@@ -192,6 +192,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             }
             else
             {
+                spaces_Result = new List<Space>();
                 foreach (Space space in spaces)
                 {
                     Space space_Result = analyticalModel.GetSpaces()?.Find(x => x.Name == space.Name);
