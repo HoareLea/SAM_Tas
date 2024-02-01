@@ -223,7 +223,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 dataAccess.SetDataList(index, spaceTM52Results.ConvertAll(x => new GooResult(x)));
             }
 
-            index = Params.IndexOfOutputParam("indoorComfortTemperatures");
+            index = Params.IndexOfOutputParam("indoorComfortUpperLimitTemperatures");
             if (index != -1)
             {
                 dataAccess.SetDataList(index, indoorComfortTemperatures?.Values);
