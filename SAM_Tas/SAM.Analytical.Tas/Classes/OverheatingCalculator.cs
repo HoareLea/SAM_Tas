@@ -86,6 +86,11 @@ namespace SAM.Analytical.Tas
 
         public IndexedDoubles GetIndoorComfortTemperatures(Period period = Period.Hourly)
         {
+            return GetIndoorComfortTemperatures(Core.Query.DayOfYear(StartHourOfYear), Core.Query.DayOfYear(EndHourOfYear), period);
+        }
+
+        public IndexedDoubles GetIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
+        {
             if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
             {
                 return null;
@@ -96,9 +101,6 @@ namespace SAM.Analytical.Tas
             {
                 return null;
             }
-
-            int startDayIndex = Core.Query.DayOfYear(StartHourOfYear);
-            int endDayIndex = Core.Query.DayOfYear(EndHourOfYear);
 
             List<double> values = Analytical.Query.IndoorComfortTemperatures(weatherYear, TM52BuildingCategory, startDayIndex, endDayIndex);
             if (values == null || values.Count == 0)

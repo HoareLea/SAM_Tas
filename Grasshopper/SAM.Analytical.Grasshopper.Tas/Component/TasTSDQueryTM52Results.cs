@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
@@ -81,7 +81,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "spaces", NickName = "spaces", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooResultParam() { Name = "spaceTM52Results", NickName = "spaceTM52Results", Description = "SAM Space TM52 Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooIndexedObjectsParam() { Name = "indoorComfortUpperLimitTemperatures", NickName = "indoorComfortULTemperatures Tupp", Description = "Indoor Comfort Upper Limit Temperatures Tupp \nTcomf = 0.33 Trm + 18.8  where TuppCatII =0.33 Trm + 18.8+3 ", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "indoorComfortUpperLimitTemperatures", NickName = "indoorComfortULTemperatures Tupp", Description = "Indoor Comfort Upper Limit Temperatures Tupp \nTcomf = 0.33 Trm + 18.8  where TuppCatII =0.33 Trm + 18.8+3 ", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
 
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly extracted?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
@@ -209,7 +209,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 
             List<SpaceTM52Result> spaceTM52Results = overheatingCalculator.Calculate(spaces_Result);
 
-            IndexedDoubles indoorComfortTemperatures = overheatingCalculator.GetIndoorComfortTemperatures();
+            IndexedDoubles indoorComfortTemperatures = overheatingCalculator.GetIndoorComfortTemperatures(0, 364);
 
             index = Params.IndexOfOutputParam("spaces");
             if (index != -1)
@@ -226,7 +226,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             index = Params.IndexOfOutputParam("indoorComfortTemperatures");
             if (index != -1)
             {
-                dataAccess.SetData(index, indoorComfortTemperatures);
+                dataAccess.SetDataList(index, indoorComfortTemperatures?.Values);
             }
 
             if (index_Successful != -1)
