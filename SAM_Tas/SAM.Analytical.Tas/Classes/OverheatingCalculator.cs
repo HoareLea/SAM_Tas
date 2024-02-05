@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            IndexedDoubles indoorComfortTemperatures = GetIndoorComfortTemperatures();
+            IndexedDoubles maxIndoorComfortTemperatures = GetMaxIndoorComfortTemperatures();
 
             List<SpaceTM52Result> result = new List<SpaceTM52Result>();
             foreach (Space space in spaces)
@@ -73,7 +73,7 @@ namespace SAM.Analytical.Tas
                     }
 
                     occupiedHourIndices.Add(i);
-                    maximumAcceptableTemperatures.Add(i, indoorComfortTemperatures[i]);
+                    maximumAcceptableTemperatures.Add(i, maxIndoorComfortTemperatures[i]);
                     operativeTemperatures.Add(i, resultantTemperature);
                 }
 
@@ -84,12 +84,12 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public IndexedDoubles GetIndoorComfortTemperatures(Period period = Period.Hourly)
+        public IndexedDoubles GetMaxIndoorComfortTemperatures(Period period = Period.Hourly)
         {
-            return GetIndoorComfortTemperatures(Core.Query.DayOfYear(StartHourOfYear), Core.Query.DayOfYear(EndHourOfYear), period);
+            return GetMaxIndoorComfortTemperatures(Core.Query.DayOfYear(StartHourOfYear), Core.Query.DayOfYear(EndHourOfYear), period);
         }
 
-        public IndexedDoubles GetIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
+        public IndexedDoubles GetMaxIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
         {
             if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
             {
@@ -102,7 +102,36 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            List<double> values = Analytical.Query.IndoorComfortTemperatures(weatherYear, TM52BuildingCategory, startDayIndex, endDayIndex);
+            List<double> values = Analytical.Query.MaxIndoorComfortTemperatures(weatherYear, TM52BuildingCategory, startDayIndex, endDayIndex);
+            if (values == null || values.Count == 0)
+            {
+                return null;
+            }
+
+            IndexedDoubles result = new IndexedDoubles(values, startDayIndex);
+
+            return result.Repeat(period, Period.Daily);
+        }
+
+        public IndexedDoubles GetMinIndoorComfortTemperatures(Period period = Period.Hourly)
+        {
+            return GetMinIndoorComfortTemperatures(Core.Query.DayOfYear(StartHourOfYear), Core.Query.DayOfYear(EndHourOfYear), period);
+        }
+
+        public IndexedDoubles GetMinIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
+        {
+            if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
+            {
+                return null;
+            }
+
+            WeatherYear weatherYear = weatherData?.WeatherYears?.FirstOrDefault();
+            if (weatherYear == null)
+            {
+                return null;
+            }
+
+            List<double> values = Analytical.Query.MinIndoorComfortTemperatures(weatherYear, TM52BuildingCategory, startDayIndex, endDayIndex);
             if (values == null || values.Count == 0)
             {
                 return null;
