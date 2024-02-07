@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasTSDQueryTM52ExtendedResult : GH_SAMVariableOutputParameterComponent
+    public class TasTSDQueryTM52Results : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.5";
+        public override string LatestComponentVersion => "1.0.7";
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
@@ -30,9 +30,9 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasTSDQueryTM52ExtendedResult()
-          : base("Tas.TSDQueryTM52ExtendedResult", "Tas.TSDQueryTM52ExtendedResult",
-              "Query TSD for TM52ExtendedResult" +
+        public TasTSDQueryTM52Results()
+          : base("Tas.TSDQueryTM52Results", "Tas.TSDQueryTM52Results",
+              "Query TSD for TM52Results" +
                "this node will query results for given space and output when inspect results",
               "SAM WIP", "Tas")
         {
@@ -48,7 +48,13 @@ namespace SAM.Analytical.Grasshopper.Tas
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
-                
+
+                global::Grasshopper.Kernel.Parameters.Param_Boolean boolean;
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_extended_", NickName = "_extended_", Description = "Return extended results", Access = GH_ParamAccess.item, Optional = true };
+                boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Binding));
+
                 global::Grasshopper.Kernel.Parameters.Param_String @string = new global::Grasshopper.Kernel.Parameters.Param_String { Name = "_tM52BuildingCategory", NickName = "_tM52BuildingCategory", Description = "Category of Buildings I, II, III or IV", Access = GH_ParamAccess.item, Optional = true };
                 @string.SetPersistentData(TM52BuildingCategory.CategoryII.ToString());
                 result.Add(new GH_SAMParam(@string, ParamVisibility.Binding));
@@ -63,7 +69,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 @integer.SetPersistentData(6528);
                 result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_Boolean boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Binding));
 
@@ -80,7 +86,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "spaces", NickName = "spaces", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooResultParam() { Name = "tM52ExtendedResults", NickName = "tM52ExtendedResults", Description = "SAM TM52 Extended Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "tM52Results", NickName = "tM52Results", Description = "SAM TM52 Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "indoorComfortUpperLimitTemperatures", NickName = "indoorComfortULTemperatures Tupp", Description = "Indoor Comfort Upper Limit Temperatures Tupp \nTcomf = 0.33 Trm + 18.8  where TuppCatII =0.33 Trm + 18.8-4 ", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "indoorComfortLowerLimitTemperatures", NickName = "indoorComfortLLTemperatures Tupp", Description = "Indoor Comfort Lower Limit Temperatures Tupp \nTcomf = 0.33 Trm + 18.8  where TuppCatII =0.33 Trm + 18.8-4 ", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
 
@@ -171,6 +177,15 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            bool extended = false;
+            index = Params.IndexOfInputParam("_extended_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref extended))
+                {
+                    extended = false;
+                }
+            }
 
             TSDConversionSettings tSDConversionSettings = new TSDConversionSettings()
             {
@@ -184,8 +199,6 @@ namespace SAM.Analytical.Grasshopper.Tas
             OverheatingCalculator overheatingCalculator = new OverheatingCalculator(analyticalModel)
             {
                 TM52BuildingCategory = tM52BuildingCategory,
-                StartHourOfYear = startHourOfYear,
-                EndHourOfYear = endHourOfYear,
             };
 
             List<Space> spaces_Result = null;
@@ -208,7 +221,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            List<TM52ExtendedResult> tM52ExtendedResults = overheatingCalculator.Calculate(spaces_Result);
+            List<TM52ExtendedResult> tM52ExtendedResults = overheatingCalculator.Calculate_TM52(spaces_Result, startHourOfYear, endHourOfYear);
+            List<IResult> results = extended ? tM52ExtendedResults?.ConvertAll(x => x as IResult) : tM52ExtendedResults?.ConvertAll(x => x?.Simplify() as IResult);
 
             IndexedDoubles maxIndoorComfortTemperatures = overheatingCalculator.GetMaxIndoorComfortTemperatures(0, 364);
             IndexedDoubles minIndoorComfortTemperatures = overheatingCalculator.GetMinIndoorComfortTemperatures(0, 364);
@@ -219,10 +233,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 dataAccess.SetDataList(index, spaces_Result.ConvertAll(x => new GooSpace(x)));
             }
 
-            index = Params.IndexOfOutputParam("tM52ExtendedResults");
+            index = Params.IndexOfOutputParam("tM52Results");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, tM52ExtendedResults.ConvertAll(x => new GooResult(x)));
+                dataAccess.SetDataList(index, results.ConvertAll(x => new GooResult(x)));
             }
 
             index = Params.IndexOfOutputParam("indoorComfortUpperLimitTemperatures");

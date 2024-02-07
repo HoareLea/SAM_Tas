@@ -8,8 +8,6 @@ namespace SAM.Analytical.Tas
 {
     public class OverheatingCalculator
     {
-        public int StartHourOfYear { get; set; } = 2880;
-        public int EndHourOfYear { get; set; } = 6528;
         public TM52BuildingCategory TM52BuildingCategory { get; set; } = TM52BuildingCategory.CategoryII;
         public AnalyticalModel AnalyticalModel { get; set; } = null;
 
@@ -18,7 +16,7 @@ namespace SAM.Analytical.Tas
             AnalyticalModel = analyticalModel;
         }
 
-        public List<TM52ExtendedResult> Calculate(IEnumerable<Space> spaces)
+        public List<TM52ExtendedResult> Calculate_TM52(IEnumerable<Space> spaces, int startHourOfYear = 2880, int endHourOfYear = 6528)
         {
             if (AnalyticalModel == null || spaces == null)
             {
@@ -54,7 +52,7 @@ namespace SAM.Analytical.Tas
 
                 for (int i = 0; i < jArray_OccupantSensibleGain.Count; i++)
                 {
-                    if(i < StartHourOfYear || i > EndHourOfYear)
+                    if(i < startHourOfYear || i > endHourOfYear)
                     {
                         continue;
                     }
@@ -89,9 +87,131 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
+        public List<TM59ExtendedResult> Calculate_TM59(IEnumerable<Space> spaces)
+        {
+            if (AnalyticalModel == null || spaces == null)
+            {
+                return null;
+            }
+
+            TextMap textMap = Analytical.Query.DefaultInternalConditionTextMap_TM59();
+            if(textMap == null)
+            {
+                return null;
+            }
+
+            TM59Manager TM59Manager = new TM59Manager(textMap);
+
+            IndexedDoubles maxIndoorComfortTemperatures = GetMaxIndoorComfortTemperatures();
+            IndexedDoubles minIndoorComfortTemperatures = GetMinIndoorComfortTemperatures();
+
+            List<TM59ExtendedResult> result = new List<TM59ExtendedResult>();
+            foreach (Space space in spaces)
+            {
+                Space space_Temp = AnalyticalModel.GetSpaces()?.Find(x => x.Guid == space.Guid);
+                if (space_Temp == null)
+                {
+                    continue;
+                }
+
+                string systemTypeName = space_Temp?.InternalCondition?.GetSystemTypeName<VentilationSystemType>()?.ToUpper();
+
+                List<TM59SpaceApplication> tM59SpaceApplications = TM59Manager.TM59SpaceApplications(space);
+                if (tM59SpaceApplications == null || tM59SpaceApplications.Count == 0)
+                {
+                    continue;
+                }
+
+                if (!Core.Query.TryGetValue(space_Temp, SpaceDataType.OccupantSensibleGain.Text(), out JArray jArray_OccupantSensibleGain) || jArray_OccupantSensibleGain == null)
+                {
+                    continue;
+                }
+
+                if (!Core.Query.TryGetValue(space_Temp, SpaceDataType.ResultantTemperature.Text(), out JArray jArray_ResultantTemperature) || jArray_ResultantTemperature == null)
+                {
+                    continue;
+                }
+
+                HashSet<int> occupiedHourIndices = new HashSet<int>();
+                IndexedDoubles maxAcceptableTemperatures = new IndexedDoubles();
+                IndexedDoubles minAcceptableTemperatures = new IndexedDoubles();
+                IndexedDoubles operativeTemperatures = new IndexedDoubles();
+
+                for (int i = 0; i < jArray_OccupantSensibleGain.Count; i++)
+                {
+                    if (Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
+                    {
+                        continue;
+                    }
+
+                    maxAcceptableTemperatures.Add(i, maxIndoorComfortTemperatures[i]);
+                    minAcceptableTemperatures.Add(i, minAcceptableTemperatures[i]);
+                    operativeTemperatures.Add(i, resultantTemperature);
+
+
+                    if (!Core.Query.TryConvert(jArray_OccupantSensibleGain[i], out double occupantSensibleGain) || double.IsNaN(occupantSensibleGain))
+                    {
+                        continue;
+                    }
+
+                    if (occupantSensibleGain <= 0)
+                    {
+                        continue;
+                    }
+
+                    occupiedHourIndices.Add(i);
+                }
+
+                TM59ExtendedResult tM59ExtendedResult = null;
+                if(!string.IsNullOrWhiteSpace(systemTypeName) && systemTypeName.Equals("NV"))
+                {
+                    if (tM59SpaceApplications.Contains(TM59SpaceApplication.Sleeping))
+                    {
+                        tM59ExtendedResult = new TM59NaturalVentilationBedroomExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
+                    }
+                    else
+                    {
+                        tM59ExtendedResult = new TM59NaturalVentilationExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, tM59SpaceApplications?.ToArray());
+                    }
+                }
+                else
+                {
+                    tM59ExtendedResult = new TM59MechanicalVentilationExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, tM59SpaceApplications?.ToArray());
+                }
+
+                if(tM59ExtendedResult == null)
+                {
+                    continue;
+                }
+
+                result.Add(tM59ExtendedResult);
+            }
+
+            return result;
+        }
+
         public IndexedDoubles GetMaxIndoorComfortTemperatures(Period period = Period.Hourly)
         {
-            return GetMaxIndoorComfortTemperatures(Core.Query.DayOfYear(StartHourOfYear), Core.Query.DayOfYear(EndHourOfYear), period);
+            if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
+            {
+                return null;
+            }
+
+            WeatherYear weatherYear = weatherData?.WeatherYears?.FirstOrDefault();
+            if (weatherYear == null)
+            {
+                return null;
+            }
+
+            List<double> values = Analytical.Query.MaxIndoorComfortTemperatures(weatherYear, TM52BuildingCategory);
+            if (values == null || values.Count == 0)
+            {
+                return null;
+            }
+
+            IndexedDoubles result = new IndexedDoubles(values);
+
+            return result.Repeat(period, Period.Daily);
         }
 
         public IndexedDoubles GetMaxIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
@@ -120,7 +240,26 @@ namespace SAM.Analytical.Tas
 
         public IndexedDoubles GetMinIndoorComfortTemperatures(Period period = Period.Hourly)
         {
-            return GetMinIndoorComfortTemperatures(Core.Query.DayOfYear(StartHourOfYear), Core.Query.DayOfYear(EndHourOfYear), period);
+            if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
+            {
+                return null;
+            }
+
+            WeatherYear weatherYear = weatherData?.WeatherYears?.FirstOrDefault();
+            if (weatherYear == null)
+            {
+                return null;
+            }
+
+            List<double> values = Analytical.Query.MinIndoorComfortTemperatures(weatherYear, TM52BuildingCategory);
+            if (values == null || values.Count == 0)
+            {
+                return null;
+            }
+
+            IndexedDoubles result = new IndexedDoubles(values);
+
+            return result.Repeat(period, Period.Daily);
         }
 
         public IndexedDoubles GetMinIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
