@@ -156,7 +156,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            if (dayOfYears != null || dayOfYears.Count == 0)
+            if (dayOfYears != null && dayOfYears.Count != 0)
             {
                 List<double> maxIndoorComfortTemperatures_Temp = new List<double>();
                 List<double> minIndoorComfortTemperatures_Temp = new List<double>();

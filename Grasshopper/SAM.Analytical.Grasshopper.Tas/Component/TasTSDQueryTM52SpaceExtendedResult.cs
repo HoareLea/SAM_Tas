@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasTSDQueryTM52Results : GH_SAMVariableOutputParameterComponent
+    public class TasTSDQueryTM52ExtendedResult : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.5";
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
@@ -30,9 +30,9 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasTSDQueryTM52Results()
-          : base("Tas.TSDQueryTM52Results", "Tas.TSDQueryTM52Results",
-              "Query TSD for TM52Results" +
+        public TasTSDQueryTM52ExtendedResult()
+          : base("Tas.TSDQueryTM52ExtendedResult", "Tas.TSDQueryTM52ExtendedResult",
+              "Query TSD for TM52ExtendedResult" +
                "this node will query results for given space and output when inspect results",
               "SAM WIP", "Tas")
         {
@@ -80,7 +80,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "spaces", NickName = "spaces", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooResultParam() { Name = "spaceTM52Results", NickName = "spaceTM52Results", Description = "SAM Space TM52 Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "tM52ExtendedResults", NickName = "tM52ExtendedResults", Description = "SAM TM52 Extended Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "indoorComfortUpperLimitTemperatures", NickName = "indoorComfortULTemperatures Tupp", Description = "Indoor Comfort Upper Limit Temperatures Tupp \nTcomf = 0.33 Trm + 18.8  where TuppCatII =0.33 Trm + 18.8-4 ", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "indoorComfortLowerLimitTemperatures", NickName = "indoorComfortLLTemperatures Tupp", Description = "Indoor Comfort Lower Limit Temperatures Tupp \nTcomf = 0.33 Trm + 18.8  where TuppCatII =0.33 Trm + 18.8-4 ", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
 
@@ -208,7 +208,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            List<SpaceTM52Result> spaceTM52Results = overheatingCalculator.Calculate(spaces_Result);
+            List<TM52ExtendedResult> tM52ExtendedResults = overheatingCalculator.Calculate(spaces_Result);
 
             IndexedDoubles maxIndoorComfortTemperatures = overheatingCalculator.GetMaxIndoorComfortTemperatures(0, 364);
             IndexedDoubles minIndoorComfortTemperatures = overheatingCalculator.GetMinIndoorComfortTemperatures(0, 364);
@@ -219,10 +219,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 dataAccess.SetDataList(index, spaces_Result.ConvertAll(x => new GooSpace(x)));
             }
 
-            index = Params.IndexOfOutputParam("spaceTM52Results");
+            index = Params.IndexOfOutputParam("tM52ExtendedResults");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, spaceTM52Results.ConvertAll(x => new GooResult(x)));
+                dataAccess.SetDataList(index, tM52ExtendedResults.ConvertAll(x => new GooResult(x)));
             }
 
             index = Params.IndexOfOutputParam("indoorComfortUpperLimitTemperatures");

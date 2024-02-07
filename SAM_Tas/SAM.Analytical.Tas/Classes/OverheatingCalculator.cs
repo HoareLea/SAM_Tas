@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas
             AnalyticalModel = analyticalModel;
         }
 
-        public List<SpaceTM52Result> Calculate(IEnumerable<Space> spaces)
+        public List<TM52ExtendedResult> Calculate(IEnumerable<Space> spaces)
         {
             if (AnalyticalModel == null || spaces == null)
             {
@@ -26,8 +26,9 @@ namespace SAM.Analytical.Tas
             }
 
             IndexedDoubles maxIndoorComfortTemperatures = GetMaxIndoorComfortTemperatures();
+            IndexedDoubles minIndoorComfortTemperatures = GetMinIndoorComfortTemperatures();
 
-            List<SpaceTM52Result> result = new List<SpaceTM52Result>();
+            List<TM52ExtendedResult> result = new List<TM52ExtendedResult>();
             foreach (Space space in spaces)
             {
                 Space space_Temp = AnalyticalModel.GetSpaces()?.Find(x => x.Guid == space.Guid);
@@ -47,7 +48,8 @@ namespace SAM.Analytical.Tas
                 }
 
                 HashSet<int> occupiedHourIndices = new HashSet<int>();
-                IndexedDoubles maximumAcceptableTemperatures = new IndexedDoubles();
+                IndexedDoubles maxAcceptableTemperatures = new IndexedDoubles();
+                IndexedDoubles minAcceptableTemperatures = new IndexedDoubles();
                 IndexedDoubles operativeTemperatures = new IndexedDoubles();
 
                 for (int i = 0; i < jArray_OccupantSensibleGain.Count; i++)
@@ -56,7 +58,17 @@ namespace SAM.Analytical.Tas
                     {
                         continue;
                     }
-                    
+
+                    if (Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
+                    {
+                        continue;
+                    }
+
+                    maxAcceptableTemperatures.Add(i, maxIndoorComfortTemperatures[i]);
+                    minAcceptableTemperatures.Add(i, minAcceptableTemperatures[i]);
+                    operativeTemperatures.Add(i, resultantTemperature);
+
+
                     if (!Core.Query.TryConvert(jArray_OccupantSensibleGain[i], out double occupantSensibleGain) || double.IsNaN(occupantSensibleGain))
                     {
                         continue;
@@ -67,18 +79,11 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    if (!Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
-                    {
-                        continue;
-                    }
-
                     occupiedHourIndices.Add(i);
-                    maximumAcceptableTemperatures.Add(i, maxIndoorComfortTemperatures[i]);
-                    operativeTemperatures.Add(i, resultantTemperature);
                 }
 
-                SpaceTM52Result spaceTM52Result = new SpaceTM52Result(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, maximumAcceptableTemperatures, operativeTemperatures);
-                result.Add(spaceTM52Result);
+                TM52ExtendedResult tM52ExtendedResult = new TM52ExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
+                result.Add(tM52ExtendedResult);
             }
 
             return result;
