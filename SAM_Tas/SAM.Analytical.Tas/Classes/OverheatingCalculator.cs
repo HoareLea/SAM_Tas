@@ -80,7 +80,7 @@ namespace SAM.Analytical.Tas
                     occupiedHourIndices.Add(i);
                 }
 
-                TM52ExtendedResult tM52ExtendedResult = new TM52ExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
+                TM52ExtendedResult tM52ExtendedResult = new TM52ExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), TM52BuildingCategory,occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
                 result.Add(tM52ExtendedResult);
             }
 
@@ -167,16 +167,16 @@ namespace SAM.Analytical.Tas
                 {
                     if (tM59SpaceApplications.Contains(TM59SpaceApplication.Sleeping))
                     {
-                        tM59ExtendedResult = new TM59NaturalVentilationBedroomExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
+                        tM59ExtendedResult = new TM59NaturalVentilationBedroomExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), TM52BuildingCategory, occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
                     }
                     else
                     {
-                        tM59ExtendedResult = new TM59NaturalVentilationExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, tM59SpaceApplications?.ToArray());
+                        tM59ExtendedResult = new TM59NaturalVentilationExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), TM52BuildingCategory, occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, tM59SpaceApplications?.ToArray());
                     }
                 }
                 else
                 {
-                    tM59ExtendedResult = new TM59MechanicalVentilationExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, tM59SpaceApplications?.ToArray());
+                    tM59ExtendedResult = new TM59MechanicalVentilationExtendedResult(space_Temp.Name, Query.Source(), space.Guid.ToString(), TM52BuildingCategory, occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, tM59SpaceApplications?.ToArray());
                 }
 
                 if(tM59ExtendedResult == null)
