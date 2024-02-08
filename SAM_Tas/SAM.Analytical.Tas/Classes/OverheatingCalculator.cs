@@ -8,8 +8,38 @@ namespace SAM.Analytical.Tas
 {
     public class OverheatingCalculator
     {
+        private TextMap textMap = Analytical.Query.DefaultInternalConditionTextMap_TM59();
+
         public TM52BuildingCategory TM52BuildingCategory { get; set; } = TM52BuildingCategory.CategoryII;
+        
         public AnalyticalModel AnalyticalModel { get; set; } = null;
+
+        public string Source
+        {
+            get
+            {
+                string result = AnalyticalModel?.Name;
+                if (string.IsNullOrWhiteSpace(result))
+                {
+                    result = Query.Source();
+                }
+
+                return result;
+            }
+        }
+
+        public TextMap TextMap
+        {
+            get
+            {
+                return textMap;
+            }
+
+            set
+            {
+                textMap = value;
+            }
+        }
 
         public OverheatingCalculator(AnalyticalModel analyticalModel)
         {
@@ -89,13 +119,7 @@ namespace SAM.Analytical.Tas
 
         public List<TM59ExtendedResult> Calculate_TM59(IEnumerable<Space> spaces)
         {
-            if (AnalyticalModel == null || spaces == null)
-            {
-                return null;
-            }
-
-            TextMap textMap = Analytical.Query.DefaultInternalConditionTextMap_TM59();
-            if(textMap == null)
+            if (AnalyticalModel == null || spaces == null || textMap == null)
             {
                 return null;
             }
@@ -191,20 +215,6 @@ namespace SAM.Analytical.Tas
             }
 
             return result;
-        }
-
-        public string Source
-        {
-            get
-            {
-                string result = AnalyticalModel?.Name;
-                if(string.IsNullOrWhiteSpace(result))
-                {
-                    result = Query.Source();
-                }
-
-                return result;
-            }
         }
 
         public IndexedDoubles GetMaxIndoorComfortTemperatures(Period period = Period.Hourly)
