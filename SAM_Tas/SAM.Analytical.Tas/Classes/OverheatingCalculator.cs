@@ -87,13 +87,13 @@ namespace SAM.Analytical.Tas
                         continue;
                     }
 
-                    if (Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
+                    if (!Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
                     {
                         continue;
                     }
 
                     maxAcceptableTemperatures.Add(i, maxIndoorComfortTemperatures[i]);
-                    minAcceptableTemperatures.Add(i, minAcceptableTemperatures[i]);
+                    minAcceptableTemperatures.Add(i, minIndoorComfortTemperatures[i]);
                     operativeTemperatures.Add(i, resultantTemperature);
 
 
@@ -159,13 +159,13 @@ namespace SAM.Analytical.Tas
 
                 for (int i = 0; i < jArray_OccupantSensibleGain.Count; i++)
                 {
-                    if (Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
+                    if (!Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
                     {
                         continue;
                     }
 
                     maxAcceptableTemperatures.Add(i, maxIndoorComfortTemperatures[i]);
-                    minAcceptableTemperatures.Add(i, minAcceptableTemperatures[i]);
+                    minAcceptableTemperatures.Add(i, minIndoorComfortTemperatures[i]);
                     operativeTemperatures.Add(i, resultantTemperature);
 
 
