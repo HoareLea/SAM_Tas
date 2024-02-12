@@ -172,6 +172,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 SpaceDataTypes = new HashSet<SpaceDataType>() { SpaceDataType.ResultantTemperature, SpaceDataType.OccupantSensibleGain },
                 SpaceNames = spaces == null ? null : new HashSet<string>(spaces.ConvertAll(x => x?.Name)),
                 ConvertWeaterData = true,
+                ConvertZones = true
             };
 
             AnalyticalModel analyticalModel = Analytical.Tas.Convert.ToSAM(path, tSDConversionSettings);

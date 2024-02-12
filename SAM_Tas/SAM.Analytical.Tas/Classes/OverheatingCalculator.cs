@@ -129,16 +129,31 @@ namespace SAM.Analytical.Tas
             IndexedDoubles maxIndoorComfortTemperatures = GetMaxIndoorComfortTemperatures();
             IndexedDoubles minIndoorComfortTemperatures = GetMinIndoorComfortTemperatures();
 
+            AdjacencyCluster adjacencyCluster = AnalyticalModel.AdjacencyCluster;
+
             List<TM59ExtendedResult> result = new List<TM59ExtendedResult>();
             foreach (Space space in spaces)
             {
-                Space space_Temp = AnalyticalModel.GetSpaces()?.Find(x => x.Guid == space.Guid);
+                Space space_Temp = adjacencyCluster?.GetSpaces()?.Find(x => x.Guid == space.Guid);
                 if (space_Temp == null)
                 {
                     continue;
                 }
 
                 string systemTypeName = space_Temp?.InternalCondition?.GetSystemTypeName<VentilationSystemType>()?.ToUpper();
+                if(string.IsNullOrWhiteSpace(systemTypeName))
+                {
+                    List<Zone> zones = adjacencyCluster.GetRelatedObjects<Zone>(space_Temp);
+                    if(zones != null)
+                    {
+                        Zone zone = zones.Find(x => x.Name.ToUpper() == "NV");
+
+                        if (zone != null)
+                        {
+                            systemTypeName = zone.Name.ToUpper();
+                        }
+                    }
+                }
 
                 List<TM59SpaceApplication> tM59SpaceApplications = TM59Manager.TM59SpaceApplications(space);
 

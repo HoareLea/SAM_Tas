@@ -14,6 +14,8 @@ namespace SAM.Analytical.Tas
 
         public bool ConvertWeaterData { get; set; } = true;
 
+        public bool ConvertZones { get; set; } = false;
+
         public TSDConversionSettings()
         {
 
@@ -31,6 +33,7 @@ namespace SAM.Analytical.Tas
                 SpaceDataTypes = tSDConversionSettings.SpaceDataTypes == null ? null : new HashSet<SpaceDataType>(tSDConversionSettings.SpaceDataTypes);
                 PanelDataTypes = tSDConversionSettings.PanelDataTypes == null ? null : new HashSet<PanelDataType>(tSDConversionSettings.PanelDataTypes);
                 ConvertWeaterData = tSDConversionSettings.ConvertWeaterData;
+                ConvertZones = tSDConversionSettings.ConvertZones;
                 SpaceNames = tSDConversionSettings.SpaceNames == null ? null : new HashSet<string>(tSDConversionSettings.SpaceNames);
             }
         }
@@ -92,6 +95,11 @@ namespace SAM.Analytical.Tas
                 ConvertWeaterData = jObject.Value<bool>("ConvertWeaterData");
             }
 
+            if (jObject.ContainsKey("ConvertZones"))
+            {
+                ConvertZones = jObject.Value<bool>("ConvertZones");
+            }
+
             return true;
         }
 
@@ -139,6 +147,8 @@ namespace SAM.Analytical.Tas
             }
 
             jObject.Add("ConvertWeaterData", ConvertWeaterData);
+
+            jObject.Add("ConvertZones", ConvertZones);
 
             return jObject;
         }

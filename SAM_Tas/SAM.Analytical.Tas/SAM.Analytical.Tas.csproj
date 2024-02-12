@@ -288,6 +288,7 @@
     <Compile Include="Query\Source.cs" />
     <Compile Include="Query\RoomSurfaces.cs" />
     <Compile Include="Modify\RemoveZoneGrups.cs" />
+    <Compile Include="Query\ZoneDataGroups.cs" />
     <Compile Include="Query\ZoneGrups.cs" />
     <Compile Include="Query\Zone.cs" />
     <Compile Include="Query\ZoneSurfaces.cs" />

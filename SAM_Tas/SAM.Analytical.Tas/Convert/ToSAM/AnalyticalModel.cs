@@ -1,4 +1,5 @@
 ﻿using SAM.Core.Tas;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
 {
@@ -40,6 +41,38 @@ namespace SAM.Analytical.Tas
             }
 
             AdjacencyCluster adjacencyCluster = ToSAM_AdjacencyCluster(buildingData, tSDConversionSettings.SpaceDataTypes, tSDConversionSettings.PanelDataTypes, tSDConversionSettings.SpaceNames);
+
+            if (tSDConversionSettings.ConvertZones)
+            {
+                List<Space> spaces = adjacencyCluster.GetSpaces();
+                
+                List<TSD.ZoneDataGroup> zoneDataGroups = Query.ZoneDataGroups(tSDDocument.SimulationData);
+                if(zoneDataGroups != null)
+                {
+                    foreach(TSD.ZoneDataGroup zoneDataGroup in zoneDataGroups)
+                    {
+                        Zone zone = new Zone(zoneDataGroup.name);
+                        adjacencyCluster.AddObject(zone);
+
+                        if(spaces != null)
+                        {
+                            List<TSD.ZoneData> zoneDatas = Query.ZoneDatas(zoneDataGroup);
+                            if (zoneDatas != null)
+                            {
+                                foreach(TSD.ZoneData zoneData in zoneDatas)
+                                {
+                                    Space space = spaces.Find(x => x.Name == zoneData.name);
+                                    if(space != null)
+                                    {
+                                        adjacencyCluster.AddRelation(zone, space);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
 
             AnalyticalModel result = new AnalyticalModel(buildingData.name, buildingData.description, null, null, adjacencyCluster);
 
