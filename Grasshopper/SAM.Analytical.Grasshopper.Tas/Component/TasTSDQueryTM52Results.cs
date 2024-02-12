@@ -62,11 +62,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 global::Grasshopper.Kernel.Parameters.Param_Integer @integer;
 
                 @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_startHourOfYear_", NickName = "_startHourOfYear_", Description = "Start Hour of Year Index", Access = GH_ParamAccess.item, Optional = true };
-                @integer.SetPersistentData(2880);
+                @integer.SetPersistentData(HourOfYear.SummerStartIndex);
                 result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
 
                 @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHourOfYear_", NickName = "_endHourOfYear_", Description = "End Hour of Year Index", Access = GH_ParamAccess.item, Optional = true };
-                @integer.SetPersistentData(6528);
+                @integer.SetPersistentData(HourOfYear.SummerEndIndex);
                 result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
@@ -158,22 +158,22 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             index = Params.IndexOfInputParam("_startHourOfYear_");
-            int startHourOfYear = 2880;
+            int startHourOfYear = HourOfYear.SummerStartIndex;
             if (index != -1)
             {
                 if(!dataAccess.GetData(index, ref startHourOfYear))
                 {
-                    startHourOfYear = 2880;
+                    startHourOfYear = HourOfYear.SummerStartIndex;
                 }
             }
 
             index = Params.IndexOfInputParam("_endHourOfYear_");
-            int endHourOfYear = 6528;
+            int endHourOfYear = HourOfYear.SummerEndIndex;
             if (index != -1)
             {
                 if (!dataAccess.GetData(index, ref endHourOfYear))
                 {
-                    endHourOfYear = 6528;
+                    endHourOfYear = HourOfYear.SummerEndIndex;
                 }
             }
 
