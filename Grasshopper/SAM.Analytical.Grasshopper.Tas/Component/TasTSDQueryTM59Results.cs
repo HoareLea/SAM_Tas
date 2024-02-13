@@ -28,13 +28,13 @@ namespace SAM.Analytical.Grasshopper.Tas
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTSD3;
 
         /// <summary>
-        /// Initializes a new instance of the SAM_point3D class.
+        /// Initializes a new instance of the TasTSDQueryTM59Results class.
         /// </summary>
         public TasTSDQueryTM59Results()
           : base("Tas.TSDQueryTM59Results", "Tas.TSDQueryTM59Results",
               "Query TSD for TM59Results" +
-               "this node will query results for given space and output when inspect results",
-              "SAM WIP", "Tas")
+               "this node will query results for summer 01 May to 30 September for a given space or zone and output when inspect results",
+              "SAM", "Tas")
         {
         }
 
