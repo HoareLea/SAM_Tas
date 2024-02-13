@@ -25,7 +25,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
         /// </summary>
         public override string LatestComponentVersion => "1.0.0";
 
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -242,7 +242,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             AdjacencyCluster adjacencyCluster = null;
             using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path, true))
             {
-                adjacencyCluster = sAMTSDDocument.ToSAM(new SpaceDataType[] { spaceDataType });
+                adjacencyCluster = sAMTSDDocument.ToSAM_AdjacencyCluster(new SpaceDataType[] { spaceDataType });
                 sAMTSDDocument.Close();
             }
 

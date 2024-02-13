@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TBD;
 using System.Linq;
 using SAM.Core;
+using SAM.Geometry.Object.Spatial;
+using System;
 
 namespace SAM.Analytical.Tas
 {
@@ -65,6 +67,15 @@ namespace SAM.Analytical.Tas
 
             List<string> result = new List<string>();
 
+            double height = 2;
+
+            double elevation = 0;
+            Geometry.Spatial.BoundingBox3D boundingBox3D = adjacencyCluster?.GetPanels()?.BoundingBox3D(1);
+            if(boundingBox3D != null)
+            {
+                elevation = boundingBox3D.Min.Z - height -  1;
+            }
+
             foreach (AirHandlingUnit airHandlingUnit in airHandlingUnits)
             {
                 AirHandlingUnitAirMovement airHandlingUnitAirMovement = adjacencyCluster.GetRelatedObjects<AirHandlingUnitAirMovement>(airHandlingUnit)?.FirstOrDefault();
@@ -73,8 +84,22 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                zone zone = building.AddZone();
-                zone.name = airHandlingUnitAirMovement.Name;
+                AdjacencyCluster adjacencyCluster_Temp = Create.AdjacencyCluster(elevation, 3, height, 3);
+                elevation -= height - 1;
+
+                Update(building, adjacencyCluster_Temp, Analytical.Query.DefaultMaterialLibrary(), true);
+
+                Space space = adjacencyCluster_Temp.GetSpaces().FirstOrDefault();
+
+                zones = building.Zones();
+                zone zone = zones.Match(space.Name, false, true);
+                if(zone == null)
+                {
+                    continue;
+                }
+
+                zone.name = airHandlingUnit.Name;
+                zone.sizeHeating = (int)TBD.SizingType.tbdSizing;
 
                 TBD.InternalCondition internalCondition = building.AddIC(null);
                 internalCondition.name = string.Format("{0}", airHandlingUnitAirMovement.Name);
@@ -83,9 +108,7 @@ namespace SAM.Analytical.Tas
                     internalCondition.SetDayType(dayType, true);
                 }
 
-
                 Thermostat thermostat = internalCondition.GetThermostat();
-
 
                 if(thermostat != null)
                 {
@@ -132,10 +155,11 @@ namespace SAM.Analytical.Tas
                     zone.AssignIC(internalCondition, true);
                 }
 
-                Profile airFlow = Analytical.Query.AirFlow(adjacencyCluster, airHandlingUnitAirMovement);
-                if(airFlow != null)
+                double airFlow = Analytical.Query.AirFlow(adjacencyCluster, airHandlingUnitAirMovement, out Profile profile_AirHandlingUnit);
+                if(profile_AirHandlingUnit != null)
                 {
                     IZAM iZAM = building.AddIZAM(null);
+                    iZAM.fromOutside = 1;
                     iZAM.name = string.Format("IZAM {0} FROM OUTSIDE", airHandlingUnitAirMovement.Name);
                     result.Add(iZAM.name);
 
@@ -145,13 +169,14 @@ namespace SAM.Analytical.Tas
                     }
 
                     profile profile = iZAM.GetProfile();
-                    profile.Update(airFlow, 1);
+                    profile.Update(profile_AirHandlingUnit, airFlow);
 
                     zone.AssignIZAM(iZAM, true);
                 }
 
             }
 
+            List<Tuple<IZAM, SAMObject>> tuples = new List<Tuple<IZAM, SAMObject>>();
             foreach(Space space in spaces)
             {
                 zone zone = zones.Match(space.Name, false, true);
@@ -159,6 +184,8 @@ namespace SAM.Analytical.Tas
                 {
                     continue;
                 }
+
+                zone.sizeHeating = (int)TBD.SizingType.tbdNoSizing;
 
                 List<SpaceAirMovement> spaceAirMovements = adjacencyCluster.GetRelatedObjects<SpaceAirMovement>(space);
                 if (spaceAirMovements == null || spaceAirMovements.Count == 0)
@@ -186,12 +213,22 @@ namespace SAM.Analytical.Tas
                     string name = string.Format("IZAM {0}", sAMObject_From.Name);
                     name = sAMObject_To == null ? string.Format("{0} TO OUTSIDE", name) : string.Format("{0} TO {1}", name, sAMObject_To.Name);
                     iZAM.name = name;
+                    iZAM.fromOutside = 0;
                     result.Add(iZAM.name);
 
                     profile profile = iZAM.GetProfile();
-                    profile.Update(spaceAirMovement.AirFlow, 1);
+                    profile.Update(spaceAirMovement.Profile, spaceAirMovement.AirFlow);
 
                     zone.AssignIZAM(iZAM, true);
+
+                    if (sAMObject_From != null && sAMObject_From.Guid != space.Guid)
+                    {
+                        zone zone_From = zones.Match(sAMObject_From.Name, false, true);
+                        if(zone_From != null)
+                        {
+                            iZAM.SetSourceZone(zone_From);
+                        }
+                    }
                 }
             }
 

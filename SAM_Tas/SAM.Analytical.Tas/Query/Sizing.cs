@@ -8,31 +8,50 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static bool Sizing(this string path_TBD, AnalyticalModel analyticalModel = null, bool excludeOutdoorAir = false, bool excludePositiveInternalGains = false)
+        public static bool Sizing(this string path_TBD, SizingSettings sizingSettings, AnalyticalModel analyticalModel = null)
         {
             if (string.IsNullOrWhiteSpace(path_TBD))
+            {
                 return false;
+            }
 
-            if (!Sizing_PrepareDocument(path_TBD, excludeOutdoorAir))
+            if (!Sizing_PrepareDocument(path_TBD, sizingSettings, analyticalModel))
+            {
                 return false;
+            }
 
             string directory = global::System.IO.Path.GetDirectoryName(path_TBD);
 
-            string path_TBD_Uncapped = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + global::System.IO.Path.GetExtension(path_TBD));
-            global::System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
-            Sizing_ApplyAirGlass(path_TBD, excludePositiveInternalGains);
+            if(sizingSettings.GenerateUncappedFile)
+            {
+                string path_TBD_Uncapped = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_Uncapped" + global::System.IO.Path.GetExtension(path_TBD));
+                global::System.IO.File.Copy(path_TBD, path_TBD_Uncapped, true);
+                Sizing_ApplyAirGlass(path_TBD, sizingSettings, analyticalModel);
+            }
 
-            string path_TBD_HDDCDD = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + global::System.IO.Path.GetExtension(path_TBD));
-            global::System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
-            Sizing_ApplyOversizingFactors(path_TBD, analyticalModel);
+            if(sizingSettings.GenerateHDDCDDFile)
+            {
+                string path_TBD_HDDCDD = global::System.IO.Path.Combine(directory, global::System.IO.Path.GetFileNameWithoutExtension(path_TBD) + "_HDDCDD" + global::System.IO.Path.GetExtension(path_TBD));
+                global::System.IO.File.Copy(path_TBD, path_TBD_HDDCDD, true);
+                Sizing_ApplyOversizingFactors(path_TBD, sizingSettings, analyticalModel);
+            }
 
             return true;
         }
 
-        private static bool Sizing_PrepareDocument(string path_TBD, bool excludeOutdoorAir = true)
+        private static bool Sizing_PrepareDocument(string path_TBD, SizingSettings sizingSettings, AnalyticalModel analyticalModel = null)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
+            {
                 return false;
+            }
+
+            if(sizingSettings == null)
+            {
+                sizingSettings = new SizingSettings();
+            }
+
+            AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
 
             bool result = false;
 
@@ -47,33 +66,33 @@ namespace SAM.Analytical.Tas
                     List<zone> zones = building.Zones();
                     foreach (zone zone in zones)
                     {
+                        if (sizingSettings.SystemSizingMethod && Modify.ApplySystemSizingMethod(zone, adjacencyCluster))
+                        {
+                            continue;
+                        }
+
                         zone.sizeCooling = (int)sizingType;
                         zone.sizeHeating = (int)sizingType;
                         zone.maxCoolingLoad = 0;
                         zone.maxHeatingLoad = 0;
                     }
 
-                    List<TBD.InternalCondition> internalConditions = building.InternalConditions();
-                    for (int i = internalConditions.Count - 1; i >= 0; i--)
+                    if (sizingSettings.ExcludeOutdoorAir)
                     {
-                        TBD.InternalCondition internalCondition = building.GetIC(i);
-                        if (internalCondition.name.EndsWith("HDD"))
+                        List<TBD.InternalCondition> internalConditions = building.InternalConditions();
+                        for (int i = internalConditions.Count - 1; i >= 0; i--)
                         {
-                            if (excludeOutdoorAir)
+                            TBD.InternalCondition internalCondition = building.GetIC(i);
+                            if (internalCondition.name.EndsWith("HDD"))
                             {
                                 profile profile = internalCondition.GetInternalGain()?.GetProfile((int)Profiles.ticV);
                                 if (profile != null)
                                     profile.factor = 0;
                             }
-
-                            //while (internalCondition.GetZone(0) != null)
-                            //{
-                            //    zone zone = internalCondition.GetZone(0);
-                            //    zone.AssignIC(internalCondition, false);
-                            //}
                         }
                     }
 
+                    tBDDocument.sizing(0);// new 24.01.2024
                     sAMTBDDocument.Save();
                     result = true;
                 }
@@ -82,10 +101,17 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_ApplyAirGlass(string path_TBD, bool excludePositiveInternalGains = false)
+        private static bool Sizing_ApplyAirGlass(string path_TBD, SizingSettings sizingSettings, AnalyticalModel analyticalModel)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
+            {
                 return false;
+            }
+
+            if(sizingSettings == null)
+            {
+                sizingSettings = new SizingSettings();
+            }
 
             bool result = false;
 
@@ -123,17 +149,26 @@ namespace SAM.Analytical.Tas
                         buildingElement.AssignConstruction(construction);
                     }
 
-                    if (excludePositiveInternalGains)
+                    
+
+                    if (sizingSettings.ExcludePositiveInternalGains)
                     {
-                        Sizing_ExcludePositiveInternalGains(tBDDocument);
+                        Sizing_ExcludePositiveInternalGains(tBDDocument, sizingSettings, analyticalModel);
                     }
                     else
                     {
+                        AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
+
                         TBD.SizingType sizingType = TBD.SizingType.tbdDesignSizingOnly;
 
                         List<zone> zones = building.Zones();
                         foreach (zone zone in zones)
                         {
+                            if (sizingSettings.SystemSizingMethod && Modify.ApplySystemSizingMethod(zone, adjacencyCluster))
+                            {
+                                continue;
+                            }
+
                             zone.sizeCooling = (int)sizingType;
                             zone.sizeHeating = (int)sizingType;
                         }
@@ -149,7 +184,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_ApplyOversizingFactors(string path_TBD, AnalyticalModel analyticalModel = null)
+        private static bool Sizing_ApplyOversizingFactors(string path_TBD, SizingSettings sizingSettings, AnalyticalModel analyticalModel = null)
         {
             if (string.IsNullOrWhiteSpace(path_TBD) || !global::System.IO.File.Exists(path_TBD))
                 return false;
@@ -182,7 +217,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        private static bool Sizing_ExcludePositiveInternalGains(this TBDDocument tBDDocument)
+        private static bool Sizing_ExcludePositiveInternalGains(this TBDDocument tBDDocument, SizingSettings sizingSettings, AnalyticalModel analyticalModel = null)
         {
             if (tBDDocument == null)
                 return false;
@@ -193,9 +228,16 @@ namespace SAM.Analytical.Tas
 
             TBD.SizingType sizingType = TBD.SizingType.tbdDesignSizingOnly;
 
+            AdjacencyCluster adjacencyCluster = analyticalModel?.AdjacencyCluster;
+
             List<Tuple<zone, TBD.InternalCondition, double>> tuples = new List<Tuple<zone, TBD.InternalCondition, double>>();
             foreach (zone zone in zones)
             {
+                if (sizingSettings.SystemSizingMethod && Modify.ApplySystemSizingMethod(zone, adjacencyCluster))
+                {
+                    continue;
+                }
+
                 zone.sizeHeating = (int)sizingType;
                 zone.sizeCooling = (int)sizingType;
 

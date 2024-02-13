@@ -10,43 +10,64 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {      
-        public static AdjacencyCluster ToSAM(this BuildingData buildingData, IEnumerable<SpaceDataType> spaceDataTypes = null, IEnumerable <PanelDataType> panelDataTypes = null)
+        public static AdjacencyCluster ToSAM_AdjacencyCluster(this BuildingData buildingData, IEnumerable<SpaceDataType> spaceDataTypes = null, IEnumerable <PanelDataType> panelDataTypes = null, IEnumerable<string> spaceNames = null)
         {
             if (buildingData == null)
+            {
                 return null;
+            }
 
             List<ZoneData> zoneDatas = buildingData.ZoneDatas();
             if (zoneDatas == null)
+            {
                 return null;
+            }
 
             AdjacencyCluster result = new AdjacencyCluster();
 
             foreach(ZoneData zoneData in zoneDatas)
             {
                 if (zoneData == null)
+                {
                     continue;
+                }
+
+                if(spaceNames != null && !spaceNames.Contains(zoneData.name))
+                {
+                    continue;
+                }
 
                 Space space = zoneData.ToSAM(spaceDataTypes);
                 if (space != null)
+                {
                     result.AddObject(space);
+                }
 
                 List<SurfaceData> surfaceDatas = zoneData.SurfaceDatas();
                 if (surfaceDatas == null)
+                {
                     continue;
+                }
 
                 foreach(SurfaceData surfaceData in surfaceDatas)
                 {
                     if (surfaceData == null)
+                    {
                         continue;
+                    }
 
                     Panel panel = surfaceData.ToSAM(panelDataTypes);
                     if (panel == null)
+                    {
                         continue;
+                    }
 
                     result.AddObject(panel);
 
                     if (space != null)
+                    {
                         result.AddRelation(space, panel);
+                    }
                 }
             }
 
@@ -54,14 +75,14 @@ namespace SAM.Analytical.Tas
 
         }
 
-        public static AdjacencyCluster ToSAM(this SAMTSDDocument sAMTSDDocument, IEnumerable<SpaceDataType> spaceDataTypes = null, IEnumerable<PanelDataType> panelDataTypes = null)
+        public static AdjacencyCluster ToSAM_AdjacencyCluster(this SAMTSDDocument sAMTSDDocument, IEnumerable<SpaceDataType> spaceDataTypes = null, IEnumerable<PanelDataType> panelDataTypes = null)
         {
-            return ToSAM(sAMTSDDocument?.TSDDocument, spaceDataTypes, panelDataTypes);
+            return ToSAM_AdjacencyCluster(sAMTSDDocument?.TSDDocument, spaceDataTypes, panelDataTypes);
         }
 
-        public static AdjacencyCluster ToSAM(this TSDDocument tSDDocument, IEnumerable<SpaceDataType> spaceDataTypes = null, IEnumerable<PanelDataType> panelDataTypes = null)
+        public static AdjacencyCluster ToSAM_AdjacencyCluster(this TSDDocument tSDDocument, IEnumerable<SpaceDataType> spaceDataTypes = null, IEnumerable<PanelDataType> panelDataTypes = null)
         {
-            return ToSAM(tSDDocument?.SimulationData?.GetBuildingData(), spaceDataTypes, panelDataTypes);
+            return ToSAM_AdjacencyCluster(tSDDocument?.SimulationData?.GetBuildingData(), spaceDataTypes, panelDataTypes);
         }
 
         public static AdjacencyCluster ToSAM_AdjacencyCluster(this string path_TSD, IEnumerable<SpaceDataType> spaceDataTypes = null, IEnumerable<PanelDataType> panelDataTypes = null)
@@ -73,7 +94,7 @@ namespace SAM.Analytical.Tas
 
             using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD))
             {
-                result = sAMTSDDocument.ToSAM(spaceDataTypes, panelDataTypes);
+                result = sAMTSDDocument.ToSAM_AdjacencyCluster(spaceDataTypes, panelDataTypes);
             }
 
             return result;

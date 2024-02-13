@@ -1,4 +1,6 @@
 ﻿using SAM.Core;
+using SAM.Geometry.Spatial;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TBD;
@@ -320,7 +322,7 @@ namespace SAM.Analytical.Tas
             }
 
             index = 1;
-            TCD.ConstructionFolder constructionFolder_Child = constructionFolder.childFolders(index);
+            ConstructionFolder constructionFolder_Child = constructionFolder.childFolders(index);
             while(constructionFolder_Child != null)
             {
                 Update(constructionManager, constructionFolder_Child, category_Temp, tolerance);
@@ -361,7 +363,7 @@ namespace SAM.Analytical.Tas
             }
 
             index = 1;
-            TCD.MaterialFolder materialFolder_Child = materialFolder.childFolders(index);
+            MaterialFolder materialFolder_Child = materialFolder.childFolders(index);
             while (materialFolder_Child != null)
             {
                 Update(constructionManager, materialFolder_Child, category_Temp);
@@ -372,7 +374,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static bool Update(this ConstructionManager constructionManager, System.Guid source, System.Guid destination, bool replace)
+        public static bool Update(this ConstructionManager constructionManager, Guid source, Guid destination, bool replace)
         {
             IAnalyticalObject analyticalObject_Source = constructionManager.Constructions?.Find(x => x.Guid == source);
             if (analyticalObject_Source == null)
@@ -449,6 +451,631 @@ namespace SAM.Analytical.Tas
             }
 
             return false;
+        }
+
+        public static void Update(this Building building, AdjacencyCluster adjacencyCluster, MaterialLibrary materialLibrary, bool updateGuids = false)
+        {
+            adjacencyCluster = adjacencyCluster.UpdateNormals(true, false, false);
+            adjacencyCluster.Normalize(true, Geometry.Orientation.Clockwise);
+
+            List<Space> spaces = adjacencyCluster.GetSpaces();
+            if (spaces == null)
+            {
+                return;
+            }
+
+            List<DaysShade> daysShades = new List<DaysShade>();
+
+            Plane plane = Plane.WorldXY;
+
+            Dictionary<Guid, List<Tuple<zoneSurface, bool>>> dictionary_Panel = new Dictionary<Guid, List<Tuple<zoneSurface, bool>>>();
+            Dictionary<Guid, List<Tuple<AperturePart, zoneSurface, bool>>> dictionary_Aperture = new Dictionary<Guid, List<Tuple<AperturePart, zoneSurface, bool>>>();
+            foreach (Space space in spaces)
+            {
+                Shell shell = adjacencyCluster.Shell(space);
+                BoundingBox3D boundingBox3D = shell?.GetBoundingBox();
+                if (shell == null || boundingBox3D == null)
+                {
+                    return;
+                }
+
+                zone zone = building.AddZone();
+                if (updateGuids)
+                {
+                    Space space_Temp = new Space(space);
+                    space_Temp.SetValue(SpaceParameter.ZoneGuid, zone.GUID);
+                    adjacencyCluster.AddSpace(space_Temp);
+                }
+
+                zone.name = space.Name;
+                double volume = shell.Volume();
+                if (double.IsNaN(volume))
+                {
+                    volume = space.GetValue<double>(Analytical.SpaceParameter.Volume);
+                }
+
+                zone.volume = System.Convert.ToSingle(volume);
+
+                if (space.TryGetValue(Analytical.SpaceParameter.Color, out SAMColor sAMColor) && sAMColor != null)
+                {
+                    zone.colour = Core.Convert.ToUint(sAMColor.ToColor());
+                }
+
+                List<Face3D> face3Ds = Geometry.Spatial.Query.Section(shell, (boundingBox3D.Max.Z - boundingBox3D.Min.Z) / 2, false);
+                if (face3Ds != null && face3Ds.Count != 0)
+                {
+                    face3Ds.RemoveAll(x => x == null || !x.IsValid());
+                    zone.floorArea = System.Convert.ToSingle(face3Ds.ConvertAll(x => x.GetArea()).Sum());
+                    zone.exposedPerimeter = System.Convert.ToSingle(face3Ds.ConvertAll(x => Geometry.Planar.Query.Perimeter(x.ExternalEdge2D)).Sum());
+                    zone.length = System.Convert.ToSingle(face3Ds.ConvertAll(x => Geometry.Tas.Query.Length(x)).Sum());
+                }
+
+                room room = zone.AddRoom();
+
+                List<buildingElement> buildingElements = building.BuildingElements();
+                List<TBD.Construction> constructions = building.Constructions();
+
+                int index_Space = adjacencyCluster.GetIndex(space);
+
+                List<Panel> panels = adjacencyCluster?.GetPanels(space);
+                if (panels != null || panels.Count != 0)
+                {
+                    foreach (Panel panel in panels)
+                    {
+                        string name_Panel = panel.Name;
+                        if (string.IsNullOrWhiteSpace(name_Panel) || panel.PanelType == PanelType.Air)
+                        {
+                            name_Panel = "Air";
+                        }
+
+                        Face3D face3D_Panel = panel.Face3D;
+                        if (face3D_Panel == null)
+                        {
+                            continue;
+                        }
+
+                        BoundingBox3D boundingBox3D_Panel = face3D_Panel.GetBoundingBox();
+
+                        Vector3D normal = dictionary_Panel.ContainsKey(panel.Guid) ? panel.Normal.GetNegated() : panel.Normal;
+
+                        zoneSurface zoneSurface_Panel = zone.AddSurface();
+
+                        Core.Tas.ZoneSurfaceReference zoneSurfaceReference = new Core.Tas.ZoneSurfaceReference(zoneSurface_Panel.number, zone.GUID);
+
+                        Panel panel_Temp = Analytical.Create.Panel(panel);
+
+                        PanelParameter panelParameter = panel.HasValue(PanelParameter.ZoneSurfaceReference_1) ? PanelParameter.ZoneSurfaceReference_2 : PanelParameter.ZoneSurfaceReference_1;
+                        panel_Temp.SetValue(panelParameter, zoneSurfaceReference);
+
+                        float orientation = System.Convert.ToSingle(Geometry.Object.Spatial.Query.Azimuth(panel, Vector3D.WorldY));
+                        orientation += 180;
+                        if (orientation >= 360)
+                        {
+                            orientation -= 360;
+                        }
+                        zoneSurface_Panel.orientation = orientation;
+
+                        float inclination = System.Convert.ToSingle(Geometry.Spatial.Query.Tilt(normal));
+                        if (inclination == 0 || inclination == 180)
+                        {
+                            inclination -= 180;
+                            if (inclination < 0)
+                            {
+                                inclination += 360;
+                            }
+                        }
+                        else
+                        {
+                            inclination = Math.Min(inclination, 180 - inclination);
+                        }
+
+                        zoneSurface_Panel.inclination = inclination;
+
+                        zoneSurface_Panel.altitude = System.Convert.ToSingle(boundingBox3D_Panel.GetCentroid().Z);
+                        zoneSurface_Panel.altitudeRange = System.Convert.ToSingle(boundingBox3D_Panel.Max.Z - boundingBox3D_Panel.Min.Z);
+                        zoneSurface_Panel.area = System.Convert.ToSingle(face3D_Panel.GetArea());
+                        zoneSurface_Panel.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_Panel));
+
+                        RoomSurface roomSurface_Panel = room.AddSurface();
+                        roomSurface_Panel.area = zoneSurface_Panel.area;
+                        roomSurface_Panel.zoneSurface = zoneSurface_Panel;
+
+                        Face3D face3D = panel.GetFace3D(true);
+
+                        if (dictionary_Panel.ContainsKey(panel.Guid))
+                        {
+                            face3D.FlipNormal(false);
+                        }
+
+
+                        List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
+                        bool reverse = false;
+                        if (panel.PanelGroup == PanelGroup.Floor && spaces_Adjacent != null && spaces_Adjacent.Count > 1)
+                        {
+                            Vector3D vector3D_1 = Vector3D.WorldZ.GetNegated();
+                            Vector3D vector3D_2 = face3D.GetPlane().Normal;
+                            if (!vector3D_1.SameHalf(vector3D_2))
+                            {
+                                face3D.FlipNormal(false);
+                            }
+
+                            vector3D_1 *= 0.01;
+                            Point3D point3D = face3D.GetInternalPoint3D();
+                            point3D.Move(vector3D_1);
+                            if (!shell.Inside(point3D))
+                            {
+                                face3D.FlipNormal(false);
+                                reverse = true;
+                            }
+                        }
+
+                        face3D.Normalize(Geometry.Orientation.Clockwise);
+
+                        Perimeter perimeter_Panel = Geometry.Tas.Convert.ToTBD(face3D, roomSurface_Panel);
+                        if (perimeter_Panel == null)
+                        {
+                            continue;
+                        }
+
+                        PanelType panelType = panel.PanelType;
+
+                        buildingElement buildingElement_Panel = buildingElements.Find(x => x.name == name_Panel);
+                        if (buildingElement_Panel == null)
+                        {
+                            TBD.Construction construction_TBD = null;
+
+                            if (panel.PanelType != PanelType.Air)
+                            {
+                                Construction construction = panel.Construction;
+                                if (construction != null)
+                                {
+                                    construction_TBD = constructions.Find(x => x.name == construction.Name);
+                                    if (construction_TBD == null)
+                                    {
+                                        construction_TBD = building.AddConstruction(null);
+                                        construction_TBD.name = construction.Name;
+
+                                        if (construction.Transparent(materialLibrary))
+                                        {
+                                            construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                                        }
+
+                                        List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
+                                        if (constructionLayers != null && constructionLayers.Count != 0)
+                                        {
+                                            int index = 1;
+                                            foreach (ConstructionLayer constructionLayer in constructionLayers)
+                                            {
+                                                Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
+                                                if (material == null)
+                                                {
+                                                    continue;
+                                                }
+
+                                                TBD.material material_TBD = construction_TBD.AddMaterial(material);
+                                                if (material_TBD != null)
+                                                {
+                                                    material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                    construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                    index++;
+                                                }
+                                            }
+                                        }
+
+                                        constructions.Add(construction_TBD);
+                                    }
+
+                                    if (panelType == PanelType.Undefined && construction != null)
+                                    {
+                                        panelType = construction.PanelType();
+                                        if (panelType == PanelType.Undefined && construction.TryGetValue(Analytical.ConstructionParameter.DefaultPanelType, out string panelTypeString))
+                                        {
+                                            panelType = Core.Query.Enum<PanelType>(panelTypeString);
+                                        }
+                                    }
+                                }
+                            }
+
+                            buildingElement_Panel = building.AddBuildingElement();
+                            buildingElement_Panel.name = name_Panel;
+                            buildingElement_Panel.colour = Core.Convert.ToUint(Analytical.Query.Color(panelType));
+                            buildingElement_Panel.BEType = Query.BEType(panelType.Text());
+                            buildingElement_Panel.AssignConstruction(construction_TBD);
+                            buildingElement_Panel.ghost = panelType == PanelType.Air ? 1 : 0;
+                            buildingElements.Add(buildingElement_Panel);
+                        }
+
+                        if (buildingElement_Panel != null)
+                        {
+                            zoneSurface_Panel.buildingElement = buildingElement_Panel;
+                            panel_Temp.SetValue(PanelParameter.BuildingElementGuid, buildingElement_Panel.GUID);
+                        }
+
+                        zoneSurface_Panel.type = TBD.SurfaceType.tbdExposed;
+
+                        Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult = adjacencyCluster.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel, null)?.FirstOrDefault();
+
+                        bool adiabatic = Analytical.Query.Adiabatic(panel);
+
+                        List<Aperture> apertures = panel.Apertures;
+                        if (apertures != null && apertures.Count != 0)
+                        {
+                            bool @internal = adjacencyCluster.Internal(panel);
+
+                            Func<Face3D, zoneSurface> func = delegate (Face3D face3D_ZoneSurface)
+                            {
+                                BoundingBox3D boundingBox3D_Aperture = face3D_ZoneSurface.GetBoundingBox();
+
+                                float area = System.Convert.ToSingle(face3D_ZoneSurface.GetArea());
+
+                                zoneSurface zoneSurface_Aperture = zoneSurface_Panel.AddChildSurface(area);
+                                if (zoneSurface_Aperture == null)
+                                {
+                                    return null;
+                                };
+
+
+                                //zoneSurface_Aperture.orientation = zoneSurface_Panel.orientation; 
+                                zoneSurface_Aperture.inclination = zoneSurface_Panel.inclination;
+                                zoneSurface_Aperture.altitude = System.Convert.ToSingle(boundingBox3D_Aperture.GetCentroid().Z);
+                                zoneSurface_Aperture.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
+                                zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_ZoneSurface));
+
+                                zoneSurface_Aperture.type = @internal ? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
+                                if (adiabatic)
+                                {
+                                    zoneSurface_Aperture.type = TBD.SurfaceType.tbdNullLink;
+                                }
+
+                                RoomSurface roomSurface_Aperture = room.AddSurface();
+                                roomSurface_Aperture.area = zoneSurface_Aperture.area;
+                                roomSurface_Aperture.zoneSurface = zoneSurface_Aperture;
+
+                                Perimeter perimeter_Aperture = Geometry.Tas.Convert.ToTBD(face3D_ZoneSurface, roomSurface_Aperture);
+                                if (perimeter_Aperture == null)
+                                {
+                                    return null;
+                                }
+
+                                if (solarFaceSimulationResult != null)
+                                {
+                                    List<SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(building, daysShades, zoneSurface_Aperture, face3D_ZoneSurface, solarFaceSimulationResult);
+                                }
+
+                                return zoneSurface_Aperture;
+                            };
+
+                            foreach (Aperture aperture in apertures)
+                            {
+                                string name_Aperture = aperture.Name;
+                                if (string.IsNullOrWhiteSpace(name_Aperture))
+                                {
+                                    continue;
+                                }
+
+                                string name = Query.Name(aperture.UniqueName(), false, true, true, false);
+
+                                Dictionary<string, Tuple<AperturePart, List<zoneSurface>>> dictionary = new Dictionary<string, Tuple<AperturePart, List<zoneSurface>>>();
+
+                                double thickness = double.NaN;
+
+                                thickness = aperture.GetThickness(AperturePart.Pane);
+                                if (!double.IsNaN(thickness) && thickness > 0)
+                                {
+                                    List<Face3D> face3Ds_Pane = aperture.GetFace3Ds(AperturePart.Pane);
+                                    if (face3Ds_Pane != null)
+                                    {
+                                        string apertureName_Pane = string.Format("{0} {1}", name, AperturePart.Pane.Sufix());
+                                        dictionary[apertureName_Pane] = new Tuple<AperturePart, List<zoneSurface>>(AperturePart.Pane, new List<zoneSurface>());
+                                        foreach (Face3D face3D_Pane in face3Ds_Pane)
+                                        {
+                                            // here we added fix so Pane/Frame on secnd side will be correctyl shaded...
+                                            if (dictionary_Panel.ContainsKey(panel.Guid))
+                                            {
+                                                face3D_Pane.FlipNormal(false);
+                                            }
+                                            face3D_Pane.Normalize(Geometry.Orientation.Clockwise);
+
+                                            zoneSurface zoneSurface = func.Invoke(face3D_Pane);
+                                            if (zoneSurface != null)
+                                            {
+                                                dictionary[apertureName_Pane].Item2.Add(zoneSurface);
+
+                                                if (updateGuids)
+                                                {
+                                                    Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
+                                                    ApertureParameter apertureParameter = aperture_Temp.HasValue(ApertureParameter.PaneZoneSurfaceReference_1) ? ApertureParameter.PaneZoneSurfaceReference_2 : ApertureParameter.PaneZoneSurfaceReference_1;
+                                                    aperture_Temp.SetValue(apertureParameter, new Core.Tas.ZoneSurfaceReference(zoneSurface.number, zone.GUID));
+                                                    panel_Temp.RemoveAperture(aperture_Temp.Guid);
+                                                    panel_Temp.AddAperture(aperture_Temp);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                thickness = aperture.GetThickness(AperturePart.Frame);
+                                if (!double.IsNaN(thickness) && thickness > 0)
+                                {
+                                    List<Face3D> face3Ds_Frame = aperture.GetFace3Ds(AperturePart.Frame);
+                                    if (face3Ds_Frame != null)
+                                    {
+                                        string apertureName_Frame = string.Format("{0} {1}", name, AperturePart.Frame.Sufix());
+                                        dictionary[apertureName_Frame] = new Tuple<AperturePart, List<zoneSurface>>(AperturePart.Frame, new List<zoneSurface>());
+                                        foreach (Face3D face3D_Frame in face3Ds_Frame)
+                                        {
+                                            // here we added fix so Pane/Frame on secnd side will be correctyl shaded...
+                                            if (dictionary_Panel.ContainsKey(panel.Guid))
+                                            {
+                                                face3D_Frame.FlipNormal(false);
+                                            }
+                                            face3D_Frame.Normalize(Geometry.Orientation.Clockwise);
+
+                                            zoneSurface zoneSurface = func.Invoke(face3D_Frame);
+                                            if (zoneSurface != null)
+                                            {
+                                                //zoneSurface.reversed = 1;
+                                                dictionary[apertureName_Frame].Item2.Add(zoneSurface);
+
+                                                if (updateGuids)
+                                                {
+                                                    Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
+                                                    ApertureParameter apertureParameter = aperture_Temp.HasValue(ApertureParameter.FrameZoneSurfaceReference_1) ? ApertureParameter.FrameZoneSurfaceReference_2 : ApertureParameter.FrameZoneSurfaceReference_1;
+                                                    aperture_Temp.SetValue(apertureParameter, new Core.Tas.ZoneSurfaceReference(zoneSurface.number, zone.GUID));
+                                                    panel_Temp.RemoveAperture(aperture_Temp.Guid);
+                                                    panel_Temp.AddAperture(aperture_Temp);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                foreach (KeyValuePair<string, Tuple<AperturePart, List<zoneSurface>>> keyValuePair in dictionary)
+                                {
+                                    buildingElement buildingElement_Aperture = buildingElements.Find(x => x.name == keyValuePair.Key);
+                                    if (buildingElement_Aperture == null)
+                                    {
+
+                                        AperturePart aperturePart = keyValuePair.Value.Item1;
+
+                                        TBD.Construction construction_TBD = null;
+
+                                        ApertureConstruction apertureConstruction = aperture.ApertureConstruction;
+                                        if (apertureConstruction != null)
+                                        {
+                                            string constructionName = string.Format("{0} {1}", Query.Name(aperture.UniqueName(), false, true, false, false), aperturePart.Sufix());
+
+                                            construction_TBD = constructions.Find(x => x.name == constructionName);
+                                            if (construction_TBD == null)
+                                            {
+                                                construction_TBD = building.AddConstruction(null);
+                                                construction_TBD.name = constructionName;
+
+                                                if (apertureConstruction.Transparent(materialLibrary, keyValuePair.Value.Item1))
+                                                {
+                                                    construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
+                                                }
+
+                                                List<ConstructionLayer> constructionLayers = apertureConstruction.GetConstructionLayers(aperturePart);
+                                                if (constructionLayers != null && constructionLayers.Count != 0)
+                                                {
+                                                    int index = 1;
+                                                    foreach (ConstructionLayer constructionLayer in constructionLayers)
+                                                    {
+                                                        Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
+                                                        if (material == null)
+                                                        {
+                                                            continue;
+                                                        }
+
+                                                        TBD.material material_TBD = construction_TBD.AddMaterial(material);
+                                                        if (material_TBD != null)
+                                                        {
+                                                            material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                            construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
+                                                            index++;
+                                                        }
+                                                    }
+                                                }
+
+                                                constructions.Add(construction_TBD);
+                                            }
+                                        }
+
+                                        if (construction_TBD != null)
+                                        {
+                                            ApertureType apertureType = aperture.ApertureType;
+
+                                            buildingElement_Aperture = building.AddBuildingElement();
+                                            buildingElement_Aperture.name = keyValuePair.Key;
+
+                                            buildingElement_Aperture.SetColor(aperture, aperturePart);
+
+                                            buildingElement_Aperture.BEType = Query.BEType(keyValuePair.Value.Item1);
+                                            buildingElement_Aperture.AssignConstruction(construction_TBD);
+                                            buildingElements.Add(buildingElement_Aperture);
+                                        }
+
+
+
+                                        if (aperturePart == AperturePart.Pane && aperture.TryGetValue(Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
+                                        {
+                                            List<TBD.ApertureType> apertureTypes = Modify.SetApertureTypes(building, buildingElement_Aperture, openingProperties);
+                                        }
+                                    }
+
+                                    if (updateGuids && buildingElement_Aperture != null)
+                                    {
+                                        ApertureParameter apertureParameter = keyValuePair.Value.Item1 == AperturePart.Frame ? ApertureParameter.FrameBuildingElementGuid : ApertureParameter.PaneBuildingElementGuid;
+
+                                        Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
+                                        aperture_Temp.SetValue(apertureParameter, buildingElement_Aperture.GUID);
+                                        panel_Temp.RemoveAperture(aperture_Temp.Guid);
+                                        panel_Temp.AddAperture(aperture_Temp);
+                                    }
+
+                                    foreach (zoneSurface zoneSurface in keyValuePair.Value.Item2)
+                                    {
+                                        if (buildingElement_Aperture != null)
+                                        {
+                                            zoneSurface.buildingElement = buildingElement_Aperture;
+                                        }
+
+                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<Tuple<AperturePart, zoneSurface, bool>> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
+                                        {
+                                            zoneSurfaces_Aperture = new List<Tuple<AperturePart, zoneSurface, bool>>();
+                                            dictionary_Aperture[aperture.Guid] = zoneSurfaces_Aperture;
+                                        }
+
+                                        zoneSurfaces_Aperture.Add(new Tuple<AperturePart, zoneSurface, bool>(keyValuePair.Value.Item1, zoneSurface, dictionary_Panel.ContainsKey(panel.Guid)));
+                                    }
+                                }
+                            }
+                        }
+
+                        if (solarFaceSimulationResult != null)
+                        {
+                            List<SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(building, daysShades, zoneSurface_Panel, adjacencyCluster, solarFaceSimulationResult);
+                        }
+
+                        zoneSurface_Panel.type = adiabatic ? TBD.SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
+
+                        if (!dictionary_Panel.TryGetValue(panel.Guid, out List<Tuple<zoneSurface, bool>> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
+                        {
+                            zoneSurfaces_Panel = new List<Tuple<zoneSurface, bool>>();
+                            dictionary_Panel[panel.Guid] = zoneSurfaces_Panel;
+                        }
+
+                        zoneSurfaces_Panel.Add(new Tuple<zoneSurface, bool>(zoneSurface_Panel, reverse));
+
+                        if (updateGuids)
+                        {
+                            adjacencyCluster.AddObject(Analytical.Create.Panel(panel_Temp));
+                        }
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<Guid, List<Tuple<zoneSurface, bool>>> keyValuePair in dictionary_Panel)
+            {
+                if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
+                {
+                    continue;
+                }
+
+                keyValuePair.Value[1].Item1.linkSurface = keyValuePair.Value[0].Item1;
+                keyValuePair.Value[0].Item1.linkSurface = keyValuePair.Value[1].Item1;
+
+                Panel panel = adjacencyCluster.GetObject<Panel>(keyValuePair.Key);
+
+                bool reverse_1 = keyValuePair.Value[0].Item2;
+                bool reverse_2 = keyValuePair.Value[1].Item2;
+
+                if (keyValuePair.Value[0].Item1.inclination == 0 || keyValuePair.Value[0].Item1.inclination == 180)
+                {
+                    if (reverse_1)
+                    {
+                        keyValuePair.Value[0].Item1.reversed = 1;
+                    }
+                    if (reverse_2)
+                    {
+                        //reverse only one that are outside when test if in shell
+                        keyValuePair.Value[1].Item1.reversed = 1;
+                    }
+                    if (!reverse_1 && !reverse_2)
+                    {
+                        keyValuePair.Value.Last().Item1.reversed = 1;
+                    }
+                }
+                else
+                {
+                    float orientation = keyValuePair.Value[1].Item1.orientation;
+                    orientation += 180;
+                    if (orientation >= 360)
+                    {
+                        orientation -= 360;
+                    }
+
+                    keyValuePair.Value[1].Item1.orientation = orientation;
+
+                    List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
+                    bool adjacent = spaces_Adjacent != null && spaces_Adjacent.Count > 1;
+
+
+
+                    if (panel.PanelGroup == PanelGroup.Floor && adjacent)
+                    {
+                        keyValuePair.Value[1].Item1.inclination = Math.Abs(180 - keyValuePair.Value[1].Item1.inclination);
+
+                        if (reverse_1)
+                        {
+                            //reverse only one that are outside when test if in shell
+                            keyValuePair.Value[0].Item1.reversed = 1;
+                        }
+
+
+                        if (reverse_2)
+                        {
+                            //reverse only one that are outside when test if in shell
+                            keyValuePair.Value[1].Item1.reversed = 1;
+                        }
+                    }
+                    else
+                    {
+                        keyValuePair.Value[1].Item1.reversed = 1;
+                    }
+
+                    float inclination = keyValuePair.Value[1].Item1.inclination;
+                    while (inclination > 180)
+                    {
+                        inclination -= 180;
+                    }
+                    keyValuePair.Value[1].Item1.inclination = inclination;
+                }
+            }
+
+            foreach (KeyValuePair<Guid, List<Tuple<AperturePart, zoneSurface, bool>>> keyValuePair in dictionary_Aperture)
+            {
+                if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
+                {
+                    continue;
+                }
+
+                List<zoneSurface> zoneSurfaces = null;
+
+                zoneSurfaces = keyValuePair.Value.FindAll(x => x.Item1 == AperturePart.Frame).ConvertAll(x => x.Item2);
+                if (zoneSurfaces.Count == 2)
+                {
+                    zoneSurfaces[1].linkSurface = zoneSurfaces[0];
+                    zoneSurfaces[0].linkSurface = zoneSurfaces[1];
+                }
+
+
+                zoneSurfaces = keyValuePair.Value.FindAll(x => x.Item1 == AperturePart.Pane).ConvertAll(x => x.Item2);
+                if (zoneSurfaces.Count == 2)
+                {
+                    zoneSurfaces[1].linkSurface = zoneSurfaces[0];
+                    zoneSurfaces[0].linkSurface = zoneSurfaces[1];
+                }
+
+                foreach (Tuple<AperturePart, zoneSurface, bool> tuple in keyValuePair.Value)
+                {
+                    if (!tuple.Item3)
+                    {
+                        continue;
+                    }
+
+                    float orientation = tuple.Item2.orientation;
+                    orientation += 180;
+                    if (orientation >= 360)
+                    {
+                        orientation -= 360;
+                    }
+                    tuple.Item2.orientation = orientation;
+
+                    tuple.Item2.reversed = 1;  // only second panel window does not workk internla
+                }
+            }
         }
     }
 }

@@ -167,14 +167,14 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 {
                     if (index_AdjacencyCluster != -1)
                     {
-                        adjacencyCluster = sAMTSDDocument.ToSAM(spaceDataTypes, panelDataTypes);
+                        adjacencyCluster = sAMTSDDocument.ToSAM_AdjacencyCluster(spaceDataTypes, panelDataTypes);
                         dataAccess.SetData(index_AdjacencyCluster, new GooAdjacencyCluster(adjacencyCluster));
                     }
                         
 
                     if (index_Result != -1)
                     {
-                        results = Analytical.Tas.Convert.ToSAM(sAMTSDDocument);
+                        results = Analytical.Tas.Convert.ToSAM_Results(sAMTSDDocument);
                         dataAccess.SetDataList(index_Result, results?.ConvertAll(x => new GooResult(x)));
                     }
 

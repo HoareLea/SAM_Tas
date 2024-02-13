@@ -4,6 +4,25 @@ namespace SAM.Weather.Tas
 {
     public static partial class Convert
     {
+        public static WeatherData ToSAM_WeatherData(string path_TSD, int year = 2018)
+        {
+            if (string.IsNullOrWhiteSpace(path_TSD) || !System.IO.File.Exists(path_TSD))
+            {
+                return null;
+            }
+
+            WeatherData result = null;
+
+            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
+            {
+                result = ToSAM_WeatherData(sAMTSDDocument, year);
+                sAMTSDDocument.Close();
+            }
+
+            return result;
+        }
+
+
         public static WeatherData ToSAM_WeatherData(this SAMTSDDocument sAMTSDDocument, int year = 2018)
         {
             if (sAMTSDDocument == null)

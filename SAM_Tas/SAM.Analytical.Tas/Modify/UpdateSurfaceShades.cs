@@ -29,6 +29,28 @@ namespace SAM.Analytical.Tas
             return UpdateSurfaceShades(building, daysShades, zoneSurface, face3D, solarFaceSimulationResult, tolerance);
         }
 
+        public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, AdjacencyCluster adjacencyCluster, Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
+        {
+            if (daysShades == null || adjacencyCluster == null || solarFaceSimulationResult == null || zoneSurface == null)
+            {
+                return null;
+            }
+
+            Panel panel = adjacencyCluster.GetRelatedObjects<Panel>(solarFaceSimulationResult)?.FirstOrDefault();
+            if (panel == null)
+            {
+                return null;
+            }
+
+            Face3D face3D = panel.GetFace3D(true);
+            if (face3D == null)
+            {
+                return null;
+            }
+
+            return UpdateSurfaceShades(building, daysShades, zoneSurface, face3D, solarFaceSimulationResult, tolerance);
+        }
+
         public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, Face3D face3D, Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
         {
             if (daysShades == null || face3D == null || solarFaceSimulationResult == null || zoneSurface == null)

@@ -1,8 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.Properties;
-using SAM.Analytical.Tas;
-using SAM.Core;
 using SAM.Core.Grasshopper;
+using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +17,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -50,6 +49,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_tBDPath", NickName = "_tBDPath", Description = "TBD File Path", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_removeVentilation_", NickName = "_removeVentilation_", Description = "Remove Ventilation.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -103,7 +106,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfInputParam("_tBDPath");
             if (index == -1 || !dataAccess.GetData(index, ref path_TBD) || path_TBD == null)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                //AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
@@ -111,21 +114,44 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfInputParam("_analytical");
             if (index == -1 || !dataAccess.GetData(index, ref analyticalObject) || analyticalObject == null)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                //AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
+            }
+
+            bool removeVentilation = true;
+            index = Params.IndexOfInputParam("_removeVentilation_");
+            if (index != -1)
+            {
+                if(!dataAccess.GetData(index, ref removeVentilation))
+                {
+                    removeVentilation = true;
+                }
             }
 
             AdjacencyCluster adjacencyCluster = analyticalObject is AdjacencyCluster ? (AdjacencyCluster)analyticalObject : (analyticalObject as AnalyticalModel)?.AdjacencyCluster;
             if(adjacencyCluster == null)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                //AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
             bool result = false;
 
-            List<string> names = Analytical.Tas.Modify.UpdateIZAMs(path_TBD, adjacencyCluster);
-            result = names != null && names.Count > 0;
+            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+            {
+                List<string> names = Analytical.Tas.Modify.UpdateIZAMs(sAMTBDDocument, adjacencyCluster);
+                result = names != null && names.Count > 0;
+
+                if(removeVentilation)
+                {
+                    Analytical.Tas.Modify.RemoveVentilationGains(sAMTBDDocument, adjacencyCluster);
+                }
+
+                if(result)
+                {
+                    sAMTBDDocument.Save();
+                }
+            }
 
             if (adjacencyCluster != null)
             {

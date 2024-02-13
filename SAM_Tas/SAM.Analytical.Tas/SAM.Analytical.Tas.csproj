@@ -110,6 +110,9 @@
     <Compile Include="Classes\ConstructionCalculationData.cs" />
     <Compile Include="Classes\ApertureConstructionCalculationResult.cs" />
     <Compile Include="Classes\ConstructionCalculationResult.cs" />
+    <Compile Include="Classes\OverheatingCalculator.cs" />
+    <Compile Include="Classes\TSDConversionSettings.cs" />
+    <Compile Include="Classes\SizingSettings.cs" />
     <Compile Include="Classes\ThermalTransmittances.cs" />
     <Compile Include="Classes\ThermalTransmittanceCalculationResult.cs" />
     <Compile Include="Classes\GlazingCalculationResult.cs" />
@@ -145,6 +148,7 @@
     <Compile Include="Convert\ToTCD\Construction.cs" />
     <Compile Include="Convert\ToTCD\ConstructionFolder.cs" />
     <Compile Include="Convert\ToTCD\Material.cs" />
+    <Compile Include="Create\AdjacencyCluster.cs" />
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\ApertureConstructionCalculationData.cs" />
     <Compile Include="Create\GlazingCalculationData.cs" />
@@ -167,6 +171,7 @@
     <Compile Include="Interfaces\IThermalTransmittanceCalculationData.cs" />
     <Compile Include="Interfaces\IConstructionCalculationResult.cs" />
     <Compile Include="Interfaces\IConstructionCalculationData.cs" />
+    <Compile Include="Modify\ApplySystemSizingMethod.cs" />
     <Compile Include="Modify\Run.cs" />
     <Compile Include="Modify\SetApertureTypes.cs" />
     <Compile Include="Modify\AddDefaultZoneGroups.cs" />
@@ -178,6 +183,7 @@
     <Compile Include="Modify\SetSizingTypes.cs" />
     <Compile Include="Modify\SetColor.cs" />
     <Compile Include="Modify\UpdateAdiabatic.cs" />
+    <Compile Include="Modify\RemoveVentilationGains.cs" />
     <Compile Include="Modify\UpdateIZAMs.cs" />
     <Compile Include="Modify\UpdateUKBRFile.cs" />
     <Compile Include="Modify\UpdateZoneGroups.cs" />
@@ -282,6 +288,7 @@
     <Compile Include="Query\Source.cs" />
     <Compile Include="Query\RoomSurfaces.cs" />
     <Compile Include="Modify\RemoveZoneGrups.cs" />
+    <Compile Include="Query\ZoneDataGroups.cs" />
     <Compile Include="Query\ZoneGrups.cs" />
     <Compile Include="Query\Zone.cs" />
     <Compile Include="Query\ZoneSurfaces.cs" />
