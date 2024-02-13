@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.8";
+        public override string LatestComponentVersion => "1.0.9";
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
@@ -28,13 +28,13 @@ namespace SAM.Analytical.Grasshopper.Tas
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTSD3;
 
         /// <summary>
-        /// Initializes a new instance of the SAM_point3D class.
+        /// Initializes a new instance of TSDQueryTM52Results
         /// </summary>
         public TasTSDQueryTM52Results()
           : base("Tas.TSDQueryTM52Results", "Tas.TSDQueryTM52Results",
-              "Query TSD for TM52Results" +
-               "this node will query results for given space and output when inspect results",
-              "SAM WIP", "Tas")
+              "Query TSD for TM52Results from Space or Zone" +
+               "this node will query results for given space or zone and output when inspect results",
+              "SAM", "Tas")
         {
         }
 
@@ -47,7 +47,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces or Zone", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean;
 
@@ -61,11 +61,11 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 global::Grasshopper.Kernel.Parameters.Param_Integer @integer;
 
-                @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_startHourOfYear_", NickName = "_startHourOfYear_", Description = "Start Hour of Year Index", Access = GH_ParamAccess.item, Optional = true };
+                @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_startHourOfYear_", NickName = "_startHourOfYear_", Description = "Start Hour of Year Index \nDefault start summer 01 May", Access = GH_ParamAccess.item, Optional = true };
                 @integer.SetPersistentData(HourOfYear.SummerStartIndex);
                 result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
 
-                @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHourOfYear_", NickName = "_endHourOfYear_", Description = "End Hour of Year Index", Access = GH_ParamAccess.item, Optional = true };
+                @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHourOfYear_", NickName = "_endHourOfYear_", Description = "End Hour of Year Index \nDefault end summer 30 September", Access = GH_ParamAccess.item, Optional = true };
                 @integer.SetPersistentData(HourOfYear.SummerEndIndex);
                 result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
 
