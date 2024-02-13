@@ -40,6 +40,31 @@ namespace SAM.Analytical.Tas
                 tSDConversionSettings = new TSDConversionSettings();
             }
 
+            if(tSDConversionSettings.ZoneNames != null)
+            {
+                tSDConversionSettings = new TSDConversionSettings(tSDConversionSettings);
+
+                if(tSDConversionSettings.SpaceNames == null)
+                {
+                    tSDConversionSettings.SpaceNames = new HashSet<string>();
+                }
+
+                List<TSD.ZoneDataGroup> zoneDataGroups = Query.ZoneDataGroups(tSDDocument.SimulationData);
+                foreach(TSD.ZoneDataGroup zoneDataGroup in zoneDataGroups)
+                {
+                    if(!tSDConversionSettings.ZoneNames.Contains(zoneDataGroup.name))
+                    {
+                        continue;
+                    }
+
+                    List<TSD.ZoneData> zoneDatas = zoneDataGroup.ZoneDatas();
+                    if(zoneDatas != null)
+                    {
+                        zoneDatas.ForEach(x => tSDConversionSettings.SpaceNames.Add(x.name));
+                    }
+                }
+            }
+
             AdjacencyCluster adjacencyCluster = ToSAM_AdjacencyCluster(buildingData, tSDConversionSettings.SpaceDataTypes, tSDConversionSettings.PanelDataTypes, tSDConversionSettings.SpaceNames);
 
             if (tSDConversionSettings.ConvertZones)

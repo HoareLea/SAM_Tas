@@ -12,6 +12,8 @@ namespace SAM.Analytical.Tas
 
         public HashSet<string> SpaceNames { get; set; } = null;
 
+        public HashSet<string> ZoneNames { get; set; } = null;
+
         public bool ConvertWeaterData { get; set; } = true;
 
         public bool ConvertZones { get; set; } = false;
@@ -35,6 +37,7 @@ namespace SAM.Analytical.Tas
                 ConvertWeaterData = tSDConversionSettings.ConvertWeaterData;
                 ConvertZones = tSDConversionSettings.ConvertZones;
                 SpaceNames = tSDConversionSettings.SpaceNames == null ? null : new HashSet<string>(tSDConversionSettings.SpaceNames);
+                ZoneNames = tSDConversionSettings.ZoneNames == null ? null : new HashSet<string>(tSDConversionSettings.ZoneNames);
             }
         }
 
@@ -90,6 +93,19 @@ namespace SAM.Analytical.Tas
                 }
             }
 
+            if (jObject.ContainsKey("ZoneNames"))
+            {
+                JArray jArray = jObject.Value<JArray>("ZoneNames");
+                if (jArray != null)
+                {
+                    ZoneNames = new HashSet<string>();
+                    foreach (string @string in jArray)
+                    {
+                        ZoneNames.Add(@string);
+                    }
+                }
+            }
+
             if (jObject.ContainsKey("ConvertWeaterData"))
             {
                 ConvertWeaterData = jObject.Value<bool>("ConvertWeaterData");
@@ -133,17 +149,33 @@ namespace SAM.Analytical.Tas
             if (SpaceNames != null)
             {
                 JArray jArray = new JArray();
-                foreach (string spaceNames in SpaceNames)
+                foreach (string spaceName in SpaceNames)
                 {
-                    if(spaceNames == null)
+                    if(spaceName == null)
                     {
                         continue;
                     }
 
-                    jArray.Add(spaceNames);
+                    jArray.Add(spaceName);
                 }
 
                 jObject.Add("SpaceNames", jArray);
+            }
+
+            if (ZoneNames != null)
+            {
+                JArray jArray = new JArray();
+                foreach (string zoneName in ZoneNames)
+                {
+                    if (zoneName == null)
+                    {
+                        continue;
+                    }
+
+                    jArray.Add(zoneName);
+                }
+
+                jObject.Add("ZoneNames", jArray);
             }
 
             jObject.Add("ConvertWeaterData", ConvertWeaterData);
