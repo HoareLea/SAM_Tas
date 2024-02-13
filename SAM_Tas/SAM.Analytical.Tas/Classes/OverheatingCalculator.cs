@@ -155,6 +155,11 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
+                if(string.IsNullOrWhiteSpace(systemTypeName))
+                {
+                    systemTypeName = "NV";
+                }
+
                 List<TM59SpaceApplication> tM59SpaceApplications = TM59Manager.TM59SpaceApplications(space);
 
                 if (!Core.Query.TryGetValue(space_Temp, SpaceDataType.OccupantSensibleGain.Text(), out JArray jArray_OccupantSensibleGain) || jArray_OccupantSensibleGain == null)
