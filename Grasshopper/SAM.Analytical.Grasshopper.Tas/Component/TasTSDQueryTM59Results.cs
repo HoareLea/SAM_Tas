@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
@@ -47,7 +47,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces or Zone", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean;
 
@@ -133,13 +133,26 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             List<Space> spaces = null;
+            List<Zone> zones = null;
             index = Params.IndexOfInputParam("_spaces_");
             if (index != -1)
             {
-                spaces = new List<Space>();
-                if(!dataAccess.GetDataList(index, spaces))
+                List<IAnalyticalObject> analyticalObjects = new List<IAnalyticalObject>();
+                if (!dataAccess.GetDataList(index, analyticalObjects))
+                {
+                    analyticalObjects = null;
+                }
+
+                spaces = analyticalObjects?.FindAll(x => x is Space).ConvertAll(x => x as Space);
+                if (spaces != null && spaces.Count == 0)
                 {
                     spaces = null;
+                }
+
+                zones = analyticalObjects?.FindAll(x => x is Zone).ConvertAll(x => x as Zone);
+                if (zones != null && zones.Count == 0)
+                {
+                    zones = null;
                 }
             }
 
@@ -171,6 +184,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 SpaceDataTypes = new HashSet<SpaceDataType>() { SpaceDataType.ResultantTemperature, SpaceDataType.OccupantSensibleGain },
                 SpaceNames = spaces == null ? null : new HashSet<string>(spaces.ConvertAll(x => x?.Name)),
+                ZoneNames = zones == null ? null : new HashSet<string>(zones.ConvertAll(x => x?.Name)),
                 ConvertWeaterData = true,
                 ConvertZones = true
             };
@@ -193,12 +207,45 @@ namespace SAM.Analytical.Grasshopper.Tas
                 foreach (Space space in spaces)
                 {
                     Space space_Result = analyticalModel.GetSpaces()?.Find(x => x.Name == space.Name);
-                    if(space_Result == null)
+                    if (space_Result == null)
                     {
                         continue;
                     }
 
                     spaces_Result.Add(space_Result);
+                }
+            }
+
+            if (zones != null)
+            {
+                if (spaces_Result == null)
+                {
+                    spaces_Result = new List<Space>();
+                }
+
+                foreach (Zone zone in zones)
+                {
+                    Zone zone_Temp = analyticalModel.GetZones()?.Find(x => x.Name == zone.Name);
+                    if (zone_Temp == null)
+                    {
+                        continue;
+                    }
+
+                    List<Space> spaces_Temp = analyticalModel.AdjacencyCluster.GetRelatedObjects<Space>(zone_Temp);
+                    if (spaces_Temp == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (Space space_Temp in spaces_Temp)
+                    {
+                        if (spaces_Result.Find(x => x.Name == space_Temp.Name) != null)
+                        {
+                            continue;
+                        }
+
+                        spaces_Result.Add(space_Temp);
+                    }
                 }
             }
 
