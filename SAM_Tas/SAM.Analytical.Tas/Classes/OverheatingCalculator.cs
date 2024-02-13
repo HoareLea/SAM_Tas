@@ -143,14 +143,32 @@ namespace SAM.Analytical.Tas
                 string systemTypeName = space_Temp?.InternalCondition?.GetSystemTypeName<VentilationSystemType>()?.ToUpper();
                 if(string.IsNullOrWhiteSpace(systemTypeName))
                 {
+                    SystemTypeLibrary systemTypeLibrary = Analytical.Query.DefaultSystemTypeLibrary();
+                    
                     List<Zone> zones = adjacencyCluster.GetRelatedObjects<Zone>(space_Temp);
                     if(zones != null)
                     {
-                        Zone zone = zones.Find(x => x.Name.ToUpper() == "NV");
-
-                        if (zone != null)
+                        foreach(Zone zone_Temp in zones)
                         {
-                            systemTypeName = zone.Name.ToUpper();
+                            VentilationSystemType ventilationSystemType = systemTypeLibrary.GetSystemTypes<VentilationSystemType>(zone_Temp.Name, TextComparisonType.Equals, true)?.FirstOrDefault();
+                            if(ventilationSystemType != null)
+                            {
+                                systemTypeName = ventilationSystemType.Name.ToUpper().Trim();
+                                break;
+                            }
+                        }
+
+                        if (string.IsNullOrWhiteSpace(systemTypeName))
+                        {
+                            foreach (Zone zone_Temp in zones)
+                            {
+                                VentilationSystemType ventilationSystemType = systemTypeLibrary.GetSystemTypes<VentilationSystemType>(zone_Temp.Name, TextComparisonType.StartsWith, false)?.FirstOrDefault();
+                                if (ventilationSystemType != null)
+                                {
+                                    systemTypeName = ventilationSystemType.Name.ToUpper().Trim();
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -203,7 +221,7 @@ namespace SAM.Analytical.Tas
                 }
 
                 TM59ExtendedResult tM59ExtendedResult = null;
-                if (tM59SpaceApplications == null || tM59SpaceApplications.Count == 0)
+                if (tM59SpaceApplications == null || tM59SpaceApplications.Count == 0 || (!string.IsNullOrWhiteSpace(systemTypeName) && systemTypeName.Equals("UV")))
                 {
                     tM59ExtendedResult = new TM59CorridorExtendedResult(space_Temp.Name, Source, space.Guid.ToString(), TM52BuildingCategory, occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
                 }
