@@ -76,7 +76,7 @@ namespace SAM.Analytical.Tas
                 elevation = boundingBox3D.Min.Z - height -  1;
             }
 
-            //RemoveInternalConditions(building, dictionary_Spaces.Keys);
+            
 
             foreach (AirHandlingUnit airHandlingUnit in airHandlingUnits)
             {
@@ -103,8 +103,12 @@ namespace SAM.Analytical.Tas
                 zone.name = airHandlingUnit.Name;
                 zone.sizeHeating = (int)TBD.SizingType.tbdSizing;
 
+                string name = string.Format("{0}", airHandlingUnitAirMovement.Name);
+
+                RemoveInternalConditions(building, new string[] { name });
+
                 TBD.InternalCondition internalCondition = building.AddIC(null);
-                internalCondition.name = string.Format("{0}", airHandlingUnitAirMovement.Name);
+                internalCondition.name = name;
                 foreach (dayType dayType in dayTypes)
                 {
                     internalCondition.SetDayType(dayType, true);
@@ -160,9 +164,12 @@ namespace SAM.Analytical.Tas
                 double airFlow = Analytical.Query.AirFlow(adjacencyCluster, airHandlingUnitAirMovement, out Profile profile_AirHandlingUnit);
                 if(profile_AirHandlingUnit != null)
                 {
+                    name = string.Format("IZAM {0} FROM OUTSIDE", airHandlingUnitAirMovement.Name);
+                    RemoveIZAMs(building, new string[] { name });
+
                     IZAM iZAM = building.AddIZAM(null);
                     iZAM.fromOutside = 1;
-                    iZAM.name = string.Format("IZAM {0} FROM OUTSIDE", airHandlingUnitAirMovement.Name);
+                    iZAM.name = name;
                     result.Add(iZAM.name);
 
                     foreach (dayType dayType in dayTypes)
@@ -199,13 +206,6 @@ namespace SAM.Analytical.Tas
 
                 foreach(SpaceAirMovement spaceAirMovement in spaceAirMovements)
                 {
-                    IZAM iZAM = building.AddIZAM(null);
-
-                    foreach (dayType dayType in dayTypes)
-                    {
-                        iZAM.SetDayType(dayType, true);
-                    }
-
                     ObjectReference objectReference_From = Core.Convert.ComplexReference<ObjectReference>(spaceAirMovement.From);
                     ObjectReference objectReference_To = Core.Convert.ComplexReference<ObjectReference>(spaceAirMovement.To);
 
@@ -214,6 +214,16 @@ namespace SAM.Analytical.Tas
 
                     string name = string.Format("IZAM {0}", sAMObject_From.Name);
                     name = sAMObject_To == null ? string.Format("{0} TO OUTSIDE", name) : string.Format("{0} TO {1}", name, sAMObject_To.Name);
+
+                    RemoveIZAMs(building, new string[] { name });
+
+                    IZAM iZAM = building.AddIZAM(null);
+
+                    foreach (dayType dayType in dayTypes)
+                    {
+                        iZAM.SetDayType(dayType, true);
+                    }
+
                     iZAM.name = name;
                     iZAM.fromOutside = 0;
                     result.Add(iZAM.name);
