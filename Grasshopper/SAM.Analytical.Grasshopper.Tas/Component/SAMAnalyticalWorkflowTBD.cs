@@ -61,6 +61,10 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_addIZAMs_", NickName = "_addIZAMs_", Description = "Add IZAMs", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_sizing_", NickName = "_sizing_", Description = "Sizing", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
@@ -337,6 +341,16 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            bool addIZAMs = true;
+            index = Params.IndexOfInputParam("_addIZAMs_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref addIZAMs))
+                {
+                    addIZAMs = true;
+                }
+            }
+
             WorkflowSettings workflowSettings = new WorkflowSettings()
             {
                 Path_TBD = path_TBD,
@@ -350,6 +364,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 Sizing = sizing,
                 UpdateZones = false,
                 UseWidths = false,
+                AddIZAMs = addIZAMs,
                 SimulateFrom = simulate_From,
                 SimulateTo = simulate_To
             };

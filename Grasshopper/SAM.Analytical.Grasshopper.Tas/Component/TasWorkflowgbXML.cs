@@ -20,7 +20,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.4";
+        public override string LatestComponentVersion => "1.0.5";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -60,6 +60,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_addIZAMs_", NickName = "_addIZAMs_", Description = "Add IZAMs", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_sizing_", NickName = "_sizing_", Description = "Sizing", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(true);
@@ -264,6 +268,16 @@ namespace SAM.Analytical.Grasshopper.Tas
                 if (!dataAccess.GetData(index, ref unmetHours))
                     unmetHours = true;
 
+            bool addIZAMs = true;
+            index = Params.IndexOfInputParam("_addIZAMs_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref addIZAMs))
+                {
+                    addIZAMs = true;
+                }
+            }
+
             WorkflowSettings workflowSettings = new WorkflowSettings()
             {
                 Path_TBD = path_TBD,
@@ -277,6 +291,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 Sizing = sizing,
                 UpdateZones = true,
                 UseWidths = useBEWidths,
+                AddIZAMs = addIZAMs,
                 SimulateFrom = 1,
                 SimulateTo = 365
             };

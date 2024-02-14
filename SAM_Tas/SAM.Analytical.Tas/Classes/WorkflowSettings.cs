@@ -29,6 +29,8 @@ namespace SAM.Analytical.Tas
 
         public bool UseWidths { get; set; } = false;
 
+        public bool AddIZAMs { get; set; } = true;
+
         public int SimulateFrom { get; set; } = 1;
 
         public int SimulateTo { get; set; } = 1;
@@ -58,6 +60,7 @@ namespace SAM.Analytical.Tas
                 Sizing = workflowSettings.Sizing;
                 UpdateZones = workflowSettings.UpdateZones;
                 UseWidths = workflowSettings.UseWidths;
+                AddIZAMs = workflowSettings.AddIZAMs;
                 SimulateFrom = workflowSettings.SimulateFrom;
                 SimulateTo = workflowSettings.SimulateTo;
             }
@@ -150,6 +153,11 @@ namespace SAM.Analytical.Tas
                 UseWidths = jObject.Value<bool>("UseWidths");
             }
 
+            if (jObject.ContainsKey("AddIZAMs"))
+            {
+                AddIZAMs = jObject.Value<bool>("AddIZAMs");
+            }
+
             if (jObject.ContainsKey("SimulateFrom"))
             {
                 SimulateFrom = jObject.Value<int>("SimulateFrom");
@@ -221,6 +229,7 @@ namespace SAM.Analytical.Tas
             jObject.Add("Sizing", Sizing);
             jObject.Add("UpdateZones", UpdateZones);
             jObject.Add("UseWidths", UseWidths);
+            jObject.Add("AddIZAMs", AddIZAMs);
 
             jObject.Add("SimulateFrom", SimulateFrom);
             jObject.Add("SimulateTo", SimulateTo);

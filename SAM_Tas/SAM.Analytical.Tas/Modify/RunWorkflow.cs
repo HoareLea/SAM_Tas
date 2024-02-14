@@ -30,6 +30,11 @@ namespace SAM.Analytical.Tas
                 count++;
             }
 
+            if (workflowSettings.AddIZAMs)
+            {
+                count++;
+            }
+
             if (workflowSettings.DesignDays_Cooling != null || workflowSettings.DesignDays_Heating != null)
             {
                 count++;
@@ -174,7 +179,11 @@ namespace SAM.Analytical.Tas
                         SetApertureTypes(tBDDocument.Building, adjacencyCluster, Core.Tolerance.MacroDistance);
                     }
 
-                    UpdateIZAMs(tBDDocument, adjacencyCluster);
+                    if(workflowSettings.AddIZAMs)
+                    {
+                        simpleProgressForm.Update("Add IZAMs");
+                        UpdateIZAMs(tBDDocument, adjacencyCluster);
+                    }
 
                     sAMTBDDocument.Save();
                 }
