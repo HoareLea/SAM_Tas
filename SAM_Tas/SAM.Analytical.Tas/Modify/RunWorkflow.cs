@@ -5,32 +5,32 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, string path_TBD, string path_gbXML = null, Weather.WeatherData weatherData = null, List<DesignDay> heatingDesignDays = null, List<DesignDay> coolingDesignDays = null, List<SurfaceOutputSpec> surfaceOutputSpecs = null, bool unmetHours = true, bool simulate = true, bool sizing = true, bool updateZones = true, bool useBEWidths = false, int simulateFrom = 1, int simulateTo = 1)
+        public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, WorkflowSettings workflowSettings)
         {
-            if (analyticalModel == null || string.IsNullOrWhiteSpace(path_TBD))
+            if (analyticalModel == null || workflowSettings == null)
             {
                 return null;
             }
 
             AnalyticalModel result = new AnalyticalModel(analyticalModel);
 
-            string directory = System.IO.Path.GetDirectoryName(path_TBD);
-            string fileName = System.IO.Path.GetFileNameWithoutExtension(path_TBD);
+            string directory = System.IO.Path.GetDirectoryName(workflowSettings.Path_TBD);
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(workflowSettings.Path_TBD);
 
             string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
 
             int count = 6;
-            if (!string.IsNullOrWhiteSpace(path_gbXML))
+            if (!string.IsNullOrWhiteSpace(workflowSettings.Path_gbXML))
             {
                 count = count + 9;
             }
 
-            if (updateZones)
+            if (workflowSettings.UpdateZones)
             {
                 count++;
             }
 
-            if (coolingDesignDays != null || heatingDesignDays != null)
+            if (workflowSettings.DesignDays_Cooling != null || workflowSettings.DesignDays_Heating != null)
             {
                 count++;
             }
@@ -43,7 +43,7 @@ namespace SAM.Analytical.Tas
 
             using (Core.Windows.Forms.ProgressForm simpleProgressForm = new Core.Windows.Forms.ProgressForm("SAM Workflow - Preparing TBD", count))
             {
-                if (!string.IsNullOrWhiteSpace(path_gbXML))
+                if (!string.IsNullOrWhiteSpace(workflowSettings.Path_gbXML))
                 {
                     string path_T3D = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "t3d"));
                     if (System.IO.File.Exists(path_T3D))
@@ -64,14 +64,14 @@ namespace SAM.Analytical.Tas
                     float longitude = float.NaN;
                     float timeZone = float.NaN;
                     simpleProgressForm.Update("Opening TBD file");
-                    using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+                    using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(workflowSettings.Path_TBD))
                     {
                         TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
 
                         simpleProgressForm.Update("Updating Weather Data");
-                        if (weatherData != null)
+                        if (workflowSettings.WeatherData != null)
                         {
-                            Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, adjacencyCluster.BuildingHeight());
+                            Weather.Tas.Modify.UpdateWeatherData(tBDDocument, workflowSettings.WeatherData, adjacencyCluster.BuildingHeight());
                         }
 
                         if (!string.IsNullOrWhiteSpace(guid))
@@ -109,10 +109,10 @@ namespace SAM.Analytical.Tas
                         TAS3D.T3DDocument t3DDocument = sAMT3DDocument.T3DDocument;
 
                         simpleProgressForm.Update("Importing gbXML");
-                        t3DDocument.TogbXML(path_gbXML, true, true, true);
+                        t3DDocument.TogbXML(workflowSettings.Path_gbXML, true, true, true);
 
                         simpleProgressForm.Update("Updating T3D file");
-                        t3DDocument.SetUseBEWidths(useBEWidths);
+                        t3DDocument.SetUseBEWidths(workflowSettings.UseWidths);
                         result = Query.UpdateT3D(result, t3DDocument);
 
                         t3DDocument.Building.latitude = float.IsNaN(latitude) ? t3DDocument.Building.latitude : latitude;
@@ -122,12 +122,12 @@ namespace SAM.Analytical.Tas
                         sAMT3DDocument.Save();
 
                         simpleProgressForm.Update("T3D to TBD -> Shading");
-                        Convert.ToTBD(t3DDocument, path_TBD, 1, 365, 15, true);
+                        Convert.ToTBD(t3DDocument, workflowSettings.Path_TBD, 1, 365, 15, true);
                     }
                 }
 
                 simpleProgressForm.Update("Opening TBD");
-                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(workflowSettings.Path_TBD))
                 {
                     TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
 
@@ -153,33 +153,35 @@ namespace SAM.Analytical.Tas
                     UpdateThermalParameters(adjacencyCluster, tBDDocument.Building);
                     result = new AnalyticalModel(result, adjacencyCluster);
 
-                    if (updateZones)
+                    if (workflowSettings.UpdateZones)
                     {
                         simpleProgressForm.Update("Updating Updating Zones");
                         UpdateZones(tBDDocument.Building, result, true);
                     }
 
-                    if (coolingDesignDays != null || heatingDesignDays != null)
+                    if (workflowSettings.DesignDays_Cooling != null || workflowSettings.DesignDays_Heating != null)
                     {
                         simpleProgressForm.Update("Adding Design Days");
-                        AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
+                        AddDesignDays(tBDDocument, workflowSettings.DesignDays_Cooling, workflowSettings.DesignDays_Heating, 30);
                     }
 
                     simpleProgressForm.Update("Creating Zone Groups");
                     AddDefaultZoneGroups(tBDDocument?.Building, adjacencyCluster);
 
-                    if (!string.IsNullOrWhiteSpace(path_gbXML))
+                    if (!string.IsNullOrWhiteSpace(workflowSettings.Path_gbXML))
                     {
                         simpleProgressForm.Update("Updating Aperture Types");
                         SetApertureTypes(tBDDocument.Building, adjacencyCluster, Core.Tolerance.MacroDistance);
                     }
+
+                    UpdateIZAMs(tBDDocument, adjacencyCluster);
 
                     sAMTBDDocument.Save();
                 }
 
             }
 
-            if (coolingDesignDays != null || heatingDesignDays != null)
+            if (workflowSettings.DesignDays_Cooling != null || workflowSettings.DesignDays_Heating != null)
             {
                 if (adjacencyCluster == null)
                 {
@@ -188,19 +190,19 @@ namespace SAM.Analytical.Tas
 
                 if (adjacencyCluster != null)
                 {
-                    if (coolingDesignDays != null)
+                    if (workflowSettings.DesignDays_Cooling != null)
                     {
-                        for (int i = 0; i < coolingDesignDays.Count; i++)
+                        for (int i = 0; i < workflowSettings.DesignDays_Cooling.Count; i++)
                         {
-                            adjacencyCluster.AddObject(new DesignDay(coolingDesignDays[i], LoadType.Cooling));
+                            adjacencyCluster.AddObject(new DesignDay(workflowSettings.DesignDays_Cooling[i], LoadType.Cooling));
                         }
                     }
 
-                    if (heatingDesignDays != null)
+                    if (workflowSettings.DesignDays_Heating != null)
                     {
-                        for (int i = 0; i < heatingDesignDays.Count; i++)
+                        for (int i = 0; i < workflowSettings.DesignDays_Heating.Count; i++)
                         {
-                            adjacencyCluster.AddObject(new DesignDay(heatingDesignDays[i], LoadType.Heating));
+                            adjacencyCluster.AddObject(new DesignDay(workflowSettings.DesignDays_Heating[i], LoadType.Heating));
                         }
                     }
                 }
@@ -214,22 +216,22 @@ namespace SAM.Analytical.Tas
             }
 
             count = 2;
-            if(surfaceOutputSpecs != null && surfaceOutputSpecs.Count > 0)
+            if(workflowSettings.SurfaceOutputSpecs != null && workflowSettings.SurfaceOutputSpecs.Count > 0)
             {
                 count = count + 2;
             }
 
-            if(simulate)
+            if(workflowSettings.Simulate)
             {
                 count = count + 2;
             }
 
-            if(unmetHours)
+            if(workflowSettings.UnmetHours)
             {
                 count++;
             }
 
-            if(!sizing)
+            if(!workflowSettings.Sizing)
             {
                 count--;
             }
@@ -237,35 +239,37 @@ namespace SAM.Analytical.Tas
             using (Core.Windows.Forms.ProgressForm progressForm = new Core.Windows.Forms.ProgressForm("SAM Workflow - Simulation", count))
             {
 
-                if(sizing)
+                
+                
+                if(workflowSettings.Sizing)
                 {
                     progressForm.Update("Sizing");
-                    Query.Sizing(path_TBD, new SizingSettings() { ExcludeOutdoorAir = false, ExcludePositiveInternalGains = true }, result);
+                    Query.Sizing(workflowSettings.Path_TBD, new SizingSettings() { ExcludeOutdoorAir = false, ExcludePositiveInternalGains = true }, result);
                 }
 
 
                 progressForm.Update("Opening TBD");
-                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(workflowSettings.Path_TBD))
                 {
                     TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
 
-                    if (surfaceOutputSpecs != null && surfaceOutputSpecs.Count > 0)
+                    if (workflowSettings.SurfaceOutputSpecs != null && workflowSettings.SurfaceOutputSpecs.Count > 0)
                     {
                         progressForm.Update("Updating Surface Output Specs");
-                        Core.Tas.Modify.UpdateSurfaceOutputSpecs(tBDDocument, surfaceOutputSpecs);
+                        Core.Tas.Modify.UpdateSurfaceOutputSpecs(tBDDocument, workflowSettings.SurfaceOutputSpecs);
                         progressForm.Update("Assigning Surface Output Specs");
-                        Core.Tas.Modify.AssignSurfaceOutputSpecs(tBDDocument, surfaceOutputSpecs[0].Name);
+                        Core.Tas.Modify.AssignSurfaceOutputSpecs(tBDDocument, workflowSettings.SurfaceOutputSpecs[0].Name);
                         sAMTBDDocument.Save();
                     }
 
-                    if (simulate)
+                    if (workflowSettings.Simulate)
                     {
                         progressForm.Update("Simulating Model");
-                        Simulate(tBDDocument, path_TSD, simulateFrom, simulateTo);
+                        Simulate(tBDDocument, path_TSD, workflowSettings.SimulateFrom, workflowSettings.SimulateTo);
                     }
                 }
 
-                if (!simulate)
+                if (!workflowSettings.Simulate)
                 {
                     return result;
                 }
@@ -274,10 +278,10 @@ namespace SAM.Analytical.Tas
                 adjacencyCluster = result.AdjacencyCluster;
                 List<Core.Result> results = AddResults(path_TSD, adjacencyCluster);
 
-                if (unmetHours)
+                if (workflowSettings.UnmetHours)
                 {
                     progressForm.Update("Calculating Unmet Hours");
-                    List<Core.Result> results_UnmetHours = Query.UnmetHours(path_TSD, path_TBD, 0.5);
+                    List<Core.Result> results_UnmetHours = Query.UnmetHours(path_TSD, workflowSettings.Path_TBD, 0.5);
                     if (results_UnmetHours != null && results_UnmetHours.Count > 0)
                     {
                         foreach (Core.Result result_UnmetHours in results_UnmetHours)
@@ -301,7 +305,7 @@ namespace SAM.Analytical.Tas
                 }
 
                 progressForm.Update("Updating Design Loads");
-                adjacencyCluster = UpdateDesignLoads(path_TBD, adjacencyCluster);
+                adjacencyCluster = UpdateDesignLoads(workflowSettings.Path_TBD, adjacencyCluster);
             }
 
             return new AnalyticalModel(result, adjacencyCluster);

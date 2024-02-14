@@ -1,6 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
+using SAM.Analytical.Tas;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using SAM.Weather;
@@ -336,7 +337,24 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, path_TBD, null, null, heatingDesignDays, coolingDesignDays, surfaceOutputSpecs, unmetHours, simulate, sizing, false, false, simulate_From, simulate_To);
+            WorkflowSettings workflowSettings = new WorkflowSettings()
+            {
+                Path_TBD = path_TBD,
+                Path_gbXML = null,
+                WeatherData = null,
+                DesignDays_Heating = heatingDesignDays,
+                DesignDays_Cooling = coolingDesignDays,
+                SurfaceOutputSpecs = surfaceOutputSpecs,
+                UnmetHours = unmetHours,
+                Simulate = simulate,
+                Sizing = sizing,
+                UpdateZones = false,
+                UseWidths = false,
+                SimulateFrom = simulate_From,
+                SimulateTo = simulate_To
+            };
+
+            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, workflowSettings);
 
             index = Params.IndexOfOutputParam("_path_TSD");
             if (index != -1)
