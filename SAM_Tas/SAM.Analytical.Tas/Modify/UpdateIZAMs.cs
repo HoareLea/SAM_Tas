@@ -76,6 +76,8 @@ namespace SAM.Analytical.Tas
                 elevation = boundingBox3D.Min.Z - height -  1;
             }
 
+            //RemoveInternalConditions(building, dictionary_Spaces.Keys);
+
             foreach (AirHandlingUnit airHandlingUnit in airHandlingUnits)
             {
                 AirHandlingUnitAirMovement airHandlingUnitAirMovement = adjacencyCluster.GetRelatedObjects<AirHandlingUnitAirMovement>(airHandlingUnit)?.FirstOrDefault();
