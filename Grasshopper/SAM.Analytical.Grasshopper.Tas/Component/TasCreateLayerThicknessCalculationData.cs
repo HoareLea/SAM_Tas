@@ -22,7 +22,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -51,7 +51,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_constructionName", NickName = "_constructionName", Description = "Construction Name", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_layerIndex", NickName = "_layerIndex", Description = "Layer Index", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "layerIndex_", NickName = "layerIndex_", Description = "Layer Index", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "_thermalTransmittance", NickName = "_thermalTransmittance", Description = "Thermal Transmittance", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_heatFlowDirection", NickName = "_heatFlowDirection", Description = "HeatFlowDirection", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_external", NickName = "_external", Description = "External", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
@@ -100,11 +100,10 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             int layerIndex = -1;
-            index = Params.IndexOfInputParam("_layerIndex");
-            if (index == -1 || !dataAccess.GetData(index, ref layerIndex) || layerIndex == -1)
+            index = Params.IndexOfInputParam("layerIndex_");
+            if (index != -1 )
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-                return;
+                dataAccess.GetData(index, ref layerIndex);
             }
 
             double thermalTransmittance = double.NaN;

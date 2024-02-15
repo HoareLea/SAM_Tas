@@ -22,7 +22,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -125,7 +125,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 layerThicknessCalculationData.ConstructionName = constructionName_Temp;
             }
 
-            int layerIndex_Temp = -1;
+            layerThicknessCalculationData.LayerIndex = -1;
+            int layerIndex_Temp = layerThicknessCalculationData.LayerIndex;
             index = Params.IndexOfInputParam("layerIndex_");
             if (index != -1 && dataAccess.GetData(index, ref layerIndex_Temp) && layerIndex_Temp != -1)
             {

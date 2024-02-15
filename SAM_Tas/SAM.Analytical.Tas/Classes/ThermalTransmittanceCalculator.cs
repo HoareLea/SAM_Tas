@@ -308,7 +308,25 @@ namespace SAM.Analytical.Tas
             LayerThicknessCalculationResult layerThicknessCalculationResult = null;
 
             List<TCD.material> materials = construction_TCD.Materials();
-            if(materials == null || materials.Count <= layerThicknessCalculationData.LayerIndex)
+            if (materials == null || materials.Count == 0)
+            {
+                return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, initialThermalTransmittance, thermalTransmittance, double.NaN);
+            }
+
+            int layerIndex = layerThicknessCalculationData.LayerIndex;
+            if(layerIndex == -1)
+            {
+                double conductivity = double.MinValue;
+                for (int i = 0; i < materials.Count; i++)
+                {
+                    if (materials[i].conductivity < conductivity)
+                    {
+                        layerIndex = i;
+                    }
+                }
+            }
+
+            if(materials.Count <= layerIndex)
             {
                 return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, initialThermalTransmittance, thermalTransmittance, double.NaN);
             }
