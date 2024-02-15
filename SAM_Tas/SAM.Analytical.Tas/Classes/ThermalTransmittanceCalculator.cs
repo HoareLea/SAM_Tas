@@ -316,12 +316,13 @@ namespace SAM.Analytical.Tas
             int layerIndex = layerThicknessCalculationData.LayerIndex;
             if(layerIndex == -1)
             {
-                double conductivity = double.MinValue;
+                double conductivity = double.MaxValue;
                 for (int i = 0; i < materials.Count; i++)
                 {
                     if (materials[i].conductivity < conductivity)
                     {
                         layerIndex = i;
+                        conductivity = materials[i].conductivity;
                     }
                 }
             }
@@ -331,7 +332,7 @@ namespace SAM.Analytical.Tas
                 return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, initialThermalTransmittance, thermalTransmittance, double.NaN);
             }
 
-            TCD.material material = materials[layerThicknessCalculationData.LayerIndex];
+            TCD.material material = materials[layerIndex];
             if(material == null)
             {
                 return new LayerThicknessCalculationResult(Query.Source(),layerThicknessCalculationData.ConstructionName, -1, double.NaN, initialThermalTransmittance, thermalTransmittance, double.NaN);
@@ -347,7 +348,7 @@ namespace SAM.Analytical.Tas
 
             double calculatedThermalTransmittance = func.Invoke(thickness);
 
-            return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, layerThicknessCalculationData.LayerIndex, thickness, initialThermalTransmittance, thermalTransmittance, calculatedThermalTransmittance);
+            return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, layerIndex, thickness, initialThermalTransmittance, thermalTransmittance, calculatedThermalTransmittance);
         }
 
         private ThermalTransmittanceCalculationResult Calculate(Guid constructionGuid, TCD.Document document)
