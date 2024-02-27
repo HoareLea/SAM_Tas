@@ -19,9 +19,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
 
-            ISystemComponent systemComponent = @dynamic as ISystemComponent;
-
-            Point2D location = systemComponent.GetPosition()?.ToSAM();
+            Point2D location =((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             result = Systems.Create.DisplayObject<DisplaySystemHeatingCoil>(result, location, Systems.Query.DefaultDisplaySystemManager());
 
