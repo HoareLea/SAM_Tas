@@ -12,7 +12,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            return new Point2D(tasPosition.x, tasPosition.y);
+            return new Point2D(System.Convert.ToDouble(tasPosition.x) / 100.0, -System.Convert.ToDouble(tasPosition.y) / 100.0);
         }
     }
 }
