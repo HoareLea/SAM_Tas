@@ -76,54 +76,6 @@ namespace SAM.Analytical.Tas.TPD
                 foreach (global::TPD.System system in systems)
                 {
                     systemPlantRoom.Add(system, tPDDoc);
-
-                    //List<SystemZone> systemZones = system.SystemZones();
-                    //if (systemZones == null || systemZones.Count == 0)
-                    //{
-                    //    continue;
-                    //}
-
-                    //foreach (SystemZone systemZone in systemZones)
-                    //{
-                    //    SystemSpace systemSpace = systemZone.ToSAM();
-                    //    if (systemSpace == null)
-                    //    {
-                    //        continue;
-                    //    }
-
-                    //    systemPlantRoom.Add(systemSpace);
-
-                    //    List<ZoneComponent> zoneComponents = Query.ZoneComponents<ZoneComponent>(systemZone);
-                    //    foreach (ZoneComponent zoneComponent in zoneComponents)
-                    //    {
-                    //        ISystemSpaceComponent systemSpaceComponent = zoneComponent.ToSAM();
-                    //        if (systemSpaceComponent == null)
-                    //        {
-                    //            continue;
-                    //        }
-
-                    //        systemPlantRoom.Add(systemSpaceComponent);
-
-                    //        systemPlantRoom.Connect(systemSpaceComponent, systemSpace);
-
-                    //        ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemEquipmentResult(start, end);
-                    //        if (systemComponentResult == null)
-                    //        {
-                    //            continue;
-                    //        }
-
-                    //        systemPlantRoom.Add(systemComponentResult);
-
-                    //        systemPlantRoom.Connect(systemComponentResult, systemSpaceComponent);
-                    //    }
-
-                    //    SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, start, end);
-                    //    if (systemSpaceResult != null)
-                    //    {
-                    //        systemPlantRoom.Add(systemSpaceResult);
-                    //        systemPlantRoom.Connect(systemSpaceResult, systemSpace);
-                    //    }
-                    //}
                 }
 
                 result.Add(systemPlantRoom);

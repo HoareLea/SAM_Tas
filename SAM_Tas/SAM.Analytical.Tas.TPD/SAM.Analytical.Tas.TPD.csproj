@@ -51,6 +51,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM_Systems\build\SAM.Core.Systems.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Geometry, Version=1.0.8810.23906, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Geometry.Systems, Version=1.0.8823.22638, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM_Systems\build\SAM.Geometry.Systems.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -62,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\SystemModelConversionSettings.cs" />
+    <Compile Include="Convert\ToSAM\Point2D.cs" />
     <Compile Include="Convert\ToSAM\AirSystem.cs" />
     <Compile Include="Convert\ToSAM\SystemDesiccantWheelResult.cs" />
     <Compile Include="Convert\ToSAM\SystemEconomiser.cs" />
