@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.4";
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
@@ -47,6 +47,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces or Zone", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean boolean;
@@ -156,6 +157,14 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            AnalyticalModel analyticalModel = null;
+            index = Params.IndexOfInputParam("_analyticalModel");
+            if (index == -1 || !dataAccess.GetData(index, ref analyticalModel))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
             index = Params.IndexOfInputParam("_tM52BuildingCategory");
             string @string = null;
             if (index == -1 || !dataAccess.GetData(index, ref @string) || string.IsNullOrEmpty(@string))
@@ -189,9 +198,32 @@ namespace SAM.Analytical.Grasshopper.Tas
                 ConvertZones = true
             };
 
-            AnalyticalModel analyticalModel = Analytical.Tas.Convert.ToSAM(path, tSDConversionSettings);
+            AnalyticalModel analyticalModel_TSD = Analytical.Tas.Convert.ToSAM(path, tSDConversionSettings);
+            AdjacencyCluster adjacencyCluster_TSD = analyticalModel_TSD?.AdjacencyCluster;
+            if(adjacencyCluster_TSD != null)
+            {
+                List<Space> spaces_AnalyticalModel = analyticalModel?.GetSpaces();
+                if(spaces_AnalyticalModel != null)
+                {
+                    List<Space> spaces_TSD = adjacencyCluster_TSD.GetSpaces();
+                    if(spaces_TSD != null)
+                    {
+                        foreach(Space space_TSD in spaces_TSD)
+                        {
+                            Space space_AnalyticalModel = spaces_AnalyticalModel.Find(x => x.Name == space_TSD.Name);
+                            if(space_AnalyticalModel != null)
+                            {
+                                space_TSD.InternalCondition = space_AnalyticalModel.InternalCondition;
+                                adjacencyCluster_TSD.AddObject(space_TSD);
+                            }
+                        }
 
-            OverheatingCalculator overheatingCalculator = new OverheatingCalculator(analyticalModel)
+                        analyticalModel_TSD = new AnalyticalModel(analyticalModel_TSD, adjacencyCluster_TSD);
+                    }
+                }
+            }
+
+            OverheatingCalculator overheatingCalculator = new OverheatingCalculator(analyticalModel_TSD)
             {
                 TM52BuildingCategory = tM52BuildingCategory,
             };
@@ -199,14 +231,14 @@ namespace SAM.Analytical.Grasshopper.Tas
             List<Space> spaces_Result = null;
             if (spaces == null)
             {
-                spaces_Result = analyticalModel.GetSpaces();
+                spaces_Result = analyticalModel_TSD.GetSpaces();
             }
             else
             {
                 spaces_Result = new List<Space>();
                 foreach (Space space in spaces)
                 {
-                    Space space_Result = analyticalModel.GetSpaces()?.Find(x => x.Name == space.Name);
+                    Space space_Result = analyticalModel_TSD.GetSpaces()?.Find(x => x.Name == space.Name);
                     if (space_Result == null)
                     {
                         continue;
@@ -225,13 +257,13 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 foreach (Zone zone in zones)
                 {
-                    Zone zone_Temp = analyticalModel.GetZones()?.Find(x => x.Name == zone.Name);
+                    Zone zone_Temp = analyticalModel_TSD.GetZones()?.Find(x => x.Name == zone.Name);
                     if (zone_Temp == null)
                     {
                         continue;
                     }
 
-                    List<Space> spaces_Temp = analyticalModel.AdjacencyCluster.GetRelatedObjects<Space>(zone_Temp);
+                    List<Space> spaces_Temp = analyticalModel_TSD.AdjacencyCluster.GetRelatedObjects<Space>(zone_Temp);
                     if (spaces_Temp == null)
                     {
                         continue;

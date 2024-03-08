@@ -20,7 +20,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.5";
+        public override string LatestComponentVersion => "1.0.6";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -55,9 +55,9 @@ namespace SAM.Analytical.Grasshopper.Tas
                 //result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a Tas file TSD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
 
-                result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new Weather.Grasshopper.GooWeatherDataParam() { Name = "weatherData_", NickName = "weatherData_", Description = "SAM WeatherData", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "coolingDesignDays_", NickName = "coolingDesignDays_", Description = "The SAM Analytical Design Days for Cooling", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
@@ -67,11 +67,11 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_sizing_", NickName = "_sizing_", Description = "Sizing", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(true);
-                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Binding));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulates the model from 1 to 365 day.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
-                result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(boolean, ParamVisibility.Binding));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_useBEthickness_", NickName = "_useBEthickness_", Description = "If True Building Element thickness will be applied in T3D. Default False.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
