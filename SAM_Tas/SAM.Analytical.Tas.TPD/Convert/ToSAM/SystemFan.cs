@@ -1,6 +1,8 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections;
+using System;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -15,13 +17,36 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = fan;
 
-            SystemFan result = new SystemFan(@dynamic.Name);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, @dynamic.GUID);
+            SystemFan systemFan = new SystemFan(@dynamic.Name);
+            systemFan.Description = dynamic.Description;
+            Modify.SetReference(systemFan, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            result = Systems.Create.DisplayObject<DisplaySystemFan>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            DisplaySystemFan result = Systems.Create.DisplayObject<DisplaySystemFan>(systemFan, location, Systems.Query.DefaultDisplaySystemManager());
+
+            global::TPD.tpdDirection tpdDirection = @dynamic.GetDirection();
+            Transform2D transform2D = null;
+            switch(tpdDirection)
+            {
+                case tpdDirection.tpdTopBottom:
+                    transform2D = Transform2D.GetRotation(Math.PI / 2);
+                    break;
+
+                case tpdDirection.tpdLeftRight:
+                    transform2D = null;
+                    break;
+
+                case tpdDirection.tpdBottomTop:
+                    transform2D = Transform2D.GetRotation(3 / 2 * Math.PI);
+                    break;
+            }
+
+
+            if(transform2D != null)
+            {
+                result.SystemGeometry.Transform(transform2D);
+            }
 
             return result;
         }
