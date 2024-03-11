@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
 
             DisplaySystemFan result = Systems.Create.DisplayObject<DisplaySystemFan>(systemFan, location, Systems.Query.DefaultDisplaySystemManager());
 
-            global::TPD.tpdDirection tpdDirection = @dynamic.GetDirection();
+            tpdDirection tpdDirection = (tpdDirection)(int)@dynamic.GetDirection();
             Transform2D transform2D = null;
             switch(tpdDirection)
             {
@@ -37,6 +37,11 @@ namespace SAM.Analytical.Tas.TPD
                     transform2D = null;
                     break;
 
+
+                case tpdDirection.tpdRightLeft:
+                    transform2D = Transform2D.GetMirrorX();
+                    break;
+
                 case tpdDirection.tpdBottomTop:
                     transform2D = Transform2D.GetRotation(3 / 2 * Math.PI);
                     break;
@@ -45,7 +50,7 @@ namespace SAM.Analytical.Tas.TPD
 
             if(transform2D != null)
             {
-                result.SystemGeometry.Transform(transform2D);
+                result.Transform(transform2D);
             }
 
             return result;
