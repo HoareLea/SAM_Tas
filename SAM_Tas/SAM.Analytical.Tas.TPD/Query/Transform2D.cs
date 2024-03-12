@@ -1,4 +1,5 @@
-﻿using SAM.Geometry.Planar;
+﻿using SAM.Core;
+using SAM.Geometry.Planar;
 using System;
 using TPD;
 
@@ -11,7 +12,7 @@ namespace SAM.Analytical.Tas.TPD
             switch (tpdDirection)
             {
                 case tpdDirection.tpdTopBottom:
-                    return Geometry.Planar.Transform2D.GetRotation(Math.PI / 2);
+                    return Geometry.Planar.Transform2D.GetRotation(location, 3 / 2 * Math.PI);
 
                 case tpdDirection.tpdLeftRight:
                     return null;
@@ -20,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
                     return Geometry.Planar.Transform2D.GetMirrorY(location);
 
                 case tpdDirection.tpdBottomTop:
-                    return Geometry.Planar.Transform2D.GetRotation(3 / 2 * Math.PI);
+                    return Geometry.Planar.Transform2D.GetRotation(location,  Math.PI / 4);
             }
 
             return null;
