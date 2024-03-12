@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
                     return Geometry.Planar.Transform2D.GetMirrorY(location);
 
                 case tpdDirection.tpdBottomTop:
-                    return Geometry.Planar.Transform2D.GetRotation(location,  Math.PI / 4);
+                    return Geometry.Planar.Transform2D.GetRotation(location,  Math.PI / 2);
             }
 
             return null;
