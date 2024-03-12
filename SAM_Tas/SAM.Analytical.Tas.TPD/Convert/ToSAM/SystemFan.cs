@@ -1,7 +1,6 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
-using System.Collections;
 using System;
 
 namespace SAM.Analytical.Tas.TPD
@@ -26,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
             DisplaySystemFan result = Systems.Create.DisplayObject<DisplaySystemFan>(systemFan, location, Systems.Query.DefaultDisplaySystemManager());
 
             tpdDirection tpdDirection = (tpdDirection)(int)@dynamic.GetDirection();
-            Transform2D transform2D = null;
+            ITransform2D transform2D = null;
             switch(tpdDirection)
             {
                 case tpdDirection.tpdTopBottom:
@@ -39,7 +38,7 @@ namespace SAM.Analytical.Tas.TPD
 
 
                 case tpdDirection.tpdRightLeft:
-                    transform2D = Transform2D.GetMirrorX();
+                    transform2D = Transform2D.GetMirrorX(location);
                     break;
 
                 case tpdDirection.tpdBottomTop:
