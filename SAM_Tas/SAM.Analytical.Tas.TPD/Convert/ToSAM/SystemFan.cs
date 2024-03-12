@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas.TPD
 
 
                 case tpdDirection.tpdRightLeft:
-                    transform2D = Transform2D.GetMirrorX(location);
+					transform2D = Transform2D.GetMirrorY(location);
                     break;
 
                 case tpdDirection.tpdBottomTop:
