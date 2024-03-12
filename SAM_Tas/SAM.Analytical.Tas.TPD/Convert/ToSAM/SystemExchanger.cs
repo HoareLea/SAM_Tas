@@ -15,13 +15,19 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = exchanger;
 
-            SystemExchanger result = new SystemExchanger(@dynamic.Name);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, @dynamic.GUID);
+            SystemExchanger systemExchanger = new SystemExchanger(@dynamic.Name);
+            systemExchanger.Description = dynamic.Description;
+            Modify.SetReference(systemExchanger, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            result = Systems.Create.DisplayObject<DisplaySystemExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            DisplaySystemExchanger result = Systems.Create.DisplayObject<DisplaySystemExchanger>(systemExchanger, location, Systems.Query.DefaultDisplaySystemManager());
+
+            ITransform2D transform2D = ((ISystemComponent)exchanger).Transform2D();
+            if (transform2D != null)
+            {
+                result.Transform(transform2D);
+            }
 
             return result;
         }

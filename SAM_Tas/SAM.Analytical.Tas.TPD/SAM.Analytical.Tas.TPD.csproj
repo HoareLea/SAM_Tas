@@ -125,6 +125,7 @@
     <Compile Include="Query\Source.cs" />
     <Compile Include="Query\ZoneComponents.cs" />
     <Compile Include="Query\StartHour.cs" />
+    <Compile Include="Query\Transform2D.cs" />
     <Compile Include="Query\ZoneLoads.cs" />
     <Compile Include="Query\SystemComponents.cs" />
     <Compile Include="Query\SystemZones.cs" />

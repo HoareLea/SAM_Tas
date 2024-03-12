@@ -24,30 +24,8 @@ namespace SAM.Analytical.Tas.TPD
 
             DisplaySystemFan result = Systems.Create.DisplayObject<DisplaySystemFan>(systemFan, location, Systems.Query.DefaultDisplaySystemManager());
 
-            tpdDirection tpdDirection = (tpdDirection)(int)@dynamic.GetDirection();
-            ITransform2D transform2D = null;
-            switch(tpdDirection)
-            {
-                case tpdDirection.tpdTopBottom:
-                    transform2D = Transform2D.GetRotation(Math.PI / 2);
-                    break;
-
-                case tpdDirection.tpdLeftRight:
-                    transform2D = null;
-                    break;
-
-
-                case tpdDirection.tpdRightLeft:
-					transform2D = Transform2D.GetMirrorY(location);
-                    break;
-
-                case tpdDirection.tpdBottomTop:
-                    transform2D = Transform2D.GetRotation(3 / 2 * Math.PI);
-                    break;
-            }
-
-
-            if(transform2D != null)
+            ITransform2D transform2D = ((ISystemComponent)fan).Transform2D();
+            if (transform2D != null)
             {
                 result.Transform(transform2D);
             }

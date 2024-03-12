@@ -15,13 +15,19 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = coolingCoil;
 
-            SystemCoolingCoil result = new SystemCoolingCoil(@dynamic.Name);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, @dynamic.GUID);
+            SystemCoolingCoil systemCoolingCoil = new SystemCoolingCoil(@dynamic.Name);
+            systemCoolingCoil.Description = dynamic.Description;
+            Modify.SetReference(systemCoolingCoil, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            result = Systems.Create.DisplayObject<DisplaySystemCoolingCoil>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            DisplaySystemCoolingCoil result = Systems.Create.DisplayObject<DisplaySystemCoolingCoil>(systemCoolingCoil, location, Systems.Query.DefaultDisplaySystemManager());
+
+            ITransform2D transform2D = ((ISystemComponent)coolingCoil).Transform2D();
+            if (transform2D != null)
+            {
+                result.Transform(transform2D);
+            }
 
             return result;
         }

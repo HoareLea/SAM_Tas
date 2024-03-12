@@ -15,13 +15,19 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = desiccantWheel;
 
-            SystemDesiccantWheel result = new SystemDesiccantWheel(@dynamic.Name);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, @dynamic.GUID);
+            SystemDesiccantWheel systemDesiccantWheel = new SystemDesiccantWheel(@dynamic.Name);
+            systemDesiccantWheel.Description = dynamic.Description;
+            Modify.SetReference(systemDesiccantWheel, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            result = Systems.Create.DisplayObject<DisplaySystemDesiccantWheel>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            DisplaySystemDesiccantWheel result = Systems.Create.DisplayObject<DisplaySystemDesiccantWheel>(systemDesiccantWheel, location, Systems.Query.DefaultDisplaySystemManager());
+
+            ITransform2D transform2D = ((ISystemComponent)desiccantWheel).Transform2D();
+            if (transform2D != null)
+            {
+                result.Transform(transform2D);
+            }
 
             return result;
         }

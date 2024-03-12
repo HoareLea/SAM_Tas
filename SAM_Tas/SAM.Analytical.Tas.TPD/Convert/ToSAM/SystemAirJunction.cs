@@ -15,13 +15,19 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = junction;
 
-            SystemAirJunction result = new SystemAirJunction(@dynamic.Name);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, @dynamic.GUID);
+            SystemAirJunction systemAirJunction = new SystemAirJunction(@dynamic.Name);
+            systemAirJunction.Description = dynamic.Description;
+            Modify.SetReference(systemAirJunction, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            result = Systems.Create.DisplayObject<DisplaySystemAirJunction>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            DisplaySystemAirJunction result = Systems.Create.DisplayObject<DisplaySystemAirJunction>(systemAirJunction, location, Systems.Query.DefaultDisplaySystemManager());
+
+            ITransform2D transform2D = ((ISystemComponent)junction).Transform2D();
+            if (transform2D != null)
+            {
+                result.Transform(transform2D);
+            }
 
             return result;
         }
