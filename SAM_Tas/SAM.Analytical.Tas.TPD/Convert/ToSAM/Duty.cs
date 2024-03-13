@@ -14,7 +14,7 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = sizedVariable as dynamic;
 
-            switch (@dynamic.Type)
+            switch ((tpdSizedVariable)@dynamic.Type)
             {
                 case tpdSizedVariable.tpdSizedVariableSizeDone:
                     return new SizedDuty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction);
