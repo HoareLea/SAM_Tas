@@ -14,8 +14,6 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = fanCoilUnit;
 
-            double coolingDuty = System.Convert.ToDouble((fanCoilUnit.CoolingDuty as dynamic).Value);
-            double heatingDuty = System.Convert.ToDouble((fanCoilUnit.HeatingDuty as dynamic).Value);
             double designFlowRate = System.Convert.ToDouble((fanCoilUnit.DesignFlowRate as dynamic).Value);
 
             double heatingEfficiency = fanCoilUnit.HeatingEfficiency.Value;
@@ -24,8 +22,8 @@ namespace SAM.Analytical.Tas.TPD
             SystemFanCoilUnit result = new SystemFanCoilUnit(dynamic.Name) 
             { 
                 Pressure = fanCoilUnit.Pressure,
-                CoolingDuty = coolingDuty,
-                HeatingDuty = heatingDuty,
+                CoolingDuty = fanCoilUnit.CoolingDuty?.ToSAM_Duty(),
+                HeatingDuty = fanCoilUnit.HeatingDuty?.ToSAM_Duty(),
                 DesignFlowRate = designFlowRate,
                 HeatingEfficiency = heatingEfficiency,
                 OverallEfficiency = overallEfficiency

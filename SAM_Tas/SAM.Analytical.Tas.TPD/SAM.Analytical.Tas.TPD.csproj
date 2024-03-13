@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\SystemModelConversionSettings.cs" />
+    <Compile Include="Convert\ToSAM\Duty.cs" />
     <Compile Include="Convert\ToSAM\Point2D.cs" />
     <Compile Include="Convert\ToSAM\AirSystem.cs" />
     <Compile Include="Convert\ToSAM\SystemDesiccantWheelResult.cs" />

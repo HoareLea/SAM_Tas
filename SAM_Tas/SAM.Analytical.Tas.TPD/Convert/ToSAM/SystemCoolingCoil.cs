@@ -23,26 +23,7 @@ namespace SAM.Analytical.Tas.TPD
 
             DisplaySystemCoolingCoil result = Systems.Create.DisplayObject<DisplaySystemCoolingCoil>(systemCoolingCoil, location, Systems.Query.DefaultDisplaySystemManager());
             result.BypassFactor = coolingCoil.BypassFactor.Value;
-            switch(coolingCoil.Duty.Type)
-            {
-                case tpdSizedVariable.tpdSizedVariableSizeDone:
-                    result.Duty = new SizedDuty(System.Convert.ToDouble((coolingCoil.Duty as dynamic).Value), coolingCoil.Duty.SizeFraction);
-                    break;
-
-                case tpdSizedVariable.tpdSizedVariableSize:
-                    result.Duty = new SizedDuty(System.Convert.ToDouble((coolingCoil.Duty as dynamic)).Value, coolingCoil.Duty.SizeFraction);
-                    break;
-
-                case tpdSizedVariable.tpdSizedVariableNone:
-                    result.Duty = new UnlimitedDuty();
-                    break;
-
-
-                case tpdSizedVariable.tpdSizedVariableValue:
-                    result.Duty = new Duty(System.Convert.ToDouble((coolingCoil.Duty as dynamic).Value));
-                    break;
-            }
-
+            result.Duty = coolingCoil.Duty.ToSAM_Duty();
 
             ITransform2D transform2D = ((ISystemComponent)coolingCoil).Transform2D();
             if (transform2D != null)
