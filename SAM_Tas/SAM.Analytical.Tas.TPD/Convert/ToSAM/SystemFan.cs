@@ -1,7 +1,6 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
-using System;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -23,6 +22,21 @@ namespace SAM.Analytical.Tas.TPD
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemFan result = Systems.Create.DisplayObject<DisplaySystemFan>(systemFan, location, Systems.Query.DefaultDisplaySystemManager());
+
+            switch(fan.DesignFlowType)
+            {
+                case tpdFlowRateType.tpdFlowRateValue:
+                case tpdFlowRateType.tpdFlowRateNearestZoneFlowRate:
+                case tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate:
+                case tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir:
+                case tpdFlowRateType.tpdFlowRateNearestZoneFreshAir:
+                    result.DesignFlowRate = System.Convert.ToDouble(fan.DesignFlowRate.Value) / 0.001;
+                    break;
+            }
+
+            result.OverallEfficiency = fan.OverallEfficiency.Value;
+            result.HeatGainFactor = fan.HeatGainFactor;
+            result.Pressure = fan.Pressure;
 
             ITransform2D transform2D = ((ISystemComponent)fan).Transform2D();
             if (transform2D != null)
