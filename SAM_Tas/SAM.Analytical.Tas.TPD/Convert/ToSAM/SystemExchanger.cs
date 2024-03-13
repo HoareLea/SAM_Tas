@@ -23,6 +23,9 @@ namespace SAM.Analytical.Tas.TPD
 
             DisplaySystemExchanger result = Systems.Create.DisplayObject<DisplaySystemExchanger>(systemExchanger, location, Systems.Query.DefaultDisplaySystemManager());
 
+            result.SensibleEfficiency =  exchanger.SensibleEfficiency.Value;
+            result.LatentEfficiency = exchanger.LatentEfficiency.Value;
+
             ITransform2D transform2D = ((ISystemComponent)exchanger).Transform2D();
             if (transform2D != null)
             {
