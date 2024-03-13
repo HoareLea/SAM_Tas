@@ -25,8 +25,12 @@ namespace SAM.Analytical.Tas.TPD
             result.BypassFactor = coolingCoil.BypassFactor.Value;
             switch(coolingCoil.Duty.Type)
             {
+                case tpdSizedVariable.tpdSizedVariableSizeDone:
+                    result.Duty = new SizedDuty(System.Convert.ToDouble((coolingCoil.Duty as dynamic).Value), coolingCoil.Duty.SizeFraction);
+                    break;
+
                 case tpdSizedVariable.tpdSizedVariableSize:
-                    result.Duty = new SizedDuty(double.NaN, coolingCoil.Duty.SizeFraction);
+                    result.Duty = new SizedDuty(System.Convert.ToDouble((coolingCoil.Duty as dynamic)).Value, coolingCoil.Duty.SizeFraction);
                     break;
 
                 case tpdSizedVariable.tpdSizedVariableNone:
@@ -35,7 +39,7 @@ namespace SAM.Analytical.Tas.TPD
 
 
                 case tpdSizedVariable.tpdSizedVariableValue:
-                    result.Duty = new Duty(double.NaN);
+                    result.Duty = new Duty(System.Convert.ToDouble((coolingCoil.Duty as dynamic).Value));
                     break;
             }
 
