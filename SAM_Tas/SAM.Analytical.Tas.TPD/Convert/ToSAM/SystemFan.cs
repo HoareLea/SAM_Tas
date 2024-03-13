@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas.TPD
                 case tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate:
                 case tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir:
                 case tpdFlowRateType.tpdFlowRateNearestZoneFreshAir:
-                    result.DesignFlowRate = System.Convert.ToDouble(fan.DesignFlowRate.Value) / 0.001;
+                    result.DesignFlowRate = System.Convert.ToDouble(fan.DesignFlowRate.Value);
                     break;
             }
 
