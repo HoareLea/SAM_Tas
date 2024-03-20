@@ -49,6 +49,8 @@ namespace SAM.Analytical.Grasshopper.Tas
 
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
+
         public GooSAMT3DDocumentParam()
             : base(typeof(SAMT3DDocument).Name, typeof(SAMT3DDocument).Name, typeof(SAMT3DDocument).FullName.Replace(".", " "), "Params", "SAM")
         {

@@ -74,6 +74,8 @@ namespace SAM.Analytical.Grasshopper.Tas
     {
         public override Guid ComponentGuid => new Guid("6b8d9a23-d379-4725-b1c2-43f18d591ccb");
 
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
+
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
         public GooLayerThicknessCalculationResultParam()

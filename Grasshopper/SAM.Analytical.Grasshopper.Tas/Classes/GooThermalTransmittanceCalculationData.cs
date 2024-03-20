@@ -78,6 +78,8 @@ namespace SAM.Analytical.Grasshopper.Tas
 
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
+
         public GooThermalTransmittanceCalculationDataParam()
             : base(typeof(IThermalTransmittanceCalculationData).Name, typeof(IThermalTransmittanceCalculationData).Name, typeof(IThermalTransmittanceCalculationData).FullName.Replace(".", " "), "Params", "SAM")
         {

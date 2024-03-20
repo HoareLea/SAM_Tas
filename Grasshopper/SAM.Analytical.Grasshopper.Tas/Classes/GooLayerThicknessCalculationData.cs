@@ -78,6 +78,8 @@ namespace SAM.Analytical.Grasshopper.Tas
 
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
+
         public GooLayerThicknessCalculationDataParam()
             : base(typeof(LayerThicknessCalculationData).Name, typeof(LayerThicknessCalculationData).Name, typeof(LayerThicknessCalculationData).FullName.Replace(".", " "), "Params", "SAM")
         {
