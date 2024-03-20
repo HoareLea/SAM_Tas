@@ -47,6 +47,8 @@ namespace SAM.Core.Grasshopper.Tas.UKBR
     {
         public override Guid ComponentGuid => new Guid("b8da455e-b8aa-4740-b770-c8c3581ff0d7");
 
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
+
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
 
         public GooUKBRFileParam()

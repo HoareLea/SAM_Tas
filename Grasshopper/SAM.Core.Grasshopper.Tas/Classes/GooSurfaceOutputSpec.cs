@@ -31,6 +31,8 @@ namespace SAM.Core.Grasshopper.Tas
     {
         public override Guid ComponentGuid => new Guid("167fe3c5-7dcf-415e-b4e0-a40dc9159b31");
 
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
+
         protected override System.Drawing.Bitmap Icon => Resources.SAM_Small;
 
         public GooSurfaceOutputSpecParam()
