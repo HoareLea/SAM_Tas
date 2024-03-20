@@ -199,7 +199,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             base.AppendAdditionalMenuItems(menu);
 
             Menu_AppendSeparator(menu);
-            Menu_AppendItem(menu, "Open TBD", Menu_OpenTBD, Resources.SAM_Small, true, false);
+            Menu_AppendItem(menu, "Open TBD", Menu_OpenTBD, Resources.SAM_TasTBD, true, false);
         }
 
         private void Menu_OpenTBD(object sender, EventArgs e)

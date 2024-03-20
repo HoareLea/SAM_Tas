@@ -9,6 +9,9 @@ using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas.Obsolete
 {
@@ -258,6 +261,40 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
             {
                 dataAccess.SetData(index_Successful, true);
             }
+        }
+
+        public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+        {
+            base.AppendAdditionalMenuItems(menu);
+
+            Menu_AppendSeparator(menu);
+            Menu_AppendItem(menu, "Open TSD", Menu_OpenTSD, Resources.SAM_TasTSD, true, false);
+        }
+
+        private void Menu_OpenTSD(object sender, EventArgs e)
+        {
+            int index_Path = Params.IndexOfInputParam("_pathTasTSD");
+            if (index_Path == -1)
+            {
+                return;
+            }
+
+            string path = null;
+
+            object @object = null;
+
+            @object = Params.Input[index_Path].VolatileData.AllData(true)?.OfType<object>()?.ElementAt(0);
+            if (@object is IGH_Goo)
+            {
+                path = (@object as dynamic).Value?.ToString();
+            }
+
+            if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+            {
+                return;
+            }
+
+            Process.Start(path);
         }
     }
 }

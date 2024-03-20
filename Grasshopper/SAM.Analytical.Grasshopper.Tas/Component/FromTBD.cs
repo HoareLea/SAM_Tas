@@ -1,7 +1,11 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
@@ -15,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -90,6 +94,40 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             dataAccess.SetData(0, analyticalModel);
             dataAccess.SetData(1, analyticalModel != null);
+        }
+
+        public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+        {
+            base.AppendAdditionalMenuItems(menu);
+
+            Menu_AppendSeparator(menu);
+            Menu_AppendItem(menu, "Open TBD", Menu_OpenTBD, Resources.SAM_TasTBD, true, false);
+        }
+
+        private void Menu_OpenTBD(object sender, EventArgs e)
+        {
+            int index_Path = Params.IndexOfInputParam("_pathTasTBD");
+            if (index_Path == -1)
+            {
+                return;
+            }
+
+            string path = null;
+
+            object @object = null;
+
+            @object = Params.Input[index_Path].VolatileData.AllData(true)?.OfType<object>()?.ElementAt(0);
+            if (@object is IGH_Goo)
+            {
+                path = (@object as dynamic).Value?.ToString();
+            }
+
+            if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+            {
+                return;
+            }
+
+            Process.Start(path);
         }
     }
 }
