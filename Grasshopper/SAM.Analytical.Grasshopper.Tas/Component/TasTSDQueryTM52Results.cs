@@ -313,7 +313,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             base.AppendAdditionalMenuItems(menu);
 
             Menu_AppendSeparator(menu);
-            Menu_AppendItem(menu, "Open TsD", Menu_OpenTSD, Resources.SAM_TasTSD, true, false);
+            Menu_AppendItem(menu, "Open TsD", Menu_OpenTSD, Resources.SAM_TasTSD3, true, false);
         }
 
         private void Menu_OpenTSD(object sender, EventArgs e)

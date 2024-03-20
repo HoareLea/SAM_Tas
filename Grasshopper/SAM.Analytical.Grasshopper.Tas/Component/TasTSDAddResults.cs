@@ -25,7 +25,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTSD;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTSD3;
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
@@ -262,8 +262,8 @@ namespace SAM.Analytical.Grasshopper.Tas
             base.AppendAdditionalMenuItems(menu);
 
             Menu_AppendSeparator(menu);
-            Menu_AppendItem(menu, "Open TBD", Menu_OpenTBD, Resources.SAM_TasTBD, true, false);
-            Menu_AppendItem(menu, "Open TSD", Menu_OpenTSD, Resources.SAM_TasTSD, true, false);
+            Menu_AppendItem(menu, "Open TBD", Menu_OpenTBD, Resources.SAM_TasTBD3, true, false);
+            Menu_AppendItem(menu, "Open TSD", Menu_OpenTSD, Resources.SAM_TasTSD3, true, false);
         }
 
         private void Menu_OpenTBD(object sender, EventArgs e)
