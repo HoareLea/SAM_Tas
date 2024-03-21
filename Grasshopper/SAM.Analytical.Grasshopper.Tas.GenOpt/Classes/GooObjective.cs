@@ -88,10 +88,12 @@ namespace SAM.Analytical.Grasshopper.Tas.GenOpt
     {
         public override Guid ComponentGuid => new Guid("efa8de4a-5379-44c1-a01d-b6f21fabc2bc");
 
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasT3D;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_GenOpt;
+
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         public GooObjectiveParam()
-            : base(typeof(Parameter).Name, typeof(Parameter).Name, typeof(Parameter).FullName.Replace(".", " "), "Params", "SAM")
+            : base(typeof(Objective).Name, typeof(Objective).Name, typeof(Objective).FullName.Replace(".", " "), "Params", "SAM")
         {
         }
 
