@@ -120,6 +120,8 @@
     <Compile Include="Modify\Add.cs" />
     <Compile Include="Modify\SetReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\SystemComponent.cs" />
+    <Compile Include="Query\Point2Ds.cs" />
     <Compile Include="Query\Reference.cs" />
     <Compile Include="Query\EndHour.cs" />
     <Compile Include="Query\Ducts.cs" />

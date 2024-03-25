@@ -1,5 +1,8 @@
 ﻿using SAM.Analytical.Systems;
+using SAM.Core;
 using SAM.Core.Systems;
+using SAM.Geometry.Planar;
+using SAM.Geometry.Systems;
 using System.Collections.Generic;
 using TPD;
 
@@ -509,6 +512,68 @@ namespace SAM.Analytical.Tas.TPD
             result.Add(airSystem);
 
             Connect(systemPlantRoom, system);
+
+            List<Duct> ducts = Query.Ducts(system);
+            if(ducts != null)
+            {
+
+                SystemType systemType = new SystemType(airSystem);
+
+                foreach (Duct duct in ducts)
+                {
+                    dynamic @dynamic_1 = duct.GetUpstreamComponent();
+                    int index_1 = duct.GetUpstreamComponentPort();
+
+                    string guid_1 = dynamic_1.GUID;
+
+                    dynamic @dynamic_2 = duct.GetDownstreamComponent();
+                    int index_2 = duct.GetDownstreamComponentPort();
+
+                    string guid_2 = dynamic_2.GUID;
+
+                    Core.Systems.ISystemComponent systemComponent_1 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_1);
+                    if(systemComponent_1 == null || !(systemComponent_1 is IDisplaySystemObject<SystemGeometryInstance>))
+                    {
+                        continue;
+                    }
+                    
+                    Core.Systems.ISystemComponent systemComponent_2 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_2);
+                    if(systemComponent_2 == null || !(systemComponent_2 is IDisplaySystemObject<SystemGeometryInstance>))
+                    {
+                        continue;
+                    }
+
+                    List<Point2D> point2Ds = Query.Point2Ds(duct);
+                    if(point2Ds == null)
+                    {
+                        point2Ds = new List<Point2D>();
+                    }
+
+                    Point2D point2D = null;
+
+                    point2D = (systemComponent_1 as dynamic).SystemGeometry.GetPoint2D(systemType, index_1, Direction.Out);
+                    if (point2D != null)
+                    {
+                        point2Ds.Insert(0, point2D);
+                    }
+
+                    point2D = (systemComponent_2 as dynamic).SystemGeometry.GetPoint2D(systemType, index_2, Direction.In);
+                    if (point2D != null)
+                    {
+                        point2Ds.Add(point2D);
+                    }
+
+                    if(point2Ds == null || point2Ds.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(airSystem, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds?.ToArray());
+
+                    systemPlantRoom.Connect(systemComponent_1, displaySystemConnection);
+                    systemPlantRoom.Connect(systemComponent_2, displaySystemConnection);
+                }
+            }
 
             return result;
         }

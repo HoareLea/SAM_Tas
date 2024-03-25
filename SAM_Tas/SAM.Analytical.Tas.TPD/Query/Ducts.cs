@@ -12,7 +12,6 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-
             int portCount = direction == Direction.Out ? (systemComponent as dynamic).GetOutputPortCount() : (systemComponent as dynamic).GetInputPortCount();
             if(portCount < 1)
             {
@@ -40,6 +39,34 @@ namespace SAM.Analytical.Tas.TPD
                     result.Add(duct);
                 }
 
+            }
+
+            return result;
+        }
+
+        public static List<global::TPD.Duct> Ducts(global::TPD.System system)
+        {
+            if (system == null)
+            {
+                return null;
+            }
+
+            int ductCount = system.GetDuctCount();
+            if (ductCount < 1)
+            {
+                return null;
+            }
+
+            List<global::TPD.Duct> result = new List<global::TPD.Duct>();
+            for (int i = 1; i <= ductCount; i++)
+            {
+                global::TPD.Duct duct = system.GetDuct(i);
+                if (duct == null)
+                {
+                    continue;
+                }
+
+                result.Add(duct);
             }
 
             return result;
