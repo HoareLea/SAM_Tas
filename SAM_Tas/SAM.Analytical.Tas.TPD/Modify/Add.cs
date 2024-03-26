@@ -422,6 +422,12 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             SystemDamper systemDamper = damper.ToSAM();
+            if(systemDamper == null)
+            {
+                return null;
+            }
+
+
             systemPlantRoom.Add(systemDamper);
 
             return new List<ISystemJSAMObject>() { systemDamper };

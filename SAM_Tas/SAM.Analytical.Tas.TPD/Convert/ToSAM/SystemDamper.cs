@@ -1,5 +1,6 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
+using SAM.Geometry.Planar;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -14,9 +15,23 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = damper;
 
-            SystemDamper result = new SystemDamper(@dynamic.Name);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, @dynamic.GUID);
+            SystemDamper systemDamper = new SystemDamper(@dynamic.Name);
+            systemDamper.Description = dynamic.Description;
+            Modify.SetReference(systemDamper, @dynamic.GUID);
+
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            DisplaySystemDamper result = Systems.Create.DisplayObject<DisplaySystemDamper>(systemDamper, location, Systems.Query.DefaultDisplaySystemManager());
+            if(result == null)
+            {
+                return null;
+            }
+
+            ITransform2D transform2D = ((ISystemComponent)systemDamper).Transform2D();
+            if (transform2D != null)
+            {
+                result.Transform(transform2D);
+            }
 
             return result;
         }
