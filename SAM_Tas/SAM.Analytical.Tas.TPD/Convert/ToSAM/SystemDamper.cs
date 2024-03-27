@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            ITransform2D transform2D = ((ISystemComponent)systemDamper).Transform2D();
+            ITransform2D transform2D = ((ISystemComponent)damper).Transform2D();
             if (transform2D != null)
             {
                 result.Transform(transform2D);

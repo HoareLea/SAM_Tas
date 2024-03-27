@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
                     return new SizedDuty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction);
 
                 case tpdSizedVariable.tpdSizedVariableSize:
-                    return new SizedDuty(System.Convert.ToDouble(@dynamic.Value, @dynamic.SizeFraction));
+                    return new SizedDuty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction);
 
                 case tpdSizedVariable.tpdSizedVariableNone:
                     return new UnlimitedDuty();
