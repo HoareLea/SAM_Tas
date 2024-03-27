@@ -146,6 +146,11 @@ namespace SAM.Analytical.Tas.TPD
             int end = tPDDoc.EndHour();
 
             SystemSpace systemSpace = systemZone.ToSAM();
+            if(systemSpace == null)
+            {
+                return null;
+            }
+
             systemPlantRoom.Add(systemSpace);
 
             SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, start, end);

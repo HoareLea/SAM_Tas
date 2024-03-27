@@ -1,6 +1,7 @@
 ﻿using TPD;
 using System.Linq;
 using SAM.Analytical.Systems;
+using SAM.Geometry.Planar;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -33,11 +34,21 @@ namespace SAM.Analytical.Tas.TPD
                 freshAirRate = systemZone.FreshAir.Value;
             }
 
-            SystemSpace result = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume, flowRate, freshAirRate);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, dynamic.GUID);
+            SystemSpace systemSpace = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume, flowRate, freshAirRate);
+            systemSpace.Description = dynamic.Description;
+            Modify.SetReference(systemSpace, dynamic.GUID);
 
-            return result;
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            DisplaySystemSpace result = Systems.Create.DisplayObject<DisplaySystemSpace>(systemSpace, location, Systems.Query.DefaultDisplaySystemManager());
+
+            ITransform2D transform2D = ((ISystemComponent)systemZone).Transform2D();
+            if (transform2D != null)
+            {
+                result.Transform(transform2D);
+            }
+
+            return systemSpace;
         }
     }
 }
