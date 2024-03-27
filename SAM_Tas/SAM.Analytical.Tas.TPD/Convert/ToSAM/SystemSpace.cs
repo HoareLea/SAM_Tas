@@ -48,7 +48,7 @@ namespace SAM.Analytical.Tas.TPD
                 result.Transform(transform2D);
             }
 
-            return systemSpace;
+            return result;
         }
     }
 }
