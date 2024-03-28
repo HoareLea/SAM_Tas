@@ -12,18 +12,19 @@ namespace SAM.Analytical.Tas.TPD
         public static ITransform2D Transform2D(this tpdDirection tpdDirection, Point2D location, AnalyticalSystemComponentType analyticalSystemComponentType)
         {
             Point2D location_Temp = location;
-            switch (analyticalSystemComponentType)
-            {
-                case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil:
-                case Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil:
-                    location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
-                    break;
+            location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
+            //switch (analyticalSystemComponentType)
+            //{
+            //    case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil:
+            //    case Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil:
+            //        location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
+            //        break;
 
-                case Analytical.Systems.AnalyticalSystemComponentType.SystemAirJunction:
-                    location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
-                    break;
+            //    case Analytical.Systems.AnalyticalSystemComponentType.SystemAirJunction:
+            //        location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
+            //        break;
 
-            }
+            //}
 
 
             switch (tpdDirection)
