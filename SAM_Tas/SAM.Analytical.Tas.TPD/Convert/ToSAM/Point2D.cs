@@ -17,7 +17,7 @@ namespace SAM.Analytical.Tas.TPD
 
         public static Point2D ToSAM(int x, int y)
         {
-            return new Point2D(System.Convert.ToDouble(x) / 100.0, -System.Convert.ToDouble(y) / 100.0);
+            return new Point2D(System.Convert.ToDouble(x) / 100.0, - System.Convert.ToDouble(y) / 100.0);
         }
     }
 }

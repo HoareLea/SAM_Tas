@@ -1,6 +1,8 @@
 ﻿using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using SAM.Geometry.Spatial;
 using System;
+using System.Collections.Generic;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -9,24 +11,34 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static ITransform2D Transform2D(this tpdDirection tpdDirection, Point2D location, AnalyticalSystemComponentType analyticalSystemComponentType)
         {
-
             Point2D location_Temp = location;
-            //switch(analyticalSystemComponentType)
-            //{
-            //    case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil:
-            //    case Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil:
-            //        location_Temp = new Point2D(location_Temp.X, location_Temp.Y);
-            //        break;
-            //}
+            switch (analyticalSystemComponentType)
+            {
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil:
+                    location_Temp = new Point2D(location_Temp.X, location_Temp.Y - 0.1);
+                    break;
+
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemAirJunction:
+                    location_Temp = new Point2D(location_Temp.X - 0.1, location_Temp.Y - 0.1);
+                    break;
+
+            }
+
 
             switch (tpdDirection)
             {
                 case tpdDirection.tpdTopBottom:
-                    return new TransformGroup2D(new ITransform2D[] 
+
+                    List<ITransform2D> transforms = new List<ITransform2D>()
                     {
                         Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2),
                         Geometry.Planar.Transform2D.GetMirrorX(location_Temp),
-                    });
+                    };
+
+
+
+                    return new TransformGroup2D(transforms);
 
                 case tpdDirection.tpdLeftRight:
                     return null;
