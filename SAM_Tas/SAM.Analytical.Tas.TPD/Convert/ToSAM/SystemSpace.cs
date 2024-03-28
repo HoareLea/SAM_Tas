@@ -14,10 +14,16 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            string name = null;
+            double area = double.NaN;
+            double volume = double.NaN;
+
             ZoneLoad zoneLoad = systemZone.ZoneLoads()?.FirstOrDefault();
-            if (zoneLoad == null)
+            if (zoneLoad != null)
             {
-                return null;
+                name = zoneLoad.Name;
+                area = zoneLoad.FloorArea;
+                volume = zoneLoad.Volume;
             }
 
             dynamic @dynamic = systemZone as dynamic;
@@ -34,7 +40,7 @@ namespace SAM.Analytical.Tas.TPD
                 freshAirRate = systemZone.FreshAir.Value;
             }
 
-            SystemSpace systemSpace = new SystemSpace(zoneLoad.Name, zoneLoad.FloorArea, zoneLoad.Volume, flowRate, freshAirRate);
+            SystemSpace systemSpace = new SystemSpace(name, area, volume, flowRate, freshAirRate);
             systemSpace.Description = dynamic.Description;
             Modify.SetReference(systemSpace, dynamic.GUID);
 
