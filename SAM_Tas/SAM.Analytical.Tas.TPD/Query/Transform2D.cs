@@ -1,4 +1,4 @@
-﻿using SAM.Core;
+﻿using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
 using System;
 using TPD;
@@ -7,21 +7,31 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static ITransform2D Transform2D(this tpdDirection tpdDirection, Point2D location)
+        public static ITransform2D Transform2D(this tpdDirection tpdDirection, Point2D location, AnalyticalSystemComponentType analyticalSystemComponentType)
         {
+
+            Point2D location_Temp = location;
+            switch(analyticalSystemComponentType)
+            {
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil:
+                    location_Temp = new Point2D(location_Temp.X - 0.1, location_Temp.Y);
+                    break;
+            }
+
             switch (tpdDirection)
             {
                 case tpdDirection.tpdTopBottom:
-                    return Geometry.Planar.Transform2D.GetRotation(location, - Math.PI / 2);
+                    return Geometry.Planar.Transform2D.GetRotation(location_Temp, - Math.PI / 2);
 
                 case tpdDirection.tpdLeftRight:
                     return null;
 
                 case tpdDirection.tpdRightLeft:
-                    return Geometry.Planar.Transform2D.GetMirrorY(location);
+                    return Geometry.Planar.Transform2D.GetMirrorY(location_Temp);
 
                 case tpdDirection.tpdBottomTop:
-                    return Geometry.Planar.Transform2D.GetRotation(location, Math.PI / 2);
+                    return Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2);
             }
 
             return null;
@@ -40,7 +50,7 @@ namespace SAM.Analytical.Tas.TPD
 
             tpdDirection tpdDirection = (tpdDirection)(int)@dynamic.GetDirection();
 
-            return Transform2D(tpdDirection, location);
+            return Transform2D(tpdDirection, location, AnalyticalSystemComponentType(systemComponent));
         }
     }
 }

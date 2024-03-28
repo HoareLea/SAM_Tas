@@ -62,6 +62,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (Damper)systemComponent, tPDDoc);
             }
 
+            if (systemComponent is SystemZone)
+            {
+                return Add(systemPlantRoom, (SystemZone)systemComponent, tPDDoc);
+            }
+
             if (systemComponent is Optimiser)
             {
                 return Add(systemPlantRoom, (Optimiser)systemComponent, tPDDoc);
