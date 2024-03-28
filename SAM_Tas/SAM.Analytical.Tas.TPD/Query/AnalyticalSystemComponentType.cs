@@ -22,6 +22,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil;
             }
 
+            if (systemComponent is Junction)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemAirJunction;
+            }
+
             return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
         }
     }
