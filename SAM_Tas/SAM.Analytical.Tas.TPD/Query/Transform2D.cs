@@ -11,18 +11,22 @@ namespace SAM.Analytical.Tas.TPD
         {
 
             Point2D location_Temp = location;
-            switch(analyticalSystemComponentType)
-            {
-                case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil:
-                case Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil:
-                    location_Temp = new Point2D(location_Temp.X, location_Temp.Y);
-                    break;
-            }
+            //switch(analyticalSystemComponentType)
+            //{
+            //    case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil:
+            //    case Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil:
+            //        location_Temp = new Point2D(location_Temp.X, location_Temp.Y);
+            //        break;
+            //}
 
             switch (tpdDirection)
             {
                 case tpdDirection.tpdTopBottom:
-                    return Geometry.Planar.Transform2D.GetRotation(location_Temp, - Math.PI / 2);
+                    return new TransformGroup2D(new ITransform2D[] 
+                    {
+                        Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2),
+                        Geometry.Planar.Transform2D.GetMirrorX(location_Temp),
+                    });
 
                 case tpdDirection.tpdLeftRight:
                     return null;
