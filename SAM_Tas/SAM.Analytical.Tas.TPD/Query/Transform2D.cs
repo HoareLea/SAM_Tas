@@ -15,7 +15,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil:
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil:
-                    location_Temp = new Point2D(location_Temp.X - 0.1, location_Temp.Y);
+                    location_Temp = new Point2D(location_Temp.X, location_Temp.Y);
                     break;
             }
 
