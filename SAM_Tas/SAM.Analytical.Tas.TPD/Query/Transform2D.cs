@@ -32,13 +32,11 @@ namespace SAM.Analytical.Tas.TPD
 
 
                         case tpdDirection.tpdBottomTop:
-                            location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
-                            Point2D location_Temp_2 = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.3);
+                            location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
                             transforms = new List<ITransform2D>()
                             {
                                     Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2),
-                                    Geometry.Planar.Transform2D.GetMirrorX(location_Temp_2),
-                                    Geometry.Planar.Transform2D.GetMirrorY(location_Temp_2),
+                                    Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, -0.2)),
                             };
                             return new TransformGroup2D(transforms);
 
