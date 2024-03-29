@@ -15,6 +15,8 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ITransform2D> transforms = null;
 
+            Vector2D vector2D = null;
+
             switch (analyticalSystemComponentType)
             {
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemFan:
@@ -49,18 +51,22 @@ namespace SAM.Analytical.Tas.TPD
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemExchanger:
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemDesiccantWheel:
                     location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
+                    vector2D = new Vector2D(0.8, 0);
                     break;
 
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemSpace:
                     location_Temp = new Point2D(location_Temp.X + 0.3, location_Temp.Y - 0.3);
+                    vector2D = new Vector2D(0, 0);
                     break;
 
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemDamper:
                     location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
+                    vector2D = new Vector2D(0, 0);
                     break;
 
                 default:
                     location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
+                    vector2D = new Vector2D(0.2, 0);
                     break;
             }
 
@@ -72,7 +78,7 @@ namespace SAM.Analytical.Tas.TPD
                     transforms = new List<ITransform2D>()
                     {
                         Geometry.Planar.Transform2D.GetRotation(location_Temp, - Math.PI / 2),
-                        Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.2, 0)),
+                        Geometry.Planar.Transform2D.GetTranslation(vector2D),
                     };
                     return new TransformGroup2D(transforms);
 
@@ -83,7 +89,13 @@ namespace SAM.Analytical.Tas.TPD
                     return Geometry.Planar.Transform2D.GetMirrorY(location_Temp);
 
                 case tpdDirection.tpdBottomTop:
-                    return Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2);
+                    //return Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2);
+                    transforms = new List<ITransform2D>()
+                    {
+                        Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2),
+                        //Geometry.Planar.Transform2D.GetTranslation(vector2D),
+                    };
+                    return new TransformGroup2D(transforms);
             }
 
             return null;
