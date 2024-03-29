@@ -64,6 +64,11 @@ namespace SAM.Analytical.Tas.TPD
                     vector2D = new Vector2D(0, 0);
                     break;
 
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemAirJunction:
+                    location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
+                    vector2D = new Vector2D(0, 0);
+                    break;
+
                 default:
                     location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
                     vector2D = new Vector2D(0.2, 0);
