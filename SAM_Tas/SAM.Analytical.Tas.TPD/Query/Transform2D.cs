@@ -12,7 +12,9 @@ namespace SAM.Analytical.Tas.TPD
         public static ITransform2D Transform2D(this tpdDirection tpdDirection, Point2D location, AnalyticalSystemComponentType analyticalSystemComponentType)
         {
             Point2D location_Temp = location;
-       
+
+            List<ITransform2D> transforms = null;
+
             switch (analyticalSystemComponentType)
             {
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemFan:
@@ -20,12 +22,24 @@ namespace SAM.Analytical.Tas.TPD
                     {
                         case tpdDirection.tpdTopBottom:
                             location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
-                            break;
+                            transforms = new List<ITransform2D>()
+                            {
+                                    Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2),
+                                    Geometry.Planar.Transform2D.GetMirrorX(location_Temp),
+                                    Geometry.Planar.Transform2D.GetMirrorY(location_Temp),
+                            };
+                            return new TransformGroup2D(transforms);
 
 
                         case tpdDirection.tpdBottomTop:
                             location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
-                            break;
+                            transforms = new List<ITransform2D>()
+                            {
+                                    Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2),
+                                    Geometry.Planar.Transform2D.GetMirrorX(location_Temp),
+                                    Geometry.Planar.Transform2D.GetMirrorY(location_Temp),
+                            };
+                            return new TransformGroup2D(transforms);
 
                         default:
                             location_Temp = new Point2D(location_Temp.X + 0.3, location_Temp.Y - 0.2);
@@ -43,7 +57,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 case tpdDirection.tpdTopBottom:
 
-                    List<ITransform2D> transforms = new List<ITransform2D>()
+                    transforms = new List<ITransform2D>()
                     {
                         Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2),
                         Geometry.Planar.Transform2D.GetMirrorX(location_Temp),
