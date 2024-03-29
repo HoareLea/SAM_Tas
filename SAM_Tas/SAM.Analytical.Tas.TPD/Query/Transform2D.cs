@@ -16,7 +16,21 @@ namespace SAM.Analytical.Tas.TPD
             switch (analyticalSystemComponentType)
             {
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemFan:
-                    location_Temp = new Point2D(location_Temp.X + 0.3, location_Temp.Y - 0.2);
+                    switch(tpdDirection)
+                    {
+                        case tpdDirection.tpdTopBottom:
+                            location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
+                            break;
+
+
+                        case tpdDirection.tpdBottomTop:
+                            location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
+                            break;
+
+                        default:
+                            location_Temp = new Point2D(location_Temp.X + 0.3, location_Temp.Y - 0.2);
+                            break;
+                    }
                     break;
 
                 default:
