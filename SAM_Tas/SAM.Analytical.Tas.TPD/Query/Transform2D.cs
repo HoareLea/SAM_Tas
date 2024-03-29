@@ -71,8 +71,7 @@ namespace SAM.Analytical.Tas.TPD
 
                     transforms = new List<ITransform2D>()
                     {
-                        Geometry.Planar.Transform2D.GetRotation(location_Temp, Math.PI / 2),
-                        Geometry.Planar.Transform2D.GetMirrorX(location_Temp),
+                        Geometry.Planar.Transform2D.GetRotation(location_Temp, 3/ 2  * Math.PI),
                         Geometry.Planar.Transform2D.GetMirrorY(location_Temp),
                     };
                     return new TransformGroup2D(transforms);
