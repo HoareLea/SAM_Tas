@@ -32,6 +32,26 @@ namespace SAM.Analytical.Tas.TPD
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemFan;
             }
 
+            if (systemComponent is DesiccantWheel)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemDesiccantWheel;
+            }
+
+            if (systemComponent is Exchanger)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemExchanger;
+            }
+
+            if (systemComponent is SystemZone)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemSpace;
+            }
+
+            if (systemComponent is Damper)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemDamper;
+            }
+
             return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
         }
     }

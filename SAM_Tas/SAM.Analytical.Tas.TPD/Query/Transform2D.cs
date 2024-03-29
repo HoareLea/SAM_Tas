@@ -46,6 +46,19 @@ namespace SAM.Analytical.Tas.TPD
                     }
                     break;
 
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemExchanger:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemDesiccantWheel:
+                    location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
+                    break;
+
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemSpace:
+                    location_Temp = new Point2D(location_Temp.X + 0.3, location_Temp.Y - 0.3);
+                    break;
+
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemDamper:
+                    location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
+                    break;
+
                 default:
                     location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
                     break;
