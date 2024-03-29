@@ -27,6 +27,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemAirJunction;
             }
 
+            if (systemComponent is Fan)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemFan;
+            }
+
             return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
         }
     }
