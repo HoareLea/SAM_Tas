@@ -276,6 +276,20 @@ namespace SAM.Analytical.Tas
                     }
 
                     Update(profile_TBD, profile, value_Temp);
+
+                    if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunction, out string ventilationFunction) && !string.IsNullOrWhiteSpace(ventilationFunction))
+                    {
+                        if (profile_TBD.type == TBD.ProfileTypes.ticHourlyProfile)
+                        {
+                            profile_TBD.type = TBD.ProfileTypes.ticHourlyFunctionProfile;
+                        }
+                        else if (profile_TBD.type == TBD.ProfileTypes.ticYearlyProfile)
+                        {
+                            profile_TBD.type = TBD.ProfileTypes.ticYearlyFunctionProfile;
+                        }
+
+                        profile_TBD.function = ventilationFunction;
+                    }
                 }
             }
 
