@@ -110,6 +110,7 @@
     <Compile Include="Classes\ConstructionCalculationData.cs" />
     <Compile Include="Classes\ApertureConstructionCalculationResult.cs" />
     <Compile Include="Classes\ConstructionCalculationResult.cs" />
+    <Compile Include="Classes\ApertureGlazingCalculationResult.cs" />
     <Compile Include="Classes\OverheatingCalculator.cs" />
     <Compile Include="Classes\WorkflowSettings.cs" />
     <Compile Include="Classes\TSDConversionSettings.cs" />

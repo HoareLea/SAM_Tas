@@ -422,9 +422,10 @@ namespace SAM.Analytical.Tas
                 transparent = construction.Transparent(ConstructionManager.MaterialLibrary);
             }
 
-            if(construction_TCD == null)
+            ApertureConstruction apertureConstruction = null;
+            if (construction_TCD == null)
             {
-                ApertureConstruction apertureConstruction = ConstructionManager.ApertureConstructions?.Find(x => x.Guid == constructionGuid);
+                apertureConstruction = ConstructionManager.ApertureConstructions?.Find(x => x.Guid == constructionGuid);
                 if(apertureConstruction != null)
                 {
                     construction_TCD = apertureConstruction.ToTCD_Constructions(document, ConstructionManager)?.Find(x => x.name.EndsWith("-pane"));
@@ -437,36 +438,86 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            if(!transparent)
+            double thermalTransmittance = 0;
+            double totalSolarEnergyTransmittance = 0;
+            double lightTransmittance = 0;
+
+            if (!transparent)
             {
-                double thermalTransmittance = Query.ThermalTransmittance(construction_TCD, HeatFlowDirection.Horizontal, true, Tolerance);
-                return new GlazingCalculationResult(constructionGuid, Query.Source(), 0, 0, thermalTransmittance);
+                thermalTransmittance = Query.ThermalTransmittance(construction_TCD, HeatFlowDirection.Horizontal, true, Tolerance);
+            }
+            else
+            {
+                construction_TCD.GlazingValues(
+                    out lightTransmittance,
+                    out double lightReflectance,
+                    out double directSolarEnergyTransmittance,
+                    out double directSolarEnergyReflectance,
+                    out double directSolarEnergyAbosrtptance,
+                    out totalSolarEnergyTransmittance,
+                    out double pilkingtonShortWavelengthCoefficient,
+                    out double pilkingtonLongWavelengthCoefficient,
+                    Tolerance);
+
+                object @object = construction_TCD?.GetUValue();
+                if (@object != null)
+                {
+                    float[] values = Query.Array<float>(@object);
+                    if (values != null && values.Length >= 6)
+                    {
+                        thermalTransmittance = values[6];
+                    }
+                }
             }
 
-            construction_TCD.GlazingValues(
-                out double lightTransmittance, 
-                out double lightReflectance, 
-                out double directSolarEnergyTransmittance, 
-                out double directSolarEnergyReflectance, 
-                out double directSolarEnergyAbosrtptance, 
-                out double totalSolarEnergyTransmittance, 
-                out double pilkingtonShortWavelengthCoefficient, 
-                out double pilkingtonLongWavelengthCoefficient, 
-                Tolerance);
-
-            object @object = construction_TCD?.GetUValue();
-            if (@object == null)
+            GlazingCalculationResult result = new GlazingCalculationResult(constructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, thermalTransmittance);
+            if(apertureConstruction != null)
             {
-                return new GlazingCalculationResult(constructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, 0);
+                List<ConstructionLayer> constructionLayers = apertureConstruction.FrameConstructionLayers;
+                if(constructionLayers != null && constructionLayers.Count != 0)
+                {
+                    construction_TCD = apertureConstruction.ToTCD_Constructions(document, ConstructionManager)?.Find(x => x.name.EndsWith("-frame"));
+                    if(construction_TCD != null)
+                    {
+                        thermalTransmittance = 0;
+                        totalSolarEnergyTransmittance = 0;
+                        lightTransmittance = 0;
+
+                        transparent = constructionLayers.Transparent(ConstructionManager.MaterialLibrary);
+                        if (!transparent)
+                        {
+                            thermalTransmittance = Query.ThermalTransmittance(construction_TCD, HeatFlowDirection.Horizontal, true, Tolerance);
+                        }
+                        else
+                        {
+                            construction_TCD.GlazingValues(
+                                out lightTransmittance,
+                                out double lightReflectance,
+                                out double directSolarEnergyTransmittance,
+                                out double directSolarEnergyReflectance,
+                                out double directSolarEnergyAbosrtptance,
+                                out totalSolarEnergyTransmittance,
+                                out double pilkingtonShortWavelengthCoefficient,
+                                out double pilkingtonLongWavelengthCoefficient,
+                                Tolerance);
+
+                            object @object = construction_TCD?.GetUValue();
+                            if (@object != null)
+                            {
+                                float[] values = Query.Array<float>(@object);
+                                if (values != null && values.Length >= 6)
+                                {
+                                    thermalTransmittance = values[6];
+                                }
+                            }
+                        }
+
+                        result = new ApertureGlazingCalculationResult(result, totalSolarEnergyTransmittance, lightTransmittance, thermalTransmittance);
+                    }
+                }
             }
 
-            float[] values = Query.Array<float>(@object);
-            if (values == null || values.Length <= 6)
-            {
-                return new GlazingCalculationResult(constructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, 0);
-            }
-
-            return new GlazingCalculationResult(constructionGuid, Query.Source(), totalSolarEnergyTransmittance, lightTransmittance, values[6]);
+            return result;
         }
 
         public List<LayerThicknessCalculationResult> Calculate(IEnumerable<LayerThicknessCalculationData> layerThicknessCalculationDatas)
