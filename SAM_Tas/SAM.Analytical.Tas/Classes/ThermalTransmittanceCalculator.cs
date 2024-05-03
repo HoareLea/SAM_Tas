@@ -413,21 +413,34 @@ namespace SAM.Analytical.Tas
 
             TCD.Construction construction_TCD = null;
 
+            bool transparent = false;
+
             Construction construction = ConstructionManager.Constructions?.Find(x => x.Guid == constructionGuid);
             if(construction != null)
             {
                 construction_TCD = construction.ToTCD(document, ConstructionManager);
+                transparent = construction.Transparent(ConstructionManager.MaterialLibrary);
             }
 
             if(construction_TCD == null)
             {
                 ApertureConstruction apertureConstruction = ConstructionManager.ApertureConstructions?.Find(x => x.Guid == constructionGuid);
-                construction_TCD = apertureConstruction?.ToTCD_Constructions(document, ConstructionManager)?.Find(x => x.name.EndsWith("-pane"));
+                if(apertureConstruction != null)
+                {
+                    construction_TCD = apertureConstruction.ToTCD_Constructions(document, ConstructionManager)?.Find(x => x.name.EndsWith("-pane"));
+                    transparent = apertureConstruction.Transparent(ConstructionManager.MaterialLibrary);
+                }
             }
 
             if(construction_TCD == null)
             {
                 return null;
+            }
+
+            if(!transparent)
+            {
+                double thermalTransmittance = Query.ThermalTransmittance(construction_TCD, HeatFlowDirection.Horizontal, true, Tolerance);
+                return new GlazingCalculationResult(constructionGuid, Query.Source(), 0, 0, thermalTransmittance);
             }
 
             construction_TCD.GlazingValues(
