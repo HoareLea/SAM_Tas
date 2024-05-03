@@ -132,6 +132,13 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            List<string> names = Analytical.Query.MissingMaterialsNames(constructionManager, guids);
+            if (names != null && names.Count != 0)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, string.Format("{0}: {1}", "ConstructionManager is missing following materials:", string.Join(", ", names)));
+                return;
+            }
+
             ThermalTransmittanceCalculator thermalTransmittanceCalculator = new ThermalTransmittanceCalculator(constructionManager);
             List<GlazingCalculationResult> glazingCalculationResults = thermalTransmittanceCalculator.CalculateGlazing(guids);
 
