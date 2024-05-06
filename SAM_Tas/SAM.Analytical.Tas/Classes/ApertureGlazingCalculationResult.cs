@@ -122,5 +122,25 @@ namespace SAM.Analytical.Tas
 
             return jObject;
         }
+
+        /// <summary>
+        /// Gets Thermal Transmittance for given pane area percentage (percent of pane in total aperture area)
+        /// </summary>
+        /// <param name="paneAreaPercentage">Percentage of pane area</param>
+        /// <returns>Thermal Transmittance</returns>
+        public double GetThermalTransmittance(double paneAreaPercentage)
+        {
+            if(double.IsNaN(paneAreaPercentage))
+            {
+                return double.NaN;
+            }
+
+            if(double.IsNaN(ThermalTransmittance) && double.IsNaN(frameThermalTransmittance))
+            {
+                return double.NaN;
+            }
+
+            return (ThermalTransmittance * paneAreaPercentage / 100 ) + (frameThermalTransmittance * (100 - paneAreaPercentage) / 100);
+        }
     }
 }
