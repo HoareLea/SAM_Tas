@@ -71,5 +71,33 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static List<global::TPD.Duct> Ducts(global::TPD.ComponentGroup componentGroup)
+        {
+            if (componentGroup == null)
+            {
+                return null;
+            }
+
+            int ductCount = componentGroup.GetDuctCount();
+            if (ductCount < 1)
+            {
+                return null;
+            }
+
+            List<global::TPD.Duct> result = new List<global::TPD.Duct>();
+            for (int i = 1; i <= ductCount; i++)
+            {
+                global::TPD.Duct duct = componentGroup.GetDuct(i);
+                if (duct == null)
+                {
+                    continue;
+                }
+
+                result.Add(duct);
+            }
+
+            return result;
+        }
     }
 }

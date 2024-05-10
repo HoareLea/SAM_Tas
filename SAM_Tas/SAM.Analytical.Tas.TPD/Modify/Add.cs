@@ -3,6 +3,7 @@ using SAM.Core;
 using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Systems;
+using System;
 using System.Collections.Generic;
 using TPD;
 
@@ -455,9 +456,44 @@ namespace SAM.Analytical.Tas.TPD
             List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
             if(systemComponents != null)
             {
-                foreach(global::TPD.SystemComponent systemComponent_Temp in systemComponents)
+                Transform2D transform2D = null;
+
+                Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
+                if(location != null)
                 {
+                    transform2D = Transform2D.GetTranslation(location.ToVector());
+                }
+
+                foreach (global::TPD.SystemComponent systemComponent_Temp in systemComponents)
+                {
+                    if (systemComponent_Temp is Junction)
+                    {
+                        continue;
+                    }
+
                     List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc);
+                    if(systemJSAMObjects != null)
+                    {
+                        foreach(ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
+                        {
+                            if(transform2D != null && systemJSAMObject is IDisplaySystemObject)
+                            {
+                                ((IDisplaySystemObject)systemJSAMObject).Transform(transform2D);
+                                systemPlantRoom.Add(systemJSAMObject as dynamic);
+                            }
+
+                            result.Add(systemJSAMObject);
+                        }
+                    }
+                }
+            }
+
+            List<Duct> ducts = Query.Ducts(componentGroup);
+            if(ducts != null)
+            {
+                foreach (Duct duct in ducts)
+                {
+                    List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(duct);
                     if(systemJSAMObjects != null)
                     {
                         result.AddRange(systemJSAMObjects);
@@ -527,71 +563,171 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Add(airSystem);
 
-            Connect(systemPlantRoom, system);
-
-            List<Duct> ducts = Query.Ducts(system);
-            if(ducts != null)
+            List<DisplaySystemConnection> displaySystemConnections = Connect(systemPlantRoom, system);
+            if(displaySystemConnections != null)
             {
-
-                SystemType systemType = new SystemType(airSystem);
-
-                foreach (Duct duct in ducts)
-                {
-                    dynamic @dynamic_1 = duct.GetUpstreamComponent();
-                    int index_1 = duct.GetUpstreamComponentPort();
-
-                    string guid_1 = dynamic_1.GUID;
-
-                    dynamic @dynamic_2 = duct.GetDownstreamComponent();
-                    int index_2 = duct.GetDownstreamComponentPort();
-
-                    string guid_2 = dynamic_2.GUID;
-
-                    Core.Systems.ISystemComponent systemComponent_1 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_1);
-                    if(systemComponent_1 == null || !(systemComponent_1 is IDisplaySystemObject<SystemGeometryInstance>))
-                    {
-                        continue;
-                    }
-                    
-                    Core.Systems.ISystemComponent systemComponent_2 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_2);
-                    if(systemComponent_2 == null || !(systemComponent_2 is IDisplaySystemObject<SystemGeometryInstance>))
-                    {
-                        continue;
-                    }
-
-                    List<Point2D> point2Ds = Query.Point2Ds(duct);
-                    if(point2Ds == null)
-                    {
-                        point2Ds = new List<Point2D>();
-                    }
-
-                    Point2D point2D = null;
-
-                    point2D = (systemComponent_1 as dynamic).SystemGeometry.GetPoint2D(systemType, index_1, Direction.Out);
-                    if (point2D != null)
-                    {
-                        point2Ds.Insert(0, point2D);
-                    }
-
-                    point2D = (systemComponent_2 as dynamic).SystemGeometry.GetPoint2D(systemType, index_2, Direction.In);
-                    if (point2D != null)
-                    {
-                        point2Ds.Add(point2D);
-                    }
-
-                    if(point2Ds == null || point2Ds.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(airSystem, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds?.ToArray());
-
-                    systemPlantRoom.Connect(systemComponent_1, displaySystemConnection);
-                    systemPlantRoom.Connect(systemComponent_2, displaySystemConnection);
-                }
+                result.AddRange(displaySystemConnections);
             }
+
+            //List<Duct> ducts = Query.Ducts(system);
+            //if(ducts != null)
+            //{
+
+            //    //SystemType systemType = new SystemType(airSystem);
+
+            //    foreach (Duct duct in ducts)
+            //    {
+            //        List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(duct);
+            //        if (systemJSAMObjects != null)
+            //        {
+            //            result.AddRange(systemJSAMObjects);
+            //        }
+
+            //        //dynamic @dynamic_1 = duct.GetUpstreamComponent();
+            //        //int index_1 = duct.GetUpstreamComponentPort();
+
+            //        //string guid_1 = dynamic_1.GUID;
+
+            //        //dynamic @dynamic_2 = duct.GetDownstreamComponent();
+            //        //int index_2 = duct.GetDownstreamComponentPort();
+
+            //        //string guid_2 = dynamic_2.GUID;
+
+            //        //Core.Systems.ISystemComponent systemComponent_1 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_1);
+            //        //if(systemComponent_1 == null || !(systemComponent_1 is IDisplaySystemObject<SystemGeometryInstance>))
+            //        //{
+            //        //    continue;
+            //        //}
+
+            //        //Core.Systems.ISystemComponent systemComponent_2 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_2);
+            //        //if(systemComponent_2 == null || !(systemComponent_2 is IDisplaySystemObject<SystemGeometryInstance>))
+            //        //{
+            //        //    continue;
+            //        //}
+
+            //        //List<Point2D> point2Ds = Query.Point2Ds(duct);
+            //        //if(point2Ds == null)
+            //        //{
+            //        //    point2Ds = new List<Point2D>();
+            //        //}
+
+            //        //Point2D point2D = null;
+
+            //        //point2D = (systemComponent_1 as dynamic).SystemGeometry.GetPoint2D(systemType, index_1, Direction.Out);
+            //        //if (point2D != null)
+            //        //{
+            //        //    point2Ds.Insert(0, point2D);
+            //        //}
+
+            //        //point2D = (systemComponent_2 as dynamic).SystemGeometry.GetPoint2D(systemType, index_2, Direction.In);
+            //        //if (point2D != null)
+            //        //{
+            //        //    point2Ds.Add(point2D);
+            //        //}
+
+            //        //if(point2Ds == null || point2Ds.Count == 0)
+            //        //{
+            //        //    continue;
+            //        //}
+
+            //        //DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(airSystem, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds?.ToArray());
+
+            //        //systemPlantRoom.Connect(systemComponent_1, displaySystemConnection);
+            //        //systemPlantRoom.Connect(systemComponent_2, displaySystemConnection);
+            //    }
+            //}
 
             return result;
         }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Duct duct)
+        {
+
+            if (systemPlantRoom == null || duct == null)
+            {
+                return null;
+            }
+
+            AirSystem airSystem = systemPlantRoom.System<AirSystem>(duct.GetSystem().GUID);
+            if (airSystem == null)
+            {
+                return null;
+            }
+
+            SystemType systemType = new SystemType(airSystem);
+            if (systemType == null)
+            {
+                return null;
+            }
+
+            dynamic @dynamic_1 = duct.GetUpstreamComponent();
+
+            string guid_1 = dynamic_1.GUID;
+
+            dynamic @dynamic_2 = duct.GetDownstreamComponent();
+
+            string guid_2 = dynamic_2.GUID;
+
+            Core.Systems.ISystemComponent systemComponent_1 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_1);
+            if (systemComponent_1 == null || !(systemComponent_1 is IDisplaySystemObject<SystemGeometryInstance>))
+            {
+                return null;
+            }
+
+            int index_1 = systemPlantRoom.FindIndex(systemComponent_1, systemType, ConnectorStatus.Unconnected, Direction.Out);
+            if(index_1 == -1)
+            {
+                return null;
+            }
+
+            Core.Systems.ISystemComponent systemComponent_2 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_2);
+            if (systemComponent_2 == null || !(systemComponent_2 is IDisplaySystemObject<SystemGeometryInstance>))
+            {               
+                return null;
+            }
+
+            int index_2 = systemPlantRoom.FindIndex(systemComponent_2, systemType, ConnectorStatus.Unconnected, Direction.In);
+            if (index_2 == -1)
+            {
+                return null;
+            }
+
+            List<Point2D> point2Ds = Query.Point2Ds(duct);
+            if (point2Ds == null)
+            {
+                point2Ds = new List<Point2D>();
+            }
+
+            Point2D point2D = null;
+
+            point2D = (systemComponent_1 as dynamic).SystemGeometry.GetPoint2D(index_1);
+            if (point2D != null)
+            {
+                point2Ds.Insert(0, point2D);
+            }
+
+            point2D = (systemComponent_2 as dynamic).SystemGeometry.GetPoint2D(index_2);
+            if (point2D != null)
+            {
+                point2Ds.Add(point2D);
+            }
+
+            if (point2Ds == null || point2Ds.Count == 0)
+            {
+                return null;
+            }
+
+            DisplaySystemConnection result = new DisplaySystemConnection(new SystemConnection(airSystem, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds?.ToArray());
+            if (result == null)
+            {
+                return null;
+            }
+
+            systemPlantRoom.Connect(systemComponent_1, result);
+            systemPlantRoom.Connect(systemComponent_2, result);
+
+            return new List<ISystemJSAMObject>() { result };
+        }
+
     }
 }
