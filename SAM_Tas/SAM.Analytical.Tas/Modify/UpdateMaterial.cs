@@ -129,9 +129,14 @@ namespace SAM.Analytical.Tas
                     GasMaterial gasMaterial = (GasMaterial)material;
 
                     material_TCD.type = (int)MaterialTypes.tcdGasLayer;
-                    material_TCD.conductivity = System.Convert.ToSingle(gasMaterial.ThermalConductivity);
+
+                    float thermalConductivity = System.Convert.ToSingle(gasMaterial.ThermalConductivity);
+                    material_TCD.conductivity = thermalConductivity < 0 || double.IsNaN(thermalConductivity) ? 0 : thermalConductivity;
+
+                    float specificHeatCapacity = System.Convert.ToSingle(gasMaterial.SpecificHeatCapacity);
+                    material_TCD.specificHeat = specificHeatCapacity < 0 || double.IsNaN(specificHeatCapacity) ? 0 : specificHeatCapacity;
+
                     material_TCD.description = gasMaterial.Description;
-                    material_TCD.specificHeat = System.Convert.ToSingle(gasMaterial.SpecificHeatCapacity);
                     material_TCD.density = System.Convert.ToSingle(gasMaterial.Density);
                     material_TCD.dynamicViscosity = System.Convert.ToSingle(gasMaterial.DynamicViscosity);
 
@@ -170,10 +175,14 @@ namespace SAM.Analytical.Tas
             material.width = System.Convert.ToSingle(gasMaterial.GetValue<double>(Core.MaterialParameter.DefaultThickness));
             material.convectionCoefficient = System.Convert.ToSingle(gasMaterial.GetValue<double>(GasMaterialParameter.HeatTransferCoefficient));
             material.vapourDiffusionFactor = System.Convert.ToSingle(gasMaterial.GetValue<double>(Analytical.MaterialParameter.VapourDiffusionFactor));
-            
-            material.conductivity = System.Convert.ToSingle(gasMaterial.ThermalConductivity);
+
+            float thermalConductivity = System.Convert.ToSingle(gasMaterial.ThermalConductivity);
+            material.conductivity = thermalConductivity < 0 || double.IsNaN(thermalConductivity) ? 0 : thermalConductivity;
+
+            float specificHeatCapacity = System.Convert.ToSingle(gasMaterial.SpecificHeatCapacity);
+            material.specificHeat = specificHeatCapacity < 0 || double.IsNaN(specificHeatCapacity) ? 0 : specificHeatCapacity;
+
             material.density = System.Convert.ToSingle(gasMaterial.Density);
-            material.specificHeat = System.Convert.ToSingle(gasMaterial.SpecificHeatCapacity);
             material.dynamicViscosity = System.Convert.ToSingle(gasMaterial.DynamicViscosity);
 
             return true;
