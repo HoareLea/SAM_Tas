@@ -453,6 +453,8 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
+            BoundingBox2D boundingBox2D = null;
+
             List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
             if(systemComponents != null)
             {
@@ -478,14 +480,34 @@ namespace SAM.Analytical.Tas.TPD
                         {
                             if(transform2D != null && systemJSAMObject is IDisplaySystemObject)
                             {
-                                ((IDisplaySystemObject)systemJSAMObject).Transform(transform2D);
+                                IDisplaySystemObject displaySystemObject = (IDisplaySystemObject)systemJSAMObject;
+
+                                displaySystemObject.Transform(transform2D);
                                 systemPlantRoom.Add(systemJSAMObject as dynamic);
+
+                                BoundingBox2D boundingBox2D_Temp = displaySystemObject.BoundingBox2D;
+                                if(boundingBox2D_Temp != null)
+                                {
+                                    if (boundingBox2D == null)
+                                    {
+                                        boundingBox2D = boundingBox2D_Temp;
+                                    }
+                                    else
+                                    {
+                                        boundingBox2D.Include(boundingBox2D_Temp);
+                                    }
+                                }
                             }
 
                             result.Add(systemJSAMObject);
                         }
                     }
                 }
+            }
+
+            if(boundingBox2D != null)
+            {
+                boundingBox2D = boundingBox2D.GetBoundingBox(0.3);
             }
 
             List<Duct> ducts = Query.Ducts(componentGroup);
@@ -501,7 +523,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            AirSystemGroup airSystemGroup = componentGroup.ToSAM();
+            AirSystemGroup airSystemGroup = componentGroup.ToSAM(boundingBox2D);
             systemPlantRoom.Add(airSystemGroup);
 
             foreach(ISystemJSAMObject systemJSAMObject in result)
