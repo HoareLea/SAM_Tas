@@ -11,7 +11,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Modify
     {
-        public static List<DisplaySystemConnection> Connect(this SystemPlantRoom systemPlantRoom, global::TPD.System system)
+        public static List<ISystemConnection> Connect(this SystemPlantRoom systemPlantRoom, global::TPD.System system)
         {
             if (systemPlantRoom == null || system == null)
             {
@@ -32,7 +32,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            List<DisplaySystemConnection> result = new List<DisplaySystemConnection>();
+            List<ISystemConnection> result = new List<ISystemConnection>();
             foreach (global::TPD.SystemComponent systemComponent in systemComponents)
             {
                 if(systemComponent == null)
@@ -59,59 +59,12 @@ namespace SAM.Analytical.Tas.TPD
                                 continue;
                             }
 
-                            if(!Geometry.Systems.Query.TryGetIndexes(systemPlantRoom, systemComponent_1, systemComponent_2, out int index_1, out int index_2, new SystemType(airSystem), direction))
+                            List<Point2D> point2Ds = Query.Point2Ds(duct);
+
+                            ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_1, systemComponent_2, airSystem, direction, point2Ds);
+                            if(systemConnection != null)
                             {
-                                continue;
-                            }
-
-                            systemPlantRoom.Connect(systemComponent_1, systemComponent_2, airSystem, index_1, index_2);
-
-                            if(systemComponent_1 is IDisplaySystemObject<SystemGeometryInstance> && systemComponent_2 is IDisplaySystemObject<SystemGeometryInstance>)
-                            {
-                                Point2D point2D_1 = (systemComponent_1 as dynamic).SystemGeometry.GetPoint2D(index_1);
-                                if(point2D_1 == null)
-                                {
-                                    continue;
-                                }
-
-                                Point2D point2D_2 = (systemComponent_2 as dynamic).SystemGeometry.GetPoint2D(index_2);
-                                if(point2D_2 == null)
-                                {
-                                    continue;
-                                }
-
-                                List<Point2D> point2Ds = Query.Point2Ds(duct);
-                                if (point2Ds == null || point2Ds.Count == 0)
-                                {
-                                    point2Ds = new List<Point2D>() { point2D_1, point2D_2 };
-                                }
-                                else
-                                {
-                                    if (point2D_1.Distance(point2Ds.First()) + point2D_2.Distance(point2Ds.Last()) < point2D_1.Distance(point2Ds.Last()) + point2D_2.Distance(point2Ds.First()))
-                                    {
-                                        point2Ds.Insert(0, point2D_1);
-                                        point2Ds.Add(point2D_2);
-                                    }
-                                    else
-                                    {
-                                        point2Ds.Insert(0, point2D_2);
-                                        point2Ds.Add(point2D_1);
-                                    }
-
-                                }
-
-                                if (point2Ds == null || point2Ds.Count < 2)
-                                {
-                                    continue;
-                                }
-
-                                DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(airSystem, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds?.ToArray());
-                                if (displaySystemConnection != null)
-                                {
-                                    systemPlantRoom.Connect(systemComponent_1, displaySystemConnection);
-                                    systemPlantRoom.Connect(systemComponent_2, displaySystemConnection);
-                                    result.Add(displaySystemConnection);
-                                }
+                                result.Add(systemConnection);
                             }
                         }
                     }
@@ -120,5 +73,70 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static ISystemConnection Connect(this SystemPlantRoom systemPlantRoom, Core.Systems.ISystemComponent systemComponent_1, Core.Systems.ISystemComponent systemComponent_2, Core.Systems.ISystem system, Direction direction, IEnumerable<Point2D> point2Ds = null)
+        {
+            if(systemPlantRoom == null || systemComponent_1 == null || systemComponent_2 == null || system == null)
+            {
+                return null;
+            }
+
+            if (!Geometry.Systems.Query.TryGetIndexes(systemPlantRoom, systemComponent_1, systemComponent_2, out int index_1, out int index_2, new SystemType(system), direction))
+            {
+                return null;
+            }
+
+            if (!(systemComponent_1 is IDisplaySystemObject<SystemGeometryInstance>) || !(systemComponent_2 is IDisplaySystemObject<SystemGeometryInstance>))
+            {
+                if(systemPlantRoom.Connect(systemComponent_1, systemComponent_2, out ISystemConnection systemConnection, system, index_1, index_2))
+                {
+                    return systemConnection;
+                }
+
+                return null;
+            }
+
+            Point2D point2D_1 = (systemComponent_1 as dynamic).SystemGeometry.GetPoint2D(index_1);
+            if (point2D_1 == null)
+            {
+                return null;
+            }
+
+            Point2D point2D_2 = (systemComponent_2 as dynamic).SystemGeometry.GetPoint2D(index_2);
+            if (point2D_2 == null)
+            {
+                return null;
+            }
+
+            List<Point2D> point2Ds_Temp = point2Ds == null ? null : new List<Point2D>(point2Ds);
+            if (point2Ds_Temp == null || point2Ds_Temp.Count == 0)
+            {
+                point2Ds_Temp = new List<Point2D>() { point2D_1, point2D_2 };
+            }
+            else
+            {
+                if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
+                {
+                    point2Ds_Temp.Insert(0, point2D_1);
+                    point2Ds_Temp.Add(point2D_2);
+                }
+                else
+                {
+                    point2Ds_Temp.Insert(0, point2D_2);
+                    point2Ds_Temp.Add(point2D_1);
+                }
+
+            }
+
+            if (point2Ds_Temp == null || point2Ds_Temp.Count < 2)
+            {
+                return null;
+            }
+
+            DisplaySystemConnection result = new DisplaySystemConnection(new SystemConnection(system, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds_Temp?.ToArray());
+
+            return systemPlantRoom.Connect(result, system) ? result : null;
+        }
+
     }
 }

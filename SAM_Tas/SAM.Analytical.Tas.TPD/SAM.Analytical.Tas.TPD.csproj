@@ -129,6 +129,7 @@
     <Compile Include="Query\EndHour.cs" />
     <Compile Include="Query\Ducts.cs" />
     <Compile Include="Query\Source.cs" />
+    <Compile Include="Query\ConnectedSystemComponents.cs" />
     <Compile Include="Query\ZoneComponents.cs" />
     <Compile Include="Query\StartHour.cs" />
     <Compile Include="Query\Transform2D.cs" />

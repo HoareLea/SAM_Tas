@@ -5,6 +5,7 @@ using SAM.Geometry.Planar;
 using SAM.Geometry.Systems;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -505,7 +506,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            if(boundingBox2D != null)
+            if (boundingBox2D != null)
             {
                 boundingBox2D = boundingBox2D.GetBoundingBox(0.3);
             }
@@ -535,6 +536,53 @@ namespace SAM.Analytical.Tas.TPD
                 }
 
                 systemPlantRoom.Connect(airSystemGroup, systemComponent);
+            }
+
+            //Connect componentGroup with the rest of the system
+            if(systemComponents != null)
+            {
+                foreach (global::TPD.SystemComponent systemComponent_Temp in systemComponents)
+                {
+                    if (!(systemComponent_Temp is Junction))
+                    {
+                        continue;
+                    }
+
+                    AirSystem airSystem = systemPlantRoom.System<AirSystem>(((systemComponent_Temp as dynamic)?.GetSystem() as dynamic)?.GUID as string);
+
+                    List<global::TPD.SystemComponent> systemComponents_In = Query.ConnectedSystemComponents(systemComponent_Temp, Direction.In);
+                    if (systemComponents_In == null || systemComponents_In.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    List<global::TPD.SystemComponent> systemComponents_Out = Query.ConnectedSystemComponents(systemComponent_Temp, Direction.Out);
+                    if (systemComponents_Out == null || systemComponents_Out.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (global::TPD.SystemComponent systemComponent_In in systemComponents_In)
+                    {
+                        Core.Systems.ISystemComponent systemComponent_In_SAM = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x?.Reference() == (systemComponent_In as dynamic).GUID);
+                        if (systemComponent_In_SAM == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (global::TPD.SystemComponent systemComponent_Out in systemComponents_Out)
+                        {
+                            Core.Systems.ISystemComponent systemComponent_Out_SAM = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x?.Reference() == (systemComponent_Out as dynamic).GUID);
+                            if (systemComponent_Out_SAM == null)
+                            {
+                                continue;
+                            }
+
+                            Connect(systemPlantRoom, systemComponent_In_SAM, systemComponent_Out_SAM, airSystem, Direction.Out);
+                        }
+                    }
+
+                }
             }
 
             result.Add(airSystemGroup);
@@ -585,10 +633,10 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Add(airSystem);
 
-            List<DisplaySystemConnection> displaySystemConnections = Connect(systemPlantRoom, system);
-            if(displaySystemConnections != null)
+            List<ISystemConnection> systemConnections = Connect(systemPlantRoom, system);
+            if(systemConnections != null)
             {
-                result.AddRange(displaySystemConnections);
+                result.AddRange(systemConnections);
             }
 
             //List<Duct> ducts = Query.Ducts(system);
@@ -745,8 +793,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            systemPlantRoom.Connect(systemComponent_1, result);
-            systemPlantRoom.Connect(systemComponent_2, result);
+            systemPlantRoom.Connect(result, airSystem);
 
             return new List<ISystemJSAMObject>() { result };
         }
