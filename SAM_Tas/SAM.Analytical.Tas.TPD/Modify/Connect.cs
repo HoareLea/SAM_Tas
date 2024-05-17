@@ -44,7 +44,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 Core.Systems.ISystemComponent systemComponent_1 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_1);
 
-                foreach (Direction direction in new Direction[] { Direction.In, Direction.Out})
+                foreach (Direction direction in new Direction[] { Direction.In })
                 {
                     List<Duct> ducts = Query.Ducts(systemComponent, direction);
                     if (ducts != null)
