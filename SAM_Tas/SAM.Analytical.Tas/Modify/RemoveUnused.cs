@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas
             List<Guid> result = new List<Guid>();
             result.AddRange(RemoveUnusedZones(building));
             result.AddRange(RemoveUnusedWindows(building));
-            result.AddRange(RemoveUnusedElements(building));
+            result.AddRange(RemoveUnusedElements(building, new string[] { "Exposed Floor", "External Wall", "Ground Floor", "Internal Ceiling", "Internal Floor", "Internal Wall", "Roof" }));
 
             return result;
         }
