@@ -138,5 +138,75 @@ namespace SAM.Analytical.Tas.TPD
             return systemPlantRoom.Connect(result, system) ? result : null;
         }
 
+        public static List<ISystemConnection> Connect(this SystemPlantRoom systemPlantRoom, ComponentGroup componentGroup)
+        {
+            if(systemPlantRoom == null || componentGroup == null)
+            {
+                return null;
+            }
+
+            List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
+            if(systemComponents == null)
+            {
+                return null;
+            }
+
+            List<ISystemConnection> result = new List<ISystemConnection>();
+
+            //Connect componentGroup with the rest of the system
+            foreach (global::TPD.SystemComponent systemComponent_Temp in systemComponents)
+            {
+                if (!(systemComponent_Temp is Junction))
+                {
+                    continue;
+                }
+
+                AirSystem airSystem = systemPlantRoom.System<AirSystem>(((systemComponent_Temp as dynamic)?.GetSystem() as dynamic)?.GUID as string);
+
+                List<global::TPD.SystemComponent> systemComponents_In = Query.ConnectedSystemComponents(systemComponent_Temp, Direction.In);
+                if (systemComponents_In == null || systemComponents_In.Count == 0)
+                {
+                    continue;
+                }
+
+                systemComponents_In.RemoveAll(x => (x as dynamic).Guid == (componentGroup as dynamic).Guid);
+
+                List<global::TPD.SystemComponent> systemComponents_Out = Query.ConnectedSystemComponents(systemComponent_Temp, Direction.Out);
+                if (systemComponents_Out == null || systemComponents_Out.Count == 0)
+                {
+                    continue;
+                }
+
+                systemComponents_Out.RemoveAll(x => (x as dynamic).Guid == (componentGroup as dynamic).Guid);
+
+                foreach (global::TPD.SystemComponent systemComponent_In in systemComponents_In)
+                {
+                    Core.Systems.ISystemComponent systemComponent_In_SAM = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x?.Reference() == (systemComponent_In as dynamic).GUID);
+                    if (systemComponent_In_SAM == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (global::TPD.SystemComponent systemComponent_Out in systemComponents_Out)
+                    {
+                        Core.Systems.ISystemComponent systemComponent_Out_SAM = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x?.Reference() == (systemComponent_Out as dynamic).GUID);
+                        if (systemComponent_Out_SAM == null)
+                        {
+                            continue;
+                        }
+
+                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_In_SAM, systemComponent_Out_SAM, airSystem, Direction.Out);
+                        if(systemConnection != null)
+                        {
+                            result.Add(systemConnection);
+                        }
+                    }
+                }
+
+            }
+
+            return result;
+        }
+
     }
 }
