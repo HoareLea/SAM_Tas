@@ -1,4 +1,5 @@
 ﻿using SAM.Analytical.Systems;
+using SAM.Geometry.Planar;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -14,9 +15,19 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = steamHumidifier;
 
-            SystemSteamHumidifier result = new SystemSteamHumidifier(@dynamic.Name);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, @dynamic.GUID);
+            SystemSteamHumidifier systemSteamHumidifier = new SystemSteamHumidifier(@dynamic.Name);
+            systemSteamHumidifier.Description = dynamic.Description;
+            Modify.SetReference(systemSteamHumidifier, @dynamic.GUID);
+
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            DisplaySystemSteamHumidifier result = Systems.Create.DisplayObject<DisplaySystemSteamHumidifier>(systemSteamHumidifier, location, Systems.Query.DefaultDisplaySystemManager());
+
+            ITransform2D transform2D = ((ISystemComponent)steamHumidifier).Transform2D();
+            if (transform2D != null)
+            {
+                result.Transform(transform2D);
+            }
 
             return result;
         }
