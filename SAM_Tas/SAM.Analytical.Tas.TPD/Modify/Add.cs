@@ -640,6 +640,11 @@ namespace SAM.Analytical.Tas.TPD
                     continue;
                 }
 
+                if(systemComponent is ISystemSpaceComponent)
+                {
+                    continue;
+                }
+
                 systemPlantRoom.Connect(airSystem, systemComponent);
             }
 
