@@ -288,12 +288,12 @@ namespace SAM.Analytical.Tas.TPD
 
             switch (sprayHumidifier.Flags)
             {
-                case 1:
+                case 0:
                     systemComponent = sprayHumidifier.ToSAM_SystemSprayHumidifier();
                     systemComponentResult = sprayHumidifier.ToSAM_SystemSprayHumidifierResult(start, end);
                     break;
 
-                case 0:
+                case 1:
                     systemComponent = sprayHumidifier.ToSAM_SystemDirectEvaporativeCooler();
                     systemComponentResult = sprayHumidifier.ToSAM_SystemDirectEvaporativeCoolerResult(start, end);
                     break;

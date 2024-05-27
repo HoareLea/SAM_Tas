@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
 
             DisplaySystemSprayHumidifier result = Systems.Create.DisplayObject<DisplaySystemSprayHumidifier>(systemSprayHumidifier, location, Systems.Query.DefaultDisplaySystemManager());
 
-            ITransform2D transform2D = ((ISystemComponent)systemSprayHumidifier).Transform2D();
+            ITransform2D transform2D = ((ISystemComponent)sprayHumidifier).Transform2D();
             if (transform2D != null)
             {
                 result.Transform(transform2D);
