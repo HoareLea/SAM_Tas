@@ -8,7 +8,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemFanResult ToSAM_SystemFanResult(this Fan fan, int start, int end, params FanDataType[] fanDataTypes)
+        public static SystemFanResult ToSAM_SystemFanResult(this global::TPD.Fan fan, int start, int end, params FanDataType[] fanDataTypes)
         {
             if (fan == null)
             {

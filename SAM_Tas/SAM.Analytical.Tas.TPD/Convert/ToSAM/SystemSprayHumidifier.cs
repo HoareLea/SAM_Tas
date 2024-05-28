@@ -22,6 +22,10 @@ namespace SAM.Analytical.Tas.TPD
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemSprayHumidifier result = Systems.Create.DisplayObject<DisplaySystemSprayHumidifier>(systemSprayHumidifier, location, Systems.Query.DefaultDisplaySystemManager());
+            result.Setpoint = sprayHumidifier.Setpoint.ToSAM();
+            result.Effectiveness = sprayHumidifier.Effectiveness.ToSAM();
+            result.WaterFlowCapacity = sprayHumidifier.WaterFlowCapacity.ToSAM();
+            result.ElectricalLoad = sprayHumidifier?.ElectricalLoad.ToSAM();
 
             ITransform2D transform2D = ((ISystemComponent)sprayHumidifier).Transform2D();
             if (transform2D != null)

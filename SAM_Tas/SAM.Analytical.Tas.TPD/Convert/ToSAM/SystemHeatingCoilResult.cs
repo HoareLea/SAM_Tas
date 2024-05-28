@@ -8,7 +8,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemHeatingCoilResult ToSAM_SystemHeatingCoilResult(this HeatingCoil heatingCoil, int start, int end, params HeatingCoilDataType[] heatingCoilDataTypes)
+        public static SystemHeatingCoilResult ToSAM_SystemHeatingCoilResult(this global::TPD.HeatingCoil heatingCoil, int start, int end, params HeatingCoilDataType[] heatingCoilDataTypes)
         {
             if (heatingCoil == null)
             {

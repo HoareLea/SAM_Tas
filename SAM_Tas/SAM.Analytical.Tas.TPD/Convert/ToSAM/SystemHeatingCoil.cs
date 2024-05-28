@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemHeatingCoil ToSAM(this HeatingCoil heatingCoil)
+        public static SystemHeatingCoil ToSAM(this global::TPD.HeatingCoil heatingCoil)
         {
             if (heatingCoil == null)
             {
@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
 
             DisplaySystemHeatingCoil result = Systems.Create.DisplayObject<DisplaySystemHeatingCoil>(systemHeatingCoil, location, Systems.Query.DefaultDisplaySystemManager());
 
-            result.Duty = heatingCoil.Duty.ToSAM_Duty();
+            result.Duty = heatingCoil.Duty.ToSAM();
 
             ITransform2D transform2D = ((ISystemComponent)heatingCoil).Transform2D();
             if (transform2D != null)

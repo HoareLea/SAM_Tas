@@ -46,17 +46,17 @@ namespace SAM.Analytical.Tas.TPD
 
             if (systemComponent is Fan)
             {
-                return Add(systemPlantRoom, (Fan)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (global::TPD.Fan)systemComponent, tPDDoc);
             }
 
             if (systemComponent is HeatingCoil)
             {
-                return Add(systemPlantRoom, (HeatingCoil)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (global::TPD.HeatingCoil)systemComponent, tPDDoc);
             }
 
             if (systemComponent is CoolingCoil)
             {
-                return Add(systemPlantRoom, (CoolingCoil)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (global::TPD.CoolingCoil)systemComponent, tPDDoc);
             }
 
             if (systemComponent is Damper)
@@ -363,7 +363,7 @@ namespace SAM.Analytical.Tas.TPD
             return new List<ISystemJSAMObject>() { systemDesiccantWheel, systemDesiccantWheelResult };
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Fan fan, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.Fan fan, TPDDoc tPDDoc)
         {
             if (systemPlantRoom == null || fan == null || tPDDoc == null)
             {
@@ -384,7 +384,7 @@ namespace SAM.Analytical.Tas.TPD
             return new List<ISystemJSAMObject>() { systemFan, systemFanResult };
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, CoolingCoil coolingCoil, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.CoolingCoil coolingCoil, TPDDoc tPDDoc)
         {
             if (systemPlantRoom == null || coolingCoil == null)
             {
@@ -405,7 +405,7 @@ namespace SAM.Analytical.Tas.TPD
             return new List<ISystemJSAMObject>() { systemCoolingCoil, systemCoolingCoilResult };
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HeatingCoil heatingCoil, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.HeatingCoil heatingCoil, TPDDoc tPDDoc)
         {
             if (systemPlantRoom == null || heatingCoil == null)
             {

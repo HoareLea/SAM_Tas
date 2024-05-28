@@ -20,8 +20,8 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemDXCoilUnit result = new SystemDXCoilUnit(dynamic.Name) 
             {
-                CoolingDuty = dXCoilUnit.CoolingDuty?.ToSAM_Duty(),
-                HeatingDuty = dXCoilUnit.HeatingDuty?.ToSAM_Duty(),
+                CoolingDuty = dXCoilUnit.CoolingDuty?.ToSAM(),
+                HeatingDuty = dXCoilUnit.HeatingDuty?.ToSAM(),
                 DesignFlowRate = designFlowRate,
                 OverallEfficiency = overallEfficiency
             };

@@ -22,6 +22,7 @@ namespace SAM.Analytical.Tas.TPD
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemEconomiser result = Systems.Create.DisplayObject<DisplaySystemEconomiser>(systemEconomiser, location, Systems.Query.DefaultDisplaySystemManager());
+            result.Setpoint = optimizer.Setpoint.ToSAM();
 
             ITransform2D transform2D = ((ISystemComponent)optimizer).Transform2D();
             if (transform2D != null)

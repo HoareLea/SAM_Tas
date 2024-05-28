@@ -22,8 +22,8 @@ namespace SAM.Analytical.Tas.TPD
             SystemFanCoilUnit result = new SystemFanCoilUnit(dynamic.Name) 
             { 
                 Pressure = fanCoilUnit.Pressure,
-                CoolingDuty = fanCoilUnit.CoolingDuty?.ToSAM_Duty(),
-                HeatingDuty = fanCoilUnit.HeatingDuty?.ToSAM_Duty(),
+                CoolingDuty = fanCoilUnit.CoolingDuty?.ToSAM(),
+                HeatingDuty = fanCoilUnit.HeatingDuty?.ToSAM(),
                 DesignFlowRate = designFlowRate,
                 HeatingEfficiency = heatingEfficiency,
                 OverallEfficiency = overallEfficiency

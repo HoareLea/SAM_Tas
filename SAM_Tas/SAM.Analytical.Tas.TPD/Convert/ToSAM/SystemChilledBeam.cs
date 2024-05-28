@@ -20,8 +20,8 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemChilledBeam result = new SystemChilledBeam(@dynamic.Name) 
             {
-                CoolingDuty = chilledBeam.CoolingDuty?.ToSAM_Duty(),
-                HeatingDuty = chilledBeam.HeatingDuty?.ToSAM_Duty(),
+                CoolingDuty = chilledBeam.CoolingDuty?.ToSAM(),
+                HeatingDuty = chilledBeam.HeatingDuty?.ToSAM(),
                 DesignFlowRate = designFlowRate,
                 HeatingEfficiency = heatingEfficiency,
             };

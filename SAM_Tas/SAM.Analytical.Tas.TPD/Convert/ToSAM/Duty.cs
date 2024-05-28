@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Duty ToSAM_Duty(this SizedVariable sizedVariable)
+        public static SizableValue ToSAM(this SizedVariable sizedVariable)
         {
             if(sizedVariable == null)
             {
@@ -17,16 +17,16 @@ namespace SAM.Analytical.Tas.TPD
             switch ((tpdSizedVariable)@dynamic.Type)
             {
                 case tpdSizedVariable.tpdSizedVariableSizeDone:
-                    return new SizedDuty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction);
+                    return new SizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction);
 
                 case tpdSizedVariable.tpdSizedVariableSize:
-                    return new SizedDuty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction);
+                    return new SizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction);
 
                 case tpdSizedVariable.tpdSizedVariableNone:
-                    return new UnlimitedDuty();
+                    return new UnlimitedValue();
 
                 case tpdSizedVariable.tpdSizedVariableValue:
-                    return new Duty(System.Convert.ToDouble(@dynamic.Value));
+                    return new SizableValue(System.Convert.ToDouble(@dynamic.Value));
             }
 
             return null;

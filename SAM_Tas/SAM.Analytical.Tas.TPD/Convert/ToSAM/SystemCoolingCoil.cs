@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemCoolingCoil ToSAM(this CoolingCoil coolingCoil)
+        public static SystemCoolingCoil ToSAM(this global::TPD.CoolingCoil coolingCoil)
         {
             if (coolingCoil == null)
             {
@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
 
             DisplaySystemCoolingCoil result = Systems.Create.DisplayObject<DisplaySystemCoolingCoil>(systemCoolingCoil, location, Systems.Query.DefaultDisplaySystemManager());
             result.BypassFactor = coolingCoil.BypassFactor.Value;
-            result.Duty = coolingCoil.Duty.ToSAM_Duty();
+            result.Duty = coolingCoil.Duty.ToSAM();
 
             ITransform2D transform2D = ((ISystemComponent)coolingCoil).Transform2D();
             if (transform2D != null)

@@ -22,6 +22,12 @@ namespace SAM.Analytical.Tas.TPD
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemDirectEvaporativeCooler result = Systems.Create.DisplayObject<DisplaySystemDirectEvaporativeCooler>(systemDirectEvaporativeCooler, location, Systems.Query.DefaultDisplaySystemManager());
+            result.Setpoint = sprayHumidifier.Setpoint.ToSAM();
+            result.Effectiveness = sprayHumidifier.Effectiveness.ToSAM();
+            result.WaterFlowCapacity = sprayHumidifier.WaterFlowCapacity.ToSAM();
+            result.ElectricalLoad = sprayHumidifier.ElectricalLoad.ToSAM();
+            result.HoursBeforePurgingTank = System.Convert.ToDouble(sprayHumidifier.TankHours);
+            result.TankVolume = System.Convert.ToDouble(sprayHumidifier.TankVolume);
 
             ITransform2D transform2D = ((ISystemComponent)sprayHumidifier).Transform2D();
             if (transform2D != null)

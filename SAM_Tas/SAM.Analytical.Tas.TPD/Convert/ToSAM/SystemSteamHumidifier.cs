@@ -22,6 +22,9 @@ namespace SAM.Analytical.Tas.TPD
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemSteamHumidifier result = Systems.Create.DisplayObject<DisplaySystemSteamHumidifier>(systemSteamHumidifier, location, Systems.Query.DefaultDisplaySystemManager());
+            result.Duty = steamHumidifier.Duty.ToSAM();
+            result.WaterSupplyTemperature = steamHumidifier.WaterSupplyTemp.ToSAM();
+            result.Setpoint = steamHumidifier.Setpoint.ToSAM();
 
             ITransform2D transform2D = ((ISystemComponent)steamHumidifier).Transform2D();
             if (transform2D != null)

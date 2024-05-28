@@ -22,6 +22,13 @@ namespace SAM.Analytical.Tas.TPD
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemDXCoil result = Systems.Create.DisplayObject<DisplaySystemDXCoil>(systemDXCoil, location, Systems.Query.DefaultDisplaySystemManager());
+            result.CoolingSetpoint = dxCoil.CoolingSetpoint.ToSAM();
+            result.HeatingSetpoint = dxCoil.HeatingSetpoint.ToSAM();
+            result.MinOffcoilTemperature = dxCoil.MinimumOffcoil.ToSAM();
+            result.MaxOffcoilTemperature = dxCoil.MaximumOffcoil.ToSAM();
+            result.BypassFactor = dxCoil.BypassFactor.ToSAM();
+            result.CoolingDuty = dxCoil.CoolingDuty.ToSAM();
+            result.HeatingDuty = dxCoil.HeatingDuty.ToSAM();
 
             ITransform2D transform2D = ((ISystemComponent)dxCoil).Transform2D();
             if (transform2D != null)

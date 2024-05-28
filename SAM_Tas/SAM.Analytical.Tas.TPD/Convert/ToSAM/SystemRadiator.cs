@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemRadiator result = new SystemRadiator(dynamic.Name)
             {
-                Duty = radiator.Duty.ToSAM_Duty(),
+                Duty = radiator.Duty.ToSAM(),
                 Efficiency = efficiency,
             };
 
