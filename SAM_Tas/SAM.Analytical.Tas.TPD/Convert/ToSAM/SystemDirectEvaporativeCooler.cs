@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
             result.WaterFlowCapacity = sprayHumidifier.WaterFlowCapacity.ToSAM();
             result.ElectricalLoad = sprayHumidifier.ElectricalLoad.ToSAM();
             result.HoursBeforePurgingTank = System.Convert.ToDouble(sprayHumidifier.TankHours);
-            result.TankVolume = System.Convert.ToDouble(sprayHumidifier.TankVolume);
+            result.TankVolume = sprayHumidifier.TankVolume.ToSAM();
 
             ITransform2D transform2D = ((ISystemComponent)sprayHumidifier).Transform2D();
             if (transform2D != null)
