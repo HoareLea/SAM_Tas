@@ -47,7 +47,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            if(profileDataModifier is IProfileDataModifierCurve)
+            if (profileDataModifier is IProfileDataModifierCurve)
             {
                 return ToSAM((IProfileDataModifierCurve)profileDataModifier);
             }
@@ -65,6 +65,11 @@ namespace SAM.Analytical.Tas.TPD
             if (profileDataModifier is IProfileDataModifierYearly)
             {
                 return ToSAM((IProfileDataModifierYearly)profileDataModifier);
+            }
+
+            if (profileDataModifier is IProfileDataModifierLua)
+            {
+                return ToSAM((IProfileDataModifierLua)profileDataModifier);
             }
 
             return null;
@@ -114,6 +119,18 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             ProfileModifier result = new ProfileModifier(profileDataModifierYearly.Multiplier.ArithmeticOperator().Value, null);
+
+            return result;
+        }
+
+        public static LuaModifier ToSAM(IProfileDataModifierLua profileDataModifierLua)
+        {
+            if (profileDataModifierLua == null)
+            {
+                return null;
+            }
+
+            LuaModifier result = new LuaModifier(profileDataModifierLua.Multiplier.ArithmeticOperator().Value, null);
 
             return result;
         }

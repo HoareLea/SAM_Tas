@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\LuaModifier.cs" />
     <Compile Include="Classes\SystemModelConversionSettings.cs" />
     <Compile Include="Convert\ToSAM\ModifiableValue.cs" />
     <Compile Include="Convert\ToSAM\Duty.cs" />
