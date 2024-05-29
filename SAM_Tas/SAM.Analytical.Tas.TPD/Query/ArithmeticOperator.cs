@@ -17,6 +17,9 @@ namespace SAM.Analytical.Tas.TPD
 
                 case tpdProfileDataModifierMultiplier.tpdProfileDataModifierMultiply:
                     return Core.ArithmeticOperator.Multiplication;
+
+                case tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual:
+                    return Core.ArithmeticOperator.Multiplication;
             }
 
             return null;
