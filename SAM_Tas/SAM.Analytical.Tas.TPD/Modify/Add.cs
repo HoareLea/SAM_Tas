@@ -44,17 +44,17 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (DesiccantWheel)systemComponent, tPDDoc);
             }
 
-            if (systemComponent is Fan)
+            if (systemComponent is global::TPD.Fan)
             {
                 return Add(systemPlantRoom, (global::TPD.Fan)systemComponent, tPDDoc);
             }
 
-            if (systemComponent is HeatingCoil)
+            if (systemComponent is global::TPD.HeatingCoil)
             {
                 return Add(systemPlantRoom, (global::TPD.HeatingCoil)systemComponent, tPDDoc);
             }
 
-            if (systemComponent is CoolingCoil)
+            if (systemComponent is global::TPD.CoolingCoil)
             {
                 return Add(systemPlantRoom, (global::TPD.CoolingCoil)systemComponent, tPDDoc);
             }
