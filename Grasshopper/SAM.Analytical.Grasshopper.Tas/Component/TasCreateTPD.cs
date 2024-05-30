@@ -1,9 +1,13 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
@@ -140,6 +144,46 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 dataAccess.SetData(index_successful, true);
             }
+        }
+
+        public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+        {
+            base.AppendAdditionalMenuItems(menu);
+
+            Menu_AppendSeparator(menu);
+            Menu_AppendItem(menu, "Open TPD", Menu_OpenTPD, Resources.SAM_TasTPD3, true, false);
+        }
+
+        private void Menu_OpenTPD(object sender, EventArgs e)
+        {
+            int index_Path = Params.IndexOfInputParam("_path_TSD");
+            if (index_Path == -1)
+            {
+                return;
+            }
+
+            string path = null;
+
+            object @object = null;
+
+            @object = Params.Input[index_Path].VolatileData.AllData(true)?.OfType<object>()?.ElementAt(0);
+            if (@object is IGH_Goo)
+            {
+                path = (@object as dynamic).Value?.ToString();
+            }
+
+            if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+            {
+                return;
+            }
+
+            path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), string.Format("{0}.{1}", System.IO.Path.GetFileNameWithoutExtension(path), "tpd"));
+            if (!System.IO.File.Exists(path))
+            {
+                return;
+            }
+
+            Process.Start(path);
         }
     }
 }
