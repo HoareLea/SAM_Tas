@@ -126,6 +126,7 @@
     <Compile Include="Convert\ToSAM\SystemModel.cs" />
     <Compile Include="Convert\ToSAM\SystemSpaceResults.cs" />
     <Compile Include="Convert\ToSAM\SystemSpaceResult.cs" />
+    <Compile Include="Convert\ToTPD\Fan.cs" />
     <Compile Include="Create\IndexedDoubles.cs" />
     <Compile Include="Enums\Parameters\SystemObjectParameter.cs" />
     <Compile Include="Modify\Connect.cs" />
