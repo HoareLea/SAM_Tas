@@ -508,7 +508,7 @@ namespace SAM.Analytical.Tas.TPD
 
             if (boundingBox2D != null)
             {
-                boundingBox2D = boundingBox2D.GetBoundingBox(0.3);
+                boundingBox2D = boundingBox2D.GetBoundingBox(0.1);
             }
 
             List<Duct> ducts = Query.Ducts(componentGroup);
