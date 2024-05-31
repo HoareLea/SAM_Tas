@@ -23,14 +23,14 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTPD;
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
@@ -38,7 +38,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         public FromTPD()
           : base("SAMAnalytical.FromTPD", "SAMAnalytical.FromTPD",
               "Converts from TPD to SystemEnergyCentre",
-              "SAM WIP", "Tas")
+              "SAM", "Tas")
         {
         }
 

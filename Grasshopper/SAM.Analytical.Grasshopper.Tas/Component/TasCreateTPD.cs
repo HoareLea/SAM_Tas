@@ -21,15 +21,15 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override Bitmap Icon => Resources.SAM_TasTBD3;
+        protected override Bitmap Icon => Resources.SAM_TasTPD3;
 
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
@@ -37,7 +37,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         public TasCreateTPD()
           : base("Tas.CreateTPD", "Tas.CreateTPD",
               "Tas Create TPD",
-              "SAM WIP", "Tas")
+              "SAM", "Tas")
         {
         }
 

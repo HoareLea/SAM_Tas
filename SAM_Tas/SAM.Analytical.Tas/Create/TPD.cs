@@ -1061,7 +1061,7 @@ namespace SAM.Analytical.Tas
             junction_ExhaustAir.SetPosition(0, 190);
 
             dynamic exchanger = system.AddExchanger();
-            exchanger.ExchLatType = global::TPD.tpdExchangerLatentType.tpdExchangerLatentEnthalpy;
+            exchanger.ExchLatType = global::TPD.tpdExchangerLatentType.tpdExchangerLatentHumRat;
             exchanger.LatentEfficiency.Value = 0.0;
             exchanger.SensibleEfficiency.Value = 0.7;
             exchanger.Setpoint.Value = 14;
@@ -1349,7 +1349,7 @@ namespace SAM.Analytical.Tas
             junction_ExhaustAir.SetPosition(0, 190);
 
             dynamic exchanger = system.AddExchanger();
-            exchanger.ExchLatType = global::TPD.tpdExchangerLatentType.tpdExchangerLatentEnthalpy;
+            exchanger.ExchLatType = global::TPD.tpdExchangerLatentType.tpdExchangerLatentHumRat;
             exchanger.LatentEfficiency.Value = 0.0;
             exchanger.SensibleEfficiency.Value = 0.7;
             exchanger.Setpoint.Value = 14;
@@ -1613,7 +1613,7 @@ namespace SAM.Analytical.Tas
             junction_ExhaustAir.SetPosition(0, 190);
 
             dynamic desiccantWheel = system.AddDesiccantWheel();
-            //desiccantWheel.ExchLatType = TPD.tpdExchangerLatentType.tpdExchangerLatentEnthalpy;
+            //desiccantWheel.ExchLatType = TPD.tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //desiccantWheel.LatentEfficiency.Value = 0.0;
             //desiccantWheel.SensibleEfficiency.Value = 0.7;
             //desiccantWheel.Setpoint.Value = 14;
@@ -1864,7 +1864,7 @@ namespace SAM.Analytical.Tas
             junction_ExhaustAir.SetPosition(0, 190);
 
             dynamic exchanger = system.AddExchanger();
-            exchanger.ExchLatType = global::TPD.tpdExchangerLatentType.tpdExchangerLatentEnthalpy;
+            exchanger.ExchLatType = global::TPD.tpdExchangerLatentType.tpdExchangerLatentHumRat;
             exchanger.LatentEfficiency.Value = 0.0;
             exchanger.SensibleEfficiency.Value = 0.7;
             exchanger.Setpoint.Value = 14;
