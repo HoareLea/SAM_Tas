@@ -37,5 +37,67 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static List<ZoneLoad> ZoneLoads(this TSDData tSDData)
+        {
+            if(tSDData == null)
+            {
+                return null;
+            }
+
+            List<ZoneLoad> result = new List<ZoneLoad>();
+            for (int i = 1; i <= tSDData.GetZoneLoadCount(); i++)
+            {
+                ZoneLoad zoneLoad = tSDData.GetZoneLoad(i);
+                if(zoneLoad == null)
+                {
+                    continue;
+                }
+
+                result.Add(zoneLoad);
+            }
+
+            return result;
+        }
+
+        public static List<ZoneLoad> ZoneLoads<T>(this TSDData tSDData, IEnumerable<T> systemSpaces) where T : Systems.SystemSpace
+        {
+            if (tSDData == null)
+            {
+                return null;
+            }
+
+            List<ZoneLoad> result = new List<ZoneLoad>();
+            for (int i = 1; i <= tSDData.GetZoneLoadCount(); i++)
+            {
+                ZoneLoad zoneLoad = tSDData.GetZoneLoad(i);
+                if (zoneLoad == null)
+                {
+                    continue;
+                }
+
+                if(systemSpaces != null)
+                {
+                    bool exists = false;
+                    foreach (T systemSpace in systemSpaces)
+                    {
+                        if(systemSpace.Name == zoneLoad.Name)
+                        {
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if(!exists)
+                    {
+                        continue;
+                    }
+                }
+
+                result.Add(zoneLoad);
+            }
+
+            return result;
+        }
     }
 }
