@@ -1,7 +1,4 @@
-﻿using SAM.Core;
-using System.Collections.Generic;
-
-namespace SAM.Analytical.Tas.TPD
+﻿namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {

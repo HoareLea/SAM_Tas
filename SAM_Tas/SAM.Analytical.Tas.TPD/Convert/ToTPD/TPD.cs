@@ -2,13 +2,10 @@
 using SAM.Core.Tas;
 using TPD;
 using System.Drawing;
-using System.Reflection;
 using System;
 using System.Collections.Generic;
 using SAM.Analytical.Systems;
-using SAM.Core;
 using System.Linq;
-using SAM.Geometry.Systems;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -416,7 +413,8 @@ namespace SAM.Analytical.Tas.TPD
                         List<AirSystem> airSystems = systemPlantRoom.GetSystems<AirSystem>();
                         if(airSystems != null && airSystems.Count != 0)
                         {
-                            List<global::TPD.ISystemComponent> systemComponents_TPD = new List<global::TPD.ISystemComponent>();
+                            Dictionary<Guid, global::TPD.ISystemComponent> dictionary = new Dictionary<Guid, global::TPD.ISystemComponent>();
+
                             foreach(AirSystem airSystem in airSystems)
                             {
                                 global::TPD.System system = airSystem.ToTPD(plantRoom);
@@ -472,9 +470,14 @@ namespace SAM.Analytical.Tas.TPD
 
                                     if (systemComponent_TPD != null)
                                     {
-                                        systemComponents_TPD.Add(systemComponent_TPD);
+                                        dictionary[systemComponent_Ordered.Guid] = systemComponent_TPD;
                                     }
                                 }
+                            }
+
+                            foreach(KeyValuePair<Guid, global::TPD.ISystemComponent> keyValuePair in dictionary)
+                            {
+                                Core.Systems.SystemComponent systemComponent = systemPlantRoom.GetSystemComponent<Core.Systems.SystemComponent>(x => x.Guid == keyValuePair.Key);
                             }
                         }
                     }
