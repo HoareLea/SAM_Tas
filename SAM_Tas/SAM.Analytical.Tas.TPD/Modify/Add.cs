@@ -562,7 +562,7 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-                    List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc);
+                    List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc, componentConversionSettings);
                     if(systemJSAMObjects != null)
                     {
                         foreach(ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
