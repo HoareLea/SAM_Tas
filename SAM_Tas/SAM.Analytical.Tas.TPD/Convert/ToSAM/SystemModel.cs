@@ -55,8 +55,7 @@ namespace SAM.Analytical.Tas.TPD
                 systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
             }
 
-            //int start = tPDDoc.StartHour();
-            //int end = tPDDoc.EndHour();
+            ComponentConversionSettings componentConversionSettings = systemEnergyCentreConversionSettings.GetComponentConversionSettings();
 
             foreach (PlantRoom plantRoom in plantRooms)
             {
@@ -75,7 +74,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 foreach (global::TPD.System system in systems)
                 {
-                    systemPlantRoom.Add(system, tPDDoc);
+                    systemPlantRoom.Add(system, tPDDoc, componentConversionSettings);
                 }
 
                 result.Add(systemPlantRoom);

@@ -3,28 +3,28 @@ using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
-    public class SystemEnergyCentreConversionSettings : IJSAMObject
+    public class ComponentConversionSettings : IJSAMObject
     {
-        public bool Simulate { get; set; } = true;
         public int StartHour { get; set; } = 0;
         public int EndHour { get; set; } = 8759;
+        public bool IncludeResults { get; set; } = true;
 
-        public SystemEnergyCentreConversionSettings() 
+        public ComponentConversionSettings() 
         { 
         }
 
-        public SystemEnergyCentreConversionSettings(JObject jObject)
+        public ComponentConversionSettings(JObject jObject)
         {
             FromJObject(jObject);
         }
 
-        public SystemEnergyCentreConversionSettings(SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings)
+        public ComponentConversionSettings(ComponentConversionSettings componentConversionSettings)
         {
-            if (systemEnergyCentreConversionSettings != null)
+            if (componentConversionSettings != null)
             {
-                Simulate = systemEnergyCentreConversionSettings.Simulate;
-                StartHour = systemEnergyCentreConversionSettings.StartHour;
-                EndHour = systemEnergyCentreConversionSettings.EndHour;
+                StartHour = componentConversionSettings.StartHour;
+                EndHour = componentConversionSettings.EndHour;
+                IncludeResults = componentConversionSettings.IncludeResults;
             }
         }
 
@@ -33,11 +33,6 @@ namespace SAM.Analytical.Tas.TPD
             if(jObject == null)
             {
                 return false;
-            }
-
-            if (jObject.ContainsKey("Simulate"))
-            {
-                Simulate = jObject.Value<bool>("Simulate");
             }
 
             if (jObject.ContainsKey("StartHour"))
@@ -50,6 +45,11 @@ namespace SAM.Analytical.Tas.TPD
                 EndHour = jObject.Value<int>("EndHour");
             }
 
+            if (jObject.ContainsKey("IncludeResults"))
+            {
+                IncludeResults = jObject.Value<bool>("IncludeResults");
+            }
+
             return true;
         }
 
@@ -58,10 +58,10 @@ namespace SAM.Analytical.Tas.TPD
             JObject result = new JObject();
             result.Add("_type", Core.Query.FullTypeName(this));
 
-            result.Add("Simulate", Simulate);
-
             result.Add("StartHour", StartHour);
             result.Add("EndHour", EndHour);
+
+            result.Add("IncludeResults", IncludeResults);
 
             return result;
         }

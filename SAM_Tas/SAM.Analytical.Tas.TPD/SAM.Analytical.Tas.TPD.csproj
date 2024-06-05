@@ -81,7 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\LuaModifier.cs" />
-    <Compile Include="Classes\SystemModelConversionSettings.cs" />
+    <Compile Include="Classes\ComponentConversionSettings.cs" />
+    <Compile Include="Classes\SystemEnergyCentreConversionSettings.cs" />
     <Compile Include="Convert\ToSAM\ModifiableValue.cs" />
     <Compile Include="Convert\ToSAM\Duty.cs" />
     <Compile Include="Convert\ToSAM\Point2D.cs" />

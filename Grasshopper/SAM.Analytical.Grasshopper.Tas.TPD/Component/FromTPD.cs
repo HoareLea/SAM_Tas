@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -69,6 +69,10 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHour_", NickName = "_endHour_", Description = "Simulation end hour", Access = GH_ParamAccess.item };
                 integer.SetPersistentData(systemEnergyCentreConversionSettings.EndHour);
                 result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_includeResults_", NickName = "_includeResults_", Description = "Include Results.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(systemEnergyCentreConversionSettings.IncludeResults);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -137,6 +141,13 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             if (index != -1 && dataAccess.GetData(index, ref endHour))
             {
                 systemEnergyCentreConversionSettings.EndHour = endHour;
+            }
+
+            bool includeResults = systemEnergyCentreConversionSettings.IncludeResults;
+            index = Params.IndexOfInputParam("_includeResults_");
+            if (index != -1 && dataAccess.GetData(index, ref includeResults))
+            {
+                systemEnergyCentreConversionSettings.IncludeResults = includeResults;
             }
 
             string path = null;

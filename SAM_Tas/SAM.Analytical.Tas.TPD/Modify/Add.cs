@@ -10,97 +10,102 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Modify
     {
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.ISystemComponent systemComponent, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.ISystemComponent systemComponent, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || systemComponent == null)
             {
                 return null;
             }
 
+            if(componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
             if (systemComponent is SystemZone)
             {
-                return Add(systemPlantRoom, (SystemZone)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (SystemZone)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is ComponentGroup)
             {
-                return Add(systemPlantRoom, (ComponentGroup)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (ComponentGroup)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if(systemComponent is Junction)
             {
-                return Add(systemPlantRoom, (Junction)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (Junction)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if(systemComponent is Exchanger)
             {
-                return Add(systemPlantRoom, (Exchanger)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (Exchanger)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is DesiccantWheel)
             {
-                return Add(systemPlantRoom, (DesiccantWheel)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (DesiccantWheel)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is global::TPD.Fan)
             {
-                return Add(systemPlantRoom, (global::TPD.Fan)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (global::TPD.Fan)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is global::TPD.HeatingCoil)
             {
-                return Add(systemPlantRoom, (global::TPD.HeatingCoil)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (global::TPD.HeatingCoil)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is global::TPD.CoolingCoil)
             {
-                return Add(systemPlantRoom, (global::TPD.CoolingCoil)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (global::TPD.CoolingCoil)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is Damper)
             {
-                return Add(systemPlantRoom, (Damper)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (Damper)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is SystemZone)
             {
-                return Add(systemPlantRoom, (SystemZone)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (SystemZone)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is Optimiser)
             {
-                return Add(systemPlantRoom, (Optimiser)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (Optimiser)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is SteamHumidifier)
             {
-                return Add(systemPlantRoom, (SteamHumidifier)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (SteamHumidifier)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is SprayHumidifier)
             {
-                return Add(systemPlantRoom, (SprayHumidifier)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (SprayHumidifier)systemComponent, tPDDoc, componentConversionSettings);
             }
 
             if (systemComponent is DXCoil)
             {
-                return Add(systemPlantRoom, (DXCoil)systemComponent, tPDDoc);
+                return Add(systemPlantRoom, (DXCoil)systemComponent, tPDDoc, componentConversionSettings);
             }
-
-            //List<System.Type> types = Core.Query.Types(systemComponent, @"C:\Users\jakub\GitHub\HoareLea\SAM_Tas\references_buildonly\Interop.TPD.dll"); 
 
             return null;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Optimiser optimiser, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Optimiser optimiser, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || optimiser == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
 
             Core.Systems.ISystemComponent systemComponent = null;
             ISystemComponentResult systemComponentResult = null;
@@ -109,12 +114,12 @@ namespace SAM.Analytical.Tas.TPD
             {
                 case 1:
                     systemComponent = optimiser.ToSAM_SystemMixingBox();
-                    systemComponentResult = optimiser.ToSAM_SystemMixingBoxResult(start, end);
+                    systemComponentResult = componentConversionSettings.IncludeResults ? optimiser.ToSAM_SystemMixingBoxResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour) : null;
                     break;
 
                 case 0:
                     systemComponent = optimiser.ToSAM_SystemEconomiser();
-                    systemComponentResult = optimiser.ToSAM_SystemEconomiserResult(start, end);
+                    systemComponentResult = componentConversionSettings.IncludeResults ? optimiser.ToSAM_SystemEconomiserResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour) : null;
                     break;
             }
 
@@ -140,15 +145,17 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SystemZone systemZone, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SystemZone systemZone, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || systemZone == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if(componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
 
             SystemSpace systemSpace = systemZone.ToSAM();
             if(systemSpace == null)
@@ -156,14 +163,19 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            systemPlantRoom.Add(systemSpace);
-
-            SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, start, end);
-            systemPlantRoom.Add(systemSpaceResult);
-
-            systemPlantRoom.Connect(systemSpaceResult, systemSpace);
-
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            systemPlantRoom.Add(systemSpace);
+            result.Add(systemSpace);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemSpaceResult);
+
+                systemPlantRoom.Connect(systemSpaceResult, systemSpace);
+                result.Add(systemSpaceResult);
+            }
 
             List<ZoneComponent> zoneComponents =  systemZone.ZoneComponents<ZoneComponent>();
             foreach (ZoneComponent zoneComponent in zoneComponents)
@@ -178,7 +190,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 result.Add(systemSpaceComponent);
 
-                ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemComponentResult(start, end);
+                ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemComponentResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
                 if (systemComponentResult == null)
                 {
                     continue;
@@ -202,84 +214,110 @@ namespace SAM.Analytical.Tas.TPD
                 systemPlantRoom.Connect(systemSpaceComponent, systemSpace);
             }
 
-            result.Add(systemSpace);
-            result.Add(systemSpaceResult);
-
             return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Junction junction, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Junction junction, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || junction == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             SystemAirJunction systemAirJunction = junction.ToSAM();
             systemPlantRoom.Add(systemAirJunction);
+            result.Add(systemAirJunction);
 
-            SystemAirJunctionResult systemAirJunctionResult = junction.ToSAM_SystemAirJunctionResult(start, end);
-            systemPlantRoom.Add(systemAirJunctionResult);
+            if(componentConversionSettings.IncludeResults)
+            {
+                SystemAirJunctionResult systemAirJunctionResult = junction.ToSAM_SystemAirJunctionResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemAirJunctionResult);
 
-            systemPlantRoom.Connect(systemAirJunctionResult, systemAirJunction);
+                systemPlantRoom.Connect(systemAirJunctionResult, systemAirJunction);
+            }
 
-            return new List<ISystemJSAMObject>() { systemAirJunction, systemAirJunctionResult };
+            return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, DXCoil dXCoil, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, DXCoil dXCoil, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || dXCoil == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             SystemDXCoil systemDXCoil = dXCoil.ToSAM();
             systemPlantRoom.Add(systemDXCoil);
+            result.Add(systemDXCoil);
 
-            SystemDXCoilResult systemDXCoilResult = dXCoil.ToSAM_SystemDXCoilResult(start, end);
-            systemPlantRoom.Add(systemDXCoilResult);
+            if (componentConversionSettings.IncludeResults)
+            {
+                SystemDXCoilResult systemDXCoilResult = dXCoil.ToSAM_SystemDXCoilResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemDXCoilResult);
 
-            systemPlantRoom.Connect(systemDXCoilResult, systemDXCoil);
+                systemPlantRoom.Connect(systemDXCoilResult, systemDXCoil);
+                result.Add(systemDXCoilResult);
+            }
 
-            return new List<ISystemJSAMObject>() { systemDXCoil, systemDXCoilResult };
+            return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SteamHumidifier steamHumidifier, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SteamHumidifier steamHumidifier, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || steamHumidifier == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             SystemSteamHumidifier systemSteamHumidifier = steamHumidifier.ToSAM();
             systemPlantRoom.Add(systemSteamHumidifier);
+            result.Add(systemSteamHumidifier);
 
-            SystemSteamHumidifierResult systemSteamHumidifierResult = steamHumidifier.ToSAM_SystemSteamHumidifierResult(start, end);
-            systemPlantRoom.Add(systemSteamHumidifierResult);
+            if (componentConversionSettings.IncludeResults)
+            {
+                SystemSteamHumidifierResult systemSteamHumidifierResult = steamHumidifier.ToSAM_SystemSteamHumidifierResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemSteamHumidifierResult);
 
-            systemPlantRoom.Connect(systemSteamHumidifierResult, systemSteamHumidifier);
+                systemPlantRoom.Connect(systemSteamHumidifierResult, systemSteamHumidifier);
+                result.Add(systemSteamHumidifierResult);
+            }
 
-            return new List<ISystemJSAMObject>() { systemSteamHumidifier, systemSteamHumidifierResult };
+
+            return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SprayHumidifier sprayHumidifier, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SprayHumidifier sprayHumidifier, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || sprayHumidifier == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
 
             Core.Systems.ISystemComponent systemComponent = null;
             ISystemComponentResult systemComponentResult = null;
@@ -288,12 +326,12 @@ namespace SAM.Analytical.Tas.TPD
             {
                 case 0:
                     systemComponent = sprayHumidifier.ToSAM_SystemSprayHumidifier();
-                    systemComponentResult = sprayHumidifier.ToSAM_SystemSprayHumidifierResult(start, end);
+                    systemComponentResult = componentConversionSettings.IncludeResults ? sprayHumidifier.ToSAM_SystemSprayHumidifierResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour) : null;
                     break;
 
                 case 1:
                     systemComponent = sprayHumidifier.ToSAM_SystemDirectEvaporativeCooler();
-                    systemComponentResult = sprayHumidifier.ToSAM_SystemDirectEvaporativeCoolerResult(start, end);
+                    systemComponentResult = componentConversionSettings.IncludeResults ? sprayHumidifier.ToSAM_SystemDirectEvaporativeCoolerResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour) : null;
                     break;
             }
 
@@ -319,112 +357,161 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Exchanger exchanger, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Exchanger exchanger, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || exchanger == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             SystemExchanger systemExchanger = exchanger.ToSAM();
             systemPlantRoom.Add(systemExchanger);
+            result.Add(systemExchanger);
 
-            SystemExchangerResult systemExchangerResult = exchanger.ToSAM_SystemExchangerResult(start, end);
-            systemPlantRoom.Add(systemExchangerResult);
+            if(componentConversionSettings.IncludeResults)
+            {
+                SystemExchangerResult systemExchangerResult = exchanger.ToSAM_SystemExchangerResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemExchangerResult);
 
-            systemPlantRoom.Connect(systemExchangerResult, systemExchanger);
+                systemPlantRoom.Connect(systemExchangerResult, systemExchanger);
 
-            return new List<ISystemJSAMObject>() { systemExchanger, systemExchangerResult };
+                result.Add(systemExchangerResult);
+            }
+
+            return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, DesiccantWheel desiccantWheel, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, DesiccantWheel desiccantWheel, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || desiccantWheel == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             SystemDesiccantWheel systemDesiccantWheel= desiccantWheel.ToSAM();
             systemPlantRoom.Add(systemDesiccantWheel);
+            result.Add(systemDesiccantWheel);
 
-            SystemDesiccantWheelResult systemDesiccantWheelResult = desiccantWheel.ToSAM_SystemDesiccantWheelResult(start, end);
-            systemPlantRoom.Add(systemDesiccantWheelResult);
+            if (componentConversionSettings.IncludeResults)
+            {
+                SystemDesiccantWheelResult systemDesiccantWheelResult = desiccantWheel.ToSAM_SystemDesiccantWheelResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemDesiccantWheelResult);
 
-            systemPlantRoom.Connect(systemDesiccantWheelResult, systemDesiccantWheel);
+                systemPlantRoom.Connect(systemDesiccantWheelResult, systemDesiccantWheel);
+                result.Add(systemDesiccantWheelResult);
+            }
 
-            return new List<ISystemJSAMObject>() { systemDesiccantWheel, systemDesiccantWheelResult };
+            return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.Fan fan, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.Fan fan, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || fan == null || tPDDoc == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             SystemFan systemFan = fan.ToSAM();
             systemPlantRoom.Add(systemFan);
+            result.Add(systemFan);
 
-            SystemFanResult systemFanResult = fan.ToSAM_SystemFanResult(start, end);
-            systemPlantRoom.Add(systemFanResult);
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
 
-            systemPlantRoom.Connect(systemFanResult, systemFan);
+                SystemFanResult systemFanResult = fan.ToSAM_SystemFanResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemFanResult);
 
-            return new List<ISystemJSAMObject>() { systemFan, systemFanResult };
+                systemPlantRoom.Connect(systemFanResult, systemFan);
+                result.Add(systemFanResult);
+            }
+
+            return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.CoolingCoil coolingCoil, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.CoolingCoil coolingCoil, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || coolingCoil == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             SystemCoolingCoil systemCoolingCoil = coolingCoil.ToSAM();
             systemPlantRoom.Add(systemCoolingCoil);
+            result.Add(systemCoolingCoil);
 
-            SystemCoolingCoilResult systemCoolingCoilResult = coolingCoil.ToSAM_SystemCoolingCoilResult(start, end);
-            systemPlantRoom.Add(systemCoolingCoilResult);
+            if (componentConversionSettings.IncludeResults)
+            {
+                SystemCoolingCoilResult systemCoolingCoilResult = coolingCoil.ToSAM_SystemCoolingCoilResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemCoolingCoilResult);
 
-            systemPlantRoom.Connect(systemCoolingCoilResult, systemCoolingCoil);
+                systemPlantRoom.Connect(systemCoolingCoilResult, systemCoolingCoil);
+                result.Add(systemCoolingCoilResult);
+            }
 
-            return new List<ISystemJSAMObject>() { systemCoolingCoil, systemCoolingCoilResult };
+            return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.HeatingCoil heatingCoil, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.HeatingCoil heatingCoil, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || heatingCoil == null)
             {
                 return null;
             }
 
-            int start = tPDDoc.StartHour();
-            int end = tPDDoc.EndHour();
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             SystemHeatingCoil systemHeatingCoil = heatingCoil.ToSAM();
             systemPlantRoom.Add(systemHeatingCoil);
+            result.Add(systemHeatingCoil);
 
-            SystemHeatingCoilResult systemHeatingCoilResult = heatingCoil.ToSAM_SystemHeatingCoilResult(start, end);
-            systemPlantRoom.Add(systemHeatingCoilResult);
+            if (componentConversionSettings.IncludeResults)
+            {
+                SystemHeatingCoilResult systemHeatingCoilResult = heatingCoil.ToSAM_SystemHeatingCoilResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                systemPlantRoom.Add(systemHeatingCoilResult);
 
-            systemPlantRoom.Connect(systemHeatingCoilResult, systemHeatingCoil);
+                systemPlantRoom.Connect(systemHeatingCoilResult, systemHeatingCoil);
+                result.Add(systemHeatingCoilResult);
+            }
 
-            return new List<ISystemJSAMObject>() { systemHeatingCoil, systemHeatingCoilResult };
+            return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Damper damper, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Damper damper, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || damper == null)
             {
@@ -443,7 +530,7 @@ namespace SAM.Analytical.Tas.TPD
             return new List<ISystemJSAMObject>() { systemDamper };
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, ComponentGroup componentGroup, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, ComponentGroup componentGroup, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || componentGroup == null)
             {
@@ -541,7 +628,7 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.System system, TPDDoc tPDDoc)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.System system, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || system == null)
             {
@@ -565,7 +652,7 @@ namespace SAM.Analytical.Tas.TPD
                 
                 foreach (global::TPD.SystemComponent systemComponent in systemComponents)
                 {
-                    List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(systemComponent, tPDDoc);
+                    List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(systemComponent, tPDDoc, componentConversionSettings);
                     if (systemJSAMObjects != null)
                     {
                         result.AddRange(systemJSAMObjects);
@@ -606,74 +693,6 @@ namespace SAM.Analytical.Tas.TPD
             {
                 result.AddRange(systemConnections);
             }
-
-            //List<Duct> ducts = Query.Ducts(system);
-            //if(ducts != null)
-            //{
-
-            //    //SystemType systemType = new SystemType(airSystem);
-
-            //    foreach (Duct duct in ducts)
-            //    {
-            //        List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(duct);
-            //        if (systemJSAMObjects != null)
-            //        {
-            //            result.AddRange(systemJSAMObjects);
-            //        }
-
-            //        //dynamic @dynamic_1 = duct.GetUpstreamComponent();
-            //        //int index_1 = duct.GetUpstreamComponentPort();
-
-            //        //string guid_1 = dynamic_1.GUID;
-
-            //        //dynamic @dynamic_2 = duct.GetDownstreamComponent();
-            //        //int index_2 = duct.GetDownstreamComponentPort();
-
-            //        //string guid_2 = dynamic_2.GUID;
-
-            //        //Core.Systems.ISystemComponent systemComponent_1 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_1);
-            //        //if(systemComponent_1 == null || !(systemComponent_1 is IDisplaySystemObject<SystemGeometryInstance>))
-            //        //{
-            //        //    continue;
-            //        //}
-
-            //        //Core.Systems.ISystemComponent systemComponent_2 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_2);
-            //        //if(systemComponent_2 == null || !(systemComponent_2 is IDisplaySystemObject<SystemGeometryInstance>))
-            //        //{
-            //        //    continue;
-            //        //}
-
-            //        //List<Point2D> point2Ds = Query.Point2Ds(duct);
-            //        //if(point2Ds == null)
-            //        //{
-            //        //    point2Ds = new List<Point2D>();
-            //        //}
-
-            //        //Point2D point2D = null;
-
-            //        //point2D = (systemComponent_1 as dynamic).SystemGeometry.GetPoint2D(systemType, index_1, Direction.Out);
-            //        //if (point2D != null)
-            //        //{
-            //        //    point2Ds.Insert(0, point2D);
-            //        //}
-
-            //        //point2D = (systemComponent_2 as dynamic).SystemGeometry.GetPoint2D(systemType, index_2, Direction.In);
-            //        //if (point2D != null)
-            //        //{
-            //        //    point2Ds.Add(point2D);
-            //        //}
-
-            //        //if(point2Ds == null || point2Ds.Count == 0)
-            //        //{
-            //        //    continue;
-            //        //}
-
-            //        //DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(airSystem, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds?.ToArray());
-
-            //        //systemPlantRoom.Connect(systemComponent_1, displaySystemConnection);
-            //        //systemPlantRoom.Connect(systemComponent_2, displaySystemConnection);
-            //    }
-            //}
 
             return result;
         }
