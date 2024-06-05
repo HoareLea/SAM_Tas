@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using SAM.Analytical.Systems;
 using System.Linq;
+using static SAM.Core.FluidProperty;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -28,6 +29,11 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
+            if (System.IO.File.Exists(path_TPD))
+            {
+                System.IO.File.Delete(path_TPD);
+            }
+
             using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
             {
                 TPDDoc tPDDoc = sAMTPDDocument.TPDDocument;
@@ -48,7 +54,7 @@ namespace SAM.Analytical.Tas.TPD
                     plantRoom.Name = "Main PlantRoom";
                 }
 
-                energyCentre.AddTSDData(path_TSD, 0);
+                energyCentre.AddTSDData(path_TSD, 1);
 
                 TSDData tSDData = energyCentre.GetTSDData(1);
 
@@ -413,10 +419,10 @@ namespace SAM.Analytical.Tas.TPD
                         List<AirSystem> airSystems = systemPlantRoom.GetSystems<AirSystem>();
                         if(airSystems != null && airSystems.Count != 0)
                         {
-                            Dictionary<Guid, global::TPD.ISystemComponent> dictionary = new Dictionary<Guid, global::TPD.ISystemComponent>();
-
                             foreach(AirSystem airSystem in airSystems)
                             {
+                                Dictionary<Guid, global::TPD.ISystemComponent> dictionary = new Dictionary<Guid, global::TPD.ISystemComponent>();
+
                                 global::TPD.System system = airSystem.ToTPD(plantRoom);
                                 if(system == null)
                                 {
@@ -473,12 +479,43 @@ namespace SAM.Analytical.Tas.TPD
                                         dictionary[systemComponent_Ordered.Guid] = systemComponent_TPD;
                                     }
                                 }
+
+                                foreach (KeyValuePair<Guid, global::TPD.ISystemComponent> keyValuePair in dictionary)
+                                {
+                                    Core.Systems.SystemComponent systemComponent_Temp = systemPlantRoom.GetSystemComponent<Core.Systems.SystemComponent>(x => x.Guid == keyValuePair.Key);
+                                    if(systemComponent_Temp != null)
+                                    {
+                                        List<ISystemConnection> systemConnetctions = systemPlantRoom?.GetRelatedObjects<ISystemConnection>(systemComponent);
+                                        if(systemConnetctions != null)
+                                        {
+                                            foreach(ISystemConnection systemConnection in systemConnetctions)
+                                            {
+                                                if(systemConnection.SystemType != new SystemType(airSystem))
+                                                {
+                                                    continue;
+                                                }
+
+                                                systemPlantRoom?.GetRelatedObjects<ISystemConnection>(systemConnection);
+                                            }
+                                        }
+
+                                    }
+
+
+
+
+                                    List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.SystemComponent>(airSystem, ConnectorStatus.Connected, null);
+                                    if(systemComponents != null)
+                                    {
+                                        foreach (Core.Systems.SystemComponent systemComponent_Connected in systemComponents)
+                                        {
+                                        }
+                                    }
+
+                                }
                             }
 
-                            foreach(KeyValuePair<Guid, global::TPD.ISystemComponent> keyValuePair in dictionary)
-                            {
-                                Core.Systems.SystemComponent systemComponent = systemPlantRoom.GetSystemComponent<Core.Systems.SystemComponent>(x => x.Guid == keyValuePair.Key);
-                            }
+
                         }
                     }
                 }

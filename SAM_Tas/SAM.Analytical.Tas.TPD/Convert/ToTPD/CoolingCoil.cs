@@ -20,10 +20,13 @@ namespace SAM.Analytical.Tas.TPD
             result.BypassFactor.Value = displaySystemCoolingCoil.BypassFactor;
             result.MinimumOffcoil.Value = 16;
 
-            Point2D location = displaySystemCoolingCoil.SystemGeometry?.Location;
-            result.SetPosition(location.X, location.Y);
+            Point2D point2D = displaySystemCoolingCoil.SystemGeometry?.Location?.ToTPD();
+            if (point2D != null)
+            {
+                result.SetPosition(point2D.X, point2D.Y);
+            }
 
-            if(coolingGroup != null)
+            if (coolingGroup != null)
             {
                 result.SetCoolingGroup(coolingGroup);
             }

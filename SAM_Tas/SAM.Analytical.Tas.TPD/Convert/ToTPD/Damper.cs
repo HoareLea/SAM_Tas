@@ -15,8 +15,11 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic result = system.AddDamper();
 
-            Point2D location = displaySystemDamper.SystemGeometry?.Location;
-            result.SetPosition(location.X, location.Y);
+            Point2D point2D = displaySystemDamper.SystemGeometry?.Location?.ToTPD();
+            if (point2D != null)
+            {
+                result.SetPosition(point2D.X, point2D.Y);
+            }
 
             return result as Damper;
         }

@@ -128,6 +128,7 @@
     <Compile Include="Convert\ToSAM\SystemModel.cs" />
     <Compile Include="Convert\ToSAM\SystemSpaceResults.cs" />
     <Compile Include="Convert\ToSAM\SystemSpaceResult.cs" />
+    <Compile Include="Convert\ToTPD\TasPosition.cs" />
     <Compile Include="Convert\ToTPD\System.cs" />
     <Compile Include="Convert\ToTPD\TPD.cs" />
     <Compile Include="Convert\ToTPD\SystemZone.cs" />

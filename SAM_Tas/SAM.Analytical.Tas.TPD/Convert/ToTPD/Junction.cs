@@ -17,8 +17,11 @@ namespace SAM.Analytical.Tas.TPD
             result.Name = displaySystemAirJunction.Name;
             result.Description = displaySystemAirJunction.Description;
 
-            Point2D location = displaySystemAirJunction.SystemGeometry?.Location;
-            result.SetPosition(location.X, location.Y);
+            Point2D point2D = displaySystemAirJunction.SystemGeometry?.Location?.ToTPD();
+            if (point2D != null)
+            {
+                result.SetPosition(point2D.X, point2D.Y);
+            }
 
             return result as global::TPD.Junction;
         }

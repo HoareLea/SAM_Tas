@@ -25,10 +25,13 @@ namespace SAM.Analytical.Tas.TPD
             result.SetDirection(tpdDirection.tpdLeftRight);
             result.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
-            Point2D location = displaySystemFan.SystemGeometry?.Location;
-            result.SetPosition(location.X, location.Y);
+            Point2D point2D = displaySystemFan.SystemGeometry?.Location?.ToTPD();
+            if (point2D != null)
+            {
+                result.SetPosition(point2D.X, point2D.Y);
+            }
 
-            if(electricalGroup != null)
+            if (electricalGroup != null)
             {
                 result.SetElectricalGroup1(electricalGroup);
             }
