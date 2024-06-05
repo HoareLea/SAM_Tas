@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas
             List<int> indexes = new List<int>();
             if(names == null)
             {
-                for (int index = 1; index <= constructions.Count; index++)
+                for (int index = 0; index < constructions.Count; index++)
                 {
                     indexes.Add(index);
                 }
@@ -30,9 +30,9 @@ namespace SAM.Analytical.Tas
             {
                 for (int index = 0; index < constructions.Count; index++)
                 {
-                    if (names.Contains(constructions[index + 1].name))
+                    if (names.Contains(constructions[index].name))
                     {
-                        indexes.Add(index + 1);
+                        indexes.Add(index);
                     }
                 }
             }
