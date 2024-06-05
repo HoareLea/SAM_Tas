@@ -319,10 +319,16 @@ namespace SAM.Analytical.Tas
                 double conductivity = double.MaxValue;
                 for (int i = 0; i < materials.Count; i++)
                 {
-                    if (materials[i].conductivity < conductivity)
+                    double conductivity_Temp = materials[i].conductivity;
+                    if(conductivity_Temp <= 0)
+                    {
+                        continue;
+                    }
+
+                    if (conductivity_Temp < conductivity)
                     {
                         layerIndex = i;
-                        conductivity = materials[i].conductivity;
+                        conductivity = conductivity_Temp;
                     }
                 }
             }
