@@ -190,17 +190,20 @@ namespace SAM.Analytical.Tas.TPD
 
                 result.Add(systemSpaceComponent);
 
-                ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemComponentResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
-                if (systemComponentResult == null)
+                if(componentConversionSettings.IncludeResults)
                 {
-                    continue;
+                    ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemComponentResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
+                    if (systemComponentResult == null)
+                    {
+                        continue;
+                    }
+
+                    systemPlantRoom.Add(systemComponentResult);
+
+                    systemPlantRoom.Connect(systemComponentResult, systemSpaceComponent);
+
+                    result.Add(systemComponentResult);
                 }
-
-                systemPlantRoom.Add(systemComponentResult);
-
-                systemPlantRoom.Connect(systemComponentResult, systemSpaceComponent);
-
-                result.Add(systemComponentResult);
             }
 
             foreach(ISystemJSAMObject systemJSAMObject in result)
