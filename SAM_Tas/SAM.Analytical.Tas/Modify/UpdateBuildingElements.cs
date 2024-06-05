@@ -41,6 +41,8 @@ namespace SAM.Analytical.Tas
             if (building == null)
                 return false;
 
+            RemoveConstructions(building); //Added 05.06.2024 -> Requested By Michal D. to clean existing consructions from TBD file
+
             UpdateConstructions(tBDDocument, analyticalModel);
 
             List<buildingElement> buildingElements = building.BuildingElements();
