@@ -20,11 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Duty.AddDesignCondition(designConditionLoad);
             result.MaximumOffcoil.Value = 28;
 
-            Point2D point2D = displaySystemHeatingCoil.SystemGeometry?.Location?.ToTPD();
-            if (point2D != null)
-            {
-                result.SetPosition(point2D.X, point2D.Y);
-            }
+            displaySystemHeatingCoil.SetLocation(result as SystemComponent);
 
             if (heatingGroup != null)
             {

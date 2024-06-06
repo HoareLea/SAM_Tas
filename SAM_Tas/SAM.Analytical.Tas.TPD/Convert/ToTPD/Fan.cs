@@ -22,14 +22,10 @@ namespace SAM.Analytical.Tas.TPD
             result.HeatGainFactor = displaySystemFan.HeatGainFactor;
             result.PartLoad.Value = 0;
             result.PartLoad.ClearModifiers();
-            result.SetDirection(tpdDirection.tpdLeftRight);
+           // result.SetDirection(tpdDirection.tpdLeftRight);
             result.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
-            Point2D point2D = displaySystemFan.SystemGeometry?.Location?.ToTPD();
-            if (point2D != null)
-            {
-                result.SetPosition(point2D.X, point2D.Y);
-            }
+            displaySystemFan.SetLocation(result as SystemComponent);
 
             if (electricalGroup != null)
             {

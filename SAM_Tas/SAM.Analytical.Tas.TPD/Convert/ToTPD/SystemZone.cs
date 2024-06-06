@@ -15,11 +15,7 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic result = system.AddSystemZone();
 
-            Point2D point2D = displaySystemSpace.SystemGeometry?.Location?.ToTPD();
-            if (point2D != null)
-            {
-                result.SetPosition(point2D.X, point2D.Y);
-            }
+            displaySystemSpace.SetLocation(result as SystemComponent);
 
             return result as SystemZone;
         }

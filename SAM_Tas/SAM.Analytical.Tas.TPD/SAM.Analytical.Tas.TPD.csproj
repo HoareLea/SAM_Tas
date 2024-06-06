@@ -144,6 +144,7 @@
     <Compile Include="Enums\WaterSideControllerSetup.cs" />
     <Compile Include="Modify\Connect.cs" />
     <Compile Include="Modify\Add.cs" />
+    <Compile Include="Modify\SetLocation.cs" />
     <Compile Include="Modify\SetReference.cs" />
     <Compile Include="Modify\SetWaterSideController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

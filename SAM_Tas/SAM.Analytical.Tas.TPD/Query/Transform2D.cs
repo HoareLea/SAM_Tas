@@ -1,5 +1,6 @@
 ﻿using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using SAM.Geometry.Systems;
 using System.Collections.Generic;
 using TPD;
 
@@ -47,6 +48,7 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemExchanger:
+                
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemDesiccantWheel:
                     location_Temp = new Point2D(location_Temp.X + 0.2, location_Temp.Y - 0.2);
                     vector2D = new Vector2D(0.8, 0);
@@ -118,6 +120,48 @@ namespace SAM.Analytical.Tas.TPD
             tpdDirection tpdDirection = (tpdDirection)(int)@dynamic.GetDirection();
 
             return Transform2D(tpdDirection, location, AnalyticalSystemComponentType(systemComponent));
+        }
+
+        public static ITransform2D Transform2D(this IDisplaySystemObject<SystemGeometryInstance> displaySystemObject, out tpdDirection tpdDirection)
+        {
+            tpdDirection = tpdDirection.tpdLeftRight;
+
+            CoordinateSystem2D coordinateSystem2D = displaySystemObject?.SystemGeometry.CoordinateSystem2D;
+            if(coordinateSystem2D == null)
+            {
+                return null;
+            }
+
+
+            Vector2D axis_X = coordinateSystem2D.AxisX;
+            Vector2D axis_Y = coordinateSystem2D.AxisY;
+
+            Point2D point2D = coordinateSystem2D.Origin;
+
+            if(displaySystemObject is SystemFan)
+            {
+                //ITransform2D result = Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.2, -0.2));
+
+                //return result;
+                return null;
+            }
+
+            if (displaySystemObject is SystemAirJunction)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return Geometry.Planar.Transform2D.GetMirrorY(new Point2D(point2D.X - 0.1, point2D.Y - 0.1));
+                }
+
+                return null;
+            }
+
+            return null;
         }
     }
 }

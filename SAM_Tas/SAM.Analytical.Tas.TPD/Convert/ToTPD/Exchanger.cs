@@ -20,11 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Setpoint.Value = 14;
             result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
-            Point2D point2D = displaySystemExchanger.SystemGeometry?.Location?.ToTPD();
-            if (point2D != null)
-            {
-                result.SetPosition(point2D.X, point2D.Y);
-            }
+            displaySystemExchanger.SetLocation(result as SystemComponent);
 
             return result as Exchanger;
         }

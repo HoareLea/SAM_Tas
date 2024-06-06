@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using SAM.Analytical.Systems;
 using System.Linq;
 using static SAM.Core.FluidProperty;
+using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -443,6 +444,8 @@ namespace SAM.Analytical.Tas.TPD
                                     continue;
                                 }
 
+                                systemComponents_Ordered.Insert(0, systemComponent as Core.Systems.SystemComponent);
+
                                 foreach (Core.Systems.SystemComponent systemComponent_Ordered in systemComponents_Ordered)
                                 {
                                     global::TPD.ISystemComponent systemComponent_TPD = null;
@@ -482,26 +485,48 @@ namespace SAM.Analytical.Tas.TPD
 
                                 foreach (KeyValuePair<Guid, global::TPD.ISystemComponent> keyValuePair in dictionary)
                                 {
-                                    Core.Systems.SystemComponent systemComponent_Temp = systemPlantRoom.GetSystemComponent<Core.Systems.SystemComponent>(x => x.Guid == keyValuePair.Key);
-                                    if(systemComponent_Temp != null)
-                                    {
-                                        List<ISystemConnection> systemConnetctions = systemPlantRoom?.GetRelatedObjects<ISystemConnection>(systemComponent);
-                                        if(systemConnetctions != null)
-                                        {
-                                            foreach(ISystemConnection systemConnection in systemConnetctions)
-                                            {
-                                                if(systemConnection.SystemType != new SystemType(airSystem))
-                                                {
-                                                    continue;
-                                                }
 
-                                                systemPlantRoom?.GetRelatedObjects<ISystemConnection>(systemConnection);
-                                            }
-                                        }
+                                    Core.Systems.SystemComponent systemComponent_Temp = systemPlantRoom.GetSystemComponent<Core.Systems.SystemComponent>(x => x.Guid == keyValuePair.Key);
+                                    if(systemComponent_Temp == null)
+                                    {
+                                        continue;
 
                                     }
 
+                                    List<ISystemConnection> systemConnections = systemPlantRoom?.GetRelatedObjects<ISystemConnection>(systemComponent);
+                                    if (systemConnections == null || systemConnections.Count == 0)
+                                    {
+                                        continue;
+                                    }
 
+                                    global::TPD.ISystemComponent systemComponent_1 = keyValuePair.Value;
+
+                                    foreach (ISystemConnection systemConnection in systemConnections)
+                                    {
+                                        if (systemConnection.SystemType != new SystemType(airSystem))
+                                        {
+                                            continue;
+                                        }
+
+                                        List<Core.Systems.SystemComponent> systemComponents_SystemConnection = systemPlantRoom?.GetRelatedObjects<Core.Systems.SystemComponent>(systemConnection);
+                                        systemComponents_SystemConnection?.RemoveAll(x => x.Guid == systemComponent_Temp.Guid);
+                                        if (systemComponents_SystemConnection == null || systemComponents_SystemConnection.Count == 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        foreach(Core.Systems.SystemComponent systemComponent_SystemConnection in systemComponents_SystemConnection)
+                                        {
+                                            if (!dictionary.TryGetValue(systemComponent_SystemConnection.Guid, out global::TPD.ISystemComponent systemComponent_2))
+                                            {
+                                                continue;
+                                            }
+
+                                            system.AddDuct((global::TPD.SystemComponent)systemComponent_1, 1, (global::TPD.SystemComponent)systemComponent_2, 1);
+                                        }
+
+
+                                    }
 
 
                                     List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.SystemComponent>(airSystem, ConnectorStatus.Connected, null);
