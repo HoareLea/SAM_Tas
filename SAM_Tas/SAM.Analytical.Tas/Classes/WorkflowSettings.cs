@@ -35,6 +35,8 @@ namespace SAM.Analytical.Tas
 
         public int SimulateTo { get; set; } = 1;
 
+        public bool RemoveExistingTBD { get; set; } = false;
+
         public WorkflowSettings()
         {
 
@@ -63,6 +65,8 @@ namespace SAM.Analytical.Tas
                 AddIZAMs = workflowSettings.AddIZAMs;
                 SimulateFrom = workflowSettings.SimulateFrom;
                 SimulateTo = workflowSettings.SimulateTo;
+
+                RemoveExistingTBD = workflowSettings.RemoveExistingTBD;
             }
         }
 
@@ -168,6 +172,11 @@ namespace SAM.Analytical.Tas
                 SimulateTo = jObject.Value<int>("SimulateTo");
             }
 
+            if (jObject.ContainsKey("RemoveExistingTBD"))
+            {
+                RemoveExistingTBD = jObject.Value<bool>("RemoveExistingTBD");
+            }
+
             return true;
         }
 
@@ -233,6 +242,8 @@ namespace SAM.Analytical.Tas
 
             jObject.Add("SimulateFrom", SimulateFrom);
             jObject.Add("SimulateTo", SimulateTo);
+
+            jObject.Add("RemoveExistingTBD", RemoveExistingTBD);
 
             return jObject;
         }

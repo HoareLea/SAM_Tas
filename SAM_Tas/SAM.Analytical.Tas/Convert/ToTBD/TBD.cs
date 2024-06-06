@@ -1,12 +1,13 @@
 ﻿using SAM.Core.Tas;
 using System.Collections.Generic;
+using System.IO;
 using TAS3D;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
-        public static bool ToTBD(this string path_T3D, string path_TBD, int day_First, int day_Last, int step, bool autoAssignConstructions)
+        public static bool ToTBD(this string path_T3D, string path_TBD, int day_First, int day_Last, int step, bool autoAssignConstructions, bool removeExisting)
         {
             if (string.IsNullOrWhiteSpace(path_T3D) || string.IsNullOrWhiteSpace(path_TBD))
                 return false;
@@ -14,30 +15,42 @@ namespace SAM.Analytical.Tas
             bool result = false;
             using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
             {
-                result = ToTBD(sAMT3DDocument, path_TBD, day_First, day_Last, step, autoAssignConstructions);
+                result = ToTBD(sAMT3DDocument, path_TBD, day_First, day_Last, step, autoAssignConstructions, removeExisting);
             }
 
             return result;
         }
 
-        public static bool ToTBD(this SAMT3DDocument sAMT3DDocument, string path_TBD, int day_First, int day_Last, int step, bool autoAssignConstructions)
+        public static bool ToTBD(this SAMT3DDocument sAMT3DDocument, string path_TBD, int day_First, int day_Last, int step, bool autoAssignConstructions, bool removeExisting)
         {
             if (sAMT3DDocument == null)
                 return false;
 
-            return ToTBD(sAMT3DDocument.T3DDocument, path_TBD, day_First, day_Last, step, autoAssignConstructions);
+            return ToTBD(sAMT3DDocument.T3DDocument, path_TBD, day_First, day_Last, step, autoAssignConstructions, removeExisting);
         }
 
-        public static bool ToTBD(this T3DDocument t3DDocument, string path_TBD, int day_First, int day_Last, int step, bool autoAssignConstructions)
+        public static bool ToTBD(this T3DDocument t3DDocument, string path_TBD, int day_First, int day_Last, int step, bool autoAssignConstructions, bool removeExisting)
         {
             if (t3DDocument == null || string.IsNullOrWhiteSpace(path_TBD))
+            {
                 return false;
+            }
+
+            if(removeExisting)
+            {
+                if (File.Exists(path_TBD))
+                {
+                    File.Delete(path_TBD);
+                }
+            }
 
             int int_autoAssignConstructions = 0;
             if (autoAssignConstructions)
+            {
                 int_autoAssignConstructions = 1;
+            }
 
-            if (path_TBD != null && System.IO.File.Exists(path_TBD) && !string.IsNullOrWhiteSpace(t3DDocument?.Building?.GUID))
+            if (path_TBD != null && File.Exists(path_TBD) && !string.IsNullOrWhiteSpace(t3DDocument?.Building?.GUID))
             {
                 using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
                 {
@@ -53,7 +66,7 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            return t3DDocument.ExportNew(day_First, day_Last, step, 1, 1, 1, path_TBD, int_autoAssignConstructions, 0, 0);
+            return t3DDocument.ExportNew(day_First, day_Last, step, 1, File.Exists(path_TBD) ? 0 : 1, 1, path_TBD, int_autoAssignConstructions, 0, 0);
         }
 
         public static bool ToTBD(this AnalyticalModel analyticalModel, string path, Weather.WeatherData weatherData = null, IEnumerable<DesignDay> coolingDesignDays = null, IEnumerable<DesignDay> heatingDesignDays = null, bool updateGuids = false)
@@ -63,9 +76,9 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
-            if (System.IO.File.Exists(path))
+            if (File.Exists(path))
             {
-                System.IO.File.Delete(path);
+                File.Delete(path);
             }
 
             Weather.WeatherData weatherData_Temp = weatherData;

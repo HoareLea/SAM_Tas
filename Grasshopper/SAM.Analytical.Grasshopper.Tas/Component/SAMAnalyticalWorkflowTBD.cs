@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.5";
+        public override string LatestComponentVersion => "1.0.6";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -86,6 +86,10 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 global::Grasshopper.Kernel.Parameters.Param_GenericObject genericObject = new global::Grasshopper.Kernel.Parameters.Param_GenericObject() { Name = "surfaceOutputSpec_", NickName = "surfaceOutputSpec_", Description = "Surface Output Spec", Access = GH_ParamAccess.list, Optional = true };
                 result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_removeTBD_", NickName = "_removeTBD_", Description = "If True existing TBD file will be deleted before simulation", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -251,6 +255,16 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            bool removeExistingTBD = false;
+            index = Params.IndexOfInputParam("_removeTBD_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref removeExistingTBD))
+                {
+                    removeExistingTBD = false;
+                }
+            }
+
 
             int count = 5;
             if(weatherData != null)
@@ -369,7 +383,8 @@ namespace SAM.Analytical.Grasshopper.Tas
                 UseWidths = false,
                 AddIZAMs = addIZAMs,
                 SimulateFrom = simulate_From,
-                SimulateTo = simulate_To
+                SimulateTo = simulate_To,
+                RemoveExistingTBD = removeExistingTBD
             };
 
             analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, workflowSettings);

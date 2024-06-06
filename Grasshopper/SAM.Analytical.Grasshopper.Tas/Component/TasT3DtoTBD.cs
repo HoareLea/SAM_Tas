@@ -15,7 +15,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -48,6 +48,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             inputParamManager.AddIntegerParameter("_dayLast_", "_dayLast_", "The last day", GH_ParamAccess.item, 365);
             inputParamManager.AddIntegerParameter("_step_", "_step_", "What should the time interval (in days) be, of the solar calculations?", GH_ParamAccess.item, 15);
             inputParamManager.AddBooleanParameter("_autoAssignConstructions_", "_autoAssignConstructions_", "Should the construction be assigned automatically?", GH_ParamAccess.item, true);
+            inputParamManager.AddBooleanParameter("_removeTBD", "_removeTBD", "If True existing TBD file will be deleted before simulation", GH_ParamAccess.item, false);
             inputParamManager.AddBooleanParameter("_run", "_run", "Connect a boolean toggle to run.", GH_ParamAccess.item, false);
         }
 
@@ -68,7 +69,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             dataAccess.SetData(0, false);
 
             bool run = false;
-            if (!dataAccess.GetData(6, ref run))
+            if (!dataAccess.GetData(7, ref run))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -118,8 +119,15 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
+            bool removeExisting = true;
+            if (!dataAccess.GetData(6, ref removeExisting))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
 
-            bool result = Analytical.Tas.Convert.ToTBD(path_T3D, path_TBD, day_First, day_Last, step, autoAssignConstructions);
+
+            bool result = Analytical.Tas.Convert.ToTBD(path_T3D, path_TBD, day_First, day_Last, step, autoAssignConstructions, removeExisting);
 
             dataAccess.SetData(0, result);
         }
