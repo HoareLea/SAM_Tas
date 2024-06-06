@@ -56,6 +56,14 @@ namespace SAM.Analytical.Tas
                         System.IO.File.Delete(path_T3D);
                     }
 
+                    if(workflowSettings.RemoveExistingTBD)
+                    {
+                        if (System.IO.File.Exists(workflowSettings.Path_TBD))
+                        {
+                            System.IO.File.Delete(workflowSettings.Path_TBD);
+                        }
+                    }
+
                     simpleProgressForm.Update("Extracting GUID");
                     string guid = null;
                     using (SAMT3DDocument sAMT3DDocument = new SAMT3DDocument(path_T3D))
@@ -127,7 +135,7 @@ namespace SAM.Analytical.Tas
                         sAMT3DDocument.Save();
 
                         simpleProgressForm.Update("T3D to TBD -> Shading");
-                        Convert.ToTBD(t3DDocument, workflowSettings.Path_TBD, 1, 365, 15, true, workflowSettings.RemoveExistingTBD);
+                        Convert.ToTBD(t3DDocument, workflowSettings.Path_TBD, 1, 365, 15, true, false);
                     }
                 }
 

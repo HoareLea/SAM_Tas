@@ -66,7 +66,7 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            return t3DDocument.ExportNew(day_First, day_Last, step, 1, File.Exists(path_TBD) ? 0 : 1, 1, path_TBD, int_autoAssignConstructions, 0, 0);
+            return t3DDocument.ExportNew(day_First, day_Last, step, 1, 1, 1, path_TBD, int_autoAssignConstructions, 0, 0);
         }
 
         public static bool ToTBD(this AnalyticalModel analyticalModel, string path, Weather.WeatherData weatherData = null, IEnumerable<DesignDay> coolingDesignDays = null, IEnumerable<DesignDay> heatingDesignDays = null, bool updateGuids = false)
