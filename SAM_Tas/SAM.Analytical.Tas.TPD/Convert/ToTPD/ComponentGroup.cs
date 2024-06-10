@@ -1,6 +1,7 @@
 ﻿using SAM.Analytical.Systems;
 using SAM.Core.Systems;
 using SAM.Geometry.Systems;
+using System;
 using System.Collections.Generic;
 using TPD;
 
@@ -10,7 +11,14 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static ComponentGroup ToTPD(this DisplayAirSystemGroup displayAirSystemGroup, SystemPlantRoom systemPlantRoom, EnergyCentre energyCentre, global::TPD.System system, Controller[] controllers, DHWGroup dHWGroup, ElectricalGroup electricalGroup_SmallPower, ElectricalGroup electricalGroup_Lighting)
         {
-            if(displayAirSystemGroup == null || system == null || systemPlantRoom == null)
+            return ToTPD(displayAirSystemGroup, systemPlantRoom, energyCentre, system, controllers, dHWGroup, electricalGroup_SmallPower, electricalGroup_Lighting, out Dictionary<Guid, global::TPD.ISystemComponent> dictionary);
+        }
+
+        public static ComponentGroup ToTPD(this DisplayAirSystemGroup displayAirSystemGroup, SystemPlantRoom systemPlantRoom, EnergyCentre energyCentre, global::TPD.System system, Controller[] controllers, DHWGroup dHWGroup, ElectricalGroup electricalGroup_SmallPower, ElectricalGroup electricalGroup_Lighting, out Dictionary<Guid, global::TPD.ISystemComponent> dictionary)
+        {
+            dictionary = null;
+
+            if (displayAirSystemGroup == null || system == null || systemPlantRoom == null)
             {
                 return null;
             }
@@ -39,6 +47,8 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            dictionary = new Dictionary<Guid, global::TPD.ISystemComponent>();
+
             List<global::TPD.SystemComponent> systemComponents_TPD = new List<global::TPD.SystemComponent>();
             while(displaySystemObjects.Count > 0)
             {
@@ -53,12 +63,19 @@ namespace SAM.Analytical.Tas.TPD
                 dynamic dynamic = Convert.ToTPD(displaySystemObjects_Type[0] as dynamic, system);
                 if(dynamic is global::TPD.SystemComponent)
                 {
-                    systemComponents_TPD.Add((global::TPD.SystemComponent)dynamic);
+                    global::TPD.SystemComponent systemComponent_Temp = (global::TPD.SystemComponent)dynamic;
+                    foreach(IDisplaySystemObject displaySystemObject_Type in displaySystemObjects_Type)
+                    {
+                        dictionary[displaySystemObject_Type.Guid] = systemComponent_Temp;
+                    }
+
+                    systemComponents_TPD.Add(systemComponent_Temp);
                 }
             }
 
+            Create.Ducts(systemPlantRoom, system, dictionary);
 
-            ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD, controllers);
+            ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers);
             componentGroup.SetMultiplicity(zoneLoads.Count);
 
             List<global::TPD.SystemComponent> systemComponents_ComponentGroup = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);

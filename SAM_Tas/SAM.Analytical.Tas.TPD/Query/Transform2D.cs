@@ -140,9 +140,11 @@ namespace SAM.Analytical.Tas.TPD
 
             if(displaySystemObject is SystemFan)
             {
-                //ITransform2D result = Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.2, -0.2));
-
-                //return result;
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.2, 0));
+                }
                 return null;
             }
 
@@ -155,7 +157,13 @@ namespace SAM.Analytical.Tas.TPD
 
                 if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
                 {
+                    tpdDirection = tpdDirection.tpdRightLeft;
                     return Geometry.Planar.Transform2D.GetMirrorY(new Point2D(point2D.X - 0.1, point2D.Y - 0.1));
+                }
+                else if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.2));
                 }
 
                 return null;

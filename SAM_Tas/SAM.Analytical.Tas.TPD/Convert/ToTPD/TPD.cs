@@ -8,6 +8,8 @@ using SAM.Analytical.Systems;
 using System.Linq;
 using static SAM.Core.FluidProperty;
 using SAM.Core;
+using SAM.Geometry.Systems;
+using SAM.Geometry.Planar;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -446,98 +448,140 @@ namespace SAM.Analytical.Tas.TPD
 
                                 systemComponents_Ordered.Insert(0, systemComponent as Core.Systems.SystemComponent);
 
+                                List<DisplayAirSystemGroup> displayAirSystemGroups = new List<DisplayAirSystemGroup>();
+
                                 foreach (Core.Systems.SystemComponent systemComponent_Ordered in systemComponents_Ordered)
                                 {
                                     global::TPD.ISystemComponent systemComponent_TPD = null;
 
-                                    if (systemComponent_Ordered is DisplaySystemAirJunction)
+                                    List<DisplayAirSystemGroup> displayAirSystemGroups_Temp = systemPlantRoom.GetRelatedObjects<DisplayAirSystemGroup>(systemComponent_Ordered);
+                                    if(displayAirSystemGroups_Temp != null && displayAirSystemGroups_Temp.Count != 0)
                                     {
-                                        systemComponent_TPD = ToTPD((DisplaySystemAirJunction)systemComponent_Ordered, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Ordered is DisplayAirSystemGroup)
-                                    {
-                                        global::TPD.Controller[] controllers = new global::TPD.Controller[0];
-
-                                        systemComponent_TPD = ToTPD((DisplayAirSystemGroup)systemComponent_Ordered, systemPlantRoom, energyCentre, system, controllers, dHWGroup, electricalGroup_SmallPower, electricalGroup_Lighting) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Ordered is DisplaySystemCoolingCoil)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemCoolingCoil)systemComponent_Ordered, system, coolingGroup, energyCentre.GetDesignCondition(2)) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Ordered is DisplaySystemHeatingCoil)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemHeatingCoil)systemComponent_Ordered, system, heatingGroup, energyCentre.GetDesignCondition(3)) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Ordered is DisplaySystemExchanger)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemExchanger)systemComponent_Ordered, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Ordered is DisplaySystemFan)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemFan)systemComponent_Ordered, system, electricalGroup_Fans, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
-                                    }
-
-                                    if (systemComponent_TPD != null)
-                                    {
-                                        dictionary[systemComponent_Ordered.Guid] = systemComponent_TPD;
-                                    }
-                                }
-
-                                foreach (KeyValuePair<Guid, global::TPD.ISystemComponent> keyValuePair in dictionary)
-                                {
-
-                                    Core.Systems.SystemComponent systemComponent_Temp = systemPlantRoom.GetSystemComponent<Core.Systems.SystemComponent>(x => x.Guid == keyValuePair.Key);
-                                    if(systemComponent_Temp == null)
-                                    {
-                                        continue;
-
-                                    }
-
-                                    List<ISystemConnection> systemConnections = systemPlantRoom?.GetRelatedObjects<ISystemConnection>(systemComponent);
-                                    if (systemConnections == null || systemConnections.Count == 0)
-                                    {
-                                        continue;
-                                    }
-
-                                    global::TPD.ISystemComponent systemComponent_1 = keyValuePair.Value;
-
-                                    foreach (ISystemConnection systemConnection in systemConnections)
-                                    {
-                                        if (systemConnection.SystemType != new SystemType(airSystem))
+                                        foreach(DisplayAirSystemGroup displayAirSystemGroup_Temp in displayAirSystemGroups_Temp)
                                         {
-                                            continue;
-                                        }
-
-                                        List<Core.Systems.SystemComponent> systemComponents_SystemConnection = systemPlantRoom?.GetRelatedObjects<Core.Systems.SystemComponent>(systemConnection);
-                                        systemComponents_SystemConnection?.RemoveAll(x => x.Guid == systemComponent_Temp.Guid);
-                                        if (systemComponents_SystemConnection == null || systemComponents_SystemConnection.Count == 0)
-                                        {
-                                            continue;
-                                        }
-
-                                        foreach(Core.Systems.SystemComponent systemComponent_SystemConnection in systemComponents_SystemConnection)
-                                        {
-                                            if (!dictionary.TryGetValue(systemComponent_SystemConnection.Guid, out global::TPD.ISystemComponent systemComponent_2))
+                                            if(displayAirSystemGroups.Find(x => x.Guid == displayAirSystemGroup_Temp.Guid) != null)
                                             {
                                                 continue;
                                             }
 
-                                            system.AddDuct((global::TPD.SystemComponent)systemComponent_1, 1, (global::TPD.SystemComponent)systemComponent_2, 1);
+                                            displayAirSystemGroups.Add(displayAirSystemGroup_Temp);
+
+                                            Controller[] controllers = new Controller[0];
+
+                                            systemComponent_TPD = ToTPD(displayAirSystemGroup_Temp, systemPlantRoom, energyCentre, system, controllers, dHWGroup, electricalGroup_SmallPower, electricalGroup_Lighting) as global::TPD.ISystemComponent;
+                                            if (systemComponent_TPD != null)
+                                            {
+                                                dictionary[systemComponent_Ordered.Guid] = systemComponent_TPD;
+                                            }
                                         }
-
-
                                     }
-
-
-                                    List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.SystemComponent>(airSystem, ConnectorStatus.Connected, null);
-                                    if(systemComponents != null)
+                                    else
                                     {
-                                        foreach (Core.Systems.SystemComponent systemComponent_Connected in systemComponents)
+                                        if (systemComponent_Ordered is DisplaySystemAirJunction)
                                         {
+                                            systemComponent_TPD = ToTPD((DisplaySystemAirJunction)systemComponent_Ordered, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Ordered is DisplaySystemCoolingCoil)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemCoolingCoil)systemComponent_Ordered, system, coolingGroup, energyCentre.GetDesignCondition(2)) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Ordered is DisplaySystemHeatingCoil)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemHeatingCoil)systemComponent_Ordered, system, heatingGroup, energyCentre.GetDesignCondition(3)) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Ordered is DisplaySystemExchanger)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemExchanger)systemComponent_Ordered, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Ordered is DisplaySystemFan)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemFan)systemComponent_Ordered, system, electricalGroup_Fans, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                        }
+
+                                        if (systemComponent_TPD != null)
+                                        {
+                                            dictionary[systemComponent_Ordered.Guid] = systemComponent_TPD;
                                         }
                                     }
-
                                 }
+
+                                Create.Ducts(systemPlantRoom, system, dictionary);
+
+                                //List<ISystemConnection> systemConnections = systemPlantRoom.GetSystemConnections();
+                                //if(systemConnections != null)
+                                //{
+                                //    SystemType systemType = new SystemType(airSystem);
+
+                                //    foreach (ISystemConnection systemConnection in systemConnections)
+                                //    {
+                                //        if(systemConnection.SystemType != systemType)
+                                //        {
+                                //            continue;
+                                //        }
+
+                                //        List<Core.Systems.SystemComponent> systemComponents_SystemConnection = systemPlantRoom?.GetRelatedObjects<Core.Systems.SystemComponent>(systemConnection);
+                                //        if(systemComponents_SystemConnection == null)
+                                //        {
+                                //            continue;
+                                //        }
+
+                                //        for (int i = 0; i < systemComponents_SystemConnection.Count - 1; i++)
+                                //        {
+                                //            if (!dictionary.TryGetValue(systemComponents_SystemConnection[i].Guid, out global::TPD.ISystemComponent systemComponent_1) || systemComponent_1 == null)
+                                //            {
+                                //                continue;
+                                //            }
+
+                                //            Core.Systems.SystemComponent systemComponent_Temp_1 = systemComponents_SystemConnection[i];
+
+                                //            systemConnection.TryGetIndex(systemComponents_SystemConnection[i], out int index_1);
+                                //            Direction direction_1 = systemComponents_SystemConnection[i].SystemConnectorManager.GetDirection(index_1);
+
+                                //            for (int j = i + 1; j < systemComponents_SystemConnection.Count; j++)
+                                //            {
+                                //                if (!dictionary.TryGetValue(systemComponents_SystemConnection[j].Guid, out global::TPD.ISystemComponent systemComponent_2) || systemComponent_2 == null)
+                                //                {
+                                //                    continue;
+                                //                }
+
+                                //                Core.Systems.SystemComponent systemComponent_Temp_2 = systemComponents_SystemConnection[j];
+
+                                //                systemConnection.TryGetIndex(systemComponent_Temp_2, out int index_2);
+                                //                Direction direction_2 = systemComponent_Temp_2.SystemConnectorManager.GetDirection(index_2);
+                                //                if(direction_1 == Direction.In)
+                                //                {
+                                //                    global::TPD.ISystemComponent systemComponent_Temp = systemComponent_1;
+                                //                    systemComponent_1 = systemComponent_2;
+                                //                    systemComponent_2 = systemComponent_Temp;
+                                //                }
+
+                                //                Duct duct = system.AddDuct((global::TPD.SystemComponent)systemComponent_1, 1, (global::TPD.SystemComponent)systemComponent_2, 1);
+                                //                if(duct != null)
+                                //                {
+                                //                    if(systemConnection is DisplaySystemConnection)
+                                //                    {
+                                //                        DisplaySystemConnection displaySystemConnection = (DisplaySystemConnection)systemConnection;
+                                //                        SystemPolyline systemPolyline = displaySystemConnection.SystemGeometry;
+                                //                        if(systemPolyline != null)
+                                //                        {
+                                //                            List<Point2D> point2Ds = systemPolyline.Points;
+                                //                            if(point2Ds != null && point2Ds.Count > 2)
+                                //                            {
+                                //                                for(int k = 1; k < point2Ds.Count - 1; k++)
+                                //                                {
+                                //                                    Point2D point2D = point2Ds[k].ToTPD();
+
+                                //                                    duct.AddNode(System.Convert.ToInt32(point2D.X), System.Convert.ToInt32(point2D.Y));
+                                //                                }
+                                //                            }
+                                //                        }
+
+                                //                    }
+                                //                }
+                                //            }
+                                //        }
+                                //    }
+                                //}
                             }
 
 

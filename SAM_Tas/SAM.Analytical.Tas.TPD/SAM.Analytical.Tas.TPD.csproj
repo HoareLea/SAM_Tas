@@ -139,6 +139,7 @@
     <Compile Include="Convert\ToTPD\ComponentGroup.cs" />
     <Compile Include="Convert\ToTPD\Junction.cs" />
     <Compile Include="Convert\ToTPD\Fan.cs" />
+    <Compile Include="Create\Ducts.cs" />
     <Compile Include="Create\IndexedDoubles.cs" />
     <Compile Include="Enums\Parameters\SystemObjectParameter.cs" />
     <Compile Include="Enums\WaterSideControllerSetup.cs" />
