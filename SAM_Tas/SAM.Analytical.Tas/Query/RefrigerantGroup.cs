@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static global::TPD.RefrigerantGroup RefrigerantGroup(this global::TPD.PlantRoom plantRoom, string name)
+        public static TPD.RefrigerantGroup RefrigerantGroup(this TPD.PlantRoom plantRoom, string name)
         {
             if (plantRoom is null || string.IsNullOrWhiteSpace(name))
             {
@@ -11,7 +11,7 @@
 
             for (int i = 1; i <= plantRoom.GetRefrigerantGroupCount(); i++)
             {
-                global::TPD.RefrigerantGroup refrigerantGroup = plantRoom.GetRefrigerantGroup(i);
+                TPD.RefrigerantGroup refrigerantGroup = plantRoom.GetRefrigerantGroup(i);
                 if (refrigerantGroup == null)
                 {
                     continue;

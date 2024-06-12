@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static global::TPD.PlantRoom PlantRoom(this global::TPD.EnergyCentre energyCentre, string name)
+        public static TPD.PlantRoom PlantRoom(this TPD.EnergyCentre energyCentre, string name)
         {
             if (energyCentre is null || string.IsNullOrWhiteSpace(name))
             {
@@ -11,7 +11,7 @@
 
             for (int i = 1; i <= energyCentre.GetPlantRoomCount(); i++)
             {
-                global::TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(i);
+                TPD.PlantRoom plantRoom = energyCentre.GetPlantRoom(i);
                 if(plantRoom == null)
                 {
                     continue;

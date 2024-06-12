@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas
     {
         public static HashSet<string> UpdateZoneGroups(this Building building, AdjacencyCluster adjacencyCluster)
         {
-            List<TBD.zone> zones_TBD = building?.Zones();
+            List<zone> zones_TBD = building?.Zones();
             if (zones_TBD == null || zones_TBD.Count == 0)
             {
                 return null;

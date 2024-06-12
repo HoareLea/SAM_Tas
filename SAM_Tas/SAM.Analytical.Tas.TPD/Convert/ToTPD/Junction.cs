@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas.TPD
 
             displaySystemAirJunction.SetLocation(result as SystemComponent);
 
-            return result as global::TPD.Junction;
+            return result as Junction;
         }
     }
 }

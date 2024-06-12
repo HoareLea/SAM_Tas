@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas
         public void Load(Document document)
         {
             constructions = new Dictionary<string, TCD.Construction>();
-            materials = new Dictionary<string, TCD.material>();
+            materials = new Dictionary<string, material>();
             layersDictionary = new Dictionary<string, List<string>>();
             materialCategories = new Dictionary<string, Category>();
             constructionCategories = new Dictionary<string, Category>();
@@ -70,7 +70,7 @@ namespace SAM.Analytical.Tas
                     List<string> layers = new List<string>();
 
                     int index_Material = 1;
-                    TCD.material material = construction.materials(index_Material);
+                    material material = construction.materials(index_Material);
                     while (material != null)
                     {
                         string uniqueId = material.UniqueId();
@@ -116,7 +116,7 @@ namespace SAM.Analytical.Tas
             }
 
             int index_Material = 1;
-            TCD.material material = materialFolder.materials(index_Material);
+            material material = materialFolder.materials(index_Material);
             while (material != null)
             {
                 string uniqueId = material.UniqueId();
@@ -154,7 +154,7 @@ namespace SAM.Analytical.Tas
 
             if(materials != null)
             {
-                foreach (KeyValuePair<string, TCD.material> keyValuePair in materials)
+                foreach (KeyValuePair<string, material> keyValuePair in materials)
                 {
                     Update(constructionManager, keyValuePair.Value);
                 }

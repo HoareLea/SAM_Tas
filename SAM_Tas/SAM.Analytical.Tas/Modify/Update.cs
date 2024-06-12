@@ -691,7 +691,7 @@ namespace SAM.Analytical.Tas
                             panel_Temp.SetValue(PanelParameter.BuildingElementGuid, buildingElement_Panel.GUID);
                         }
 
-                        zoneSurface_Panel.type = TBD.SurfaceType.tbdExposed;
+                        zoneSurface_Panel.type = SurfaceType.tbdExposed;
 
                         Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult = adjacencyCluster.GetResults<Geometry.SolarCalculator.SolarFaceSimulationResult>(panel, null)?.FirstOrDefault();
 
@@ -721,10 +721,10 @@ namespace SAM.Analytical.Tas
                                 zoneSurface_Aperture.altitudeRange = System.Convert.ToSingle(boundingBox3D_Aperture.Max.Z - boundingBox3D_Aperture.Min.Z);
                                 zoneSurface_Aperture.planHydraulicDiameter = System.Convert.ToSingle(Geometry.Tas.Query.HydraulicDiameter(face3D_ZoneSurface));
 
-                                zoneSurface_Aperture.type = @internal ? TBD.SurfaceType.tbdLink : zoneSurface_Panel.type;
+                                zoneSurface_Aperture.type = @internal ? SurfaceType.tbdLink : zoneSurface_Panel.type;
                                 if (adiabatic)
                                 {
-                                    zoneSurface_Aperture.type = TBD.SurfaceType.tbdNullLink;
+                                    zoneSurface_Aperture.type = SurfaceType.tbdNullLink;
                                 }
 
                                 RoomSurface roomSurface_Aperture = room.AddSurface();
@@ -739,7 +739,7 @@ namespace SAM.Analytical.Tas
 
                                 if (solarFaceSimulationResult != null)
                                 {
-                                    List<SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(building, daysShades, zoneSurface_Aperture, face3D_ZoneSurface, solarFaceSimulationResult);
+                                    List<SurfaceShade> surfaceShades = UpdateSurfaceShades(building, daysShades, zoneSurface_Aperture, face3D_ZoneSurface, solarFaceSimulationResult);
                                 }
 
                                 return zoneSurface_Aperture;
@@ -900,7 +900,7 @@ namespace SAM.Analytical.Tas
 
                                         if (aperturePart == AperturePart.Pane && aperture.TryGetValue(Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
                                         {
-                                            List<TBD.ApertureType> apertureTypes = Modify.SetApertureTypes(building, buildingElement_Aperture, openingProperties);
+                                            List<TBD.ApertureType> apertureTypes = SetApertureTypes(building, buildingElement_Aperture, openingProperties);
                                         }
                                     }
 
@@ -935,10 +935,10 @@ namespace SAM.Analytical.Tas
 
                         if (solarFaceSimulationResult != null)
                         {
-                            List<SurfaceShade> surfaceShades = Modify.UpdateSurfaceShades(building, daysShades, zoneSurface_Panel, adjacencyCluster, solarFaceSimulationResult);
+                            List<SurfaceShade> surfaceShades = UpdateSurfaceShades(building, daysShades, zoneSurface_Panel, adjacencyCluster, solarFaceSimulationResult);
                         }
 
-                        zoneSurface_Panel.type = adiabatic ? TBD.SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
+                        zoneSurface_Panel.type = adiabatic ? SurfaceType.tbdNullLink : Query.SurfaceType(panelType);
 
                         if (!dictionary_Panel.TryGetValue(panel.Guid, out List<Tuple<zoneSurface, bool>> zoneSurfaces_Panel) || zoneSurfaces_Panel == null)
                         {

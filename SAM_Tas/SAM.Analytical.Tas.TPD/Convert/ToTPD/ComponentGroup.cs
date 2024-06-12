@@ -85,7 +85,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 foreach(Damper damper in dampers)
                 {
-                    damper.DesignFlowType = global::TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
+                    damper.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
                 }
             }
 

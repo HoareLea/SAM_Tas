@@ -41,38 +41,73 @@ namespace SAM.Analytical.Tas.TPD
                     continue;
                 }
 
-
                 for (int i = 0; i < systemComponents_SystemConnection.Count - 1; i++)
                 {
-                    if (!dictionary.TryGetValue(systemComponents_SystemConnection[i].Guid, out global::TPD.ISystemComponent systemComponent_1) || systemComponent_1 == null)
+                    Core.Systems.SystemComponent systemComponent_Temp_1 = systemComponents_SystemConnection[i];
+
+                    if (!dictionary.TryGetValue(systemComponent_Temp_1.Guid, out global::TPD.ISystemComponent systemComponent_1) || systemComponent_1 == null)
                     {
                         continue;
                     }
 
-                    Core.Systems.SystemComponent systemComponent_Temp_1 = systemComponents_SystemConnection[i];
-
-                    systemConnection.TryGetIndex(systemComponents_SystemConnection[i], out int index_1);
-                    Direction direction_1 = systemComponents_SystemConnection[i].SystemConnectorManager.GetDirection(index_1);
+                    systemConnection.TryGetIndex(systemComponent_Temp_1, out int index_1);
+                    Direction direction_1 = systemComponent_Temp_1.SystemConnectorManager.GetDirection(index_1);
 
                     for (int j = i + 1; j < systemComponents_SystemConnection.Count; j++)
                     {
-                        if (!dictionary.TryGetValue(systemComponents_SystemConnection[j].Guid, out global::TPD.ISystemComponent systemComponent_2) || systemComponent_2 == null)
+                        Core.Systems.SystemComponent systemComponent_Temp_2 = systemComponents_SystemConnection[j];
+
+                        if (!dictionary.TryGetValue(systemComponent_Temp_2.Guid, out global::TPD.ISystemComponent systemComponent_2) || systemComponent_2 == null)
                         {
                             continue;
                         }
 
-                        Core.Systems.SystemComponent systemComponent_Temp_2 = systemComponents_SystemConnection[j];
+                        if((systemComponent_2 as dynamic).GUID == (systemComponent_1 as dynamic).GUID)
+                        {
+                            continue;
+                        }
 
                         systemConnection.TryGetIndex(systemComponent_Temp_2, out int index_2);
                         Direction direction_2 = systemComponent_Temp_2.SystemConnectorManager.GetDirection(index_2);
+
+                        int portIndex_1 = 1;
+                        if(systemComponent_Temp_1.SystemConnectorManager.TryGetSystemConnector(index_1, out SystemConnector systemConnector_1) && systemConnector_1 != null)
+                        {
+                            if(systemConnector_1.ConnectionIndex != -1)
+                            {
+                                portIndex_1 = systemConnector_1.ConnectionIndex;
+                            }
+                        }
+
+                        int portIndex_2 = 1;
+                        if (systemComponent_Temp_2.SystemConnectorManager.TryGetSystemConnector(index_2, out SystemConnector systemConnector_2) && systemConnector_2 != null)
+                        {
+                            if (systemConnector_2.ConnectionIndex != -1)
+                            {
+                                portIndex_2 = systemConnector_2.ConnectionIndex;
+                            }
+                        }
+
                         if (direction_1 == Direction.In)
                         {
                             global::TPD.ISystemComponent systemComponent_Temp = systemComponent_1;
                             systemComponent_1 = systemComponent_2;
                             systemComponent_2 = systemComponent_Temp;
+
+                            int portIndex = portIndex_1;
+                            portIndex_1 = portIndex_2;
+                            portIndex_2 = portIndex;
                         }
 
-                        Duct duct = system.AddDuct((global::TPD.SystemComponent)systemComponent_1, 1, (global::TPD.SystemComponent)systemComponent_2, 1);
+                        Dictionary<int, int> dictionary_Temp = new Dictionary<int, int>();
+
+                        int inputPortCount = (systemComponent_1 as dynamic).GetInputPortCount();
+                        for (int k = 1; k <= inputPortCount; k++)
+                        {
+                            dictionary_Temp[k] = (systemComponent_1 as dynamic).GetInputDuctCount(k);
+                        }
+
+                        Duct duct = system.AddDuct((global::TPD.SystemComponent)systemComponent_1, portIndex_1, (global::TPD.SystemComponent)systemComponent_2, portIndex_2);
                         if (duct == null)
                         {
                             continue;

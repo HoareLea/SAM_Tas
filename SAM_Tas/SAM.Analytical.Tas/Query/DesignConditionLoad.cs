@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static global::TPD.DesignConditionLoad DesignConditionLoad(this global::TPD.EnergyCentre energyCentre, string name)
+        public static TPD.DesignConditionLoad DesignConditionLoad(this TPD.EnergyCentre energyCentre, string name)
         {
             if (energyCentre is null || string.IsNullOrWhiteSpace(name))
             {
@@ -11,7 +11,7 @@
 
             for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
             {
-                global::TPD.DesignConditionLoad designConditionLoad = energyCentre.GetDesignCondition(i);
+                TPD.DesignConditionLoad designConditionLoad = energyCentre.GetDesignCondition(i);
                 if(designConditionLoad == null)
                 {
                     continue;
