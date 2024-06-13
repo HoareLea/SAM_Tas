@@ -6,10 +6,7 @@ using System;
 using System.Collections.Generic;
 using SAM.Analytical.Systems;
 using System.Linq;
-using static SAM.Core.FluidProperty;
 using SAM.Core;
-using SAM.Geometry.Systems;
-using SAM.Geometry.Planar;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -508,6 +505,11 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         systemComponent_TPD = ToTPD((DisplaySystemSpace)systemComponent_Temp, system) as global::TPD.ISystemComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemEconomiser)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemEconomiser)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                    }
+
 
                                     if (systemComponent_TPD == null)
                                     {
