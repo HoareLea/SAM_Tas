@@ -555,7 +555,9 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
-            if(name.StartsWith("UV"))
+            energyCentre.Name = name;
+
+            if (name.StartsWith("UV"))
             {
                 return TPD_UV(energyCentre, zoneLoads, ventilationSystem, heatingSystem, coolingSystem);
             }

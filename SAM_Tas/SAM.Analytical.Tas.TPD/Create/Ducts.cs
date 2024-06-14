@@ -107,40 +107,40 @@ namespace SAM.Analytical.Tas.TPD
 
                         //------ TO BE REMOVED - START --------
 
-                        int inputPortCount = -1;
-                        int outputPortCount = -1;
+                        //int inputPortCount = -1;
+                        //int outputPortCount = -1;
 
-                        Dictionary<int, int> dictionary_Input_1 = new Dictionary<int, int>();
+                        //Dictionary<int, int> dictionary_Input_1 = new Dictionary<int, int>();
 
-                        inputPortCount = (systemComponent_1 as dynamic).GetInputPortCount();
-                        for (int k = 1; k <= inputPortCount; k++)
-                        {
-                            dictionary_Input_1[k] = (systemComponent_1 as dynamic).GetInputDuctCount(k);
-                        }
+                        //inputPortCount = (systemComponent_1 as dynamic).GetInputPortCount();
+                        //for (int k = 1; k <= inputPortCount; k++)
+                        //{
+                        //    dictionary_Input_1[k] = (systemComponent_1 as dynamic).GetInputDuctCount(k);
+                        //}
 
-                        Dictionary<int, int> dictionary_Output_1 = new Dictionary<int, int>();
+                        //Dictionary<int, int> dictionary_Output_1 = new Dictionary<int, int>();
 
-                        outputPortCount = (systemComponent_1 as dynamic).GetOutputPortCount();
-                        for (int k = 1; k <= outputPortCount; k++)
-                        {
-                            dictionary_Output_1[k] = (systemComponent_1 as dynamic).GetOutputDuctCount(k);
-                        }
+                        //outputPortCount = (systemComponent_1 as dynamic).GetOutputPortCount();
+                        //for (int k = 1; k <= outputPortCount; k++)
+                        //{
+                        //    dictionary_Output_1[k] = (systemComponent_1 as dynamic).GetOutputDuctCount(k);
+                        //}
 
-                        Dictionary<int, int> dictionary_Input_2 = new Dictionary<int, int>();
+                        //Dictionary<int, int> dictionary_Input_2 = new Dictionary<int, int>();
 
-                        inputPortCount = (systemComponent_2 as dynamic).GetInputPortCount();
-                        for (int k = 1; k <= inputPortCount; k++)
-                        {
-                            dictionary_Input_2[k] = (systemComponent_2 as dynamic).GetInputDuctCount(k);
-                        }
+                        //inputPortCount = (systemComponent_2 as dynamic).GetInputPortCount();
+                        //for (int k = 1; k <= inputPortCount; k++)
+                        //{
+                        //    dictionary_Input_2[k] = (systemComponent_2 as dynamic).GetInputDuctCount(k);
+                        //}
 
-                        Dictionary<int, int> dictionary_Output_2 = new Dictionary<int, int>();
+                        //Dictionary<int, int> dictionary_Output_2 = new Dictionary<int, int>();
 
-                        outputPortCount = (systemComponent_2 as dynamic).GetOutputPortCount();
-                        for (int k = 1; k <= outputPortCount; k++)
-                        {
-                            dictionary_Output_2[k] = (systemComponent_2 as dynamic).GetOutputDuctCount(k);
-                        }
+                        //outputPortCount = (systemComponent_2 as dynamic).GetOutputPortCount();
+                        //for (int k = 1; k <= outputPortCount; k++)
+                        //{
+                        //    dictionary_Output_2[k] = (systemComponent_2 as dynamic).GetOutputDuctCount(k);
+                        //}
 
                         //------ TO BE REMOVED - END --------
 
