@@ -618,90 +618,88 @@ namespace SAM.Analytical.Tas.TPD
                     systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
                 }
 
-                if(!systemEnergyCentreConversionSettings.Simulate)
+                if(systemEnergyCentreConversionSettings.Simulate)
                 {
-                    return true;
-                }
+                    plantRoom.SimulateEx(systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
 
-                plantRoom.SimulateEx(systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
-
-                if (systemEnergyCentre != null)
-                {
-
-                    //TODO: [Jakub] NOT IMPLEMENTED
-                    double totalConsumption = 0;
-                    double CO2Emission = 0;
-                    double cost = 0;
-                    double unmetHours = 0;
-
-                    WrResultSet wrResultSet = (WrResultSet)energyCentre.GetResultSet(tpdResultsPeriod.tpdResultsPeriodAnnual, 0, 0, 0, null);
-
-                    int count;
-
-                    count = wrResultSet.GetVectorSize(tpdResultVectorType.tpdConsumption);
-                    for (int j = 1; j <= count; j++)
+                    if (systemEnergyCentre != null)
                     {
-                        WrResultItem wrResultItem = (WrResultItem)wrResultSet.GetResultItem(tpdResultVectorType.tpdConsumption, j);
-                        if (wrResultItem != null)
+
+                        //TODO: [Jakub] NOT IMPLEMENTED
+                        double totalConsumption = 0;
+                        double CO2Emission = 0;
+                        double cost = 0;
+                        double unmetHours = 0;
+
+                        WrResultSet wrResultSet = (WrResultSet)energyCentre.GetResultSet(tpdResultsPeriod.tpdResultsPeriodAnnual, 0, 0, 0, null);
+
+                        int count;
+
+                        count = wrResultSet.GetVectorSize(tpdResultVectorType.tpdConsumption);
+                        for (int j = 1; j <= count; j++)
                         {
-                            Array array = (Array)wrResultItem.GetValues();
-                            if (array != null && array.Length != 0)
+                            WrResultItem wrResultItem = (WrResultItem)wrResultSet.GetResultItem(tpdResultVectorType.tpdConsumption, j);
+                            if (wrResultItem != null)
                             {
-                                totalConsumption += (double)array.GetValue(0);
+                                Array array = (Array)wrResultItem.GetValues();
+                                if (array != null && array.Length != 0)
+                                {
+                                    totalConsumption += (double)array.GetValue(0);
+                                }
                             }
                         }
-                    }
 
-                    count = wrResultSet.GetVectorSize(tpdResultVectorType.tpdCost);
-                    for (int j = 1; j <= count; j++)
-                    {
-                        WrResultItem wrResultItem = (WrResultItem)wrResultSet.GetResultItem(tpdResultVectorType.tpdCost, j);
-                        if (wrResultItem != null)
+                        count = wrResultSet.GetVectorSize(tpdResultVectorType.tpdCost);
+                        for (int j = 1; j <= count; j++)
                         {
-                            Array array = (Array)wrResultItem.GetValues();
-                            if (array != null && array.Length != 0)
+                            WrResultItem wrResultItem = (WrResultItem)wrResultSet.GetResultItem(tpdResultVectorType.tpdCost, j);
+                            if (wrResultItem != null)
                             {
-                                cost += (double)array.GetValue(0);
+                                Array array = (Array)wrResultItem.GetValues();
+                                if (array != null && array.Length != 0)
+                                {
+                                    cost += (double)array.GetValue(0);
+                                }
                             }
                         }
-                    }
 
-                    count = wrResultSet.GetVectorSize(tpdResultVectorType.tpdCo2);
-                    for (int j = 1; j <= count; j++)
-                    {
-                        WrResultItem wrResultItem = (WrResultItem)wrResultSet.GetResultItem(tpdResultVectorType.tpdCo2, j);
-                        if (wrResultItem != null)
+                        count = wrResultSet.GetVectorSize(tpdResultVectorType.tpdCo2);
+                        for (int j = 1; j <= count; j++)
                         {
-                            Array array = (Array)wrResultItem.GetValues();
-                            if (array != null && array.Length != 0)
+                            WrResultItem wrResultItem = (WrResultItem)wrResultSet.GetResultItem(tpdResultVectorType.tpdCo2, j);
+                            if (wrResultItem != null)
                             {
-                                CO2Emission += (double)array.GetValue(0);
+                                Array array = (Array)wrResultItem.GetValues();
+                                if (array != null && array.Length != 0)
+                                {
+                                    CO2Emission += (double)array.GetValue(0);
+                                }
                             }
                         }
-                    }
 
-                    count = wrResultSet.GetVectorSize(tpdResultVectorType.tpdUnmetHours);
-                    for (int j = 1; j <= count; j++)
-                    {
-                        WrResultItem wrResultItem = (WrResultItem)wrResultSet.GetResultItem(tpdResultVectorType.tpdUnmetHours, j);
-                        if (wrResultItem != null)
+                        count = wrResultSet.GetVectorSize(tpdResultVectorType.tpdUnmetHours);
+                        for (int j = 1; j <= count; j++)
                         {
-                            Array array = (Array)wrResultItem.GetValues();
-                            if (array != null && array.Length != 0)
+                            WrResultItem wrResultItem = (WrResultItem)wrResultSet.GetResultItem(tpdResultVectorType.tpdUnmetHours, j);
+                            if (wrResultItem != null)
                             {
-                                unmetHours += (double)array.GetValue(0);
+                                Array array = (Array)wrResultItem.GetValues();
+                                if (array != null && array.Length != 0)
+                                {
+                                    unmetHours += (double)array.GetValue(0);
+                                }
                             }
                         }
+
+                        wrResultSet.Dispose();
+
+                        //AnalyticalModelSimulationResult analyticalModelSimulationResult = new AnalyticalModelSimulationResult(analyticalModel.Name, Assembly.GetExecutingAssembly().GetName()?.Name, path_TPD);
+                        //analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualTotalConsumption, totalConsumption);
+                        //analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualCO2Emission, CO2Emission);
+                        //analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualCost, cost);
+                        //analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualUnmetHours, unmetHours);
+                        //analyticalModel.AddResult(analyticalModelSimulationResult);
                     }
-
-                    wrResultSet.Dispose();
-
-                    //AnalyticalModelSimulationResult analyticalModelSimulationResult = new AnalyticalModelSimulationResult(analyticalModel.Name, Assembly.GetExecutingAssembly().GetName()?.Name, path_TPD);
-                    //analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualTotalConsumption, totalConsumption);
-                    //analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualCO2Emission, CO2Emission);
-                    //analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualCost, cost);
-                    //analyticalModelSimulationResult.SetValue(AnalyticalModelSimulationResultParameter.AnnualUnmetHours, unmetHours);
-                    //analyticalModel.AddResult(analyticalModelSimulationResult);
                 }
 
                 tPDDoc.Save();
