@@ -777,7 +777,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            DisplaySystemConnection result = new DisplaySystemConnection(new SystemConnection(airSystem, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds?.ToArray());
+            DisplaySystemConnection result = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemComponent_1, index_1, systemComponent_2, index_2), point2Ds?.ToArray());
             if (result == null)
             {
                 return null;

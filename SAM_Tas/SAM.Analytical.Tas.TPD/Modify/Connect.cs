@@ -133,7 +133,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            DisplaySystemConnection result = new DisplaySystemConnection(new SystemConnection(system, systemComponent_1, index_1, systemComponent_2, index_2), point2Ds_Temp?.ToArray());
+            DisplaySystemConnection result = new DisplaySystemConnection(new SystemConnection(new SystemType(system), systemComponent_1, index_1, systemComponent_2, index_2), point2Ds_Temp?.ToArray());
 
             return systemPlantRoom.Connect(result, system) ? result : null;
         }
