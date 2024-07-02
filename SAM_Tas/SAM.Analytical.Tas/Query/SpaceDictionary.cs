@@ -4,14 +4,14 @@ namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
-        public static Dictionary<string, Space> SpaceDictionary(this AdjacencyCluster adjacencyCluster)
+        public static Dictionary<string, T> SpaceDictionary<T>(this AdjacencyCluster adjacencyCluster) where T : ISpace
         {
-            List<Space> spaces = adjacencyCluster?.GetSpaces();
+            List<T> spaces = adjacencyCluster?.GetObjects<T>();
             if (spaces == null)
                 return null;
 
-            Dictionary<string, Space> result = new Dictionary<string, Space>();
-            foreach(Space space in spaces)
+            Dictionary<string, T> result = new Dictionary<string, T>();
+            foreach(T space in spaces)
             {
                 string name = space?.Name;
                 if (name == null)

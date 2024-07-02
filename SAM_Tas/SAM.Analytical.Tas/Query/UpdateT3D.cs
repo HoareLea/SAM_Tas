@@ -68,7 +68,7 @@ namespace SAM.Analytical.Tas
             if(adjacencyCluster != null)
             {
                 //Zones -> Spaces
-                Dictionary<string, Space> spaces = adjacencyCluster.SpaceDictionary();
+                Dictionary<string, ISpace> spaces = adjacencyCluster.SpaceDictionary<ISpace>();
                 if (spaces != null)
                 {
                     Dictionary<string, TAS3D.Zone> zones = building.ZoneDictionary();
@@ -76,16 +76,23 @@ namespace SAM.Analytical.Tas
                     {
                         foreach (KeyValuePair<string, TAS3D.Zone> keyValuePair in zones)
                         {
-                            Space space;
-                            if (!spaces.TryGetValue(keyValuePair.Key, out space))
+                            if (!spaces.TryGetValue(keyValuePair.Key, out ISpace space) || space == null)
+                            {
                                 continue;
-                            
-                            if (space == null)
-                                continue;
+                            }
 
                             //TODO: Update Zone
-                            Space space_New = space.Clone();
-                            space_New.Add(Create.ParameterSet(ActiveSetting.Setting, keyValuePair.Value));
+                            ISpace space_New = space.Clone();
+                            if(space_New is SAMObject)
+                            {
+                                ((SAMObject)space_New).Add(Create.ParameterSet(ActiveSetting.Setting, keyValuePair.Value));
+                            }
+
+                            if(space_New is ExternalSpace)
+                            {
+                                keyValuePair.Value.external = true;
+                            }
+
                             adjacencyCluster.AddObject(space_New);
                         }
                     }

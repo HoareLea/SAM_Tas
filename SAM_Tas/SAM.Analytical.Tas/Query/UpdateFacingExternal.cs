@@ -45,7 +45,7 @@ namespace SAM.Analytical.Tas
             if (adjacencyCluster == null)
                 return null;
 
-            Dictionary<string, Space> spaces = adjacencyCluster.SpaceDictionary();
+            Dictionary<string, Space> spaces = adjacencyCluster.SpaceDictionary<Space>();
             if (spaces == null)
                 return null;
 
