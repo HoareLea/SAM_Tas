@@ -109,7 +109,10 @@ namespace SAM.Analytical.Tas
                         {
                             Construction construction = element.Match(constructions);
                             if (construction == null)
+                            {
+                                element.ghost = true;
                                 continue;
+                            }
 
                             //Update Element
 
@@ -325,8 +328,6 @@ namespace SAM.Analytical.Tas
                         }
                     }
                 }
-
-
             }
 
             AnalyticalModel result = new AnalyticalModel(analyticalModel, adjacencyCluster);
