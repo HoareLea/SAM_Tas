@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SAM.Analytical.Tas
 {
@@ -72,14 +73,15 @@ namespace SAM.Analytical.Tas
                 return result;
             }
 
-            foreach (DateTime dateTime in dateTimes)
+            List<Tuple<int, short, float>> tuples = Enumerable.Repeat<Tuple<int, short, float>>(null, dateTimes.Count).ToList();
+            Parallel.For(0, dateTimes.Count, (int i) => 
             {
-                List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTime);
+                List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTimes[i]);
                 float proportion = 0;
                 if (face3Ds != null && face3Ds.Count != 0)
                 {
                     double area_Temp = face3Ds.ConvertAll(x => x.GetArea()).Sum();
-                    proportion = System.Convert.ToSingle(area_Temp / face3D.GetArea());
+                    proportion = System.Convert.ToSingle(area_Temp / area);
                 }
 
                 if (proportion <= tolerance)
@@ -87,21 +89,27 @@ namespace SAM.Analytical.Tas
                     proportion = 0;
                 }
 
-                int dayIndex = dateTime.DayOfYear;
+                tuples.Add(new Tuple<int, short, float>(dateTimes[i].DayOfYear, System.Convert.ToInt16(dateTimes[i].Hour), proportion));
+            });
 
-                TBD.DaysShade daysShade = daysShades.Find(x => x.day == dayIndex);
+
+            foreach (Tuple<int, short, float> tuple in tuples)
+            {
+                if(tuple == null)
+                {
+                    continue;
+                }
+
+                TBD.DaysShade daysShade = daysShades.Find(x => x.day == tuple.Item1);
                 if (daysShade == null)
                 {
                     daysShade = building.AddDaysShade();
-                    daysShade.day = dayIndex;
+                    daysShade.day = tuple.Item1;
                     daysShades.Add(daysShade);
                 }
 
-                // float proportion = System.Convert.ToSingle(Core.Query.Round(sunExposureArea / area, tolerance));
-
-
-                TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour));
-                surfaceShade.proportion = proportion;
+                TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(tuple.Item2);
+                surfaceShade.proportion = tuple.Item3;
                 surfaceShade.surface = zoneSurface;
 
                 result.Add(surfaceShade);
