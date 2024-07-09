@@ -76,7 +76,7 @@ namespace SAM.Analytical.Tas
             List<Tuple<int, short, float>> tuples = Enumerable.Repeat<Tuple<int, short, float>>(null, dateTimes.Count).ToList();
             Parallel.For(0, dateTimes.Count, (int i) => 
             {
-                List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTimes[i]);
+                List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTimes[i]); //TODO Optimze this function! https://github.com/HoareLea/SAM_Tas/issues/72 
                 float proportion = 0;
                 if (face3Ds != null && face3Ds.Count != 0)
                 {
