@@ -1,6 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
+using SAM.Core;
 using SAM.Core.Grasshopper;
 using SAM.Weather;
 using System;
@@ -21,13 +22,12 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTBD3;
-
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
@@ -57,6 +57,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "heatingDesignDays_", NickName = "heatingDesignDays_", Description = "The SAM Analytical Design Days for Heating", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "saveWeather_", NickName = "saveWeather_", Description = "Save Wetaher in Analytical Model", Optional = true, Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -143,6 +147,38 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
 
             Analytical.Tas.Convert.ToTBD(analyticalModel, path, weatherData, coolingDesignDays, heatingDesignDays);
+
+            bool saveWeather = false;
+            index = Params.IndexOfInputParam("saveWeather_");
+            if (index != -1 && dataAccess.GetData(index, ref saveWeather) && saveWeather)
+            {
+                if(weatherData != null)
+                {
+                    analyticalModel.SetValue(AnalyticalModelParameter.WeatherData, new WeatherData(weatherData));
+                }
+                else
+                {
+                    analyticalModel.RemoveValue(AnalyticalModelParameter.WeatherData);
+                }
+                
+                if (coolingDesignDays != null)
+                {
+                    analyticalModel.SetValue(AnalyticalModelParameter.CoolingDesignDays, new SAMCollection<DesignDay>(coolingDesignDays));
+                }
+                else
+                {
+                    analyticalModel.RemoveValue(AnalyticalModelParameter.CoolingDesignDays);
+                }
+
+                if (heatingDesignDays != null)
+                {
+                    analyticalModel.SetValue(AnalyticalModelParameter.HeatingDesignDays, new SAMCollection<DesignDay>(heatingDesignDays));
+                }
+                else
+                {
+                    analyticalModel.RemoveValue(AnalyticalModelParameter.HeatingDesignDays);
+                }
+            }
 
             //if(System.IO.File.Exists(path))
             //{

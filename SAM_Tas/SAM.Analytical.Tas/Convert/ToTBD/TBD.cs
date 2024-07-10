@@ -1,4 +1,5 @@
-﻿using SAM.Core.Tas;
+﻿using SAM.Core;
+using SAM.Core.Tas;
 using System.Collections.Generic;
 using System.IO;
 using TAS3D;
@@ -119,6 +120,22 @@ namespace SAM.Analytical.Tas
 
                 ToTBD(analyticalModel, tBDDocument, updateGuids);
                 Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
+
+                if(coolingDesignDays == null)
+                {
+                    if(analyticalModel.TryGetValue(AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> designDays, true))
+                    {
+                        coolingDesignDays = designDays;
+                    }
+                }
+
+                if (heatingDesignDays == null)
+                {
+                    if (analyticalModel.TryGetValue(AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> designDays, true))
+                    {
+                        heatingDesignDays = designDays;
+                    }
+                }
 
                 if (coolingDesignDays != null || heatingDesignDays != null)
                 {
