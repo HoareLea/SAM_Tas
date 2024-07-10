@@ -1,33 +1,25 @@
 ﻿using SAM.Geometry.Spatial;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, AnalyticalModel analyticalModel,  Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
+        public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, AnalyticalModel analyticalModel, Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
         {
             if (daysShades == null || analyticalModel == null || solarFaceSimulationResult == null || zoneSurface == null)
             {
                 return null;
             }
 
-            Panel panel = analyticalModel.GetRelatedObjects<Panel>(solarFaceSimulationResult)?.FirstOrDefault();
-            if(panel == null)
-            {
-                return null;
-            }
+            var panel = analyticalModel.GetRelatedObjects<Panel>(solarFaceSimulationResult)?.FirstOrDefault();
 
-            Face3D face3D = panel.GetFace3D(true);
-            if (face3D == null)
-            {
-                return null;
-            }
-
-            return UpdateSurfaceShades(building, daysShades, zoneSurface, face3D, solarFaceSimulationResult, tolerance);
+            return panel == null ? null : UpdateSurfaceShades(building, daysShades, zoneSurface, panel.GetFace3D(true), solarFaceSimulationResult, tolerance);
         }
 
         public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, AdjacencyCluster adjacencyCluster, Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
@@ -37,19 +29,9 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            Panel panel = adjacencyCluster.GetRelatedObjects<Panel>(solarFaceSimulationResult)?.FirstOrDefault();
-            if (panel == null)
-            {
-                return null;
-            }
-
-            Face3D face3D = panel.GetFace3D(true);
-            if (face3D == null)
-            {
-                return null;
-            }
-
-            return UpdateSurfaceShades(building, daysShades, zoneSurface, face3D, solarFaceSimulationResult, tolerance);
+            var panel = adjacencyCluster.GetRelatedObjects<Panel>(solarFaceSimulationResult)?.FirstOrDefault();
+            
+            return panel == null ? null : UpdateSurfaceShades(building, daysShades, zoneSurface, panel.GetFace3D(true), solarFaceSimulationResult, tolerance);
         }
 
         public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, Face3D face3D, Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
@@ -65,23 +47,22 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            List<TBD.SurfaceShade> result = new List<TBD.SurfaceShade>();
-
-            List<DateTime> dateTimes = solarFaceSimulationResult.DateTimes;
+            var dateTimes = solarFaceSimulationResult.DateTimes;
             if (dateTimes == null || dateTimes.Count == 0)
             {
-                return result;
+                return new List<TBD.SurfaceShade>();
             }
 
-            List<Tuple<int, short, float>> tuples = Enumerable.Repeat<Tuple<int, short, float>>(null, dateTimes.Count).ToList();
-            Parallel.For(0, dateTimes.Count, (int i) => 
+            var tuples = new ConcurrentBag<Tuple<int, short, float>>();
+
+            Parallel.ForEach(dateTimes, dateTime =>
             {
-                List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTimes[i]); //TODO Optimze this function! https://github.com/HoareLea/SAM_Tas/issues/72 
+                var face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTime);
                 float proportion = 0;
-                if (face3Ds != null && face3Ds.Count != 0)
+                if (face3Ds != null && face3Ds.Count > 0)
                 {
-                    double area_Temp = face3Ds.ConvertAll(x => x.GetArea()).Sum();
-                    proportion = System.Convert.ToSingle(area_Temp / area);
+                    double areaTemp = face3Ds.Sum(x => x.GetArea());
+                    proportion = (float)(areaTemp / area);
                 }
 
                 if (proportion <= tolerance)
@@ -89,33 +70,10 @@ namespace SAM.Analytical.Tas
                     proportion = 0;
                 }
 
-                tuples.Add(new Tuple<int, short, float>(dateTimes[i].DayOfYear, System.Convert.ToInt16(dateTimes[i].Hour), proportion));
+                tuples.Add(new Tuple<int, short, float>(dateTime.DayOfYear, (short)dateTime.Hour, proportion));
             });
 
-
-            foreach (Tuple<int, short, float> tuple in tuples)
-            {
-                if(tuple == null)
-                {
-                    continue;
-                }
-
-                TBD.DaysShade daysShade = daysShades.Find(x => x.day == tuple.Item1);
-                if (daysShade == null)
-                {
-                    daysShade = building.AddDaysShade();
-                    daysShade.day = tuple.Item1;
-                    daysShades.Add(daysShade);
-                }
-
-                TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(tuple.Item2);
-                surfaceShade.proportion = tuple.Item3;
-                surfaceShade.surface = zoneSurface;
-
-                result.Add(surfaceShade);
-            }
-
-            return result;
+            return Create.SurfaceShades(building, daysShades, zoneSurface, tuples);
         }
 
         public static List<TBD.SurfaceShade> UpdateSurfaceShades(this TBD.Building building, List<TBD.DaysShade> daysShades, TBD.zoneSurface zoneSurface, Geometry.SolarCalculator.SolarFaceSimulationResult solarFaceSimulationResult, double tolerance = 0.01)
@@ -125,102 +83,70 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            List<DateTime> dateTimes = solarFaceSimulationResult.DateTimes;
+            var dateTimes = solarFaceSimulationResult.DateTimes;
             if (dateTimes == null || dateTimes.Count == 0)
             {
                 return null;
             }
 
-            List<TBD.IRoomSurface> roomSurfaces = zoneSurface.RoomSurfaces();
+            var roomSurfaces = zoneSurface.RoomSurfaces();
             if (roomSurfaces == null)
             {
                 return null;
             }
 
-            List<Face3D> face3Ds = new List<Face3D>();
-            double area = 0;
-            foreach (TBD.IRoomSurface roomSurface in roomSurfaces)
+            var face3Ds = new List<Face3D>();
+            double totalArea = 0;
+            foreach (var roomSurface in roomSurfaces)
             {
-                Face3D face3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter());
+                var face3D = Geometry.Tas.Convert.ToSAM(roomSurface?.GetPerimeter());
                 if (face3D == null || !face3D.IsValid())
                 {
                     continue;
                 }
 
-                double area_Temp = face3D.GetArea();
-                if(area_Temp < tolerance)
+                double area = face3D.GetArea();
+                if (area < tolerance)
                 {
                     continue;
                 }
 
                 face3Ds.Add(face3D);
-                area += area_Temp;
+                totalArea += area;
             }
 
-            if(area < tolerance)
+            if (totalArea < tolerance)
             {
                 return null;
             }
 
-            List<TBD.SurfaceShade> result = new List<TBD.SurfaceShade>();
-
-            foreach (DateTime dateTime in dateTimes)
+            var result = new List<TBD.SurfaceShade>();
+            foreach (var dateTime in dateTimes)
             {
-                List<Face3D> sunExposureFace3Ds = solarFaceSimulationResult.GetSunExposureFace3Ds(dateTime);
+                var sunExposureFace3Ds = solarFaceSimulationResult.GetSunExposureFace3Ds(dateTime);
                 if (sunExposureFace3Ds == null || sunExposureFace3Ds.Count == 0)
                 {
                     continue;
                 }
 
                 int dayIndex = dateTime.DayOfYear;
-
-                TBD.DaysShade daysShade = daysShades.Find(x => x.day == dayIndex);
-                if (daysShade == null)
+                var daysShade = daysShades.FirstOrDefault(x => x.day == dayIndex) ?? building.AddDaysShade();
+                daysShade.day = dayIndex;
+                if (!daysShades.Contains(daysShade))
                 {
-                    daysShade = building.AddDaysShade();
-                    daysShade.day = dayIndex;
                     daysShades.Add(daysShade);
                 }
 
-                Plane plane = sunExposureFace3Ds[0].GetPlane();
-                List<Geometry.Planar.Face2D> sunExposureFace2Ds = sunExposureFace3Ds.ConvertAll(x => plane.Convert(x));
-                List<Geometry.Planar.Face2D> face2Ds = face3Ds.ConvertAll(x => plane.Convert(x));
-
-                double sunExposureArea = 0;
-                foreach (Geometry.Planar.Face2D sunExposureface2D in sunExposureFace2Ds)
-                {
-                    if(sunExposureface2D == null)
-                    {
-                        continue;
-                    }
-
-                    foreach(Geometry.Planar.Face2D face2D in face2Ds)
-                    {
-                        if(face2D == null)
-                        {
-                            continue;
-                        }
-
-                        List<Geometry.Planar.Face2D> face2Ds_Intersection = Geometry.Planar.Query.Intersection(sunExposureface2D, face2D);
-                        if(face2Ds_Intersection == null || face2Ds_Intersection.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        sunExposureArea += face2Ds_Intersection.ConvertAll(x => x.GetArea()).Sum();
-                    }
-                }
-
-                float proportion = System.Convert.ToSingle(Core.Query.Round(sunExposureArea / area, tolerance));
+                double sunExposureArea = Query.SunExposureArea(sunExposureFace3Ds, face3Ds);
+                float proportion = (float)Math.Round(sunExposureArea / totalArea, 2);
                 if (proportion <= tolerance)
                 {
                     proportion = 0;
                 }
 
-                TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(System.Convert.ToInt16(dateTime.Hour - 1));
-                surfaceShade.proportion = proportion;  //TODO: TAS MEETING: Discuss why Tas returns value below 1
+                var surfaceShade = daysShade.AddSurfaceShade((short)(dateTime.Hour - 1));
+                surfaceShade.proportion = proportion;
                 surfaceShade.surface = zoneSurface;
-
                 result.Add(surfaceShade);
             }
 

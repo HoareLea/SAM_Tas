@@ -154,6 +154,7 @@
     <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
     <Compile Include="Create\ApertureConstructionCalculationData.cs" />
     <Compile Include="Create\GlazingCalculationData.cs" />
+    <Compile Include="Create\SurfaceShades.cs" />
     <Compile Include="Create\LayerThicknessCalculationData.cs" />
     <Compile Include="Create\Log.cs" />
     <Compile Include="Create\TBD.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="Interfaces\IConstructionCalculationResult.cs" />
     <Compile Include="Interfaces\IConstructionCalculationData.cs" />
     <Compile Include="Modify\RemoveConstructions.cs" />
+    <Compile Include="Query\SunExposureArea.cs" />
     <Compile Include="Query\ThermalTransmittances.cs" />
     <Compile Include="Modify\ApplySystemSizingMethod.cs" />
     <Compile Include="Modify\Run.cs" />
