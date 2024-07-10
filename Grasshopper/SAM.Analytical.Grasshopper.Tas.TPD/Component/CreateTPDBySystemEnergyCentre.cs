@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -72,6 +72,10 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 integer.SetPersistentData(systemEnergyCentreConversionSettings.EndHour);
                 result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
 
+                global::Grasshopper.Kernel.Parameters.Param_String  @string = new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_includeResults_", NickName = "_includeResults_", Description = "IncludeResults", Access = GH_ParamAccess.item };
+                integer.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@string, ParamVisibility.Binding));
+
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
@@ -89,6 +93,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new GooSystemEnergyCentreParam() { Name = "systemEnergyCentre", NickName = "systemEnergyCentre", Description = "SAM Core Systems SystemEnergyCentre", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "path_TPD", NickName = "path_TPD", Description = "Path to TPD file", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -165,12 +170,25 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 systemEnergyCentreConversionSettings.EndHour = endHour;
             }
 
+            bool includeResults = systemEnergyCentreConversionSettings.IncludeResults;
+            index = Params.IndexOfInputParam("_includeResults_");
+            if (index != -1 && dataAccess.GetData(index, ref endHour))
+            {
+                systemEnergyCentreConversionSettings.IncludeResults = includeResults;
+            }
+
             bool successful = Analytical.Tas.TPD.Convert.ToTPD(systemEnergyCentre, path_TPD, path_TSD, systemEnergyCentreConversionSettings);
 
             index = Params.IndexOfOutputParam("systemEnergyCentre");
             if (index != -1)
             {
                 dataAccess.SetData(index, new GooSystemEnergyCentre(systemEnergyCentre));
+            }
+
+            index = Params.IndexOfOutputParam("path_TPD");
+            if (index != -1)
+            {
+                dataAccess.SetData(index, path_TPD);
             }
 
             if (index_successful != -1)
