@@ -144,6 +144,7 @@
     <Compile Include="Create\IndexedDoubles.cs" />
     <Compile Include="Enums\Parameters\SystemObjectParameter.cs" />
     <Compile Include="Enums\WaterSideControllerSetup.cs" />
+    <Compile Include="Modify\CopyResults.cs" />
     <Compile Include="Modify\Connect.cs" />
     <Compile Include="Modify\Add.cs" />
     <Compile Include="Modify\SetLocation.cs" />
