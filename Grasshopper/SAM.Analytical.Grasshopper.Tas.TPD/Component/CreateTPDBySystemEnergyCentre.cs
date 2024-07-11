@@ -72,7 +72,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 integer.SetPersistentData(systemEnergyCentreConversionSettings.EndHour);
                 result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
 
-                global::Grasshopper.Kernel.Parameters.Param_String  @string = new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_includeResults_", NickName = "_includeResults_", Description = "IncludeResults", Access = GH_ParamAccess.item };
+                global::Grasshopper.Kernel.Parameters.Param_Boolean @string = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_includeResults_", NickName = "_includeResults_", Description = "IncludeResults", Access = GH_ParamAccess.item, Optional = true };
                 integer.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@string, ParamVisibility.Binding));
 
@@ -170,9 +170,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 systemEnergyCentreConversionSettings.EndHour = endHour;
             }
 
-            bool includeResults = systemEnergyCentreConversionSettings.IncludeResults;
+            bool includeResults = false;
             index = Params.IndexOfInputParam("_includeResults_");
-            if (index != -1 && dataAccess.GetData(index, ref endHour))
+            if (index != -1 && dataAccess.GetData(index, ref includeResults))
             {
                 systemEnergyCentreConversionSettings.IncludeResults = includeResults;
             }
