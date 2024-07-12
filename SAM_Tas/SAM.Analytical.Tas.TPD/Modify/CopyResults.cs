@@ -24,7 +24,14 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     foreach (PlantRoom plantRoom in plantRooms)
                     {
-                        CopyResults(plantRoom, systemPlantRooms.Find(x => x.Name == plantRoom.Name), startHour, endHour);
+                        SystemPlantRoom systemPlantRoom = systemPlantRooms.Find(x => x.Name == plantRoom.Name);
+                        if(systemPlantRoom == null)
+                        {
+                            continue;
+                        }
+
+                        CopyResults(plantRoom, systemPlantRoom, startHour, endHour);
+                        systemEnergyCentre.Add(systemPlantRoom);
                     }
                 }
             }

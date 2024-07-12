@@ -22,7 +22,7 @@ namespace SAM.Analytical.Tas.TPD
             result.PartLoad.Value = 0;
             result.PartLoad.ClearModifiers();
            // result.SetDirection(tpdDirection.tpdLeftRight);
-            result.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
+            result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
             displaySystemFan.SetLocation(result as SystemComponent);
 

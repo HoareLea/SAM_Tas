@@ -146,6 +146,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
+            systemEnergyCentre = new SystemEnergyCentre(systemEnergyCentre);
 
             SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
 
