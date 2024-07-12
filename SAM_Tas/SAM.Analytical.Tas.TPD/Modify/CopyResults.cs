@@ -139,12 +139,14 @@ namespace SAM.Analytical.Tas.TPD
 
                 foreach(global::TPD.SystemComponent systemComponent in systemComponents)
                 {
+                    string name = ((dynamic)systemComponent).Name;
+
                     if (systemComponent is SystemZone)
                     {
                         SystemSpace systemSpace = systemComponents_AirSystem.Find(x => x is SystemSpace && x.Reference() == systemComponent.Reference()) as SystemSpace;
                         if(systemSpace == null)
                         {
-                            systemSpace = systemComponents_AirSystem.Find(x => x is SystemSpace && ((SystemSpace)x).Name == systemComponent.Name) as SystemSpace;
+                            systemSpace = systemComponents_AirSystem.Find(x => x is SystemSpace && ((SystemSpace)x).Name == name) as SystemSpace;
                         }
 
                         if (systemSpace != null)
@@ -191,7 +193,7 @@ namespace SAM.Analytical.Tas.TPD
                         AirSystemGroup airSystemGroup = systemComponents_AirSystem.Find(x => x is AirSystemGroup && x.Reference() == systemComponent.Reference()) as AirSystemGroup;
                         if (airSystemGroup == null)
                         {
-                            airSystemGroup = systemComponents_AirSystem.Find(x => x is AirSystemGroup && ((AirSystemGroup)x).Name == systemComponent.Name) as AirSystemGroup;
+                            airSystemGroup = systemComponents_AirSystem.Find(x => x is AirSystemGroup && ((AirSystemGroup)x).Name == name) as AirSystemGroup;
                         }
 
                         if (airSystemGroup != null)
@@ -201,13 +203,11 @@ namespace SAM.Analytical.Tas.TPD
                     }
                     else if (systemComponent is Junction)
                     {
-                        //SystemAirJunction systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && x.Reference() == systemComponent.Reference()) as SystemAirJunction;
-                        //if(systemAirJunction == null)
-                        //{
-                        //    systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && ((SystemAirJunction)x).Name == systemComponent.Name) as SystemAirJunction;
-                        //}
-
-                        SystemAirJunction systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && ((SystemAirJunction)x).Name == systemComponent.Name) as SystemAirJunction;
+                        SystemAirJunction systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && x.Reference() == systemComponent.Reference()) as SystemAirJunction;
+                        if (systemAirJunction == null)
+                        {
+                            systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && ((SystemAirJunction)x).Name == name) as SystemAirJunction;
+                        }
 
                         if (systemAirJunction != null)
                         {
@@ -224,7 +224,7 @@ namespace SAM.Analytical.Tas.TPD
                         SystemExchanger systemExchanger = systemComponents_AirSystem.Find(x => x is SystemExchanger && x.Reference() == systemComponent.Reference()) as SystemExchanger;
                         if(systemExchanger == null)
                         {
-                            systemExchanger = systemComponents_AirSystem.Find(x => x is SystemExchanger && ((SystemExchanger)x).Name == systemComponent.Name) as SystemExchanger;
+                            systemExchanger = systemComponents_AirSystem.Find(x => x is SystemExchanger && ((SystemExchanger)x).Name == name) as SystemExchanger;
                         }
 
                         if (systemExchanger != null)
@@ -242,7 +242,7 @@ namespace SAM.Analytical.Tas.TPD
                         SystemDesiccantWheel systemDesiccantWheel = systemComponents_AirSystem.Find(x => x is SystemDesiccantWheel && x.Reference() == systemComponent.Reference()) as SystemDesiccantWheel;
                         if(systemDesiccantWheel != null)
                         {
-                            systemDesiccantWheel = systemComponents_AirSystem.Find(x => x is SystemDesiccantWheel && ((SystemDesiccantWheel)x).Name == systemComponent.Name) as SystemDesiccantWheel;
+                            systemDesiccantWheel = systemComponents_AirSystem.Find(x => x is SystemDesiccantWheel && ((SystemDesiccantWheel)x).Name == name) as SystemDesiccantWheel;
                         }
 
                         if (systemDesiccantWheel != null)
@@ -260,7 +260,7 @@ namespace SAM.Analytical.Tas.TPD
                         SystemFan systemFan = systemComponents_AirSystem.Find(x => x is SystemFan && x.Reference() == systemComponent.Reference()) as SystemFan;
                         if(systemFan == null)
                         {
-                            systemFan = systemComponents_AirSystem.Find(x => x is SystemFan && ((SystemFan)x).Name == systemComponent.Name) as SystemFan;
+                            systemFan = systemComponents_AirSystem.Find(x => x is SystemFan && ((SystemFan)x).Name == name) as SystemFan;
                         }
                         
                         if (systemFan != null)
@@ -278,7 +278,7 @@ namespace SAM.Analytical.Tas.TPD
                         SystemHeatingCoil systemHeatingCoil = systemComponents_AirSystem.Find(x => x is SystemHeatingCoil && x.Reference() == systemComponent.Reference()) as SystemHeatingCoil;
                         if(systemHeatingCoil == null)
                         {
-                            systemHeatingCoil = systemComponents_AirSystem.Find(x => x is SystemHeatingCoil && ((SystemHeatingCoil)x).Name == systemComponent.Name) as SystemHeatingCoil;
+                            systemHeatingCoil = systemComponents_AirSystem.Find(x => x is SystemHeatingCoil && ((SystemHeatingCoil)x).Name == name) as SystemHeatingCoil;
                         }
 
                         if (systemHeatingCoil != null)
@@ -296,7 +296,7 @@ namespace SAM.Analytical.Tas.TPD
                         SystemCoolingCoil systemCoolingCoil = systemComponents_AirSystem.Find(x => x is SystemCoolingCoil && x.Reference() == systemComponent.Reference()) as SystemCoolingCoil;
                         if(systemCoolingCoil == null)
                         {
-                            systemCoolingCoil = systemComponents_AirSystem.Find(x => x is SystemCoolingCoil && ((SystemCoolingCoil)x).Name == systemComponent.Name) as SystemCoolingCoil;
+                            systemCoolingCoil = systemComponents_AirSystem.Find(x => x is SystemCoolingCoil && ((SystemCoolingCoil)x).Name == name) as SystemCoolingCoil;
                         }
 
                         if (systemCoolingCoil != null)
@@ -322,7 +322,7 @@ namespace SAM.Analytical.Tas.TPD
                                 SystemEconomiser systemEconomiser = systemComponents_AirSystem.Find(x => x is SystemEconomiser && x.Reference() == systemComponent.Reference()) as SystemEconomiser;
                                 if(systemEconomiser == null)
                                 {
-                                    systemEconomiser = systemComponents_AirSystem.Find(x => x is SystemEconomiser && ((SystemEconomiser)x).Name == systemComponent.Name) as SystemEconomiser;
+                                    systemEconomiser = systemComponents_AirSystem.Find(x => x is SystemEconomiser && ((SystemEconomiser)x).Name == name) as SystemEconomiser;
                                 }
 
                                 if (systemEconomiser != null)
@@ -340,7 +340,7 @@ namespace SAM.Analytical.Tas.TPD
                                 SystemMixingBox systemMixingBox = systemComponents_AirSystem.Find(x => x is SystemMixingBox && x.Reference() == systemComponent.Reference()) as SystemMixingBox;
                                 if(systemMixingBox == null)
                                 {
-                                    systemMixingBox = systemComponents_AirSystem.Find(x => x is SystemMixingBox && ((SystemMixingBox)x).Name == systemComponent.Name) as SystemMixingBox;
+                                    systemMixingBox = systemComponents_AirSystem.Find(x => x is SystemMixingBox && ((SystemMixingBox)x).Name == name) as SystemMixingBox;
                                 }
 
                                 if (systemMixingBox != null)
@@ -360,7 +360,7 @@ namespace SAM.Analytical.Tas.TPD
                         SystemSteamHumidifier systemSteamHumidifier = systemComponents_AirSystem.Find(x => x is SystemSteamHumidifier && x.Reference() == systemComponent.Reference()) as SystemSteamHumidifier;
                         if(systemSteamHumidifier == null)
                         {
-                            systemSteamHumidifier = systemComponents_AirSystem.Find(x => x is SystemSteamHumidifier && ((SystemSteamHumidifier)x).Name == systemComponent.Name) as SystemSteamHumidifier;
+                            systemSteamHumidifier = systemComponents_AirSystem.Find(x => x is SystemSteamHumidifier && ((SystemSteamHumidifier)x).Name == name) as SystemSteamHumidifier;
                         }
 
                         if (systemSteamHumidifier != null)
@@ -378,7 +378,7 @@ namespace SAM.Analytical.Tas.TPD
                         SystemDirectEvaporativeCooler systemDirectEvaporativeCooler = systemComponents_AirSystem.Find(x => x is SystemDirectEvaporativeCooler && x.Reference() == systemComponent.Reference()) as SystemDirectEvaporativeCooler;
                         if(systemDirectEvaporativeCooler == null)
                         {
-                            systemDirectEvaporativeCooler = systemComponents_AirSystem.Find(x => x is SystemDirectEvaporativeCooler && ((SystemCoolingCoil)x).Name == systemComponent.Name) as SystemDirectEvaporativeCooler;
+                            systemDirectEvaporativeCooler = systemComponents_AirSystem.Find(x => x is SystemDirectEvaporativeCooler && ((SystemCoolingCoil)x).Name == name) as SystemDirectEvaporativeCooler;
                         }
 
                         if (systemDirectEvaporativeCooler != null)
@@ -397,7 +397,7 @@ namespace SAM.Analytical.Tas.TPD
                         SystemDXCoil systemDXCoil = systemComponents_AirSystem.Find(x => x is SystemDXCoil && x.Reference() == systemComponent.Reference()) as SystemDXCoil;
                         if(systemDXCoil == null)
                         {
-                            systemDXCoil = systemComponents_AirSystem.Find(x => x is SystemDXCoil && ((SystemDXCoil)x).Name == systemComponent.Name) as SystemDXCoil;
+                            systemDXCoil = systemComponents_AirSystem.Find(x => x is SystemDXCoil && ((SystemDXCoil)x).Name == name) as SystemDXCoil;
                         }
 
                         if (systemDXCoil != null)
