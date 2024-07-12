@@ -75,5 +75,35 @@ namespace SAM.Analytical.Tas.TPD
 
             return (systemComponent as dynamic).GUID;
         }
+
+        public static string Reference(this global::TPD.ISystemComponent systemComponent)
+        {
+            if (systemComponent == null)
+            {
+                return null;
+            }
+
+            return (systemComponent as dynamic).GUID;
+        }
+
+        public static string Reference(this global::TPD.System system)
+        {
+            if (system == null)
+            {
+                return null;
+            }
+
+            return (system as dynamic).GUID;
+        }
+
+        public static string Reference(this global::TPD.ComponentGroup componentGroup)
+        {
+            if (componentGroup == null)
+            {
+                return null;
+            }
+
+            return (componentGroup as dynamic).GUID;
+        }
     }
 }

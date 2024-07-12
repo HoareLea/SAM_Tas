@@ -430,6 +430,9 @@ namespace SAM.Analytical.Tas.TPD
                                     continue;
                                 }
 
+                                Modify.SetReference(airSystem, system.Reference());
+                                systemPlantRoom.Add(airSystem);
+
                                 offset = new Point(0, 0);
 
                                 Core.Systems.ISystemComponent systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.Out)?.FirstOrDefault();
@@ -517,6 +520,8 @@ namespace SAM.Analytical.Tas.TPD
                                     }
 
                                     dictionary_TPD[systemComponent_Temp.Guid] = systemComponent_TPD;
+                                    systemComponent_Temp.SetReference(systemComponent_TPD.Reference());
+                                    systemPlantRoom.Add(systemComponent_Temp);
 
                                     List<DisplayAirSystemGroup> displayAirSystemGroups_Temp = systemPlantRoom.GetRelatedObjects<DisplayAirSystemGroup>(systemComponent_Temp);
                                     if (displayAirSystemGroups_Temp != null && displayAirSystemGroups_Temp.Count != 0)
@@ -551,7 +556,6 @@ namespace SAM.Analytical.Tas.TPD
                                         continue;
                                     }
 
-
                                     List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1), displaySystemSpaces);
                                     if (zoneLoads == null || zoneLoads.Count == 0)
                                     {
@@ -562,6 +566,9 @@ namespace SAM.Analytical.Tas.TPD
 
                                     ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
                                     componentGroup.SetMultiplicity(zoneLoads.Count);
+
+                                    displayAirSystemGroup.SetReference(componentGroup.Reference());
+                                    systemPlantRoom.Add(displayAirSystemGroup);
 
                                     List<global::TPD.SystemComponent> systemComponents_ComponentGroup = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
 
@@ -609,6 +616,8 @@ namespace SAM.Analytical.Tas.TPD
 
 
                             }
+
+                            systemEnergyCentre.Add(systemPlantRoom);
                         }
                     }
                 }
