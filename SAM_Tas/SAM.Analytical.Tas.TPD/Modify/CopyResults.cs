@@ -201,13 +201,15 @@ namespace SAM.Analytical.Tas.TPD
                     }
                     else if (systemComponent is Junction)
                     {
-                        SystemAirJunction systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && x.Reference() == systemComponent.Reference()) as SystemAirJunction;
-                        if(systemAirJunction == null)
-                        {
-                            systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && ((SystemAirJunction)x).Name == systemComponent.Name) as SystemAirJunction;
-                        }
-                        
-                        if(systemAirJunction != null)
+                        //SystemAirJunction systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && x.Reference() == systemComponent.Reference()) as SystemAirJunction;
+                        //if(systemAirJunction == null)
+                        //{
+                        //    systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && ((SystemAirJunction)x).Name == systemComponent.Name) as SystemAirJunction;
+                        //}
+
+                        SystemAirJunction systemAirJunction = systemComponents_AirSystem.Find(x => x is SystemAirJunction && ((SystemAirJunction)x).Name == systemComponent.Name) as SystemAirJunction;
+
+                        if (systemAirJunction != null)
                         {
                             SystemAirJunctionResult systemAirJunctionResult = Convert.ToSAM_SystemAirJunctionResult((Junction)(systemComponent as dynamic), startHour, endHour);
                             if(systemAirJunctionResult != null)

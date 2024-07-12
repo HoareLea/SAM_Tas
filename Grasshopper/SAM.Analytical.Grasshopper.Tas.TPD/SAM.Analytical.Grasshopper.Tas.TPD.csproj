@@ -38,6 +38,13 @@
       <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="SAM.Analytical, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Analytical.Grasshopper">
+      <HintPath>..\..\..\SAM\build\SAM.Analytical.Grasshopper.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Analytical.Grasshopper.Systems">
       <HintPath>..\..\..\SAM_Systems\build\SAM.Analytical.Grasshopper.Systems.dll</HintPath>
     </Reference>
@@ -75,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Component\CreateTPDByAnalyticalModel.cs" />
     <Compile Include="Component\CreateTPDBySystemEnergyCentre.cs" />
     <Compile Include="Component\FromTPD.cs" />
     <Compile Include="Component\SAMAnalyticalTPDResults.cs" />

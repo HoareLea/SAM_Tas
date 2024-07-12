@@ -148,7 +148,7 @@
     <Compile Include="Component\TasCreateLayerThicknessCalculationDataByConstruction.cs" />
     <Compile Include="Component\TasCreateTCD.cs" />
     <Compile Include="Component\TasCreateLayerThicknessCalculationData.cs" />
-    <Compile Include="Component\TasCreateTPD.cs" />
+    <Compile Include="Component\TasCreateTPDBySystemTypeName.cs" />
     <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
     <Compile Include="Component\SAMAnalyticalTBD.cs" />
     <Compile Include="Component\TasCreateTBDByPartL.cs" />

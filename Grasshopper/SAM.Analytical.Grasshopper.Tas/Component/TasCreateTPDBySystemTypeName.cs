@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasCreateTPD : GH_SAMVariableOutputParameterComponent
+    public class TasCreateTPDBySystemTypeName : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -21,7 +21,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.5";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -34,7 +34,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasCreateTPD()
+        public TasCreateTPDBySystemTypeName()
           : base("Tas.CreateTPD", "Tas.CreateTPD",
               "Tas Create TPD",
               "SAM", "Tas")
