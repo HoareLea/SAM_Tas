@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class TasWorkflowgbXML : GH_SAMVariableOutputParameterComponent
+    public class SAMAnalyticalWorkflowgbXML : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -24,7 +24,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.9";
+        public override string LatestComponentVersion => "1.0.10";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -37,8 +37,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public TasWorkflowgbXML()
-          : base("Tas.WorkflowgbXML", "Tas.WorkflowgbXML",
+        public SAMAnalyticalWorkflowgbXML()
+          : base("SAMAnalytical.WorkflowgbXML", "SAMAnalytical.WorkflowgbXML",
               "To run the Tas workflow with gbXML, make sure to generate the gbXML file beforehand. \n* Use SAMAnalytical.Check to verify that your model is error-free. ",
               "SAM WIP", "Tas")
         {

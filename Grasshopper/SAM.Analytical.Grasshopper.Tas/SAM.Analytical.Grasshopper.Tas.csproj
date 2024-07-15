@@ -161,7 +161,7 @@
     <Compile Include="Component\TasUpdateShading.cs" />
     <Compile Include="Component\TasUpdateUKBRFile.cs" />
     <Compile Include="Component\TasUpdateWeatherData.cs" />
-    <Compile Include="Component\TasWorkflowgbXML.cs" />
+    <Compile Include="Component\SAMAnalyticalWorkflowgbXML.cs" />
     <Compile Include="Component\TasDesignDayNames.cs" />
     <Compile Include="Component\TasCreateDesignDays.cs" />
     <Compile Include="Component\TasOpenT3DDocument.cs" />

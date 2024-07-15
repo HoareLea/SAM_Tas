@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.7";
+        public override string LatestComponentVersion => "1.0.8";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -37,8 +37,8 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public SAMAnalyticalWorkflowTBD()
-          : base("SAMAnalytical.Workflow", "SAMAnalytical.Workflow",
-              "SAM Analytical Workflow",
+          : base("SAMAnalytical.WorkflowTBD", "SAMAnalytical.WorkflowTBD",
+              "SAM Analytical Workflow TBD",
               "SAM WIP", "Tas")
         {
         }
