@@ -152,32 +152,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfInputParam("saveWeather_");
             if (index != -1 && dataAccess.GetData(index, ref saveWeather) && saveWeather)
             {
-                if(weatherData != null)
-                {
-                    analyticalModel.SetValue(AnalyticalModelParameter.WeatherData, new WeatherData(weatherData));
-                }
-                else
-                {
-                    analyticalModel.RemoveValue(AnalyticalModelParameter.WeatherData);
-                }
-                
-                if (coolingDesignDays != null)
-                {
-                    analyticalModel.SetValue(AnalyticalModelParameter.CoolingDesignDays, new SAMCollection<DesignDay>(coolingDesignDays));
-                }
-                else
-                {
-                    analyticalModel.RemoveValue(AnalyticalModelParameter.CoolingDesignDays);
-                }
-
-                if (heatingDesignDays != null)
-                {
-                    analyticalModel.SetValue(AnalyticalModelParameter.HeatingDesignDays, new SAMCollection<DesignDay>(heatingDesignDays));
-                }
-                else
-                {
-                    analyticalModel.RemoveValue(AnalyticalModelParameter.HeatingDesignDays);
-                }
+                analyticalModel.UpdateWeather(weatherData, coolingDesignDays, heatingDesignDays);
             }
 
             //if(System.IO.File.Exists(path))

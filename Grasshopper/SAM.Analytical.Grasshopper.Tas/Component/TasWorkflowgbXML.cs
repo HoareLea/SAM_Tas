@@ -2,6 +2,7 @@
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
+using SAM.Core;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using SAM.Weather;
@@ -23,7 +24,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.8";
+        public override string LatestComponentVersion => "1.0.9";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -94,6 +95,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_removeTBD_", NickName = "_removeTBD_", Description = "If True existing TBD file will be deleted before simulation", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "saveWeather_", NickName = "saveWeather_", Description = "Save Wetaher in Analytical Model", Optional = true, Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
@@ -315,6 +320,13 @@ namespace SAM.Analytical.Grasshopper.Tas
             };
 
             analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, workflowSettings);
+
+            bool saveWeather = false;
+            index = Params.IndexOfInputParam("saveWeather_");
+            if (index != -1 && dataAccess.GetData(index, ref saveWeather) && saveWeather)
+            {
+                analyticalModel.UpdateWeather(weatherData, coolingDesignDays, heatingDesignDays);
+            }
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
