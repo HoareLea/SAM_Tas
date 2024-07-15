@@ -173,6 +173,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            if(weatherData != null)
+            {
+                weatherData = new WeatherData(weatherData);
+            }
+
             AnalyticalModel analyticalModel = null;
             index = Params.IndexOfInputParam("_analyticalModel");
             if (index == -1 || !dataAccess.GetData(index, ref analyticalModel) || analyticalModel == null)
@@ -188,11 +193,21 @@ namespace SAM.Analytical.Grasshopper.Tas
                 heatingDesignDays = null;
             }
 
+            if(heatingDesignDays != null)
+            {
+                heatingDesignDays = heatingDesignDays.ConvertAll(x => x.Clone());
+            }
+
             List<DesignDay> coolingDesignDays = new List<DesignDay>();
             index = Params.IndexOfInputParam("coolingDesignDays_");
             if (index == -1 || !dataAccess.GetDataList(index, coolingDesignDays) || coolingDesignDays == null || coolingDesignDays.Count == 0)
             {
                 coolingDesignDays = null;
+            }
+
+            if (coolingDesignDays != null)
+            {
+                coolingDesignDays = coolingDesignDays.ConvertAll(x => x.Clone());
             }
 
             List<SurfaceOutputSpec> surfaceOutputSpecs = null;
@@ -325,6 +340,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfInputParam("saveWeather_");
             if (index != -1 && dataAccess.GetData(index, ref saveWeather) && saveWeather)
             {
+                analyticalModel = new AnalyticalModel(analyticalModel);
                 analyticalModel.UpdateWeather(weatherData, coolingDesignDays, heatingDesignDays);
             }
 

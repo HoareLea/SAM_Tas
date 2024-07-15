@@ -137,6 +137,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out weatherData);
             }
 
+            if(weatherData != null)
+            {
+                weatherData = new WeatherData(weatherData);
+            }
+
             List<DesignDay> heatingDesignDays = new List<DesignDay>();
             index = Params.IndexOfInputParam("heatingDesignDays_");
             if (index == -1 || !dataAccess.GetDataList(index, heatingDesignDays) || heatingDesignDays == null || heatingDesignDays.Count == 0)
@@ -150,6 +155,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 {
                     heatingDesignDays = new List<DesignDay>(heatingDesignDays_Temp);
                 }
+            }
+
+            if(heatingDesignDays != null)
+            {
+                heatingDesignDays = heatingDesignDays.ConvertAll(x => x?.Clone());
             }
 
             List<DesignDay> coolingDesignDays = new List<DesignDay>();
@@ -167,12 +177,18 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
+            if (coolingDesignDays != null)
+            {
+                coolingDesignDays = coolingDesignDays.ConvertAll(x => x?.Clone());
+            }
+
             Analytical.Tas.Convert.ToTBD(analyticalModel, path, weatherData, coolingDesignDays, heatingDesignDays);
 
             bool saveWeather = false;
             index = Params.IndexOfInputParam("saveWeather_");
             if (index != -1 && dataAccess.GetData(index, ref saveWeather) && saveWeather)
             {
+                analyticalModel = new AnalyticalModel(analyticalModel);
                 analyticalModel.UpdateWeather(weatherData, coolingDesignDays, heatingDesignDays);
             }
 

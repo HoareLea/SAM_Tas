@@ -2,6 +2,7 @@
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
+using SAM.Core;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
 using SAM.Weather;
@@ -171,6 +172,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out weatherData);
             }
 
+            if(weatherData != null)
+            {
+                weatherData = new WeatherData(weatherData);
+            }
+
             List<DesignDay> heatingDesignDays = new List<DesignDay>();
             index = Params.IndexOfInputParam("heatingDesignDays_");
             if (index == -1 || !dataAccess.GetDataList(index, heatingDesignDays) || heatingDesignDays == null || heatingDesignDays.Count == 0)
@@ -178,11 +184,21 @@ namespace SAM.Analytical.Grasshopper.Tas
                 heatingDesignDays = null;
             }
 
+            if(heatingDesignDays != null)
+            {
+                heatingDesignDays = heatingDesignDays.ConvertAll(x => x.Clone());
+            }
+
             List<DesignDay> coolingDesignDays = new List<DesignDay>();
             index = Params.IndexOfInputParam("coolingDesignDays_");
             if (index == -1 || !dataAccess.GetDataList(index, coolingDesignDays) || coolingDesignDays == null || coolingDesignDays.Count == 0)
             {
                 coolingDesignDays = null;
+            }
+
+            if (coolingDesignDays != null)
+            {
+                coolingDesignDays = coolingDesignDays.ConvertAll(x => x.Clone());
             }
 
             List<SurfaceOutputSpec> surfaceOutputSpecs = null;
@@ -410,6 +426,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfInputParam("saveWeather_");
             if (index != -1 && dataAccess.GetData(index, ref saveWeather) && saveWeather)
             {
+                analyticalModel = new AnalyticalModel(analyticalModel);
                 analyticalModel.UpdateWeather(weatherData, coolingDesignDays, heatingDesignDays);
             }
 
@@ -446,7 +463,9 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
+            {
                 dataAccess.SetData(index, analyticalModel);
+            }
 
             if (index_Successful != -1)
             {
