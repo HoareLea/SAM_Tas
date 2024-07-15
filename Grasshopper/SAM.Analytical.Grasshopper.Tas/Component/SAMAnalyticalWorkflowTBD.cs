@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.6";
+        public override string LatestComponentVersion => "1.0.7";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -88,6 +88,10 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(genericObject, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_removeTBD_", NickName = "_removeTBD_", Description = "If True existing TBD file will be deleted before simulation", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "saveWeather_", NickName = "saveWeather_", Description = "Save Wetaher in Analytical Model", Optional = true, Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
@@ -160,6 +164,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 {
                     weatherData = null;
                 }
+            }
+
+            if(weatherData == null)
+            {
+                analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out weatherData);
             }
 
             List<DesignDay> heatingDesignDays = new List<DesignDay>();
@@ -387,7 +396,22 @@ namespace SAM.Analytical.Grasshopper.Tas
                 RemoveExistingTBD = removeExistingTBD
             };
 
+            analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData_Temp);
+            analyticalModel.RemoveValue(AnalyticalModelParameter.WeatherData);
+
             analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, workflowSettings);
+
+            if(weatherData_Temp != null)
+            {
+                analyticalModel.SetValue(AnalyticalModelParameter.WeatherData, weatherData_Temp);
+            }
+
+            bool saveWeather = false;
+            index = Params.IndexOfInputParam("saveWeather_");
+            if (index != -1 && dataAccess.GetData(index, ref saveWeather) && saveWeather)
+            {
+                analyticalModel.UpdateWeather(weatherData, coolingDesignDays, heatingDesignDays);
+            }
 
             index = Params.IndexOfOutputParam("_path_TSD");
             if (index != -1)

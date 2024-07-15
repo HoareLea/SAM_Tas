@@ -1,4 +1,6 @@
-﻿using SAM.Core.Tas;
+﻿using SAM.Core;
+using SAM.Core.Tas;
+using SAM.Weather;
 using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas
@@ -18,6 +20,24 @@ namespace SAM.Analytical.Tas
             string fileName = System.IO.Path.GetFileNameWithoutExtension(workflowSettings.Path_TBD);
 
             string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
+
+            analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData);
+            if(workflowSettings?.WeatherData != null)
+            {
+                weatherData = workflowSettings.WeatherData;
+            }
+
+            analyticalModel.TryGetValue(AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> heatingDesignDays);
+            if (workflowSettings?.DesignDays_Heating != null)
+            {
+                heatingDesignDays = new SAMCollection<DesignDay>(workflowSettings.DesignDays_Heating);
+            }
+
+            analyticalModel.TryGetValue(AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> coolingDesignDays);
+            if (workflowSettings?.DesignDays_Cooling != null)
+            {
+                coolingDesignDays = new SAMCollection<DesignDay>(workflowSettings.DesignDays_Cooling);
+            }
 
             int count = 6;
             if (!string.IsNullOrWhiteSpace(workflowSettings.Path_gbXML))
@@ -82,9 +102,9 @@ namespace SAM.Analytical.Tas
                         TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
 
                         simpleProgressForm.Update("Updating Weather Data");
-                        if (workflowSettings.WeatherData != null)
+                        if (weatherData != null)
                         {
-                            Weather.Tas.Modify.UpdateWeatherData(tBDDocument, workflowSettings.WeatherData, adjacencyCluster.BuildingHeight());
+                            Weather.Tas.Modify.UpdateWeatherData(tBDDocument, weatherData, adjacencyCluster.BuildingHeight());
                         }
 
                         if (!string.IsNullOrWhiteSpace(guid))
@@ -172,10 +192,10 @@ namespace SAM.Analytical.Tas
                         UpdateZones(tBDDocument.Building, result, true);
                     }
 
-                    if (workflowSettings.DesignDays_Cooling != null || workflowSettings.DesignDays_Heating != null)
+                    if (coolingDesignDays != null || heatingDesignDays != null)
                     {
                         simpleProgressForm.Update("Adding Design Days");
-                        AddDesignDays(tBDDocument, workflowSettings.DesignDays_Cooling, workflowSettings.DesignDays_Heating, 30);
+                        AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
                     }
 
                     simpleProgressForm.Update("Creating Zone Groups");
@@ -198,7 +218,7 @@ namespace SAM.Analytical.Tas
 
             }
 
-            if (workflowSettings.DesignDays_Cooling != null || workflowSettings.DesignDays_Heating != null)
+            if (coolingDesignDays != null || heatingDesignDays != null)
             {
                 if (adjacencyCluster == null)
                 {
@@ -207,19 +227,19 @@ namespace SAM.Analytical.Tas
 
                 if (adjacencyCluster != null)
                 {
-                    if (workflowSettings.DesignDays_Cooling != null)
+                    if (coolingDesignDays != null)
                     {
-                        for (int i = 0; i < workflowSettings.DesignDays_Cooling.Count; i++)
+                        for (int i = 0; i < coolingDesignDays.Count; i++)
                         {
-                            adjacencyCluster.AddObject(new DesignDay(workflowSettings.DesignDays_Cooling[i], LoadType.Cooling));
+                            adjacencyCluster.AddObject(new DesignDay(coolingDesignDays[i], LoadType.Cooling));
                         }
                     }
 
-                    if (workflowSettings.DesignDays_Heating != null)
+                    if (heatingDesignDays != null)
                     {
-                        for (int i = 0; i < workflowSettings.DesignDays_Heating.Count; i++)
+                        for (int i = 0; i < heatingDesignDays.Count; i++)
                         {
-                            adjacencyCluster.AddObject(new DesignDay(workflowSettings.DesignDays_Heating[i], LoadType.Heating));
+                            adjacencyCluster.AddObject(new DesignDay(heatingDesignDays[i], LoadType.Heating));
                         }
                     }
                 }
