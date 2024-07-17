@@ -196,7 +196,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 systemEnergyCentre = Analytical.Systems.Create.SystemEnergyCentre(analyticalModel);
             }
 
-            if (systemEnergyCentre != null)
+            if (systemEnergyCentre == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not find and create SystemEnergyCentre");
                 return;
