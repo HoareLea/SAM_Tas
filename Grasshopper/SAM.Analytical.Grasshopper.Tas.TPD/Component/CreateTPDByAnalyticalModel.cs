@@ -53,7 +53,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TSD", NickName = "_path_TSD", Description = "A file path to TAS TSD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new GooSystemEnergyCentreParam() { Name = "systemEnergyCentre_", NickName = "systemEnergyCentre_", Description = "SAM Core Systems SystemEnergyCentre", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooSystemEnergyCentreParam() { Name = "systemEnergyCentre_", NickName = "systemEnergyCentre_", Description = "SAM Core Systems SystemEnergyCentre", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
 
@@ -151,7 +151,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
             SystemEnergyCentre systemEnergyCentre = null;
             index = Params.IndexOfInputParam("systemEnergyCentre_");
-            if (index == -1)
+            if (index != -1)
             {
                 dataAccess.GetData(index, ref systemEnergyCentre);
             }
