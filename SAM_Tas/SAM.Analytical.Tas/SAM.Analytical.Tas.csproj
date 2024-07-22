@@ -1,68 +1,45 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BF2443B1-0709-4E8C-B9FF-B8785D9253E4}</ProjectGuid>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAM.Analytical.Tas</RootNamespace>
-    <AssemblyName>SAM.Analytical.Tas</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <Deterministic>false</Deterministic>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>..\..\build\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\build\SAM.Analytical.Tas.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
     <OutputPath>..\..\build\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TBD">
       <HintPath>..\..\references_buildonly\Interop.TBD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TCD">
       <HintPath>..\..\references_buildonly\Interop.TCD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TCR">
       <HintPath>..\..\references_buildonly\Interop.TCR.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TIC">
       <HintPath>..\..\references_buildonly\Interop.TIC.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TPD">
       <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TSD">
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TWD">
       <HintPath>..\..\references_buildonly\Interop.TWD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SAM.Analytical">
       <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
@@ -78,9 +55,6 @@
     <Reference Include="SAM.Core.SolarCalculator">
       <HintPath>..\..\..\SAM_SolarCalculator\build\SAM.Core.SolarCalculator.dll</HintPath>
     </Reference>
-    <Reference Include="SAM.Core.Windows">
-      <HintPath>..\..\..\SAM_Windows\build\SAM.Core.Windows.dll</HintPath>
-    </Reference>
     <Reference Include="SAM.Geometry, Version=1.0.7503.29265, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
@@ -94,282 +68,6 @@
     <Reference Include="SAM.Weather">
       <HintPath>..\..\..\SAM\build\SAM.Weather.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Classes\ApertureConstructionCalculationData.cs" />
-    <Compile Include="Classes\ConstructionCalculationData.cs" />
-    <Compile Include="Classes\ApertureConstructionCalculationResult.cs" />
-    <Compile Include="Classes\ConstructionCalculationResult.cs" />
-    <Compile Include="Classes\ApertureGlazingCalculationResult.cs" />
-    <Compile Include="Classes\OverheatingCalculator.cs" />
-    <Compile Include="Classes\WorkflowSettings.cs" />
-    <Compile Include="Classes\TSDConversionSettings.cs" />
-    <Compile Include="Classes\SizingSettings.cs" />
-    <Compile Include="Classes\ThermalTransmittances.cs" />
-    <Compile Include="Classes\ThermalTransmittanceCalculationResult.cs" />
-    <Compile Include="Classes\GlazingCalculationResult.cs" />
-    <Compile Include="Classes\GlazingCalculationData.cs" />
-    <Compile Include="Classes\TCDDatabase.cs" />
-    <Compile Include="Classes\LayerThicknessCalculationResult.cs" />
-    <Compile Include="Classes\LayerThicknessCalculationData.cs" />
-    <Compile Include="Classes\ThermalTransmittanceCalculator.cs" />
-    <Compile Include="Convert\ToSAM\ConstructionManager.cs" />
-    <Compile Include="Convert\ToSAM\AnalyticalModel.cs" />
-    <Compile Include="Convert\ToSAM\ApertureConstruction.cs" />
-    <Compile Include="Convert\ToSAM\Construction.cs" />
-    <Compile Include="Convert\ToSAM\DesignDay.cs" />
-    <Compile Include="Convert\ToSAM\Materials.cs" />
-    <Compile Include="Convert\ToSAM\MaterialLibrary.cs" />
-    <Compile Include="Convert\ToSAM\Material.cs" />
-    <Compile Include="Convert\ToSAM\PanelSimulationResult.cs" />
-    <Compile Include="Convert\ToSAM\ConstructionLayers.cs" />
-    <Compile Include="Convert\ToSAM\ProfileLibrary.cs" />
-    <Compile Include="Convert\ToSAM\Profile.cs" />
-    <Compile Include="Convert\ToSAM\Profiles.cs" />
-    <Compile Include="Convert\ToSAM\New\OpeningSimulationResult.cs" />
-    <Compile Include="Convert\ToSAM\New\PartitionSimulationResult.cs" />
-    <Compile Include="Convert\ToSAM\New\SpaceSimulationResult.cs" />
-    <Compile Include="Convert\ToSAM\InternalCondition.cs" />
-    <Compile Include="Convert\ToSAM\PanelSimulationResults.cs" />
-    <Compile Include="Convert\ToSAM\Results.cs" />
-    <Compile Include="Convert\ToSAM\NCMNameCollection.cs" />
-    <Compile Include="Convert\ToT3D\New\Window.cs" />
-    <Compile Include="Convert\ToTBD\Building.cs" />
-    <Compile Include="Convert\ToTCD\MaterialFolder.cs" />
-    <Compile Include="Convert\ToTCD\Constructions.cs" />
-    <Compile Include="Convert\ToTCD\Construction.cs" />
-    <Compile Include="Convert\ToTCD\ConstructionFolder.cs" />
-    <Compile Include="Convert\ToTCD\Material.cs" />
-    <Compile Include="Create\AdjacencyCluster.cs" />
-    <Compile Include="Create\AdjacencyClusterSimulationResult.cs" />
-    <Compile Include="Create\ApertureConstructionCalculationData.cs" />
-    <Compile Include="Create\GlazingCalculationData.cs" />
-    <Compile Include="Create\LayerThicknessCalculationData.cs" />
-    <Compile Include="Create\Log.cs" />
-    <Compile Include="Create\TBD.cs" />
-    <Compile Include="Create\ThermalTransmittances.cs" />
-    <Compile Include="Create\ZoneGroup.cs" />
-    <Compile Include="Create\InternalConditions.cs" />
-    <Compile Include="Enums\Parameters\ApertureConstructionParameter.cs" />
-    <Compile Include="Enums\Parameters\ConstructionParameter.cs" />
-    <Compile Include="Enums\Parameters\MaterialParameter.cs" />
-    <Compile Include="Enums\SizingType.cs" />
-    <Compile Include="Enums\Parameters\ApertureParameter.cs" />
-    <Compile Include="Enums\Parameters\PanelParameter.cs" />
-    <Compile Include="Enums\Parameters\TasSettingParameter.cs" />
-    <Compile Include="Interfaces\IApertureConstructionCalculationData.cs" />
-    <Compile Include="Interfaces\IApertureConstructionCalculationResult.cs" />
-    <Compile Include="Interfaces\IThermalTransmittanceCalculationResult.cs" />
-    <Compile Include="Interfaces\IThermalTransmittanceCalculationData.cs" />
-    <Compile Include="Interfaces\IConstructionCalculationResult.cs" />
-    <Compile Include="Interfaces\IConstructionCalculationData.cs" />
-    <Compile Include="Modify\RemoveConstructions.cs" />
-    <Compile Include="Query\ThermalTransmittances.cs" />
-    <Compile Include="Modify\ApplySystemSizingMethod.cs" />
-    <Compile Include="Modify\Run.cs" />
-    <Compile Include="Modify\SetApertureTypes.cs" />
-    <Compile Include="Modify\AddDefaultZoneGroups.cs" />
-    <Compile Include="Modify\RemoveUnusedInternalConditions.cs" />
-    <Compile Include="Modify\RemoveUnused.cs" />
-    <Compile Include="Modify\RemoveUnusedWindows.cs" />
-    <Compile Include="Modify\RemoveUnusedElements.cs" />
-    <Compile Include="Modify\SetApertureType.cs" />
-    <Compile Include="Modify\SetSizingTypes.cs" />
-    <Compile Include="Modify\SetColor.cs" />
-    <Compile Include="Modify\UpdateAdiabatic.cs" />
-    <Compile Include="Modify\RemoveVentilationGains.cs" />
-    <Compile Include="Modify\UpdateIZAMs.cs" />
-    <Compile Include="Modify\UpdateUKBRFile.cs" />
-    <Compile Include="Modify\UpdateZoneGroups.cs" />
-    <Compile Include="Modify\UpdateZoneGroupsByPartL.cs" />
-    <Compile Include="Enums\Parameters\AnalyticalModelSimulationResultParameter.cs" />
-    <Compile Include="Enums\Parameters\SpaceSimulationResultParameter.cs" />
-    <Compile Include="Enums\Parameters\SpaceParameter.cs" />
-    <Compile Include="Enums\Parameters\SurfaceSimulationResultParameter.cs" />
-    <Compile Include="Enums\AirSideControllerSetup.cs" />
-    <Compile Include="Enums\WaterSideControllerSetup.cs" />
-    <Compile Include="Modify\AddComponents.cs" />
-    <Compile Include="Modify\CopyFrom.cs" />
-    <Compile Include="Create\TPD.cs" />
-    <Compile Include="Modify\RemoveDayTypes.cs" />
-    <Compile Include="Modify\SetAirSideController.cs" />
-    <Compile Include="Modify\SetWaterSideController.cs" />
-    <Compile Include="Modify\UpdateInternalConditionByPartL.cs" />
-    <Compile Include="Modify\UpdateShading.cs" />
-    <Compile Include="Modify\UpdateSurfaceShades.cs" />
-    <Compile Include="Modify\AddInternalCondition_HDD.cs" />
-    <Compile Include="Convert\ToSAM\AdjacencyCluster.cs" />
-    <Compile Include="Convert\ToSAM\RelationCluster.cs" />
-    <Compile Include="Convert\ToSAM\Aperture.cs" />
-    <Compile Include="Convert\ToSAM\Panel.cs" />
-    <Compile Include="Convert\ToSAM\Space.cs" />
-    <Compile Include="Convert\ToTBD\TBD.cs" />
-    <Compile Include="Create\IZAMs.cs" />
-    <Compile Include="Create\IZAM.cs" />
-    <Compile Include="Create\Schedule.cs" />
-    <Compile Include="Enums\SpaceDataType.cs" />
-    <Compile Include="Enums\PanelDataType.cs" />
-    <Compile Include="Modify\RunWorkflow.cs" />
-    <Compile Include="Modify\AddMaterial.cs" />
-    <Compile Include="Modify\AddDesignDays.cs" />
-    <Compile Include="Modify\New\AddResults.cs" />
-    <Compile Include="Modify\New\UpdateDesignLoads.cs" />
-    <Compile Include="Modify\RemoveInternalConditions.cs" />
-    <Compile Include="Modify\RemoveInternalCondition.cs" />
-    <Compile Include="Modify\RemoveMaterials.cs" />
-    <Compile Include="Modify\AddInternalCondition.cs" />
-    <Compile Include="Modify\UpdateThermalParameters.cs" />
-    <Compile Include="Modify\UpdateDesignLoads.cs" />
-    <Compile Include="Modify\UpdateInternalCondition_HDD.cs" />
-    <Compile Include="Modify\UpdateInternalCondition.cs" />
-    <Compile Include="Modify\Update.cs" />
-    <Compile Include="Modify\Simulate.cs" />
-    <Compile Include="Modify\RemoveApertureTypes.cs" />
-    <Compile Include="Modify\AssignApertureTypes.cs" />
-    <Compile Include="Modify\RemoveIZAMs.cs" />
-    <Compile Include="Modify\SetBlinds.cs" />
-    <Compile Include="Modify\UpdateApertureControl.cs" />
-    <Compile Include="Modify\UpdateBuildingElements.cs" />
-    <Compile Include="Modify\New\UpdateSizingFactors.cs" />
-    <Compile Include="Modify\AddResults.cs" />
-    <Compile Include="Create\SpaceSimulationResult.cs" />
-    <Compile Include="Modify\UpdateSizingFactors.cs" />
-    <Compile Include="Modify\UpdateIds.cs" />
-    <Compile Include="Modify\UpdateACCI.cs" />
-    <Compile Include="Query\HeatFlowDirection.cs" />
-    <Compile Include="Query\Key.cs" />
-    <Compile Include="Query\AperturePart.cs" />
-    <Compile Include="Query\ApertureTypes.cs" />
-    <Compile Include="Query\Score.cs" />
-    <Compile Include="Query\Factor.cs" />
-    <Compile Include="Query\Color.cs" />
-    <Compile Include="Query\ConstructionLayer.cs" />
-    <Compile Include="Query\Material.cs" />
-    <Compile Include="Query\Sufix.cs" />
-    <Compile Include="Query\UniqueId.cs" />
-    <Compile Include="Query\UniqueNameDecomposition.cs" />
-    <Compile Include="Query\DefaultFilePath.cs" />
-    <Compile Include="Query\ResourcesDirectory.cs" />
-    <Compile Include="Query\Calendars.cs" />
-    <Compile Include="Query\Calendar.cs" />
-    <Compile Include="Query\DisplayName.cs" />
-    <Compile Include="Query\ComponentTypes.cs" />
-    <Compile Include="Query\DHWGroup.cs" />
-    <Compile Include="Query\Component.cs" />
-    <Compile Include="Query\System.cs" />
-    <Compile Include="Query\RefrigerantGroup.cs" />
-    <Compile Include="Query\MultiBoiler.cs" />
-    <Compile Include="Query\ElectricalGroup.cs" />
-    <Compile Include="Query\DesignConditionLoad.cs" />
-    <Compile Include="Query\CoolingGroup.cs" />
-    <Compile Include="Query\PlantSchedule.cs" />
-    <Compile Include="Query\PlantRoom.cs" />
-    <Compile Include="Query\FuelSource.cs" />
-    <Compile Include="Query\HeatingGroup.cs" />
-    <Compile Include="Query\SurfaceType.cs" />
-    <Compile Include="Query\BuildingElements.cs" />
-    <Compile Include="Query\GlazingValues.cs" />
-    <Compile Include="Query\DesignDataDictionary.cs" />
-    <Compile Include="Query\MaxValueDictionary.cs" />
-    <Compile Include="Query\ValueDictionary.cs" />
-    <Compile Include="Query\DesignDayNames.cs" />
-    <Compile Include="Query\HeatingDesignDatas.cs" />
-    <Compile Include="Query\HourlySurfaceResult.cs" />
-    <Compile Include="Query\DesignDays.cs" />
-    <Compile Include="Query\HeatingDesignDays.cs" />
-    <Compile Include="Query\CoolingDesignDays.cs" />
-    <Compile Include="Query\CoolingDesignDatas.cs" />
-    <Compile Include="Query\Source.cs" />
-    <Compile Include="Query\RoomSurfaces.cs" />
-    <Compile Include="Modify\RemoveZoneGrups.cs" />
-    <Compile Include="Query\ZoneDataGroups.cs" />
-    <Compile Include="Query\ZoneGrups.cs" />
-    <Compile Include="Query\Zone.cs" />
-    <Compile Include="Query\ZoneSurfaces.cs" />
-    <Compile Include="Query\RoomShapes.cs" />
-    <Compile Include="Query\Rooms.cs" />
-    <Compile Include="Query\New\OpeningType.cs" />
-    <Compile Include="Query\ThermalTransmittance.cs" />
-    <Compile Include="Query\TotalSolarEnergyTransmittance.cs" />
-    <Compile Include="Query\LightTransmittance.cs" />
-    <Compile Include="Query\Combine.cs" />
-    <Compile Include="Query\Compare.cs" />
-    <Compile Include="Query\Overheating.cs" />
-    <Compile Include="Modify\UpdateZone_HDD.cs" />
-    <Compile Include="Modify\UpdateZones.cs" />
-    <Compile Include="Modify\UpdateZone.cs" />
-    <Compile Include="Modify\UpdateMaterial.cs" />
-    <Compile Include="Modify\UpdateConstruction.cs" />
-    <Compile Include="Modify\UpdateConstructions.cs" />
-    <Compile Include="Modify\UpdateIZAMsBySpaceParameter.cs" />
-    <Compile Include="Modify\RemoveSchedules.cs" />
-    <Compile Include="Modify\AssignBuildingElementType.cs" />
-    <Compile Include="Modify\AssignRooflightBuilidingElementType.cs" />
-    <Compile Include="Modify\AssignAdiabaticConstruction.cs" />
-    <Compile Include="Query\AnnualZoneResult.cs" />
-    <Compile Include="Query\ConstructionLayers.cs" />
-    <Compile Include="Query\ConstructionTypes.cs" />
-    <Compile Include="Query\HasDayType.cs" />
-    <Compile Include="Query\InternalConditions.cs" />
-    <Compile Include="Query\DayType.cs" />
-    <Compile Include="Query\SpaceDictionary.cs" />
-    <Compile Include="Query\Sizing.cs" />
-    <Compile Include="Query\SurfaceDataType.cs" />
-    <Compile Include="Query\PanelDataType.cs" />
-    <Compile Include="Query\InternalCondition.cs" />
-    <Compile Include="Query\TemperatureSetPointDictionary.cs" />
-    <Compile Include="Query\Results.cs" />
-    <Compile Include="Query\TsdZoneArray.cs" />
-    <Compile Include="Query\TsdSurfaceArray.cs" />
-    <Compile Include="Query\Text.cs" />
-    <Compile Include="Query\Ints.cs" />
-    <Compile Include="Query\DayTypes.cs" />
-    <Compile Include="Query\Construction.cs" />
-    <Compile Include="Query\UpdateFacingExternal.cs" />
-    <Compile Include="Query\UpdateT3D.cs" />
-    <Compile Include="Convert\ToT3D\Window.cs" />
-    <Compile Include="Convert\ToT3D\Shade.cs" />
-    <Compile Include="Convert\ToT3D\Element.cs" />
-    <Compile Include="Convert\ToT3D\Building.cs" />
-    <Compile Include="Manager\ActiveSetting.cs" />
-    <Compile Include="Modify\RemoveUnusedZones.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Create\ParameterSet.cs" />
-    <Compile Include="Query\Name.cs" />
-    <Compile Include="Query\OpeningType.cs" />
-    <Compile Include="Query\Elements.cs" />
-    <Compile Include="Query\ApertureType.cs" />
-    <Compile Include="Query\BEType.cs" />
-    <Compile Include="Query\PanelType.cs" />
-    <Compile Include="Query\ShadeGroups.cs" />
-    <Compile Include="Query\Match.cs" />
-    <Compile Include="Query\Schedules.cs" />
-    <Compile Include="Query\Materials.cs" />
-    <Compile Include="Query\Windows.cs" />
-    <Compile Include="Query\WindowGroups.cs" />
-    <Compile Include="Query\Shades.cs" />
-    <Compile Include="Query\SurfaceDatas.cs" />
-    <Compile Include="Query\AnnualSurfaceResult.cs" />
-    <Compile Include="Query\Array.cs" />
-    <Compile Include="Query\DailyValues.cs" />
-    <Compile Include="Query\YearlyValues.cs" />
-    <Compile Include="Query\UnmetHours.cs" />
-    <Compile Include="Query\ZoneDataDictionary.cs" />
-    <Compile Include="Query\ZoneDatas.cs" />
-    <Compile Include="Query\Constructions.cs" />
-    <Compile Include="Query\ZoneDictionary.cs" />
-    <Compile Include="Query\ZoneSets.cs" />
-    <Compile Include="Query\Zones.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
@@ -382,29 +80,18 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\SAM.Core.Tas.UKBR\SAM.Core.Tas.UKBR.csproj">
-      <Project>{9fa85ad6-c49e-4bf7-bd25-4b55065b41ea}</Project>
-      <Name>SAM.Core.Tas.UKBR</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">
-      <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
-      <Name>SAM.Core.Tas</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SAM.Geometry.Tas\SAM.Geometry.Tas.csproj">
-      <Project>{913ead72-bc27-4797-a95f-bedf56428ab0}</Project>
-      <Name>SAM.Geometry.Tas</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SAM.Weather.Tas\SAM.Weather.Tas.csproj">
-      <Project>{d7ab37f9-a953-4b62-a55b-50cb13ff768b}</Project>
-      <Name>SAM.Weather.Tas</Name>
-    </ProjectReference>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.2</Version>
-    </PackageReference>
+    <ProjectReference Include="..\SAM.Core.Tas.UKBR\SAM.Core.Tas.UKBR.csproj" />
+    <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj" />
+    <ProjectReference Include="..\SAM.Geometry.Tas\SAM.Geometry.Tas.csproj" />
+    <ProjectReference Include="..\SAM.Weather.Tas\SAM.Weather.Tas.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Remove="Modify\New\AssignOpeningTypes.cs" />
+  </ItemGroup>
 </Project>
