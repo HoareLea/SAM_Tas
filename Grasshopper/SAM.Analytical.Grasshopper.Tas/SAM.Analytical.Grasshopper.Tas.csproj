@@ -1,48 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
     <Rhino7DefaultInstallDir>$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\McNeel\Rhinoceros\7.0\Install', 'Path', null, RegistryView.Registry64))</Rhino7DefaultInstallDir>
     <Rhino7DebugInstallDir>$([MSBuild]::GetRegistryValueFromView('HKEY_CURRENT_USER\Software\McNeel\Rhinoceros\7.0-WIP-Developer-Debug-trunk\Install', 'Path', null, RegistryView.Registry64))</Rhino7DebugInstallDir>
     <Rhino7InstallDir>$([MSBuild]::ValueOrDefault('$(Rhino7DebugInstallDir)', '$(Rhino7DefaultInstallDir)'))</Rhino7InstallDir>
     <Rhino7DefaultPluginsDir>$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\McNeel\Rhinoceros\7.0\Install', 'Default Plug-ins Folder', null, RegistryView.Registry64))</Rhino7DefaultPluginsDir>
     <Rhino7DebugPluginsDir>$([MSBuild]::GetRegistryValueFromView('HKEY_CURRENT_USER\Software\McNeel\Rhinoceros\7.0-WIP-Developer-Debug-trunk\Install', 'Default Plug-ins Folder', null, RegistryView.Registry64))</Rhino7DebugPluginsDir>
     <Rhino7PluginsDir>$([MSBuild]::ValueOrDefault('$(Rhino7DebugPluginsDir)', '$(Rhino7DefaultPluginsDir)'))</Rhino7PluginsDir>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	  <Deterministic>false</Deterministic>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F0881D8C-68B0-4F9C-AFCE-61C0A7C1F293}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAM.Analytical.Grasshopper.Tas</RootNamespace>
-    <AssemblyName>SAM.Analytical.Grasshopper.Tas</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>..\..\build\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
     <OutputPath>..\..\build\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\build\SAM.Analytical.Grasshopper.Tas.xml</DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Convert\**" />
+    <EmbeddedResource Remove="Convert\**" />
+    <None Remove="Convert\**" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
@@ -76,7 +64,6 @@
       <HintPath>..\..\references_buildonly\Interop.TWD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="SAM.Analytical, Version=1.0.7509.27573, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
@@ -96,7 +83,7 @@
       <HintPath>..\..\..\SAM\build\SAM.Core.Grasshopper.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Core.Windows">
-      <HintPath>..\..\..\SAM_Windows\build\SAM.Core.Windows.dll</HintPath>
+      <HintPath>..\..\..\SAM_Windows\Framework\build\SAM.Core.Windows.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Geometry">
       <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
@@ -111,97 +98,6 @@
     <Reference Include="SAM.Weather.Grasshopper">
       <HintPath>..\..\..\SAM\build\SAM.Weather.Grasshopper.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Classes\GooThermalTransmittanceCalculationResult.cs" />
-    <Compile Include="Classes\GooThermalTransmittanceCalculationData.cs" />
-    <Compile Include="Classes\GooLayerThicknessCalculationData.cs" />
-    <Compile Include="Classes\GooLayerThicknessCalculationResult.cs" />
-    <Compile Include="Classes\GooSAMT3DDocument.cs" />
-    <Compile Include="Component\SAMAnalyticalCalculateThermalTransmittanceByAperture.cs" />
-    <Compile Include="Component\SAMAnalyticalCalculateThermalTransmittance.cs" />
-    <Compile Include="Component\SAMAnalyticalCalculateGlazing.cs" />
-    <Compile Include="Component\SAMAnalyticalCalculateConstructions.cs" />
-    <Compile Include="Component\TasTSDDailyIndoorComfortTemperatures.cs" />
-    <Compile Include="Component\TasTSDQueryTM59Results.cs" />
-    <Compile Include="Component\TasTSDQueryTM52Results.cs" />
-    <Compile Include="Component\TasUpdateIZAMs.cs" />
-    <Compile Include="Component\SAMAnalyticalCalculateThicknesses.cs" />
-    <Compile Include="Component\SAMAnalyticalSurfaceSimulationResults.cs" />
-    <Compile Include="Component\SAMAnalyticalSizingType.cs" />
-    <Compile Include="Component\SAMAnalyticalTasSpaceDataType.cs" />
-    <Compile Include="Component\SAMAnalyticalTasPanelDataType.cs" />
-    <Compile Include="Component\FromTBD.cs" />
-    <Compile Include="Component\SAMAnalyticalCreateTBDByTM59.cs" />
-    <Compile Include="Component\SAMAnalyticalSAP.cs" />
-    <Compile Include="Component\SAMAnalyticalTM59.cs" />
-    <Compile Include="Component\TasCopyCalendar.cs" />
-    <Compile Include="Component\TasCreateApertureConstructionCalculationData.cs" />
-    <Compile Include="Component\TasCreateConstructionCalculationData.cs" />
-    <Compile Include="Component\TasCreateLayerThicknessCalculationDataByConstruction.cs" />
-    <Compile Include="Component\TasCreateTCD.cs" />
-    <Compile Include="Component\TasCreateLayerThicknessCalculationData.cs" />
-    <Compile Include="Component\TasCreateTPDBySystemTypeName.cs" />
-    <Compile Include="Component\SAMAnalyticalWorkflowTBD.cs" />
-    <Compile Include="Component\SAMAnalyticalTBD.cs" />
-    <Compile Include="Component\TasCreateTBDByPartL.cs" />
-    <Compile Include="Component\TasTSDCreateSpaceSimulationResults_Obsolete.cs" />
-    <Compile Include="Component\TasTSDQueryZoneResultsByPercentage.cs" />
-    <Compile Include="Component\TasTSDQueryZoneResultsByHourOfYear.cs" />
-    <Compile Include="Component\TasTSDQueryResultsByTotalPercentage.cs" />
-    <Compile Include="Component\TasTSDQueryResultsByPercentage.cs" />
-    <Compile Include="Component\TasUpdateAdaptiveSetpointACCI.cs" />
-    <Compile Include="Component\TasUpdateShading.cs" />
-    <Compile Include="Component\TasUpdateUKBRFile.cs" />
-    <Compile Include="Component\TasUpdateWeatherData.cs" />
-    <Compile Include="Component\SAMAnalyticalWorkflowgbXML.cs" />
-    <Compile Include="Component\TasDesignDayNames.cs" />
-    <Compile Include="Component\TasCreateDesignDays.cs" />
-    <Compile Include="Component\TasOpenT3DDocument.cs" />
-    <Compile Include="Component\TasSizing.cs" />
-    <Compile Include="Component\TasTSDAddResults.cs" />
-    <Compile Include="Component\TasTSDCreateAdjacencyCluster._Obsolete.cs" />
-    <Compile Include="Component\TasRemoveSchedules.cs" />
-    <Compile Include="Component\TasAssignRooflightBuildingElementType.cs" />
-    <Compile Include="Component\TasT3DtoTBD.cs" />
-    <Compile Include="Component\TasAssignAdiabaticConstruction.cs" />
-    <Compile Include="Component\TasUpdateDesignDays.cs" />
-    <Compile Include="Component\TasUpdateApertureControl.cs" />
-    <Compile Include="Component\TasSimulate.cs" />
-    <Compile Include="Component\TasUpdateBuildingElements.cs" />
-    <Compile Include="Component\TasUpdateDesignLoads.cs" />
-    <Compile Include="Component\TasUpdateConstructions.cs" />
-    <Compile Include="Component\TasTSDQueryResultsByHourOfYear.cs" />
-    <Compile Include="Component\TasUpdateZones.cs" />
-    <Compile Include="Component\TasUpdateIZAMsBySpaceParameter.cs" />
-    <Compile Include="Component\TasUpdateFacingExternal.cs" />
-    <Compile Include="Component\TasUpdateT3D.cs" />
-    <Compile Include="Kernel\AssemblyPriority.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Kernel\AssemblyInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query\DayTypes.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Resources\SAM_Small.png" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
@@ -215,117 +111,40 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Convert\ToSAM\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas.SAP\SAM.Analytical.Tas.SAP.csproj">
-      <Project>{5ca0603e-7344-48d2-8e12-2d3d47e62630}</Project>
-      <Name>SAM.Analytical.Tas.SAP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas.TM59\SAM.Analytical.Tas.TM59.csproj">
-      <Project>{4b654ca7-b9ee-40a9-b7d3-c7ffed34caa6}</Project>
-      <Name>SAM.Analytical.Tas.TM59</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas\SAM.Analytical.Tas.csproj">
-      <Project>{bf2443b1-0709-4e8c-b9ff-b8785d9253e4}</Project>
-      <Name>SAM.Analytical.Tas</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SAM_Tas\SAM.Core.Tas.UKBR\SAM.Core.Tas.UKBR.csproj">
-      <Project>{9fa85ad6-c49e-4bf7-bd25-4b55065b41ea}</Project>
-      <Name>SAM.Core.Tas.UKBR</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SAM_Tas\SAM.Core.Tas\SAM.Core.Tas.csproj">
-      <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
-      <Name>SAM.Core.Tas</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SAM_Tas\SAM.Weather.Tas\SAM.Weather.Tas.csproj">
-      <Project>{d7ab37f9-a953-4b62-a55b-50cb13ff768b}</Project>
-      <Name>SAM.Weather.Tas</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SAM.Core.Grasshopper.Tas\SAM.Core.Grasshopper.Tas.csproj">
-      <Project>{b8f0ee34-a776-4518-ada2-e047e468b47b}</Project>
-      <Name>SAM.Core.Grasshopper.Tas</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasT3D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTBD.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTSD.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTPD.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTCD.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTWD.png" />
+    <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas.SAP\SAM.Analytical.Tas.SAP.csproj" />
+    <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas.TM59\SAM.Analytical.Tas.TM59.csproj" />
+    <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas\SAM.Analytical.Tas.csproj" />
+    <ProjectReference Include="..\..\SAM_Tas\SAM.Core.Tas.UKBR\SAM.Core.Tas.UKBR.csproj" />
+    <ProjectReference Include="..\..\SAM_Tas\SAM.Core.Tas\SAM.Core.Tas.csproj" />
+    <ProjectReference Include="..\..\SAM_Tas\SAM.Weather.Tas\SAM.Weather.Tas.csproj" />
+    <ProjectReference Include="..\SAM.Core.Grasshopper.Tas\SAM.Core.Grasshopper.Tas.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Grasshopper">
       <Version>6.32.20340.21001</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.2</Version>
+      <Version>13.0.3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\SAM_gbXML.png" />
+    <Compile Remove="ToTAS\GH_Curve.cs" />
+    <Compile Remove="ToTAS\GH_Line.cs" />
+    <Compile Remove="ToTAS\GH_Point.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_gbXML3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTSD3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTCD3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTBD3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_T3D3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_Small3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SAM_TasTPD3.png" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)\$(ProjectName).gha"
-
-set SAM_DIR=$(APPDATA)\SAM\
-if not exist "%25SAM_DIR%25" mkdir "%25SAM_DIR%25"
-
-copy "$(TargetDir)*.dll" "%25SAM_DIR%25"
-copy "%25SAM_DIR%25\$(ProjectName).dll" "%25SAM_DIR%25\$(ProjectName).gha"
-
-::erase "%25SAM_DIR%25$(ProjectName).dll"
-::erase "$(TargetPath)"</PostBuildEvent>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <FallbackCulture>en-US</FallbackCulture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
-    <StartArguments>
-    </StartArguments>
+    <StartArguments></StartArguments>
     <StartAction>Program</StartAction>
     <DocumentationFile>..\..\build\SAM.Analytical.Grasshopper.Tas.xml</DocumentationFile>
   </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(TargetDir)\$(ProjectName).gha&quot;&#xD;&#xA;&#xD;&#xA;set SAM_DIR=$(APPDATA)\SAM\&#xD;&#xA;if not exist &quot;%25SAM_DIR%25&quot; mkdir &quot;%25SAM_DIR%25&quot;&#xD;&#xA;&#xD;&#xA;copy &quot;$(TargetDir)*.dll&quot; &quot;%25SAM_DIR%25&quot;&#xD;&#xA;copy &quot;%25SAM_DIR%25\$(ProjectName).dll&quot; &quot;%25SAM_DIR%25\$(ProjectName).gha&quot;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;xcopy &quot;$(SolutionDir)\files\resources&quot; &quot;$(APPDATA)\SAM\resources&quot; /Y/I/E/S&#xD;&#xA;xcopy &quot;$(SolutionDir)\files\resources&quot; &quot;$(USERPROFILE)\Documents\SAM\resources&quot; /Y/D/I/E/S&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;if Exist &quot;$(SolutionDir)\files\Grasshopper\UserObjects&quot; (&#xD;&#xA;xcopy &quot;$(SolutionDir)\files\Grasshopper\UserObjects&quot; &quot;$(APPDATA)\Grasshopper\UserObjects\SAM&quot; /Y /I /E/S&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;::erase &quot;%25SAM_DIR%25$(ProjectName).dll&quot;&#xD;&#xA;::erase &quot;$(TargetPath)&quot;" />
+  </Target>
 </Project>
