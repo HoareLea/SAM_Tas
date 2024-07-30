@@ -34,7 +34,7 @@ namespace SAM.Analytical.Tas
                 return result;
             }
 
-            object[,] values = coolingDesignData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray });
+            object[,] values = coolingDesignData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray }) as dynamic;
 
             for(int i=0; i < zoneDatas.Count; i++)
             {
@@ -47,7 +47,7 @@ namespace SAM.Analytical.Tas
 
             for (int i = 1; i < coolingDesignDatas.Count(); i++)
             {
-                values = coolingDesignDatas.ElementAt(i).GetPeakZoneGains(new short[1] { (short)tsdZoneArray });
+                values = coolingDesignDatas.ElementAt(i).GetPeakZoneGains(new short[1] { (short)tsdZoneArray }) as dynamic;
                 for (int j = 0; j < zoneDatas.Count; j++)
                 {
                     string id = zoneDatas[j].zoneGUID;
@@ -96,7 +96,7 @@ namespace SAM.Analytical.Tas
                 return result;
             }
 
-            object[,] values = heatingDesignData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray });
+            object[,] values = heatingDesignData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray }) as dynamic;
 
             for (int i = 0; i < zoneDatas.Count; i++)
             {
@@ -109,7 +109,7 @@ namespace SAM.Analytical.Tas
 
             for (int i = 1; i < heatingDesignDatas.Count(); i++)
             {
-                values = heatingDesignDatas.ElementAt(i).GetPeakZoneGains(new short[1] { (short)tsdZoneArray });
+                values = heatingDesignDatas.ElementAt(i).GetPeakZoneGains(new short[1] { (short)tsdZoneArray }) as dynamic;
                 for (int j = 0; j < zoneDatas.Count; j++)
                 {
                     string id = zoneDatas[j].zoneGUID;

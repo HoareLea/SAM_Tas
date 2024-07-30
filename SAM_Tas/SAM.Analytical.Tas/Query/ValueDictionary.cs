@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            object[,] values = buildingData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray });
+            object[,] values = buildingData.GetPeakZoneGains(new short[1] { (short)tsdZoneArray }) as dynamic;
 
             Dictionary<string, Tuple<double, int>> dictionary = new Dictionary<string, Tuple<double, int>>();
             for (int i = 0; i < zoneDatas.Count; i++)

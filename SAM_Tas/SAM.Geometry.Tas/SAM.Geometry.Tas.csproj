@@ -1,52 +1,54 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{913EAD72-BC27-4797-A95F-BEDF56428AB0}</ProjectGuid>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAM.Geometry.Tas</RootNamespace>
-    <AssemblyName>SAM.Geometry.Tas</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <Deterministic>false</Deterministic>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyTitle>SAM_Tas</AssemblyTitle>
+    <Product>SAM_Tas</Product>
+    <Copyright>Copyright ©  2020</Copyright>
+    <AssemblyVersion>1.0.%2a</AssemblyVersion>
+    <FileVersion>1.0.%2a</FileVersion>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>..\..\build\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\build\SAM.Geometry.Tas.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
     <OutputPath>..\..\build\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Classes\**" />
+    <Compile Remove="Create\**" />
+    <Compile Remove="Enums\**" />
+    <Compile Remove="Modify\**" />
+    <EmbeddedResource Remove="Classes\**" />
+    <EmbeddedResource Remove="Create\**" />
+    <EmbeddedResource Remove="Enums\**" />
+    <EmbeddedResource Remove="Modify\**" />
+    <None Remove="Classes\**" />
+    <None Remove="Create\**" />
+    <None Remove="Enums\**" />
+    <None Remove="Modify\**" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+		<EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TBD">
       <HintPath>..\..\references_buildonly\Interop.TBD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+		<EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TCD">
       <HintPath>..\..\references_buildonly\Interop.TCD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+		<EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TSD">
       <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+		<EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SAM.Core, Version=1.0.7488.22264, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,27 +58,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Convert\ToSAM\Face3D.cs" />
-    <Compile Include="Convert\ToSAM\Polygon3D.cs" />
-    <Compile Include="Convert\ToSAM\Point3D.cs" />
-    <Compile Include="Convert\ToTBD\Polygon.cs" />
-    <Compile Include="Convert\ToTBD\Perimeter.cs" />
-    <Compile Include="Convert\ToTBD\TasPoint.cs" />
-    <Compile Include="Manager\ActiveSetting.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query\Holes.cs" />
-    <Compile Include="Query\Length.cs" />
-    <Compile Include="Query\HydraulicDiameter.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
@@ -90,15 +71,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Classes\" />
-    <Folder Include="Create\" />
-    <Folder Include="Enums\" />
-    <Folder Include="Modify\" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.2</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

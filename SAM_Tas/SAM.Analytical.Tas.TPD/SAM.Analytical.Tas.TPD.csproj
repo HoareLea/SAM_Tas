@@ -1,45 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{93A77EB6-BA52-429F-A985-E399E5873932}</ProjectGuid>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAM.Analytical.Tas.TPD</RootNamespace>
-    <AssemblyName>SAM.Analytical.Tas.TPD</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyTitle>SAM.Analytical.Tas.TPD</AssemblyTitle>
+    <Product>SAM.Analytical.Tas.TPD</Product>
+    <Copyright>Copyright ©  2023</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>..\..\build\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CustomMarshalers" />
+    <Compile Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <None Remove="Interfaces\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Interop.TPD">
-      <HintPath>..\..\..\SAM_UI\references_buildonly\Interop.TPD.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
+		<EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SAM.Analytical, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -69,131 +52,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Math.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\LuaModifier.cs" />
-    <Compile Include="Classes\ComponentConversionSettings.cs" />
-    <Compile Include="Classes\SystemEnergyCentreConversionSettings.cs" />
-    <Compile Include="Convert\ToSAM\ModifiableValue.cs" />
-    <Compile Include="Convert\ToSAM\Duty.cs" />
-    <Compile Include="Convert\ToSAM\Point2D.cs" />
-    <Compile Include="Convert\ToSAM\AirSystem.cs" />
-    <Compile Include="Convert\ToSAM\SystemDesiccantWheelResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemEconomiser.cs" />
-    <Compile Include="Convert\ToSAM\SystemDXCoilResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemEconomiserResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemDirectEvaporativeCooler.cs" />
-    <Compile Include="Convert\ToSAM\SystemDesiccantWheel.cs" />
-    <Compile Include="Convert\ToSAM\SystemDXCoil.cs" />
-    <Compile Include="Convert\ToSAM\SystemSprayHumidifier.cs" />
-    <Compile Include="Convert\ToSAM\SystemDirectEvaporativeCoolerResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemSprayHumidifierResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemSteamHumidifierResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemSteamHumidifier.cs" />
-    <Compile Include="Convert\ToSAM\SystemMixingBoxResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemMixingBox.cs" />
-    <Compile Include="Convert\ToSAM\SystemCoolingCoilResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemAirJunctionResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemExchangerResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemHeatingCoilResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemFanResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemCoolingCoil.cs" />
-    <Compile Include="Convert\ToSAM\SystemDamper.cs" />
-    <Compile Include="Convert\ToSAM\SystemHeatingCoil.cs" />
-    <Compile Include="Convert\ToSAM\SystemFan.cs" />
-    <Compile Include="Convert\ToSAM\SystemExchanger.cs" />
-    <Compile Include="Convert\ToSAM\SystemAirJunction.cs" />
-    <Compile Include="Convert\ToSAM\SystemDXCoilUnit.cs" />
-    <Compile Include="Convert\ToSAM\SystemDXCoilUnitResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemChilledBeam.cs" />
-    <Compile Include="Convert\ToSAM\SystemChilledBeamResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemPlantRoom.cs" />
-    <Compile Include="Convert\ToSAM\SystemRadiatorResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemComponentResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemFanCoilUnitResult.cs" />
-    <Compile Include="Convert\ToSAM\SystemRadiator.cs" />
-    <Compile Include="Convert\ToSAM\SystemFanCoilUnit.cs" />
-    <Compile Include="Convert\ToSAM\SystemSpaceComponent.cs" />
-    <Compile Include="Convert\ToSAM\AirSystemGroup.cs" />
-    <Compile Include="Convert\ToSAM\SystemSpace.cs" />
-    <Compile Include="Convert\ToSAM\SystemModel.cs" />
-    <Compile Include="Convert\ToSAM\SystemSpaceResults.cs" />
-    <Compile Include="Convert\ToSAM\SystemSpaceResult.cs" />
-    <Compile Include="Convert\ToTPD\Optimiser.cs" />
-    <Compile Include="Convert\ToTPD\TasPosition.cs" />
-    <Compile Include="Convert\ToTPD\System.cs" />
-    <Compile Include="Convert\ToTPD\TPD.cs" />
-    <Compile Include="Convert\ToTPD\SystemZone.cs" />
-    <Compile Include="Convert\ToTPD\Damper.cs" />
-    <Compile Include="Convert\ToTPD\HeatingCoil.cs" />
-    <Compile Include="Convert\ToTPD\CoolingCoil.cs" />
-    <Compile Include="Convert\ToTPD\Exchanger.cs" />
-    <Compile Include="Convert\ToTPD\ComponentGroup.cs" />
-    <Compile Include="Convert\ToTPD\Junction.cs" />
-    <Compile Include="Convert\ToTPD\Fan.cs" />
-    <Compile Include="Create\Ducts.cs" />
-    <Compile Include="Create\IndexedDoubles.cs" />
-    <Compile Include="Enums\Parameters\SystemObjectParameter.cs" />
-    <Compile Include="Enums\WaterSideControllerSetup.cs" />
-    <Compile Include="Modify\CopyResults.cs" />
-    <Compile Include="Modify\Connect.cs" />
-    <Compile Include="Modify\Add.cs" />
-    <Compile Include="Modify\SetLocation.cs" />
-    <Compile Include="Modify\SetReference.cs" />
-    <Compile Include="Modify\SetWaterSideController.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Convert\ToSAM\Modifier.cs" />
-    <Compile Include="Query\ArithmeticOperator.cs" />
-    <Compile Include="Query\Component.cs" />
-    <Compile Include="Query\CoolingGroup.cs" />
-    <Compile Include="Query\DesignConditionLoad.cs" />
-    <Compile Include="Query\DHWGroup.cs" />
-    <Compile Include="Query\ElectricalGroup.cs" />
-    <Compile Include="Query\FuelSource.cs" />
-    <Compile Include="Query\HeatingGroup.cs" />
-    <Compile Include="Query\MultiBoiler.cs" />
-    <Compile Include="Query\PlantRoom.cs" />
-    <Compile Include="Query\PlantSchedule.cs" />
-    <Compile Include="Query\RefrigerantGroup.cs" />
-    <Compile Include="Query\System.cs" />
-    <Compile Include="Query\SystemComponent.cs" />
-    <Compile Include="Query\Point2Ds.cs" />
-    <Compile Include="Query\Reference.cs" />
-    <Compile Include="Query\EndHour.cs" />
-    <Compile Include="Query\Ducts.cs" />
-    <Compile Include="Query\Source.cs" />
-    <Compile Include="Query\ConnectedSystemComponents.cs" />
-    <Compile Include="Query\ProfileDataModifiers.cs" />
-    <Compile Include="Query\ZoneComponents.cs" />
-    <Compile Include="Query\StartHour.cs" />
-    <Compile Include="Query\Transform2D.cs" />
-    <Compile Include="Query\AnalyticalSystemComponentType.cs" />
-    <Compile Include="Query\ZoneLoads.cs" />
-    <Compile Include="Query\SystemComponents.cs" />
-    <Compile Include="Query\SystemZones.cs" />
-    <Compile Include="Query\Systems.cs" />
-    <Compile Include="Query\PlantRooms.cs" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SAM.Core.Tas\SAM.Core.Tas.csproj">
-      <Project>{86de2672-4961-4d74-a337-0933fddae79b}</Project>
-      <Name>SAM.Core.Tas</Name>
-    </ProjectReference>
+    <Compile Remove="Convert\ToSAM\SpaceSystemCalculationResult.cs" />
+    <Compile Remove="Query\IModifier.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
