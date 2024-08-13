@@ -14,7 +14,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -28,7 +28,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// </summary>
         public TasCreateSurfaceOutputSpec()
           : base("Tas.CreateSurfaceOutputSpec", "TasCreateSurfaceOutputSpec",
-              "Creates SAM SurfaceOutputSpec",
+              "Creates SAM SurfaceOutputSpec \n * For Condensation you need also  convection, temperature \n* For LongWave you need also solarGain, condensation, convection",
               "SAM", "Tas")
         {
         }
@@ -49,7 +49,7 @@ namespace SAM.Core.Grasshopper.Tas
             index = inputParamManager.AddBooleanParameter("_apertureData_", "_apertureData_", "Aperture Data", GH_ParamAccess.item, false);
             inputParamManager[index].Optional = true;
 
-            index = inputParamManager.AddBooleanParameter("_condensation_", "_condensation_", "Condensation", GH_ParamAccess.item, false);
+            index = inputParamManager.AddBooleanParameter("_condensation_", "_condensation_", "Condensation \n* you need also  convection, temperature", GH_ParamAccess.item, false);
             inputParamManager[index].Optional = true;
 
             index = inputParamManager.AddBooleanParameter("_convection_", "_convection_", "Convection", GH_ParamAccess.item, false);
@@ -61,7 +61,7 @@ namespace SAM.Core.Grasshopper.Tas
             index = inputParamManager.AddBooleanParameter("_conduction_", "_conduction_", "Conduction", GH_ParamAccess.item, false);
             inputParamManager[index].Optional = true;
 
-            index = inputParamManager.AddBooleanParameter("_longWave_", "_longWave_", "LongWave", GH_ParamAccess.item, false);
+            index = inputParamManager.AddBooleanParameter("_longWave_", "_longWave_", "LongWave \n* you need also solarGain, condensation, convection  ", GH_ParamAccess.item, false);
             inputParamManager[index].Optional = true;
 
             index = inputParamManager.AddBooleanParameter("_temperature_", "_temperature_", "Temperature", GH_ParamAccess.item, false);
