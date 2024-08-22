@@ -28,7 +28,7 @@ namespace SAM.Core.Grasshopper.Tas
         /// </summary>
         public TasCreateSurfaceOutputSpec()
           : base("Tas.CreateSurfaceOutputSpec", "TasCreateSurfaceOutputSpec",
-              "Creates SAM SurfaceOutputSpec \n * For Condensation you need also  convection, temperature \n* For LongWave you need also solarGain, condensation, convection",
+              "Creates SAM SurfaceOutputSpec \n * For Condensation you need also convection, temperature \n* For LongWave you need also solarGain, condensation, convection.",
               "SAM", "Tas")
         {
         }
