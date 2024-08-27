@@ -17,6 +17,11 @@
     <OutputPath>..\..\build\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Classes\**" />
+    <EmbeddedResource Remove="Classes\**" />
+    <None Remove="Classes\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Interop.TPD">
       <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -68,9 +73,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\SAM_Tas\SAM.Analytical.Tas.TPD\SAM.Analytical.Tas.TPD.csproj" />
     <ProjectReference Include="..\..\SAM_Tas\SAM.Core.Tas\SAM.Core.Tas.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\" />
   </ItemGroup>
   <PropertyGroup />
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
