@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using SAM.Analytical.Systems;
 using System.Linq;
 using SAM.Core;
+using System.Data;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -469,12 +470,35 @@ namespace SAM.Analytical.Tas.TPD
 
                                 systemComponents_Ordered.Insert(0, systemComponent);
 
-                                foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
-                                {
-                                    dictionary_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
-                                }
+                                List<Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>> tuples = new List<Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>>();
 
-                                List<Tuple<DisplayAirSystemGroup, List<global::TPD.ISystemComponent>>> tuples = new List<Tuple<DisplayAirSystemGroup, List<global::TPD.ISystemComponent>>>();
+                                foreach (Core.Systems.ISystemComponent systemComponent_Temp in systemComponents_Ordered)
+                                {
+                                    if(!Query.TryGetSystemSpace(systemPlantRoom, systemComponent_Temp, out ISystemSpace systemSpace, out AirSystemGroup airSystemGroup) || systemSpace == null)
+                                    {
+                                        dictionary_SAM[systemPlantRoom.GetGuid(systemComponent_Temp)] = systemComponent_Temp;
+                                        continue;
+                                    }
+
+                                    List<Core.Systems.ISystemComponent> systemComponents = Query.ConnectedSystemComponents(systemPlantRoom, airSystemGroup, systemSpace);
+                                    if (systemComponents == null || systemComponents.Count == 0)
+                                    {
+                                        systemComponents = new List<Core.Systems.ISystemComponent>() { systemSpace };
+                                    }
+                                    else
+                                    {
+                                        systemComponents.Add(systemSpace);
+                                    }
+
+                                    systemComponents.ForEach(x => dictionary_SAM[systemPlantRoom.GetGuid(x)] = x);
+
+                                    Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple = tuples.Find(x => x.Item1.Guid == airSystemGroup.Guid);
+                                    if (tuple == null)
+                                    {
+                                        tuple = new Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>(airSystemGroup, systemComponents);
+                                        tuples.Add(tuple);
+                                    }
+                                }
                                 
                                 foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SAM.Values)
                                 {
@@ -513,7 +537,6 @@ namespace SAM.Analytical.Tas.TPD
                                         systemComponent_TPD = ToTPD((DisplaySystemEconomiser)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
                                     }
 
-
                                     if (systemComponent_TPD == null)
                                     {
                                         continue;
@@ -522,53 +545,29 @@ namespace SAM.Analytical.Tas.TPD
                                     dictionary_TPD[systemComponent_Temp.Guid] = systemComponent_TPD;
                                     systemComponent_Temp.SetReference(systemComponent_TPD.Reference());
                                     systemPlantRoom.Add(systemComponent_Temp);
-
-                                    List<DisplayAirSystemGroup> displayAirSystemGroups_Temp = systemPlantRoom.GetRelatedObjects<DisplayAirSystemGroup>(systemComponent_Temp);
-                                    if (displayAirSystemGroups_Temp != null && displayAirSystemGroups_Temp.Count != 0)
-                                    {
-                                        foreach (DisplayAirSystemGroup displayAirSystemGroup_Temp in displayAirSystemGroups_Temp)
-                                        {
-                                            Tuple<DisplayAirSystemGroup, List<global::TPD.ISystemComponent>> tuple = tuples.Find(x => x.Item1.Guid == displayAirSystemGroup_Temp.Guid);
-                                            if (tuple == null)
-                                            {
-                                                tuple = new Tuple<DisplayAirSystemGroup, List<global::TPD.ISystemComponent>>(displayAirSystemGroup_Temp, new List<global::TPD.ISystemComponent>());
-                                                tuples.Add(tuple);
-                                            }
-
-                                            if (tuple.Item2.Find(x => (x as dynamic).GUID == (systemComponent_TPD as dynamic).GUID) == null)
-                                            {
-                                                tuple.Item2.Add(systemComponent_TPD);
-                                            }
-                                        }
-                                    }
                                 }
 
                                 Create.Ducts(systemPlantRoom, system, dictionary_TPD);
 
-                                foreach (Tuple<DisplayAirSystemGroup, List<global::TPD.ISystemComponent>> tuple in tuples)
+                                foreach (Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple in tuples)
                                 {
-                                    DisplayAirSystemGroup displayAirSystemGroup = tuple.Item1;
-                                    global::TPD.ISystemComponent[] systemComponents = tuple.Item2.ToArray();
+                                    List<SystemSpace> systemSpaces = systemPlantRoom.GetRelatedObjects<SystemSpace>(tuple.Item1);
 
-                                    List<DisplaySystemSpace> displaySystemSpaces = systemPlantRoom.GetRelatedObjects<DisplaySystemSpace>(displayAirSystemGroup);
-                                    if (displaySystemSpaces == null || displaySystemSpaces.Count == 0)
-                                    {
-                                        continue;
-                                    }
-
-                                    List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1), displaySystemSpaces);
+                                    List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1), systemSpaces);
                                     if (zoneLoads == null || zoneLoads.Count == 0)
                                     {
                                         continue;
                                     }
 
+                                    global::TPD.ISystemComponent[] systemComponents_TPD = tuple.Item2.ConvertAll(x => dictionary_TPD[(x as dynamic).Guid] as global::TPD.ISystemComponent).ToArray();
+
                                     Controller[] controllers = new Controller[0];
 
-                                    ComponentGroup componentGroup = system.AddGroup(systemComponents, controllers);
+                                    ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD, controllers);
                                     componentGroup.SetMultiplicity(zoneLoads.Count);
 
-                                    displayAirSystemGroup.SetReference(componentGroup.Reference());
-                                    systemPlantRoom.Add(displayAirSystemGroup);
+                                    tuple.Item1.SetReference(componentGroup.Reference());
+                                    systemPlantRoom.Add(tuple.Item1);
 
                                     List<global::TPD.SystemComponent> systemComponents_ComponentGroup = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
 
