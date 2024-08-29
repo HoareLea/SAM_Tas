@@ -1,23 +1,24 @@
-﻿using SAM.Core;
+﻿using SAM.Analytical.Systems;
+using SAM.Core;
+using SAM.Core.Systems;
 using System.Collections.Generic;
-using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static List<SystemComponent> ConnectedSystemComponents(this SystemComponent systemComponent, Direction direction)
+        public static List<global::TPD.SystemComponent> ConnectedSystemComponents(this global::TPD.SystemComponent systemComponent, Direction direction)
         {
-            List<Duct> ducts = Ducts(systemComponent, direction);
+            List<global::TPD.Duct> ducts = Ducts(systemComponent, direction);
             if(ducts == null)
             {
                 return null;
             }
 
-            List<SystemComponent> result = new List<SystemComponent>();
-            foreach (Duct duct in ducts)
+            List<global::TPD.SystemComponent> result = new List<global::TPD.SystemComponent>();
+            foreach (global::TPD.Duct duct in ducts)
             {
-                SystemComponent systemComponent_Temp = null;
+                global::TPD.SystemComponent systemComponent_Temp = null;
 
                 systemComponent_Temp = duct.GetDownstreamComponent();
                 if(systemComponent_Temp != null && systemComponent_Temp != systemComponent && !result.Contains(systemComponent_Temp))
@@ -33,6 +34,33 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             return result;
+        }
+
+        public static List<ISystemComponent> ConnectedSystemComponents<T>(this SystemPlantRoom systemPlantRoom, SystemGroup<T> systemGroup, ISystemComponent systemComponent) where T : Core.Systems.ISystem
+        {
+            if(systemPlantRoom == null || systemGroup == null || systemComponent == null)
+            {
+                return null;
+            }
+
+            List<ISystemComponent> systemComponents = systemPlantRoom.GetRelatedObjects<ISystemComponent>(systemGroup);
+            if(systemComponents == null)
+            {
+                return null;
+            }
+
+            if(systemComponents.Find(x => (x as dynamic).Guid == (systemComponent as dynamic).Guid) == null)
+            {
+                return null;
+            }
+
+            List<Core.Systems.ISystem> systems = systemPlantRoom.GetRelatedObjects<Core.Systems.ISystem>(systemGroup);
+            if(systems == null || systems.Count == 0)
+            {
+                return null;
+            }
+
+            return Core.Systems.Query.ConnectedSystemComponents(systemPlantRoom, systems[0], systemGroup, systemComponent);
         }
     }
 }

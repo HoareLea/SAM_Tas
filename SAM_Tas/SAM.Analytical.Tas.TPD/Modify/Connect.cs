@@ -33,40 +33,41 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             List<ISystemConnection> result = new List<ISystemConnection>();
-            foreach (global::TPD.SystemComponent systemComponent in systemComponents)
+            foreach (global::TPD.SystemComponent systemComponent_TPD in systemComponents)
             {
-                if(systemComponent == null)
+                if(systemComponent_TPD == null)
                 {
                     continue;
                 }
 
-                string reference_1 = (systemComponent as dynamic).GUID;
+                string reference_1 = (systemComponent_TPD as dynamic).GUID;
 
-                Core.Systems.ISystemComponent systemComponent_1 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_1);
+                Core.Systems.ISystemComponent systemComponent_SAM_1 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_1);
 
-                foreach (Direction direction in new Direction[] { Direction.In })
+                Direction direction = Direction.In;
+
+                List<Duct> ducts = Query.Ducts(systemComponent_TPD, direction);
+                if (ducts == null || ducts.Count == 0)
                 {
-                    List<Duct> ducts = Query.Ducts(systemComponent, direction);
-                    if (ducts != null)
+                    continue;
+                }
+
+                foreach (Duct duct in ducts)
+                {
+                    string reference_2 = (duct.GetUpstreamComponent() as dynamic)?.GUID;
+
+                    Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                    if (systemComponent_SAM_2 == null)
                     {
-                        foreach (Duct duct in ducts)
-                        {
-                            string reference_2 = (direction == Direction.In ? duct.GetUpstreamComponent() as dynamic : duct.GetDownstreamComponent() as dynamic)?.GUID;
+                        continue;
+                    }
 
-                            Core.Systems.ISystemComponent systemComponent_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
-                            if (systemComponent_2 == null)
-                            {
-                                continue;
-                            }
+                    List<Point2D> point2Ds = Query.Point2Ds(duct);
 
-                            List<Point2D> point2Ds = Query.Point2Ds(duct);
-
-                            ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_1, systemComponent_2, airSystem, direction, point2Ds);
-                            if(systemConnection != null)
-                            {
-                                result.Add(systemConnection);
-                            }
-                        }
+                    ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, systemComponent_SAM_2, airSystem, direction, point2Ds);
+                    if (systemConnection != null)
+                    {
+                        result.Add(systemConnection);
                     }
                 }
             }
