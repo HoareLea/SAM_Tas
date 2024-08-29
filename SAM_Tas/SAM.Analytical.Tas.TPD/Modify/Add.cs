@@ -17,7 +17,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            if(componentConversionSettings == null)
+            if (componentConversionSettings == null)
             {
                 componentConversionSettings = new ComponentConversionSettings();
             }
@@ -32,12 +32,12 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (ComponentGroup)systemComponent, tPDDoc, componentConversionSettings);
             }
 
-            if(systemComponent is Junction)
+            if (systemComponent is Junction)
             {
                 return Add(systemPlantRoom, (Junction)systemComponent, tPDDoc, componentConversionSettings);
             }
 
-            if(systemComponent is Exchanger)
+            if (systemComponent is Exchanger)
             {
                 return Add(systemPlantRoom, (Exchanger)systemComponent, tPDDoc, componentConversionSettings);
             }
@@ -110,7 +110,7 @@ namespace SAM.Analytical.Tas.TPD
             Core.Systems.ISystemComponent systemComponent = null;
             ISystemComponentResult systemComponentResult = null;
 
-            switch(optimiser.Flags)
+            switch (optimiser.Flags)
             {
                 case 1:
                     systemComponent = optimiser.ToSAM_SystemMixingBox();
@@ -131,13 +131,13 @@ namespace SAM.Analytical.Tas.TPD
                 result.Add(systemComponent);
             }
 
-            if(systemComponentResult != null)
+            if (systemComponentResult != null)
             {
                 systemPlantRoom.Add(systemComponentResult);
                 result.Add(systemComponentResult);
             }
 
-            if(systemComponent != null && systemComponentResult != null)
+            if (systemComponent != null && systemComponentResult != null)
             {
                 systemPlantRoom.Connect(systemComponentResult, systemComponent);
             }
@@ -152,13 +152,13 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            if(componentConversionSettings == null)
+            if (componentConversionSettings == null)
             {
                 componentConversionSettings = new ComponentConversionSettings();
             }
 
             SystemSpace systemSpace = systemZone.ToSAM();
-            if(systemSpace == null)
+            if (systemSpace == null)
             {
                 return null;
             }
@@ -177,11 +177,11 @@ namespace SAM.Analytical.Tas.TPD
                 result.Add(systemSpaceResult);
             }
 
-            List<ZoneComponent> zoneComponents =  systemZone.ZoneComponents<ZoneComponent>();
+            List<ZoneComponent> zoneComponents = systemZone.ZoneComponents<ZoneComponent>();
             foreach (ZoneComponent zoneComponent in zoneComponents)
             {
                 ISystemSpaceComponent systemSpaceComponent = zoneComponent?.ToSAM();
-                if(systemSpaceComponent == null)
+                if (systemSpaceComponent == null)
                 {
                     continue;
                 }
@@ -190,7 +190,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 result.Add(systemSpaceComponent);
 
-                if(componentConversionSettings.IncludeResults)
+                if (componentConversionSettings.IncludeResults)
                 {
                     ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemComponentResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
                     if (systemComponentResult == null)
@@ -206,10 +206,10 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            foreach(ISystemJSAMObject systemJSAMObject in result)
+            foreach (ISystemJSAMObject systemJSAMObject in result)
             {
                 ISystemSpaceComponent systemSpaceComponent = systemJSAMObject as ISystemSpaceComponent;
-                if(systemSpaceComponent == null)
+                if (systemSpaceComponent == null)
                 {
                     continue;
                 }
@@ -238,7 +238,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemAirJunction);
             result.Add(systemAirJunction);
 
-            if(componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeResults)
             {
                 SystemAirJunctionResult systemAirJunctionResult = junction.ToSAM_SystemAirJunctionResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
                 systemPlantRoom.Add(systemAirJunctionResult);
@@ -378,7 +378,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemExchanger);
             result.Add(systemExchanger);
 
-            if(componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeResults)
             {
                 SystemExchangerResult systemExchangerResult = exchanger.ToSAM_SystemExchangerResult(componentConversionSettings.StartHour, componentConversionSettings.EndHour);
                 systemPlantRoom.Add(systemExchangerResult);
@@ -405,7 +405,7 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
-            SystemDesiccantWheel systemDesiccantWheel= desiccantWheel.ToSAM();
+            SystemDesiccantWheel systemDesiccantWheel = desiccantWheel.ToSAM();
             systemPlantRoom.Add(systemDesiccantWheel);
             result.Add(systemDesiccantWheel);
 
@@ -522,7 +522,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             SystemDamper systemDamper = damper.ToSAM();
-            if(systemDamper == null)
+            if (systemDamper == null)
             {
                 return null;
             }
@@ -545,12 +545,12 @@ namespace SAM.Analytical.Tas.TPD
             BoundingBox2D boundingBox2D = null;
 
             List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
-            if(systemComponents != null)
+            if (systemComponents != null)
             {
                 Transform2D transform2D = null;
 
                 Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
-                if(location != null)
+                if (location != null)
                 {
                     transform2D = Transform2D.GetTranslation(location.ToVector());
                 }
@@ -563,11 +563,11 @@ namespace SAM.Analytical.Tas.TPD
                     }
 
                     List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc, componentConversionSettings);
-                    if(systemJSAMObjects != null)
+                    if (systemJSAMObjects != null)
                     {
-                        foreach(ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
+                        foreach (ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
                         {
-                            if(transform2D != null && systemJSAMObject is IDisplaySystemObject)
+                            if (transform2D != null && systemJSAMObject is IDisplaySystemObject)
                             {
                                 IDisplaySystemObject displaySystemObject = (IDisplaySystemObject)systemJSAMObject;
 
@@ -575,7 +575,7 @@ namespace SAM.Analytical.Tas.TPD
                                 systemPlantRoom.Add(systemJSAMObject as dynamic);
 
                                 BoundingBox2D boundingBox2D_Temp = displaySystemObject.BoundingBox2D;
-                                if(boundingBox2D_Temp != null)
+                                if (boundingBox2D_Temp != null)
                                 {
                                     if (boundingBox2D == null)
                                     {
@@ -600,12 +600,12 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             List<Duct> ducts = Query.Ducts(componentGroup);
-            if(ducts != null)
+            if (ducts != null)
             {
                 foreach (Duct duct in ducts)
                 {
                     List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(duct);
-                    if(systemJSAMObjects != null)
+                    if (systemJSAMObjects != null)
                     {
                         result.AddRange(systemJSAMObjects);
                     }
@@ -615,10 +615,10 @@ namespace SAM.Analytical.Tas.TPD
             AirSystemGroup airSystemGroup = componentGroup.ToSAM(boundingBox2D);
             systemPlantRoom.Add(airSystemGroup);
 
-            foreach(ISystemJSAMObject systemJSAMObject in result)
+            foreach (ISystemJSAMObject systemJSAMObject in result)
             {
                 Core.Systems.ISystemComponent systemComponent = systemJSAMObject as Core.Systems.ISystemComponent;
-                if(systemComponent == null)
+                if (systemComponent == null)
                 {
                     continue;
                 }
@@ -641,7 +641,7 @@ namespace SAM.Analytical.Tas.TPD
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
             AirSystem airSystem = system.ToSAM();
-            if(airSystem == null)
+            if (airSystem == null)
             {
                 return null;
             }
@@ -651,8 +651,8 @@ namespace SAM.Analytical.Tas.TPD
             List<global::TPD.SystemComponent> systemComponents = system.SystemComponents<global::TPD.SystemComponent>();
             if (systemComponents != null)
             {
-                List< ComponentGroup > componentGroups = new List< ComponentGroup >();
-                
+                List<ComponentGroup> componentGroups = new List<ComponentGroup>();
+
                 foreach (global::TPD.SystemComponent systemComponent in systemComponents)
                 {
                     List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(systemComponent, tPDDoc, componentConversionSettings);
@@ -661,27 +661,33 @@ namespace SAM.Analytical.Tas.TPD
                         result.AddRange(systemJSAMObjects);
                     }
 
-                    if(systemComponent is ComponentGroup)
+                    if (systemComponent is ComponentGroup)
                     {
                         componentGroups.Add((ComponentGroup)systemComponent);
                     }
                 }
 
-                foreach(ComponentGroup componentGroup in componentGroups)
+                foreach (ComponentGroup componentGroup in componentGroups)
                 {
                     systemPlantRoom.Connect(componentGroup);
                 }
             }
 
-            foreach(ISystemJSAMObject systemJSAMObject in result)
+            foreach (ISystemJSAMObject systemJSAMObject in result)
             {
+                if(systemJSAMObject is ISystemGroup)
+                {
+                    systemPlantRoom.Connect(airSystem, (ISystemGroup)systemJSAMObject);
+                    continue;
+                }
+                
                 Core.Systems.ISystemComponent systemComponent = systemJSAMObject as Core.Systems.ISystemComponent;
                 if (systemComponent == null)
                 {
                     continue;
                 }
 
-                if(systemComponent is ISystemSpaceComponent)
+                if (systemComponent is ISystemSpaceComponent)
                 {
                     continue;
                 }
@@ -692,7 +698,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Add(airSystem);
 
             List<ISystemConnection> systemConnections = Connect(systemPlantRoom, system);
-            if(systemConnections != null)
+            if (systemConnections != null)
             {
                 result.AddRange(systemConnections);
             }
@@ -735,14 +741,14 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             int index_1 = systemPlantRoom.FindIndex(systemComponent_1, systemType, ConnectorStatus.Unconnected, Direction.Out);
-            if(index_1 == -1)
+            if (index_1 == -1)
             {
                 return null;
             }
 
             Core.Systems.ISystemComponent systemComponent_2 = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, guid_2);
             if (systemComponent_2 == null || !(systemComponent_2 is IDisplaySystemObject<SystemGeometryInstance>))
-            {               
+            {
                 return null;
             }
 
