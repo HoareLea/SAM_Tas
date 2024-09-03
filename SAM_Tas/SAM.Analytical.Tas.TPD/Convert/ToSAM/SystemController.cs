@@ -58,7 +58,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             systemController.Description = dynamic.Description;
-            Modify.SetReference(systemController, @dynamic.GUID);
+            //Modify.SetReference(systemController, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
