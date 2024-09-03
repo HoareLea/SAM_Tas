@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             switch(controller.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    systemController = new SystemIndoorController(@dynamic.Name);
+                    systemController = new SystemNormalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
