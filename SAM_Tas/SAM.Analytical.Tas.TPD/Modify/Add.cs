@@ -10,6 +10,25 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Modify
     {
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Controller controller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if(systemPlantRoom == null || controller == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            ISystemController systemController = controller.ToSAM();
+            if(systemController == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+            result.Add(systemController);
+
+            return result;
+        }
+
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.ISystemComponent systemComponent, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || systemComponent == null)
@@ -655,6 +674,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 foreach (global::TPD.SystemComponent systemComponent in systemComponents)
                 {
+
                     List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(systemComponent, tPDDoc, componentConversionSettings);
                     if (systemJSAMObjects != null)
                     {
@@ -672,6 +692,20 @@ namespace SAM.Analytical.Tas.TPD
                     systemPlantRoom.Connect(componentGroup);
                 }
             }
+
+            List<Controller> controllers = system.Controllers();
+            if(controllers != null)
+            {
+                foreach(Controller controller in controllers)
+                {
+                    List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(controller, tPDDoc, componentConversionSettings);
+                    if (systemJSAMObjects != null)
+                    {
+                        result.AddRange(systemJSAMObjects);
+                    }
+                }
+            }
+
 
             foreach (ISystemJSAMObject systemJSAMObject in result)
             {
