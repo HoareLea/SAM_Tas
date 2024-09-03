@@ -31,6 +31,10 @@ namespace SAM.Analytical.Tas.TPD
                     systemController = new SystemDifferenceController(@dynamic.Name);
                     break;
 
+                case tpdControlType.tpdControlPassThrough:
+                    systemController = new SystemPassthroughController(@dynamic.Name);
+                    break;
+
                 case tpdControlType.tpdControlNot:
                     systemController = new SystemNotLogicalController(@dynamic.Name);
                     break;
