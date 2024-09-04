@@ -54,6 +54,10 @@ namespace SAM.Analytical.Tas.TPD
                 case tpdControlType.tpdControlIf:
                     systemController = new SystemIfLogicalController(@dynamic.Name);
                     break;
+
+                //case tpdControlType.tpdControlGroup:
+                //    systemController = new SystemNormalController(@dynamic.Name);
+                //    break;
             }
 
             if(systemController == null)
