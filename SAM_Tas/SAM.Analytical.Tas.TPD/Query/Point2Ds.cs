@@ -1,5 +1,8 @@
 ﻿using SAM.Geometry.Planar;
+using SAM.Geometry.Spatial;
+using SAM.Geometry.Systems;
 using System.Collections.Generic;
+using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -12,6 +15,8 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+
+
             int nodeCount = duct.GetNodeCount();
             if (nodeCount < 1)
             {
@@ -22,6 +27,27 @@ namespace SAM.Analytical.Tas.TPD
             for (int i = 1; i <= nodeCount; i++)
             {
                 result.Add(Convert.ToSAM(duct.GetNodePosX(i), duct.GetNodePosY(i)));
+            }
+
+
+            ComponentGroup componentGroup = duct.GetGroup();
+            if (componentGroup != null)
+            {
+                Transform2D transform2D = null;
+
+                Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
+                if (location != null)
+                {
+                    transform2D = Geometry.Planar.Transform2D.GetTranslation(location.ToVector());
+                }
+
+                if(transform2D != null)
+                {
+                    for (int i = 0; i < result.Count; i++)
+                    {
+                        result[i].Transform(transform2D);
+                    }
+                }
             }
 
             return result;
