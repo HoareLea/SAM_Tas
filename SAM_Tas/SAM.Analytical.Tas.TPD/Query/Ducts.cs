@@ -117,14 +117,14 @@ namespace SAM.Analytical.Tas.TPD
 
             string guid_1 = null;
 
-            dynamic componentGroup_1 = (systemComponent_1 as dynamic).GetGroup();
+            dynamic componentGroup_1 = systemComponent_1 is global::TPD.ComponentGroup ? systemComponent_1 : (systemComponent_1 as dynamic).GetGroup();
             if (componentGroup_1 != null)
             {
                 guid_1 = componentGroup_1.Guid;
             }
 
             string guid_2 = null;
-            dynamic componentGroup_2 = (systemComponent_2 as dynamic).GetGroup();
+            dynamic componentGroup_2 = systemComponent_2 is global::TPD.ComponentGroup ? systemComponent_2 : (systemComponent_2 as dynamic).GetGroup();
             if (componentGroup_2 != null)
             {
                 guid_2 = componentGroup_2.Guid;
