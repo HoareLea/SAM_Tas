@@ -196,7 +196,26 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_In_SAM, systemComponent_Out_SAM, airSystem, Direction.Out);
+                        //TODO: Get Duct points here
+
+                        List<Duct> ducts = Query.Ducts(systemComponent_In, Direction.Out, systemComponent_Out);
+
+                        List<Point2D> point2Ds = null;
+                        if(ducts != null && ducts.Count != 0)
+                        {
+                            point2Ds = new List<Point2D>();
+                            foreach(Duct duct in ducts)
+                            {
+                                List<Point2D> point2Ds_Temp = Query.Point2Ds(duct);
+                                if(point2Ds_Temp != null)
+                                {
+                                    point2Ds.AddRange(point2Ds_Temp);
+                                }
+
+                            }
+                        }
+
+                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_In_SAM, systemComponent_Out_SAM, airSystem, Direction.Out, point2Ds);
                         if(systemConnection != null)
                         {
                             result.Add(systemConnection);
