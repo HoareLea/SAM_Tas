@@ -12,8 +12,6 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            int index = 1;
-
             List<Controller> result = new List<Controller>();
 
             int count = system.GetControllerCount();
@@ -27,7 +25,28 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             return result;
+        }
 
+        public static List<Controller> Controllers(this IComponentGroup componentGroup)
+        {
+            if (componentGroup == null)
+            {
+                return null;
+            }
+
+            List<Controller> result = new List<Controller>();
+
+            int count = componentGroup.GetControllerCount();
+            for (int i = 1; i <= count; i++)
+            {
+                Controller controller = componentGroup.GetController(i);
+                if (controller != null)
+                {
+                    result.Add(controller);
+                }
+            }
+
+            return result;
         }
     }
 }
