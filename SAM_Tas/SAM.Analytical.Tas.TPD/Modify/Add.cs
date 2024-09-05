@@ -3,8 +3,11 @@ using SAM.Core;
 using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Systems;
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using TPD;
+using static SAM.Analytical.Tas.TPD.Query;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -581,7 +584,6 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-
             List<Controller> controllers = componentGroup.Controllers();
             if (controllers != null)
             {
@@ -593,6 +595,28 @@ namespace SAM.Analytical.Tas.TPD
                         result.AddRange(systemJSAMObjects);
                     }
                 }
+
+                //List<string> pointers = new List<string>();
+                //foreach (Controller controller in controllers)
+                //{
+                //    dynamic @dynamic = controller;
+
+                //    GCHandle gCHandle = GCHandle.Alloc(controller);
+
+                //    pointers.Add(((IntPtr)gCHandle).ToString());
+                //}
+
+                //controllers = componentGroup.Controllers();
+                //foreach (Controller controller in controllers)
+                //{
+                //    dynamic @dynamic = controller;
+
+                //    GCHandle gCHandle = GCHandle.Alloc(controller);
+
+                //    string pointer = ((IntPtr)gCHandle).ToString();
+
+                //    int index = pointers.IndexOf(pointer);
+                //}
             }
 
             Transform2D transform2D = null;
@@ -724,7 +748,6 @@ namespace SAM.Analytical.Tas.TPD
                     }
                 }
             }
-
 
             foreach (ISystemJSAMObject systemJSAMObject in result)
             {

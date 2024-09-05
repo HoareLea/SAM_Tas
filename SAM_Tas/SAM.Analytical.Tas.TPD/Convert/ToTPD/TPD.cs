@@ -543,7 +543,7 @@ namespace SAM.Analytical.Tas.TPD
                                     }
 
                                     dictionary_TPD[systemComponent_Temp.Guid] = systemComponent_TPD;
-                                    systemComponent_Temp.SetReference(systemComponent_TPD.Reference());
+                                    systemComponent_Temp.SetReference(Query.Reference(systemComponent_TPD));
                                     systemPlantRoom.Add(systemComponent_Temp);
                                 }
 

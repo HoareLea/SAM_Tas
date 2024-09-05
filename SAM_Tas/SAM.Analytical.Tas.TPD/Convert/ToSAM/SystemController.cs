@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -63,6 +64,12 @@ namespace SAM.Analytical.Tas.TPD
             if(systemController == null)
             {
                 return null;
+            }
+
+            IReference reference = Create.Reference(controller);
+            if (reference != null)
+            {
+                Modify.SetReference(systemController, reference.ToString());
             }
 
             systemController.Description = dynamic.Description;
