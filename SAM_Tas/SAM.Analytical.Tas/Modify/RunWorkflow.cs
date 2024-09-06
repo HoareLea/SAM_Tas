@@ -1,9 +1,4 @@
-﻿using SAM.Core;
-using SAM.Core.Tas;
-using SAM.Weather;
-using System.Collections.Generic;
-
-namespace SAM.Analytical.Tas
+﻿namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {

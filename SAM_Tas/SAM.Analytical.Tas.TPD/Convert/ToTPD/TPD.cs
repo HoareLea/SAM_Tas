@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using SAM.Analytical.Systems;
 using System.Linq;
 using SAM.Core;
-using System.Data;
 
 namespace SAM.Analytical.Tas.TPD
 {

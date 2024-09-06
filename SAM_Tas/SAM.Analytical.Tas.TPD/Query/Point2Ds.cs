@@ -1,6 +1,4 @@
 ﻿using SAM.Geometry.Planar;
-using SAM.Geometry.Spatial;
-using SAM.Geometry.Systems;
 using System.Collections.Generic;
 using TPD;
 

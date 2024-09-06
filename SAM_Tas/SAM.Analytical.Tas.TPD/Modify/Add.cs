@@ -3,11 +3,8 @@ using SAM.Core;
 using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Systems;
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using TPD;
-using static SAM.Analytical.Tas.TPD.Query;
 
 namespace SAM.Analytical.Tas.TPD
 {

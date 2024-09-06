@@ -16,6 +16,8 @@ namespace SAM.Analytical.Tas.TPD
             {
             };
 
+            Modify.SetReference(result, plantRoom.GUID());
+
             return result;
         }
     }

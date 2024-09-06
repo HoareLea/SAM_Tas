@@ -7,6 +7,11 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static List<Controller> Controllers(this global::TPD.System system)
         {
+            return Controllers(system as ISystem);
+        }
+
+        public static List<Controller> Controllers(this ISystem system)
+        {
             if (system == null)
             {
                 return null;
@@ -18,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             for (int i = 1; i <= count; i++)
             {
                 Controller controller = system.GetController(i);
-                if(controller != null)
+                if (controller != null)
                 {
                     result.Add(controller);
                 }

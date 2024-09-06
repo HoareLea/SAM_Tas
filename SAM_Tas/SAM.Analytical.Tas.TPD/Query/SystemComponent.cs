@@ -1,8 +1,5 @@
-﻿using SAM.Core;
-using SAM.Core.Systems;
+﻿using SAM.Core.Systems;
 using System;
-using System.Linq;
-using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -26,35 +23,6 @@ namespace SAM.Analytical.Tas.TPD
             });
 
             return systemPlantRoom.GetSystemComponent(func);
-        }
-
-        public static Controller Controller(this SystemPlantRoom systemPlantRoom, string reference)
-        {
-            if(systemPlantRoom == null || string.IsNullOrWhiteSpace(reference))
-            {
-                return null;
-            }
-
-            PathReference pathReference = Core.Convert.ComplexReference(reference) as PathReference;
-            if(pathReference == null)
-            {
-                return null;
-            }
-
-            if(pathReference.Count() < 2)
-            {
-                return null;
-            }
-
-            throw new NotImplementedException();
-
-            ObjectReference objectReference = pathReference.ElementAt(0);
-            if(objectReference.TypeName == null)
-            {
-                return null;
-            }
-
-            return null;
         }
     }
 }

@@ -30,8 +30,8 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ObjectReference> objectReferences = new List<ObjectReference>() 
             { 
-                new ObjectReference(typeof(PlantRoom), plantRoom.GUID()), 
-                new ObjectReference(typeof(global::TPD.System), system.GUID) 
+                new ObjectReference(typeof(PlantRoom), Guid.Parse(plantRoom.GUID())), 
+                new ObjectReference(typeof(global::TPD.System), Guid.Parse(system.GUID)) 
             };
 
             List<Controller> controllers = null;
@@ -43,7 +43,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 controllers = componentGroup.Controllers();
 
-                objectReferences.Add(new ObjectReference(typeof(ComponentGroup), (componentGroup as dynamic).Guid));
+                objectReferences.Add(new ObjectReference(typeof(ComponentGroup), Guid.Parse((componentGroup as dynamic).Guid)));
             }
             else
             {

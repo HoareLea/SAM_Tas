@@ -1,5 +1,4 @@
-﻿using SAM.Analytical.Systems;
-using SAM.Core;
+﻿using SAM.Core;
 using SAM.Core.Systems;
 using System.Collections.Generic;
 
