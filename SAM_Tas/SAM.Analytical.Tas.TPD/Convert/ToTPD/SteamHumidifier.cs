@@ -13,9 +13,9 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             dynamic result = system.AddSteamHumidifier();
-            result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
-            result.Setpoint.Value = 14;
-            result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
+            //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
+            //result.Setpoint.Value = 14;
+            //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
             displaySystemSteamHumidifier.SetLocation(result as SystemComponent);
 
