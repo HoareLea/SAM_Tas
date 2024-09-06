@@ -543,6 +543,18 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         systemComponent_TPD = ToTPD((DisplaySystemSteamHumidifier)systemComponent_Temp, system) as global::TPD.ISystemComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemDesiccantWheel)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemDesiccantWheel)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemDXCoil)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemDXCoil)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemMixingBox)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemMixingBox)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                    }
 
                                     if (systemComponent_TPD == null)
                                     {

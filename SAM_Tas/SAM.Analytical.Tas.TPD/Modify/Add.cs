@@ -592,28 +592,6 @@ namespace SAM.Analytical.Tas.TPD
                         result.AddRange(systemJSAMObjects);
                     }
                 }
-
-                //List<string> pointers = new List<string>();
-                //foreach (Controller controller in controllers)
-                //{
-                //    dynamic @dynamic = controller;
-
-                //    GCHandle gCHandle = GCHandle.Alloc(controller);
-
-                //    pointers.Add(((IntPtr)gCHandle).ToString());
-                //}
-
-                //controllers = componentGroup.Controllers();
-                //foreach (Controller controller in controllers)
-                //{
-                //    dynamic @dynamic = controller;
-
-                //    GCHandle gCHandle = GCHandle.Alloc(controller);
-
-                //    string pointer = ((IntPtr)gCHandle).ToString();
-
-                //    int index = pointers.IndexOf(pointer);
-                //}
             }
 
             Transform2D transform2D = null;
