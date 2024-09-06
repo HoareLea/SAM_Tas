@@ -26,49 +26,92 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(system, true);
-            if(systemComponents == null || systemComponents.Count == 0)
-            {
-                return null;
-            }
-
             List<ISystemConnection> result = new List<ISystemConnection>();
-            foreach (global::TPD.SystemComponent systemComponent_TPD in systemComponents)
+
+            List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(system, true);
+            if(systemComponents != null && systemComponents.Count != 0)
             {
-                if(systemComponent_TPD == null)
+                foreach (global::TPD.SystemComponent systemComponent_TPD in systemComponents)
                 {
-                    continue;
-                }
-
-                string reference_1 = (systemComponent_TPD as dynamic).GUID;
-
-                Core.Systems.ISystemComponent systemComponent_SAM_1 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_1);
-
-                Direction direction = Direction.In;
-
-                List<Duct> ducts = Query.Ducts(systemComponent_TPD, direction);
-                if (ducts == null || ducts.Count == 0)
-                {
-                    continue;
-                }
-
-                foreach (Duct duct in ducts)
-                {
-                    string reference_2 = (duct.GetUpstreamComponent() as dynamic)?.GUID;
-
-                    Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
-                    if (systemComponent_SAM_2 == null)
+                    if (systemComponent_TPD == null)
                     {
                         continue;
                     }
 
-                    List<Point2D> point2Ds = Query.Point2Ds(duct);
+                    string reference_1 = (systemComponent_TPD as dynamic).GUID;
 
-                    ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, systemComponent_SAM_2, airSystem, direction, point2Ds);
-                    if (systemConnection != null)
+                    Core.Systems.ISystemComponent systemComponent_SAM_1 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_1);
+
+                    Direction direction = Direction.In;
+
+                    List<Duct> ducts = Query.Ducts(systemComponent_TPD, direction);
+                    if (ducts == null || ducts.Count == 0)
                     {
-                        result.Add(systemConnection);
+                        continue;
                     }
+
+                    foreach (Duct duct in ducts)
+                    {
+                        string reference_2 = (duct.GetUpstreamComponent() as dynamic)?.GUID;
+
+                        Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                        if (systemComponent_SAM_2 == null)
+                        {
+                            continue;
+                        }
+
+                        List<Point2D> point2Ds = Query.Point2Ds(duct);
+
+                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, systemComponent_SAM_2, airSystem, direction, point2Ds);
+                        if (systemConnection != null)
+                        {
+                            result.Add(systemConnection);
+                        }
+                    }
+                }
+            }
+
+            List<Controller> controllers = Query.Controllers(system);
+            if(controllers != null && controllers.Count != 0)
+            {
+                foreach(Controller controller in controllers)
+                {
+                    if (controller == null)
+                    {
+                        continue;
+                    }
+
+                    IReference reference_1 = controller.Reference();
+
+                    ISystemController systemController = systemPlantRoom.SystemController<ISystemController>(reference_1);
+                    if(systemController == null)
+                    {
+                        continue;
+                    }
+
+                    List<ControlArc> controlArcs = controller.ControlArcs();
+                    if(controlArcs != null && controlArcs.Count != 0)
+                    {
+                        foreach (ControlArc controlArc in controlArcs)
+                        {
+                            string reference_2 = (controlArc.GetComponent() as dynamic)?.GUID;
+
+                            Core.Systems.ISystemComponent systemComponent_SAM = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                            if (systemComponent_SAM == null)
+                            {
+                                continue;
+                            }
+
+                            List<Point2D> point2Ds = Query.Point2Ds(controlArc);
+
+                            ISystemConnection systemConnection = Connect(systemPlantRoom, systemController, systemComponent_SAM, point2Ds);
+                            if (systemConnection != null)
+                            {
+                                result.Add(systemConnection);
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -137,6 +180,16 @@ namespace SAM.Analytical.Tas.TPD
             DisplaySystemConnection result = new DisplaySystemConnection(new SystemConnection(new SystemType(system), systemComponent_1, index_1, systemComponent_2, index_2), point2Ds_Temp?.ToArray());
 
             return systemPlantRoom.Connect(result, system) ? result : null;
+        }
+
+        public static ISystemConnection Connect(this SystemPlantRoom systemPlantRoom, ISystemController systemController, Core.Systems.ISystemComponent systemComponent, IEnumerable<Point2D> point2Ds = null)
+        {
+            if(systemPlantRoom == null || systemController == null || systemComponent == null)
+            {
+                return null;
+            }
+
+            return null;
         }
 
         public static List<ISystemConnection> Connect(this SystemPlantRoom systemPlantRoom, ComponentGroup componentGroup)

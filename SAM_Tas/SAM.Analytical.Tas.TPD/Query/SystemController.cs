@@ -15,7 +15,12 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            PathReference pathReference = Core.Convert.ComplexReference(reference) as PathReference;
+            return SystemController<T>(systemPlantRoom, Core.Convert.ComplexReference(reference));
+        }
+
+        public static ISystemController SystemController<T>(this SystemPlantRoom systemPlantRoom, IReference reference)
+        {
+            PathReference pathReference = reference as PathReference;
             if (pathReference == null)
             {
                 return null;
@@ -30,7 +35,7 @@ namespace SAM.Analytical.Tas.TPD
             ObjectReference objectReference = objectReferences[0];
             if (objectReference.TypeName == Core.Query.FullTypeName(typeof(PlantRoom)))
             {
-                if(Core.Query.TryConvert(systemPlantRoom.Reference(), out System.Guid guid_SystemPlantRoom))
+                if (Core.Query.TryConvert(systemPlantRoom.Reference(), out System.Guid guid_SystemPlantRoom))
                 {
                     if (Core.Query.TryConvert(objectReference.Reference.ToString(), out System.Guid guid))
                     {
@@ -75,13 +80,13 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             List<ISystemController> systemControllers = system == null ? systemPlantRoom.GetSystemComponents<ISystemController>() : systemPlantRoom.GetSystemComponents<ISystemController>(system);
-            foreach(ISystemController systemController in systemControllers)
+            foreach (ISystemController systemController in systemControllers)
             {
-                if(systemController?.Reference() == pathReference.ToString())
+                if (systemController?.Reference() == pathReference.ToString())
                 {
-                    if(systemGroup != null)
+                    if (systemGroup != null)
                     {
-                        if(systemPlantRoom.GetRelatedObjects<ISystemController>(systemGroup)?.Find(x => (x as dynamic).Guid == ((dynamic)systemController).Guid) == null)
+                        if (systemPlantRoom.GetRelatedObjects<ISystemController>(systemGroup)?.Find(x => (x as dynamic).Guid == ((dynamic)systemController).Guid) == null)
                         {
                             continue;
                         }
