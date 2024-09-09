@@ -1,4 +1,6 @@
 ﻿using SAM.Analytical.Systems;
+using System;
+using System.Collections.Generic;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -17,7 +19,9 @@ namespace SAM.Analytical.Tas.TPD
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
-            displaySystemDXCoil.SetLocation(result as SystemComponent);
+            SystemComponent systemComponent = result as SystemComponent;
+
+            displaySystemDXCoil.SetLocation(systemComponent);
 
             return result as DXCoil;
         }
