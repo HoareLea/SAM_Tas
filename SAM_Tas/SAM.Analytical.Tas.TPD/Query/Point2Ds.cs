@@ -89,5 +89,27 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static List<Point2D> Point2Ds(SensorArc sensorArc)
+        {
+            if (sensorArc == null)
+            {
+                return null;
+            }
+
+            int nodeCount = sensorArc.GetNodeCount();
+            if (nodeCount < 1)
+            {
+                return null;
+            }
+
+            List<Point2D> result = new List<Point2D>();
+            for (int i = 1; i <= nodeCount; i++)
+            {
+                result.Add(Convert.ToSAM(sensorArc.GetNodePosX(i), sensorArc.GetNodePosY(i)));
+            }
+
+            return result;
+        }
     }
 }

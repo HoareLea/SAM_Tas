@@ -176,6 +176,44 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
 
+                    List<SensorArc> sensorArcs = controller.SensorArcs();
+                    if (sensorArcs != null && sensorArcs.Count != 0)
+                    {
+                        foreach(SensorArc sensorArc in sensorArcs)
+                        {
+                            ISystemJSAMObject systemJSAMObject = null;
+
+                            dynamic @dynamic = sensorArc.GetComponent();
+                            if (@dynamic != null)
+                            {
+                                string reference_2 = (@dynamic)?.GUID;
+                                systemJSAMObject  = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                            }
+                            
+                            if(systemJSAMObject == null)
+                            {
+                                @dynamic = sensorArc.GetDuct();
+
+                                //TODO: Add duct handling (issue with reference)
+                            }
+                            
+                            if(systemJSAMObject == null)
+                            {
+                                continue;
+                            }
+
+                            List<Point2D> point2Ds = Query.Point2Ds(sensorArc);
+
+                            DisplaySystemSensor displaySystemSensor = new DisplaySystemSensor(new SystemSensor(), point2Ds?.ToArray());
+
+                            systemPlantRoom.Add(displaySystemSensor);
+
+                            systemPlantRoom.Connect(displaySystemSensor, systemJSAMObject as dynamic);
+                            systemPlantRoom.Connect(displaySystemSensor, systemController);
+                            systemPlantRoom.Connect(displaySystemSensor, airSystem);
+                        }
+                    }
+
                 }
             }
 
@@ -244,18 +282,6 @@ namespace SAM.Analytical.Tas.TPD
             DisplaySystemConnection result = new DisplaySystemConnection(new SystemConnection(new SystemType(system), systemComponent_1, index_1, systemComponent_2, index_2), point2Ds_Temp?.ToArray());
 
             return systemPlantRoom.Connect(result, system) ? result : null;
-        }
-
-        public static ISystemConnection Connect(this SystemPlantRoom systemPlantRoom, ISystemController systemController, Core.Systems.ISystemComponent systemComponent, IEnumerable<Point2D> point2Ds = null)
-        {
-            if(systemPlantRoom == null || systemController == null || systemComponent == null)
-            {
-                return null;
-            }
-
-
-
-            return null;
         }
 
         public static List<ISystemConnection> Connect(this SystemPlantRoom systemPlantRoom, ComponentGroup componentGroup)
