@@ -75,7 +75,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            SystemType systemType_Control = new SystemType(typeof(ControlSystem));
+            SystemType systemType_Control = new SystemType(typeof(IControlSystem));
 
             List<Controller> controllers = Query.Controllers(system);
             if(controllers != null && controllers.Count != 0)
@@ -121,13 +121,13 @@ namespace SAM.Analytical.Tas.TPD
                             List<Point2D> point2Ds = Query.Point2Ds(controlArc);
 
 
-                            HashSet<int> indexes_1 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController, systemType_Control, direction: Direction.Out);
+                            HashSet<int> indexes_1 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.Out);
                             if (indexes_1 == null || indexes_1.Count == 0)
                             {
                                 continue;
                             }
 
-                            HashSet<int> indexes_2 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemComponent_SAM, systemType_Control);
+                            HashSet<int> indexes_2 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemComponent_SAM as dynamic, systemType_Control);
                             if (indexes_2 == null || indexes_2.Count == 0)
                             {
                                 continue;
