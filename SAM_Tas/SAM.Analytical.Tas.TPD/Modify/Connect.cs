@@ -95,7 +95,9 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-                    List<ControlArc> controlArcs = controller.ControlArcs();
+                    List<ControlArc> controlArcs;
+
+                    controlArcs = controller.ControlArcs();
                     if(controlArcs != null && controlArcs.Count != 0)
                     {
                         foreach (ControlArc controlArc in controlArcs)
@@ -177,6 +179,65 @@ namespace SAM.Analytical.Tas.TPD
 
                                 systemPlantRoom.Connect(displaySystemConnection, airSystem);
                             }
+                        }
+                    }
+
+                    controlArcs = controller.ChainControlArcs();
+                    if (controlArcs != null && controlArcs.Count != 0)
+                    {
+                        foreach (ControlArc controlArc in controlArcs)
+                        {
+                            Controller controller_2 = controlArc.GetController();
+                            if (controller_2 == null)
+                            {
+                                continue;
+                            }
+
+                            IReference reference_2 = controller_2.Reference();
+
+                            ISystemController systemController_2 = systemPlantRoom.SystemController<ISystemController>(reference_2);
+                            if (systemController == null)
+                            {
+                                continue;
+                            }
+
+                            List<Point2D> point2Ds = Query.Point2Ds(controlArc);
+
+                            HashSet<int> indexes_1 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController, systemType_Control, direction: Direction.In);
+                            if (indexes_1 == null || indexes_1.Count == 0)
+                            {
+                                continue;
+                            }
+
+                            HashSet<int> indexes_2 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController_2, systemType_Control, direction: Direction.Out);
+                            if (indexes_2 == null || indexes_2.Count == 0)
+                            {
+                                continue;
+                            }
+
+                            int index_1 = indexes_1.ElementAt(0);
+                            int index_2 = indexes_2.ElementAt(0);
+
+                            Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(index_1);
+                            if (point2D_1 == null)
+                            {
+                                return null;
+                            }
+
+                            point2Ds.Add(point2D_1);
+
+                            Point2D point2D_2 = (systemController_2 as dynamic).SystemGeometry.GetPoint2D(index_2);
+                            if (point2D_2 == null)
+                            {
+                                return null;
+                            }
+
+                            point2Ds.Insert(0, point2D_2);
+
+
+                            DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController, index_1, systemController_2, index_2), point2Ds?.ToArray());
+
+                            systemPlantRoom.Connect(displaySystemConnection, airSystem);
                         }
                     }
 

@@ -29,6 +29,30 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
+        public static List<ControlArc> ChainControlArcs(this Controller controller)
+        {
+            if (controller == null)
+            {
+                return null;
+            }
+
+            List<ControlArc> result = new List<ControlArc>();
+
+            int count = controller.GetChainArcCount();
+            for (int i = 1; i <= count; i++)
+            {
+                ControlArc controlArc = controller.GetChainArc(i);
+                if (controlArc == null)
+                {
+                    continue;
+                }
+
+                result.Add(controlArc);
+            }
+
+            return result;
+        }
+
         public static List<ControlArc> ControlArcs(this SystemComponent systemComponent)
         {
             if (systemComponent == null)
