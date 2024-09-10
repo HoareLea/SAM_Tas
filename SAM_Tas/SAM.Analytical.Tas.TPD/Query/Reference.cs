@@ -115,5 +115,23 @@ namespace SAM.Analytical.Tas.TPD
 
             return (componentGroup as dynamic).GUID;
         }
+
+        public static string Reference(this Duct duct)
+        {
+            if(duct == null)
+            {
+                return null;
+            }
+
+            string reference_1 = Reference(duct.GetDownstreamComponent());
+            int port_1 = duct.GetDownstreamComponentPort();
+            string reference_2 = Reference(duct.GetUpstreamComponent());
+            int port_2 = duct.GetUpstreamComponentPort();
+
+            List<string> values = new List<string>() { reference_1, port_1.ToString(), reference_2, port_2.ToString() };
+            values.RemoveAll(x => x == null);
+
+            return string.Join("-", values);
+        }
     }
 }

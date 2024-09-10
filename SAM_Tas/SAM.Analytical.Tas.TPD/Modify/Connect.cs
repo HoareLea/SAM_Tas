@@ -65,11 +65,17 @@ namespace SAM.Analytical.Tas.TPD
                         ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, systemComponent_SAM_2, airSystem, direction, point2Ds);
                         if (systemConnection != null)
                         {
+                            systemConnection.SetReference(Query.Reference(duct));
+                            systemPlantRoom.Add(systemConnection);
+
                             result.Add(systemConnection);
                         }
                     }
                 }
             }
+
+
+            SystemType systemType_Control = new SystemType(typeof(ControlSystem));
 
             List<Controller> controllers = Query.Controllers(system);
             if(controllers != null && controllers.Count != 0)
@@ -112,15 +118,14 @@ namespace SAM.Analytical.Tas.TPD
 
                             List<Point2D> point2Ds = Query.Point2Ds(controlArc);
 
-                            SystemType systemType = new SystemType(typeof(ControlSystem));
 
-                            HashSet<int> indexes_1 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController, systemType);
+                            HashSet<int> indexes_1 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController, systemType_Control, direction: Direction.Out);
                             if (indexes_1 == null || indexes_1.Count == 0)
                             {
                                 continue;
                             }
 
-                            HashSet<int> indexes_2 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemComponent_SAM, systemType);
+                            HashSet<int> indexes_2 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemComponent_SAM, systemType_Control);
                             if (indexes_2 == null || indexes_2.Count == 0)
                             {
                                 continue;
@@ -172,47 +177,70 @@ namespace SAM.Analytical.Tas.TPD
 
                                 systemPlantRoom.Connect(displaySystemConnection, airSystem);
                             }
-
                         }
                     }
 
-                    List<SensorArc> sensorArcs = controller.SensorArcs();
-                    if (sensorArcs != null && sensorArcs.Count != 0)
+                    HashSet<int> indexes = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController, systemType_Control, direction: Direction.In);
+                    if(indexes != null || indexes.Count != 0)
                     {
-                        foreach(SensorArc sensorArc in sensorArcs)
+                        Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(indexes.ElementAt(0));
+                        if (point2D_1 == null)
                         {
-                            ISystemJSAMObject systemJSAMObject = null;
+                            return null;
+                        }
 
-                            dynamic @dynamic = sensorArc.GetComponent();
-                            if (@dynamic != null)
+                        List<SensorArc> sensorArcs = controller.SensorArcs();
+                        if (sensorArcs != null && sensorArcs.Count != 0)
+                        {
+                            foreach (SensorArc sensorArc in sensorArcs)
                             {
-                                string reference_2 = (@dynamic)?.GUID;
-                                systemJSAMObject  = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                                List<Point2D> point2Ds = Query.Point2Ds(sensorArc);
+                                point2Ds.Add(point2D_1);
+
+                                ISystemJSAMObject systemJSAMObject = null;
+
+                                dynamic @dynamic = sensorArc.GetComponent();
+                                if (@dynamic != null)
+                                {
+                                    string reference_2 = (@dynamic)?.GUID;
+                                    systemJSAMObject = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                                }
+
+                                if (systemJSAMObject == null)
+                                {
+                                    @dynamic = sensorArc.GetDuct();
+
+                                    string reference = Query.Reference(dynamic);
+                                    DisplaySystemConnection displaySystemConnection = systemPlantRoom.Find<DisplaySystemConnection>(x => x.Reference() == reference);
+
+                                    SystemPolyline systemPolyline = displaySystemConnection?.SystemGeometry;
+                                    if (systemPolyline != null)
+                                    {
+                                        Polyline2D polyline2D = new Polyline2D(systemPolyline);
+
+                                        point2Ds.Insert(0, polyline2D.Closest(point2Ds[0], true));
+                                    }
+
+                                    systemJSAMObject = displaySystemConnection;
+                                }
+
+                                if (systemJSAMObject == null)
+                                {
+                                    continue;
+                                }
+
+                                DisplaySystemSensor displaySystemSensor = new DisplaySystemSensor(new SystemSensor(), point2Ds?.ToArray());
+
+                                systemPlantRoom.Add(displaySystemSensor);
+
+                                systemPlantRoom.Connect(displaySystemSensor, systemJSAMObject as dynamic);
+                                systemPlantRoom.Connect(displaySystemSensor, systemController);
+                                systemPlantRoom.Connect(displaySystemSensor, airSystem);
                             }
-                            
-                            if(systemJSAMObject == null)
-                            {
-                                @dynamic = sensorArc.GetDuct();
-
-                                //TODO: Add duct handling (issue with reference)
-                            }
-                            
-                            if(systemJSAMObject == null)
-                            {
-                                continue;
-                            }
-
-                            List<Point2D> point2Ds = Query.Point2Ds(sensorArc);
-
-                            DisplaySystemSensor displaySystemSensor = new DisplaySystemSensor(new SystemSensor(), point2Ds?.ToArray());
-
-                            systemPlantRoom.Add(displaySystemSensor);
-
-                            systemPlantRoom.Connect(displaySystemSensor, systemJSAMObject as dynamic);
-                            systemPlantRoom.Connect(displaySystemSensor, systemController);
-                            systemPlantRoom.Connect(displaySystemSensor, airSystem);
                         }
                     }
+
+
 
                 }
             }
@@ -341,8 +369,6 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
-                        //TODO: Get Duct points here
-
                         List<Duct> ducts = Query.Ducts(systemComponent_In, Direction.Out, systemComponent_Out);
 
                         List<Point2D> point2Ds = null;
@@ -361,8 +387,15 @@ namespace SAM.Analytical.Tas.TPD
                         }
 
                         ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_In_SAM, systemComponent_Out_SAM, airSystem, Direction.Out, point2Ds);
-                        if(systemConnection != null)
+                        
+                        if (systemConnection != null)
                         {
+                            if(ducts != null && ducts.Count != 0)
+                            {
+                                systemConnection.SetReference(Query.Reference(ducts[0]));
+                                systemPlantRoom.Add(systemConnection);
+                            }
+
                             result.Add(systemConnection);
                         }
                     }
