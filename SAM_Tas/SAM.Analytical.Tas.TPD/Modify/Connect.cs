@@ -241,7 +241,7 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
 
-                    HashSet<int> indexes = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController, systemType_Control, direction: Direction.In);
+                    HashSet<int> indexes = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
                     if(indexes != null || indexes.Count != 0)
                     {
                         Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(indexes.ElementAt(0));
