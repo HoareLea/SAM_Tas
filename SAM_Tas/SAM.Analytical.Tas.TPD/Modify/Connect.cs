@@ -203,13 +203,13 @@ namespace SAM.Analytical.Tas.TPD
 
                             List<Point2D> point2Ds = Query.Point2Ds(controlArc);
 
-                            HashSet<int> indexes_1 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController, systemType_Control, direction: Direction.In);
+                            HashSet<int> indexes_1 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
                             if (indexes_1 == null || indexes_1.Count == 0)
                             {
                                 continue;
                             }
 
-                            HashSet<int> indexes_2 = Core.Systems.Query.FindIndexes(systemPlantRoom, systemController_2, systemType_Control, direction: Direction.Out);
+                            HashSet<int> indexes_2 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController_2 as dynamic, systemType_Control, direction: Direction.Out);
                             if (indexes_2 == null || indexes_2.Count == 0)
                             {
                                 continue;
