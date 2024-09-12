@@ -29,30 +29,6 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static List<ControlArc> ChainControlArcs(this Controller controller)
-        {
-            if (controller == null)
-            {
-                return null;
-            }
-
-            List<ControlArc> result = new List<ControlArc>();
-
-            int count = controller.GetChainArcCount();
-            for (int i = 1; i <= count; i++)
-            {
-                ControlArc controlArc = controller.GetChainArc(i);
-                if (controlArc == null)
-                {
-                    continue;
-                }
-
-                result.Add(controlArc);
-            }
-
-            return result;
-        }
-
         public static List<ControlArc> ControlArcs(this SystemComponent systemComponent)
         {
             if (systemComponent == null)
@@ -79,6 +55,52 @@ namespace SAM.Analytical.Tas.TPD
                     result.Add(controlArc);
                 }
             }
+
+            return result;
+        }
+
+        public static List<ControlArc> ControlArcs(this Controller controller, ComponentGroup componentGroup, bool control = true, bool chain = true)
+        {
+            if(controller == null || (!control && !chain))
+            {
+                return null;
+            }
+
+            List<ControlArc> result = new List<ControlArc>();
+
+            if(chain)
+            {
+                List<ControlArc> controlArcs = controller.ChainControlArcs();
+                if (controlArcs != null)
+                {
+                    foreach (ControlArc controlArc_Temp in controlArcs)
+                    {
+                        ComponentGroup componentGroup_Temp = controlArc_Temp.GetGroup();
+                        if (componentGroup_Temp != null && componentGroup_Temp.Reference() == componentGroup.Reference())
+                        {
+                            result.Add(controlArc_Temp);
+                        }
+                    }
+                }
+            }
+
+            if(control)
+            {
+                List<ControlArc> controlArcs = controller.ControlArcs();
+                if (controlArcs != null)
+                {
+                    foreach (ControlArc controlArc_Temp in controlArcs)
+                    {
+                        ComponentGroup componentGroup_Temp = controlArc_Temp.GetGroup();
+                        if (componentGroup_Temp != null && componentGroup_Temp.Reference() == componentGroup.Reference())
+                        {
+                            result.Add(controlArc_Temp);
+                        }
+                    }
+                }
+            }
+
+
 
             return result;
         }
