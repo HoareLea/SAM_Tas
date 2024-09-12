@@ -109,6 +109,26 @@ namespace SAM.Analytical.Tas.TPD
                 result.Add(Convert.ToSAM(sensorArc.GetNodePosX(i), sensorArc.GetNodePosY(i)));
             }
 
+            ComponentGroup componentGroup = (sensorArc?.GetComponent() as dynamic)?.GetGroup();
+            if (componentGroup != null)
+            {
+                Transform2D transform2D = null;
+
+                Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
+                if (location != null)
+                {
+                    transform2D = Geometry.Planar.Transform2D.GetTranslation(location.ToVector());
+                }
+
+                if (transform2D != null)
+                {
+                    for (int i = 0; i < result.Count; i++)
+                    {
+                        result[i].Transform(transform2D);
+                    }
+                }
+            }
+
             return result;
         }
     }
