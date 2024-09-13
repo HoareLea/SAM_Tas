@@ -5,6 +5,7 @@ using SAM.Geometry.Planar;
 using SAM.Geometry.Spatial;
 using SAM.Geometry.Systems;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TPD;
@@ -99,10 +100,19 @@ namespace SAM.Analytical.Tas.TPD
 
                     List<Controller> controllers_Temp = null;
 
-                    controllers_Temp = controllers_Group.FindAll(x => x.ControlType != tpdControlType.tpdControlGroup);
-                    for (int i = 1; i <= controllers_Temp.Count; i++)
+                    controllers_Temp = controllers_Group.FindAll(x => x.ControlType == tpdControlType.tpdControlGroup);
+                    int count = controllers_Temp.Count;
+                    for (int i = 0; i < count; i++)
                     {
-                        Controller controller_1 = controllers_Temp[i - 1];
+                        Controller controller_1 = controllers_Temp[i];
+                        int chainArcCount = controller_1.GetChainArcCount();
+                        if(chainArcCount == 0)
+                        {
+                            continue;
+                        }
+
+                        controller_1 = (controller_1.GetChainArc(1) as dynamic).GetController();
+
                         IReference reference_1 = controller_1.Reference();
                         ISystemController systemController_1 = systemPlantRoom.SystemController<ISystemController>(reference_1);
                         if (systemController_1 == null)
@@ -110,7 +120,7 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
-                        ControlArc controlArc = componentGroup.GetGroupControlArc(i, 1);
+                        ControlArc controlArc = componentGroup.GetGroupControlArc(count - i, 1);
                         if (controlArc == null)
                         {
                             continue;
@@ -132,50 +142,36 @@ namespace SAM.Analytical.Tas.TPD
 
                         controlArcs.Add(controlArc);
 
+                        Dictionary<int, Point2D> dictionary = null;
 
                         List<Point2D> point2Ds = new List<Point2D>();
-                        foreach (ControlArc controlArc_Temp in controlArcs)
-                        {
-                            List<Point2D> point2Ds_Temp = Query.Point2Ds(controlArc_Temp);
-                        }
 
-                        HashSet<int> indexes_1 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController_1 as dynamic, systemType_Control, direction: Direction.Out);
-                        if (indexes_1 == null || indexes_1.Count == 0)
+                        dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController_1 as dynamic, systemType_Control, direction: Direction.Out);
+                        if(dictionary == null || dictionary.Count == 0)
                         {
                             continue;
                         }
 
-                        HashSet<int> indexes_2 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController_2 as dynamic, systemType_Control, direction: Direction.In);
-                        if (indexes_2 == null || indexes_2.Count == 0)
+                        int index_1 = dictionary.Keys.First();
+
+                        point2Ds.Add(dictionary[index_1]);
+
+                        dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController_2 as dynamic, systemType_Control, direction: Direction.In);
+                        if (dictionary == null || dictionary.Count == 0)
                         {
                             continue;
                         }
 
-                        int index_1 = indexes_1.ElementAt(0);
-                        int index_2 = indexes_2.ElementAt(0);
+                        int index_2 = dictionary.Keys.First();
 
-                        Point2D point2D_1 = (systemController_1 as dynamic).SystemGeometry.GetPoint2D(index_1);
-                        if (point2D_1 == null)
-                        {
-                            return null;
-                        }
-
-                        point2Ds.Add(point2D_1);
-
-                        Point2D point2D_2 = (systemController_2 as dynamic).SystemGeometry.GetPoint2D(index_2);
-                        if (point2D_2 == null)
-                        {
-                            return null;
-                        }
-
-                        point2Ds.Insert(0, point2D_2);
-
+                        point2Ds.Insert(0, dictionary[index_2]);
 
                         DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController_1, index_1, systemController_2, index_2), point2Ds?.ToArray());
 
                         systemPlantRoom.Connect(displaySystemConnection, airSystem);
                     }
 
+                    controllers_Temp = controllers_Group.FindAll(x => x.ControlType != tpdControlType.tpdControlGroup);
                     for (int i = 1; i <= controllers_Temp.Count; i++)
                     {
                         Controller controller = controllers_Temp[i - 1];
@@ -191,10 +187,12 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
-                        HashSet<int> indexes = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
-                        if (indexes != null && indexes.Count != 0)
+                        Dictionary<int, Point2D> dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
+                        if(dictionary != null && dictionary.Count != 0)
                         {
-                            Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(indexes.ElementAt(0));
+                            int index = dictionary.Keys.First();
+
+                            Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(index);
                             if (point2D_1 == null)
                             {
                                 return null;
@@ -254,65 +252,51 @@ namespace SAM.Analytical.Tas.TPD
 
                             List<Point2D> point2Ds = Query.Point2Ds(controlArc);
 
-
-                            HashSet<int> indexes_1 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.Out);
-                            if (indexes_1 == null || indexes_1.Count == 0)
+                            Dictionary<int, Point2D> dictionary_1 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.Out);
+                            if(dictionary_1 == null || dictionary_1.Count == 0)
                             {
                                 continue;
                             }
 
-                            HashSet<int> indexes_2 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemComponent_SAM as dynamic, systemType_Control);
-                            if (indexes_2 == null || indexes_2.Count == 0)
+                            Dictionary<int, Point2D> dictionary_2 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemComponent_SAM as dynamic, systemType_Control);
+                            if (dictionary_2 == null || dictionary_2.Count == 0)
                             {
                                 continue;
                             }
 
-                            if(indexes_2.Count > 1)
+                            int index_1 = dictionary_1.Keys.ElementAt(0);
+                            int index_2 = dictionary_2.Keys.ElementAt(0);
+                            if(dictionary_2.Count > 1)
                             {
-                                indexes_2 = new HashSet<int>() { port == 1 ? indexes_2.Max() : indexes_2.Min() };
+                                index_2 = port == 1 ? dictionary_2.Keys.Max() : dictionary_2.Keys.Min();
                             }
 
-                            if(indexes_1.Count == 1 && indexes_2.Count == 1)
+                            Point2D point2D_1 = dictionary_1[index_1];
+                            Point2D point2D_2 = dictionary_2[index_2];
+
+                            List<Point2D> point2Ds_Temp = point2Ds == null ? null : new List<Point2D>(point2Ds);
+                            if (point2Ds_Temp == null || point2Ds_Temp.Count == 0)
                             {
-                                int index_1 = indexes_1.ElementAt(0);
-                                int index_2 = indexes_2.ElementAt(0);
-
-                                Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(index_1);
-                                if (point2D_1 == null)
+                                point2Ds_Temp = new List<Point2D>() { point2D_1, point2D_2 };
+                            }
+                            else
+                            {
+                                if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
                                 {
-                                    return null;
-                                }
-
-                                Point2D point2D_2 = (systemComponent_SAM as dynamic).SystemGeometry.GetPoint2D(index_2);
-                                if (point2D_2 == null)
-                                {
-                                    return null;
-                                }
-
-                                List<Point2D> point2Ds_Temp = point2Ds == null ? null : new List<Point2D>(point2Ds);
-                                if (point2Ds_Temp == null || point2Ds_Temp.Count == 0)
-                                {
-                                    point2Ds_Temp = new List<Point2D>() { point2D_1, point2D_2 };
+                                    point2Ds_Temp.Insert(0, point2D_1);
+                                    point2Ds_Temp.Add(point2D_2);
                                 }
                                 else
                                 {
-                                    if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
-                                    {
-                                        point2Ds_Temp.Insert(0, point2D_1);
-                                        point2Ds_Temp.Add(point2D_2);
-                                    }
-                                    else
-                                    {
-                                        point2Ds_Temp.Insert(0, point2D_2);
-                                        point2Ds_Temp.Add(point2D_1);
-                                    }
-
+                                    point2Ds_Temp.Insert(0, point2D_2);
+                                    point2Ds_Temp.Add(point2D_1);
                                 }
 
-                                DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController, index_1, systemComponent_SAM, index_2), point2Ds_Temp?.ToArray());
-
-                                systemPlantRoom.Connect(displaySystemConnection, airSystem);
                             }
+
+                            DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController, index_1, systemComponent_SAM, index_2), point2Ds_Temp?.ToArray());
+
+                            systemPlantRoom.Connect(displaySystemConnection, airSystem);
                         }
                     }
 
@@ -322,31 +306,6 @@ namespace SAM.Analytical.Tas.TPD
                         foreach (ControlArc controlArc in controlArcs)
                         {
                             Controller controller_2 = controlArc.GetController();
-                            //if (controller_2 == null)
-                            //{
-                            //    ComponentGroup componentGroup = controlArc.GetGroup();
-                            //    if (componentGroup == null)
-                            //    {
-                            //        continue;
-                            //    }
-
-                            //    int port = controlArc.ControlPort;
-
-                            //    ControlArc controlArc_Temp = (componentGroup as dynamic).GetGroupControlArc(port + 1, 1);
-                            //    if (controlArc_Temp == null)
-                            //    {
-                            //        continue;
-                            //    }
-
-                            //    Controller controller_Group = controlArc_Temp.GetChainController();
-                            //    if(controller_Group == null)
-                            //    {
-                            //        controller_Group = controlArc_Temp.GetController();
-                            //    }
-
-                            //    controller_2 = controller_Group;
-                            //}
-
                             if(controller_2 == null)
                             {
                                 continue;
@@ -363,61 +322,34 @@ namespace SAM.Analytical.Tas.TPD
                             List<Point2D> point2Ds = Query.Point2Ds(controlArc);
                             point2Ds = point2Ds == null ? new List<Point2D>() : point2Ds;
 
-                            HashSet<int> indexes_1 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
-                            if (indexes_1 == null || indexes_1.Count == 0)
+                            Dictionary<int, Point2D> dictionary_1 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.Out);
+                            if (dictionary_1 == null || dictionary_1.Count == 0)
                             {
                                 continue;
                             }
 
-                            HashSet<int> indexes_2 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController_2 as dynamic, systemType_Control, direction: Direction.Out);
-                            if (indexes_2 == null || indexes_2.Count == 0)
+                            Dictionary<int, Point2D> dictionary_2 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController_2 as dynamic, systemType_Control);
+                            if (dictionary_2 == null || dictionary_2.Count == 0)
                             {
                                 continue;
                             }
 
-                            int index_1 = indexes_1.ElementAt(0);
-                            int index_2 = indexes_2.ElementAt(0);
+                            point2Ds.Add(dictionary_1.Values.First());
+                            point2Ds.Insert(0, dictionary_2.Values.First());
 
-                            Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(index_1);
-                            if (point2D_1 == null)
-                            {
-                                return null;
-                            }
-
-                            point2Ds.Add(point2D_1);
-
-                            Point2D point2D_2 = (systemController_2 as dynamic).SystemGeometry.GetPoint2D(index_2);
-                            if (point2D_2 == null)
-                            {
-                                return null;
-                            }
-
-                            point2Ds.Insert(0, point2D_2);
-
-
-                            DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController, index_1, systemController_2, index_2), point2Ds?.ToArray());
+                            DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController, dictionary_1.Keys.First(), systemController_2, dictionary_2.Keys.First()), point2Ds?.ToArray());
 
                             systemPlantRoom.Connect(displaySystemConnection, airSystem);
                         }
                     }
 
-                    HashSet<int> indexes = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
-                    if(indexes != null && indexes.Count != 0)
+                    List<SensorArc> sensorArcs = controller.SensorArcs();
+                    if (sensorArcs != null && sensorArcs.Count != 0)
                     {
-                        Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(indexes.ElementAt(0));
-                        if (point2D_1 == null)
+                        foreach (SensorArc sensorArc in sensorArcs)
                         {
-                            return null;
-                        }
-
-                        List<SensorArc> sensorArcs = controller.SensorArcs();
-                        if (sensorArcs != null && sensorArcs.Count != 0)
-                        {
-                            foreach (SensorArc sensorArc in sensorArcs)
-                            {
-                                ISystemSensor systemSensor = Connect(systemPlantRoom, sensorArc);
-                                systemPlantRoom.Connect(systemSensor, airSystem);
-                            }
+                            ISystemSensor systemSensor = Connect(systemPlantRoom, sensorArc);
+                            systemPlantRoom.Connect(systemSensor, airSystem);
                         }
                     }
                 }
@@ -447,22 +379,18 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemType systemType_Control = new SystemType(typeof(IControlSystem));
 
-            HashSet<int> indexes = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
-            if (indexes == null || indexes.Count == 0)
-            {
-                return null;
-            }
-
-            Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(indexes.ElementAt(0));
-            if (point2D_1 == null)
-            {
-                return null;
-            }
-
             List<Point2D> point2Ds = Query.Point2Ds(sensorArc);
             point2Ds = point2Ds == null ? new List<Point2D>() : point2Ds;
 
-            point2Ds.Add(point2D_1);
+            Dictionary<int, Point2D> dictionary;
+
+            dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
+            if (dictionary == null || dictionary.Count == 0)
+            {
+                return null;
+            }
+
+            point2Ds.Add(dictionary.Values.First());
 
             ISystemJSAMObject systemJSAMObject = null;
 
@@ -473,14 +401,11 @@ namespace SAM.Analytical.Tas.TPD
                 systemJSAMObject = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
                 if (systemJSAMObject != null)
                 {
-                    HashSet<int> indexes_1 = Geometry.Systems.Query.FindIndexes(systemPlantRoom, systemJSAMObject as dynamic, systemType_Control, direction: Direction.Out);
-                    if (indexes_1 != null && indexes_1.Count != 0)
+
+                    dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemJSAMObject as dynamic, systemType_Control, direction: Direction.Out);
+                    if(dictionary != null && dictionary.Count != 0)
                     {
-                        Point2D point2D_2 = (systemJSAMObject as dynamic).SystemGeometry.GetPoint2D(indexes_1.ElementAt(0));
-                        if (point2D_2 != null)
-                        {
-                            point2Ds.Insert(0, point2D_2);
-                        }
+                        point2Ds.Insert(0, dictionary.Values.First());
                     }
                 }
             }
