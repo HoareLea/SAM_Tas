@@ -256,13 +256,13 @@ namespace SAM.Analytical.Tas.TPD
                             List<Point2D> point2Ds = Query.Point2Ds(controlArc);
                             point2Ds = point2Ds == null ? new List<Point2D>() : point2Ds;
 
-                            Dictionary<int, Point2D> dictionary_1 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.Out);
+                            Dictionary<int, Point2D> dictionary_1 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
                             if (dictionary_1 == null || dictionary_1.Count == 0)
                             {
                                 continue;
                             }
 
-                            Dictionary<int, Point2D> dictionary_2 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController_2 as dynamic, systemType_Control);
+                            Dictionary<int, Point2D> dictionary_2 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController_2 as dynamic, systemType_Control, direction: Direction.Out);
                             if (dictionary_2 == null || dictionary_2.Count == 0)
                             {
                                 continue;
