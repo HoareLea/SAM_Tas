@@ -268,10 +268,15 @@ namespace SAM.Analytical.Tas.TPD
                                 continue;
                             }
 
-                            point2Ds.Add(dictionary_1.Values.First());
-                            point2Ds.Insert(0, dictionary_2.Values.First());
+                            int controlPort = controlArc.ControlPort + 1;
 
-                            DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController, dictionary_1.Keys.First(), systemController_2, dictionary_2.Keys.First()), point2Ds?.ToArray());
+                            int index_1 = dictionary_1.ContainsKey(controlPort) ? controlPort : dictionary_1.Keys.First();
+                            int index_2 = dictionary_2.Keys.First();
+
+                            point2Ds.Add(dictionary_1[index_1]);
+                            point2Ds.Insert(0, dictionary_2[index_2]);
+
+                            DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController, index_1, systemController_2, index_2), point2Ds?.ToArray());
 
                             systemPlantRoom.Connect(displaySystemConnection, airSystem);
                         }
