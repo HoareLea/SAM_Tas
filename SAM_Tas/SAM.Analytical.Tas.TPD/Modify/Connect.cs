@@ -172,36 +172,28 @@ namespace SAM.Analytical.Tas.TPD
                     }
 
                     controllers_Temp = controllers_Group.FindAll(x => x.ControlType != tpdControlType.tpdControlGroup);
-                    for (int i = 1; i <= controllers_Temp.Count; i++)
+                    foreach(Controller controller in controllers_Temp)
                     {
-                        Controller controller = controllers_Temp[i - 1];
-                        ISystemController systemController = systemPlantRoom.SystemController<ISystemController>(controller.Reference());
-                        if (systemController == null)
+                        List<ISystemSensor> systemSensors = systemPlantRoom.Connect_SystemSensors(controller);
+                        if (systemSensors != null)
                         {
-                            continue;
-                        }
-
-                        List<SensorArc> sensorArcs = controller.SensorArcs();
-                        if (sensorArcs == null)
-                        {
-                            continue;
-                        }
-
-                        Dictionary<int, Point2D> dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
-                        if(dictionary != null && dictionary.Count != 0)
-                        {
-                            int index = dictionary.Keys.First();
-
-                            Point2D point2D_1 = (systemController as dynamic).SystemGeometry.GetPoint2D(index);
-                            if (point2D_1 == null)
+                            foreach (ISystemSensor systemSensor in systemSensors)
                             {
-                                return null;
+                                systemPlantRoom.Connect(systemSensor, airSystem);
                             }
 
-                            foreach (SensorArc sensorArc in sensorArcs)
+                        }
+
+                        List<ControlArc> controlArcs = controlArcs = controller.ControlArcs();
+                        if (controlArcs != null && controlArcs.Count != 0)
+                        {
+                            foreach (ControlArc controlArc in controlArcs)
                             {
-                                ISystemSensor systemSensor = Connect(systemPlantRoom, sensorArc);
-                                systemPlantRoom.Connect(systemSensor, airSystem);
+                                ISystemConnection systemConnection = Connect_ControlArc(systemPlantRoom, controlArc);
+                                if (systemConnection != null)
+                                {
+                                    systemPlantRoom.Connect(systemConnection, airSystem);
+                                }
                             }
                         }
                     }
@@ -234,69 +226,11 @@ namespace SAM.Analytical.Tas.TPD
                     {
                         foreach (ControlArc controlArc in controlArcs)
                         {
-                            int port = controlArc.ControlPort;
-
-                            global::TPD.SystemComponent systemComponent_TPD = controlArc.GetComponent();
-                            if(systemComponent_TPD == null)
+                            ISystemConnection systemConnection = Connect_ControlArc(systemPlantRoom, controlArc);
+                            if (systemConnection != null)
                             {
-                                continue;
+                                systemPlantRoom.Connect(systemConnection, airSystem);
                             }
-
-                            string reference_2 = (systemComponent_TPD as dynamic)?.GUID;
-
-                            Core.Systems.ISystemComponent systemComponent_SAM = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
-                            if (systemComponent_SAM == null)
-                            {
-                                continue;
-                            }
-
-                            List<Point2D> point2Ds = Query.Point2Ds(controlArc);
-
-                            Dictionary<int, Point2D> dictionary_1 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.Out);
-                            if(dictionary_1 == null || dictionary_1.Count == 0)
-                            {
-                                continue;
-                            }
-
-                            Dictionary<int, Point2D> dictionary_2 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemComponent_SAM as dynamic, systemType_Control);
-                            if (dictionary_2 == null || dictionary_2.Count == 0)
-                            {
-                                continue;
-                            }
-
-                            int index_1 = dictionary_1.Keys.ElementAt(0);
-                            int index_2 = dictionary_2.Keys.ElementAt(0);
-                            if(dictionary_2.Count > 1)
-                            {
-                                index_2 = port == 1 ? dictionary_2.Keys.Max() : dictionary_2.Keys.Min();
-                            }
-
-                            Point2D point2D_1 = dictionary_1[index_1];
-                            Point2D point2D_2 = dictionary_2[index_2];
-
-                            List<Point2D> point2Ds_Temp = point2Ds == null ? null : new List<Point2D>(point2Ds);
-                            if (point2Ds_Temp == null || point2Ds_Temp.Count == 0)
-                            {
-                                point2Ds_Temp = new List<Point2D>() { point2D_1, point2D_2 };
-                            }
-                            else
-                            {
-                                if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
-                                {
-                                    point2Ds_Temp.Insert(0, point2D_1);
-                                    point2Ds_Temp.Add(point2D_2);
-                                }
-                                else
-                                {
-                                    point2Ds_Temp.Insert(0, point2D_2);
-                                    point2Ds_Temp.Add(point2D_1);
-                                }
-
-                            }
-
-                            DisplaySystemConnection displaySystemConnection = new DisplaySystemConnection(new SystemConnection(new SystemType(airSystem), systemController, index_1, systemComponent_SAM, index_2), point2Ds_Temp?.ToArray());
-
-                            systemPlantRoom.Connect(displaySystemConnection, airSystem);
                         }
                     }
 
@@ -343,15 +277,128 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
 
-                    List<SensorArc> sensorArcs = controller.SensorArcs();
-                    if (sensorArcs != null && sensorArcs.Count != 0)
+                    List<ISystemSensor> systemSensors = systemPlantRoom.Connect_SystemSensors(controller);
+                    if(systemSensors != null)
                     {
-                        foreach (SensorArc sensorArc in sensorArcs)
+                        foreach(ISystemSensor systemSensor in systemSensors)
                         {
-                            ISystemSensor systemSensor = Connect(systemPlantRoom, sensorArc);
                             systemPlantRoom.Connect(systemSensor, airSystem);
                         }
+
                     }
+                }
+            }
+
+            return result;
+        }
+
+        private static ISystemConnection Connect_ControlArc(SystemPlantRoom systemPlantRoom, ControlArc controlArc)
+        {
+            if(systemPlantRoom == null || controlArc == null)
+            {
+                return null;
+            }
+
+            SystemType systemType_Control = new SystemType(typeof(IControlSystem));
+
+            Controller controller = controlArc.GetController();
+            if(controller == null)
+            {
+                return null;
+            }
+
+            ISystemController systemController = systemPlantRoom.SystemController<ISystemController>(controller.Reference());
+            if (systemController == null)
+            {
+                return null;
+            }
+
+
+            global::TPD.SystemComponent systemComponent_TPD = controlArc.GetComponent();
+            if (systemComponent_TPD == null)
+            {
+                return null;
+            }
+
+            string reference_2 = (systemComponent_TPD as dynamic)?.GUID;
+
+            Core.Systems.ISystemComponent systemComponent_SAM = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+            if (systemComponent_SAM == null)
+            {
+                return null;
+            }
+
+            List<Point2D> point2Ds = Query.Point2Ds(controlArc);
+
+            Dictionary<int, Point2D> dictionary_1 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.Out);
+            if (dictionary_1 == null || dictionary_1.Count == 0)
+            {
+                return null;
+            }
+
+            Dictionary<int, Point2D> dictionary_2 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemComponent_SAM as dynamic, systemType_Control);
+            if (dictionary_2 == null || dictionary_2.Count == 0)
+            {
+                return null;
+            }
+
+            int port = controlArc.ControlPort;
+
+            int index_1 = dictionary_1.Keys.ElementAt(0);
+            int index_2 = dictionary_2.Keys.ElementAt(0);
+            if (dictionary_2.Count > 1)
+            {
+                index_2 = port == 1 ? dictionary_2.Keys.Max() : dictionary_2.Keys.Min();
+            }
+
+            Point2D point2D_1 = dictionary_1[index_1];
+            Point2D point2D_2 = dictionary_2[index_2];
+
+            List<Point2D> point2Ds_Temp = point2Ds == null ? null : new List<Point2D>(point2Ds);
+            if (point2Ds_Temp == null || point2Ds_Temp.Count == 0)
+            {
+                point2Ds_Temp = new List<Point2D>() { point2D_1, point2D_2 };
+            }
+            else
+            {
+                if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
+                {
+                    point2Ds_Temp.Insert(0, point2D_1);
+                    point2Ds_Temp.Add(point2D_2);
+                }
+                else
+                {
+                    point2Ds_Temp.Insert(0, point2D_2);
+                    point2Ds_Temp.Add(point2D_1);
+                }
+
+            }
+
+            return new DisplaySystemConnection(new SystemConnection(new SystemType(typeof(AirSystem)), systemController, index_1, systemComponent_SAM, index_2), point2Ds_Temp?.ToArray());
+
+        }
+
+        private static List<ISystemSensor> Connect_SystemSensors(this SystemPlantRoom systemPlantRoom, Controller controller)
+        {
+            if(systemPlantRoom == null || controller == null)
+            {
+                return null;
+            }
+
+            List<ISystemSensor> result = new List<ISystemSensor>();
+
+            List<SensorArc> sensorArcs = controller.SensorArcs();
+            if (sensorArcs == null || sensorArcs.Count == 0)
+            {
+                return result;
+            }
+
+            foreach (SensorArc sensorArc in sensorArcs)
+            {
+                ISystemSensor systemSensor = Connect(systemPlantRoom, sensorArc);
+                if (systemSensor != null)
+                {
+                    result.Add(systemSensor);
                 }
             }
 
