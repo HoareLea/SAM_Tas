@@ -293,8 +293,6 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-
-
             return result;
         }
 
