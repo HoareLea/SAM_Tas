@@ -2,6 +2,7 @@
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
 using SAM.Core;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -16,24 +17,80 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = controller;
 
+            string sensorReference = controller.SensorArc1?.Reference();
+
+            ISetpoint setpoint = null;
+            
+            ControllerProfileData ControllerProfileData_Setpoint = controller.GetProfile();
+
+            List<ControllerProfilePoint> controllerProfilePoints_Setpoint = ControllerProfileData_Setpoint?.ControllerProfilePoints();
+            if(controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
+            {
+                ProfileSetpoint profileSetpoint = new ProfileSetpoint();
+                foreach(ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setpoint)
+                {
+                    profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
+                }
+
+                setpoint = profileSetpoint;
+            }
+
+            if(setpoint == null)
+            {
+                RangeSetpoint rangeSetpoint = new RangeSetpoint();
+                rangeSetpoint.InputRange = new Range<double>(controller.Setpoint - (controller.Gradient * controller.Band));
+                rangeSetpoint.OutputRange = new Range<double>(controller.Min, controller.Max);
+                setpoint = rangeSetpoint;
+            }
+
+            NormalControllerDataType normalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM();
+            NormalControllerLimit normalControllerLimit = (controller.SensorPresetType).ToSAM();
+            OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
+
+            string scheduleName = controller.GetSchedule()?.Name;
+
+            ISetback setback = null;
+
+            ControllerProfileData ControllerProfileData_Setback = controller.GetSetbackProfile();
+
+            List<ControllerProfilePoint> controllerProfilePoints_Setback = ControllerProfileData_Setback?.ControllerProfilePoints();
+            if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
+            {
+                ProfileSetpoint profileSetpoint = new ProfileSetpoint();
+                foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setpoint)
+                {
+                    profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
+                }
+
+                setback = new SetpointSetback(scheduleName, profileSetpoint);
+            }
+
+            if (setback == null)
+            {
+                RangeSetpoint rangeSetpoint = new RangeSetpoint();
+                rangeSetpoint.InputRange = new Range<double>(controller.SetbackSetpoint - (controller.SetbackGradient * controller.SetbackBand));
+                rangeSetpoint.OutputRange = new Range<double>(controller.SetbackMin, controller.SetbackMax);
+                setback = new SetpointSetback(scheduleName, rangeSetpoint);
+            }
+
             SystemController systemController = null;
 
             switch(controller.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    systemController = new SystemNormalController(@dynamic.Name);
+                    systemController = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
-                    systemController = new SystemOutdoorController(@dynamic.Name);
+                    systemController = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    systemController = new SystemDifferenceController(@dynamic.Name);
+                    systemController = new SystemDifferenceController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    systemController = new SystemPassthroughController(@dynamic.Name);
+                    systemController = new SystemPassthroughController(@dynamic.Name, normalControllerDataType) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlNot:

@@ -200,7 +200,6 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-
             List<Controller> controllers = Query.Controllers(system);
             if(controllers != null && controllers.Count != 0)
             {
@@ -293,6 +292,8 @@ namespace SAM.Analytical.Tas.TPD
                     }
                 }
             }
+
+
 
             return result;
         }
@@ -407,6 +408,20 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            SystemSensorController systemSensorController = systemPlantRoom.SystemController<SystemSensorController>(controller.Reference());
+            if (systemSensorController != null)
+            {
+                string reference = controller.SensorArc1.Reference();
+                if (reference != null)
+                {
+                    ISystemSensor systemSensor = systemPlantRoom.GetSystemObject<ISystemSensor>(x => x.Reference() == reference);
+                    if(systemSensor != null)
+                    {
+                        systemSensorController.SensorReference = systemSensor.Guid.ToString();
+                    }
+                }
+            }
+
             return result;
         }
 
@@ -489,6 +504,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             DisplaySystemSensor result = new DisplaySystemSensor(new SystemSensor(), point2Ds?.ToArray());
+            SetReference(result, sensorArc.Reference());
 
             systemPlantRoom.Add(result);
 

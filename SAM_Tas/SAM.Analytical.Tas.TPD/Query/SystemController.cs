@@ -18,18 +18,18 @@ namespace SAM.Analytical.Tas.TPD
             return SystemController<T>(systemPlantRoom, Core.Convert.ComplexReference(reference));
         }
 
-        public static ISystemController SystemController<T>(this SystemPlantRoom systemPlantRoom, IReference reference)
+        public static T SystemController<T>(this SystemPlantRoom systemPlantRoom, IReference reference) where T : ISystemController
         {
             PathReference pathReference = reference as PathReference;
             if (pathReference == null)
             {
-                return null;
+                return default;
             }
 
             List<ObjectReference> objectReferences = new List<ObjectReference>(pathReference);
             if (objectReferences.Count < 2)
             {
-                return null;
+                return default;
             }
 
             ObjectReference objectReference = objectReferences[0];
@@ -41,7 +41,7 @@ namespace SAM.Analytical.Tas.TPD
                     {
                         if (guid_SystemPlantRoom != guid)
                         {
-                            return null;
+                            return default;
                         }
                     }
                 }
@@ -76,11 +76,11 @@ namespace SAM.Analytical.Tas.TPD
 
             if (objectReference.TypeName != Core.Query.FullTypeName(typeof(Controller)))
             {
-                return null;
+                return default;
             }
 
-            List<ISystemController> systemControllers = system == null ? systemPlantRoom.GetSystemComponents<ISystemController>() : systemPlantRoom.GetSystemComponents<ISystemController>(system);
-            foreach (ISystemController systemController in systemControllers)
+            List<T> systemControllers = system == null ? systemPlantRoom.GetSystemComponents<T>() : systemPlantRoom.GetSystemComponents<T>(system);
+            foreach (T systemController in systemControllers)
             {
                 if (systemController?.Reference() == pathReference.ToString())
                 {
@@ -96,7 +96,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            return null;
+            return default;
         }
     }
 }

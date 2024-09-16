@@ -133,5 +133,25 @@ namespace SAM.Analytical.Tas.TPD
 
             return string.Join("-", values);
         }
+
+        public static string Reference(this SensorArc sensorArc)
+        {
+            if (sensorArc == null)
+            {
+                return null;
+            }
+
+            List<string> values = new List<string>()
+            {
+                sensorArc.GetController()?.Reference()?.ToString(),
+                sensorArc.SensorPort.ToString(),
+                sensorArc.GetDuct()?.Reference(),
+                sensorArc.GetComponent()?.Reference(),
+            };
+
+            values.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+            return string.Join("-", values);
+        }
     }
 }
