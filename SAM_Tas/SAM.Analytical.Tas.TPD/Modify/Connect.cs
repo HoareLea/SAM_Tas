@@ -418,6 +418,7 @@ namespace SAM.Analytical.Tas.TPD
                     if(systemSensor != null)
                     {
                         systemSensorController.SensorReference = systemSensor.Guid.ToString();
+                        systemPlantRoom.Add(systemSensorController);
                     }
                 }
             }
