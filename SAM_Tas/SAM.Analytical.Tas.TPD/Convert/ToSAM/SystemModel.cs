@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SAM.Core.Tas;
 using SAM.Core.Systems;
+using SAM.Analytical.Systems;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -78,6 +79,19 @@ namespace SAM.Analytical.Tas.TPD
                 }
 
                 result.Add(systemPlantRoom);
+
+                //=======TEST=======
+                //List<ISystemController> systemControllers = systemPlantRoom.GetSystemComponents<ISystemController>();
+                //if (systemControllers != null)
+                //{
+                //    foreach (ISystemController systemController in systemControllers)
+                //    {
+                //        string reference = systemController.Reference();
+                //        Controller controller = plantRoom.Controller(reference);
+                //        ISystemController systemController_Temp = systemPlantRoom.SystemController<ISystemController>(reference);
+                //    }
+                //}
+                //========TEST========
             }
 
             return result;

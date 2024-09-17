@@ -12,12 +12,12 @@ namespace SAM.Analytical.Tas.TPD
                 return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
             }
 
-            if(systemComponent is CoolingCoil)
+            if(systemComponent is global::TPD.CoolingCoil)
             {
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingCoil;
             }
 
-            if (systemComponent is HeatingCoil)
+            if (systemComponent is global::TPD.HeatingCoil)
             {
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemHeatingCoil;
             }
@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemAirJunction;
             }
 
-            if (systemComponent is Fan)
+            if (systemComponent is global::TPD.Fan)
             {
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemFan;
             }

@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static T SystemComponent<T>(this SystemPlantRoom systemPlantRoom, string reference) where T : ISystemComponent
+        public static T SystemComponent<T>(this SystemPlantRoom systemPlantRoom, string reference) where T : Core.Systems.ISystemComponent
         {
             if(systemPlantRoom == null || string.IsNullOrWhiteSpace(reference))
             {

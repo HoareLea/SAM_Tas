@@ -86,6 +86,16 @@ namespace SAM.Analytical.Tas.TPD
             return (systemComponent as dynamic).GUID;
         }
 
+        public static string Reference(this global::TPD.ISystem system)
+        {
+            if (system == null)
+            {
+                return null;
+            }
+
+            return (system as dynamic).GUID;
+        }
+
         public static string Reference(this global::TPD.System system)
         {
             if (system == null)
@@ -104,6 +114,44 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             return (componentGroup as dynamic).GUID;
+        }
+
+        public static string Reference(this Duct duct)
+        {
+            if(duct == null)
+            {
+                return null;
+            }
+
+            string reference_1 = Reference(duct.GetDownstreamComponent());
+            int port_1 = duct.GetDownstreamComponentPort();
+            string reference_2 = Reference(duct.GetUpstreamComponent());
+            int port_2 = duct.GetUpstreamComponentPort();
+
+            List<string> values = new List<string>() { reference_1, port_1.ToString(), reference_2, port_2.ToString() };
+            values.RemoveAll(x => x == null);
+
+            return string.Join("-", values);
+        }
+
+        public static string Reference(this SensorArc sensorArc)
+        {
+            if (sensorArc == null)
+            {
+                return null;
+            }
+
+            List<string> values = new List<string>()
+            {
+                sensorArc.GetController()?.Reference()?.ToString(),
+                sensorArc.SensorPort.ToString(),
+                sensorArc.GetDuct()?.Reference(),
+                sensorArc.GetComponent()?.Reference(),
+            };
+
+            values.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+            return string.Join("-", values);
         }
     }
 }

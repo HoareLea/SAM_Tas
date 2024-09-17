@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using SAM.Analytical.Systems;
 using System.Linq;
 using SAM.Core;
-using System.Data;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -536,6 +535,26 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         systemComponent_TPD = ToTPD((DisplaySystemEconomiser)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemSprayHumidifier)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemSprayHumidifier)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemSteamHumidifier)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemSteamHumidifier)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemDesiccantWheel)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemDesiccantWheel)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemDXCoil)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemDXCoil)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemMixingBox)
+                                    {
+                                        systemComponent_TPD = ToTPD((DisplaySystemMixingBox)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                    }
 
                                     if (systemComponent_TPD == null)
                                     {
@@ -543,7 +562,7 @@ namespace SAM.Analytical.Tas.TPD
                                     }
 
                                     dictionary_TPD[systemComponent_Temp.Guid] = systemComponent_TPD;
-                                    systemComponent_Temp.SetReference(systemComponent_TPD.Reference());
+                                    systemComponent_Temp.SetReference(Query.Reference(systemComponent_TPD));
                                     systemPlantRoom.Add(systemComponent_Temp);
                                 }
 

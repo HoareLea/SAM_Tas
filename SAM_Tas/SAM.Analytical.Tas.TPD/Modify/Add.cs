@@ -10,6 +10,25 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Modify
     {
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Controller controller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if(systemPlantRoom == null || controller == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            ISystemController systemController = controller.ToSAM();
+            if(systemController == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+            result.Add(systemController);
+
+            return result;
+        }
+
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.ISystemComponent systemComponent, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || systemComponent == null)
@@ -547,14 +566,6 @@ namespace SAM.Analytical.Tas.TPD
             List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
             if (systemComponents != null)
             {
-                Transform2D transform2D = null;
-
-                Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
-                if (location != null)
-                {
-                    transform2D = Transform2D.GetTranslation(location.ToVector());
-                }
-
                 foreach (global::TPD.SystemComponent systemComponent_Temp in systemComponents)
                 {
                     if (systemComponent_Temp is Junction)
@@ -565,30 +576,56 @@ namespace SAM.Analytical.Tas.TPD
                     List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc, componentConversionSettings);
                     if (systemJSAMObjects != null)
                     {
-                        foreach (ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
+                        result.AddRange(systemJSAMObjects);
+                    }
+                }
+            }
+
+            List<Controller> controllers = componentGroup.Controllers();
+            if (controllers != null)
+            {
+                foreach (Controller controller in controllers)
+                {
+                    List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(controller, tPDDoc, componentConversionSettings);
+                    if (systemJSAMObjects != null)
+                    {
+                        result.AddRange(systemJSAMObjects);
+                    }
+                }
+            }
+
+            Transform2D transform2D = null;
+
+            Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
+            if (location != null)
+            {
+                transform2D = Transform2D.GetTranslation(location.ToVector());
+            }
+
+            if(transform2D != null)
+            {
+                for (int i = 0; i < result.Count; i++)
+                {
+                    IDisplaySystemObject displaySystemObject = result[i] as IDisplaySystemObject;
+
+                    if(displaySystemObject == null)
+                    {
+                        continue;
+                    }
+
+                    displaySystemObject.Transform(transform2D);
+                    systemPlantRoom.Add(displaySystemObject as dynamic);
+
+                    BoundingBox2D boundingBox2D_Temp = displaySystemObject.BoundingBox2D;
+                    if (boundingBox2D_Temp != null)
+                    {
+                        if (boundingBox2D == null)
                         {
-                            if (transform2D != null && systemJSAMObject is IDisplaySystemObject)
-                            {
-                                IDisplaySystemObject displaySystemObject = (IDisplaySystemObject)systemJSAMObject;
-
-                                displaySystemObject.Transform(transform2D);
-                                systemPlantRoom.Add(systemJSAMObject as dynamic);
-
-                                BoundingBox2D boundingBox2D_Temp = displaySystemObject.BoundingBox2D;
-                                if (boundingBox2D_Temp != null)
-                                {
-                                    if (boundingBox2D == null)
-                                    {
-                                        boundingBox2D = boundingBox2D_Temp;
-                                    }
-                                    else
-                                    {
-                                        boundingBox2D.Include(boundingBox2D_Temp);
-                                    }
-                                }
-                            }
-
-                            result.Add(systemJSAMObject);
+                            boundingBox2D = boundingBox2D_Temp;
+                        }
+                        else
+                        {
+                            boundingBox2D.Include(boundingBox2D_Temp);
                         }
                     }
                 }
@@ -655,6 +692,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 foreach (global::TPD.SystemComponent systemComponent in systemComponents)
                 {
+
                     List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(systemComponent, tPDDoc, componentConversionSettings);
                     if (systemJSAMObjects != null)
                     {
@@ -670,6 +708,19 @@ namespace SAM.Analytical.Tas.TPD
                 foreach (ComponentGroup componentGroup in componentGroups)
                 {
                     systemPlantRoom.Connect(componentGroup);
+                }
+            }
+
+            List<Controller> controllers = system.Controllers();
+            if(controllers != null)
+            {
+                foreach(Controller controller in controllers)
+                {
+                    List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(controller, tPDDoc, componentConversionSettings);
+                    if (systemJSAMObjects != null)
+                    {
+                        result.AddRange(systemJSAMObjects);
+                    }
                 }
             }
 

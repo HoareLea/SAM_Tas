@@ -1,6 +1,8 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
+using System;
 
 namespace SAM.Analytical.Tas.TPD
 {
