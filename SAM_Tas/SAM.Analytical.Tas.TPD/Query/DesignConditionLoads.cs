@@ -1,0 +1,29 @@
+﻿using System.Collections.Generic;
+
+namespace SAM.Analytical.Tas.TPD
+{
+    public static partial class Query
+    {
+        public static List<global::TPD.DesignConditionLoad> DesignConditionLoads(this global::TPD.SizedVariable sizedVariable)
+        {
+            if (sizedVariable == null)
+            {
+                return null;
+            }
+
+            List<global::TPD.DesignConditionLoad> result = new List<global::TPD.DesignConditionLoad>();
+            for (int i = 1; i <= sizedVariable.GetDesignConditionCount(); i++)
+            {
+                global::TPD.DesignConditionLoad designConditionLoad = sizedVariable.GetDesignCondition(i);
+                if(designConditionLoad == null)
+                {
+                    continue;
+                }
+
+                result.Add(designConditionLoad);
+            }
+
+            return result;
+        }
+    }
+}
