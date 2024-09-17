@@ -45,7 +45,6 @@ namespace SAM.Analytical.Tas.TPD
 
             NormalControllerDataType normalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM();
             NormalControllerLimit normalControllerLimit = (controller.SensorPresetType).ToSAM();
-            OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
 
             string scheduleName = controller.GetSchedule()?.Name;
 
@@ -82,6 +81,7 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
+                    OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
                     systemController = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint) { SensorReference = sensorReference };
                     break;
 

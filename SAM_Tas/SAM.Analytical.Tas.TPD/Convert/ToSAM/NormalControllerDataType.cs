@@ -42,7 +42,7 @@ namespace SAM.Analytical.Tas.TPD
                     return NormalControllerDataType.WetBulbTemperature;
 
                 case global::TPD.tpdSensorType.tpdMinFlowSensor:
-                    throw new System.NotImplementedException();
+                    return NormalControllerDataType.MinimalFreshAir;
 
                 case global::TPD.tpdSensorType.tpdPartLoadSensor:
                     throw new System.NotImplementedException();
