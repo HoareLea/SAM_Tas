@@ -1,9 +1,12 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Systems;
+using SAM.Core;
 using SAM.Core.Grasshopper;
+using SAM.Core.Tas.TPD;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
@@ -12,12 +15,12 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("75d9f6aa-f407-4b79-908a-51666a287e15");
+        public override Guid ComponentGuid => new Guid("fd882916-69fd-43f5-aa19-cb96c993daa3");
 
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.0";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -46,12 +49,30 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "plantRoomIndexes_", NickName = "plantRoomIndexes", Description = "Indexes of the plant pooms starting from 0", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_resultDataTypes", NickName = "_resultDataTypes", Description = "ResultDataTypes", Access = GH_ParamAccess.list}, ParamVisibility.Binding));
 
-                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+                global::Grasshopper.Kernel.Parameters.Param_String param_String = new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_resultPeriod_", NickName = "_resultPeriod_", Description = "Result Period", Access = GH_ParamAccess.item, Optional = true };
+                param_String.SetPersistentData(ResultPeriod.Annual.ToString());
+                result.Add(new GH_SAMParam(param_String, ParamVisibility.Binding));
 
-                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
-                @boolean.SetPersistentData(false);
-                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+                global::Grasshopper.Kernel.Parameters.Param_Boolean param_Boolean = null;
+
+                param_Boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_detailedCategoryView_", NickName = "_detailedCategoryView_", Description = "Detailed Category View", Access = GH_ParamAccess.item, Optional = true };
+                param_String.SetPersistentData(false);
+                result.Add(new GH_SAMParam(param_Boolean, ParamVisibility.Binding));
+
+                param_Boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_regulatedEnergyOnly_", NickName = "_regulatedEnergyOnly_", Description = "Regulated Energy Only", Access = GH_ParamAccess.item, Optional = true };
+                param_String.SetPersistentData(false);
+                result.Add(new GH_SAMParam(param_Boolean, ParamVisibility.Binding));
+
+                param_Boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_perUnitArea_", NickName = "_perUnitArea_", Description = "Results per Unit Area", Access = GH_ParamAccess.item, Optional = true };
+                param_String.SetPersistentData(false);
+                result.Add(new GH_SAMParam(param_Boolean, ParamVisibility.Binding));
+
+                param_Boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
+                param_Boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(param_Boolean, ParamVisibility.Binding));
 
                 return result.ToArray();
             }
@@ -65,7 +86,8 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooResultParam() { Name = "results", NickName = "results", Description = "SAM Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooIndexedObjectsParam() { Name = "results", NickName = "results", Description = "SAM Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "resultDataTypes", NickName = "resultDataTypes", Description = "Result Data Types", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -101,15 +123,82 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            List<SystemSpaceResult> systemSpaceResults = Analytical.Tas.TPD.Convert.ToSAM_SpaceSystemResults(path);
+            List<int> plantRoomIndexes = new List<int>();
+            index = Params.IndexOfInputParam("plantRoomIndexes_");
+            if (index != -1)
+            {
+                dataAccess.GetDataList(index, plantRoomIndexes);
+            }
+
+            if(plantRoomIndexes != null && plantRoomIndexes.Count == 0)
+            {
+                plantRoomIndexes = null;
+            }
+
+            List<string> resultDataTypeStrings = new List<string>();
+            index = Params.IndexOfInputParam("_resultDataTypes");
+            if (index == -1 || !dataAccess.GetDataList(index, resultDataTypeStrings) || resultDataTypeStrings == null)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
+            List<ResultDataType> resultDataTypes = resultDataTypeStrings.ConvertAll(x => Core.Query.Enum<ResultDataType>(x));
+            resultDataTypes.RemoveAll(x => x == ResultDataType.Undefined);
+
+            if(resultDataTypes == null || resultDataTypes.Count == 0)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid ResultDataTypes");
+                return;
+            }
+
+            bool detailedCategoryView = false;
+            index = Params.IndexOfInputParam("_detailedCategoryView_");
+            if (index != -1)
+            {
+                dataAccess.GetData(index, ref detailedCategoryView);
+            }
+
+            bool regulatedEnergyOnly = false;
+            index = Params.IndexOfInputParam("_regulatedEnergyOnly_");
+            if (index != -1)
+            {
+                dataAccess.GetData(index, ref regulatedEnergyOnly);
+            }
+
+            bool perUnitArea = false;
+            index = Params.IndexOfInputParam("_perUnitArea_");
+            if (index != -1)
+            {
+                dataAccess.GetData(index, ref perUnitArea);
+            }
+
+
+            ResultPeriod resultPeriod = ResultPeriod.Annual;
+            index = Params.IndexOfInputParam("_resultPeriod_");
+            if (index != -1)
+            {
+                string resultPeriodString = null;
+
+                if(dataAccess.GetData(index, ref resultPeriodString))
+                {
+                    resultPeriod = Core.Query.Enum<ResultPeriod>(resultPeriodString);
+                }
+            }
+
+            Dictionary<ResultDataType, IndexedDoubles> dictionary = SAM.Core.Tas.TPD.Query.ResultDataTypeDictionary(path, resultPeriod, resultDataTypes, plantRoomIndexes, detailedCategoryView, regulatedEnergyOnly, perUnitArea);
 
             index = Params.IndexOfOutputParam("results");
             if (index != -1)
-                dataAccess.SetDataList(index, systemSpaceResults?.ConvertAll(x => new GooResult(x)));
+                dataAccess.SetDataList(index, dictionary?.Values.ToList());
+
+            index = Params.IndexOfOutputParam("resultDataTypes");
+            if (index != -1)
+                dataAccess.SetDataList(index, dictionary?.Keys.ToList());
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, systemSpaceResults != null);
+                dataAccess.SetData(index_successful, dictionary != null);
             }
         }
     }
