@@ -1,68 +1,69 @@
-﻿using SAM.Core.Tas.TPD;
+﻿using SAM.Analytical.Systems;
+using SAM.Core.Tas.TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static global::TPD.tpdResultVectorType ToTPD(this ResultDataType resultDataType)
+        public static global::TPD.tpdResultVectorType ToTPD(this SystemEnergyCentreDataType systemEnergyCentreDataType)
         {
-            switch (resultDataType)
+            switch (systemEnergyCentreDataType)
             {
-                case ResultDataType.Load:
+                case SystemEnergyCentreDataType.Load:
                     return global::TPD.tpdResultVectorType.tpdLoad;
 
-                case ResultDataType.ElectricLoad:
+                case SystemEnergyCentreDataType.ElectricLoad:
                     return global::TPD.tpdResultVectorType.tpdElectricLoad;
 
-                case ResultDataType.ThermalLoad:
+                case SystemEnergyCentreDataType.ThermalLoad:
                     return global::TPD.tpdResultVectorType.tpdThermalLoad;
 
-                case ResultDataType.Demand:
+                case SystemEnergyCentreDataType.Demand:
                     return global::TPD.tpdResultVectorType.tpdDemand;
 
-                case ResultDataType.ElectricDemand:
+                case SystemEnergyCentreDataType.ElectricDemand:
                     return global::TPD.tpdResultVectorType.tpdElectricDemand;
 
-                case ResultDataType.ThermalDemand:
+                case SystemEnergyCentreDataType.ThermalDemand:
                     return global::TPD.tpdResultVectorType.tpdThermalDemand;
 
-                case ResultDataType.Consumption:
+                case SystemEnergyCentreDataType.Consumption:
                     return global::TPD.tpdResultVectorType.tpdConsumption;
 
-                case ResultDataType.ElectricConsumption:
+                case SystemEnergyCentreDataType.ElectricConsumption:
                     return global::TPD.tpdResultVectorType.tpdElectricConsumption;
 
-                case ResultDataType.ThermalConsumption:
+                case SystemEnergyCentreDataType.ThermalConsumption:
                     return global::TPD.tpdResultVectorType.tpdThermalConsumption;
 
-                case ResultDataType.Generated:
+                case SystemEnergyCentreDataType.Generated:
                     return global::TPD.tpdResultVectorType.tpdGenerated;
 
-                case ResultDataType.Co2:
+                case SystemEnergyCentreDataType.Co2:
                     return global::TPD.tpdResultVectorType.tpdCo2;
 
-                case ResultDataType.Cost:
+                case SystemEnergyCentreDataType.Cost:
                     return global::TPD.tpdResultVectorType.tpdCost;
 
-                case ResultDataType.FuelType:
+                case SystemEnergyCentreDataType.FuelType:
                     return global::TPD.tpdResultVectorType.tpdFuelType;
 
-                case ResultDataType.ElectricFuelType:
+                case SystemEnergyCentreDataType.ElectricFuelType:
                     return global::TPD.tpdResultVectorType.tpdElectricFuelType;
 
-                case ResultDataType.ThermalFuelType:
+                case SystemEnergyCentreDataType.ThermalFuelType:
                     return global::TPD.tpdResultVectorType.tpdThermalFuelType;
 
-                case ResultDataType.PlantComponent:
+                case SystemEnergyCentreDataType.PlantComponent:
                     return global::TPD.tpdResultVectorType.tpdPlantComp;
 
-                case ResultDataType.ElectricPlantComponent:
+                case SystemEnergyCentreDataType.ElectricPlantComponent:
                     return global::TPD.tpdResultVectorType.tpdElectricPlantComp;
 
-                case ResultDataType.ThermalPlantComponent:
+                case SystemEnergyCentreDataType.ThermalPlantComponent:
                     return global::TPD.tpdResultVectorType.tpdThermalPlantComp;
 
-                case ResultDataType.UnmetHours:
+                case SystemEnergyCentreDataType.UnmetHours:
                     return global::TPD.tpdResultVectorType.tpdUnmetHours;
             }
 

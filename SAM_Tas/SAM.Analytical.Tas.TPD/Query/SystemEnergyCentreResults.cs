@@ -9,19 +9,19 @@ namespace SAM.Core.Tas.TPD
 {
     public static partial class Query
     {
-        public static Dictionary<SystemEnergyCentreDataType, IndexedDoubles> ResultDataTypeDictionary(string path, ResultPeriod resultPeriod, IEnumerable<SystemEnergyCentreDataType> systemEnergyCentreDataTypes, IEnumerable<int> plantRoomIndexes = null, bool detailedCategory = false, bool regulatedEnergyOnly = false, bool perUnitArea = false)
+        public static List<SystemEnergyCentreResult> SystemEnergyCentreResults(string path, ResultPeriod resultPeriod, IEnumerable<SystemEnergyCentreDataType> systemEnergyCentreDataTypes, IEnumerable<int> plantRoomIndexes = null, bool detailedCategory = false, bool regulatedEnergyOnly = false, bool perUnitArea = false)
         {
-            if(string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+            if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
             {
                 return null;
             }
 
-            if(resultPeriod == ResultPeriod.Undefined || systemEnergyCentreDataTypes == null || systemEnergyCentreDataTypes.Count() == 0)
+            if (resultPeriod == ResultPeriod.Undefined || systemEnergyCentreDataTypes == null || systemEnergyCentreDataTypes.Count() == 0)
             {
                 return null;
             }
 
-            Dictionary<SystemEnergyCentreDataType, IndexedDoubles> result = null;
+            List<SystemEnergyCentreResult> result = null;
 
             using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path))
             {
@@ -31,13 +31,13 @@ namespace SAM.Core.Tas.TPD
                     return null;
                 }
 
-                result = ResultDataTypeDictionary(tPDDoc.EnergyCentre, resultPeriod, systemEnergyCentreDataTypes, plantRoomIndexes, detailedCategory, regulatedEnergyOnly, perUnitArea);
+                result = SystemEnergyCentreResults(tPDDoc.EnergyCentre, resultPeriod, systemEnergyCentreDataTypes, plantRoomIndexes, detailedCategory, regulatedEnergyOnly, perUnitArea);
             }
 
             return result;
         }
 
-        public static Dictionary<SystemEnergyCentreDataType, IndexedDoubles> ResultDataTypeDictionary(this EnergyCentre energyCentre, ResultPeriod resultPeriod, IEnumerable<SystemEnergyCentreDataType> systemEnergyCentreDataTypes, IEnumerable<int> plantRoomIndexes = null, bool detailedCategory = false, bool regulatedEnergyOnly = false, bool perUnitArea = false)
+        public static List<SystemEnergyCentreResult> SystemEnergyCentreResults(this EnergyCentre energyCentre, ResultPeriod resultPeriod, IEnumerable<SystemEnergyCentreDataType> systemEnergyCentreDataTypes, IEnumerable<int> plantRoomIndexes = null, bool detailedCategory = false, bool regulatedEnergyOnly = false, bool perUnitArea = false)
         {
             if (energyCentre == null || resultPeriod == ResultPeriod.Undefined || systemEnergyCentreDataTypes == null || systemEnergyCentreDataTypes.Count() == 0)
             {
@@ -59,14 +59,12 @@ namespace SAM.Core.Tas.TPD
                 return null;
             }
 
-
-
-            Dictionary<SystemEnergyCentreDataType, IndexedDoubles> result = new Dictionary<SystemEnergyCentreDataType, IndexedDoubles>();
-            foreach (SystemEnergyCentreDataType resultDataType in systemEnergyCentreDataTypes)
+            List<SystemEnergyCentreResult> result = new List<SystemEnergyCentreResult>();
+            foreach (SystemEnergyCentreDataType systemEnergyCentreDataType in systemEnergyCentreDataTypes)
             {
-                tpdResultVectorType tpdResultVectorType = resultDataType.ToTPD();
+                tpdResultVectorType tpdResultVectorType = systemEnergyCentreDataType.ToTPD();
 
-                IndexedDoubles indexedDoubles = new IndexedDoubles();
+                List<SystemEnergyCentreGroup> systemEnergyCentreGroups = new List<SystemEnergyCentreGroup>(); 
 
                 int count = wrResultSet.GetVectorSize(tpdResultVectorType);
                 for (int j = 1; j <= count; j++)
@@ -80,14 +78,19 @@ namespace SAM.Core.Tas.TPD
                             continue;
                         }
 
+                        IndexedDoubles indexedDoubles = new IndexedDoubles();
+
                         for (int i = 0; i < array.Length; i++)
                         {
-                            indexedDoubles[i] += (double)array.GetValue(i);
+                            indexedDoubles[i] = (double)array.GetValue(i);
                         }
+
+                        SystemEnergyCentreGroup systemEnergyCentreGroup = new SystemEnergyCentreGroup(wrResultItem.GetPlantComponentName(), wrResultItem.Category, indexedDoubles);
+                        systemEnergyCentreGroups.Add(systemEnergyCentreGroup);
                     }
                 }
 
-                result[resultDataType] = indexedDoubles;
+                result.Add(new SystemEnergyCentreResult(energyCentre.Name, energyCentre.Name, Analytical.Tas.TPD.Query.Source(), systemEnergyCentreDataType, systemEnergyCentreGroups));
             }
 
 

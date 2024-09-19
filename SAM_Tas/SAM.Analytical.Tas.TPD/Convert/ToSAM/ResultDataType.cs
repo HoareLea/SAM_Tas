@@ -1,73 +1,72 @@
 ﻿using SAM.Analytical.Systems;
-using SAM.Core.Tas.TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static ResultDataType ToSAM(this global::TPD.tpdResultVectorType tpdResultVectorType)
+        public static SystemEnergyCentreDataType ToSAM(this global::TPD.tpdResultVectorType tpdResultVectorType)
         {
             switch (tpdResultVectorType)
             {
                 case global::TPD.tpdResultVectorType.tpdLoad:
-                    return ResultDataType.Load;
+                    return SystemEnergyCentreDataType.Load;
 
                 case global::TPD.tpdResultVectorType.tpdElectricLoad:
-                    return ResultDataType.ElectricLoad;
+                    return SystemEnergyCentreDataType.ElectricLoad;
 
                 case global::TPD.tpdResultVectorType.tpdThermalLoad:
-                    return ResultDataType.ThermalLoad;
+                    return SystemEnergyCentreDataType.ThermalLoad;
 
                 case global::TPD.tpdResultVectorType.tpdDemand:
-                    return ResultDataType.Demand;
+                    return SystemEnergyCentreDataType.Demand;
 
                 case global::TPD.tpdResultVectorType.tpdElectricDemand:
-                    return ResultDataType.ElectricDemand ;
+                    return SystemEnergyCentreDataType.ElectricDemand ;
 
                 case global::TPD.tpdResultVectorType.tpdThermalDemand:
-                    return ResultDataType.ThermalDemand;
+                    return SystemEnergyCentreDataType.ThermalDemand;
 
                 case global::TPD.tpdResultVectorType.tpdConsumption:
-                    return ResultDataType.Consumption;
+                    return SystemEnergyCentreDataType.Consumption;
 
                 case global::TPD.tpdResultVectorType.tpdElectricConsumption:
-                    return ResultDataType.ElectricConsumption;
+                    return SystemEnergyCentreDataType.ElectricConsumption;
 
                 case global::TPD.tpdResultVectorType.tpdThermalConsumption:
-                    return ResultDataType.ThermalConsumption;
+                    return SystemEnergyCentreDataType.ThermalConsumption;
 
                 case global::TPD.tpdResultVectorType.tpdGenerated:
-                    return ResultDataType.Generated;
+                    return SystemEnergyCentreDataType.Generated;
 
                 case global::TPD.tpdResultVectorType.tpdCo2:
-                    return ResultDataType.Co2;
+                    return SystemEnergyCentreDataType.Co2;
 
                 case global::TPD.tpdResultVectorType.tpdCost:
-                    return ResultDataType.Cost;
+                    return SystemEnergyCentreDataType.Cost;
 
                 case global::TPD.tpdResultVectorType.tpdFuelType:
-                    return ResultDataType.FuelType;
+                    return SystemEnergyCentreDataType.FuelType;
 
                 case global::TPD.tpdResultVectorType.tpdElectricFuelType:
-                    return ResultDataType.ElectricFuelType;
+                    return SystemEnergyCentreDataType.ElectricFuelType;
 
                 case global::TPD.tpdResultVectorType.tpdThermalFuelType:
-                    return ResultDataType.ThermalFuelType;
+                    return SystemEnergyCentreDataType.ThermalFuelType;
 
                 case global::TPD.tpdResultVectorType.tpdPlantComp:
-                    return ResultDataType.PlantComponent;
+                    return SystemEnergyCentreDataType.PlantComponent;
 
                 case global::TPD.tpdResultVectorType.tpdElectricPlantComp:
-                    return ResultDataType.ElectricPlantComponent;
+                    return SystemEnergyCentreDataType.ElectricPlantComponent;
 
                 case global::TPD.tpdResultVectorType.tpdThermalPlantComp:
-                    return ResultDataType.ThermalPlantComponent;
+                    return SystemEnergyCentreDataType.ThermalPlantComponent;
 
                 case global::TPD.tpdResultVectorType.tpdUnmetHours:
-                    return ResultDataType.UnmetHours;
+                    return SystemEnergyCentreDataType.UnmetHours;
             }
 
-            return ResultDataType.Undefined;
+            return SystemEnergyCentreDataType.Undefined;
         }
     }
 }

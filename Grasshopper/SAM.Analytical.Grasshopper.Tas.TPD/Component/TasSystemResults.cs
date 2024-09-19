@@ -20,7 +20,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -50,7 +50,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "plantRoomIndexes_", NickName = "plantRoomIndexes", Description = "Indexes of the plant pooms starting from 0", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Voluntary));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_resultDataTypes", NickName = "_resultDataTypes", Description = "ResultDataTypes", Access = GH_ParamAccess.list}, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_systemEnergyCentreDataTypes", NickName = "_systemEnergyCentreDataTypes", Description = "System Energy Centre Data Types", Access = GH_ParamAccess.list}, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_String param_String = new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_resultPeriod_", NickName = "_resultPeriod_", Description = "Result Period", Access = GH_ParamAccess.item, Optional = true };
                 param_String.SetPersistentData(ResultPeriod.Annual.ToString());
@@ -86,8 +86,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             get
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooIndexedObjectsParam() { Name = "results", NickName = "results", Description = "SAM Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "resultDataTypes", NickName = "resultDataTypes", Description = "Result Data Types", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooResultParam() { Name = "systemEnergyCentreResults", NickName = "systemEnergyCentreResults", Description = "SAM SystemEnergyCentreResults", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -135,18 +134,18 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 plantRoomIndexes = null;
             }
 
-            List<string> resultDataTypeStrings = new List<string>();
-            index = Params.IndexOfInputParam("_resultDataTypes");
-            if (index == -1 || !dataAccess.GetDataList(index, resultDataTypeStrings) || resultDataTypeStrings == null)
+            List<string> systemEnergyCentreDataTypeStrings = new List<string>();
+            index = Params.IndexOfInputParam("_systemEnergyCentreDataTypes");
+            if (index == -1 || !dataAccess.GetDataList(index, systemEnergyCentreDataTypeStrings) || systemEnergyCentreDataTypeStrings == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            List<ResultDataType> resultDataTypes = resultDataTypeStrings.ConvertAll(x => Core.Query.Enum<ResultDataType>(x));
-            resultDataTypes.RemoveAll(x => x == ResultDataType.Undefined);
+            List<SystemEnergyCentreDataType> systemEnergyCentreDataTypes = systemEnergyCentreDataTypeStrings.ConvertAll(x => Core.Query.Enum<SystemEnergyCentreDataType>(x));
+            systemEnergyCentreDataTypes.RemoveAll(x => x == SystemEnergyCentreDataType.Undefined);
 
-            if(resultDataTypes == null || resultDataTypes.Count == 0)
+            if(systemEnergyCentreDataTypes == null || systemEnergyCentreDataTypes.Count == 0)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid ResultDataTypes");
                 return;
@@ -186,19 +185,15 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 }
             }
 
-            Dictionary<ResultDataType, IndexedDoubles> dictionary = SAM.Core.Tas.TPD.Query.ResultDataTypeDictionary(path, resultPeriod, resultDataTypes, plantRoomIndexes, detailedCategoryView, regulatedEnergyOnly, perUnitArea);
+            List<SystemEnergyCentreResult> SystemEnergyCentreResults = Core.Tas.TPD.Query.SystemEnergyCentreResults(path, resultPeriod, systemEnergyCentreDataTypes, plantRoomIndexes, detailedCategoryView, regulatedEnergyOnly, perUnitArea);
 
-            index = Params.IndexOfOutputParam("results");
+            index = Params.IndexOfOutputParam("systemEnergyCentreResults");
             if (index != -1)
-                dataAccess.SetDataList(index, dictionary?.Values.ToList());
-
-            index = Params.IndexOfOutputParam("resultDataTypes");
-            if (index != -1)
-                dataAccess.SetDataList(index, dictionary?.Keys.ToList());
+                dataAccess.SetDataList(index, SystemEnergyCentreResults);
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, dictionary != null);
+                dataAccess.SetData(index_successful, SystemEnergyCentreResults != null);
             }
         }
     }
