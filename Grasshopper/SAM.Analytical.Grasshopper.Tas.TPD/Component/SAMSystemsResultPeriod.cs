@@ -6,17 +6,17 @@ using System;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
-    public class SAMAnalyticalResultDataType : GH_SAMEnumComponent<ResultDataType>
+    public class SAMSystemsResultPeriod : GH_SAMEnumComponent<ResultPeriod>
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("2ce0997f-a5e2-457d-9baa-39fbc2a5ebb6");
+        public override Guid ComponentGuid => new Guid("eb6418e9-b430-4730-a882-b77b3bcaa69d");
 
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -26,9 +26,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Panel Type
         /// </summary>
-        public SAMAnalyticalResultDataType()
-          : base("SAMAnalytical.ResultDataType", "SAMAnalytical.ResultDataType",
-              "Select ResultDataType",
+        public SAMSystemsResultPeriod()
+          : base("SAMSystems.ResultPeriod", "SAMSystems.ResultPeriod",
+              "Select ResultPeriod",
               "SAM", "Analytical")
         {
         }

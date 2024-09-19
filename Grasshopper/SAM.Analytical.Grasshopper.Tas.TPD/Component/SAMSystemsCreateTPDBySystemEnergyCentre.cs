@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
-    public class CreateTPDBySystemEnergyCentre : GH_SAMVariableOutputParameterComponent
+    public class SAMSystemsCreateTPDBySystemEnergyCentre : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -35,8 +35,8 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public CreateTPDBySystemEnergyCentre()
-          : base("SAMAnalytical.CreateTPDBySystemEnergyCentre ", "SAMAnalytical.CreateTPDBySystemEnergyCentre ",
+        public SAMSystemsCreateTPDBySystemEnergyCentre()
+          : base("SAMSystems.CreateTPDBySystemEnergyCentre", "SAMSystems.CreateTPDBySystemEnergyCentre",
               "Creates TPD from SystemEnergyCentre",
               "SAM", "Tas")
         {
