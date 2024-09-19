@@ -64,7 +64,7 @@ namespace SAM.Core.Tas.TPD
             {
                 tpdResultVectorType tpdResultVectorType = systemEnergyCentreDataType.ToTPD();
 
-                List<SystemEnergyCentreGroup> systemEnergyCentreGroups = new List<SystemEnergyCentreGroup>(); 
+                List<SystemEnergyCentreValues> systemEnergyCentreValuesList = new List<SystemEnergyCentreValues>(); 
 
                 int count = wrResultSet.GetVectorSize(tpdResultVectorType);
                 for (int j = 1; j <= count; j++)
@@ -85,12 +85,12 @@ namespace SAM.Core.Tas.TPD
                             indexedDoubles[i] = (double)array.GetValue(i);
                         }
 
-                        SystemEnergyCentreGroup systemEnergyCentreGroup = new SystemEnergyCentreGroup(wrResultItem.GetPlantComponentName(), wrResultItem.Category, indexedDoubles);
-                        systemEnergyCentreGroups.Add(systemEnergyCentreGroup);
+                        SystemEnergyCentreValues systemEnergyCentreValues = new SystemEnergyCentreValues(wrResultItem.GetPlantComponentName(), wrResultItem.Category, indexedDoubles);
+                        systemEnergyCentreValuesList.Add(systemEnergyCentreValues);
                     }
                 }
 
-                result.Add(new SystemEnergyCentreResult(energyCentre.Name, energyCentre.Name, Analytical.Tas.TPD.Query.Source(), systemEnergyCentreDataType, systemEnergyCentreGroups));
+                result.Add(new SystemEnergyCentreResult(energyCentre.Name, energyCentre.Name, Analytical.Tas.TPD.Query.Source(), systemEnergyCentreDataType, systemEnergyCentreValuesList));
             }
 
 
