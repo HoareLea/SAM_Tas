@@ -85,7 +85,15 @@ namespace SAM.Core.Tas.TPD
                             indexedDoubles[i] = (double)array.GetValue(i);
                         }
 
-                        SystemEnergyCentreValues systemEnergyCentreValues = new SystemEnergyCentreValues(wrResultItem.GetPlantComponentName(), wrResultItem.Category, indexedDoubles);
+                        string name = wrResultItem.GetPlantComponentName();
+                        if(name == null)
+                        {
+                            name = wrResultItem.GetFuelSource()?.Name;
+                        }
+
+                        string unitName = wrResultItem.GetUnitString();
+
+                        SystemEnergyCentreValues systemEnergyCentreValues = new SystemEnergyCentreValues(name, wrResultItem.Category, unitName, indexedDoubles);
                         systemEnergyCentreValuesList.Add(systemEnergyCentreValues);
                     }
                 }
