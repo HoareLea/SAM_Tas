@@ -32,7 +32,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         public TasTSDDailyIndoorComfortTemperatures()
           : base("SAMAnalytical.DailyIndoorComfortTemperatures", "SAMAnalytical.DailyIndoorComfortTemperatures",
               "Daily Indoor Comfort Temperatures",
-              "SAM", "Analytical1")
+              "SAM", "Tas")
         {
         }
 

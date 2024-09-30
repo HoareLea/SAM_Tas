@@ -86,7 +86,7 @@ namespace SAM.Core.Tas.TPD
                         }
 
                         string name = wrResultItem.GetPlantComponentName();
-                        if(name == null)
+                        if(string.IsNullOrEmpty(name))
                         {
                             name = wrResultItem.GetFuelSource()?.Name;
                         }

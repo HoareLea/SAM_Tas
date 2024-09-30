@@ -29,7 +29,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         public SAMSystemsResultPeriod()
           : base("SAMSystems.ResultPeriod", "SAMSystems.ResultPeriod",
               "Select ResultPeriod",
-              "SAM", "Analytical")
+              "SAM", "Analytical04")
         {
         }
     }
