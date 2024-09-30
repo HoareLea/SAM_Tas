@@ -22,6 +22,9 @@
     <None Remove="Classes\**" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Interop.TasConv">
+      <HintPath>..\..\references_buildonly\Interop.TasConv.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.TPD">
       <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
