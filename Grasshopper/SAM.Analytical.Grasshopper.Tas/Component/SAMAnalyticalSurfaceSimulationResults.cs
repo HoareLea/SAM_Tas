@@ -34,7 +34,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         public SAMAnalyticalSurfaceSimulationResults()
           : base("SAMAnalytical.SurfaceSimulationResults", "SAMAnalytical.SurfaceSimulationResults",
               "Query SurfaceSimulationResults from AnalyticalModel or AdjacencyCluster",
-              "SAM WIP", "Analytical")
+              "SAM", "Analytical04")
         {
         }
 

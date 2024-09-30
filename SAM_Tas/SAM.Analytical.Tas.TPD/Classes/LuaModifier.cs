@@ -60,15 +60,5 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
-
-        public override bool ContainsIndex(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override double GetCalculatedValue(int index, double value)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

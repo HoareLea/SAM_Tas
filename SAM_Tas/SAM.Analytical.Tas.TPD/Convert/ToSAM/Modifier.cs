@@ -87,14 +87,14 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static IndexedModifier ToSAM(IProfileDataModifierTable profileDataModifierTable)
+        public static IndexedDoublesModifier ToSAM(IProfileDataModifierTable profileDataModifierTable)
         {
             if(profileDataModifierTable == null)
             {
                 return null;
             }
 
-            IndexedModifier result = new IndexedModifier(profileDataModifierTable.Multiplier.ArithmeticOperator().Value, null);
+            IndexedDoublesModifier result = new IndexedDoublesModifier(profileDataModifierTable.Multiplier.ArithmeticOperator().Value, null);
 
             return result;
         }

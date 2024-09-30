@@ -17,11 +17,6 @@
     <OutputPath>..\..\build\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Enums\**" />
-    <EmbeddedResource Remove="Enums\**" />
-    <None Remove="Enums\**" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
 	  <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -69,9 +64,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Convert\ToSAM\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
-    public class SAMAnalyticalSystemResults : GH_SAMVariableOutputParameterComponent
+    public class TasSystemSpaceResults : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -17,7 +17,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -30,9 +30,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMAnalyticalSystemResults()
-          : base("SAMAnalytical.SystemResults", "SAMAnalytical.SystemResults",
-              "Converts SAM Analytical to System Results",
+        public TasSystemSpaceResults()
+          : base("Tas.SystemSpaceResults", "Tas.SystemSpaceResults",
+              "Converts SAM Analytical to System Space Results",
               "SAM", "Tas")
         {
         }
