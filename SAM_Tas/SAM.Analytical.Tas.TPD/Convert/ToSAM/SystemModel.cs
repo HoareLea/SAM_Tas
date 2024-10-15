@@ -78,6 +78,8 @@ namespace SAM.Analytical.Tas.TPD
                     systemPlantRoom.Add(system, tPDDoc, componentConversionSettings);
                 }
 
+                systemPlantRoom.Add(tPDDoc, componentConversionSettings);
+
                 result.Add(systemPlantRoom);
 
                 //=======TEST=======
