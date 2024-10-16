@@ -833,6 +833,14 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     ElectricalGroup electricalGroup = tuple.Item1;
 
+                    ElectricalSystemGroup electricalSystemGroup = electricalGroup.ToSAM();
+                    systemPlantRoom.Add(electricalSystemGroup);
+
+                    ElectricalSystem electricalSystem = new ElectricalSystem(electricalSystemGroup.Name);
+                    systemPlantRoom.Add(electricalSystem);
+
+                    systemPlantRoom.Connect(electricalSystem, electricalSystemGroup);
+
                     List<global::TPD.SystemComponent> systemComponents = tuple.Item2;
                     if(systemComponents != null && systemComponents.Count != 0)
                     {
@@ -844,16 +852,17 @@ namespace SAM.Analytical.Tas.TPD
                                 continue;
                             }
 
-                            Core.Systems.ISystemComponent systemComponent_SystemPLantRoom = systemComponents_SystemPlantRoom.Find(x => x?.Reference() == reference);
+                            Core.Systems.ISystemComponent systemComponent_SystemPlantRoom = systemComponents_SystemPlantRoom.Find(x => x?.Reference() == reference);
+                            if(systemComponent_SystemPlantRoom == null)
+                            {
+                                continue;
+                            }
 
+                            systemPlantRoom.Connect(electricalSystemGroup, systemComponent_SystemPlantRoom);
+                            systemPlantRoom.Connect(electricalSystem, systemComponent_SystemPlantRoom);
                         }
                     }
-
-
                 }
-
-
-
             }
 
             return null;
