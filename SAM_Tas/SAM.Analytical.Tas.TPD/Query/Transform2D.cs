@@ -122,6 +122,22 @@ namespace SAM.Analytical.Tas.TPD
             return Transform2D(tpdDirection, location, AnalyticalSystemComponentType(systemComponent));
         }
 
+        public static ITransform2D Transform2D(this IPlantComponent plantComponent)
+        {
+            if (plantComponent == null)
+            {
+                return null;
+            }
+
+            dynamic @dynamic = plantComponent;
+
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            tpdDirection tpdDirection = (tpdDirection)(int)@dynamic.GetDirection();
+
+            return Transform2D(tpdDirection, location, AnalyticalSystemComponentType(plantComponent));
+        }
+
         public static ITransform2D Transform2D(this IDisplaySystemObject<SystemGeometryInstance> displaySystemObject, out tpdDirection tpdDirection)
         {
             tpdDirection = tpdDirection.tpdLeftRight;

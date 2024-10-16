@@ -1,11 +1,12 @@
 ﻿using SAM.Analytical.Systems;
+using SAM.Core.Systems;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static AnalyticalSystemComponentType AnalyticalSystemComponentType(this ISystemComponent systemComponent)
+        public static AnalyticalSystemComponentType AnalyticalSystemComponentType(this global::TPD.ISystemComponent systemComponent)
         { 
             if(systemComponent == null)
             {
@@ -50,6 +51,16 @@ namespace SAM.Analytical.Tas.TPD
             if (systemComponent is Damper)
             {
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemDamper;
+            }
+
+            return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
+        }
+
+        public static AnalyticalSystemComponentType AnalyticalSystemComponentType(this IPlantComponent plantComponent)
+        {
+            if (plantComponent is Pump)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.Pump;
             }
 
             return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
