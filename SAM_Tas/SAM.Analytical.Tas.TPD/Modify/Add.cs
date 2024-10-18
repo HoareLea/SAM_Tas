@@ -1095,22 +1095,26 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            List<PlantComponent> plantComponents = plantRoom.PlantComponents<PlantComponent>();
-            if (plantComponents == null || plantComponents.Count == 0)
+            List<List<PlantComponent>> plantComponentsList = Query.ConnectedPlantComponents(plantRoom);
+            if(plantComponentsList == null || plantComponentsList.Count == 0)
             {
                 return null;
             }
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
-            foreach (PlantComponent plantComponent in plantComponents)
-            {
-                List<ISystemJSAMObject> systemJSAMObjects = null;
 
-                //systemJSAMObjects = Add(systemPlantRoom, plantComponent, tPDDoc,componentConversionSettings);
-                //if (systemJSAMObjects != null)
-                //{
-                //    result.AddRange(systemJSAMObjects);
-                //}
+            foreach (List<PlantComponent> plantComponents_Temp in plantComponentsList)
+            {
+                foreach(PlantComponent plantComponent in plantComponents_Temp)
+                {
+                    List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, plantComponent, tPDDoc, componentConversionSettings);
+                    if(systemJSAMObjects == null)
+                    {
+                        continue;
+                    }
+
+                    result.AddRange(systemJSAMObjects);
+                }
             }
 
             return result;
