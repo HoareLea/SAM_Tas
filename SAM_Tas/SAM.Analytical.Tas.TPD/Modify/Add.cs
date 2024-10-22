@@ -1149,6 +1149,31 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (PlantGroup)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if(plantComponent is HeatPump)
+            {
+                return Add(systemPlantRoom, (HeatPump)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is BoilerPlant)
+            {
+                return Add(systemPlantRoom, (BoilerPlant)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is Chiller)
+            {
+                return Add(systemPlantRoom, (Chiller)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is MultiBoiler)
+            {
+                return Add(systemPlantRoom, (MultiBoiler)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is IPlantJunction)
+            {
+                return Add(systemPlantRoom, (IPlantJunction)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
         }
 
@@ -1205,7 +1230,20 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     switch(typeName)
                     {
-                        case "":
+                        case "RefrigerantGroup":
+                            system = new RefrigerantSystem(((dynamic)plantGroup).Name);
+                            break;
+
+                        case "HeatingGroup":
+                            system = new Systems.HeatingSystem(((dynamic)plantGroup).Name);
+                            break;
+
+                        case "CoolingGroup":
+                            system = new Systems.CoolingSystem(((dynamic)plantGroup).Name);
+                            break;
+
+                        case "DHWGroup":
+                            system = new Systems.DomesticHotWaterSystem(((dynamic)plantGroup).Name);
                             break;
                     }
                 }
@@ -1244,9 +1282,9 @@ namespace SAM.Analytical.Tas.TPD
                     if(systemComponent != null)
                     {
                         result.Add(systemComponent);
+                        systemPlantRoom.Connect(system, systemComponent);
                         continue;
                     }
-
 
                     //List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc, componentConversionSettings);
                     //if (systemJSAMObjects != null)
@@ -1259,6 +1297,65 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HeatPump heatPump, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || heatPump == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, BoilerPlant boilerPlant, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || boilerPlant == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Chiller chiller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || chiller == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, MultiBoiler multiBoiler, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || multiBoiler == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            return result;
+        }
+        
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, IPlantJunction plantJunction, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || plantJunction == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            return result;
+        }
 
     }
 }
