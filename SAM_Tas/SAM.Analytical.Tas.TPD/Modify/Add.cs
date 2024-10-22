@@ -1105,7 +1105,12 @@ namespace SAM.Analytical.Tas.TPD
 
             foreach (List<PlantComponent> plantComponents_Temp in plantComponentsList)
             {
-                foreach(PlantComponent plantComponent in plantComponents_Temp)
+                if(plantComponents_Temp == null || plantComponents_Temp.Count == 0)
+                {
+                    continue;
+                }
+
+                foreach (PlantComponent plantComponent in plantComponents_Temp)
                 {
                     List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, plantComponent, tPDDoc, componentConversionSettings);
                     if(systemJSAMObjects == null)
@@ -1187,9 +1192,37 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            string typeName = ((dynamic)plantGroup).GetComponentType();
+            Core.Systems.ISystem system = null;
+
+            if (plantGroup is ElectricalGroup)
+            {
+                system = new ElectricalSystem(((dynamic)plantGroup).Name);
+            }
+            else
+            {
+                string typeName = ((dynamic)plantGroup).GetComponentType();
+                if(!string.IsNullOrWhiteSpace(typeName))
+                {
+                    switch(typeName)
+                    {
+                        case "":
+                            break;
+                    }
+                }
+            }
+
+            if(system == null)
+            {
+                return null;
+            }
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            if (systemPlantRoom.Add(system))
+            {
+                result.Add(system);
+            }
+
 
             List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(plantGroup);
             if (systemComponents != null)
