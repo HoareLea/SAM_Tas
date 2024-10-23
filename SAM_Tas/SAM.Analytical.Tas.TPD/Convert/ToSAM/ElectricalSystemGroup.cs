@@ -21,14 +21,15 @@ namespace SAM.Analytical.Tas.TPD
             result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
 
-            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+            if (boundingBox2D == null)
+            {
+                boundingBox2D = Query.BoundingBox2D((PlantGroup)electricalGroup);
+            }
 
-            Point2D min = location;
-            Point2D max = new Point2D(min.X + 0.6, min.Y + 1);
-
-            result = new DisplayElectricalSystemGroup(result, new BoundingBox2D(min, max));
+            result = new DisplayElectricalSystemGroup(result, boundingBox2D);
 
             return result;
         }
     }
 }
+

@@ -776,224 +776,10 @@ namespace SAM.Analytical.Tas.TPD
             {
                 List<ISystemJSAMObject> systemJSAMObjects = null;
 
-                systemJSAMObjects = Add_PlantComponents(systemPlantRoom, plantRoom, tPDDoc, componentConversionSettings);
+                systemJSAMObjects = Add(systemPlantRoom, plantRoom, tPDDoc, componentConversionSettings);
                 if (systemJSAMObjects != null)
                 {
                     result.AddRange(systemJSAMObjects);
-                }
-
-                systemJSAMObjects = Add_ElectricalGroups(systemPlantRoom, plantRoom, componentConversionSettings);
-                if(systemJSAMObjects != null)
-                {
-                    result.AddRange(systemJSAMObjects);
-                }
-            }
-
-            return result;
-        }
-
-        private static List<ISystemJSAMObject> Add_DHWGroups(this SystemPlantRoom systemPlantRoom, PlantRoom plantRoom, ComponentConversionSettings componentConversionSettings = null)
-        {
-            if (systemPlantRoom == null || plantRoom == null)
-            {
-                return null;
-            }
-
-            List<DHWGroup> dHWGroups = plantRoom?.DHWGroups();
-            if (dHWGroups == null || dHWGroups.Count == 0)
-            {
-                return null;
-            }
-
-            Dictionary<string, Tuple<DHWGroup, List<global::TPD.SystemComponent>>> dictionary = new Dictionary<string, Tuple<DHWGroup, List<global::TPD.SystemComponent>>>();
-            foreach (DHWGroup dHWGroup in dHWGroups)
-            {
-                string guid = ((dynamic)dHWGroup).Guid;
-                if (string.IsNullOrWhiteSpace(guid))
-                {
-                    continue;
-                }
-
-                dictionary[guid] = new Tuple<DHWGroup, List<global::TPD.SystemComponent>>(dHWGroup, new List<global::TPD.SystemComponent>());
-            }
-
-            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
-
-            List<global::TPD.System> systems = plantRoom.Systems();
-            if (systems != null || systems.Count != 0)
-            {
-                foreach (global::TPD.System system in systems)
-                {
-                    List<global::TPD.SystemComponent> systemComponents = system.SystemComponents<global::TPD.SystemComponent>(true);
-                    if (systemComponents == null || systemComponents.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    foreach (global::TPD.SystemComponent systemComponent in systemComponents)
-                    {
-                        dynamic @dynamic = systemComponent;
-
-                        List<ElectricalGroup> electricalGroups_Temp = new List<ElectricalGroup>() { @dynamic.GetElectricalGroup1(), @dynamic.GetElectricalGroup2() };
-                        electricalGroups_Temp.RemoveAll(x => x == null);
-                        if (electricalGroups_Temp.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        foreach (ElectricalGroup electricalGroup in electricalGroups_Temp)
-                        {
-                            if (!dictionary.TryGetValue(((dynamic)electricalGroup).Guid, out Tuple<DHWGroup, List<global::TPD.SystemComponent>> tuple) || tuple == null)
-                            {
-                                continue;
-                            }
-
-                            tuple.Item2.Add(systemComponent);
-                        }
-                    }
-                }
-            }
-
-            List<Core.Systems.ISystemComponent> systemComponents_SystemPlantRoom = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>();
-
-            foreach (Tuple<DHWGroup, List<global::TPD.SystemComponent>> tuple in dictionary.Values)
-            {
-                DHWGroup dHWGroup = tuple.Item1;
-
-                DomesticHotWaterSystemGroup domesticHotWaterSystemGroup = dHWGroup.ToSAM();
-                systemPlantRoom.Add(domesticHotWaterSystemGroup);
-                result.Add(domesticHotWaterSystemGroup);
-
-                DomesticHotWaterSystem domesticHotWaterSystem = new DomesticHotWaterSystem(domesticHotWaterSystemGroup.Name);
-                systemPlantRoom.Add(domesticHotWaterSystem);
-                result.Add(domesticHotWaterSystem);
-
-                systemPlantRoom.Connect(domesticHotWaterSystem, domesticHotWaterSystemGroup);
-
-                List<global::TPD.SystemComponent> systemComponents = tuple.Item2;
-                if (systemComponents != null && systemComponents.Count != 0)
-                {
-                    foreach (global::TPD.SystemComponent systemComponent in systemComponents)
-                    {
-                        string reference = systemComponent?.Reference();
-                        if (string.IsNullOrWhiteSpace(reference))
-                        {
-                            continue;
-                        }
-
-                        Core.Systems.ISystemComponent systemComponent_SystemPlantRoom = systemComponents_SystemPlantRoom.Find(x => x?.Reference() == reference);
-                        if (systemComponent_SystemPlantRoom == null)
-                        {
-                            continue;
-                        }
-
-                        systemPlantRoom.Connect(domesticHotWaterSystemGroup, systemComponent_SystemPlantRoom);
-                        systemPlantRoom.Connect(domesticHotWaterSystem, systemComponent_SystemPlantRoom);
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private static List<ISystemJSAMObject> Add_ElectricalGroups(this SystemPlantRoom systemPlantRoom, PlantRoom plantRoom, ComponentConversionSettings componentConversionSettings = null)
-        {
-            if(systemPlantRoom == null || plantRoom == null)
-            {
-                return null;
-            }
-
-            List<ElectricalGroup> electricalGroups = plantRoom?.ElectricalGroups();
-            if (electricalGroups == null || electricalGroups.Count == 0)
-            {
-                return null;
-            }
-
-            Dictionary<string, Tuple<ElectricalGroup, List<global::TPD.SystemComponent>>> dictionary = new Dictionary<string, Tuple<ElectricalGroup, List<global::TPD.SystemComponent>>>();
-            foreach (ElectricalGroup electricalGroup in electricalGroups)
-            {
-                string guid = ((dynamic)electricalGroup).Guid;
-                if (string.IsNullOrWhiteSpace(guid))
-                {
-                    continue;
-                }
-
-                dictionary[guid] = new Tuple<ElectricalGroup, List<global::TPD.SystemComponent>>(electricalGroup, new List<global::TPD.SystemComponent>());
-            }
-
-            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
-
-            List<global::TPD.System> systems = plantRoom.Systems();
-            if (systems != null || systems.Count != 0)
-            {
-                foreach (global::TPD.System system in systems)
-                {
-                    List<global::TPD.SystemComponent> systemComponents = system.SystemComponents<global::TPD.SystemComponent>(true);
-                    if (systemComponents == null || systemComponents.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    foreach (global::TPD.SystemComponent systemComponent in systemComponents)
-                    {
-                        dynamic @dynamic = systemComponent;
-
-                        List<ElectricalGroup> electricalGroups_Temp = new List<ElectricalGroup>() { @dynamic.GetElectricalGroup1(), @dynamic.GetElectricalGroup2() };
-                        electricalGroups_Temp.RemoveAll(x => x == null);
-                        if (electricalGroups_Temp.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        foreach (ElectricalGroup electricalGroup in electricalGroups_Temp)
-                        {
-                            if (!dictionary.TryGetValue(((dynamic)electricalGroup).Guid, out Tuple<ElectricalGroup, List<global::TPD.SystemComponent>> tuple) || tuple == null)
-                            {
-                                continue;
-                            }
-
-                            tuple.Item2.Add(systemComponent);
-                        }
-                    }
-                }
-            }
-
-            List<Core.Systems.ISystemComponent> systemComponents_SystemPlantRoom = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>();
-
-            foreach (Tuple<ElectricalGroup, List<global::TPD.SystemComponent>> tuple in dictionary.Values)
-            {
-                ElectricalGroup electricalGroup = tuple.Item1;
-
-                ElectricalSystemGroup electricalSystemGroup = electricalGroup.ToSAM();
-                systemPlantRoom.Add(electricalSystemGroup);
-                result.Add(electricalSystemGroup);
-
-                ElectricalSystem electricalSystem = new ElectricalSystem(electricalSystemGroup.Name);
-                systemPlantRoom.Add(electricalSystem);
-                result.Add(electricalSystem);
-
-                systemPlantRoom.Connect(electricalSystem, electricalSystemGroup);
-
-                List<global::TPD.SystemComponent> systemComponents = tuple.Item2;
-                if (systemComponents != null && systemComponents.Count != 0)
-                {
-                    foreach (global::TPD.SystemComponent systemComponent in systemComponents)
-                    {
-                        string reference = systemComponent?.Reference();
-                        if (string.IsNullOrWhiteSpace(reference))
-                        {
-                            continue;
-                        }
-
-                        Core.Systems.ISystemComponent systemComponent_SystemPlantRoom = systemComponents_SystemPlantRoom.Find(x => x?.Reference() == reference);
-                        if (systemComponent_SystemPlantRoom == null)
-                        {
-                            continue;
-                        }
-
-                        systemPlantRoom.Connect(electricalSystemGroup, systemComponent_SystemPlantRoom);
-                        systemPlantRoom.Connect(electricalSystem, systemComponent_SystemPlantRoom);
-                    }
                 }
             }
 
@@ -1088,7 +874,7 @@ namespace SAM.Analytical.Tas.TPD
             return new List<ISystemJSAMObject>() { result };
         }
 
-        private static List<ISystemJSAMObject> Add_PlantComponents(this SystemPlantRoom systemPlantRoom, PlantRoom plantRoom, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        private static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PlantRoom plantRoom, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || plantRoom == null)
             {
@@ -1169,9 +955,19 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (MultiBoiler)plantComponent, tPDDoc, componentConversionSettings);
             }
 
-            if (plantComponent is IPlantJunction)
+            if (plantComponent is PlantJunction)
             {
-                return Add(systemPlantRoom, (IPlantJunction)plantComponent, tPDDoc, componentConversionSettings);
+                return Add(systemPlantRoom, (PlantJunction)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is MultiChiller)
+            {
+                return Add(systemPlantRoom, (MultiChiller)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is AirSourceHeatPump)
+            {
+                return Add(systemPlantRoom, (AirSourceHeatPump)plantComponent, tPDDoc, componentConversionSettings);
             }
 
             return null;
@@ -1218,60 +1014,66 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             Core.Systems.ISystem system = null;
+            ISystemGroup systemGroup = null;
+
+            dynamic @dynamic = plantGroup;
+
+            string name = @dynamic.Name;
 
             if (plantGroup is ElectricalGroup)
             {
-                system = new ElectricalSystem(((dynamic)plantGroup).Name);
+                system = new ElectricalSystem(name);
+                systemGroup = ((ElectricalGroup)plantGroup).ToSAM();
             }
-            else
+            else if(plantGroup is RefrigerantGroup)
             {
-                string typeName = ((dynamic)plantGroup).GetComponentType();
-                if(!string.IsNullOrWhiteSpace(typeName))
-                {
-                    switch(typeName)
-                    {
-                        case "RefrigerantGroup":
-                            system = new RefrigerantSystem(((dynamic)plantGroup).Name);
-                            break;
-
-                        case "HeatingGroup":
-                            system = new Systems.HeatingSystem(((dynamic)plantGroup).Name);
-                            break;
-
-                        case "CoolingGroup":
-                            system = new Systems.CoolingSystem(((dynamic)plantGroup).Name);
-                            break;
-
-                        case "DHWGroup":
-                            system = new Systems.DomesticHotWaterSystem(((dynamic)plantGroup).Name);
-                            break;
-                    }
-                }
+                system = new RefrigerantSystem(name);
+                systemGroup = ((RefrigerantGroup)plantGroup).ToSAM();
+            }
+            else if (plantGroup is HeatingGroup)
+            {
+                system = new Systems.HeatingSystem(name);
+                systemGroup = ((HeatingGroup)plantGroup).ToSAM();
+            }
+            else if (plantGroup is CoolingGroup)
+            {
+                system = new Systems.CoolingSystem(name);
+                systemGroup = ((CoolingGroup)plantGroup).ToSAM();
+            }
+            else if (plantGroup is DHWGroup)
+            {
+                system = new DomesticHotWaterSystem(name);
+                systemGroup = ((DHWGroup)plantGroup).ToSAM();
             }
 
-            if(system == null)
+            if (system == null && systemGroup == null)
             {
                 return null;
             }
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
-            if (systemPlantRoom.Add(system))
+            if(system != null)
             {
-                result.Add(system);
+                if (systemPlantRoom.Add(system))
+                {
+                    result.Add(system);
+                }
             }
 
+            if(systemGroup != null)
+            {
+                if (systemPlantRoom.Add(systemGroup))
+                {
+                    result.Add(systemGroup);
+                }
+            }
 
             List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(plantGroup);
             if (systemComponents != null)
             {
                 foreach (global::TPD.SystemComponent systemComponent_Temp in systemComponents)
                 {
-                    if (systemComponent_Temp is Junction)
-                    {
-                        continue;
-                    }
-
                     string reference = systemComponent_Temp.Reference();
                     if(string.IsNullOrWhiteSpace(reference))
                     {
@@ -1282,7 +1084,8 @@ namespace SAM.Analytical.Tas.TPD
                     if(systemComponent != null)
                     {
                         result.Add(systemComponent);
-                        systemPlantRoom.Connect(system, systemComponent);
+                        systemPlantRoom?.Connect(system, systemComponent);
+                        systemPlantRoom?.Connect(systemGroup, systemComponent);
                         continue;
                     }
 
@@ -1304,7 +1107,28 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemHeatPump systemHeatPump = heatPump.ToSAM();
+            systemPlantRoom.Add(systemHeatPump);
+            result.Add(systemHeatPump);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemHeatPumpResult systemHeatPumpResult = heatPump.ToSAM_SystemHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemHeatPumpResult);
+
+                systemPlantRoom.Connect(systemHeatPumpResult, systemHeatPump);
+                result.Add(systemHeatPumpResult);
+            }
 
             return result;
         }
@@ -1316,7 +1140,28 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemBoiler systemBoiler = boilerPlant.ToSAM();
+            systemPlantRoom.Add(systemBoiler);
+            result.Add(systemBoiler);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemBoilerResult systemBoilerResult = boilerPlant.ToSAM_SystemBoilerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemBoilerResult);
+
+                systemPlantRoom.Connect(systemBoilerResult, systemBoiler);
+                result.Add(systemBoilerResult);
+            }
 
             return result;
         }
@@ -1328,7 +1173,28 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemChiller systemChiller = chiller.ToSAM();
+            systemPlantRoom.Add(systemChiller);
+            result.Add(systemChiller);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemChillerResult systemChillerResult = chiller.ToSAM_SystemChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemChillerResult);
+
+                systemPlantRoom.Connect(systemChillerResult, systemChiller);
+                result.Add(systemChillerResult);
+            }
 
             return result;
         }
@@ -1340,12 +1206,33 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemBoiler systemBoiler = multiBoiler.ToSAM();
+            systemPlantRoom.Add(systemBoiler);
+            result.Add(systemBoiler);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemBoilerResult systemBoilerResult = multiBoiler.ToSAM_SystemBoilerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemBoilerResult);
+
+                systemPlantRoom.Connect(systemBoilerResult, systemBoiler);
+                result.Add(systemBoilerResult);
+            }
 
             return result;
         }
         
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, IPlantJunction plantJunction, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PlantJunction plantJunction, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || plantJunction == null || tPDDoc == null)
             {
@@ -1357,5 +1244,49 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, MultiChiller multiChiller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || multiChiller == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemChiller systemChiller = multiChiller.ToSAM();
+            systemPlantRoom.Add(systemChiller);
+            result.Add(systemChiller);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemChillerResult systemChillerResult = multiChiller.ToSAM_SystemChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemChillerResult);
+
+                systemPlantRoom.Connect(systemChillerResult, systemChiller);
+                result.Add(systemChillerResult);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, AirSourceHeatPump airSourceHeatPump, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || airSourceHeatPump == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            return result;
+        }
     }
 }

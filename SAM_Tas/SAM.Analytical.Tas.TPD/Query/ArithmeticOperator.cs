@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static ArithmeticOperator? ArithmeticOperator(this tpdProfileDataModifierMultiplier tpdProfileDataModifierMultiplier)
         {
-            switch(tpdProfileDataModifierMultiplier)
+            switch (tpdProfileDataModifierMultiplier)
             {
                 case tpdProfileDataModifierMultiplier.tpdProfileDataModifierAdd:
                     return Core.ArithmeticOperator.Addition;
