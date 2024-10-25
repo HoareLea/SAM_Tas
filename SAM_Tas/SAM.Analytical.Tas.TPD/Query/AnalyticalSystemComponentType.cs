@@ -1,5 +1,4 @@
 ﻿using SAM.Analytical.Systems;
-using SAM.Core.Systems;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -60,7 +59,7 @@ namespace SAM.Analytical.Tas.TPD
         {
             if (plantComponent is Pump)
             {
-                return Analytical.Systems.AnalyticalSystemComponentType.Pump;
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemPump;
             }
 
             return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
