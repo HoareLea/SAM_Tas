@@ -1301,7 +1301,28 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemAirSourceHeatPump systemAirSourceHeatPump = airSourceHeatPump.ToSAM();
+            systemPlantRoom.Add(systemAirSourceHeatPump);
+            result.Add(systemAirSourceHeatPump);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemAirSourceHeatPumpResult systemAirSourceHeatPumpResult = airSourceHeatPump.ToSAM_SystemAirSourceHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemAirSourceHeatPumpResult);
+
+                systemPlantRoom.Connect(systemAirSourceHeatPumpResult, systemAirSourceHeatPump);
+                result.Add(systemAirSourceHeatPumpResult);
+            }
 
             return result;
         }
