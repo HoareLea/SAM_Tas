@@ -1234,12 +1234,29 @@ namespace SAM.Analytical.Tas.TPD
         
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PlantJunction plantJunction, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
-            if (systemPlantRoom == null || plantJunction == null || tPDDoc == null)
+            if (systemPlantRoom == null || plantJunction == null)
             {
                 return null;
             }
 
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemLiquidJunction systemLiquidJunction = plantJunction.ToSAM();
+            systemPlantRoom.Add(systemLiquidJunction);
+            result.Add(systemLiquidJunction);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                SystemLiquidJunctionResult systemLiquidJunctionResult = plantJunction.ToSAM_SystemLiquidJunctionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemLiquidJunctionResult);
+
+                systemPlantRoom.Connect(systemLiquidJunctionResult, systemLiquidJunction);
+            }
 
             return result;
         }
