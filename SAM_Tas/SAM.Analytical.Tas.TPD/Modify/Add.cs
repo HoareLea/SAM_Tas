@@ -950,6 +950,26 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (Chiller)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is AbsorptionChiller)
+            {
+                return Add(systemPlantRoom, (AbsorptionChiller)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is IceStorageChiller)
+            {
+                return Add(systemPlantRoom, (IceStorageChiller)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is WaterSourceChiller)
+            {
+                return Add(systemPlantRoom, (WaterSourceChiller)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is MultiChiller)
+            {
+                return Add(systemPlantRoom, (MultiChiller)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             if (plantComponent is MultiBoiler)
             {
                 return Add(systemPlantRoom, (MultiBoiler)plantComponent, tPDDoc, componentConversionSettings);
@@ -958,11 +978,6 @@ namespace SAM.Analytical.Tas.TPD
             if (plantComponent is PlantJunction)
             {
                 return Add(systemPlantRoom, (PlantJunction)plantComponent, tPDDoc, componentConversionSettings);
-            }
-
-            if (plantComponent is MultiChiller)
-            {
-                return Add(systemPlantRoom, (MultiChiller)plantComponent, tPDDoc, componentConversionSettings);
             }
 
             if (plantComponent is AirSourceHeatPump)
@@ -1189,11 +1204,187 @@ namespace SAM.Analytical.Tas.TPD
                 int start = tPDDoc.StartHour();
                 int end = tPDDoc.EndHour();
 
-                SystemAirSourceChillerResult systemAirSourceChillerResult = chiller.ToSAM_SystemAirSourceChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
-                systemPlantRoom.Add(systemAirSourceChillerResult);
+                if (systemChiller is SystemAirSourceChiller)
+                {
+                    SystemAirSourceChillerResult systemAirSourceChillerResult = chiller.ToSAM_SystemAirSourceChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                    systemPlantRoom.Add(systemAirSourceChillerResult);
 
-                systemPlantRoom.Connect(systemAirSourceChillerResult, systemChiller);
-                result.Add(systemAirSourceChillerResult);
+                    systemPlantRoom.Connect(systemAirSourceChillerResult, systemChiller);
+                    result.Add(systemAirSourceChillerResult);
+                }
+                else if (systemChiller is SystemAirSourceDirectAbsorptionChiller)
+                {
+                    SystemAirSourceDirectAbsorptionChillerResult systemAirSourceDirectAbsorptionChillerResult = chiller.ToSAM_SystemAirSourceDirectAbsorptionChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                    systemPlantRoom.Add(systemAirSourceDirectAbsorptionChillerResult);
+
+                    systemPlantRoom.Connect(systemAirSourceDirectAbsorptionChillerResult, systemChiller);
+                    result.Add(systemAirSourceDirectAbsorptionChillerResult);
+                }
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, WaterSourceChiller waterSourceChiller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || waterSourceChiller == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemChiller systemChiller = waterSourceChiller.ToSAM();
+            systemPlantRoom.Add(systemChiller);
+            result.Add(systemChiller);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                if (systemChiller is SystemWaterSourceChiller)
+                {
+                    SystemWaterSourceChillerResult systemWaterSourceChillerResult = waterSourceChiller.ToSAM_SystemWaterSourceChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                    systemPlantRoom.Add(systemWaterSourceChillerResult);
+
+                    systemPlantRoom.Connect(systemWaterSourceChillerResult, systemChiller);
+                    result.Add(systemWaterSourceChillerResult);
+                }
+                else if (systemChiller is SystemWaterSourceDirectAbsorptionChiller)
+                {
+                    SystemWaterSourceDirectAbsorptionChillerResult systemWaterSourceDirectAbsorptionChillerResult = waterSourceChiller.ToSAM_SystemWaterSourceDirectAbsorptionChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                    systemPlantRoom.Add(systemWaterSourceDirectAbsorptionChillerResult);
+
+                    systemPlantRoom.Connect(systemWaterSourceDirectAbsorptionChillerResult, systemChiller);
+                    result.Add(systemWaterSourceDirectAbsorptionChillerResult);
+                }
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, AbsorptionChiller absorptionChiller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || absorptionChiller == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemChiller systemChiller = absorptionChiller.ToSAM();
+            systemPlantRoom.Add(systemChiller);
+            result.Add(systemChiller);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                if (systemChiller is SystemAbsorptionChiller)
+                {
+                    SystemAbsorptionChillerResult systemAbsorptionChillerResult = absorptionChiller.ToSAM_SystemAbsorptionChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                    systemPlantRoom.Add(systemAbsorptionChillerResult);
+
+                    systemPlantRoom.Connect(systemAbsorptionChillerResult, systemChiller);
+                    result.Add(systemAbsorptionChillerResult);
+                }
+                else if (systemChiller is SystemWaterSourceAbsorptionChiller)
+                {
+                    SystemWaterSourceAbsorptionChillerResult systemWaterSourceAbsorptionChillerResult = absorptionChiller.ToSAM_SystemWaterSourceAbsorptionChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                    systemPlantRoom.Add(systemWaterSourceAbsorptionChillerResult);
+
+                    systemPlantRoom.Connect(systemWaterSourceAbsorptionChillerResult, systemChiller);
+                    result.Add(systemWaterSourceAbsorptionChillerResult);
+                }
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, IceStorageChiller iceStorageChiller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || iceStorageChiller == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemChiller systemChiller = iceStorageChiller.ToSAM();
+            systemPlantRoom.Add(systemChiller);
+            result.Add(systemChiller);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                if (systemChiller is SystemIceStorageChiller)
+                {
+                    SystemIceStorageChillerResult systemIceStorageChillerResult = iceStorageChiller.ToSAM_SystemIceStorageChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                    systemPlantRoom.Add(systemIceStorageChillerResult);
+
+                    systemPlantRoom.Connect(systemIceStorageChillerResult, systemChiller);
+                    result.Add(systemIceStorageChillerResult);
+                }
+                else if (systemChiller is SystemWaterSourceIceStorageChiller)
+                {
+                    SystemWaterSourceIceStorageChillerResult systemWaterSourceIceStorageChillerResult = iceStorageChiller.ToSAM_SystemWaterSourceIceStorageChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                    systemPlantRoom.Add(systemWaterSourceIceStorageChillerResult);
+
+                    systemPlantRoom.Connect(systemWaterSourceIceStorageChillerResult, systemChiller);
+                    result.Add(systemWaterSourceIceStorageChillerResult);
+                }
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, MultiChiller multiChiller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || multiChiller == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemMultiChiller systemMultiChiller = multiChiller.ToSAM();
+            systemPlantRoom.Add(systemMultiChiller);
+            result.Add(systemMultiChiller);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemMultiChillerResult systemMultiChillerResult = multiChiller.ToSAM_SystemMultiChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemMultiChillerResult);
+
+                systemPlantRoom.Connect(systemMultiChillerResult, systemMultiChiller);
+                result.Add(systemMultiChillerResult);
             }
 
             return result;
@@ -1256,39 +1447,6 @@ namespace SAM.Analytical.Tas.TPD
                 systemPlantRoom.Add(systemLiquidJunctionResult);
 
                 systemPlantRoom.Connect(systemLiquidJunctionResult, systemLiquidJunction);
-            }
-
-            return result;
-        }
-
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, MultiChiller multiChiller, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
-        {
-            if (systemPlantRoom == null || multiChiller == null || tPDDoc == null)
-            {
-                return null;
-            }
-
-            if (componentConversionSettings == null)
-            {
-                componentConversionSettings = new ComponentConversionSettings();
-            }
-
-            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
-
-            SystemMultiChiller systemMultiChiller = multiChiller.ToSAM();
-            systemPlantRoom.Add(systemMultiChiller);
-            result.Add(systemMultiChiller);
-
-            if (componentConversionSettings.IncludeResults)
-            {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
-                SystemMultiChillerResult systemMultiChillerResult = multiChiller.ToSAM_SystemMultiChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
-                systemPlantRoom.Add(systemMultiChillerResult);
-
-                systemPlantRoom.Connect(systemMultiChillerResult, systemMultiChiller);
-                result.Add(systemMultiChillerResult);
             }
 
             return result;
