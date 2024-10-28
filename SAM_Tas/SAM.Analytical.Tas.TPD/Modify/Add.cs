@@ -1189,11 +1189,11 @@ namespace SAM.Analytical.Tas.TPD
                 int start = tPDDoc.StartHour();
                 int end = tPDDoc.EndHour();
 
-                SystemChillerResult systemChillerResult = chiller.ToSAM_SystemChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
-                systemPlantRoom.Add(systemChillerResult);
+                SystemAirSourceChillerResult systemAirSourceChillerResult = chiller.ToSAM_SystemAirSourceChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemAirSourceChillerResult);
 
-                systemPlantRoom.Connect(systemChillerResult, systemChiller);
-                result.Add(systemChillerResult);
+                systemPlantRoom.Connect(systemAirSourceChillerResult, systemChiller);
+                result.Add(systemAirSourceChillerResult);
             }
 
             return result;
@@ -1275,20 +1275,20 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
-            SystemChiller systemChiller = multiChiller.ToSAM();
-            systemPlantRoom.Add(systemChiller);
-            result.Add(systemChiller);
+            SystemMultiChiller systemMultiChiller = multiChiller.ToSAM();
+            systemPlantRoom.Add(systemMultiChiller);
+            result.Add(systemMultiChiller);
 
             if (componentConversionSettings.IncludeResults)
             {
                 int start = tPDDoc.StartHour();
                 int end = tPDDoc.EndHour();
 
-                SystemChillerResult systemChillerResult = multiChiller.ToSAM_SystemChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
-                systemPlantRoom.Add(systemChillerResult);
+                SystemMultiChillerResult systemMultiChillerResult = multiChiller.ToSAM_SystemMultiChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemMultiChillerResult);
 
-                systemPlantRoom.Connect(systemChillerResult, systemChiller);
-                result.Add(systemChillerResult);
+                systemPlantRoom.Connect(systemMultiChillerResult, systemMultiChiller);
+                result.Add(systemMultiChillerResult);
             }
 
             return result;
