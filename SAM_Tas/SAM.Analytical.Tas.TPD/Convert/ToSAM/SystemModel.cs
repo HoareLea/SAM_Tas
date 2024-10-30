@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using SAM.Core.Tas;
 using SAM.Core.Systems;
-using SAM.Analytical.Systems;
 
 namespace SAM.Analytical.Tas.TPD
 {

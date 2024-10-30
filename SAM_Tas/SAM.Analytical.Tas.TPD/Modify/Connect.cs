@@ -4,8 +4,6 @@ using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Spatial;
 using SAM.Geometry.Systems;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TPD;

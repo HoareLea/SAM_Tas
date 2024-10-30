@@ -3,7 +3,6 @@ using SAM.Core;
 using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Systems;
-using System;
 using System.Collections.Generic;
 using TPD;
 

@@ -1,12 +1,10 @@
 ﻿using Grasshopper.Kernel;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Systems;
-using SAM.Core;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas.TPD;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
