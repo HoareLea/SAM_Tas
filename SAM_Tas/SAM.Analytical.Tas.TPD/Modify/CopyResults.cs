@@ -253,7 +253,7 @@ namespace SAM.Analytical.Tas.TPD
 
                         if (systemDesiccantWheel != null)
                         {
-                            SystemDesiccantWheelResult systemDesiccantWheelResult = Convert.ToSAM_SystemDesiccantWheelResult((global::TPD.DesiccantWheel)(systemComponent as dynamic), startHour, endHour);
+                            SystemDesiccantWheelResult systemDesiccantWheelResult = Convert.ToSAM_SystemDesiccantWheelResult((DesiccantWheel)(systemComponent as dynamic), startHour, endHour);
                             if (systemDesiccantWheelResult != null)
                             {
                                 systemPlantRoom.Add(systemDesiccantWheelResult);
@@ -371,7 +371,7 @@ namespace SAM.Analytical.Tas.TPD
 
                         if (systemSteamHumidifier != null)
                         {
-                            SystemSteamHumidifierResult systemSteamHumidifierResult = Convert.ToSAM_SystemSteamHumidifierResult((global::TPD.SteamHumidifier)(systemComponent as dynamic), startHour, endHour);
+                            SystemSteamHumidifierResult systemSteamHumidifierResult = Convert.ToSAM_SystemSteamHumidifierResult((SteamHumidifier)(systemComponent as dynamic), startHour, endHour);
                             if (systemSteamHumidifierResult != null)
                             {
                                 systemPlantRoom.Add(systemSteamHumidifierResult);
@@ -389,7 +389,7 @@ namespace SAM.Analytical.Tas.TPD
 
                         if (systemDirectEvaporativeCooler != null)
                         {
-                            SystemDirectEvaporativeCoolerResult systemDirectEvaporativeCoolerResult = Convert.ToSAM_SystemDirectEvaporativeCoolerResult((global::TPD.SprayHumidifier)(systemComponent as dynamic), startHour, endHour);
+                            SystemDirectEvaporativeCoolerResult systemDirectEvaporativeCoolerResult = Convert.ToSAM_SystemDirectEvaporativeCoolerResult((SprayHumidifier)(systemComponent as dynamic), startHour, endHour);
                             if (systemDirectEvaporativeCoolerResult != null)
                             {
                                 systemPlantRoom.Add(systemDirectEvaporativeCoolerResult);
@@ -408,7 +408,7 @@ namespace SAM.Analytical.Tas.TPD
 
                         if (systemDXCoil != null)
                         {
-                            SystemDXCoilResult systemDXCoilResult = Convert.ToSAM_SystemDXCoilResult((global::TPD.DXCoil)(systemComponent as dynamic), startHour, endHour);
+                            SystemDXCoilResult systemDXCoilResult = Convert.ToSAM_SystemDXCoilResult((DXCoil)(systemComponent as dynamic), startHour, endHour);
                             if (systemDXCoilResult != null)
                             {
                                 systemPlantRoom.Add(systemDXCoilResult);

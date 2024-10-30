@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static AnalyticalSystemComponentType AnalyticalSystemComponentType(this global::TPD.ISystemComponent systemComponent)
+        public static AnalyticalSystemComponentType AnalyticalSystemComponentType(this ISystemComponent systemComponent)
         { 
             if(systemComponent == null)
             {

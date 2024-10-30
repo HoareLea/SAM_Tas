@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static List<T> PlantComponents<T>(this global::TPD.IPlantRoom plantRoom, bool includeNested = false) where T : PlantComponent
+        public static List<T> PlantComponents<T>(this IPlantRoom plantRoom, bool includeNested = false) where T : PlantComponent
         { 
             if(plantRoom == null)
             {

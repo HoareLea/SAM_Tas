@@ -889,6 +889,9 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
+            LiquidSystem liquidSystem = new LiquidSystem("Liquid System");
+            systemPlantRoom.Add(liquidSystem);
+
             foreach (List<PlantComponent> plantComponents_Temp in plantComponentsList)
             {
                 if(plantComponents_Temp == null || plantComponents_Temp.Count == 0)
@@ -904,8 +907,26 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-                    result.AddRange(systemJSAMObjects);
+                    foreach(ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
+                    {
+                        result.Add(systemJSAMObject);
+
+                        Core.Systems.ISystemComponent systemComponent = systemJSAMObject as Core.Systems.ISystemComponent;
+                        if (systemComponent == null)
+                        {
+                            continue;
+                        }
+
+                        systemPlantRoom.Connect(liquidSystem, systemComponent);
+                    }
+
                 }
+            }
+
+            List<ISystemConnection> systemConnections = Connect(systemPlantRoom, plantRoom, liquidSystem);
+            if (systemConnections != null)
+            {
+                result.AddRange(systemConnections);
             }
 
             return result;
@@ -922,8 +943,6 @@ namespace SAM.Analytical.Tas.TPD
             {
                 componentConversionSettings = new ComponentConversionSettings();
             }
-
-            PlantComponentGroup plantComponentGroup = ((dynamic)plantComponent).GetGroup();
 
             if (plantComponent is Pump)
             {
