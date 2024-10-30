@@ -935,11 +935,6 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (PlantGroup)plantComponent, tPDDoc, componentConversionSettings);
             }
 
-            if(plantComponent is HeatPump)
-            {
-                return Add(systemPlantRoom, (HeatPump)plantComponent, tPDDoc, componentConversionSettings);
-            }
-
             if (plantComponent is BoilerPlant)
             {
                 return Add(systemPlantRoom, (BoilerPlant)plantComponent, tPDDoc, componentConversionSettings);
@@ -983,6 +978,16 @@ namespace SAM.Analytical.Tas.TPD
             if (plantComponent is AirSourceHeatPump)
             {
                 return Add(systemPlantRoom, (AirSourceHeatPump)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is WaterToWaterHeatPump)
+            {
+                return Add(systemPlantRoom, (WaterToWaterHeatPump)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is HeatPump)
+            {
+                return Add(systemPlantRoom, (HeatPump)plantComponent, tPDDoc, componentConversionSettings);
             }
 
             return null;
@@ -1110,39 +1115,6 @@ namespace SAM.Analytical.Tas.TPD
                     //    result.AddRange(systemJSAMObjects);
                     //}
                 }
-            }
-
-            return result;
-        }
-
-        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HeatPump heatPump, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
-        {
-            if (systemPlantRoom == null || heatPump == null || tPDDoc == null)
-            {
-                return null;
-            }
-
-            if (componentConversionSettings == null)
-            {
-                componentConversionSettings = new ComponentConversionSettings();
-            }
-
-            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
-
-            SystemHeatPump systemHeatPump = heatPump.ToSAM();
-            systemPlantRoom.Add(systemHeatPump);
-            result.Add(systemHeatPump);
-
-            if (componentConversionSettings.IncludeResults)
-            {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
-                SystemHeatPumpResult systemHeatPumpResult = heatPump.ToSAM_SystemHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
-                systemPlantRoom.Add(systemHeatPumpResult);
-
-                systemPlantRoom.Connect(systemHeatPumpResult, systemHeatPump);
-                result.Add(systemHeatPumpResult);
             }
 
             return result;
@@ -1480,6 +1452,72 @@ namespace SAM.Analytical.Tas.TPD
 
                 systemPlantRoom.Connect(systemAirSourceHeatPumpResult, systemAirSourceHeatPump);
                 result.Add(systemAirSourceHeatPumpResult);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, WaterToWaterHeatPump waterToWaterHeatPump, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || waterToWaterHeatPump == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemWaterToWaterHeatPump systemWaterToWaterHeatPump = waterToWaterHeatPump.ToSAM();
+            systemPlantRoom.Add(systemWaterToWaterHeatPump);
+            result.Add(systemWaterToWaterHeatPump);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemWaterToWaterHeatPumpResult systemWaterToWaterHeatPumpResult = waterToWaterHeatPump.ToSAM_SystemWaterToWaterHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemWaterToWaterHeatPumpResult);
+
+                systemPlantRoom.Connect(systemWaterToWaterHeatPumpResult, systemWaterToWaterHeatPump);
+                result.Add(systemWaterToWaterHeatPumpResult);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HeatPump heatPump, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || heatPump == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemWaterSourceHeatPump systemWaterToWaterHeatPump = heatPump.ToSAM();
+            systemPlantRoom.Add(systemWaterToWaterHeatPump);
+            result.Add(systemWaterToWaterHeatPump);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemWaterSourceHeatPumpResult systemWaterSourceHeatPumpResult = heatPump.ToSAM_SystemWaterSourceHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemWaterSourceHeatPumpResult);
+
+                systemPlantRoom.Connect(systemWaterSourceHeatPumpResult, systemWaterToWaterHeatPump);
+                result.Add(systemWaterSourceHeatPumpResult);
             }
 
             return result;

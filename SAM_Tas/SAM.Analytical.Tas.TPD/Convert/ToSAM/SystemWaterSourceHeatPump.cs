@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemHeatPump ToSAM(this HeatPump heatPump)
+        public static SystemWaterSourceHeatPump ToSAM(this HeatPump heatPump)
         {
             if (heatPump == null)
             {
@@ -15,13 +15,13 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = heatPump;
 
-            SystemHeatPump systemHeatPump = new SystemHeatPump(@dynamic.Name);
-            systemHeatPump.Description = dynamic.Description;
-            Modify.SetReference(systemHeatPump, @dynamic.GUID);
+            SystemWaterSourceHeatPump systemWaterSourceHeatPump = new SystemWaterSourceHeatPump(@dynamic.Name);
+            systemWaterSourceHeatPump.Description = dynamic.Description;
+            Modify.SetReference(systemWaterSourceHeatPump, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemHeatPump result = Systems.Create.DisplayObject<DisplaySystemHeatPump>(systemHeatPump, location, Systems.Query.DefaultDisplaySystemManager());
+            DisplaySystemWaterSourceHeatPump result = Systems.Create.DisplayObject<DisplaySystemWaterSourceHeatPump>(systemWaterSourceHeatPump, location, Systems.Query.DefaultDisplaySystemManager());
 
             ITransform2D transform2D = ((IPlantComponent)heatPump).Transform2D();
             if (transform2D != null)
