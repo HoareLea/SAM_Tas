@@ -990,6 +990,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (HeatPump)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is Tank tank)
+            {
+                return Add(systemPlantRoom, (Tank)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
         }
 
@@ -1518,6 +1523,39 @@ namespace SAM.Analytical.Tas.TPD
 
                 systemPlantRoom.Connect(systemWaterSourceHeatPumpResult, systemWaterToWaterHeatPump);
                 result.Add(systemWaterSourceHeatPumpResult);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Tank tank, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || tank == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemTank systemTank = tank.ToSAM();
+            systemPlantRoom.Add(systemTank);
+            result.Add(systemTank);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemTankResult systemTankResult = tank.ToSAM_SystemTankResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemTankResult);
+
+                systemPlantRoom.Connect(systemTankResult, systemTank);
+                result.Add(systemTankResult);
             }
 
             return result;
