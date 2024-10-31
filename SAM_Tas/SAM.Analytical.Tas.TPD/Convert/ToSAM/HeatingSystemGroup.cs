@@ -16,8 +16,9 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = heatingGroup;
 
             HeatingSystemGroup result = new HeatingSystemGroup(dynamic.Name);
-            result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             if (boundingBox2D == null)
             {

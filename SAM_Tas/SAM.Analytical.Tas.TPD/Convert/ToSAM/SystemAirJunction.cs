@@ -16,8 +16,9 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = junction;
 
             SystemAirJunction result = new SystemAirJunction(@dynamic.Name);
-            result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

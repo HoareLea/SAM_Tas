@@ -15,20 +15,24 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = heatingCoil;
 
-            SystemHeatingCoil systemHeatingCoil = new SystemHeatingCoil(dynamic.Name);
-            systemHeatingCoil.Description = dynamic.Description;
-            Modify.SetReference(systemHeatingCoil, @dynamic.GUID);
-
-            Point2D location =((TasPosition)@dynamic.GetPosition())?.ToSAM();
-
-            DisplaySystemHeatingCoil result = Systems.Create.DisplayObject<DisplaySystemHeatingCoil>(systemHeatingCoil, location, Systems.Query.DefaultDisplaySystemManager());
-
+            SystemHeatingCoil result = new SystemHeatingCoil(dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
             result.Duty = heatingCoil.Duty.ToSAM();
 
-            ITransform2D transform2D = ((ISystemComponent)heatingCoil).Transform2D();
-            if (transform2D != null)
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            DisplaySystemHeatingCoil displaySystemHeatingCoil = Systems.Create.DisplayObject<DisplaySystemHeatingCoil>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemHeatingCoil != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((ISystemComponent)heatingCoil).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemHeatingCoil.Transform(transform2D);
+                }
+
+                result = displaySystemHeatingCoil;
             }
 
             return result;

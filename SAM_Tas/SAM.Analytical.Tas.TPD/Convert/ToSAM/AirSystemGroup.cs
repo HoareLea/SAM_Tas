@@ -16,8 +16,9 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = componentGroup;
 
             AirSystemGroup result = new AirSystemGroup(dynamic.Name);
-            result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             if(boundingBox2D != null)
             {

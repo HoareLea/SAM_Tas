@@ -15,19 +15,25 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = optimizer;
 
-            SystemEconomiser systemEconomiser = new SystemEconomiser(@dynamic.Name);
-            systemEconomiser.Description = dynamic.Description;
-            Modify.SetReference(systemEconomiser, @dynamic.GUID);
+            SystemEconomiser result = new SystemEconomiser(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
+            result.Setpoint = optimizer.Setpoint.ToSAM();
+
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemEconomiser result = Systems.Create.DisplayObject<DisplaySystemEconomiser>(systemEconomiser, location, Systems.Query.DefaultDisplaySystemManager());
-            result.Setpoint = optimizer.Setpoint.ToSAM();
-
-            ITransform2D transform2D = ((ISystemComponent)optimizer).Transform2D();
-            if (transform2D != null)
+            DisplaySystemEconomiser displaySystemEconomiser = Systems.Create.DisplayObject<DisplaySystemEconomiser>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemEconomiser != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((ISystemComponent)optimizer).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemEconomiser.Transform(transform2D);
+                }
+
+                result = displaySystemEconomiser;
             }
 
             return result;

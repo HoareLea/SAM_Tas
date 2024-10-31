@@ -80,19 +80,6 @@ namespace SAM.Analytical.Tas.TPD
                 systemPlantRoom.Add(tPDDoc, componentConversionSettings);
 
                 result.Add(systemPlantRoom);
-
-                //=======TEST=======
-                //List<ISystemController> systemControllers = systemPlantRoom.GetSystemComponents<ISystemController>();
-                //if (systemControllers != null)
-                //{
-                //    foreach (ISystemController systemController in systemControllers)
-                //    {
-                //        string reference = systemController.Reference();
-                //        Controller controller = plantRoom.Controller(reference);
-                //        ISystemController systemController_Temp = systemPlantRoom.SystemController<ISystemController>(reference);
-                //    }
-                //}
-                //========TEST========
             }
 
             return result;

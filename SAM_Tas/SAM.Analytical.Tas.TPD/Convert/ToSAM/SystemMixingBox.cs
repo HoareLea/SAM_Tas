@@ -15,18 +15,22 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = optimizer;
 
-            SystemMixingBox systemMixingBox = new SystemMixingBox(@dynamic.Name);
-            systemMixingBox.Description = dynamic.Description;
-            Modify.SetReference(systemMixingBox, @dynamic.GUID);
+            SystemMixingBox result = new SystemMixingBox(@dynamic.Name);
+            result.Description = dynamic.Description;
+            Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemMixingBox result = Systems.Create.DisplayObject<DisplaySystemMixingBox>(systemMixingBox, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((ISystemComponent)systemMixingBox).Transform2D();
-            if (transform2D != null)
+            DisplaySystemMixingBox displaySystemMixingBox = Systems.Create.DisplayObject<DisplaySystemMixingBox>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemMixingBox != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((ISystemComponent)result).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemMixingBox.Transform(transform2D);
+                }
+
+                result = displaySystemMixingBox;
             }
 
             return result;

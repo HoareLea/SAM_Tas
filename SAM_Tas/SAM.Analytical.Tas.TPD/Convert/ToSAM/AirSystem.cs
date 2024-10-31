@@ -14,8 +14,9 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = system;
 
             AirSystem result = new AirSystem(@dynamic.Name);
-            result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             return result;
         }

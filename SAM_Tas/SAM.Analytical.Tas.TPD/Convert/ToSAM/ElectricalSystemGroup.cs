@@ -18,8 +18,9 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = electricalGroup;
 
             ElectricalSystemGroup result = new ElectricalSystemGroup(dynamic.Name, tpdElectricalGroupType.ToSAM());
-            result.Description = dynamic.Description;
             Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             if (boundingBox2D == null)
             {

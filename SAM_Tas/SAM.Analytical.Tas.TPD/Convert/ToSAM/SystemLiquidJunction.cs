@@ -15,18 +15,23 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = plantJunction;
 
-            SystemLiquidJunction systemLiquidJunction = new SystemLiquidJunction(@dynamic.Name);
-            systemLiquidJunction.Description = dynamic.Description;
-            Modify.SetReference(systemLiquidJunction, @dynamic.GUID);
+            SystemLiquidJunction result = new SystemLiquidJunction(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemLiquidJunction result = Systems.Create.DisplayObject<DisplaySystemLiquidJunction>(systemLiquidJunction, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((ISystemComponent)plantJunction).Transform2D();
-            if (transform2D != null)
+            DisplaySystemLiquidJunction displaySystemLiquidJunction = Systems.Create.DisplayObject<DisplaySystemLiquidJunction>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemLiquidJunction != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((ISystemComponent)plantJunction).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemLiquidJunction.Transform(transform2D);
+                }
+
+                result = displaySystemLiquidJunction;
             }
 
             return result;

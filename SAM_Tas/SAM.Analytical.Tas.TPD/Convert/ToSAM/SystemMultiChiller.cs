@@ -15,18 +15,23 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = multiChiller;
 
-            SystemMultiChiller systemChiller = new SystemMultiChiller(@dynamic.Name);
-            systemChiller.Description = dynamic.Description;
-            Modify.SetReference(systemChiller, @dynamic.GUID);
+            SystemMultiChiller result = new SystemMultiChiller(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemMultiChiller result = Systems.Create.DisplayObject<DisplaySystemMultiChiller>(systemChiller, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((IPlantComponent)multiChiller).Transform2D();
-            if (transform2D != null)
+            DisplaySystemMultiChiller displaySystemMultiChiller = Systems.Create.DisplayObject<DisplaySystemMultiChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if (displaySystemMultiChiller != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)multiChiller).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemMultiChiller.Transform(transform2D);
+                }
+
+                result = displaySystemMultiChiller;
             }
 
             return result;
