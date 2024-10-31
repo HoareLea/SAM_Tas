@@ -24,7 +24,11 @@ namespace SAM.Analytical.Tas.TPD
                 boundingBox2D = Query.BoundingBox2D((PlantGroup)refrigerantGroup);
             }
 
-            result = new DisplayRefrigerantSystemGroup(result, boundingBox2D);
+            DisplayRefrigerantSystemGroup displayRefrigerantSystemGroup = new DisplayRefrigerantSystemGroup(result, boundingBox2D);
+            if(displayRefrigerantSystemGroup != null)
+            {
+                result = displayRefrigerantSystemGroup;
+            }
 
             return result;
         }

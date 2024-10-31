@@ -15,18 +15,22 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = tank;
 
-            SystemTank systemTank = new SystemTank(@dynamic.Name);
-            systemTank.Description = dynamic.Description;
-            Modify.SetReference(systemTank, @dynamic.GUID);
+            SystemTank result = new SystemTank(@dynamic.Name);
+            result.Description = dynamic.Description;
+            Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemTank result = Systems.Create.DisplayObject<DisplaySystemTank>(systemTank, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((IPlantComponent)tank).Transform2D();
-            if (transform2D != null)
+            DisplaySystemTank displaySystemTank = Systems.Create.DisplayObject<DisplaySystemTank>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemTank != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)tank).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemTank.Transform(transform2D);
+                }
+
+                result = displaySystemTank;
             }
 
             return result;

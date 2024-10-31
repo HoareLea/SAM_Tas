@@ -41,18 +41,22 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = multiBoiler;
 
-            SystemBoiler systemBoiler = new SystemBoiler(@dynamic.Name);
-            systemBoiler.Description = dynamic.Description;
-            Modify.SetReference(systemBoiler, @dynamic.GUID);
+            SystemBoiler result = new SystemBoiler(@dynamic.Name);
+            result.Description = dynamic.Description;
+            Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemBoiler result = Systems.Create.DisplayObject<DisplaySystemBoiler>(systemBoiler, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((IPlantComponent)multiBoiler).Transform2D();
-            if (transform2D != null)
+            DisplaySystemBoiler displaySystemBoiler = Systems.Create.DisplayObject<DisplaySystemBoiler>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemBoiler != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)multiBoiler).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemBoiler.Transform(transform2D);
+                }
+
+                result = displaySystemBoiler;
             }
 
             return result;

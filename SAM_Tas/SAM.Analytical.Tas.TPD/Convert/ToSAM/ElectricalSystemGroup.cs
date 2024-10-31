@@ -26,7 +26,11 @@ namespace SAM.Analytical.Tas.TPD
                 boundingBox2D = Query.BoundingBox2D((PlantGroup)electricalGroup);
             }
 
-            result = new DisplayElectricalSystemGroup(result, boundingBox2D);
+            DisplayElectricalSystemGroup displayElectricalSystemGroup = new DisplayElectricalSystemGroup(result, boundingBox2D);
+            if(displayElectricalSystemGroup != null)
+            {
+                result = displayElectricalSystemGroup;
+            }
 
             return result;
         }

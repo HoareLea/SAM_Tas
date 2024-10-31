@@ -24,7 +24,11 @@ namespace SAM.Analytical.Tas.TPD
                 boundingBox2D = Query.BoundingBox2D((PlantGroup)heatingGroup);
             }
 
-            result = new DisplayHeatingSystemGroup(result, boundingBox2D);
+            DisplayHeatingSystemGroup displayHeatingSystemGroup = new DisplayHeatingSystemGroup(result, boundingBox2D);
+            if(displayHeatingSystemGroup != null)
+            {
+                result = displayHeatingSystemGroup;
+            }
 
             return result;
         }

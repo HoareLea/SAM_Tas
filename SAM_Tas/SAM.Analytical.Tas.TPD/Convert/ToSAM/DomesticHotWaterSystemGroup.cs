@@ -24,7 +24,12 @@ namespace SAM.Analytical.Tas.TPD
                 boundingBox2D = Query.BoundingBox2D((PlantGroup)dHWGroup);
             }
 
-            result = new DisplayDomesticHotWaterSystemGroup(result, boundingBox2D);
+            DisplayDomesticHotWaterSystemGroup displayDomesticHotWaterSystemGroup = new DisplayDomesticHotWaterSystemGroup(result, boundingBox2D);
+            if(displayDomesticHotWaterSystemGroup != null)
+            {
+                result = displayDomesticHotWaterSystemGroup;
+            }
+
 
             return result;
         }
