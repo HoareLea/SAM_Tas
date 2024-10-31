@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -15,18 +16,22 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = airSourceHeatPump;
 
-            SystemAirSourceHeatPump systemAirSourceHeatPump = new SystemAirSourceHeatPump(@dynamic.Name);
-            systemAirSourceHeatPump.Description = dynamic.Description;
-            Modify.SetReference(systemAirSourceHeatPump, @dynamic.GUID);
+            SystemAirSourceHeatPump result = new SystemAirSourceHeatPump(@dynamic.Name);
+            result.Description = dynamic.Description;
+            Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemAirSourceHeatPump result = Systems.Create.DisplayObject<DisplaySystemAirSourceHeatPump>(systemAirSourceHeatPump, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((IPlantComponent)airSourceHeatPump).Transform2D();
-            if (transform2D != null)
+            DisplaySystemAirSourceHeatPump displaySystemAirSourceHeatPump = Systems.Create.DisplayObject<DisplaySystemAirSourceHeatPump>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemAirSourceHeatPump != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)airSourceHeatPump).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemAirSourceHeatPump.Transform(transform2D);
+                }
+
+                result = displaySystemAirSourceHeatPump; 
             }
 
             return result;

@@ -63,38 +63,44 @@ namespace SAM.Analytical.Tas.TPD
             
             dynamic @dynamic = chiller;
 
-            SystemChiller systemChiller = null;
+            SystemChiller result = null;
             if (directAbsorptionChiller)
             {
-                systemChiller = new SystemAirSourceDirectAbsorptionChiller(@dynamic.Name);
+                result = new SystemAirSourceDirectAbsorptionChiller(@dynamic.Name);
             }
             else
             {
-                systemChiller = new SystemAirSourceChiller(@dynamic.Name);
+                result = new SystemAirSourceChiller(@dynamic.Name);
             }
 
-            systemChiller.Description = dynamic.Description;
-            Modify.SetReference(systemChiller, @dynamic.GUID);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            IDisplaySystemObject result = null;
+            IDisplaySystemObject displaySystemObject = null;
             if (directAbsorptionChiller)
             {
-                result = Systems.Create.DisplayObject<DisplaySystemAirSourceDirectAbsorptionChiller>(systemChiller, location, Systems.Query.DefaultDisplaySystemManager());
+                displaySystemObject = Systems.Create.DisplayObject<DisplaySystemAirSourceDirectAbsorptionChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());
             }
             else
             {
-                result = Systems.Create.DisplayObject<DisplaySystemAirSourceChiller>(systemChiller, location, Systems.Query.DefaultDisplaySystemManager());
+                displaySystemObject = Systems.Create.DisplayObject<DisplaySystemAirSourceChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());
             }
 
-            ITransform2D transform2D = ((IPlantComponent)chiller).Transform2D();
-            if (transform2D != null)
+            if(displaySystemObject != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)chiller).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemObject.Transform(transform2D);
+                }
+
+                result = displaySystemObject as SystemChiller;
             }
 
-            return result as SystemChiller;
+            return result;
         }
 
         public static SystemChiller ToSAM(this WaterSourceChiller waterSourceChiller)
@@ -108,38 +114,43 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = waterSourceChiller;
 
-            SystemChiller systemChiller = null;
+            SystemChiller result = null;
             if (directAbsorptionChiller)
             {
-                systemChiller = new SystemWaterSourceDirectAbsorptionChiller(@dynamic.Name);
+                result = new SystemWaterSourceDirectAbsorptionChiller(@dynamic.Name);
             }
             else
             {
-                systemChiller = new SystemWaterSourceChiller(@dynamic.Name);
+                result = new SystemWaterSourceChiller(@dynamic.Name);
             }
 
-            systemChiller.Description = dynamic.Description;
-            Modify.SetReference(systemChiller, @dynamic.GUID);
+            result.Description = dynamic.Description;
+            Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            IDisplaySystemObject result = null;
+            IDisplaySystemObject displaySystemObject = null;
             if (directAbsorptionChiller)
             {
-                result = Systems.Create.DisplayObject<DisplaySystemWaterSourceDirectAbsorptionChiller>(systemChiller, location, Systems.Query.DefaultDisplaySystemManager());
+                displaySystemObject = Systems.Create.DisplayObject<DisplaySystemWaterSourceDirectAbsorptionChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());
             }
             else
             {
-                result = Systems.Create.DisplayObject<DisplaySystemWaterSourceChiller>(systemChiller, location, Systems.Query.DefaultDisplaySystemManager());
+                displaySystemObject = Systems.Create.DisplayObject<DisplaySystemWaterSourceChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());
             }
 
-            ITransform2D transform2D = ((IPlantComponent)waterSourceChiller).Transform2D();
-            if (transform2D != null)
+            if(displaySystemObject != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)waterSourceChiller).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemObject.Transform(transform2D);
+                }
+
+                result = displaySystemObject as SystemChiller;
             }
 
-            return result as SystemChiller;
+            return result;
         }
 
         public static SystemChiller ToSAM(this IceStorageChiller iceStorageChiller)
@@ -153,38 +164,43 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = iceStorageChiller;
 
-            SystemChiller systemChiller = null;
+            SystemChiller result = null;
             if (waterSource)
             {
-                systemChiller = new SystemWaterSourceIceStorageChiller(@dynamic.Name);
+                result = new SystemWaterSourceIceStorageChiller(@dynamic.Name);
             }
             else
             {
-                systemChiller = new SystemIceStorageChiller(@dynamic.Name);
+                result = new SystemIceStorageChiller(@dynamic.Name);
             }
 
-            systemChiller.Description = dynamic.Description;
-            Modify.SetReference(systemChiller, @dynamic.GUID);
+            result.Description = dynamic.Description;
+            Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            IDisplaySystemObject result = null;
+            IDisplaySystemObject displaySystemObject = null;
             if (waterSource)
             {
-                result = Systems.Create.DisplayObject<DisplaySystemWaterSourceIceStorageChiller>(systemChiller, location, Systems.Query.DefaultDisplaySystemManager());
+                displaySystemObject = Systems.Create.DisplayObject<DisplaySystemWaterSourceIceStorageChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());
             }
             else
             {
-                result = Systems.Create.DisplayObject<DisplaySystemIceStorageChiller>(systemChiller, location, Systems.Query.DefaultDisplaySystemManager());
+                displaySystemObject = Systems.Create.DisplayObject<DisplaySystemIceStorageChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());
             }
 
-            ITransform2D transform2D = ((IPlantComponent)iceStorageChiller).Transform2D();
-            if (transform2D != null)
+            if(displaySystemObject != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)iceStorageChiller).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemObject.Transform(transform2D);
+                }
+
+                result = displaySystemObject as SystemChiller;
             }
 
-            return result as SystemChiller;
+            return result; 
         }
     }
 }

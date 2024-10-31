@@ -18,16 +18,14 @@ namespace SAM.Analytical.Tas.TPD
 
             double overallEfficiency = dXCoilUnit.OverallEfficiency.Value;
 
-            SystemDXCoilUnit result = new SystemDXCoilUnit(dynamic.Name) 
-            {
-                CoolingDuty = dXCoilUnit.CoolingDuty?.ToSAM(),
-                HeatingDuty = dXCoilUnit.HeatingDuty?.ToSAM(),
-                DesignFlowRate = designFlowRate,
-                OverallEfficiency = overallEfficiency
-            };
+            SystemDXCoilUnit result = new SystemDXCoilUnit(dynamic.Name);
+            result.SetReference(((ZoneComponent)dXCoilUnit).Reference());
 
             result.Description = dynamic.Description;
-            result.SetReference(((ZoneComponent)dXCoilUnit).Reference());
+            result.CoolingDuty = dXCoilUnit.CoolingDuty?.ToSAM();
+            result.HeatingDuty = dXCoilUnit.HeatingDuty?.ToSAM();
+            result.DesignFlowRate = designFlowRate;
+            result.OverallEfficiency = overallEfficiency;
 
             return result;
         }

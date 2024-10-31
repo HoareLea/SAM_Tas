@@ -15,13 +15,10 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = sprayHumidifier;
 
-            SystemDirectEvaporativeCooler systemDirectEvaporativeCooler = new SystemDirectEvaporativeCooler(@dynamic.Name);
-            systemDirectEvaporativeCooler.Description = dynamic.Description;
-            Modify.SetReference(systemDirectEvaporativeCooler, @dynamic.GUID);
-
-            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
-
-            DisplaySystemDirectEvaporativeCooler result = Systems.Create.DisplayObject<DisplaySystemDirectEvaporativeCooler>(systemDirectEvaporativeCooler, location, Systems.Query.DefaultDisplaySystemManager());
+            SystemDirectEvaporativeCooler result = new SystemDirectEvaporativeCooler(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
             result.Setpoint = sprayHumidifier.Setpoint.ToSAM();
             result.Effectiveness = sprayHumidifier.Effectiveness.ToSAM();
             result.WaterFlowCapacity = sprayHumidifier.WaterFlowCapacity.ToSAM();
@@ -29,10 +26,18 @@ namespace SAM.Analytical.Tas.TPD
             result.HoursBeforePurgingTank = System.Convert.ToDouble(sprayHumidifier.TankHours);
             result.TankVolume = sprayHumidifier.TankVolume.ToSAM();
 
-            ITransform2D transform2D = ((ISystemComponent)sprayHumidifier).Transform2D();
-            if (transform2D != null)
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            DisplaySystemDirectEvaporativeCooler displaySystemDirectEvaporativeCooler = Systems.Create.DisplayObject<DisplaySystemDirectEvaporativeCooler>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemDirectEvaporativeCooler != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((ISystemComponent)sprayHumidifier).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemDirectEvaporativeCooler.Transform(transform2D);
+                }
+
+                result = displaySystemDirectEvaporativeCooler;
             }
 
             return result;
