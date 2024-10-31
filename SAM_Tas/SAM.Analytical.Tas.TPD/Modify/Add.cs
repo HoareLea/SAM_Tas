@@ -1057,7 +1057,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             Core.Systems.ISystem system = null;
-            ISystemGroup systemGroup = null;
+            ISystemCollection systemCollection = null;
 
             dynamic @dynamic = plantGroup;
 
@@ -1066,30 +1066,35 @@ namespace SAM.Analytical.Tas.TPD
             if (plantGroup is ElectricalGroup)
             {
                 system = new ElectricalSystem(name);
-                systemGroup = ((ElectricalGroup)plantGroup).ToSAM();
+                systemCollection = ((ElectricalGroup)plantGroup).ToSAM();
             }
             else if(plantGroup is RefrigerantGroup)
             {
                 system = new RefrigerantSystem(name);
-                systemGroup = ((RefrigerantGroup)plantGroup).ToSAM();
+                systemCollection = ((RefrigerantGroup)plantGroup).ToSAM();
             }
             else if (plantGroup is HeatingGroup)
             {
                 system = new Systems.HeatingSystem(name);
-                systemGroup = ((HeatingGroup)plantGroup).ToSAM();
+                systemCollection = ((HeatingGroup)plantGroup).ToSAM();
             }
             else if (plantGroup is CoolingGroup)
             {
                 system = new Systems.CoolingSystem(name);
-                systemGroup = ((CoolingGroup)plantGroup).ToSAM();
+                systemCollection = ((CoolingGroup)plantGroup).ToSAM();
             }
             else if (plantGroup is DHWGroup)
             {
                 system = new DomesticHotWaterSystem(name);
-                systemGroup = ((DHWGroup)plantGroup).ToSAM();
+                systemCollection = ((DHWGroup)plantGroup).ToSAM();
+            }
+            else if (plantGroup is FuelGroup)
+            {
+                system = new FuelSystem(name);
+                systemCollection = ((FuelGroup)plantGroup).ToSAM();
             }
 
-            if (system == null && systemGroup == null)
+            if (system == null && systemCollection == null)
             {
                 return null;
             }
@@ -1104,11 +1109,11 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            if(systemGroup != null)
+            if(systemCollection != null)
             {
-                if (systemPlantRoom.Add(systemGroup))
+                if (systemPlantRoom.Add(systemCollection))
                 {
-                    result.Add(systemGroup);
+                    result.Add(systemCollection);
                 }
             }
 
@@ -1128,7 +1133,7 @@ namespace SAM.Analytical.Tas.TPD
                     {
                         result.Add(systemComponent);
                         systemPlantRoom?.Connect(system, systemComponent);
-                        systemPlantRoom?.Connect(systemGroup, systemComponent);
+                        systemPlantRoom?.Connect(systemCollection, systemComponent);
                         continue;
                     }
 
