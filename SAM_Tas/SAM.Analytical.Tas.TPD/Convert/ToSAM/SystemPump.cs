@@ -15,18 +15,23 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = pump;
 
-            SystemPump systemPump = new SystemPump(@dynamic.Name);
-            systemPump.Description = dynamic.Description;
-            Modify.SetReference(systemPump, @dynamic.GUID);
+            SystemPump result = new SystemPump(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemPump result = Systems.Create.DisplayObject<DisplaySystemPump>(systemPump, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((IPlantComponent)pump).Transform2D();
-            if (transform2D != null)
+            DisplaySystemPump displaySystemPump = Systems.Create.DisplayObject<DisplaySystemPump>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemPump != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)pump).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemPump.Transform(transform2D);
+                }
+
+                result = displaySystemPump;
             }
 
             return result;

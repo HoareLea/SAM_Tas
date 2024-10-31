@@ -15,18 +15,24 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = heatPump;
 
-            SystemWaterSourceHeatPump systemWaterSourceHeatPump = new SystemWaterSourceHeatPump(@dynamic.Name);
-            systemWaterSourceHeatPump.Description = dynamic.Description;
-            Modify.SetReference(systemWaterSourceHeatPump, @dynamic.GUID);
+            SystemWaterSourceHeatPump result = new SystemWaterSourceHeatPump(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+
+            result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemWaterSourceHeatPump result = Systems.Create.DisplayObject<DisplaySystemWaterSourceHeatPump>(systemWaterSourceHeatPump, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((IPlantComponent)heatPump).Transform2D();
-            if (transform2D != null)
+            DisplaySystemWaterSourceHeatPump displaySystemWaterSourceHeatPump = Systems.Create.DisplayObject<DisplaySystemWaterSourceHeatPump>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemWaterSourceHeatPump != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((IPlantComponent)heatPump).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemWaterSourceHeatPump.Transform(transform2D);
+                }
+
+                result = displaySystemWaterSourceHeatPump;
+
             }
 
             return result;
