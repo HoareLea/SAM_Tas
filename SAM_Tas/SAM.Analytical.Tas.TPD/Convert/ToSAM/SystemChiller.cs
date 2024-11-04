@@ -14,7 +14,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            bool waterSource = absorptionChiller.IsWaterSource == 1;
+            bool waterSource = absorptionChiller.IsWaterSource == -1;
 
             dynamic @dynamic = absorptionChiller;
 
@@ -160,7 +160,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            bool waterSource = iceStorageChiller.IsWaterSource == 1;
+            bool waterSource = iceStorageChiller.IsWaterSource == -1;
 
             dynamic @dynamic = iceStorageChiller;
 
