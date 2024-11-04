@@ -1018,7 +1018,45 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (PipeLossComponent)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is HeatExchanger)
+            {
+                return Add(systemPlantRoom, (HeatExchanger)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HeatExchanger heatExchanger, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || heatExchanger == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemLiquidExchanger systemLiquidExchanger = heatExchanger.ToSAM();
+            systemPlantRoom.Add(systemLiquidExchanger);
+            result.Add(systemLiquidExchanger);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemLiquidExchangerResult SystemLiquidExchangerResult = heatExchanger.ToSAM_SystemLiquidExchangerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(SystemLiquidExchangerResult);
+
+                systemPlantRoom.Connect(SystemLiquidExchangerResult, systemLiquidExchanger);
+                result.Add(SystemLiquidExchangerResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Pump pump, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)

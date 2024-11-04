@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemExchanger displaySystemExchanger = Systems.Create.DisplayObject<DisplaySystemExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());
-            if(displaySystemExchanger != null)
+            if (displaySystemExchanger != null)
             {
                 ITransform2D transform2D = ((ISystemComponent)exchanger).Transform2D();
                 if (transform2D != null)
