@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
             DisplaySystemLiquidExchanger displaySystemLiquidExchanger = Systems.Create.DisplayObject<DisplaySystemLiquidExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if (displaySystemLiquidExchanger != null)
             {
-                ITransform2D transform2D = ((ISystemComponent)heatExchanger).Transform2D();
+                ITransform2D transform2D = ((IPlantComponent)heatExchanger).Transform2D();
                 if (transform2D != null)
                 {
                     displaySystemLiquidExchanger.Transform(transform2D);
