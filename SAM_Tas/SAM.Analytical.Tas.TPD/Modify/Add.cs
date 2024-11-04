@@ -1013,6 +1013,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (Tank)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is PipeLossComponent)
+            {
+                return Add(systemPlantRoom, (PipeLossComponent)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
         }
 
@@ -1044,6 +1049,39 @@ namespace SAM.Analytical.Tas.TPD
 
                 systemPlantRoom.Connect(systemPumpResult, systemPump);
                 result.Add(systemPumpResult);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PipeLossComponent pipeLossComponent, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || pipeLossComponent == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemPipeLossComponent systemPipeLossComponent = pipeLossComponent.ToSAM();
+            systemPlantRoom.Add(systemPipeLossComponent);
+            result.Add(systemPipeLossComponent);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemPipeLossComponentResult systemPipeLossComponentResult = pipeLossComponent.ToSAM_SystemPipeLossComponentResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemPipeLossComponentResult);
+
+                systemPlantRoom.Connect(systemPipeLossComponentResult, systemPipeLossComponent);
+                result.Add(systemPipeLossComponentResult);
             }
 
             return result;
