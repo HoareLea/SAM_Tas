@@ -59,7 +59,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            bool directAbsorptionChiller = chiller.IsDirectAbsChiller == 1;
+            bool directAbsorptionChiller = chiller.IsDirectAbsChiller == -1;
             
             dynamic @dynamic = chiller;
 
@@ -110,7 +110,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            bool directAbsorptionChiller = waterSourceChiller.IsDirectAbsChiller == 1;
+            bool directAbsorptionChiller = waterSourceChiller.IsDirectAbsChiller == -1;
 
             dynamic @dynamic = waterSourceChiller;
 
