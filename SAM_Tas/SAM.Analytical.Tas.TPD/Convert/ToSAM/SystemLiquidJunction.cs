@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
             DisplaySystemLiquidJunction displaySystemLiquidJunction = Systems.Create.DisplayObject<DisplaySystemLiquidJunction>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if(displaySystemLiquidJunction != null)
             {
-                ITransform2D transform2D = ((ISystemComponent)plantJunction).Transform2D();
+                ITransform2D transform2D = ((IPlantComponent)plantJunction).Transform2D();
                 if (transform2D != null)
                 {
                     displaySystemLiquidJunction.Transform(transform2D);
