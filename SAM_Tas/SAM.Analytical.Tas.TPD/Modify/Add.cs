@@ -1063,7 +1063,45 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (HorizontalGHE)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is SolarPanel)
+            {
+                return Add(systemPlantRoom, (SolarPanel)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SolarPanel solarPanel, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || solarPanel == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemSolarPanel systemSolarPanel = solarPanel.ToSAM();
+            systemPlantRoom.Add(systemSolarPanel);
+            result.Add(systemSolarPanel);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemSolarPanelResult systemSolarPanelResult = solarPanel.ToSAM_SystemSolarPanelResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemSolarPanelResult);
+
+                systemPlantRoom.Connect(systemSolarPanelResult, systemSolarPanel);
+                result.Add(systemSolarPanelResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HorizontalGHE horizontalGHE, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
