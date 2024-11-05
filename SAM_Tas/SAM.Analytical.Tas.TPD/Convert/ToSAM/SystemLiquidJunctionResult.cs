@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            string reference = Query.Reference((SystemComponent)plantJunction);
+            string reference = Query.Reference((PlantComponent)plantJunction);
 
             SystemLiquidJunctionResult result = new SystemLiquidJunctionResult(reference, string.Empty, Query.Source(), dictionary);
             
