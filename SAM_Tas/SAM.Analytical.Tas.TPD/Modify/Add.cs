@@ -1033,7 +1033,50 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (DryCooler)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is DryCooler)
+            {
+                return Add(systemPlantRoom, (DryCooler)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is GroundSource)
+            {
+                return Add(systemPlantRoom, (GroundSource)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, GroundSource groundSource, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || groundSource == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemVerticalBorehole systemVerticalBorehole = groundSource.ToSAM();
+            systemPlantRoom.Add(systemVerticalBorehole);
+            result.Add(systemVerticalBorehole);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemVerticalBoreholeResult systemVerticalBoreholeResult = groundSource.ToSAM_SystemVerticalBoreholeResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemVerticalBoreholeResult);
+
+                systemPlantRoom.Connect(systemVerticalBoreholeResult, systemVerticalBorehole);
+                result.Add(systemVerticalBoreholeResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, DryCooler dryCooler, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
