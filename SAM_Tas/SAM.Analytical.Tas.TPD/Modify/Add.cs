@@ -1048,7 +1048,45 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (SlinkyCoil)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is CHP)
+            {
+                return Add(systemPlantRoom, (CHP)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, CHP cHP, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || cHP == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemCHP systemCHP = cHP.ToSAM();
+            systemPlantRoom.Add(systemCHP);
+            result.Add(systemCHP);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemCHPResult systemCHPResult = cHP.ToSAM_SystemCHPResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemCHPResult);
+
+                systemPlantRoom.Connect(systemCHPResult, systemCHP);
+                result.Add(systemCHPResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SlinkyCoil slinkyCoil, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
