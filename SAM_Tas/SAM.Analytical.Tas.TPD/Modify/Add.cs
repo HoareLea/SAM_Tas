@@ -1053,7 +1053,83 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (CHP)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is SurfaceWaterExchanger)
+            {
+                return Add(systemPlantRoom, (SurfaceWaterExchanger)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is HorizontalGHE)
+            {
+                return Add(systemPlantRoom, (HorizontalGHE)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HorizontalGHE horizontalGHE, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || horizontalGHE == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemHorizontalExchanger systemHorizontalExchanger = horizontalGHE.ToSAM();
+            systemPlantRoom.Add(systemHorizontalExchanger);
+            result.Add(systemHorizontalExchanger);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemHorizontalExchangerResult systemHorizontalExchangerResult = horizontalGHE.ToSAM_SystemHorizontalExchangerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemHorizontalExchangerResult);
+
+                systemPlantRoom.Connect(systemHorizontalExchangerResult, systemHorizontalExchanger);
+                result.Add(systemHorizontalExchangerResult);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SurfaceWaterExchanger surfaceWaterExchanger, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || surfaceWaterExchanger == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemSurfaceWaterExchanger systemSurfaceWaterExchanger = surfaceWaterExchanger.ToSAM();
+            systemPlantRoom.Add(systemSurfaceWaterExchanger);
+            result.Add(systemSurfaceWaterExchanger);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemSurfaceWaterExchangerResult systemSurfaceWaterExchangerResult = surfaceWaterExchanger.ToSAM_SystemSurfaceWaterExchangerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemSurfaceWaterExchangerResult);
+
+                systemPlantRoom.Connect(systemSurfaceWaterExchangerResult, systemSurfaceWaterExchanger);
+                result.Add(systemSurfaceWaterExchangerResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, CHP cHP, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
