@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             Dictionary<LiquidJunctionDataType, IndexedDoubles> dictionary = new Dictionary<LiquidJunctionDataType, IndexedDoubles>();
             foreach (LiquidJunctionDataType LiquidJunctionDataType in liquidJunctionDataTypes_Temp)
             {
-                IndexedDoubles indexedDoubles = Create.IndexedDoubles((SystemComponent)plantJunction, LiquidJunctionDataType, start, end);
+                IndexedDoubles indexedDoubles = Create.IndexedDoubles((PlantComponent)plantJunction, LiquidJunctionDataType, start, end);
                 if (indexedDoubles == null)
                 {
                     continue;

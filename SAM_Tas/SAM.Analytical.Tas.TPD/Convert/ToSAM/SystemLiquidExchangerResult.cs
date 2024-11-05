@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             Dictionary<LiquidExchangerDataType, IndexedDoubles> dictionary = new Dictionary<LiquidExchangerDataType, IndexedDoubles>();
             foreach (LiquidExchangerDataType liquidExchangerDataType in liquidExchangerDataTypes_Temp)
             {
-                IndexedDoubles indexedDoubles = Create.IndexedDoubles((SystemComponent)heatExchanger, liquidExchangerDataType, start, end);
+                IndexedDoubles indexedDoubles = Create.IndexedDoubles((PlantComponent)heatExchanger, liquidExchangerDataType, start, end);
                 if (indexedDoubles == null)
                 {
                     continue;
