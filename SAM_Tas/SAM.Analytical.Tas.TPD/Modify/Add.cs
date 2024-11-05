@@ -1068,7 +1068,45 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (SolarPanel)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is PVPanel)
+            {
+                return Add(systemPlantRoom, (PVPanel)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PVPanel pVPanel, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || pVPanel == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemPhotovoltaicPanel systemPhotovoltaicPanel = pVPanel.ToSAM();
+            systemPlantRoom.Add(systemPhotovoltaicPanel);
+            result.Add(systemPhotovoltaicPanel);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemPhotovoltaicPanelResult systemPhotovoltaicPanelResult = pVPanel.ToSAM_SystemPhotovoltaicPanelResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemPhotovoltaicPanelResult);
+
+                systemPlantRoom.Connect(systemPhotovoltaicPanelResult, systemPhotovoltaicPanel);
+                result.Add(systemPhotovoltaicPanelResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, SolarPanel solarPanel, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
