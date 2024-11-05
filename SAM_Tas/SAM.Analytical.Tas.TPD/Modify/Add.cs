@@ -1023,7 +1023,83 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (HeatExchanger)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is CoolingTower)
+            {
+                return Add(systemPlantRoom, (CoolingTower)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
+            if (plantComponent is DryCooler)
+            {
+                return Add(systemPlantRoom, (DryCooler)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, DryCooler dryCooler, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || dryCooler == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemDryCooler systemDryCooler = dryCooler.ToSAM();
+            systemPlantRoom.Add(systemDryCooler);
+            result.Add(systemDryCooler);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemDryCoolerResult systemDryCoolerResult = dryCooler.ToSAM_SystemDryCoolerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemDryCoolerResult);
+
+                systemPlantRoom.Connect(systemDryCoolerResult, systemDryCooler);
+                result.Add(systemDryCoolerResult);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, CoolingTower coolingTower, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || coolingTower == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemCoolingTower systemCoolingTower = coolingTower.ToSAM();
+            systemPlantRoom.Add(systemCoolingTower);
+            result.Add(systemCoolingTower);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemCoolingTowerResult systemCoolingTowerResult = coolingTower.ToSAM_SystemCoolingTowerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemCoolingTowerResult);
+
+                systemPlantRoom.Connect(systemCoolingTowerResult, systemCoolingTower);
+                result.Add(systemCoolingTowerResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, HeatExchanger heatExchanger, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
