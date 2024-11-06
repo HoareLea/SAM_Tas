@@ -1078,7 +1078,45 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (Valve)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is WindTurbine)
+            {
+                return Add(systemPlantRoom, (WindTurbine)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, WindTurbine windTurbine, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || windTurbine == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemWindTurbine systemWindTurbine = windTurbine.ToSAM();
+            systemPlantRoom.Add(systemWindTurbine);
+            result.Add(systemWindTurbine);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemWindTurbineResult systemWindTurbineResult = windTurbine.ToSAM_SystemWindTurbineResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemWindTurbineResult);
+
+                systemPlantRoom.Connect(systemWindTurbineResult, systemWindTurbine);
+                result.Add(systemWindTurbineResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Valve valve, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
