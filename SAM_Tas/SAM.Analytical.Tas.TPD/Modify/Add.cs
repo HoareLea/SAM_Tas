@@ -1073,7 +1073,45 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (PVPanel)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is Valve)
+            {
+                return Add(systemPlantRoom, (Valve)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Valve valve, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || valve == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemValve systemValve = valve.ToSAM();
+            systemPlantRoom.Add(systemValve);
+            result.Add(systemValve);
+
+            if (componentConversionSettings.IncludeResults)
+            {
+                int start = tPDDoc.StartHour();
+                int end = tPDDoc.EndHour();
+
+                SystemValveResult systemValveResult = valve.ToSAM_SystemValveResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemValveResult);
+
+                systemPlantRoom.Connect(systemValveResult, systemValve);
+                result.Add(systemValveResult);
+            }
+
+            return result;
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PVPanel pVPanel, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
