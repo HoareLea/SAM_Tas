@@ -65,6 +65,7 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemAirJunction:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemLiquidJunction:
                     location_Temp = new Point2D(location_Temp.X + 0.1, location_Temp.Y - 0.1);
                     vector2D = new Vector2D(0, 0);
                     break;
