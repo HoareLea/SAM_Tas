@@ -94,7 +94,7 @@ namespace SAM.Analytical.Tas.TPD
 
                         List<Point2D> point2Ds = Query.Point2Ds(pipe);
 
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, systemComponent_SAM_2, liquidSystem, direction, point2Ds);
+                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, pipe.GetDownstreamComponentPort(), systemComponent_SAM_2, pipe.GetUpstreamComponentPort(), liquidSystem, direction, point2Ds);
                         if (systemConnection != null)
                         {
                             systemConnection.SetReference(Query.Reference(pipe));
@@ -376,7 +376,7 @@ namespace SAM.Analytical.Tas.TPD
 
                         List<Point2D> point2Ds = Query.Point2Ds(duct);
 
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, systemComponent_SAM_2, airSystem, direction, point2Ds);
+                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, duct.GetDownstreamComponentPort(), systemComponent_SAM_2, duct.GetUpstreamComponentPort(), airSystem, direction, point2Ds);
                         if (systemConnection != null)
                         {
                             systemConnection.SetReference(Query.Reference(duct));
@@ -1032,14 +1032,14 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static ISystemConnection Connect(this SystemPlantRoom systemPlantRoom, Core.Systems.ISystemComponent systemComponent_1, Core.Systems.ISystemComponent systemComponent_2, Core.Systems.ISystem system, Direction direction, IEnumerable<Point2D> point2Ds = null)
+        public static ISystemConnection Connect(this SystemPlantRoom systemPlantRoom, Core.Systems.ISystemComponent systemComponent_1, int connectionIndex_1, Core.Systems.ISystemComponent systemComponent_2, int connectionIndex_2, Core.Systems.ISystem system, Direction direction, IEnumerable<Point2D> point2Ds = null)
         {
             if(systemPlantRoom == null || systemComponent_1 == null || systemComponent_2 == null || system == null)
             {
                 return null;
             }
 
-            if (!Geometry.Systems.Query.TryGetIndexes(systemPlantRoom, systemComponent_1, systemComponent_2, out int index_1, out int index_2, new SystemType(system), direction))
+            if (!Geometry.Systems.Query.TryGetIndexes(systemPlantRoom, systemComponent_1, connectionIndex_1, systemComponent_2, connectionIndex_2, out int index_1, out int index_2, new SystemType(system), direction))
             {
                 return null;
             }
@@ -1170,7 +1170,7 @@ namespace SAM.Analytical.Tas.TPD
                             }
                         }
 
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_In_SAM, systemComponent_Out_SAM, airSystem, Direction.Out, point2Ds);
+                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_In_SAM, -1, systemComponent_Out_SAM, -1, airSystem, Direction.Out, point2Ds);
                         
                         if (systemConnection != null)
                         {
