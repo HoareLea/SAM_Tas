@@ -40,7 +40,7 @@ namespace SAM.Analytical.Tas.TPD
             string reference = Query.Reference((SystemComponent)exchanger);
 
             SystemExchangerResult result = new SystemExchangerResult(reference, string.Empty, Query.Source(), dictionary);
-            
+
             return result;
         }
     }

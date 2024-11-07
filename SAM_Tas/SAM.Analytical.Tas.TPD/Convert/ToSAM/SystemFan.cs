@@ -15,15 +15,15 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = fan;
 
-            SystemFan systemFan = new SystemFan(@dynamic.Name);
-            systemFan.Description = dynamic.Description;
-            Modify.SetReference(systemFan, @dynamic.GUID);
+            SystemFan result = new SystemFan(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
+            result.OverallEfficiency = fan.OverallEfficiency.Value;
+            result.HeatGainFactor = fan.HeatGainFactor;
+            result.Pressure = fan.Pressure;
 
-            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
-
-            DisplaySystemFan result = Systems.Create.DisplayObject<DisplaySystemFan>(systemFan, location, Systems.Query.DefaultDisplaySystemManager());
-
-            switch(fan.DesignFlowType)
+            switch (fan.DesignFlowType)
             {
                 case tpdFlowRateType.tpdFlowRateValue:
                 case tpdFlowRateType.tpdFlowRateNearestZoneFlowRate:
@@ -34,14 +34,19 @@ namespace SAM.Analytical.Tas.TPD
                     break;
             }
 
-            result.OverallEfficiency = fan.OverallEfficiency.Value;
-            result.HeatGainFactor = fan.HeatGainFactor;
-            result.Pressure = fan.Pressure;
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            ITransform2D transform2D = ((ISystemComponent)fan).Transform2D();
-            if (transform2D != null)
+            DisplaySystemFan displaySystemFan = Systems.Create.DisplayObject<DisplaySystemFan>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemFan != null)
             {
-                result.Transform(transform2D);
+
+                ITransform2D transform2D = ((ISystemComponent)fan).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemFan.Transform(transform2D);
+                }
+
+                result = displaySystemFan;
             }
 
             return result;

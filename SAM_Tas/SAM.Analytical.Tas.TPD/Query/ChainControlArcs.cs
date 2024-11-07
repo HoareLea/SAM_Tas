@@ -5,25 +5,25 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static List<ControlArc> ChainControlArcs(this Controller controller)
+        public static List<PlantControlArc> ChainPlantControlArcs(this PlantController plantController)
         {
-            if (controller == null)
+            if (plantController == null)
             {
                 return null;
             }
 
-            List<ControlArc> result = new List<ControlArc>();
+            List<PlantControlArc> result = new List<PlantControlArc>();
 
-            int count = controller.GetChainArcCount();
+            int count = plantController.GetChainArcCount();
             for (int i = 1; i <= count; i++)
             {
-                ControlArc controlArc = controller.GetChainArc(i);
-                if (controlArc == null)
+                PlantControlArc plantControlArc = plantController.GetChainArc(i);
+                if (plantControlArc == null)
                 {
                     continue;
                 }
 
-                result.Add(controlArc);
+                result.Add(plantControlArc);
             }
 
             return result;

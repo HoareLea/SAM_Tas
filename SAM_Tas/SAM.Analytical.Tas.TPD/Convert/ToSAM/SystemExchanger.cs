@@ -15,21 +15,25 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = exchanger;
 
-            SystemExchanger systemExchanger = new SystemExchanger(@dynamic.Name);
-            systemExchanger.Description = dynamic.Description;
-            Modify.SetReference(systemExchanger, @dynamic.GUID);
+            SystemExchanger result = new SystemExchanger(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+
+            result.Description = dynamic.Description;
+            result.SensibleEfficiency = exchanger.SensibleEfficiency.Value;
+            result.LatentEfficiency = exchanger.LatentEfficiency.Value;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemExchanger result = Systems.Create.DisplayObject<DisplaySystemExchanger>(systemExchanger, location, Systems.Query.DefaultDisplaySystemManager());
-
-            result.SensibleEfficiency =  exchanger.SensibleEfficiency.Value;
-            result.LatentEfficiency = exchanger.LatentEfficiency.Value;
-
-            ITransform2D transform2D = ((ISystemComponent)exchanger).Transform2D();
-            if (transform2D != null)
+            DisplaySystemExchanger displaySystemExchanger = Systems.Create.DisplayObject<DisplaySystemExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if (displaySystemExchanger != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((ISystemComponent)exchanger).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemExchanger.Transform(transform2D);
+                }
+
+                result = displaySystemExchanger;
             }
 
             return result;

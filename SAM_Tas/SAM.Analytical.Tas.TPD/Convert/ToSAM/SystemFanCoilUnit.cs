@@ -19,18 +19,16 @@ namespace SAM.Analytical.Tas.TPD
             double heatingEfficiency = fanCoilUnit.HeatingEfficiency.Value;
             double overallEfficiency = fanCoilUnit.OverallEfficiency.Value;
 
-            SystemFanCoilUnit result = new SystemFanCoilUnit(dynamic.Name) 
-            { 
-                Pressure = fanCoilUnit.Pressure,
-                CoolingDuty = fanCoilUnit.CoolingDuty?.ToSAM(),
-                HeatingDuty = fanCoilUnit.HeatingDuty?.ToSAM(),
-                DesignFlowRate = designFlowRate,
-                HeatingEfficiency = heatingEfficiency,
-                OverallEfficiency = overallEfficiency
-            };
+            SystemFanCoilUnit result = new SystemFanCoilUnit(dynamic.Name);
+            result.SetReference(((ZoneComponent)fanCoilUnit).Reference());
 
             result.Description = dynamic.Description;
-            result.SetReference(((ZoneComponent)fanCoilUnit).Reference());
+            result.Pressure = fanCoilUnit.Pressure;
+            result.CoolingDuty = fanCoilUnit.CoolingDuty?.ToSAM();
+            result.HeatingDuty = fanCoilUnit.HeatingDuty?.ToSAM();
+            result.DesignFlowRate = designFlowRate;
+            result.HeatingEfficiency = heatingEfficiency;
+            result.OverallEfficiency = overallEfficiency;
 
             return result;
         }

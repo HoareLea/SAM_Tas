@@ -1,5 +1,4 @@
 ﻿using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
-using SAM.Core;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas.TPD;
 using System;

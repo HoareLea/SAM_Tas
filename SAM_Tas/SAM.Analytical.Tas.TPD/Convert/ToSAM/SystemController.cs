@@ -72,45 +72,45 @@ namespace SAM.Analytical.Tas.TPD
                 setback = new SetpointSetback(scheduleName, rangeSetpoint);
             }
 
-            SystemController systemController = null;
+            SystemController result = null;
 
             switch(controller.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    systemController = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
+                    result = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
                     OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
-                    systemController = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint) { SensorReference = sensorReference };
+                    result = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    systemController = new SystemDifferenceController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
+                    result = new SystemDifferenceController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    systemController = new SystemPassthroughController(@dynamic.Name, normalControllerDataType) { SensorReference = sensorReference };
+                    result = new SystemPassthroughController(@dynamic.Name, normalControllerDataType) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlNot:
-                    systemController = new SystemNotLogicalController(@dynamic.Name);
+                    result = new SystemNotLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlMin:
-                    systemController = new SystemMinLogicalController(@dynamic.Name);
+                    result = new SystemMinLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlMax:
-                    systemController = new SystemMaxLogicalController(@dynamic.Name);
+                    result = new SystemMaxLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlSig:
-                    systemController = new SystemSigLogicalController(@dynamic.Name);
+                    result = new SystemSigLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlIf:
-                    systemController = new SystemIfLogicalController(@dynamic.Name);
+                    result = new SystemIfLogicalController(@dynamic.Name);
                     break;
 
                 //case tpdControlType.tpdControlGroup:
@@ -118,7 +118,7 @@ namespace SAM.Analytical.Tas.TPD
                 //    break;
             }
 
-            if(systemController == null)
+            if(result == null)
             {
                 return null;
             }
@@ -126,18 +126,18 @@ namespace SAM.Analytical.Tas.TPD
             IReference reference = Create.Reference(controller);
             if (reference != null)
             {
-                Modify.SetReference(systemController, reference.ToString());
+                Modify.SetReference(result, reference.ToString());
             }
 
-            systemController.Description = dynamic.Description;
+            result.Description = dynamic.Description;
             //Modify.SetReference(systemController, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            IDisplaySystemController result = Systems.Create.DisplayObject<IDisplaySystemController>(systemController, location, Systems.Query.DefaultDisplaySystemManager());
-            if(result == null)
+            IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemController != null)
             {
-                return null;
+                return displaySystemController;
             }
 
             return result;

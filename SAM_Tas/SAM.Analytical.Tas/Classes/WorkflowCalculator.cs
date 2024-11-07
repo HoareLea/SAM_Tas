@@ -330,10 +330,10 @@ namespace SAM.Analytical.Tas
             if (WorkflowSettings.UnmetHours)
             {
                 Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Calculating Unmet Hours"));
-                List<Core.Result> results_UnmetHours = Query.UnmetHours(path_TSD, WorkflowSettings.Path_TBD, 0.5);
+                List<Result> results_UnmetHours = Query.UnmetHours(path_TSD, WorkflowSettings.Path_TBD, 0.5);
                 if (results_UnmetHours != null && results_UnmetHours.Count > 0)
                 {
-                    foreach (Core.Result result_UnmetHours in results_UnmetHours)
+                    foreach (Result result_UnmetHours in results_UnmetHours)
                     {
                         if (result_UnmetHours is AdjacencyClusterSimulationResult)
                         {

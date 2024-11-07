@@ -1,8 +1,6 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
-using System.Collections.Generic;
-using System;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -17,13 +15,10 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = dxCoil;
 
-            SystemDXCoil systemDXCoil = new SystemDXCoil(dynamic.Name);
-            systemDXCoil.Description = dynamic.Description;
-            Modify.SetReference(systemDXCoil, @dynamic.GUID);
+            SystemDXCoil result = new SystemDXCoil(dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
 
-            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
-
-            DisplaySystemDXCoil result = Systems.Create.DisplayObject<DisplaySystemDXCoil>(systemDXCoil, location, Systems.Query.DefaultDisplaySystemManager());
+            result.Description = dynamic.Description;
             result.CoolingSetpoint = dxCoil.CoolingSetpoint.ToSAM();
             result.HeatingSetpoint = dxCoil.HeatingSetpoint.ToSAM();
             result.MinOffcoilTemperature = dxCoil.MinimumOffcoil.ToSAM();
@@ -32,10 +27,18 @@ namespace SAM.Analytical.Tas.TPD
             result.CoolingDuty = dxCoil.CoolingDuty.ToSAM();
             result.HeatingDuty = dxCoil.HeatingDuty.ToSAM();
 
-            ITransform2D transform2D = ((ISystemComponent)dxCoil).Transform2D();
-            if (transform2D != null)
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            DisplaySystemDXCoil displaySystemDXCoil = Systems.Create.DisplayObject<DisplaySystemDXCoil>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemDXCoil != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((ISystemComponent)dxCoil).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemDXCoil.Transform(transform2D);
+                }
+
+                result = displaySystemDXCoil;
             }
 
             return result;

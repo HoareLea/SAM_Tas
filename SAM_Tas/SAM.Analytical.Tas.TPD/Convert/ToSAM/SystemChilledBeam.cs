@@ -26,8 +26,9 @@ namespace SAM.Analytical.Tas.TPD
                 HeatingEfficiency = heatingEfficiency,
             };
 
-            result.Description = dynamic.Description;
             result.SetReference(((ZoneComponent)chilledBeam).Reference());
+            
+            result.Description = dynamic.Description;
 
             return result;
         }

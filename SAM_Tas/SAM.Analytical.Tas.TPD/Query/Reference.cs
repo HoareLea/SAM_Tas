@@ -66,6 +66,16 @@ namespace SAM.Analytical.Tas.TPD
             return string.Format("[{0}]::[{1}]", zoneLoad.GUID, index);
         }
 
+        public static string Reference(this PlantComponent plantComponent)
+        {
+            if (plantComponent == null)
+            {
+                return null;
+            }
+
+            return (plantComponent as dynamic).GUID;
+        }
+
         public static string Reference(this global::TPD.SystemComponent systemComponent)
         {
             if(systemComponent == null)
@@ -106,7 +116,7 @@ namespace SAM.Analytical.Tas.TPD
             return (system as dynamic).GUID;
         }
 
-        public static string Reference(this global::TPD.ComponentGroup componentGroup)
+        public static string Reference(this ComponentGroup componentGroup)
         {
             if (componentGroup == null)
             {
@@ -114,6 +124,16 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             return (componentGroup as dynamic).GUID;
+        }
+
+        public static string Reference(this PlantComponentGroup plantComponentGroup)
+        {
+            if (plantComponentGroup == null)
+            {
+                return null;
+            }
+
+            return (plantComponentGroup as dynamic).GUID;
         }
 
         public static string Reference(this Duct duct)
@@ -134,6 +154,24 @@ namespace SAM.Analytical.Tas.TPD
             return string.Join("-", values);
         }
 
+        public static string Reference(this Pipe pipe)
+        {
+            if (pipe == null)
+            {
+                return null;
+            }
+
+            string reference_1 = Reference(pipe.GetDownstreamComponent());
+            int port_1 = pipe.GetDownstreamComponentPort();
+            string reference_2 = Reference(pipe.GetUpstreamComponent());
+            int port_2 = pipe.GetUpstreamComponentPort();
+
+            List<string> values = new List<string>() { reference_1, port_1.ToString(), reference_2, port_2.ToString() };
+            values.RemoveAll(x => x == null);
+
+            return string.Join("-", values);
+        }
+
         public static string Reference(this SensorArc sensorArc)
         {
             if (sensorArc == null)
@@ -147,6 +185,26 @@ namespace SAM.Analytical.Tas.TPD
                 sensorArc.SensorPort.ToString(),
                 sensorArc.GetDuct()?.Reference(),
                 sensorArc.GetComponent()?.Reference(),
+            };
+
+            values.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+            return string.Join("-", values);
+        }
+
+        public static string Reference(this PlantSensorArc plantSensorArc)
+        {
+            if (plantSensorArc == null)
+            {
+                return null;
+            }
+
+            List<string> values = new List<string>()
+            {
+                plantSensorArc.GetController()?.Reference()?.ToString(),
+                plantSensorArc.SensorPort.ToString(),
+                plantSensorArc.GetPipe()?.Reference(),
+                plantSensorArc.GetComponent()?.Reference(),
             };
 
             values.RemoveAll(x => string.IsNullOrWhiteSpace(x));

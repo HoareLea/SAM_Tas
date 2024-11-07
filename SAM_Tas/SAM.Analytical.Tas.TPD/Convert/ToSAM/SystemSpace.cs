@@ -40,18 +40,23 @@ namespace SAM.Analytical.Tas.TPD
                 freshAirRate = systemZone.FreshAir.Value;
             }
 
-            SystemSpace systemSpace = new SystemSpace(name, area, volume, flowRate, freshAirRate);
-            systemSpace.Description = dynamic.Description;
-            Modify.SetReference(systemSpace, dynamic.GUID);
+            SystemSpace result = new SystemSpace(name, area, volume, flowRate, freshAirRate);
+            Modify.SetReference(result, dynamic.GUID);
+
+            result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemSpace result = Systems.Create.DisplayObject<DisplaySystemSpace>(systemSpace, location, Systems.Query.DefaultDisplaySystemManager());
-
-            ITransform2D transform2D = ((ISystemComponent)systemZone).Transform2D();
-            if (transform2D != null)
+            DisplaySystemSpace displaySystemSpace = Systems.Create.DisplayObject<DisplaySystemSpace>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemSpace != null)
             {
-                result.Transform(transform2D);
+                ITransform2D transform2D = ((ISystemComponent)systemZone).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemSpace.Transform(transform2D);
+                }
+
+                result = displaySystemSpace;
             }
 
             return result;

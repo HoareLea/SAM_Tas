@@ -15,22 +15,23 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = damper;
 
-            SystemDamper systemDamper = new SystemDamper(@dynamic.Name);
-            systemDamper.Description = dynamic.Description;
-            Modify.SetReference(systemDamper, @dynamic.GUID);
+            SystemDamper result = new SystemDamper(@dynamic.Name);
+            Modify.SetReference(result, @dynamic.GUID);
+            
+            result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemDamper result = Systems.Create.DisplayObject<DisplaySystemDamper>(systemDamper, location, Systems.Query.DefaultDisplaySystemManager());
-            if(result == null)
+            DisplaySystemDamper displaySystemDamper = Systems.Create.DisplayObject<DisplaySystemDamper>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            if(displaySystemDamper != null)
             {
-                return null;
-            }
+                ITransform2D transform2D = ((ISystemComponent)damper).Transform2D();
+                if (transform2D != null)
+                {
+                    displaySystemDamper.Transform(transform2D);
+                }
 
-            ITransform2D transform2D = ((ISystemComponent)damper).Transform2D();
-            if (transform2D != null)
-            {
-                result.Transform(transform2D);
+                result = displaySystemDamper;
             }
 
             return result;

@@ -69,5 +69,60 @@ namespace SAM.Analytical.Tas.TPD
             return new PathReference(objectReferences);
         }
 
+        public static IReference Reference(this PlantController plantController)
+        {
+            if (plantController == null)
+            {
+                return null;
+            }
+
+            int index = -1;
+
+            PlantRoom plantRoom = plantController.GetPlantRoom();
+            if (plantRoom == null)
+            {
+                return null;
+            }
+
+            List<ObjectReference> objectReferences = new List<ObjectReference>()
+            {
+                new ObjectReference(typeof(PlantRoom), Guid.Parse(plantRoom.GUID()))
+            };
+
+            List<PlantController> plantControllers = null;
+
+            Type type = null;
+
+            PlantComponentGroup plantComponentGroup = plantController.GetGroup();
+            if (plantComponentGroup != null)
+            {
+                plantControllers = plantComponentGroup.PlantControllers();
+
+                objectReferences.Add(new ObjectReference(typeof(ComponentGroup), Guid.Parse((plantComponentGroup as dynamic).Guid)));
+            }
+            else
+            {
+                plantControllers = plantRoom.PlantControllers();
+            }
+
+            for (int i = 0; i < plantControllers.Count; i++)
+            {
+                if (plantController == plantControllers[i])
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1)
+            {
+                return null;
+            }
+
+            objectReferences.Add(new ObjectReference(typeof(PlantController), index));
+
+            return new PathReference(objectReferences);
+        }
+
     }
 }

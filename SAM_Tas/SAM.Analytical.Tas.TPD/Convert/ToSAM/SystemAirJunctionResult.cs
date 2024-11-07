@@ -8,14 +8,14 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemAirJunctionResult ToSAM_SystemAirJunctionResult(this Junction junction, int start, int end, params AirJunctionDataType[] heatingCoilDataTypes)
+        public static SystemAirJunctionResult ToSAM_SystemAirJunctionResult(this Junction junction, int start, int end, params AirJunctionDataType[] airJunctionDataTypes)
         {
             if (junction == null)
             {
                 return null;
             }
 
-            IEnumerable<AirJunctionDataType> airJunctionDataTypes_Temp = heatingCoilDataTypes == null || heatingCoilDataTypes.Length == 0 ? System.Enum.GetValues(typeof(AirJunctionDataType)).Cast<AirJunctionDataType>() : heatingCoilDataTypes;
+            IEnumerable<AirJunctionDataType> airJunctionDataTypes_Temp = airJunctionDataTypes == null || airJunctionDataTypes.Length == 0 ? System.Enum.GetValues(typeof(AirJunctionDataType)).Cast<AirJunctionDataType>() : airJunctionDataTypes;
 
             Dictionary<AirJunctionDataType, IndexedDoubles> dictionary = new Dictionary<AirJunctionDataType, IndexedDoubles>();
             foreach (AirJunctionDataType airJunctionDataType in airJunctionDataTypes_Temp)

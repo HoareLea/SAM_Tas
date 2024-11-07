@@ -54,5 +54,15 @@ namespace SAM.Analytical.Tas.TPD
 
             return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
         }
+
+        public static AnalyticalSystemComponentType AnalyticalSystemComponentType(this IPlantComponent plantComponent)
+        {
+            if (plantComponent is Pump)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemPump;
+            }
+
+            return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
+        }
     }
 }

@@ -5,19 +5,19 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
-        public static List<SensorArc> SensorArcs(this Controller controller) 
+        public static List<PlantSensorArc> PlantSensorArcs(this PlantController plantController) 
         { 
-            if(controller == null)
+            if(plantController == null)
             {
                 return null;
             }
 
-            List<SensorArc> result = new List<SensorArc>();
+            List<PlantSensorArc> result = new List<PlantSensorArc>();
 
-            int count = controller.GetSensorArcCount();
+            int count = plantController.GetSensorArcCount();
             for (int i = 1; i <= count; i++)
             {
-                SensorArc sensorArc = controller.GetSensorArc(i);
+                PlantSensorArc sensorArc = plantController.GetSensorArc(i);
                 if (sensorArc == null)
                 {
                     continue;
