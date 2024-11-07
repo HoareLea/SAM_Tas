@@ -62,7 +62,7 @@ namespace SAM.Analytical.Tas.TPD
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemPump;
             }
 
-            if (plantComponent is SystemLiquidJunction)
+            if (plantComponent is PlantJunction)
             {
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemLiquidJunction;
             }
