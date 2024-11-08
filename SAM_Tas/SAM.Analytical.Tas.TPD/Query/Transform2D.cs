@@ -70,6 +70,10 @@ namespace SAM.Analytical.Tas.TPD
 
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemLiquidExchanger:
 
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemBoiler:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemMultiBoiler:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemCHP:
+
                     switch (tpdDirection)
                     {
                         case tpdDirection.tpdLeftRight:
@@ -96,6 +100,80 @@ namespace SAM.Analytical.Tas.TPD
                             {
                                 Geometry.Planar.Transform2D.GetRotation(location_Temp, - global :: System.Math.PI / 2),
                                 Geometry.Planar.Transform2D.GetTranslation(new Vector2D(1, 0)),
+                            };
+                            return new TransformGroup2D(transforms);
+                    }
+
+                    break;
+
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemDryCooler:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemVerticalBorehole:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemSlinkyCoil:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemSurfaceWaterExchanger:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemHorizontalExchanger:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingTower:
+
+                    switch (tpdDirection)
+                    {
+                        case tpdDirection.tpdLeftRight:
+                            return null;
+
+                        case tpdDirection.tpdRightLeft:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetMirrorY(location),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.6, 0)),
+                            };
+                            return new TransformGroup2D(transforms);
+
+                        case tpdDirection.tpdBottomTop:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetRotation(location_Temp,  global :: System.Math.PI / 2),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, -0.6)),
+                            };
+                            return new TransformGroup2D(transforms);
+
+                        case tpdDirection.tpdTopBottom:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetRotation(location_Temp, - global :: System.Math.PI / 2),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.8, 0)),
+                            };
+                            return new TransformGroup2D(transforms);
+                    }
+
+                    break;
+
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemPhotovoltaicPanel:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemSolarPanel:
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemWindTurbine:
+                    switch (tpdDirection)
+                    {
+                        case tpdDirection.tpdLeftRight:
+                            return null;
+
+                        case tpdDirection.tpdRightLeft:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetMirrorY(location),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.6, 0)),
+                            };
+                            return new TransformGroup2D(transforms);
+
+                        case tpdDirection.tpdBottomTop:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetRotation(location_Temp,  global :: System.Math.PI / 2),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, -0.6)),
+                            };
+                            return new TransformGroup2D(transforms);
+
+                        case tpdDirection.tpdTopBottom:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetRotation(location_Temp, - global :: System.Math.PI / 2),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.6, 0)),
                             };
                             return new TransformGroup2D(transforms);
                     }
