@@ -67,6 +67,151 @@ namespace SAM.Analytical.Tas.TPD
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemLiquidJunction;
             }
 
+            if (plantComponent is BoilerPlant)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemBoiler;
+            }
+
+            if (plantComponent is Chiller)
+            {
+                if(((Chiller)plantComponent).IsDirectAbsChiller == -1)
+                {
+                    return Analytical.Systems.AnalyticalSystemComponentType.SystemAirSourceDirectAbsorptionChiller;
+                }
+
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemAirSourceChiller;
+            }
+
+            if (plantComponent is AbsorptionChiller)
+            {
+                if (((AbsorptionChiller)plantComponent).IsWaterSource == -1)
+                {
+                    return Analytical.Systems.AnalyticalSystemComponentType.SystemWaterSourceAbsorptionChiller;
+                }
+
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemAbsorptionChiller;
+            }
+
+            if (plantComponent is IceStorageChiller)
+            {
+                if (((IceStorageChiller)plantComponent).IsWaterSource == -1)
+                {
+                    return Analytical.Systems.AnalyticalSystemComponentType.SystemWaterSourceIceStorageChiller;
+                }
+
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemIceStorageChiller;
+            }
+
+            if (plantComponent is WaterSourceChiller)
+            {
+                if (((WaterSourceChiller)plantComponent).IsDirectAbsChiller == -1)
+                {
+                    return Analytical.Systems.AnalyticalSystemComponentType.SystemWaterSourceDirectAbsorptionChiller;
+                }
+
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemWaterSourceChiller;
+            }
+
+            if (plantComponent is MultiChiller)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemMultiChiller;
+            }
+
+            if (plantComponent is MultiBoiler)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemMultiBoiler;
+            }
+
+            if (plantComponent is AirSourceHeatPump)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemAirSourceHeatPump;
+            }
+
+            if (plantComponent is WaterToWaterHeatPump)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemWaterToWaterHeatPump;
+            }
+
+            if (plantComponent is HeatPump)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemWaterSourceHeatPump;
+            }
+
+            if (plantComponent is HeatPump)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemWaterSourceHeatPump;
+            }
+
+            if (plantComponent is Tank)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemTank;
+            }
+
+            if (plantComponent is PipeLossComponent)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemPipeLossComponent;
+            }
+
+            if (plantComponent is HeatExchanger)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemLiquidExchanger;
+            }
+
+            if (plantComponent is CoolingTower)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemCoolingTower;
+            }
+
+            if (plantComponent is DryCooler)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemDryCooler;
+            }
+
+            if (plantComponent is GroundSource)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemVerticalBorehole;
+            }
+
+            if (plantComponent is SlinkyCoil)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemSlinkyCoil;
+            }
+
+            if (plantComponent is CHP)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemCHP;
+            }
+
+            if (plantComponent is SurfaceWaterExchanger)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemSurfaceWaterExchanger;
+            }
+
+            if (plantComponent is HorizontalGHE)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemHorizontalExchanger;
+            }
+
+            if (plantComponent is SolarPanel)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemSolarPanel;
+            }
+
+            if (plantComponent is PVPanel)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemPhotovoltaicPanel;
+            }
+
+            if (plantComponent is Valve)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemValve;
+            }
+
+            if (plantComponent is WindTurbine)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.SystemWindTurbine;
+            }
+
             //TODO: Add Plant Component Types
 
             return Analytical.Systems.AnalyticalSystemComponentType.Undefined;

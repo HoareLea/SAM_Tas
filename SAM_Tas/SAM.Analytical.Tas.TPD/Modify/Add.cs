@@ -1008,7 +1008,7 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (HeatPump)plantComponent, tPDDoc, componentConversionSettings);
             }
 
-            if (plantComponent is Tank tank)
+            if (plantComponent is Tank)
             {
                 return Add(systemPlantRoom, (Tank)plantComponent, tPDDoc, componentConversionSettings);
             }
@@ -1026,11 +1026,6 @@ namespace SAM.Analytical.Tas.TPD
             if (plantComponent is CoolingTower)
             {
                 return Add(systemPlantRoom, (CoolingTower)plantComponent, tPDDoc, componentConversionSettings);
-            }
-
-            if (plantComponent is DryCooler)
-            {
-                return Add(systemPlantRoom, (DryCooler)plantComponent, tPDDoc, componentConversionSettings);
             }
 
             if (plantComponent is DryCooler)
