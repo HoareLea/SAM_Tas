@@ -212,6 +212,36 @@ namespace SAM.Analytical.Tas.TPD
                 return Analytical.Systems.AnalyticalSystemComponentType.SystemWindTurbine;
             }
 
+            if (plantComponent is CoolingGroup)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.CoolingSystemCollection;
+            }
+
+            if (plantComponent is DHWGroup)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.DomesticHotWaterSystemCollection;
+            }
+
+            if (plantComponent is ElectricalGroup)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.ElectricalSystemCollection;
+            }
+
+            if (plantComponent is FuelGroup)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.FuelSystemCollection;
+            }
+
+            if (plantComponent is HeatingGroup)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.HeatingSystemCollection;
+            }
+
+            if (plantComponent is RefrigerantGroup)
+            {
+                return Analytical.Systems.AnalyticalSystemComponentType.RefrigerantSystemCollection;
+            }
+
             //TODO: Add Plant Component Types
 
             return Analytical.Systems.AnalyticalSystemComponentType.Undefined;
