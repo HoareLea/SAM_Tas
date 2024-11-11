@@ -141,7 +141,7 @@ namespace SAM.Analytical.Tas.TPD
                             transforms = new List<ITransform2D>()
                             {
                                 Geometry.Planar.Transform2D.GetRotation(location_Temp,  global :: System.Math.PI / 2),
-                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.2, -0.8)),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.1, -0.7)),
                             };
                             return new TransformGroup2D(transforms);
 
@@ -149,7 +149,7 @@ namespace SAM.Analytical.Tas.TPD
                             transforms = new List<ITransform2D>()
                             {
                                 Geometry.Planar.Transform2D.GetRotation(location_Temp, - global :: System.Math.PI / 2),
-                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.8, -0.2)),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.7, -0.1)),
                             };
                             return new TransformGroup2D(transforms);
                     }
