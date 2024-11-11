@@ -54,6 +54,38 @@ namespace SAM.Analytical.Tas.TPD
                     vector2D = new Vector2D(0.8, 0);
                     break;
 
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemLiquidExchanger:
+                    switch (tpdDirection)
+                    {
+                        case tpdDirection.tpdLeftRight:
+                            return null;
+
+                        case tpdDirection.tpdRightLeft:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetMirrorY(location),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.5, 0)),
+                            };
+                            return new TransformGroup2D(transforms);
+
+                        case tpdDirection.tpdBottomTop:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetRotation(location_Temp,  global :: System.Math.PI / 2),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, -0.5)),
+                            };
+                            return new TransformGroup2D(transforms);
+
+                        case tpdDirection.tpdTopBottom:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetRotation(location_Temp, - global :: System.Math.PI / 2),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(1, 0)),
+                            };
+                            return new TransformGroup2D(transforms);
+                    }
+                    break;
+
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemAbsorptionChiller:
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemAirSourceChiller:
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemAirSourceDirectAbsorptionChiller:
@@ -68,11 +100,16 @@ namespace SAM.Analytical.Tas.TPD
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemWaterSourceHeatPump:
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemWaterToWaterHeatPump:
 
-                case Analytical.Systems.AnalyticalSystemComponentType.SystemLiquidExchanger:
-
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemBoiler:
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemMultiBoiler:
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemCHP:
+
+                case Analytical.Systems.AnalyticalSystemComponentType.CoolingSystemCollection:
+                case Analytical.Systems.AnalyticalSystemComponentType.DomesticHotWaterSystemCollection:
+                case Analytical.Systems.AnalyticalSystemComponentType.ElectricalSystemCollection:
+                case Analytical.Systems.AnalyticalSystemComponentType.FuelSystemCollection:
+                case Analytical.Systems.AnalyticalSystemComponentType.HeatingSystemCollection:
+                case Analytical.Systems.AnalyticalSystemComponentType.RefrigerantSystemCollection:
 
                     switch (tpdDirection)
                     {
