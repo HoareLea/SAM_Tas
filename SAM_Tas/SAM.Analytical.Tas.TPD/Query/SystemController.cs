@@ -74,12 +74,18 @@ namespace SAM.Analytical.Tas.TPD
                 objectReference = objectReferences[0];
             }
 
-            if (objectReference.TypeName != Core.Query.FullTypeName(typeof(Controller)))
+            string typeName = objectReference.TypeName;
+            if(objectReference.TypeName != Core.Query.FullTypeName(typeof(Controller)) && objectReference.TypeName != Core.Query.FullTypeName(typeof(PlantController)))
             {
                 return default;
             }
 
             List<T> systemControllers = system == null ? systemPlantRoom.GetSystemComponents<T>() : systemPlantRoom.GetSystemComponents<T>(system);
+            if(systemControllers == null)
+            {
+                return default;
+            }
+
             foreach (T systemController in systemControllers)
             {
                 if (systemController?.Reference() == pathReference.ToString())

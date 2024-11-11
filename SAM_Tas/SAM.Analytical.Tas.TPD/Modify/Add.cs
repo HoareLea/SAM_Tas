@@ -29,6 +29,28 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PlantController plantController, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || plantController == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            ISystemController systemController = plantController.ToSAM();
+            if (systemController == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+            if(systemPlantRoom.Add(systemController))
+            {
+                result.Add(systemController);
+            }
+
+            return result;
+        }
+
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.ISystemComponent systemComponent, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || systemComponent == null)
@@ -919,6 +941,19 @@ namespace SAM.Analytical.Tas.TPD
                         systemPlantRoom.Connect(liquidSystem, systemComponent);
                     }
 
+                }
+            }
+
+            List<PlantController> plantControllers = plantRoom.PlantControllers();
+            if (plantControllers != null)
+            {
+                foreach (PlantController plantController in plantControllers)
+                {
+                    List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(plantController, tPDDoc, componentConversionSettings);
+                    if (systemJSAMObjects != null)
+                    {
+                        result.AddRange(systemJSAMObjects);
+                    }
                 }
             }
 
