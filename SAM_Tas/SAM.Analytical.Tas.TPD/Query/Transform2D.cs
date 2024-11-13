@@ -156,6 +156,39 @@ namespace SAM.Analytical.Tas.TPD
 
                     break;
 
+                case Analytical.Systems.AnalyticalSystemComponentType.SystemPipeLossComponent:
+                    switch (tpdDirection)
+                    {
+                        case tpdDirection.tpdLeftRight:
+                            return null;
+
+                        case tpdDirection.tpdRightLeft:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetMirrorY(location),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.6, 0)),
+                            };
+                            return new TransformGroup2D(transforms);
+
+                        case tpdDirection.tpdBottomTop:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetRotation(location_Temp,  global :: System.Math.PI / 2),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, -0.6)),
+                            };
+                            return new TransformGroup2D(transforms);
+
+                        case tpdDirection.tpdTopBottom:
+                            transforms = new List<ITransform2D>()
+                            {
+                                Geometry.Planar.Transform2D.GetRotation(location_Temp, - global :: System.Math.PI / 2),
+                                Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0.2, 0)),
+                            };
+                            return new TransformGroup2D(transforms);
+                    }
+
+                    break;
+
                 case Analytical.Systems.AnalyticalSystemComponentType.SystemLiquidExchanger:
                     switch (tpdDirection)
                     {
