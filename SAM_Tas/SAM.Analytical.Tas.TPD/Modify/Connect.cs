@@ -94,7 +94,19 @@ namespace SAM.Analytical.Tas.TPD
 
                         List<Point2D> point2Ds = Query.Point2Ds(pipe);
 
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, pipe.GetDownstreamComponentPort(), systemComponent_SAM_2, pipe.GetUpstreamComponentPort(), liquidSystem, direction, point2Ds);
+                        int connectionIndex_1 = pipe.GetDownstreamComponentPort();
+                        if(systemComponent_SAM_1 is SystemWaterSourceHeatPump)
+                        {
+                            connectionIndex_1++;
+                        }
+
+                        int connectionIndex_2 = pipe.GetUpstreamComponentPort();
+                        if (systemComponent_SAM_2 is SystemWaterSourceHeatPump)
+                        {
+                            connectionIndex_2++;
+                        }
+
+                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, connectionIndex_1, systemComponent_SAM_2, connectionIndex_2, liquidSystem, direction, point2Ds);
                         if (systemConnection != null)
                         {
                             systemConnection.SetReference(Query.Reference(pipe));
