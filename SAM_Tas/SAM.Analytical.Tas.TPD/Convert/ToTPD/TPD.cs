@@ -1,12 +1,12 @@
-﻿using SAM.Core.Systems;
+﻿using SAM.Analytical.Systems;
+using SAM.Core;
+using SAM.Core.Systems;
 using SAM.Core.Tas;
-using TPD;
-using System.Drawing;
 using System;
 using System.Collections.Generic;
-using SAM.Analytical.Systems;
+using System.Drawing;
 using System.Linq;
-using SAM.Core;
+using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -14,7 +14,7 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static bool ToTPD(this SystemEnergyCentre systemEnergyCentre, string path_TPD, string path_TSD, SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = null)
         {
-            if(systemEnergyCentre == null)
+            if (systemEnergyCentre == null)
             {
                 return false;
             }
@@ -412,20 +412,20 @@ namespace SAM.Analytical.Tas.TPD
                 }
 
                 List<SystemPlantRoom> systemPlantRooms = systemEnergyCentre.GetSystemPlantRooms();
-                if(systemPlantRooms != null && systemPlantRooms.Count != 0)
+                if (systemPlantRooms != null && systemPlantRooms.Count != 0)
                 {
-                    foreach(SystemPlantRoom systemPlantRoom in systemPlantRooms)
+                    foreach (SystemPlantRoom systemPlantRoom in systemPlantRooms)
                     {
                         List<AirSystem> airSystems = systemPlantRoom.GetSystems<AirSystem>();
-                        if(airSystems != null && airSystems.Count != 0)
+                        if (airSystems != null && airSystems.Count != 0)
                         {
-                            foreach(AirSystem airSystem in airSystems)
+                            foreach (AirSystem airSystem in airSystems)
                             {
                                 Dictionary<Guid, global::TPD.ISystemComponent> dictionary_TPD = new Dictionary<Guid, global::TPD.ISystemComponent>();
                                 Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
 
                                 global::TPD.System system = airSystem.ToTPD(plantRoom);
-                                if(system == null)
+                                if (system == null)
                                 {
                                     continue;
                                 }
@@ -449,11 +449,10 @@ namespace SAM.Analytical.Tas.TPD
 
                                 systemComponents_Ordered.Insert(0, systemComponent);
 
-                                foreach(Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
+                                foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
                                 {
                                     dictionary_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
                                 }
-
 
                                 systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
                                 if (systemComponent == null)
@@ -473,7 +472,7 @@ namespace SAM.Analytical.Tas.TPD
 
                                 foreach (Core.Systems.ISystemComponent systemComponent_Temp in systemComponents_Ordered)
                                 {
-                                    if(!Query.TryGetSystemSpace(systemPlantRoom, systemComponent_Temp, out ISystemSpace systemSpace, out AirSystemGroup airSystemGroup) || systemSpace == null)
+                                    if (!Query.TryGetSystemSpace(systemPlantRoom, systemComponent_Temp, out ISystemSpace systemSpace, out AirSystemGroup airSystemGroup) || systemSpace == null)
                                     {
                                         dictionary_SAM[systemPlantRoom.GetGuid(systemComponent_Temp)] = systemComponent_Temp;
                                         continue;
@@ -498,7 +497,7 @@ namespace SAM.Analytical.Tas.TPD
                                         tuples.Add(tuple);
                                     }
                                 }
-                                
+
                                 foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SAM.Values)
                                 {
                                     global::TPD.ISystemComponent systemComponent_TPD = null;
@@ -631,31 +630,122 @@ namespace SAM.Analytical.Tas.TPD
 
                                     dictionary_TPD[tuple.Item1.Guid] = (global::TPD.ISystemComponent)componentGroup;
                                 }
-
-
                             }
 
                             systemEnergyCentre.Add(systemPlantRoom);
                         }
+
+                        List<LiquidSystem> liquidSystems = systemPlantRoom.GetSystems<LiquidSystem>();
+                        if (liquidSystems != null && liquidSystems.Count != 0)
+                        {
+                            foreach (LiquidSystem liquidSystem in liquidSystems)
+                            {
+                                Dictionary<Guid, global::TPD.PlantComponent> dictionary_TPD = new Dictionary<Guid, global::TPD.PlantComponent>();
+                                Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
+
+                                Core.Systems.ISystemComponent systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Unconnected, Direction.Out)?.FirstOrDefault();
+                                if (systemComponent == null)
+                                {
+                                    continue;
+                                }
+
+                                List<Core.Systems.ISystemComponent> systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, liquidSystem, Direction.In);
+                                if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
+                                {
+                                    continue;
+                                }
+
+                                systemComponents_Ordered.Insert(0, systemComponent);
+
+                                foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
+                                {
+                                    dictionary_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
+                                }
+
+                                systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
+                                if (systemComponent == null)
+                                {
+                                    continue;
+                                }
+
+                                systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, liquidSystem, Direction.Out);
+                                if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
+                                {
+                                    continue;
+                                }
+
+                                systemComponents_Ordered.Insert(0, systemComponent);
+
+                                foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SAM.Values)
+                                {
+                                    PlantComponent plantComponent_TPD = null;
+
+                                    if (systemComponent_Temp is DisplaySystemLiquidJunction)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemLiquidJunction)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayElectricalSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayElectricalSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayFuelSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayFuelSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayCoolingSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayCoolingSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayDomesticHotWaterSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayDomesticHotWaterSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayHeatingSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayHeatingSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayRefrigerantSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayRefrigerantSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemAbsorptionChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceAbsorptionChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+
+                                    if (plantComponent_TPD == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    dictionary_TPD[systemComponent_Temp.Guid] = plantComponent_TPD;
+                                    systemComponent_Temp.SetReference(Query.Reference(plantComponent_TPD));
+                                    systemPlantRoom.Add(systemComponent_Temp);
+                                }
+                            }
+                        }
                     }
                 }
 
-                if(systemEnergyCentreConversionSettings == null)
+                if (systemEnergyCentreConversionSettings == null)
                 {
                     systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
                 }
 
-                if(systemEnergyCentreConversionSettings.Simulate)
+                if (systemEnergyCentreConversionSettings.Simulate)
                 {
                     plantRoom.SimulateEx(systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
-                    if(systemEnergyCentreConversionSettings.IncludeResults)
+                    if (systemEnergyCentreConversionSettings.IncludeResults)
                     {
                         Modify.CopyResults(energyCentre, systemEnergyCentre, systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1);
                     }
                 }
 
                 tPDDoc.Save();
-
             }
 
             return true;
