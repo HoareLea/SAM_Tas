@@ -716,6 +716,14 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemWaterSourceAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemAirSourceChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemAirSourceChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemAirSourceDirectAbsorptionChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemAirSourceDirectAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
 
                                     if (plantComponent_TPD == null)
                                     {
