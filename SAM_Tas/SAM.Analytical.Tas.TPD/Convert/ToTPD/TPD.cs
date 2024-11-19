@@ -760,6 +760,30 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemMultiChiller)systemComponent_Temp, plantRoom) as PlantComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemPhotovoltaicPanel)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemPhotovoltaicPanel)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemPipeLossComponent)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemPipeLossComponent)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemPump)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemSlinkyCoil)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemSlinkyCoil)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemSolarPanel)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemSolarPanel)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemSurfaceWaterExchanger)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemSurfaceWaterExchanger)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
 
                                     if (plantComponent_TPD == null)
                                     {
