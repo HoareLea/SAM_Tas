@@ -724,6 +724,42 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemAirSourceDirectAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemAirSourceHeatPump)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemAirSourceHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemBoiler)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemBoiler)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemCHP)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemCHP)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemCoolingTower)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemCoolingTower)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemDryCooler)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemDryCooler)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemHorizontalExchanger)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemHorizontalExchanger)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemIceStorageChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemIceStorageChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemLiquidExchanger)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemLiquidExchanger)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemMultiChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemMultiChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
 
                                     if (plantComponent_TPD == null)
                                     {
