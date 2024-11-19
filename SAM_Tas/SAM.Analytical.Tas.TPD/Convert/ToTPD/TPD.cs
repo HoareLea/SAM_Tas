@@ -784,6 +784,38 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemSurfaceWaterExchanger)systemComponent_Temp, plantRoom) as PlantComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemTank)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemTank)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemValve)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemValve)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemVerticalBorehole)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemVerticalBorehole)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceDirectAbsorptionChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceDirectAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceHeatPump)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterToWaterHeatPump)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterToWaterHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWindTurbine)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWindTurbine)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
 
                                     if (plantComponent_TPD == null)
                                     {
