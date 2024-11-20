@@ -1660,7 +1660,7 @@ namespace SAM.Analytical.Tas.TPD
                     Core.Systems.ISystemComponent systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>().Find(x => x?.Reference() == reference);
                     if(systemComponent != null)
                     {
-                        result.Add(systemComponent);
+                        //result.Add(systemComponent);
                         systemPlantRoom?.Connect(system, systemComponent);
                         systemPlantRoom?.Connect(systemCollection, systemComponent);
                         continue;

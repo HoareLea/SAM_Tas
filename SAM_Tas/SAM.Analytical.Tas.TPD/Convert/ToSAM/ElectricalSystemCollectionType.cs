@@ -5,27 +5,27 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static ElectricalGroupType ToSAM(this tpdElectricalGroupType tpdElectricalGroupType)
+        public static ElectricalSystemCollectionType ToSAM(this tpdElectricalGroupType tpdElectricalGroupType)
         {
             switch(tpdElectricalGroupType)
             {
                 case tpdElectricalGroupType.tpdElectricalGroupEquipment:
-                    return ElectricalGroupType.Equipment;
+                    return ElectricalSystemCollectionType.Equipment;
 
                 case tpdElectricalGroupType.tpdElectricalGroupNone:
-                    return ElectricalGroupType.None;
+                    return ElectricalSystemCollectionType.None;
 
                 case tpdElectricalGroupType.tpdElectricalGroupHeating:
-                    return ElectricalGroupType.Heating;
+                    return ElectricalSystemCollectionType.Heating;
 
                 case tpdElectricalGroupType.tpdElectricalGroupLighting:
-                    return ElectricalGroupType.Lighting;
+                    return ElectricalSystemCollectionType.Lighting;
 
                 case tpdElectricalGroupType.tpdElectricalGroupFans:
-                    return ElectricalGroupType.Fans;
+                    return ElectricalSystemCollectionType.Fans;
             }
 
-            return ElectricalGroupType.Undefined;
+            throw new System.NotImplementedException();
         }
     }
 }

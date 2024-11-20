@@ -3,6 +3,7 @@ using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
 using SAM.Core;
 using System.Collections.Generic;
+using System;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -43,7 +44,16 @@ namespace SAM.Analytical.Tas.TPD
                 setpoint = rangeSetpoint;
             }
 
-            NormalControllerDataType normalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM();
+            NormalControllerDataType normalControllerDataType;
+            try
+            {
+                normalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM();
+            }
+            catch
+            {
+                return null;
+            }
+
             NormalControllerLimit normalControllerLimit = (controller.SensorPresetType).ToSAM();
 
             string scheduleName = controller.GetSchedule()?.Name;
@@ -178,7 +188,17 @@ namespace SAM.Analytical.Tas.TPD
                 setpoint = rangeSetpoint;
             }
 
-            NormalControllerDataType normalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM();
+            NormalControllerDataType normalControllerDataType;
+
+            try
+            {
+                normalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM();
+            }
+            catch(Exception exception)
+            {
+                return null;
+            }
+
             NormalControllerLimit normalControllerLimit = (plantController.SensorPresetType).ToSAM();
 
             string scheduleName = plantController.GetSchedule()?.Name;

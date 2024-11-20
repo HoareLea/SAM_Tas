@@ -5,18 +5,19 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static ElectricalGroup ToTPD(this DisplayElectricalSystemCollection displayFuelSystemCollection, PlantRoom plantRoom)
+        public static ElectricalGroup ToTPD(this DisplayElectricalSystemCollection displayElectricalSystemCollection, PlantRoom plantRoom)
         {
-            if(displayFuelSystemCollection == null || plantRoom == null)
+            if(displayElectricalSystemCollection == null || plantRoom == null)
             {
                 return null;
             }
 
             dynamic result = plantRoom.AddElectricalGroup();
-            result.Name = displayFuelSystemCollection.Name;
-            result.Description = displayFuelSystemCollection.Description;
+            result.Name = displayElectricalSystemCollection.Name;
+            result.Description = displayElectricalSystemCollection.Description;
+            result.ElectricalGroupType = displayElectricalSystemCollection.ElectricalSystemCollectionType.ToTPD();
 
-            displayFuelSystemCollection.SetLocation(result as PlantComponent);
+            displayElectricalSystemCollection.SetLocation(result as PlantComponent);
 
             return result as ElectricalGroup;
         }

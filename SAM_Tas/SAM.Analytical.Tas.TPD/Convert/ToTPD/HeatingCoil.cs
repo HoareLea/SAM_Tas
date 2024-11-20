@@ -16,7 +16,6 @@ namespace SAM.Analytical.Tas.TPD
             result.Setpoint.Value = 14;
             result.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
             result.Duty.SizeFraction = 1.0;
-            result.Duty.AddDesignCondition(designConditionLoad);
             result.MaximumOffcoil.Value = 28;
 
             displaySystemHeatingCoil.SetLocation(result as SystemComponent);
