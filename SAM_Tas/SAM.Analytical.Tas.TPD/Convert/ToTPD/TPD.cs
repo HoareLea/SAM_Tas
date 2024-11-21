@@ -426,8 +426,26 @@ namespace SAM.Analytical.Tas.TPD
                                     continue;
                                 }
 
-                                Dictionary<Guid, global::TPD.PlantComponent> dictionary_TPD = new Dictionary<Guid, global::TPD.PlantComponent>();
+                                Dictionary<Guid, PlantComponent> dictionary_TPD = new Dictionary<Guid, PlantComponent>();
                                 Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
+
+                                List<ISystemCollection> systemCollections = systemPlantRoom.GetSystemComponents<ISystemCollection>(liquidSystem);
+                                if(systemCollections != null)
+                                {
+                                    foreach (ISystemCollection systemCollection in systemCollections)
+                                    {
+                                        if(systemCollection == null)
+                                        {
+                                            continue;
+                                        }
+
+                                        PlantComponent plantComponent_TPD = ToTPD(systemCollection as dynamic, plantRoom) as PlantComponent;
+
+                                        dictionary_TPD[(systemCollection as dynamic).Guid] = plantComponent_TPD;
+                                        systemCollection.SetReference(Query.Reference(plantComponent_TPD));
+                                        systemPlantRoom.Add(systemCollection);
+                                    }
+                                }
 
                                 bool hasUnconnected = true;
 
@@ -629,6 +647,8 @@ namespace SAM.Analytical.Tas.TPD
                                     systemComponent_Temp.SetReference(Query.Reference(plantComponent_TPD));
                                     systemPlantRoom.Add(systemComponent_Temp);
                                 }
+
+                                Create.Pipes(systemPlantRoom, plantRoom, dictionary_TPD);
                             }
                         }
 

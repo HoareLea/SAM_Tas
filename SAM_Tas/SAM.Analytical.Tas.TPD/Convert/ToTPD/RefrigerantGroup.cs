@@ -12,7 +12,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddHeatingGroup();
+            dynamic result = plantRoom.AddRefrigerantGroup();
             result.Name = displayRefrigerantSystemCollection.Name;
             result.Description = displayRefrigerantSystemCollection.Description;
 

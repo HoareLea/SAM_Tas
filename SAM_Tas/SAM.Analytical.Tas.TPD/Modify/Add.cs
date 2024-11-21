@@ -1658,13 +1658,14 @@ namespace SAM.Analytical.Tas.TPD
                     }
 
                     Core.Systems.ISystemComponent systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>().Find(x => x?.Reference() == reference);
-                    if(systemComponent != null)
+                    if (systemComponent == null)
                     {
-                        //result.Add(systemComponent);
-                        systemPlantRoom?.Connect(system, systemComponent);
-                        systemPlantRoom?.Connect(systemCollection, systemComponent);
                         continue;
                     }
+
+                    systemPlantRoom?.Connect(system, systemComponent);
+                    systemPlantRoom?.Connect(systemCollection, systemComponent);
+                    //continue;
 
                     //List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc, componentConversionSettings);
                     //if (systemJSAMObjects != null)

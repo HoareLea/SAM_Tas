@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            string reference = Query.Reference((SystemComponent)heatExchanger);
+            string reference = Query.Reference((PlantComponent)heatExchanger);
 
             SystemLiquidExchangerResult result = new SystemLiquidExchangerResult(reference, string.Empty, Query.Source(), dictionary);
 
