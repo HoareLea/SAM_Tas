@@ -2,7 +2,6 @@
 using SAM.Core;
 using SAM.Core.Systems;
 using SAM.Core.Tas;
-using SAM.Geometry.Planar;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -460,87 +459,6 @@ namespace SAM.Analytical.Tas.TPD
                                 {
                                     dictionary_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
                                 }
-
-                                //while (systemComponents.Count > 0)
-                                //{
-                                //    Core.Systems.ISystemComponent systemComponent = systemComponents[0];
-                                //    systemComponents.RemoveAt(0);
-
-                                //    List<Core.Systems.ISystemComponent> systemComponents_Ordered_In = systemPlantRoom.GetOrderedSystemComponents(systemComponent, liquidSystem, Direction.In);
-                                //    List<Core.Systems.ISystemComponent> systemComponents_Ordered_Out = systemPlantRoom.GetOrderedSystemComponents(systemComponent, liquidSystem, Direction.Out);
-
-                                //    List<Core.Systems.ISystemComponent> systemComponents_Ordered = new List<Core.Systems.ISystemComponent>();
-                                    
-                                //    if (systemComponents_Ordered_In != null)
-                                //    {
-                                //        foreach (Core.Systems.ISystemComponent systemComponent_Ordered_In in systemComponents_Ordered_In)
-                                //        {
-                                //            systemComponents_Ordered.Add(systemComponent_Ordered_In);
-                                //            systemComponents.RemoveAll(x => ((Core.Systems.SystemComponent)x).Guid == ((Core.Systems.SystemComponent)systemComponent_Ordered_In).Guid);
-                                //        }
-                                //    }
-
-                                //    systemComponents_Ordered.Add(systemComponent);
-
-                                //    if (systemComponents_Ordered_Out != null)
-                                //    {
-                                //        foreach (Core.Systems.ISystemComponent systemComponent_Ordered_Out in systemComponents_Ordered_Out)
-                                //        {
-                                //            systemComponents_Ordered.Add(systemComponent_Ordered_Out);
-                                //            systemComponents.RemoveAll(x => ((Core.Systems.SystemComponent)x).Guid == ((Core.Systems.SystemComponent)systemComponent_Ordered_Out).Guid);
-                                //        }
-                                //    }
-
-
-                                //}
-
-
-                                //bool hasUnconnected = true;
-
-                                //Core.Systems.ISystemComponent systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Unconnected, Direction.Out)?.FirstOrDefault();
-                                //if (systemComponent == null)
-                                //{
-                                    
-                                //    hasUnconnected = false;
-                                //}
-
-                                //if (systemComponent == null)
-                                //{
-                                //    continue;
-                                //}
-
-                                //List<Core.Systems.ISystemComponent> systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, liquidSystem, Direction.In);
-                                //if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
-                                //{
-                                //    continue;
-                                //}
-
-
-                                //systemComponents_Ordered.Insert(0, systemComponent);
-
-                                //if (hasUnconnected)
-                                //{
-                                //    systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
-                                //    if (systemComponent == null)
-                                //    {
-                                //        systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Undefined, Direction.In)?.FirstOrDefault();
-                                //    }
-
-                                //    if (systemComponent == null)
-                                //    {
-                                //        continue;
-                                //    }
-
-                                //    systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, liquidSystem, Direction.Out);
-                                //    if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
-                                //    {
-                                //        continue;
-                                //    }
-
-                                //    systemComponents_Ordered.Insert(0, systemComponent);
-                                //}
-
-
 
                                 foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SAM.Values)
                                 {
