@@ -43,6 +43,10 @@ namespace SAM.Analytical.Tas.TPD
                 }
 
                 EnergyCentre energyCentre = tPDDoc.EnergyCentre;
+                energyCentre.AddTSDData(path_TSD, 1);
+
+                TSDData tSDData = energyCentre.GetTSDData(1);
+
 
                 PlantRoom plantRoom = energyCentre.PlantRoom("Main PlantRoom");
                 if (plantRoom == null)
@@ -51,9 +55,7 @@ namespace SAM.Analytical.Tas.TPD
                     plantRoom.Name = "Main PlantRoom";
                 }
 
-                //energyCentre.AddTSDData(path_TSD, 1);
 
-                //TSDData tSDData = energyCentre.GetTSDData(1);
 
                 Point offset = new Point(0, 0);
                 //double circuitLength = 10;
