@@ -92,7 +92,7 @@ namespace SAM.Analytical.Tas
                 tuples.Add(new Tuple<int, short, float>(dateTimes[i].DayOfYear, System.Convert.ToInt16(dateTimes[i].Hour), proportion));
             });
 
-
+            Dictionary<int, Dictionary<short, float>> dictionary = new Dictionary<int, Dictionary<short, float>>();
             foreach (Tuple<int, short, float> tuple in tuples)
             {
                 if(tuple == null)
@@ -100,19 +100,33 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                TBD.DaysShade daysShade = daysShades.Find(x => x.day == tuple.Item1);
+                if(!dictionary.TryGetValue(tuple.Item1, out Dictionary<short, float> dictionary_Temp) || dictionary_Temp == null)
+                {
+                    dictionary_Temp = new Dictionary<short, float>();
+                    dictionary[tuple.Item1] = dictionary_Temp;
+                }
+
+                dictionary_Temp[tuple.Item2] = tuple.Item3;
+            }
+
+
+            foreach (KeyValuePair<int, Dictionary<short, float>> keyValuePair in dictionary)
+            {
+                TBD.DaysShade daysShade = daysShades.Find(x => x.day == keyValuePair.Key);
                 if (daysShade == null)
                 {
                     daysShade = building.AddDaysShade();
-                    daysShade.day = tuple.Item1;
+                    daysShade.day = keyValuePair.Key;
                     daysShades.Add(daysShade);
                 }
 
-                TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(tuple.Item2);
-                surfaceShade.proportion = tuple.Item3;
-                surfaceShade.surface = zoneSurface;
-
-                result.Add(surfaceShade);
+                foreach (KeyValuePair<short, float> keyValuePair_Temp in keyValuePair.Value)
+                {
+                    TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(keyValuePair_Temp.Key);
+                    surfaceShade.proportion = keyValuePair_Temp.Value;
+                    surfaceShade.surface = zoneSurface;
+                    result.Add(surfaceShade);
+                }
             }
 
             return result;
