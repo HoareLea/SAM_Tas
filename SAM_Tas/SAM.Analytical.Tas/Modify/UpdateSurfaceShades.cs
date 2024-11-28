@@ -123,7 +123,13 @@ namespace SAM.Analytical.Tas
                 foreach (KeyValuePair<short, float> keyValuePair_Temp in keyValuePair.Value)
                 {
                     TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(keyValuePair_Temp.Key);
-                    surfaceShade.proportion = keyValuePair_Temp.Value;
+                    surfaceShade.proportion = System.Convert.ToSingle(Core.Query.Round(keyValuePair_Temp.Value, Core.Tolerance.MacroDistance));
+
+                    if(surfaceShade.proportion < Core.Tolerance.MacroDistance)
+                    {
+                        double value = surfaceShade.proportion;
+                    }
+
                     surfaceShade.surface = zoneSurface;
                     result.Add(surfaceShade);
                 }
