@@ -123,15 +123,38 @@ namespace SAM.Analytical.Tas
                 foreach (KeyValuePair<short, float> keyValuePair_Temp in keyValuePair.Value)
                 {
                     TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(keyValuePair_Temp.Key);
-                    surfaceShade.proportion = System.Convert.ToSingle(Core.Query.Round(keyValuePair_Temp.Value, Core.Tolerance.MacroDistance));
 
-                    if(surfaceShade.proportion < Core.Tolerance.MacroDistance)
+                    float proportion = System.Convert.ToSingle(Core.Query.Round(keyValuePair_Temp.Value, Core.Tolerance.MacroDistance));
+                    if(proportion > 1)
+                    {
+                        proportion = 1;
+                    }
+
+                    surfaceShade.proportion = proportion;
+
+                    surfaceShade.surface = zoneSurface;
+                    result.Add(surfaceShade);
+
+                    //TODO: To be removed
+                    //REMOVE START
+
+                    if (!Core.Query.AlmostEqual(surfaceShade.proportion, proportion, Core.Tolerance.MacroDistance))
                     {
                         double value = surfaceShade.proportion;
                     }
 
-                    surfaceShade.surface = zoneSurface;
-                    result.Add(surfaceShade);
+                    if (!Core.Query.AlmostEqual(proportion, 0, Core.Tolerance.MacroDistance))
+                    {
+                        if (keyValuePair.Value.TryGetValue(System.Convert.ToInt16(keyValuePair_Temp.Key - 1), out float value_1))
+                        {
+                            if (keyValuePair.Value.TryGetValue(System.Convert.ToInt16(keyValuePair_Temp.Key + 1), out float value_2))
+                            {
+                                double value = surfaceShade.proportion;
+                            }
+                        }
+                    }
+
+                    //REMOVE END
                 }
             }
 
