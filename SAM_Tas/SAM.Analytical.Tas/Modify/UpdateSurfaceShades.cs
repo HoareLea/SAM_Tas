@@ -74,7 +74,9 @@ namespace SAM.Analytical.Tas
             }
 
             List<Tuple<int, short, float>> tuples = Enumerable.Repeat<Tuple<int, short, float>>(null, dateTimes.Count).ToList();
-            Parallel.For(0, dateTimes.Count, (int i) => 
+            //Parallel.For(0, dateTimes.Count, (int i) =>   
+            //when using parallel for, value where missing in the list in Tas
+            for (int i =0; i < dateTimes.Count; i++)
             {
                 List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTimes[i]); //TODO Optimze this function! https://github.com/HoareLea/SAM_Tas/issues/72 
                 float proportion = 0;
@@ -90,7 +92,7 @@ namespace SAM.Analytical.Tas
                 }
 
                 tuples.Add(new Tuple<int, short, float>(dateTimes[i].DayOfYear, System.Convert.ToInt16(dateTimes[i].Hour), proportion));
-            });
+            };//);
 
             Dictionary<int, Dictionary<short, float>> dictionary = new Dictionary<int, Dictionary<short, float>>();
             foreach (Tuple<int, short, float> tuple in tuples)
@@ -109,14 +111,15 @@ namespace SAM.Analytical.Tas
                 dictionary_Temp[tuple.Item2] = tuple.Item3;
             }
 
-
             foreach (KeyValuePair<int, Dictionary<short, float>> keyValuePair in dictionary)
             {
                 TBD.DaysShade daysShade = daysShades.Find(x => x.day == keyValuePair.Key);
                 if (daysShade == null)
                 {
                     daysShade = building.AddDaysShade();
+
                     daysShade.day = keyValuePair.Key;
+                    
                     daysShades.Add(daysShade);
                 }
 
@@ -124,37 +127,10 @@ namespace SAM.Analytical.Tas
                 {
                     TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(keyValuePair_Temp.Key);
 
-                    float proportion = System.Convert.ToSingle(Core.Query.Round(keyValuePair_Temp.Value, Core.Tolerance.MacroDistance));
-                    if(proportion > 1)
-                    {
-                        proportion = 1;
-                    }
-
-                    surfaceShade.proportion = proportion;
-
+                    surfaceShade.proportion = keyValuePair_Temp.Value;
                     surfaceShade.surface = zoneSurface;
+
                     result.Add(surfaceShade);
-
-                    //TODO: To be removed
-                    //REMOVE START
-
-                    if (!Core.Query.AlmostEqual(surfaceShade.proportion, proportion, Core.Tolerance.MacroDistance))
-                    {
-                        double value = surfaceShade.proportion;
-                    }
-
-                    if (!Core.Query.AlmostEqual(proportion, 0, Core.Tolerance.MacroDistance))
-                    {
-                        if (keyValuePair.Value.TryGetValue(System.Convert.ToInt16(keyValuePair_Temp.Key - 1), out float value_1))
-                        {
-                            if (keyValuePair.Value.TryGetValue(System.Convert.ToInt16(keyValuePair_Temp.Key + 1), out float value_2))
-                            {
-                                double value = surfaceShade.proportion;
-                            }
-                        }
-                    }
-
-                    //REMOVE END
                 }
             }
 
