@@ -17,7 +17,7 @@ namespace SAM.Analytical.Tas.TPD
             IEnumerable<MultiBoilerDataType> multiBoilerDataTypes_Temp = multiBoilerDataTypes;
             if(multiBoilerDataTypes == null || multiBoilerDataTypes.Length == 0)
             {
-                Range<int> range = new Range<int>(multiBolier.Multiplicity, 10 - multiBolier.Multiplicity);
+                Range<int> range = new Range<int>(multiBolier.Multiplicity + 1, 10);
                 List<int> values = new List<int>();
                 for(int i = range.Min; i <= range.Max; i++)
                 {

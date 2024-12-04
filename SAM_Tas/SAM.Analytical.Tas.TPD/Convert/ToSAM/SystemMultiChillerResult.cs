@@ -17,7 +17,7 @@ namespace SAM.Analytical.Tas.TPD
             IEnumerable<MultiChillerDataType> multiChillerDataTypes_Temp = multiChillerDataTypes;
             if(multiChillerDataTypes == null || multiChillerDataTypes.Length == 0)
             {
-                Range<int> range = new Range<int>(multiChiller.Multiplicity, 10 - multiChiller.Multiplicity);
+                Range<int> range = new Range<int>(multiChiller.Multiplicity + 1, 10);
                 List<int> values = new List<int>();
                 for(int i = range.Min; i <= range.Max; i++)
                 {
