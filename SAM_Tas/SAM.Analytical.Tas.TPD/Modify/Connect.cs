@@ -1085,17 +1085,19 @@ namespace SAM.Analytical.Tas.TPD
             }
             else
             {
-                if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
-                {
-                    point2Ds_Temp.Insert(0, point2D_1);
-                    point2Ds_Temp.Add(point2D_2);
-                }
-                else
-                {
-                    point2Ds_Temp.Insert(0, point2D_2);
-                    point2Ds_Temp.Add(point2D_1);
-                }
+                point2Ds_Temp.Insert(0, point2D_2);
+                point2Ds_Temp.Add(point2D_1);
 
+                //if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
+                //{
+                //    point2Ds_Temp.Insert(0, point2D_1);
+                //    point2Ds_Temp.Add(point2D_2);
+                //}
+                //else
+                //{
+                //    point2Ds_Temp.Insert(0, point2D_2);
+                //    point2Ds_Temp.Add(point2D_1);
+                //}
             }
 
             if (point2Ds_Temp == null || point2Ds_Temp.Count < 2)
