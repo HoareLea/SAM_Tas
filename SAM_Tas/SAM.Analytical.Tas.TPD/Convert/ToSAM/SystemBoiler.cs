@@ -36,35 +36,5 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
-
-        public static SystemBoiler ToSAM(this MultiBoiler multiBoiler)
-        {
-            if (multiBoiler == null)
-            {
-                return null;
-            }
-
-            dynamic @dynamic = multiBoiler;
-
-            SystemBoiler result = new SystemBoiler(@dynamic.Name);
-            result.Description = dynamic.Description;
-            Modify.SetReference(result, @dynamic.GUID);
-
-            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
-
-            DisplaySystemBoiler displaySystemBoiler = Systems.Create.DisplayObject<DisplaySystemBoiler>(result, location, Systems.Query.DefaultDisplaySystemManager());
-            if(displaySystemBoiler != null)
-            {
-                ITransform2D transform2D = ((IPlantComponent)multiBoiler).Transform2D();
-                if (transform2D != null)
-                {
-                    displaySystemBoiler.Transform(transform2D);
-                }
-
-                result = displaySystemBoiler;
-            }
-
-            return result;
-        }
     }
 }

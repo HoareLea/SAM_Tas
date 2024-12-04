@@ -1934,19 +1934,19 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
-            SystemBoiler systemBoiler = multiBoiler.ToSAM();
-            systemPlantRoom.Add(systemBoiler);
-            result.Add(systemBoiler);
+            SystemMultiBoiler systemMultiBoiler = multiBoiler.ToSAM();
+            systemPlantRoom.Add(systemMultiBoiler);
+            result.Add(systemMultiBoiler);
 
             if (componentConversionSettings.IncludeResults)
             {
                 int start = tPDDoc.StartHour();
                 int end = tPDDoc.EndHour();
 
-                SystemBoilerResult systemBoilerResult = multiBoiler.ToSAM_SystemBoilerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                SystemMultiBoilerResult systemBoilerResult = multiBoiler.ToSAM_SystemMultiBoilerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemBoilerResult);
 
-                systemPlantRoom.Connect(systemBoilerResult, systemBoiler);
+                systemPlantRoom.Connect(systemBoilerResult, systemMultiBoiler);
                 result.Add(systemBoilerResult);
             }
 
