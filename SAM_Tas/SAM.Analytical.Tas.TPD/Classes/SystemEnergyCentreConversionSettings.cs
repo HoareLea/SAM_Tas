@@ -8,7 +8,8 @@ namespace SAM.Analytical.Tas.TPD
         public bool Simulate { get; set; } = true;
         public int StartHour { get; set; } = 0;
         public int EndHour { get; set; } = 8759;
-        public bool IncludeResults { get; set; } = true;
+        public bool IncludeComponentResults { get; set; } = true;
+        public bool IncludeControllerResults { get; set; } = false;
 
         public SystemEnergyCentreConversionSettings() 
         { 
@@ -26,13 +27,14 @@ namespace SAM.Analytical.Tas.TPD
                 Simulate = systemEnergyCentreConversionSettings.Simulate;
                 StartHour = systemEnergyCentreConversionSettings.StartHour;
                 EndHour = systemEnergyCentreConversionSettings.EndHour;
-                IncludeResults = systemEnergyCentreConversionSettings.IncludeResults;
+                IncludeComponentResults = systemEnergyCentreConversionSettings.IncludeComponentResults;
+                IncludeControllerResults = systemEnergyCentreConversionSettings.IncludeControllerResults;
             }
         }
 
         public ComponentConversionSettings GetComponentConversionSettings()
         {
-            return new ComponentConversionSettings() { StartHour = StartHour, EndHour = EndHour, IncludeComponentResults = IncludeResults };
+            return new ComponentConversionSettings() { StartHour = StartHour, EndHour = EndHour, IncludeComponentResults = IncludeComponentResults, IncludeControllerResults = IncludeControllerResults };
         }
 
         public bool FromJObject(JObject jObject)
@@ -57,9 +59,14 @@ namespace SAM.Analytical.Tas.TPD
                 EndHour = jObject.Value<int>("EndHour");
             }
 
-            if (jObject.ContainsKey("IncludeResults"))
+            if (jObject.ContainsKey("IncludeComponentResults"))
             {
-                IncludeResults = jObject.Value<bool>("IncludeResults");
+                IncludeComponentResults = jObject.Value<bool>("IncludeComponentResults");
+            }
+
+            if (jObject.ContainsKey("IncludeControllerResults"))
+            {
+                IncludeControllerResults = jObject.Value<bool>("IncludeControllerResults");
             }
 
             return true;
@@ -75,7 +82,9 @@ namespace SAM.Analytical.Tas.TPD
             result.Add("StartHour", StartHour);
             result.Add("EndHour", EndHour);
 
-            result.Add("IncludeResults", IncludeResults);
+            result.Add("IncludeComponentResults", IncludeComponentResults);
+
+            result.Add("IncludeControllerResults", IncludeControllerResults);
 
             return result;
         }

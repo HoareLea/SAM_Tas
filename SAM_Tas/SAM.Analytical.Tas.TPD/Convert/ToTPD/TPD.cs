@@ -860,7 +860,7 @@ namespace SAM.Analytical.Tas.TPD
                 if (systemEnergyCentreConversionSettings.Simulate)
                 {
                     plantRoom.SimulateEx(systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
-                    if (systemEnergyCentreConversionSettings.IncludeResults)
+                    if (systemEnergyCentreConversionSettings.IncludeComponentResults)
                     {
                         Modify.CopyResults(energyCentre, systemEnergyCentre, systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1);
                     }
