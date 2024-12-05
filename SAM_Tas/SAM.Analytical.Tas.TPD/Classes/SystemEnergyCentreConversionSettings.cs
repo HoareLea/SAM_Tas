@@ -32,7 +32,7 @@ namespace SAM.Analytical.Tas.TPD
 
         public ComponentConversionSettings GetComponentConversionSettings()
         {
-            return new ComponentConversionSettings() { StartHour = StartHour, EndHour = EndHour, IncludeResults = IncludeResults };
+            return new ComponentConversionSettings() { StartHour = StartHour, EndHour = EndHour, IncludeComponentResults = IncludeResults };
         }
 
         public bool FromJObject(JObject jObject)
