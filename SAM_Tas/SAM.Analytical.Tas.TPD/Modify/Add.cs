@@ -1565,9 +1565,6 @@ namespace SAM.Analytical.Tas.TPD
 
             if (componentConversionSettings.IncludeResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemPipeLossComponentResult systemPipeLossComponentResult = pipeLossComponent.ToSAM_SystemPipeLossComponentResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemPipeLossComponentResult);
 
@@ -1592,35 +1589,79 @@ namespace SAM.Analytical.Tas.TPD
 
             string name = @dynamic.Name;
 
+            ISystemComponentResult systemComponentResult = null;
+
             if (plantGroup is ElectricalGroup)
             {
                 system = new ElectricalSystem(name);
-                systemCollection = ((ElectricalGroup)plantGroup).ToSAM();
+
+                ElectricalGroup electricalGroup = (ElectricalGroup)plantGroup;
+
+                systemCollection = electricalGroup.ToSAM();
+                if (componentConversionSettings.IncludeResults)
+                {
+                    systemComponentResult = electricalGroup.ToSAM_ElectricalSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if(plantGroup is RefrigerantGroup)
             {
                 system = new RefrigerantSystem(name);
-                systemCollection = ((RefrigerantGroup)plantGroup).ToSAM();
+
+                RefrigerantGroup refrigerantGroup = (RefrigerantGroup)plantGroup;
+
+                systemCollection = refrigerantGroup.ToSAM();
+                if (componentConversionSettings.IncludeResults)
+                {
+                    systemComponentResult = refrigerantGroup.ToSAM_RefrigerantSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if (plantGroup is HeatingGroup)
             {
                 system = new Systems.HeatingSystem(name);
-                systemCollection = ((HeatingGroup)plantGroup).ToSAM();
+
+                HeatingGroup heatingGroup = (HeatingGroup)plantGroup;
+
+                systemCollection = heatingGroup.ToSAM();
+                if (componentConversionSettings.IncludeResults)
+                {
+                    systemComponentResult = heatingGroup.ToSAM_HeatingSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if (plantGroup is CoolingGroup)
             {
                 system = new Systems.CoolingSystem(name);
-                systemCollection = ((CoolingGroup)plantGroup).ToSAM();
+
+                CoolingGroup coolingGroup = (CoolingGroup)plantGroup;
+
+                systemCollection = coolingGroup.ToSAM();
+                if (componentConversionSettings.IncludeResults)
+                {
+                    systemComponentResult = coolingGroup.ToSAM_CoolingSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if (plantGroup is DHWGroup)
             {
                 system = new DomesticHotWaterSystem(name);
-                systemCollection = ((DHWGroup)plantGroup).ToSAM();
+
+                DHWGroup dHWGroup = (DHWGroup)plantGroup;
+
+                systemCollection = dHWGroup.ToSAM();
+                if (componentConversionSettings.IncludeResults)
+                {
+                    systemComponentResult = dHWGroup.ToSAM_DomesticHotWaterSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if (plantGroup is FuelGroup)
             {
                 system = new FuelSystem(name);
-                systemCollection = ((FuelGroup)plantGroup).ToSAM();
+
+                FuelGroup fuelGroup = (FuelGroup)plantGroup;
+
+                systemCollection = fuelGroup.ToSAM();
+                if (componentConversionSettings.IncludeResults)
+                {
+                    systemComponentResult = fuelGroup.ToSAM_FuelSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
 
             if (system == null && systemCollection == null)
@@ -1643,6 +1684,14 @@ namespace SAM.Analytical.Tas.TPD
                 if (systemPlantRoom.Add(systemCollection))
                 {
                     result.Add(systemCollection);
+                }
+
+                if (systemComponentResult != null)
+                {
+                    systemPlantRoom.Add(systemComponentResult);
+
+                    systemPlantRoom.Connect(systemComponentResult, systemCollection);
+                    result.Add(systemComponentResult);
                 }
             }
 
