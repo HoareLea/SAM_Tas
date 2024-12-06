@@ -44,10 +44,12 @@ namespace SAM.Analytical.Tas.TPD
                 setpoint = rangeSetpoint;
             }
 
+            tpdSensorType tpdSensorType = (tpdSensorType)@dynamic.SensorType;
+
             NormalControllerDataType normalControllerDataType;
             try
             {
-                normalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM();
+                normalControllerDataType = tpdSensorType.ToSAM_NormalControllerDataType();
             }
             catch
             {
@@ -188,18 +190,16 @@ namespace SAM.Analytical.Tas.TPD
                 setpoint = rangeSetpoint;
             }
 
-            NormalControllerDataType normalControllerDataType;
+            LiquidNormalControllerDataType liquidNormalControllerDataType;
 
             try
             {
-                normalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM();
+                liquidNormalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_LiquidNormalControllerDataType();
             }
             catch(Exception exception)
             {
                 return null;
             }
-
-            NormalControllerLimit normalControllerLimit = (plantController.SensorPresetType).ToSAM();
 
             string scheduleName = plantController.GetSchedule()?.Name;
 
@@ -232,7 +232,7 @@ namespace SAM.Analytical.Tas.TPD
             switch (plantController.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    result = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
+                    result = new SystemLiquidNormalController(@dynamic.Name, liquidNormalControllerDataType, setpoint) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
@@ -241,11 +241,11 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemDifferenceController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
+                    result = new SystemLiquidDifferenceController(@dynamic.Name, liquidNormalControllerDataType, setpoint) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    result = new SystemPassthroughController(@dynamic.Name, normalControllerDataType) { SensorReference = sensorReference };
+                    result = new SystemLiquidPassthroughController(@dynamic.Name, liquidNormalControllerDataType) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlNot:

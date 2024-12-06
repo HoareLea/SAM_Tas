@@ -4,48 +4,48 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static NormalControllerDataType ToSAM_NormalControllerDataType(this global::TPD.tpdSensorType tpdSensorType)
+        public static LiquidNormalControllerDataType ToSAM_LiquidNormalControllerDataType(this global::TPD.tpdSensorType tpdSensorType)
         {
             switch(tpdSensorType)
             {
                 case global::TPD.tpdSensorType.tpdTempSensor:
-                    return NormalControllerDataType.DryBulbTemperature;
+                    return LiquidNormalControllerDataType.Temperature;
 
                 case global::TPD.tpdSensorType.tpdHumRatSensor:
-                    return NormalControllerDataType.HumidityRatio;
+                    throw new System.NotImplementedException();
 
                 case global::TPD.tpdSensorType.tpdRelHumSensor:
-                    return NormalControllerDataType.RelativeHumidity;
+                    throw new System.NotImplementedException();
 
                 case global::TPD.tpdSensorType.tpdEnthalpySensor:
-                    return NormalControllerDataType.Enthalpy;
-                
+                    throw new System.NotImplementedException();
+
                 case global::TPD.tpdSensorType.tpdFlowSensor:
-                    return NormalControllerDataType.Flow;
+                    return LiquidNormalControllerDataType.Flow;
                 
                 case global::TPD.tpdSensorType.tpdPollutantSensor:
-                    return NormalControllerDataType.Pollutant;
-                
+                    throw new System.NotImplementedException();
+
                 case global::TPD.tpdSensorType.tpdPressureSensor:
-                    return NormalControllerDataType.Pressure;
+                    return LiquidNormalControllerDataType.Pressure;
                 
                 case global::TPD.tpdSensorType.tpdThermostatSensor:
-                    return NormalControllerDataType.ThermostatTemperature;
-                
+                    throw new System.NotImplementedException();
+
                 case global::TPD.tpdSensorType.tpdHumidistatSensor:
-                    return NormalControllerDataType.HumidistatRelativeHumidity;
+                    throw new System.NotImplementedException();
 
                 case global::TPD.tpdSensorType.tpdLoadSensor:
-                    throw new System.NotImplementedException();
+                    return LiquidNormalControllerDataType.Load;
 
                 case global::TPD.tpdSensorType.tpdWetbulbSensor:
-                    return NormalControllerDataType.WetBulbTemperature;
+                    throw new System.NotImplementedException();
 
                 case global::TPD.tpdSensorType.tpdMinFlowSensor:
-                    return NormalControllerDataType.MinimalFreshAir;
+                    throw new System.NotImplementedException();
 
                 case global::TPD.tpdSensorType.tpdPartLoadSensor:
-                    throw new System.NotImplementedException();
+                    return LiquidNormalControllerDataType.Load;
             }
 
             throw new System.NotImplementedException();
