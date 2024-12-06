@@ -47,27 +47,27 @@ namespace SAM.Analytical.Tas.TPD
             {
                 result.Add(systemController);
 
-                if (componentConversionSettings.IncludeControllerResults)
-                {
-                    ISystemComponentResult systemComponentResult = null;
+                //if (componentConversionSettings.IncludeControllerResults)
+                //{
+                //    ISystemComponentResult systemComponentResult = null;
 
-                    if(systemController is SystemPassthroughController)
-                    {
+                //    if(systemController is SystemPassthroughController)
+                //    {
 
-                        systemComponentResult = plantController.ToSAM_SystemValueControllerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
-                    }
-                    else
-                    {
-                        systemComponentResult = plantController.ToSAM_SystemSignalControllerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
-                    }
+                //        systemComponentResult = plantController.ToSAM_SystemValueControllerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                //    }
+                //    else
+                //    {
+                //        systemComponentResult = plantController.ToSAM_SystemSignalControllerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                //    }
 
-                    if(systemComponentResult != null)
-                    {
-                        systemPlantRoom.Add(systemComponentResult);
-                        systemPlantRoom.Connect(systemComponentResult, systemController);
-                        result.Add(systemComponentResult);
-                    }
-                }
+                //    if(systemComponentResult != null)
+                //    {
+                //        systemPlantRoom.Add(systemComponentResult);
+                //        systemPlantRoom.Connect(systemComponentResult, systemController);
+                //        result.Add(systemComponentResult);
+                //    }
+                //}
             }
 
             return result;

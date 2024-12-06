@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             Dictionary<ValueControllerDataType, IndexedDoubles> dictionary = new Dictionary<ValueControllerDataType, IndexedDoubles>();
             foreach (ValueControllerDataType valueControllerDataType in valueControllerDataTypes_Temp)
             {
-                IndexedDoubles indexedDoubles = Create.IndexedDoubles((PlantComponent)plantController, valueControllerDataType, start, end);
+                IndexedDoubles indexedDoubles = Create.IndexedDoubles(plantController, valueControllerDataType, start, end);
                 if (indexedDoubles == null)
                 {
                     continue;
@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            string reference = Query.Reference((PlantComponent)plantController);
+            string reference = Create.Reference(plantController)?.ToString();
 
             SystemValueControllerResult result = new SystemValueControllerResult(reference, string.Empty, Query.Source(), dictionary);
 

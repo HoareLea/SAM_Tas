@@ -81,6 +81,16 @@ namespace SAM.Analytical.Tas.TPD
             return (plantComponent as dynamic).GUID;
         }
 
+        //public static string Reference(this PlantController plantController)
+        //{
+        //    if (plantController == null)
+        //    {
+        //        return null;
+        //    }
+
+        //    return (plantController as dynamic).GUID;
+        //}
+
         public static string Reference(this global::TPD.SystemComponent systemComponent)
         {
             if(systemComponent == null)
