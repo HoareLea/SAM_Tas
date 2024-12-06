@@ -1032,6 +1032,11 @@ namespace SAM.Analytical.Tas.TPD
                 {
 
                     dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemJSAMObject as dynamic, systemType_Control, direction: Direction.Out);
+                    if(dictionary == null || dictionary.Count == 0)
+                    {
+                        dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemJSAMObject as dynamic, systemType_Control, direction: Direction.Undefined);
+                    }
+
                     if (dictionary != null && dictionary.Count != 0)
                     {
                         point2Ds.Insert(0, dictionary.Values.First());
