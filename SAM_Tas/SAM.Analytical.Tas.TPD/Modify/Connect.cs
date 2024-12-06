@@ -4,7 +4,6 @@ using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Spatial;
 using SAM.Geometry.Systems;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TPD;
@@ -69,51 +68,60 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-                    Direction direction = Direction.In;
-
-                    List<Pipe> pipes = Query.Pipes(plantComponent_TPD, direction);
-                    if (pipes == null || pipes.Count == 0)
+                    foreach (Direction direction in new Direction[] { Direction.In, Direction.Out })
                     {
-                        continue;
-                    }
-
-                    foreach(Pipe pipe in pipes)
-                    {
-                        string reference_2 = (pipe.GetUpstreamComponent() as dynamic)?.GUID;
-
-                        Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
-                        if (systemComponent_SAM_2 == null)
+                        List<Pipe> pipes = Query.Pipes(plantComponent_TPD, direction);
+                        if (pipes == null || pipes.Count == 0)
                         {
                             continue;
                         }
 
-                        List<LiquidSystem> liquidSystems_2 = systemPlantRoom.GetSystems<LiquidSystem>(systemComponent_SAM_2);
-                        if (liquidSystems_2 == null || liquidSystems_2.Count == 0)
+                        foreach (Pipe pipe in pipes)
                         {
-                            continue;
-                        }
+                            string reference_2 = (direction == Direction.In ? pipe.GetUpstreamComponent() : pipe.GetDownstreamComponent() as dynamic)?.GUID;
 
-                        List<Point2D> point2Ds = Query.Point2Ds(pipe);
+                            Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                            if (systemComponent_SAM_2 == null)
+                            {
+                                continue;
+                            }
 
-                        int connectionIndex_1 = pipe.GetDownstreamComponentPort();
-                        if(systemComponent_SAM_1 is SystemWaterSourceHeatPump)
-                        {
-                            connectionIndex_1++;
-                        }
+                            List<LiquidSystem> liquidSystems_2 = systemPlantRoom.GetSystems<LiquidSystem>(systemComponent_SAM_2);
+                            if (liquidSystems_2 == null || liquidSystems_2.Count == 0)
+                            {
+                                continue;
+                            }
 
-                        int connectionIndex_2 = pipe.GetUpstreamComponentPort();
-                        if (systemComponent_SAM_2 is SystemWaterSourceHeatPump)
-                        {
-                            connectionIndex_2++;
-                        }
+                            List<Point2D> point2Ds = Query.Point2Ds(pipe);
 
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, connectionIndex_1, systemComponent_SAM_2, connectionIndex_2, liquidSystem, direction, point2Ds);
-                        if (systemConnection != null)
-                        {
-                            systemConnection.SetReference(Query.Reference(pipe));
-                            systemPlantRoom.Add(systemConnection);
+                            int connectionIndex_1 = direction == Direction.In ? pipe.GetDownstreamComponentPort() : pipe.GetUpstreamComponentPort();
+                            if (systemComponent_SAM_1 is SystemWaterSourceHeatPump)
+                            {
+                                connectionIndex_1++;
+                            }
 
-                            result.Add(systemConnection);
+                            int connectionIndex_2 = direction == Direction.In ? pipe.GetUpstreamComponentPort() : pipe.GetDownstreamComponentPort();
+                            if (systemComponent_SAM_2 is SystemWaterSourceHeatPump)
+                            {
+                                connectionIndex_2++;
+                            }
+
+                            ISystemConnection systemConnection = Connect(
+                                systemPlantRoom, 
+                                systemComponent_SAM_1, 
+                                connectionIndex_1, 
+                                systemComponent_SAM_2, 
+                                connectionIndex_2, 
+                                liquidSystem, 
+                                direction, 
+                                point2Ds);
+                            if (systemConnection != null)
+                            {
+                                systemConnection.SetReference(Query.Reference(pipe));
+                                systemPlantRoom.Add(systemConnection);
+
+                                result.Add(systemConnection);
+                            }
                         }
                     }
                 }
@@ -401,8 +409,10 @@ namespace SAM.Analytical.Tas.TPD
 
                             ISystemConnection systemConnection = Connect(
                                 systemPlantRoom, 
-                                systemComponent_SAM_1, direction == Direction.Out ? duct.GetUpstreamComponentPort() : duct.GetDownstreamComponentPort(), 
-                                systemComponent_SAM_2, direction == Direction.Out ? duct.GetDownstreamComponentPort() : duct.GetUpstreamComponentPort(), 
+                                systemComponent_SAM_1, 
+                                direction == Direction.Out ? duct.GetUpstreamComponentPort() : duct.GetDownstreamComponentPort(), 
+                                systemComponent_SAM_2, 
+                                direction == Direction.Out ? duct.GetDownstreamComponentPort() : duct.GetUpstreamComponentPort(), 
                                 airSystem, 
                                 direction, 
                                 point2Ds);
@@ -945,12 +955,10 @@ namespace SAM.Analytical.Tas.TPD
                     return null;
                 }
 
-                string reference = Query.Reference(dynamic);
-
                 //List<DisplaySystemConnection> displaySystemConnections = systemPlantRoom.GetSystemObjects<DisplaySystemConnection>();
                 //List<string> references = displaySystemConnections.ConvertAll(x => x.Reference());
 
-                DisplaySystemConnection displaySystemConnection = systemPlantRoom.Find<DisplaySystemConnection>(x => x.Reference() == reference);
+                DisplaySystemConnection displaySystemConnection = systemPlantRoom.Find<DisplaySystemConnection>(x => x.Reference() == Query.Reference(dynamic));
 
                 SystemPolyline systemPolyline = displaySystemConnection?.SystemGeometry;
                 if (systemPolyline != null)
