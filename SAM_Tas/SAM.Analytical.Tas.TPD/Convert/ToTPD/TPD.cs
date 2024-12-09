@@ -1,12 +1,12 @@
-﻿using SAM.Core.Systems;
+﻿using SAM.Analytical.Systems;
+using SAM.Core;
+using SAM.Core.Systems;
 using SAM.Core.Tas;
-using TPD;
-using System.Drawing;
 using System;
 using System.Collections.Generic;
-using SAM.Analytical.Systems;
+using System.Drawing;
 using System.Linq;
-using SAM.Core;
+using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -14,7 +14,7 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static bool ToTPD(this SystemEnergyCentre systemEnergyCentre, string path_TPD, string path_TSD, SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = null)
         {
-            if(systemEnergyCentre == null)
+            if (systemEnergyCentre == null)
             {
                 return false;
             }
@@ -42,10 +42,11 @@ namespace SAM.Analytical.Tas.TPD
                     return false;
                 }
 
-                Point offset = new Point(0, 0);
-                double circuitLength = 10;
-
                 EnergyCentre energyCentre = tPDDoc.EnergyCentre;
+                energyCentre.AddTSDData(path_TSD, 1);
+
+                TSDData tSDData = energyCentre.GetTSDData(1);
+
 
                 PlantRoom plantRoom = energyCentre.PlantRoom("Main PlantRoom");
                 if (plantRoom == null)
@@ -54,151 +55,152 @@ namespace SAM.Analytical.Tas.TPD
                     plantRoom.Name = "Main PlantRoom";
                 }
 
-                energyCentre.AddTSDData(path_TSD, 1);
 
-                TSDData tSDData = energyCentre.GetTSDData(1);
 
-                //Heating Refrigerant Groups
+                Point offset = new Point(0, 0);
+                //double circuitLength = 10;
 
-                dynamic refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
-                if (refrigerantGroup == null)
-                {
-                    refrigerantGroup = plantRoom.AddRefrigerantGroup();
-                    refrigerantGroup.Name = "DXCoil Units Refrigerant Group";
-                    refrigerantGroup.SetPosition(200, 440);
-                }
+                ////Heating Refrigerant Groups
 
-                //Heating Groups
+                //dynamic refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
+                //if (refrigerantGroup == null)
+                //{
+                //    refrigerantGroup = plantRoom.AddRefrigerantGroup();
+                //    refrigerantGroup.Name = "DXCoil Units Refrigerant Group";
+                //    refrigerantGroup.SetPosition(200, 440);
+                //}
 
-                dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
-                if (heatingGroup == null)
-                {
-                    heatingGroup = plantRoom.AddHeatingGroup();
-                    heatingGroup.Name = "Heating Circuit Group";
-                    heatingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-                    heatingGroup.SetPosition(200, 0);
-                }
+                ////Heating Groups
 
-                //Cooling Groups
+                //dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
+                //if (heatingGroup == null)
+                //{
+                //    heatingGroup = plantRoom.AddHeatingGroup();
+                //    heatingGroup.Name = "Heating Circuit Group";
+                //    heatingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
+                //    heatingGroup.SetPosition(200, 0);
+                //}
 
-                dynamic coolingGroup = plantRoom.CoolingGroup("Cooling Circuit Group");
-                if (coolingGroup == null)
-                {
-                    coolingGroup = plantRoom.AddCoolingGroup();
-                    coolingGroup.Name = "Cooling Circuit Group";
-                    coolingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-                    coolingGroup.SetPosition(200, 280);
-                }
+                ////Cooling Groups
 
-                //DHW Groups
+                //dynamic coolingGroup = plantRoom.CoolingGroup("Cooling Circuit Group");
+                //if (coolingGroup == null)
+                //{
+                //    coolingGroup = plantRoom.AddCoolingGroup();
+                //    coolingGroup.Name = "Cooling Circuit Group";
+                //    coolingGroup.DesignPressureDrop = 17 + (circuitLength / 4);
+                //    coolingGroup.SetPosition(200, 280);
+                //}
 
-                dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
-                if (dHWGroup == null)
-                {
-                    dHWGroup = plantRoom.AddDHWGroup();
-                    dHWGroup.Name = "DHW Circuit Group";
-                    dHWGroup.DesignPressureDrop = 17 + (circuitLength / 4);
-                    dHWGroup.LoadDistribution = tpdLoadDistribution.tpdLoadDistributionEven;
-                    dHWGroup.SetPosition(200, 140);
-                }
+                ////DHW Groups
 
-                //Fuel Sources
+                //dynamic dHWGroup = plantRoom.DHWGroup("DHW Circuit Group");
+                //if (dHWGroup == null)
+                //{
+                //    dHWGroup = plantRoom.AddDHWGroup();
+                //    dHWGroup.Name = "DHW Circuit Group";
+                //    dHWGroup.DesignPressureDrop = 17 + (circuitLength / 4);
+                //    dHWGroup.LoadDistribution = tpdLoadDistribution.tpdLoadDistributionEven;
+                //    dHWGroup.SetPosition(200, 140);
+                //}
 
-                dynamic fuelSource_Electrical = energyCentre.FuelSource("Grid Supplied Electricity");
-                if (fuelSource_Electrical == null)
-                {
-                    fuelSource_Electrical = energyCentre.AddFuelSource();
-                    fuelSource_Electrical.Name = "Grid Supplied Electricity";
-                    fuelSource_Electrical.Description = "";
-                    fuelSource_Electrical.CO2Factor = 0.519;
-                    fuelSource_Electrical.Electrical = 1;
-                    fuelSource_Electrical.TimeOfUseType = tpdTimeOfUseType.tpdTimeOfUseValue;
-                    fuelSource_Electrical.PeakCost = 0.13;
-                }
+                ////Fuel Sources
 
-                dynamic fuelSource_Gas = energyCentre.FuelSource("Natural Gas");
-                if (fuelSource_Gas == null)
-                {
-                    fuelSource_Gas = energyCentre.AddFuelSource();
-                    fuelSource_Gas.Name = "Natural Gas";
-                    fuelSource_Gas.Description = "";
-                    fuelSource_Gas.CO2Factor = 0.216;
-                    fuelSource_Gas.Electrical = 0;
-                    fuelSource_Gas.TimeOfUseType = tpdTimeOfUseType.tpdTimeOfUseValue;
-                    fuelSource_Gas.PeakCost = 0.05;
-                }
+                //dynamic fuelSource_Electrical = energyCentre.FuelSource("Grid Supplied Electricity");
+                //if (fuelSource_Electrical == null)
+                //{
+                //    fuelSource_Electrical = energyCentre.AddFuelSource();
+                //    fuelSource_Electrical.Name = "Grid Supplied Electricity";
+                //    fuelSource_Electrical.Description = "";
+                //    fuelSource_Electrical.CO2Factor = 0.519;
+                //    fuelSource_Electrical.Electrical = 1;
+                //    fuelSource_Electrical.TimeOfUseType = tpdTimeOfUseType.tpdTimeOfUseValue;
+                //    fuelSource_Electrical.PeakCost = 0.13;
+                //}
 
-                // Electrical Groups
+                //dynamic fuelSource_Gas = energyCentre.FuelSource("Natural Gas");
+                //if (fuelSource_Gas == null)
+                //{
+                //    fuelSource_Gas = energyCentre.AddFuelSource();
+                //    fuelSource_Gas.Name = "Natural Gas";
+                //    fuelSource_Gas.Description = "";
+                //    fuelSource_Gas.CO2Factor = 0.216;
+                //    fuelSource_Gas.Electrical = 0;
+                //    fuelSource_Gas.TimeOfUseType = tpdTimeOfUseType.tpdTimeOfUseValue;
+                //    fuelSource_Gas.PeakCost = 0.05;
+                //}
 
-                //Fans
-                dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
-                if (electricalGroup_Fans == null)
-                {
-                    electricalGroup_Fans = plantRoom.AddElectricalGroup();
-                    electricalGroup_Fans.SetPosition(400, 0);
-                    electricalGroup_Fans.Name = "Electrical Group - Fans";
-                    electricalGroup_Fans.SetFuelSource(1, fuelSource_Electrical);
-                    electricalGroup_Fans.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupFans;
-                }
+                //// Electrical Groups
 
-                //DXCoilUnits
-                dynamic electricalGroup_DXCoilUnits = plantRoom.ElectricalGroup("Electrical Group - DXCoil Units");
-                if (electricalGroup_DXCoilUnits == null)
-                {
-                    electricalGroup_DXCoilUnits = plantRoom.AddElectricalGroup();
-                    electricalGroup_DXCoilUnits.SetPosition(820, 0);
-                    electricalGroup_DXCoilUnits.Name = "Electrical Group - DXCoil Units";
-                    electricalGroup_DXCoilUnits.SetFuelSource(1, fuelSource_Electrical);
-                    electricalGroup_DXCoilUnits.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupEquipment;
-                }
+                ////Fans
+                //dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
+                //if (electricalGroup_Fans == null)
+                //{
+                //    electricalGroup_Fans = plantRoom.AddElectricalGroup();
+                //    electricalGroup_Fans.SetPosition(400, 0);
+                //    electricalGroup_Fans.Name = "Electrical Group - Fans";
+                //    electricalGroup_Fans.SetFuelSource(1, fuelSource_Electrical);
+                //    electricalGroup_Fans.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupFans;
+                //}
 
-                //Humidifiers
-                dynamic electricalGroup_Humidifiers = plantRoom.ElectricalGroup("Electrical Group - Humidifiers");
-                if (electricalGroup_Humidifiers == null)
-                {
-                    electricalGroup_Humidifiers = plantRoom.AddElectricalGroup();
-                    electricalGroup_Humidifiers.SetPosition(660, 0);
-                    electricalGroup_Humidifiers.Name = "Electrical Group - Humidifiers";
-                    electricalGroup_Humidifiers.SetFuelSource(1, fuelSource_Electrical);
-                    electricalGroup_Humidifiers.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupEquipment;
-                }
+                ////DXCoilUnits
+                //dynamic electricalGroup_DXCoilUnits = plantRoom.ElectricalGroup("Electrical Group - DXCoil Units");
+                //if (electricalGroup_DXCoilUnits == null)
+                //{
+                //    electricalGroup_DXCoilUnits = plantRoom.AddElectricalGroup();
+                //    electricalGroup_DXCoilUnits.SetPosition(820, 0);
+                //    electricalGroup_DXCoilUnits.Name = "Electrical Group - DXCoil Units";
+                //    electricalGroup_DXCoilUnits.SetFuelSource(1, fuelSource_Electrical);
+                //    electricalGroup_DXCoilUnits.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupEquipment;
+                //}
 
-                //FanCoilUnits
-                dynamic electricalGroup_FanCoilUnits = plantRoom.ElectricalGroup("Electrical Group - FanCoil Units");
-                if (electricalGroup_FanCoilUnits == null)
-                {
-                    electricalGroup_FanCoilUnits = plantRoom.AddElectricalGroup();
-                    electricalGroup_FanCoilUnits.SetPosition(740, 0);
-                    electricalGroup_FanCoilUnits.Name = "Electrical Group - FanCoil Units";
-                    electricalGroup_FanCoilUnits.SetFuelSource(1, fuelSource_Electrical);
-                    electricalGroup_FanCoilUnits.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupEquipment;
-                }
+                ////Humidifiers
+                //dynamic electricalGroup_Humidifiers = plantRoom.ElectricalGroup("Electrical Group - Humidifiers");
+                //if (electricalGroup_Humidifiers == null)
+                //{
+                //    electricalGroup_Humidifiers = plantRoom.AddElectricalGroup();
+                //    electricalGroup_Humidifiers.SetPosition(660, 0);
+                //    electricalGroup_Humidifiers.Name = "Electrical Group - Humidifiers";
+                //    electricalGroup_Humidifiers.SetFuelSource(1, fuelSource_Electrical);
+                //    electricalGroup_Humidifiers.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupEquipment;
+                //}
 
-                //Lighting
-                dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
-                if (electricalGroup_Lighting == null)
-                {
-                    electricalGroup_Lighting = plantRoom.AddElectricalGroup();
-                    electricalGroup_Lighting.SetPosition(offset.X + 500, offset.Y + 0);
-                    electricalGroup_Lighting.Name = "Electrical Group - Lighting";
-                    electricalGroup_Lighting.Description = "Internal Lighting";
-                    electricalGroup_Lighting.SetFuelSource(1, fuelSource_Electrical);
-                    electricalGroup_Lighting.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupLighting;
-                }
+                ////FanCoilUnits
+                //dynamic electricalGroup_FanCoilUnits = plantRoom.ElectricalGroup("Electrical Group - FanCoil Units");
+                //if (electricalGroup_FanCoilUnits == null)
+                //{
+                //    electricalGroup_FanCoilUnits = plantRoom.AddElectricalGroup();
+                //    electricalGroup_FanCoilUnits.SetPosition(740, 0);
+                //    electricalGroup_FanCoilUnits.Name = "Electrical Group - FanCoil Units";
+                //    electricalGroup_FanCoilUnits.SetFuelSource(1, fuelSource_Electrical);
+                //    electricalGroup_FanCoilUnits.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupEquipment;
+                //}
 
-                //Equipment
-                dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
-                if (electricalGroup_SmallPower == null)
-                {
-                    electricalGroup_SmallPower = plantRoom.AddElectricalGroup();
-                    electricalGroup_SmallPower.SetPosition(offset.X + 580, offset.Y + 0);
-                    electricalGroup_SmallPower.Name = "Electrical Group - Small Power";
-                    electricalGroup_SmallPower.Description = "Space Equipment";
-                    electricalGroup_SmallPower.SetFuelSource(1, fuelSource_Electrical);
-                    electricalGroup_SmallPower.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupEquipment;
-                }
+                ////Lighting
+                //dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
+                //if (electricalGroup_Lighting == null)
+                //{
+                //    electricalGroup_Lighting = plantRoom.AddElectricalGroup();
+                //    electricalGroup_Lighting.SetPosition(offset.X + 500, offset.Y + 0);
+                //    electricalGroup_Lighting.Name = "Electrical Group - Lighting";
+                //    electricalGroup_Lighting.Description = "Internal Lighting";
+                //    electricalGroup_Lighting.SetFuelSource(1, fuelSource_Electrical);
+                //    electricalGroup_Lighting.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupLighting;
+                //}
 
-                //Schedules
+                ////Equipment
+                //dynamic electricalGroup_SmallPower = plantRoom.ElectricalGroup("Electrical Group - Small Power");
+                //if (electricalGroup_SmallPower == null)
+                //{
+                //    electricalGroup_SmallPower = plantRoom.AddElectricalGroup();
+                //    electricalGroup_SmallPower.SetPosition(offset.X + 580, offset.Y + 0);
+                //    electricalGroup_SmallPower.Name = "Electrical Group - Small Power";
+                //    electricalGroup_SmallPower.Description = "Space Equipment";
+                //    electricalGroup_SmallPower.SetFuelSource(1, fuelSource_Electrical);
+                //    electricalGroup_SmallPower.ElectricalGroupType = tpdElectricalGroupType.tpdElectricalGroupEquipment;
+                //}
+
+                ////Schedules
 
                 //Occupancy
                 dynamic plantSchedule_Occupancy = energyCentre.PlantSchedule("Occupancy Schedule");
@@ -210,7 +212,7 @@ namespace SAM.Analytical.Tas.TPD
                     plantSchedule_Occupancy.FunctionLoads = 1024; // occupant sensible
                 }
 
-                //System
+                ////System
                 dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
                 if (plantSchedule_System == null)
                 {
@@ -230,7 +232,7 @@ namespace SAM.Analytical.Tas.TPD
                     plantSchedule_Zone.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
                 }
 
-                //Design Condition Load
+                ////Design Condition Load
 
                 dynamic designConditionLoad_Annual = energyCentre.DesignConditionLoad("Annual Design Condition");
                 if (designConditionLoad_Annual == null)
@@ -240,192 +242,405 @@ namespace SAM.Analytical.Tas.TPD
                     designConditionLoad_Annual.PrecondHours = 48;
                 }
 
-                //Components
+                ////Components
 
-                //Heating MultiBoiler
-                dynamic multiBoiler_Heating = plantRoom.MultiBoiler("Heating Circuit Boiler");
-                if (multiBoiler_Heating == null)
-                {
-                    multiBoiler_Heating = plantRoom.AddMultiBoiler();
-                    multiBoiler_Heating.Name = "Heating Circuit Boiler";
-                    multiBoiler_Heating.DesignPressureDrop = 25;
-                    multiBoiler_Heating.DesignDeltaT = 11;
-                    multiBoiler_Heating.Setpoint.Value = 71;
-                    multiBoiler_Heating.SetFuelSource(1, fuelSource_Gas);
-                    multiBoiler_Heating.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
-                    multiBoiler_Heating.Duty.SizeFraction = 1.0;
-                    multiBoiler_Heating.Duty.AddDesignCondition(designConditionLoad_Annual);
-                    multiBoiler_Heating.SetPosition(offset.X, offset.Y);
-                }
+                ////Heating MultiBoiler
+                //dynamic multiBoiler_Heating = plantRoom.MultiBoiler("Heating Circuit Boiler");
+                //if (multiBoiler_Heating == null)
+                //{
+                //    multiBoiler_Heating = plantRoom.AddMultiBoiler();
+                //    multiBoiler_Heating.Name = "Heating Circuit Boiler";
+                //    multiBoiler_Heating.DesignPressureDrop = 25;
+                //    multiBoiler_Heating.DesignDeltaT = 11;
+                //    multiBoiler_Heating.Setpoint.Value = 71;
+                //    multiBoiler_Heating.SetFuelSource(1, fuelSource_Gas);
+                //    multiBoiler_Heating.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
+                //    multiBoiler_Heating.Duty.SizeFraction = 1.0;
+                //    multiBoiler_Heating.Duty.AddDesignCondition(designConditionLoad_Annual);
+                //    multiBoiler_Heating.SetPosition(offset.X, offset.Y);
+                //}
 
-                //Heating Pump
-                dynamic pump_Heating = plantRoom.Component<Pump>("Heating Circuit Pump");
-                if (pump_Heating == null)
-                {
-                    pump_Heating = plantRoom.AddPump();
-                    pump_Heating.Name = "Heating Circuit Pump";
-                    pump_Heating.DesignFlowRate = 0;
-                    pump_Heating.Capacity = 1;
-                    pump_Heating.OverallEfficiency.Value = 1;
-                    pump_Heating.SetFuelSource(1, fuelSource_Electrical);
-                    pump_Heating.Pressure = (multiBoiler_Heating.DesignPressureDrop + heatingGroup.DesignPressureDrop) / 0.712;
-                    pump_Heating.SetPosition(offset.X + 100, offset.Y);
-                }
+                ////Heating Pump
+                //dynamic pump_Heating = plantRoom.Component<Pump>("Heating Circuit Pump");
+                //if (pump_Heating == null)
+                //{
+                //    pump_Heating = plantRoom.AddPump();
+                //    pump_Heating.Name = "Heating Circuit Pump";
+                //    pump_Heating.DesignFlowRate = 0;
+                //    pump_Heating.Capacity = 1;
+                //    pump_Heating.OverallEfficiency.Value = 1;
+                //    pump_Heating.SetFuelSource(1, fuelSource_Electrical);
+                //    pump_Heating.Pressure = (multiBoiler_Heating.DesignPressureDrop + heatingGroup.DesignPressureDrop) / 0.712;
+                //    pump_Heating.SetPosition(offset.X + 100, offset.Y);
+                //}
 
-                plantRoom.AddPipe(multiBoiler_Heating, 1, pump_Heating, 1);
-                plantRoom.AddPipe(pump_Heating, 1, heatingGroup, 1);
-                plantRoom.AddPipe(heatingGroup, 1, multiBoiler_Heating, 1);
+                //plantRoom.AddPipe(multiBoiler_Heating, 1, pump_Heating, 1);
+                //plantRoom.AddPipe(pump_Heating, 1, heatingGroup, 1);
+                //plantRoom.AddPipe(heatingGroup, 1, multiBoiler_Heating, 1);
 
-                PlantController plantController_Heating = plantRoom.AddController();
-                plantController_Heating.AddControlArc(pump_Heating);
-                dynamic plantSensorArc = plantController_Heating.AddSensorArcToComponent(heatingGroup, 1);
+                //PlantController plantController_Heating = plantRoom.AddController();
+                //plantController_Heating.AddControlArc(pump_Heating);
+                //dynamic plantSensorArc = plantController_Heating.AddSensorArcToComponent(heatingGroup, 1);
 
-                plantController_Heating.SetPosition(offset.X + 180, offset.Y + 110);
-                plantController_Heating.SensorArc1 = plantSensorArc;
-                Modify.SetWaterSideController(plantController_Heating, WaterSideControllerSetup.Load, 0.1, 0.1);
+                //plantController_Heating.SetPosition(offset.X + 180, offset.Y + 110);
+                //plantController_Heating.SensorArc1 = plantSensorArc;
+                //Modify.SetWaterSideController(plantController_Heating, WaterSideControllerSetup.Load, 0.1, 0.1);
 
-                //DHW MultiBoiler
-                dynamic multiBoiler_DHW = plantRoom.MultiBoiler("DHW Circuit Boiler");
-                if (multiBoiler_DHW == null)
-                {
-                    multiBoiler_DHW = plantRoom.AddMultiBoiler();
-                    multiBoiler_DHW.DesignPressureDrop = 25;
-                    multiBoiler_DHW.Setpoint.Value = 60;
-                    multiBoiler_DHW.SetFuelSource(1, fuelSource_Gas);
-                    multiBoiler_DHW.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
-                    multiBoiler_DHW.Duty.SizeFraction = 1.0;
-                    multiBoiler_DHW.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                    multiBoiler_DHW.SetPosition(0, 140);
-                }
+                ////DHW MultiBoiler
+                //dynamic multiBoiler_DHW = plantRoom.MultiBoiler("DHW Circuit Boiler");
+                //if (multiBoiler_DHW == null)
+                //{
+                //    multiBoiler_DHW = plantRoom.AddMultiBoiler();
+                //    multiBoiler_DHW.DesignPressureDrop = 25;
+                //    multiBoiler_DHW.Setpoint.Value = 60;
+                //    multiBoiler_DHW.SetFuelSource(1, fuelSource_Gas);
+                //    multiBoiler_DHW.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
+                //    multiBoiler_DHW.Duty.SizeFraction = 1.0;
+                //    multiBoiler_DHW.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                //    multiBoiler_DHW.SetPosition(0, 140);
+                //}
 
-                //DHW Pump
-                dynamic pump_DHW = plantRoom.Component<Pump>("DHW Circuit Pump");
-                if (pump_DHW == null)
-                {
-                    pump_DHW = plantRoom.AddPump();
-                    pump_DHW.Name = "DHW Circuit Pump";
-                    pump_DHW.Description = "DHW Circuit Pump";
-                    pump_DHW.DesignFlowRate = 1;
-                    pump_DHW.Capacity = 1;
-                    pump_DHW.OverallEfficiency.Value = 1;
-                    pump_DHW.SetFuelSource(1, fuelSource_Electrical);
-                    pump_DHW.Pressure = (multiBoiler_DHW.DesignPressureDrop + dHWGroup.DesignPressureDrop) / 0.712;
-                    pump_DHW.SetPosition(100, 150);
-                }
+                ////DHW Pump
+                //dynamic pump_DHW = plantRoom.Component<Pump>("DHW Circuit Pump");
+                //if (pump_DHW == null)
+                //{
+                //    pump_DHW = plantRoom.AddPump();
+                //    pump_DHW.Name = "DHW Circuit Pump";
+                //    pump_DHW.Description = "DHW Circuit Pump";
+                //    pump_DHW.DesignFlowRate = 1;
+                //    pump_DHW.Capacity = 1;
+                //    pump_DHW.OverallEfficiency.Value = 1;
+                //    pump_DHW.SetFuelSource(1, fuelSource_Electrical);
+                //    pump_DHW.Pressure = (multiBoiler_DHW.DesignPressureDrop + dHWGroup.DesignPressureDrop) / 0.712;
+                //    pump_DHW.SetPosition(100, 150);
+                //}
 
-                dynamic junction_DHW_In = plantRoom.AddJunction();
-                junction_DHW_In.Name = "DHW Junction In";
-                junction_DHW_In.Description = "Main Cold Water Supply";
-                junction_DHW_In.SetPosition(80, 210);
-                junction_DHW_In.SetDirection(tpdDirection.tpdRightLeft);
+                //dynamic junction_DHW_In = plantRoom.AddJunction();
+                //junction_DHW_In.Name = "DHW Junction In";
+                //junction_DHW_In.Description = "Main Cold Water Supply";
+                //junction_DHW_In.SetPosition(80, 210);
+                //junction_DHW_In.SetDirection(tpdDirection.tpdRightLeft);
 
-                dynamic junction_DHW_Out = plantRoom.AddJunction();
-                junction_DHW_Out.Name = "DHW Junction Out";
-                junction_DHW_Out.Description = "DHW Junction Out";
-                junction_DHW_Out.SetPosition(160, 210);
-                junction_DHW_Out.SetDirection(tpdDirection.tpdRightLeft);
+                //dynamic junction_DHW_Out = plantRoom.AddJunction();
+                //junction_DHW_Out.Name = "DHW Junction Out";
+                //junction_DHW_Out.Description = "DHW Junction Out";
+                //junction_DHW_Out.SetPosition(160, 210);
+                //junction_DHW_Out.SetDirection(tpdDirection.tpdRightLeft);
 
-                plantRoom.AddPipe(junction_DHW_In, 1, multiBoiler_DHW, 1);
-                Pipe pipe_DHW_Multiboiler_Pump = plantRoom.AddPipe(multiBoiler_DHW, 1, pump_DHW, 1);
-                pipe_DHW_Multiboiler_Pump.AddNode(80, 180);
-                plantRoom.AddPipe(pump_DHW, 1, dHWGroup, 1);
+                //plantRoom.AddPipe(junction_DHW_In, 1, multiBoiler_DHW, 1);
+                //Pipe pipe_DHW_Multiboiler_Pump = plantRoom.AddPipe(multiBoiler_DHW, 1, pump_DHW, 1);
+                //pipe_DHW_Multiboiler_Pump.AddNode(80, 180);
+                //plantRoom.AddPipe(pump_DHW, 1, dHWGroup, 1);
 
-                Pipe pipe = plantRoom.AddPipe(dHWGroup, 1, junction_DHW_Out, 1);
+                //Pipe pipe = plantRoom.AddPipe(dHWGroup, 1, junction_DHW_Out, 1);
 
-                dynamic plantController_Load = plantRoom.AddController();
-                plantController_Load.Name = "DHW Load Controller";
-                plantController_Load.SetPosition(80, 250);
+                //dynamic plantController_Load = plantRoom.AddController();
+                //plantController_Load.Name = "DHW Load Controller";
+                //plantController_Load.SetPosition(80, 250);
 
-                dynamic plantSensorArc_Load = plantController_Load.AddSensorArcToComponent(dHWGroup, 1);
-                plantController_Load.SensorArc1 = plantSensorArc_Load;
+                //dynamic plantSensorArc_Load = plantController_Load.AddSensorArcToComponent(dHWGroup, 1);
+                //plantController_Load.SensorArc1 = plantSensorArc_Load;
 
-                Modify.SetWaterSideController(plantController_Load, WaterSideControllerSetup.Load, 0.1, 0.1);
+                //Modify.SetWaterSideController(plantController_Load, WaterSideControllerSetup.Load, 0.1, 0.1);
 
-                dynamic plantController_Temperature = plantRoom.AddController();
-                plantController_Temperature.Name = "DHW Temperature Controller";
-                plantController_Temperature.SetPosition(140, 250);
+                //dynamic plantController_Temperature = plantRoom.AddController();
+                //plantController_Temperature.Name = "DHW Temperature Controller";
+                //plantController_Temperature.SetPosition(140, 250);
 
-                Modify.SetWaterSideController(plantController_Temperature, WaterSideControllerSetup.TemperatureLowZero, 10, 0);
+                //Modify.SetWaterSideController(plantController_Temperature, WaterSideControllerSetup.TemperatureLowZero, 10, 0);
 
-                dynamic plantSensorArc_Temperature = plantController_Temperature.AddSensorArc(pipe);
-                plantController_Temperature.SensorArc1 = plantSensorArc_Temperature;
+                //dynamic plantSensorArc_Temperature = plantController_Temperature.AddSensorArc(pipe);
+                //plantController_Temperature.SensorArc1 = plantSensorArc_Temperature;
 
-                dynamic plantController_Max = plantRoom.AddController();
-                plantController_Max.Name = "DHW Max Controller";
-                plantController_Max.SetPosition(110, 210);
-                plantController_Max.ControlType = tpdControlType.tpdControlMin;
-                plantController_Max.AddControlArc(pump_DHW);
-                plantController_Max.AddChainArc(plantController_Load);
-                plantController_Max.AddChainArc(plantController_Temperature);
+                //dynamic plantController_Max = plantRoom.AddController();
+                //plantController_Max.Name = "DHW Max Controller";
+                //plantController_Max.SetPosition(110, 210);
+                //plantController_Max.ControlType = tpdControlType.tpdControlMin;
+                //plantController_Max.AddControlArc(pump_DHW);
+                //plantController_Max.AddChainArc(plantController_Load);
+                //plantController_Max.AddChainArc(plantController_Temperature);
 
-                dynamic multiChiller = plantRoom.AddMultiChiller();
-                multiChiller.Name = "Cooling Circuit Chiller";
-                multiChiller.DesignPressureDrop = 25;
-                multiChiller.DesignDeltaT = 6;
-                multiChiller.Setpoint.Value = 10;
-                multiChiller.SetFuelSource(1, fuelSource_Electrical);
-                multiChiller.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
-                multiChiller.Duty.SizeFraction = 1.0;
-                multiChiller.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
-                multiChiller.SetPosition(0, 280);
+                //dynamic multiChiller = plantRoom.AddMultiChiller();
+                //multiChiller.Name = "Cooling Circuit Chiller";
+                //multiChiller.DesignPressureDrop = 25;
+                //multiChiller.DesignDeltaT = 6;
+                //multiChiller.Setpoint.Value = 10;
+                //multiChiller.SetFuelSource(1, fuelSource_Electrical);
+                //multiChiller.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
+                //multiChiller.Duty.SizeFraction = 1.0;
+                //multiChiller.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                //multiChiller.SetPosition(0, 280);
 
-                dynamic pump_Cooling = plantRoom.AddPump();
-                pump_Cooling.Name = "Cooling Circuit Pump";
-                pump_Cooling.DesignFlowRate = 0;
-                pump_Cooling.Capacity = 1;
-                pump_Cooling.OverallEfficiency.Value = 1;
-                pump_Cooling.SetFuelSource(1, fuelSource_Electrical);
-                pump_Cooling.Pressure = (multiChiller.DesignPressureDrop + coolingGroup.DesignPressureDrop) / 0.712;
-                pump_Cooling.SetPosition(100, 280);
+                //dynamic pump_Cooling = plantRoom.AddPump();
+                //pump_Cooling.Name = "Cooling Circuit Pump";
+                //pump_Cooling.DesignFlowRate = 0;
+                //pump_Cooling.Capacity = 1;
+                //pump_Cooling.OverallEfficiency.Value = 1;
+                //pump_Cooling.SetFuelSource(1, fuelSource_Electrical);
+                //pump_Cooling.Pressure = (multiChiller.DesignPressureDrop + coolingGroup.DesignPressureDrop) / 0.712;
+                //pump_Cooling.SetPosition(100, 280);
 
-                plantRoom.AddPipe(multiChiller, 1, pump_Cooling, 1);
-                plantRoom.AddPipe(pump_Cooling, 1, coolingGroup, 1);
-                plantRoom.AddPipe(coolingGroup, 1, multiChiller, 1);
+                //plantRoom.AddPipe(multiChiller, 1, pump_Cooling, 1);
+                //plantRoom.AddPipe(pump_Cooling, 1, coolingGroup, 1);
+                //plantRoom.AddPipe(coolingGroup, 1, multiChiller, 1);
 
-                dynamic plantController_Cooling = plantRoom.AddController();
-                plantController_Cooling.AddControlArc(pump_Cooling);
-                dynamic plantSensorArc_Cooling = plantController_Cooling.AddSensorArcToComponent(coolingGroup, 1);
+                //dynamic plantController_Cooling = plantRoom.AddController();
+                //plantController_Cooling.AddControlArc(pump_Cooling);
+                //dynamic plantSensorArc_Cooling = plantController_Cooling.AddSensorArcToComponent(coolingGroup, 1);
 
-                plantController_Cooling.SetPosition(180, 380);
-                plantController_Cooling.SensorArc1 = plantSensorArc_Cooling;
-                Modify.SetWaterSideController(plantController_Cooling, WaterSideControllerSetup.Load, 0.1, 0.1);
+                //plantController_Cooling.SetPosition(180, 380);
+                //plantController_Cooling.SensorArc1 = plantSensorArc_Cooling;
+                //Modify.SetWaterSideController(plantController_Cooling, WaterSideControllerSetup.Load, 0.1, 0.1);
 
-                dynamic airSourceHeatPump = plantRoom.AddAirSourceHeatPump();
-                airSourceHeatPump.SetPosition(0, 440);
-                airSourceHeatPump.SetFuelSource(1, fuelSource_Electrical);
-                airSourceHeatPump.SetFuelSource(2, fuelSource_Electrical);
-                airSourceHeatPump.SetFuelSource(3, fuelSource_Electrical);
-                airSourceHeatPump.Name = "DXCoil Units Air Source Heat Pump";
-                plantRoom.AddPipe(refrigerantGroup, 1, airSourceHeatPump, 1);
-                plantRoom.AddPipe(airSourceHeatPump, 1, refrigerantGroup, 1);
+                //dynamic airSourceHeatPump = plantRoom.AddAirSourceHeatPump();
+                //airSourceHeatPump.SetPosition(0, 440);
+                //airSourceHeatPump.SetFuelSource(1, fuelSource_Electrical);
+                //airSourceHeatPump.SetFuelSource(2, fuelSource_Electrical);
+                //airSourceHeatPump.SetFuelSource(3, fuelSource_Electrical);
+                //airSourceHeatPump.Name = "DXCoil Units Air Source Heat Pump";
+                //plantRoom.AddPipe(refrigerantGroup, 1, airSourceHeatPump, 1);
+                //plantRoom.AddPipe(airSourceHeatPump, 1, refrigerantGroup, 1);
 
-                for (int j = 1; j <= energyCentre.GetCalendar().GetDayTypeCount(); j++)
-                {
-                    PlantDayType plantDayType = plantRoom.GetEnergyCentre().GetCalendar().GetDayType(j);
+                //for (int j = 1; j <= energyCentre.GetCalendar().GetDayTypeCount(); j++)
+                //{
+                //    PlantDayType plantDayType = plantRoom.GetEnergyCentre().GetCalendar().GetDayType(j);
 
-                    //Water Side
-                    plantController_Heating.AddDayType(plantDayType);
-                    plantController_Max.AddDayType(plantDayType);
-                    plantController_Load.AddDayType(plantDayType);
-                    plantController_Temperature.AddDayType(plantDayType);
-                    plantController_Cooling.AddDayType(plantDayType);
-                }
+                //    //Water Side
+                //    plantController_Heating.AddDayType(plantDayType);
+                //    plantController_Max.AddDayType(plantDayType);
+                //    plantController_Load.AddDayType(plantDayType);
+                //    plantController_Temperature.AddDayType(plantDayType);
+                //    plantController_Cooling.AddDayType(plantDayType);
+                //}
 
                 List<SystemPlantRoom> systemPlantRooms = systemEnergyCentre.GetSystemPlantRooms();
-                if(systemPlantRooms != null && systemPlantRooms.Count != 0)
+                if (systemPlantRooms != null && systemPlantRooms.Count != 0)
                 {
-                    foreach(SystemPlantRoom systemPlantRoom in systemPlantRooms)
+                    foreach (SystemPlantRoom systemPlantRoom in systemPlantRooms)
                     {
-                        List<AirSystem> airSystems = systemPlantRoom.GetSystems<AirSystem>();
-                        if(airSystems != null && airSystems.Count != 0)
+                        List<LiquidSystem> liquidSystems = systemPlantRoom.GetSystems<LiquidSystem>();
+                        if (liquidSystems != null && liquidSystems.Count != 0)
                         {
-                            foreach(AirSystem airSystem in airSystems)
+                            foreach (LiquidSystem liquidSystem in liquidSystems)
+                            {
+                                if (liquidSystem.GetType() != typeof(LiquidSystem))
+                                {
+                                    continue;
+                                }
+
+                                Dictionary<Guid, PlantComponent> dictionary_TPD = new Dictionary<Guid, PlantComponent>();
+                                Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
+
+                                List<ISystemCollection> systemCollections = systemPlantRoom.GetSystemComponents<ISystemCollection>(liquidSystem);
+                                if(systemCollections != null)
+                                {
+                                    foreach (ISystemCollection systemCollection in systemCollections)
+                                    {
+                                        if(systemCollection == null)
+                                        {
+                                            continue;
+                                        }
+
+                                        PlantComponent plantComponent_TPD = ToTPD(systemCollection as dynamic, plantRoom) as PlantComponent;
+
+                                        dictionary_TPD[(systemCollection as dynamic).Guid] = plantComponent_TPD;
+                                        systemCollection.SetReference(Query.Reference(plantComponent_TPD));
+                                        systemPlantRoom.Add(systemCollection);
+                                    }
+                                }
+
+
+                                List<Core.Systems.ISystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Undefined, Direction.Out);
+                                if(systemComponents  == null)
+                                {
+                                    continue;
+                                }
+
+
+                                foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents)
+                                {
+                                    dictionary_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
+                                }
+
+                                foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SAM.Values)
+                                {
+                                    PlantComponent plantComponent_TPD = null;
+
+                                    if (systemComponent_Temp is DisplaySystemLiquidJunction)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemLiquidJunction)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayElectricalSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayElectricalSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayFuelSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayFuelSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayCoolingSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayCoolingSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayDomesticHotWaterSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayDomesticHotWaterSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayHeatingSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayHeatingSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplayRefrigerantSystemCollection)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplayRefrigerantSystemCollection)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemAbsorptionChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceAbsorptionChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemAirSourceChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemAirSourceChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemAirSourceDirectAbsorptionChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemAirSourceDirectAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemAirSourceHeatPump)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemAirSourceHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemBoiler)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemBoiler)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemCHP)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemCHP)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemCoolingTower)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemCoolingTower)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemDryCooler)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemDryCooler)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemHorizontalExchanger)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemHorizontalExchanger)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemIceStorageChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemIceStorageChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemLiquidExchanger)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemLiquidExchanger)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemMultiChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemMultiChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemPhotovoltaicPanel)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemPhotovoltaicPanel)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemPipeLossComponent)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemPipeLossComponent)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemPump)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemSlinkyCoil)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemSlinkyCoil)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemSolarPanel)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemSolarPanel)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemSurfaceWaterExchanger)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemSurfaceWaterExchanger)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemTank)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemTank)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemValve)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemValve)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemVerticalBorehole)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemVerticalBorehole)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceDirectAbsorptionChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceDirectAbsorptionChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceHeatPump)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWaterToWaterHeatPump)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterToWaterHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+                                    else if (systemComponent_Temp is DisplaySystemWindTurbine)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWindTurbine)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
+
+                                    if (plantComponent_TPD == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    dictionary_TPD[systemComponent_Temp.Guid] = plantComponent_TPD;
+                                    systemComponent_Temp.SetReference(Query.Reference(plantComponent_TPD));
+                                    systemPlantRoom.Add(systemComponent_Temp);
+                                }
+
+                                Create.Pipes(systemPlantRoom, plantRoom, dictionary_TPD);
+                            }
+                        }
+
+                        List<ElectricalGroup> electricalGroups = plantRoom.ElectricalGroups();
+                        ElectricalGroup electricalGroup_Fans = electricalGroups?.Find(x => x.ElectricalGroupType == tpdElectricalGroupType.tpdElectricalGroupFans);
+                        ElectricalGroup electricalGroup_SmallPower = electricalGroups?.Find(x => x.ElectricalGroupType == tpdElectricalGroupType.tpdElectricalGroupEquipment);
+                        ElectricalGroup electricalGroup_Lighting = electricalGroups?.Find(x => x.ElectricalGroupType == tpdElectricalGroupType.tpdElectricalGroupLighting);
+
+                        List<CoolingGroup> coolingGroups = plantRoom.CoolingGroups();
+                        CoolingGroup coolingGroup = coolingGroups?.FirstOrDefault();
+
+                        List<HeatingGroup> heatingGroups = plantRoom.HeatingGroups();
+                        HeatingGroup heatingGroup = heatingGroups?.FirstOrDefault();
+
+                        List<DHWGroup> dHWGroups = plantRoom.DHWGroups();
+                        DHWGroup dHWGroup = dHWGroups?.FirstOrDefault();
+
+                        List<AirSystem> airSystems = systemPlantRoom.GetSystems<AirSystem>();
+                        if (airSystems != null && airSystems.Count != 0)
+                        {
+                            foreach (AirSystem airSystem in airSystems)
                             {
                                 Dictionary<Guid, global::TPD.ISystemComponent> dictionary_TPD = new Dictionary<Guid, global::TPD.ISystemComponent>();
                                 Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
 
                                 global::TPD.System system = airSystem.ToTPD(plantRoom);
-                                if(system == null)
+                                if (system == null)
                                 {
                                     continue;
                                 }
@@ -449,11 +664,10 @@ namespace SAM.Analytical.Tas.TPD
 
                                 systemComponents_Ordered.Insert(0, systemComponent);
 
-                                foreach(Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
+                                foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
                                 {
                                     dictionary_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
                                 }
-
 
                                 systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
                                 if (systemComponent == null)
@@ -473,7 +687,7 @@ namespace SAM.Analytical.Tas.TPD
 
                                 foreach (Core.Systems.ISystemComponent systemComponent_Temp in systemComponents_Ordered)
                                 {
-                                    if(!Query.TryGetSystemSpace(systemPlantRoom, systemComponent_Temp, out ISystemSpace systemSpace, out AirSystemGroup airSystemGroup) || systemSpace == null)
+                                    if (!Query.TryGetSystemSpace(systemPlantRoom, systemComponent_Temp, out ISystemSpace systemSpace, out AirSystemGroup airSystemGroup) || systemSpace == null)
                                     {
                                         dictionary_SAM[systemPlantRoom.GetGuid(systemComponent_Temp)] = systemComponent_Temp;
                                         continue;
@@ -498,7 +712,7 @@ namespace SAM.Analytical.Tas.TPD
                                         tuples.Add(tuple);
                                     }
                                 }
-                                
+
                                 foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SAM.Values)
                                 {
                                     global::TPD.ISystemComponent systemComponent_TPD = null;
@@ -631,8 +845,6 @@ namespace SAM.Analytical.Tas.TPD
 
                                     dictionary_TPD[tuple.Item1.Guid] = (global::TPD.ISystemComponent)componentGroup;
                                 }
-
-
                             }
 
                             systemEnergyCentre.Add(systemPlantRoom);
@@ -640,22 +852,21 @@ namespace SAM.Analytical.Tas.TPD
                     }
                 }
 
-                if(systemEnergyCentreConversionSettings == null)
+                if (systemEnergyCentreConversionSettings == null)
                 {
                     systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
                 }
 
-                if(systemEnergyCentreConversionSettings.Simulate)
+                if (systemEnergyCentreConversionSettings.Simulate)
                 {
                     plantRoom.SimulateEx(systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents, 0, 0);
-                    if(systemEnergyCentreConversionSettings.IncludeResults)
+                    if (systemEnergyCentreConversionSettings.IncludeComponentResults)
                     {
                         Modify.CopyResults(energyCentre, systemEnergyCentre, systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1);
                     }
                 }
 
                 tPDDoc.Save();
-
             }
 
             return true;

@@ -1,7 +1,6 @@
 ﻿using SAM.Analytical.Systems;
 using SAM.Core;
 using System.Collections.Generic;
-using System.Linq;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -15,7 +14,29 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            IEnumerable<MultiChillerDataType> multiChillerDataTypes_Temp = multiChillerDataTypes == null || multiChillerDataTypes.Length == 0 ? System.Enum.GetValues(typeof(MultiChillerDataType)).Cast<MultiChillerDataType>() : multiChillerDataTypes;
+            IEnumerable<MultiChillerDataType> multiChillerDataTypes_Temp = multiChillerDataTypes;
+            if(multiChillerDataTypes == null || multiChillerDataTypes.Length == 0)
+            {
+                Range<int> range = new Range<int>(multiChiller.Multiplicity + 1, 10);
+                List<int> values = new List<int>();
+                for(int i = range.Min; i <= range.Max; i++)
+                {
+                    values.Add(i);
+                }
+
+                List<MultiChillerDataType> multiChillerDataTypes_Temp_Temp = new List<MultiChillerDataType>();
+                foreach (MultiChillerDataType multiChillerDataType in System.Enum.GetValues(typeof(MultiChillerDataType)))
+                {
+                    if(values.FindIndex(x => multiChillerDataType.ToString().EndsWith(x.ToString())) != -1)
+                    {
+                        continue;
+                    }
+
+                    multiChillerDataTypes_Temp_Temp.Add(multiChillerDataType);
+                }
+
+                multiChillerDataTypes_Temp = multiChillerDataTypes_Temp_Temp;
+            }
 
             Dictionary<MultiChillerDataType, IndexedDoubles> dictionary = new Dictionary<MultiChillerDataType, IndexedDoubles>();
             foreach (MultiChillerDataType multiChillerDataType in multiChillerDataTypes_Temp)

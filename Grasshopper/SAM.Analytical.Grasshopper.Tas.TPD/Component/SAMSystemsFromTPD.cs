@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.4";
+        public override string LatestComponentVersion => "1.0.5";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -71,8 +71,12 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_includeResults_", NickName = "_includeResults_", Description = "Include Results.", Access = GH_ParamAccess.item };
-                @boolean.SetPersistentData(systemEnergyCentreConversionSettings.IncludeResults);
+                @boolean.SetPersistentData(systemEnergyCentreConversionSettings.IncludeComponentResults);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_includeControllerResults_", NickName = "_includeControllerResults_", Description = "Include Controller Results.", Access = GH_ParamAccess.item, Optional = true };
+                @boolean.SetPersistentData(systemEnergyCentreConversionSettings.IncludeControllerResults);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -143,11 +147,18 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 systemEnergyCentreConversionSettings.EndHour = endHour;
             }
 
-            bool includeResults = systemEnergyCentreConversionSettings.IncludeResults;
+            bool includeResults = systemEnergyCentreConversionSettings.IncludeComponentResults;
             index = Params.IndexOfInputParam("_includeResults_");
             if (index != -1 && dataAccess.GetData(index, ref includeResults))
             {
-                systemEnergyCentreConversionSettings.IncludeResults = includeResults;
+                systemEnergyCentreConversionSettings.IncludeComponentResults = includeResults;
+            }
+
+            bool includeControllerResults = systemEnergyCentreConversionSettings.IncludeControllerResults;
+            index = Params.IndexOfInputParam("_includeControllerResults_");
+            if (index != -1 && dataAccess.GetData(index, ref includeControllerResults))
+            {
+                systemEnergyCentreConversionSettings.IncludeControllerResults = includeControllerResults;
             }
 
             string path = null;

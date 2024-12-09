@@ -68,39 +68,60 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-                    Direction direction = Direction.In;
-
-                    List<Pipe> pipes = Query.Pipes(plantComponent_TPD, direction);
-                    if (pipes == null || pipes.Count == 0)
+                    foreach (Direction direction in new Direction[] { Direction.In, Direction.Out })
                     {
-                        continue;
-                    }
-
-                    foreach(Pipe pipe in pipes)
-                    {
-                        string reference_2 = (pipe.GetUpstreamComponent() as dynamic)?.GUID;
-
-                        Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
-                        if (systemComponent_SAM_2 == null)
+                        List<Pipe> pipes = Query.Pipes(plantComponent_TPD, direction);
+                        if (pipes == null || pipes.Count == 0)
                         {
                             continue;
                         }
 
-                        List<LiquidSystem> liquidSystems_2 = systemPlantRoom.GetSystems<LiquidSystem>(systemComponent_SAM_2);
-                        if (liquidSystems_2 == null || liquidSystems_2.Count == 0)
+                        foreach (Pipe pipe in pipes)
                         {
-                            continue;
-                        }
+                            string reference_2 = (direction == Direction.In ? pipe.GetUpstreamComponent() : pipe.GetDownstreamComponent() as dynamic)?.GUID;
 
-                        List<Point2D> point2Ds = Query.Point2Ds(pipe);
+                            Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                            if (systemComponent_SAM_2 == null)
+                            {
+                                continue;
+                            }
 
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, systemComponent_SAM_2, liquidSystem, direction, point2Ds);
-                        if (systemConnection != null)
-                        {
-                            systemConnection.SetReference(Query.Reference(pipe));
-                            systemPlantRoom.Add(systemConnection);
+                            List<LiquidSystem> liquidSystems_2 = systemPlantRoom.GetSystems<LiquidSystem>(systemComponent_SAM_2);
+                            if (liquidSystems_2 == null || liquidSystems_2.Count == 0)
+                            {
+                                continue;
+                            }
 
-                            result.Add(systemConnection);
+                            List<Point2D> point2Ds = Query.Point2Ds(pipe);
+
+                            int connectionIndex_1 = direction == Direction.In ? pipe.GetDownstreamComponentPort() : pipe.GetUpstreamComponentPort();
+                            if (systemComponent_SAM_1 is SystemWaterSourceHeatPump)
+                            {
+                                connectionIndex_1++;
+                            }
+
+                            int connectionIndex_2 = direction == Direction.In ? pipe.GetUpstreamComponentPort() : pipe.GetDownstreamComponentPort();
+                            if (systemComponent_SAM_2 is SystemWaterSourceHeatPump)
+                            {
+                                connectionIndex_2++;
+                            }
+
+                            ISystemConnection systemConnection = Connect(
+                                systemPlantRoom, 
+                                systemComponent_SAM_1, 
+                                connectionIndex_1, 
+                                systemComponent_SAM_2, 
+                                connectionIndex_2, 
+                                liquidSystem, 
+                                direction, 
+                                point2Ds);
+                            if (systemConnection != null)
+                            {
+                                systemConnection.SetReference(Query.Reference(pipe));
+                                systemPlantRoom.Add(systemConnection);
+
+                                result.Add(systemConnection);
+                            }
                         }
                     }
                 }
@@ -340,6 +361,8 @@ namespace SAM.Analytical.Tas.TPD
             {
                 componentGroups = new List<ComponentGroup>();
 
+                HashSet<string> references_Duct = new HashSet<string>();
+
                 foreach (global::TPD.SystemComponent systemComponent_TPD in systemComponents)
                 {
                     if (systemComponent_TPD == null)
@@ -355,34 +378,52 @@ namespace SAM.Analytical.Tas.TPD
                     string reference_1 = (systemComponent_TPD as dynamic).GUID;
 
                     Core.Systems.ISystemComponent systemComponent_SAM_1 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_1);
-                    
-                    Direction direction = Direction.In;
 
-                    List<Duct> ducts = Query.Ducts(systemComponent_TPD, direction);
-                    if (ducts == null || ducts.Count == 0)
+                    foreach (Direction direction in new Direction[] { Direction.In, Direction.Out })
                     {
-                        continue;
-                    }
-
-                    foreach (Duct duct in ducts)
-                    {
-                        string reference_2 = (duct.GetUpstreamComponent() as dynamic)?.GUID;
-
-                        Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
-                        if (systemComponent_SAM_2 == null)
+                        List<Duct> ducts = Query.Ducts(systemComponent_TPD, direction);
+                        if (ducts == null || ducts.Count == 0)
                         {
                             continue;
                         }
 
-                        List<Point2D> point2Ds = Query.Point2Ds(duct);
-
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_SAM_1, systemComponent_SAM_2, airSystem, direction, point2Ds);
-                        if (systemConnection != null)
+                        foreach (Duct duct in ducts)
                         {
-                            systemConnection.SetReference(Query.Reference(duct));
-                            systemPlantRoom.Add(systemConnection);
+                            string reference_Duct = duct?.Reference();
+                            if(string.IsNullOrWhiteSpace(reference_Duct) || references_Duct.Contains(reference_Duct))
+                            {
+                                continue;
+                            }
 
-                            result.Add(systemConnection);
+                            references_Duct.Add(reference_Duct);
+
+                            string reference_2 = ((direction == Direction.Out ? duct.GetDownstreamComponent() : duct.GetUpstreamComponent()) as dynamic)?.GUID;
+
+                            Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
+                            if (systemComponent_SAM_2 == null)
+                            {
+                                continue;
+                            }
+
+                            List<Point2D> point2Ds = Query.Point2Ds(duct);
+
+                            ISystemConnection systemConnection = Connect(
+                                systemPlantRoom, 
+                                systemComponent_SAM_1, 
+                                direction == Direction.Out ? duct.GetUpstreamComponentPort() : duct.GetDownstreamComponentPort(), 
+                                systemComponent_SAM_2, 
+                                direction == Direction.Out ? duct.GetDownstreamComponentPort() : duct.GetUpstreamComponentPort(), 
+                                airSystem, 
+                                direction, 
+                                point2Ds);
+
+                            if (systemConnection != null)
+                            {
+                                systemConnection.SetReference(reference_Duct);
+                                systemPlantRoom.Add(systemConnection);
+
+                                result.Add(systemConnection);
+                            }
                         }
                     }
                 }
@@ -914,6 +955,9 @@ namespace SAM.Analytical.Tas.TPD
                     return null;
                 }
 
+                //List<DisplaySystemConnection> displaySystemConnections = systemPlantRoom.GetSystemObjects<DisplaySystemConnection>();
+                //List<string> references = displaySystemConnections.ConvertAll(x => x.Reference());
+
                 DisplaySystemConnection displaySystemConnection = systemPlantRoom.Find<DisplaySystemConnection>(x => x.Reference() == Query.Reference(dynamic));
 
                 SystemPolyline systemPolyline = displaySystemConnection?.SystemGeometry;
@@ -988,6 +1032,11 @@ namespace SAM.Analytical.Tas.TPD
                 {
 
                     dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemJSAMObject as dynamic, systemType_Control, direction: Direction.Out);
+                    if(dictionary == null || dictionary.Count == 0)
+                    {
+                        dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemJSAMObject as dynamic, systemType_Control, direction: Direction.Undefined);
+                    }
+
                     if (dictionary != null && dictionary.Count != 0)
                     {
                         point2Ds.Insert(0, dictionary.Values.First());
@@ -1032,14 +1081,14 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static ISystemConnection Connect(this SystemPlantRoom systemPlantRoom, Core.Systems.ISystemComponent systemComponent_1, Core.Systems.ISystemComponent systemComponent_2, Core.Systems.ISystem system, Direction direction, IEnumerable<Point2D> point2Ds = null)
+        public static ISystemConnection Connect(this SystemPlantRoom systemPlantRoom, Core.Systems.ISystemComponent systemComponent_1, int connectionIndex_1, Core.Systems.ISystemComponent systemComponent_2, int connectionIndex_2, Core.Systems.ISystem system, Direction direction, IEnumerable<Point2D> point2Ds = null)
         {
             if(systemPlantRoom == null || systemComponent_1 == null || systemComponent_2 == null || system == null)
             {
                 return null;
             }
 
-            if (!Geometry.Systems.Query.TryGetIndexes(systemPlantRoom, systemComponent_1, systemComponent_2, out int index_1, out int index_2, new SystemType(system), direction))
+            if (!Geometry.Systems.Query.TryGetIndexes(systemPlantRoom, systemComponent_1, connectionIndex_1, systemComponent_2, connectionIndex_2, out int index_1, out int index_2, new SystemType(system), direction))
             {
                 return null;
             }
@@ -1073,17 +1122,19 @@ namespace SAM.Analytical.Tas.TPD
             }
             else
             {
-                if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
-                {
-                    point2Ds_Temp.Insert(0, point2D_1);
-                    point2Ds_Temp.Add(point2D_2);
-                }
-                else
-                {
-                    point2Ds_Temp.Insert(0, point2D_2);
-                    point2Ds_Temp.Add(point2D_1);
-                }
+                point2Ds_Temp.Insert(0, point2D_2);
+                point2Ds_Temp.Add(point2D_1);
 
+                //if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
+                //{
+                //    point2Ds_Temp.Insert(0, point2D_1);
+                //    point2Ds_Temp.Add(point2D_2);
+                //}
+                //else
+                //{
+                //    point2Ds_Temp.Insert(0, point2D_2);
+                //    point2Ds_Temp.Add(point2D_1);
+                //}
             }
 
             if (point2Ds_Temp == null || point2Ds_Temp.Count < 2)
@@ -1159,9 +1210,9 @@ namespace SAM.Analytical.Tas.TPD
                         if(ducts != null && ducts.Count != 0)
                         {
                             point2Ds = new List<Point2D>();
-                            foreach(Duct duct in ducts)
+                            foreach(Duct duct_Temp in ducts)
                             {
-                                List<Point2D> point2Ds_Temp = Query.Point2Ds(duct);
+                                List<Point2D> point2Ds_Temp = Query.Point2Ds(duct_Temp);
                                 if(point2Ds_Temp != null)
                                 {
                                     point2Ds.AddRange(point2Ds_Temp);
@@ -1170,16 +1221,19 @@ namespace SAM.Analytical.Tas.TPD
                             }
                         }
 
-                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_In_SAM, systemComponent_Out_SAM, airSystem, Direction.Out, point2Ds);
+                        Direction direction = (systemComponent_In as dynamic).GetGroup()?.Guid == (componentGroup as dynamic).Guid ? Direction.In : Direction.Out;
+                        Duct duct = direction == Direction.In ? (componentGroup as dynamic).GetOutputDuct(1, 1) : (componentGroup as dynamic).GetInputDuct(1, 1);
+
+                        ISystemConnection systemConnection = Connect(systemPlantRoom, systemComponent_In_SAM, -1, systemComponent_Out_SAM, -1, airSystem, Direction.Out, point2Ds);
                         
                         if (systemConnection != null)
                         {
-                            if(ducts != null && ducts.Count != 0)
+                            if(duct != null)
                             {
-                                systemConnection.SetReference(Query.Reference(ducts[0]));
-                                systemPlantRoom.Add(systemConnection);
+                                systemConnection.SetReference(Query.Reference(duct));
                             }
 
+                            systemPlantRoom.Add(systemConnection);
                             result.Add(systemConnection);
                         }
                     }

@@ -15,7 +15,7 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = electricalGroup;
 
-            ElectricalSystemCollection result = new ElectricalSystemCollection(dynamic.Name);
+            ElectricalSystemCollection result = new ElectricalSystemCollection(dynamic.Name, electricalGroup.ElectricalGroupType.ToSAM());
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;

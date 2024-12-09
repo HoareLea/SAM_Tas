@@ -29,6 +29,50 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PlantController plantController, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || plantController == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            ISystemController systemController = plantController.ToSAM();
+            if (systemController == null)
+            {
+                return null;
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+            if(systemPlantRoom.Add(systemController))
+            {
+                result.Add(systemController);
+
+                //if (componentConversionSettings.IncludeControllerResults)
+                //{
+                //    ISystemComponentResult systemComponentResult = null;
+
+                //    if(systemController is SystemPassthroughController)
+                //    {
+
+                //        systemComponentResult = plantController.ToSAM_SystemValueControllerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                //    }
+                //    else
+                //    {
+                //        systemComponentResult = plantController.ToSAM_SystemSignalControllerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                //    }
+
+                //    if(systemComponentResult != null)
+                //    {
+                //        systemPlantRoom.Add(systemComponentResult);
+                //        systemPlantRoom.Connect(systemComponentResult, systemController);
+                //        result.Add(systemComponentResult);
+                //    }
+                //}
+            }
+
+            return result;
+        }
+
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.ISystemComponent systemComponent, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || systemComponent == null)
@@ -133,12 +177,12 @@ namespace SAM.Analytical.Tas.TPD
             {
                 case 1:
                     systemComponent = optimiser.ToSAM_SystemMixingBox();
-                    systemComponentResult = componentConversionSettings.IncludeResults ? optimiser.ToSAM_SystemMixingBoxResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1) : null;
+                    systemComponentResult = componentConversionSettings.IncludeComponentResults ? optimiser.ToSAM_SystemMixingBoxResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1) : null;
                     break;
 
                 case 0:
                     systemComponent = optimiser.ToSAM_SystemEconomiser();
-                    systemComponentResult = componentConversionSettings.IncludeResults ? optimiser.ToSAM_SystemEconomiserResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1) : null;
+                    systemComponentResult = componentConversionSettings.IncludeComponentResults ? optimiser.ToSAM_SystemEconomiserResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1) : null;
                     break;
             }
 
@@ -187,7 +231,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemSpace);
             result.Add(systemSpace);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemSpaceResult systemSpaceResult = systemZone.ToSAM_SpaceSystemResult(systemPlantRoom, componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemSpaceResult);
@@ -209,7 +253,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 result.Add(systemSpaceComponent);
 
-                if (componentConversionSettings.IncludeResults)
+                if (componentConversionSettings.IncludeComponentResults)
                 {
                     ISystemComponentResult systemComponentResult = zoneComponent.ToSAM_SystemComponentResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                     if (systemComponentResult == null)
@@ -257,7 +301,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemAirJunction);
             result.Add(systemAirJunction);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemAirJunctionResult systemAirJunctionResult = junction.ToSAM_SystemAirJunctionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemAirJunctionResult);
@@ -286,7 +330,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemDXCoil);
             result.Add(systemDXCoil);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemDXCoilResult systemDXCoilResult = dXCoil.ToSAM_SystemDXCoilResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemDXCoilResult);
@@ -316,7 +360,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemSteamHumidifier);
             result.Add(systemSteamHumidifier);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemSteamHumidifierResult systemSteamHumidifierResult = steamHumidifier.ToSAM_SystemSteamHumidifierResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemSteamHumidifierResult);
@@ -348,12 +392,12 @@ namespace SAM.Analytical.Tas.TPD
             {
                 case 0:
                     systemComponent = sprayHumidifier.ToSAM_SystemSprayHumidifier();
-                    systemComponentResult = componentConversionSettings.IncludeResults ? sprayHumidifier.ToSAM_SystemSprayHumidifierResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1) : null;
+                    systemComponentResult = componentConversionSettings.IncludeComponentResults ? sprayHumidifier.ToSAM_SystemSprayHumidifierResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1) : null;
                     break;
 
                 case 1:
                     systemComponent = sprayHumidifier.ToSAM_SystemDirectEvaporativeCooler();
-                    systemComponentResult = componentConversionSettings.IncludeResults ? sprayHumidifier.ToSAM_SystemDirectEvaporativeCoolerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1) : null;
+                    systemComponentResult = componentConversionSettings.IncludeComponentResults ? sprayHumidifier.ToSAM_SystemDirectEvaporativeCoolerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1) : null;
                     break;
             }
 
@@ -397,7 +441,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemExchanger);
             result.Add(systemExchanger);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemExchangerResult systemExchangerResult = exchanger.ToSAM_SystemExchangerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemExchangerResult);
@@ -428,7 +472,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemDesiccantWheel);
             result.Add(systemDesiccantWheel);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemDesiccantWheelResult systemDesiccantWheelResult = desiccantWheel.ToSAM_SystemDesiccantWheelResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemDesiccantWheelResult);
@@ -458,11 +502,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemFan);
             result.Add(systemFan);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemFanResult systemFanResult = fan.ToSAM_SystemFanResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemFanResult);
 
@@ -491,7 +532,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemCoolingCoil);
             result.Add(systemCoolingCoil);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemCoolingCoilResult systemCoolingCoilResult = coolingCoil.ToSAM_SystemCoolingCoilResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemCoolingCoilResult);
@@ -521,7 +562,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemHeatingCoil);
             result.Add(systemHeatingCoil);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemHeatingCoilResult systemHeatingCoilResult = heatingCoil.ToSAM_SystemHeatingCoilResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemHeatingCoilResult);
@@ -922,6 +963,19 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            List<PlantController> plantControllers = plantRoom.PlantControllers();
+            if (plantControllers != null)
+            {
+                foreach (PlantController plantController in plantControllers)
+                {
+                    List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(plantController, tPDDoc, componentConversionSettings);
+                    if (systemJSAMObjects != null)
+                    {
+                        result.AddRange(systemJSAMObjects);
+                    }
+                }
+            }
+
             List<ISystemConnection> systemConnections = Connect(systemPlantRoom, plantRoom, liquidSystem);
             if (systemConnections != null)
             {
@@ -1008,7 +1062,7 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (HeatPump)plantComponent, tPDDoc, componentConversionSettings);
             }
 
-            if (plantComponent is Tank tank)
+            if (plantComponent is Tank)
             {
                 return Add(systemPlantRoom, (Tank)plantComponent, tPDDoc, componentConversionSettings);
             }
@@ -1026,11 +1080,6 @@ namespace SAM.Analytical.Tas.TPD
             if (plantComponent is CoolingTower)
             {
                 return Add(systemPlantRoom, (CoolingTower)plantComponent, tPDDoc, componentConversionSettings);
-            }
-
-            if (plantComponent is DryCooler)
-            {
-                return Add(systemPlantRoom, (DryCooler)plantComponent, tPDDoc, componentConversionSettings);
             }
 
             if (plantComponent is DryCooler)
@@ -1104,11 +1153,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemWindTurbine);
             result.Add(systemWindTurbine);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemWindTurbineResult systemWindTurbineResult = windTurbine.ToSAM_SystemWindTurbineResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemWindTurbineResult);
 
@@ -1137,11 +1183,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemValve);
             result.Add(systemValve);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemValveResult systemValveResult = valve.ToSAM_SystemValveResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemValveResult);
 
@@ -1170,11 +1213,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemPhotovoltaicPanel);
             result.Add(systemPhotovoltaicPanel);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemPhotovoltaicPanelResult systemPhotovoltaicPanelResult = pVPanel.ToSAM_SystemPhotovoltaicPanelResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemPhotovoltaicPanelResult);
 
@@ -1203,11 +1243,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemSolarPanel);
             result.Add(systemSolarPanel);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemSolarPanelResult systemSolarPanelResult = solarPanel.ToSAM_SystemSolarPanelResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemSolarPanelResult);
 
@@ -1236,11 +1273,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemHorizontalExchanger);
             result.Add(systemHorizontalExchanger);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemHorizontalExchangerResult systemHorizontalExchangerResult = horizontalGHE.ToSAM_SystemHorizontalExchangerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemHorizontalExchangerResult);
 
@@ -1269,11 +1303,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemSurfaceWaterExchanger);
             result.Add(systemSurfaceWaterExchanger);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemSurfaceWaterExchangerResult systemSurfaceWaterExchangerResult = surfaceWaterExchanger.ToSAM_SystemSurfaceWaterExchangerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemSurfaceWaterExchangerResult);
 
@@ -1302,11 +1333,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemCHP);
             result.Add(systemCHP);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemCHPResult systemCHPResult = cHP.ToSAM_SystemCHPResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemCHPResult);
 
@@ -1335,11 +1363,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemSlinkyCoil);
             result.Add(systemSlinkyCoil);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemSlinkyCoilResult systemSlinkyCoilResult = slinkyCoil.ToSAM_SystemSlinkyCoilResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemSlinkyCoilResult);
 
@@ -1368,11 +1393,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemVerticalBorehole);
             result.Add(systemVerticalBorehole);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemVerticalBoreholeResult systemVerticalBoreholeResult = groundSource.ToSAM_SystemVerticalBoreholeResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemVerticalBoreholeResult);
 
@@ -1401,11 +1423,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemDryCooler);
             result.Add(systemDryCooler);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemDryCoolerResult systemDryCoolerResult = dryCooler.ToSAM_SystemDryCoolerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemDryCoolerResult);
 
@@ -1434,11 +1453,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemCoolingTower);
             result.Add(systemCoolingTower);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemCoolingTowerResult systemCoolingTowerResult = coolingTower.ToSAM_SystemCoolingTowerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemCoolingTowerResult);
 
@@ -1467,11 +1483,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemLiquidExchanger);
             result.Add(systemLiquidExchanger);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemLiquidExchangerResult SystemLiquidExchangerResult = heatExchanger.ToSAM_SystemLiquidExchangerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(SystemLiquidExchangerResult);
 
@@ -1500,11 +1513,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemPump);
             result.Add(systemPump);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemPumpResult systemPumpResult = pump.ToSAM_SystemPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemPumpResult);
 
@@ -1533,11 +1543,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemPipeLossComponent);
             result.Add(systemPipeLossComponent);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemPipeLossComponentResult systemPipeLossComponentResult = pipeLossComponent.ToSAM_SystemPipeLossComponentResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemPipeLossComponentResult);
 
@@ -1562,35 +1569,79 @@ namespace SAM.Analytical.Tas.TPD
 
             string name = @dynamic.Name;
 
+            ISystemComponentResult systemComponentResult = null;
+
             if (plantGroup is ElectricalGroup)
             {
                 system = new ElectricalSystem(name);
-                systemCollection = ((ElectricalGroup)plantGroup).ToSAM();
+
+                ElectricalGroup electricalGroup = (ElectricalGroup)plantGroup;
+
+                systemCollection = electricalGroup.ToSAM();
+                if (componentConversionSettings.IncludeComponentResults)
+                {
+                    systemComponentResult = electricalGroup.ToSAM_ElectricalSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if(plantGroup is RefrigerantGroup)
             {
                 system = new RefrigerantSystem(name);
-                systemCollection = ((RefrigerantGroup)plantGroup).ToSAM();
+
+                RefrigerantGroup refrigerantGroup = (RefrigerantGroup)plantGroup;
+
+                systemCollection = refrigerantGroup.ToSAM();
+                if (componentConversionSettings.IncludeComponentResults)
+                {
+                    systemComponentResult = refrigerantGroup.ToSAM_RefrigerantSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if (plantGroup is HeatingGroup)
             {
                 system = new Systems.HeatingSystem(name);
-                systemCollection = ((HeatingGroup)plantGroup).ToSAM();
+
+                HeatingGroup heatingGroup = (HeatingGroup)plantGroup;
+
+                systemCollection = heatingGroup.ToSAM();
+                if (componentConversionSettings.IncludeComponentResults)
+                {
+                    systemComponentResult = heatingGroup.ToSAM_HeatingSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if (plantGroup is CoolingGroup)
             {
                 system = new Systems.CoolingSystem(name);
-                systemCollection = ((CoolingGroup)plantGroup).ToSAM();
+
+                CoolingGroup coolingGroup = (CoolingGroup)plantGroup;
+
+                systemCollection = coolingGroup.ToSAM();
+                if (componentConversionSettings.IncludeComponentResults)
+                {
+                    systemComponentResult = coolingGroup.ToSAM_CoolingSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if (plantGroup is DHWGroup)
             {
                 system = new DomesticHotWaterSystem(name);
-                systemCollection = ((DHWGroup)plantGroup).ToSAM();
+
+                DHWGroup dHWGroup = (DHWGroup)plantGroup;
+
+                systemCollection = dHWGroup.ToSAM();
+                if (componentConversionSettings.IncludeComponentResults)
+                {
+                    systemComponentResult = dHWGroup.ToSAM_DomesticHotWaterSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
             else if (plantGroup is FuelGroup)
             {
                 system = new FuelSystem(name);
-                systemCollection = ((FuelGroup)plantGroup).ToSAM();
+
+                FuelGroup fuelGroup = (FuelGroup)plantGroup;
+
+                systemCollection = fuelGroup.ToSAM();
+                if (componentConversionSettings.IncludeComponentResults)
+                {
+                    systemComponentResult = fuelGroup.ToSAM_FuelSystemCollectionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                }
             }
 
             if (system == null && systemCollection == null)
@@ -1610,9 +1661,22 @@ namespace SAM.Analytical.Tas.TPD
 
             if(systemCollection != null)
             {
+                if(system != null)
+                {
+                    systemPlantRoom.Connect(system, systemCollection);
+                }
+
                 if (systemPlantRoom.Add(systemCollection))
                 {
                     result.Add(systemCollection);
+                }
+
+                if (systemComponentResult != null)
+                {
+                    systemPlantRoom.Add(systemComponentResult);
+
+                    systemPlantRoom.Connect(systemComponentResult, systemCollection);
+                    result.Add(systemComponentResult);
                 }
             }
 
@@ -1628,13 +1692,14 @@ namespace SAM.Analytical.Tas.TPD
                     }
 
                     Core.Systems.ISystemComponent systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>().Find(x => x?.Reference() == reference);
-                    if(systemComponent != null)
+                    if (systemComponent == null)
                     {
-                        result.Add(systemComponent);
-                        systemPlantRoom?.Connect(system, systemComponent);
-                        systemPlantRoom?.Connect(systemCollection, systemComponent);
                         continue;
                     }
+
+                    systemPlantRoom?.Connect(system, systemComponent);
+                    systemPlantRoom?.Connect(systemCollection, systemComponent);
+                    //continue;
 
                     //List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc, componentConversionSettings);
                     //if (systemJSAMObjects != null)
@@ -1665,11 +1730,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemBoiler);
             result.Add(systemBoiler);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemBoilerResult systemBoilerResult = boilerPlant.ToSAM_SystemBoilerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemBoilerResult);
 
@@ -1698,11 +1760,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemChiller);
             result.Add(systemChiller);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 if (systemChiller is SystemAirSourceChiller)
                 {
                     SystemAirSourceChillerResult systemAirSourceChillerResult = chiller.ToSAM_SystemAirSourceChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
@@ -1742,11 +1801,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemChiller);
             result.Add(systemChiller);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 if (systemChiller is SystemWaterSourceChiller)
                 {
                     SystemWaterSourceChillerResult systemWaterSourceChillerResult = waterSourceChiller.ToSAM_SystemWaterSourceChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
@@ -1786,11 +1842,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemChiller);
             result.Add(systemChiller);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 if (systemChiller is SystemAbsorptionChiller)
                 {
                     SystemAbsorptionChillerResult systemAbsorptionChillerResult = absorptionChiller.ToSAM_SystemAbsorptionChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
@@ -1830,11 +1883,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemChiller);
             result.Add(systemChiller);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 if (systemChiller is SystemIceStorageChiller)
                 {
                     SystemIceStorageChillerResult systemIceStorageChillerResult = iceStorageChiller.ToSAM_SystemIceStorageChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
@@ -1874,11 +1924,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemMultiChiller);
             result.Add(systemMultiChiller);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemMultiChillerResult systemMultiChillerResult = multiChiller.ToSAM_SystemMultiChillerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemMultiChillerResult);
 
@@ -1903,19 +1950,16 @@ namespace SAM.Analytical.Tas.TPD
 
             List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
 
-            SystemBoiler systemBoiler = multiBoiler.ToSAM();
-            systemPlantRoom.Add(systemBoiler);
-            result.Add(systemBoiler);
+            SystemMultiBoiler systemMultiBoiler = multiBoiler.ToSAM();
+            systemPlantRoom.Add(systemMultiBoiler);
+            result.Add(systemMultiBoiler);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
-                SystemBoilerResult systemBoilerResult = multiBoiler.ToSAM_SystemBoilerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                SystemMultiBoilerResult systemBoilerResult = multiBoiler.ToSAM_SystemMultiBoilerResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemBoilerResult);
 
-                systemPlantRoom.Connect(systemBoilerResult, systemBoiler);
+                systemPlantRoom.Connect(systemBoilerResult, systemMultiBoiler);
                 result.Add(systemBoilerResult);
             }
 
@@ -1940,7 +1984,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemLiquidJunction);
             result.Add(systemLiquidJunction);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
                 SystemLiquidJunctionResult systemLiquidJunctionResult = plantJunction.ToSAM_SystemLiquidJunctionResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemLiquidJunctionResult);
@@ -1969,11 +2013,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemAirSourceHeatPump);
             result.Add(systemAirSourceHeatPump);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemAirSourceHeatPumpResult systemAirSourceHeatPumpResult = airSourceHeatPump.ToSAM_SystemAirSourceHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemAirSourceHeatPumpResult);
 
@@ -2002,11 +2043,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemWaterToWaterHeatPump);
             result.Add(systemWaterToWaterHeatPump);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemWaterToWaterHeatPumpResult systemWaterToWaterHeatPumpResult = waterToWaterHeatPump.ToSAM_SystemWaterToWaterHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemWaterToWaterHeatPumpResult);
 
@@ -2035,11 +2073,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemWaterToWaterHeatPump);
             result.Add(systemWaterToWaterHeatPump);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemWaterSourceHeatPumpResult systemWaterSourceHeatPumpResult = heatPump.ToSAM_SystemWaterSourceHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemWaterSourceHeatPumpResult);
 
@@ -2068,11 +2103,8 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Add(systemTank);
             result.Add(systemTank);
 
-            if (componentConversionSettings.IncludeResults)
+            if (componentConversionSettings.IncludeComponentResults)
             {
-                int start = tPDDoc.StartHour();
-                int end = tPDDoc.EndHour();
-
                 SystemTankResult systemTankResult = tank.ToSAM_SystemTankResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
                 systemPlantRoom.Add(systemTankResult);
 

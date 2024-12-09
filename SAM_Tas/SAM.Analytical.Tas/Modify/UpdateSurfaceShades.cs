@@ -74,7 +74,9 @@ namespace SAM.Analytical.Tas
             }
 
             List<Tuple<int, short, float>> tuples = Enumerable.Repeat<Tuple<int, short, float>>(null, dateTimes.Count).ToList();
-            Parallel.For(0, dateTimes.Count, (int i) => 
+            //Parallel.For(0, dateTimes.Count, (int i) =>   
+            //when using parallel for, value where missing in the list in Tas
+            for (int i =0; i < dateTimes.Count; i++)
             {
                 List<Face3D> face3Ds = Geometry.SolarCalculator.Query.SunExposureFace3Ds(solarFaceSimulationResult, face3D, dateTimes[i]); //TODO Optimze this function! https://github.com/HoareLea/SAM_Tas/issues/72 
                 float proportion = 0;
@@ -90,9 +92,9 @@ namespace SAM.Analytical.Tas
                 }
 
                 tuples.Add(new Tuple<int, short, float>(dateTimes[i].DayOfYear, System.Convert.ToInt16(dateTimes[i].Hour), proportion));
-            });
+            };//);
 
-
+            Dictionary<int, Dictionary<short, float>> dictionary = new Dictionary<int, Dictionary<short, float>>();
             foreach (Tuple<int, short, float> tuple in tuples)
             {
                 if(tuple == null)
@@ -100,19 +102,36 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                TBD.DaysShade daysShade = daysShades.Find(x => x.day == tuple.Item1);
+                if(!dictionary.TryGetValue(tuple.Item1, out Dictionary<short, float> dictionary_Temp) || dictionary_Temp == null)
+                {
+                    dictionary_Temp = new Dictionary<short, float>();
+                    dictionary[tuple.Item1] = dictionary_Temp;
+                }
+
+                dictionary_Temp[tuple.Item2] = tuple.Item3;
+            }
+
+            foreach (KeyValuePair<int, Dictionary<short, float>> keyValuePair in dictionary)
+            {
+                TBD.DaysShade daysShade = daysShades.Find(x => x.day == keyValuePair.Key);
                 if (daysShade == null)
                 {
                     daysShade = building.AddDaysShade();
-                    daysShade.day = tuple.Item1;
+
+                    daysShade.day = keyValuePair.Key;
+                    
                     daysShades.Add(daysShade);
                 }
 
-                TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(tuple.Item2);
-                surfaceShade.proportion = tuple.Item3;
-                surfaceShade.surface = zoneSurface;
+                foreach (KeyValuePair<short, float> keyValuePair_Temp in keyValuePair.Value)
+                {
+                    TBD.SurfaceShade surfaceShade = daysShade.AddSurfaceShade(keyValuePair_Temp.Key);
 
-                result.Add(surfaceShade);
+                    surfaceShade.proportion = keyValuePair_Temp.Value;
+                    surfaceShade.surface = zoneSurface;
+
+                    result.Add(surfaceShade);
+                }
             }
 
             return result;

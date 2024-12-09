@@ -175,7 +175,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             index = Params.IndexOfInputParam("_includeResults_");
             if (index != -1 && dataAccess.GetData(index, ref includeResults))
             {
-                systemEnergyCentreConversionSettings.IncludeResults = includeResults;
+                systemEnergyCentreConversionSettings.IncludeComponentResults = includeResults;
             }
 
             bool successful = Analytical.Tas.TPD.Convert.ToTPD(systemEnergyCentre, path_TPD, path_TSD, systemEnergyCentreConversionSettings);

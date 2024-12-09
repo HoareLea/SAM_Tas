@@ -15,25 +15,25 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = sizedVariable as dynamic;
 
-            HashSet<string> names = null;
+            HashSet<string> designConditionNames = null;
 
             List<DesignConditionLoad> designConditionLoads = sizedVariable.DesignConditionLoads();
              if(designConditionLoads != null && designConditionLoads.Count != 0)
             {
-                names = new HashSet<string>();
+                designConditionNames = new HashSet<string>();
                 foreach(DesignConditionLoad designConditionLoad in designConditionLoads)
                 {
-                    names.Add(designConditionLoad.Name);
+                    designConditionNames.Add(designConditionLoad.Name);
                 }
             }
 
             switch ((tpdSizedVariable)@dynamic.Type)
             {
                 case tpdSizedVariable.tpdSizedVariableSizeDone:
-                    return new SizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, names);
+                    return new Duty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames);
 
                 case tpdSizedVariable.tpdSizedVariableSize:
-                    return new SizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, names);
+                    return new Duty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames);
 
                 case tpdSizedVariable.tpdSizedVariableNone:
                     return new UnlimitedValue();

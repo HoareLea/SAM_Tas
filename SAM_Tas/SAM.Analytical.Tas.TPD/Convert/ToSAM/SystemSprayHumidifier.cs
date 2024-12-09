@@ -1,5 +1,4 @@
 ﻿using SAM.Analytical.Systems;
-using SAM.Core;
 using SAM.Geometry.Planar;
 using TPD;
 

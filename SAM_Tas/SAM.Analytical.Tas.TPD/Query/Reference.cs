@@ -37,6 +37,11 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            if(zoneComponent is global::TPD.SystemComponent)
+            {
+                return Reference((global::TPD.SystemComponent)zoneComponent);
+            }
+
             SystemZone systemZone = (zoneComponent as dynamic).GetZone();
             if(systemZone == null)
             {
@@ -75,6 +80,16 @@ namespace SAM.Analytical.Tas.TPD
 
             return (plantComponent as dynamic).GUID;
         }
+
+        //public static string Reference(this PlantController plantController)
+        //{
+        //    if (plantController == null)
+        //    {
+        //        return null;
+        //    }
+
+        //    return (plantController as dynamic).GUID;
+        //}
 
         public static string Reference(this global::TPD.SystemComponent systemComponent)
         {

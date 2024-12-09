@@ -4,7 +4,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static NormalControllerDataType ToSAM(this global::TPD.tpdSensorType tpdSensorType)
+        public static NormalControllerDataType ToSAM_NormalControllerDataType(this global::TPD.tpdSensorType tpdSensorType)
         {
             switch(tpdSensorType)
             {
