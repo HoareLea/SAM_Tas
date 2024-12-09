@@ -17,8 +17,16 @@ namespace SAM.Analytical.Tas.TPD
 
             HeatingSystemCollection result = new HeatingSystemCollection(dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
-            
+
             result.Description = dynamic.Description;
+            result.MinimumReturnTemperature = heatingGroup.MinimumReturnTemp;
+            result.VariableFlowCapacity = heatingGroup.VariableFlowCapacity == 1;
+            result.PeakDemand = heatingGroup.PeakDemand;
+            result.SizeFraction = heatingGroup.SizeFraction;
+            if (heatingGroup.UseDistributionHeatLossProfile == 1)
+            {
+                result.Distribution = heatingGroup.DistributionHeatLossProfile.ToSAM();
+            }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

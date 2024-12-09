@@ -19,6 +19,12 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;
+            result.MinimumReturnTemperature = dHWGroup.MinimumReturnTemp;
+            if (dHWGroup.UseDistributionHeatLossProfile == 1)
+            {
+                result.Distribution = dHWGroup.DistributionHeatLossProfile.ToSAM();
+            }
+
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

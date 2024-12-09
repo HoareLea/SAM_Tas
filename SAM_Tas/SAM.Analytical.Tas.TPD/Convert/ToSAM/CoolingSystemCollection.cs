@@ -19,6 +19,14 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;
+            result.MaximumReturnTemperature = coolingGroup.MaximumReturnTemp;
+            result.VariableFlowCapacity = coolingGroup.VariableFlowCapacity == 1;
+            result.PeakDemand = coolingGroup.PeakDemand;
+            result.SizeFraction = coolingGroup.SizeFraction;
+            if(coolingGroup.UseDistributionHeatGainProfile == 1)
+            {
+                result.Distribution = coolingGroup.DistributionHeatGainProfile.ToSAM();
+            }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
