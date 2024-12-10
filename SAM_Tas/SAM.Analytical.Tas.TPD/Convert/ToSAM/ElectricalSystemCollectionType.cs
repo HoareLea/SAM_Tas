@@ -5,24 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static ElectricalSystemCollectionType ToSAM(this tpdElectricalGroupType tpdElectricalGroupType)
+        public static SAM.Analytical.Systems.BoilerSequence ToSAM(this tpdBoilerSequence tpdBoilerSequence)
         {
-            switch(tpdElectricalGroupType)
+            switch(tpdBoilerSequence)
             {
-                case tpdElectricalGroupType.tpdElectricalGroupEquipment:
-                    return ElectricalSystemCollectionType.Equipment;
+                case tpdBoilerSequence.tpdBoilerSequenceParallel:
+                    return BoilerSequence.Parallel;
 
-                case tpdElectricalGroupType.tpdElectricalGroupNone:
-                    return ElectricalSystemCollectionType.None;
+                case tpdBoilerSequence.tpdBoilerSequenceSerial:
+                    return BoilerSequence.Serial;
 
-                case tpdElectricalGroupType.tpdElectricalGroupHeating:
-                    return ElectricalSystemCollectionType.Heating;
-
-                case tpdElectricalGroupType.tpdElectricalGroupLighting:
-                    return ElectricalSystemCollectionType.Lighting;
-
-                case tpdElectricalGroupType.tpdElectricalGroupFans:
-                    return ElectricalSystemCollectionType.Fans;
+                case tpdBoilerSequence.tpdBoilerSequenceStaging:
+                    return BoilerSequence.Staging;
             }
 
             throw new System.NotImplementedException();
