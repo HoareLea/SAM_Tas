@@ -19,6 +19,12 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
 
             result.Description = dynamic.Description;
+            result.OverallEfficiency = pump.OverallEfficiency?.ToSAM();
+            result.Pressure = pump.Pressure;
+            result.DesignFrowRate = pump.DesignFlowRate;
+            result.Capacity = pump.Capacity;
+            result.PartLoad = pump.PartLoad?.ToSAM();
+            result.FanControlType = pump.ControlType.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
