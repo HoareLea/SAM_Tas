@@ -87,14 +87,59 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static IndexedDoublesModifier ToSAM(IProfileDataModifierTable profileDataModifierTable)
+        public static TableModifier ToSAM(IProfileDataModifierTable profileDataModifierTable)
         {
             if(profileDataModifierTable == null)
             {
                 return null;
             }
 
-            IndexedDoublesModifier result = new IndexedDoublesModifier(profileDataModifierTable.Multiplier.ArithmeticOperator().Value, null);
+            HashSet<string> names = new HashSet<string>();
+            List<int> counts = new List<int>();
+            int i = 1;
+            while(profileDataModifierTable.GetAxisSize(i) > 0)
+            {
+                names.Add(profileDataModifierTable.GetVariable(i).ToString());
+                counts.Add(profileDataModifierTable.GetAxisSize(i));
+                i++;
+            }
+
+            while (counts.Count < 3)
+            {
+                counts.Add(1);
+            }
+
+            List<string> headers = new List<string>(names);
+            headers.Add("value");
+
+            TableModifier result = new TableModifier(profileDataModifierTable.Multiplier.ArithmeticOperator().Value, headers);
+            result.Extrapolate = profileDataModifierTable.Extrapolate == 1;
+
+            if (counts[0] > 0 && names.Count > 0)
+            {
+                for (int x = 1; x <= counts[0]; x++)
+                {
+                    for (int y = 1; y <= counts[1]; y++)
+                    {
+                        for (int z = 1; z <= counts[2]; z++)
+                        {
+                            Dictionary<string, double> dictionary = new Dictionary<string, double>();
+                            dictionary[names.ElementAt(0)] = profileDataModifierTable.GetAxisValue(1, x);
+                            if (names.Count > 1)
+                            {
+                                dictionary[names.ElementAt(1)] = profileDataModifierTable.GetAxisValue(2, y);
+                                if (names.Count > 2)
+                                {
+                                    dictionary[names.ElementAt(2)] = profileDataModifierTable.GetAxisValue(3, z);
+                                }
+                            }
+
+                            dictionary["value"] = profileDataModifierTable.GetDataValue(x, y, z);
+                            result.AddValues(dictionary);
+                        }
+                    }
+                }
+            }
 
             return result;
         }
