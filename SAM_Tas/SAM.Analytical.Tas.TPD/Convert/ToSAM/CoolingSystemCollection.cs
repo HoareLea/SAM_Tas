@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             result.VariableFlowCapacity = coolingGroup.VariableFlowCapacity == 1;
             result.PeakDemand = coolingGroup.PeakDemand;
             result.SizeFraction = coolingGroup.SizeFraction;
-            if(coolingGroup.UseDistributionHeatGainProfile == 1)
+            if(coolingGroup.UseDistributionHeatGainProfile == -1)
             {
                 result.Distribution = coolingGroup.DistributionHeatGainProfile.ToSAM();
             }

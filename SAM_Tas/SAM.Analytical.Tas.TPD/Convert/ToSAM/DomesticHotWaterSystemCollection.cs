@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             
             result.Description = dynamic.Description;
             result.MinimumReturnTemperature = dHWGroup.MinimumReturnTemp;
-            if (dHWGroup.UseDistributionHeatLossProfile == 1)
+            if (dHWGroup.UseDistributionHeatLossProfile == -1)
             {
                 result.Distribution = dHWGroup.DistributionHeatLossProfile.ToSAM();
             }

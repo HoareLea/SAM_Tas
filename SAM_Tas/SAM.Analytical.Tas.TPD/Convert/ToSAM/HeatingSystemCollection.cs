@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             result.VariableFlowCapacity = heatingGroup.VariableFlowCapacity == 1;
             result.PeakDemand = heatingGroup.PeakDemand;
             result.SizeFraction = heatingGroup.SizeFraction;
-            if (heatingGroup.UseDistributionHeatLossProfile == 1)
+            if (heatingGroup.UseDistributionHeatLossProfile == -1)
             {
                 result.Distribution = heatingGroup.DistributionHeatLossProfile.ToSAM();
             }
