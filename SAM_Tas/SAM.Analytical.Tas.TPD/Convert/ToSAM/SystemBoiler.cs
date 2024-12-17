@@ -17,7 +17,19 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemBoiler result = new SystemBoiler(@dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
-            
+
+            int count = @dynamic.GetFuelSourceCount();
+            FuelSource fuelSource = null;
+            if(count > 0)
+            {
+                for (int i = 1; i <= count; i++)
+                {
+                    fuelSource = @dynamic.GetFuelSource(i);
+                }
+            }
+
+            result.DesignPressureDrop = @dynamic.DesignPressureDrop;
+            result.DesignTemperatureDiffrence = @dynamic.DesignDeltaT;
             result.Description = dynamic.Description;
             result.Setpoint = boilerPlant.Setpoint?.ToSAM();
             result.Efficiency = boilerPlant?.Efficiency?.ToSAM();

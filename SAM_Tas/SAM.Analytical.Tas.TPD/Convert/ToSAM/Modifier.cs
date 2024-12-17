@@ -54,7 +54,11 @@ namespace SAM.Analytical.Tas.TPD
 
             if (profileDataModifier is IProfileDataModifierTable)
             {
-                return ToSAM((IProfileDataModifierTable)profileDataModifier);
+                TableModifier result = ToSAM((IProfileDataModifierTable)profileDataModifier);
+
+                double[,] values = result.GetValues();
+
+                return result;
             }
 
             if (profileDataModifier is IProfileDataModifierHourly)
