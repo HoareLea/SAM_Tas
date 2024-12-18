@@ -19,6 +19,14 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
 
             result.Description = dynamic.Description;
+            result.Setpoint = dynamic.Setpoint?.ToSAM();
+            result.Efficiency = dynamic.Efficiency?.ToSAM();
+            result.HeatPowerRatio = dynamic.HeatPowerRatio?.ToSAM();
+            result.Duty = dynamic.Duty?.ToSAM();
+            result.DesignTemperatureDiffrence = dynamic.DesignDeltaT;
+            result.Capacity = dynamic.Capacity;
+            result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            result.LossesInSizing = dynamic.LossesInSizing == 1;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

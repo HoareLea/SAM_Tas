@@ -21,14 +21,26 @@ namespace SAM.Analytical.Tas.TPD
             SystemChiller systemChiller = null;
             if (waterSource)
             {
-                systemChiller = new SystemWaterSourceAbsorptionChiller(@dynamic.Name);
+                systemChiller = new SystemWaterSourceAbsorptionChiller(@dynamic.Name)
+                {
+                    DesignPressureDrop1 = absorptionChiller.DesignPressureDrop1,
+                    DesignPressureDrop2 = absorptionChiller.DesignPressureDrop2,
+                    DesignPressureDrop3 = absorptionChiller.DesignPressureDrop3,
+                };
             }
             else
             {
-                systemChiller = new SystemAbsorptionChiller(@dynamic.Name);
+                systemChiller = new SystemAbsorptionChiller(@dynamic.Name)
+                {
+                    DesignPressureDrop1 = absorptionChiller.DesignPressureDrop1,
+                    DesignPressureDrop2 = absorptionChiller.DesignPressureDrop2,
+                    DesignPressureDrop3 = absorptionChiller.DesignPressureDrop3,
+                };
             }
 
             systemChiller.Description = dynamic.Description;
+            systemChiller.Duty = dynamic.Duty?.ToSAM();
+
             Modify.SetReference(systemChiller, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
@@ -76,6 +88,7 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;
+            result.Duty = chiller.Duty?.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
