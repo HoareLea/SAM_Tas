@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Description = dynamic.Description;
             result.DesignPressureDrop = @dynamic.DesignPressureDrop;
             result.DesignTemperatureDiffrence = @dynamic.DesignDeltaT;
-            result.Duty = @dynamic.Duty?.ToSAM();
+            result.Duty = ((SizedVariable)@dynamic.Duty)?.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
