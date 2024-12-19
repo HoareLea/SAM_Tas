@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -18,15 +19,16 @@ namespace SAM.Analytical.Tas.TPD
             SystemBoiler result = new SystemBoiler(@dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
 
-            int count = @dynamic.GetFuelSourceCount();
-            FuelSource fuelSource = null;
-            if(count > 0)
+            List<FuelSource> fuelSources = Query.FuelSources(boilerPlant as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
             {
-                for (int i = 1; i <= count; i++)
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0].Name);
+                if(fuelSources.Count > 1)
                 {
-                    fuelSource = @dynamic.GetFuelSource(i);
+                    result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1].Name);
                 }
             }
+
 
             result.DesignPressureDrop = @dynamic.DesignPressureDrop;
             result.DesignTemperatureDiffrence = @dynamic.DesignDeltaT;

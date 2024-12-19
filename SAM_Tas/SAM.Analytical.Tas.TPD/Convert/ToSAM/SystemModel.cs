@@ -44,6 +44,19 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemEnergyCentre result = new SystemEnergyCentre(energyCentre.Name);
 
+            List<FuelSource> fuelSources = energyCentre.FuelSources();
+            if (fuelSources != null)
+            {
+                foreach (FuelSource fuelSource in fuelSources)
+                {
+                    SystemEnergySource systemEnergySource = fuelSource.ToSAM();
+                    if (systemEnergySource != null)
+                    {
+                        result.Add(systemEnergySource);
+                    }
+                }
+            }
+
             List<PlantRoom> plantRooms = tPDDoc.PlantRooms();
             if (plantRooms == null)
             {

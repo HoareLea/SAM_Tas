@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -17,6 +18,12 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemPump result = new SystemPump(@dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
+
+            List<FuelSource> fuelSources = Query.FuelSources(pump as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
+            {
+                result.SetValue(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName, fuelSources[0]?.Name);
+            }
 
             result.Description = dynamic.Description;
             result.OverallEfficiency = pump.OverallEfficiency?.ToSAM();

@@ -23,6 +23,15 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignTemperatureDiffrence = @dynamic.DesignDeltaT;
             result.Duty = ((SizedVariable)@dynamic.Duty)?.ToSAM();
 
+            for (int i = 1; i <= multiChiller.Multiplicity; i++)
+            {
+                SystemMultiChillerItem systemMultiChillerItem = new SystemMultiChillerItem();
+                systemMultiChillerItem.Efficiency = multiChiller.GetChillerEfficiency(i)?.ToSAM();
+                systemMultiChillerItem.Percentage = multiChiller.GetChillerPercentage(i);
+                systemMultiChillerItem.Threshold = multiChiller.GetChillerThreshold(i);
+                result.Add(systemMultiChillerItem);
+            }
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemMultiChiller displaySystemMultiChiller = Systems.Create.DisplayObject<DisplaySystemMultiChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());

@@ -2,6 +2,7 @@
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Systems;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -38,10 +39,16 @@ namespace SAM.Analytical.Tas.TPD
                 };
             }
 
+            Modify.SetReference(systemChiller, @dynamic.GUID);
+
+            List<FuelSource> fuelSources = Query.FuelSources(absorptionChiller as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
+            {
+                systemChiller.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[0].Name);
+            }
+
             systemChiller.Description = dynamic.Description;
             systemChiller.Duty = dynamic.Duty?.ToSAM();
-
-            Modify.SetReference(systemChiller, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
@@ -86,7 +93,17 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             Modify.SetReference(result, @dynamic.GUID);
-            
+
+            List<FuelSource> fuelSources = Query.FuelSources(chiller as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
+            {
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0].Name);
+                if (fuelSources.Count > 1)
+                {
+                    result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1].Name);
+                }
+            }
+
             result.Description = dynamic.Description;
             result.Duty = chiller.Duty?.ToSAM();
 
@@ -177,14 +194,36 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = iceStorageChiller;
 
+            List<FuelSource> fuelSources = Query.FuelSources(iceStorageChiller as PlantComponent);
+
             SystemChiller result = null;
             if (waterSource)
             {
                 result = new SystemWaterSourceIceStorageChiller(@dynamic.Name);
+                if (fuelSources != null && fuelSources.Count > 0)
+                {
+                    result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
+                    if (fuelSources.Count > 1)
+                    {
+                        result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
+                    }
+                }
             }
             else
             {
                 result = new SystemIceStorageChiller(@dynamic.Name);
+                if (fuelSources != null && fuelSources.Count > 0)
+                {
+                    result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
+                    if (fuelSources.Count > 1)
+                    {
+                        result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
+                        if (fuelSources.Count > 2)
+                        {
+                            result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[2]?.Name);
+                        }
+                    }
+                }
             }
 
             result.Description = dynamic.Description;

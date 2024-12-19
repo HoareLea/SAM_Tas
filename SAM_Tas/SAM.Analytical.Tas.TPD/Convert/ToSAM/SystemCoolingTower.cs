@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -17,7 +18,17 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemCoolingTower result = new SystemCoolingTower(@dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
-            
+
+            List<FuelSource> fuelSources = Query.FuelSources(coolingTower as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
+            {
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
+                if(fuelSources.Count > 1)
+                {
+                    result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1]?.Name);
+                }
+            }
+
             result.Description = dynamic.Description;
             result.Capacity = @dynamic.Capacity;
             result.DesignPressureDrop = @dynamic.DesignPressureDrop;
