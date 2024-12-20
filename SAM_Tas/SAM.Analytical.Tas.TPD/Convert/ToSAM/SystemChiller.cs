@@ -89,7 +89,15 @@ namespace SAM.Analytical.Tas.TPD
             }
             else
             {
-                result = new SystemAirSourceChiller(@dynamic.Name);
+                SystemAirSourceChiller systemAirSourceChiller = new SystemAirSourceChiller(@dynamic.Name);
+                systemAirSourceChiller.Setpoint = chiller.Setpoint?.ToSAM();
+                systemAirSourceChiller.Efficiency = chiller.Efficiency?.ToSAM();
+                systemAirSourceChiller.CondenserFanLoad = chiller.CondenserFanLoad?.ToSAM();
+                systemAirSourceChiller.DesignTemperatureDifference = chiller.DesignDeltaT;
+                systemAirSourceChiller.Capacity = chiller.Capacity;
+                systemAirSourceChiller.DesignPressureDrop = chiller.DesignPressureDrop;
+                
+                result = systemAirSourceChiller;
             }
 
             Modify.SetReference(result, @dynamic.GUID);
