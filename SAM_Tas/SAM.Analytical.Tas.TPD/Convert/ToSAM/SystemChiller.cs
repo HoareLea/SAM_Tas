@@ -159,7 +159,17 @@ namespace SAM.Analytical.Tas.TPD
             }
             else
             {
-                result = new SystemWaterSourceChiller(@dynamic.Name);
+                SystemWaterSourceChiller systemWaterSourceChiller = new SystemWaterSourceChiller(@dynamic.Name);
+                systemWaterSourceChiller.Setpoint = @dynamic.Setpoint?.ToSAM();
+                systemWaterSourceChiller.Efficiency = @dynamic.Efficiency?.ToSAM();
+                systemWaterSourceChiller.Capacity1 = @dynamic.Capacity1;
+                systemWaterSourceChiller.DesignPressureDrop1 = @dynamic.DesignPressureDrop1;
+                systemWaterSourceChiller.DesignTemperatureDifference1 = @dynamic.DesignDeltaT1;
+                systemWaterSourceChiller.Capacity2 = @dynamic.Capacity2;
+                systemWaterSourceChiller.DesignPressureDrop2 = @dynamic.DesignPressureDrop2;
+                systemWaterSourceChiller.DesignTemperatureDifference2 = @dynamic.DesignDeltaT2;
+
+                result = systemWaterSourceChiller;
             }
 
             result.Description = dynamic.Description;
