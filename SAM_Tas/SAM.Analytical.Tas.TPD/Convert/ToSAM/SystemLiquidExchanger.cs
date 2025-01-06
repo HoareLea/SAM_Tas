@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
             
-            result.Efficiency = dynamic.Efficiency;
+            result.Efficiency = ((ProfileData)@dynamic.Efficiency).ToSAM();
 
             result.Capacity1 = dynamic.Capacity1;
             result.Capacity2 = dynamic.Capacity2;
