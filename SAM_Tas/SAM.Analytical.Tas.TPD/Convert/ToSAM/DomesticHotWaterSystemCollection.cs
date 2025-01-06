@@ -21,6 +21,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Description = dynamic.Description;
             result.MinimumReturnTemperature = dynamic.MinimumReturnTemp;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            result.LoadDistribution = ((tpdLoadDistribution)dynamic.LoadDistribution).ToSAM();
             if (dynamic.UseDistributionHeatLossProfile)
             {
                 ProfileData profileData = dynamic.DistributionHeatLossProfile;
