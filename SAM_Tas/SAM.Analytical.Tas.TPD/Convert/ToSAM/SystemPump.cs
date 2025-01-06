@@ -28,7 +28,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Description = dynamic.Description;
             result.OverallEfficiency = pump.OverallEfficiency?.ToSAM();
             result.Pressure = pump.Pressure;
-            result.DesignFrowRate = pump.DesignFlowRate;
+            result.DesignFlowRate = pump.DesignFlowRate;
             result.Capacity = pump.Capacity;
             result.PartLoad = pump.PartLoad?.ToSAM();
             result.FanControlType = pump.ControlType.ToSAM();
