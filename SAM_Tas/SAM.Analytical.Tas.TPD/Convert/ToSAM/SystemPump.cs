@@ -31,7 +31,7 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignFlowRate = pump.DesignFlowRate;
             result.Capacity = pump.Capacity;
             result.PartLoad = pump.PartLoad?.ToSAM();
-            result.FanControlType = pump.ControlType.ToSAM();
+            //result.FanControlType = pump.ControlType.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
