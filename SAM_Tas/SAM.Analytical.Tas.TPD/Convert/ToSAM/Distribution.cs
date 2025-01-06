@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static ModifiableValue ToSAM(this IProfileData profileData)
+        public static Distribution ToSAM(this IProfileData profileData, bool isEfficiency)
         {
             if (profileData == null)
             {
@@ -19,12 +19,12 @@ namespace SAM.Analytical.Tas.TPD
             IModifier modifier = null;
 
             List<ProfileDataModifier> profileDataModifiers = Query.ProfileDataModifiers(profileData);
-            if(profileDataModifiers != null && profileDataModifiers.Count != 0)
+            if (profileDataModifiers != null && profileDataModifiers.Count != 0)
             {
                 modifier = ToSAM(profileDataModifiers);
             }
 
-            return new ModifiableValue(modifier, value);
+            return new Distribution(modifier, value, isEfficiency);
         }
     }
 }

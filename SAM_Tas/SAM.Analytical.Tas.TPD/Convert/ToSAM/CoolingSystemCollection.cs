@@ -24,11 +24,10 @@ namespace SAM.Analytical.Tas.TPD
             result.PeakDemand = dynamic.PeakDemand;
             result.SizeFraction = dynamic.SizeFraction;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
-            if(dynamic.UseDistributionHeatGainProfile)
-            {
-                ProfileData profileData = dynamic.DistributionHeatGainProfile;
-                result.Distribution = profileData.ToSAM();
-            }
+
+            bool isEfficiency = !dynamic.UseDistributionHeatGainProfile;
+            ProfileData profileData = isEfficiency ? dynamic.DistributionEfficiency : dynamic.DistributionHeatGainProfile;
+            result.Distribution = profileData.ToSAM(isEfficiency);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

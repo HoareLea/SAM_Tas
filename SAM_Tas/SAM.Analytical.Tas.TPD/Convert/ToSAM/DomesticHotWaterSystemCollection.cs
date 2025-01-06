@@ -22,11 +22,10 @@ namespace SAM.Analytical.Tas.TPD
             result.MinimumReturnTemperature = dynamic.MinimumReturnTemp;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
             result.LoadDistribution = ((tpdLoadDistribution)dynamic.LoadDistribution).ToSAM();
-            if (dynamic.UseDistributionHeatLossProfile)
-            {
-                ProfileData profileData = dynamic.DistributionHeatLossProfile;
-                result.Distribution = profileData.ToSAM();
-            }
+
+            bool isEfficiency = !dynamic.UseDistributionHeatLossProfile;
+            ProfileData profileData = isEfficiency ? dynamic.DistributionEfficiency : dynamic.DistributionHeatLossProfile;
+            result.Distribution = profileData.ToSAM(isEfficiency);
 
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
