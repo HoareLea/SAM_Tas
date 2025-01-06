@@ -19,10 +19,31 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
 
             result.Description = dynamic.Description;
+            
+            result.Efficiency = dynamic.Efficiency;
+
+            result.Capacity1 = dynamic.Capacity1;
+            result.Capacity2 = dynamic.Capacity2;
+
             result.DesignPressureDrop1 = @dynamic.DesignPressureDrop1;
             result.DesignPressureDrop2 = @dynamic.DesignPressureDrop2;
 
+            result.BypassPosition = ((tpdExchangerPosition)@dynamic.BypassPosition).ToSAM();
+
+            result.Setpoint = ((ProfileData)@dynamic.Setpoint).ToSAM();
+
+            result.SetpointPosition = ((tpdExchangerPosition)@dynamic.SetpointPosition).ToSAM();
+
+            result.Setpoint2 = ((ProfileData)@dynamic.Setpoint2).ToSAM();
+
+            result.ExchangerCalculationMethod = ((tpdExchangerCalcMethod)@dynamic.ExchCalcType).ToSAM();
+
+            result.ExchangerType = ((tpdExchangerType)@dynamic.ExchangerType).ToSAM();
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            result.HeatTransferSurfaceArea = @dynamic.HeatTransSurfArea;
+            result.HeatTransferCoefficient = @dynamic.HeatTransCoeff;
 
             DisplaySystemLiquidExchanger displaySystemLiquidExchanger = Systems.Create.DisplayObject<DisplaySystemLiquidExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if (displaySystemLiquidExchanger != null)
