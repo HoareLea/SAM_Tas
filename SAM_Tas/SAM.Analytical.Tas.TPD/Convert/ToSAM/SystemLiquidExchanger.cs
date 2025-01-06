@@ -34,7 +34,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.SetpointPosition = ((tpdExchangerPosition)@dynamic.SetpointPosition).ToSAM();
 
-            result.Setpoint2 = ((ProfileData)@dynamic.Setpoint2).ToSAM();
+            //result.Setpoint2 = ((ProfileData)@dynamic.Setpoint2).ToSAM();
 
             result.ExchangerCalculationMethod = ((tpdExchangerCalcMethod)@dynamic.ExchCalcType).ToSAM();
 
