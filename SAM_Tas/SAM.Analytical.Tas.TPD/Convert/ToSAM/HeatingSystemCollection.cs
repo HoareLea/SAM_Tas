@@ -19,13 +19,14 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
 
             result.Description = dynamic.Description;
-            result.MinimumReturnTemperature = heatingGroup.MinimumReturnTemp;
-            result.VariableFlowCapacity = heatingGroup.VariableFlowCapacity == 1;
-            result.PeakDemand = heatingGroup.PeakDemand;
-            result.SizeFraction = heatingGroup.SizeFraction;
-            if (heatingGroup.UseDistributionHeatLossProfile == -1)
+            result.MinimumReturnTemperature = dynamic.MinimumReturnTemp;
+            result.VariableFlowCapacity = dynamic.VariableFlowCapacity == 1;
+            result.PeakDemand = dynamic.PeakDemand;
+            result.SizeFraction = dynamic.SizeFraction;
+            result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            if (dynamic.UseDistributionHeatLossProfile == -1)
             {
-                result.Distribution = heatingGroup.DistributionHeatLossProfile.ToSAM();
+                result.Distribution = dynamic.DistributionHeatLossProfile.ToSAM();
             }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
