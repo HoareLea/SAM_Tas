@@ -20,13 +20,14 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
             result.MinimumReturnTemperature = dynamic.MinimumReturnTemp;
-            result.VariableFlowCapacity = dynamic.VariableFlowCapacity == 1;
+            result.VariableFlowCapacity = dynamic.VariableFlowCapacity;
             result.PeakDemand = dynamic.PeakDemand;
             result.SizeFraction = dynamic.SizeFraction;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
-            if (dynamic.UseDistributionHeatLossProfile == -1)
+            if (dynamic.UseDistributionHeatLossProfile)
             {
-                result.Distribution = dynamic.DistributionHeatLossProfile.ToSAM();
+                ProfileData profileData = dynamic.DistributionHeatLossProfile;
+                result.Distribution = profileData.ToSAM();
             }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
