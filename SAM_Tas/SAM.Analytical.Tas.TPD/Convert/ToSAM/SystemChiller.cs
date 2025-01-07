@@ -96,7 +96,8 @@ namespace SAM.Analytical.Tas.TPD
                 systemAirSourceChiller.DesignTemperatureDifference = chiller.DesignDeltaT;
                 systemAirSourceChiller.Capacity = chiller.Capacity;
                 systemAirSourceChiller.DesignPressureDrop = chiller.DesignPressureDrop;
-                
+                systemAirSourceChiller.LossesInSizing = dynamic.LossesInSizing;
+
                 result = systemAirSourceChiller;
             }
 
