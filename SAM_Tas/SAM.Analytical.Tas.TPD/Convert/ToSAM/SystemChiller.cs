@@ -161,8 +161,8 @@ namespace SAM.Analytical.Tas.TPD
             else
             {
                 SystemWaterSourceChiller systemWaterSourceChiller = new SystemWaterSourceChiller(@dynamic.Name);
-                systemWaterSourceChiller.Setpoint = @dynamic.Setpoint?.ToSAM();
-                systemWaterSourceChiller.Efficiency = @dynamic.Efficiency?.ToSAM();
+                systemWaterSourceChiller.Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM();
+                systemWaterSourceChiller.Efficiency = ((ProfileData)@dynamic.Efficiency)?.ToSAM();
                 systemWaterSourceChiller.Capacity1 = @dynamic.Capacity1;
                 systemWaterSourceChiller.DesignPressureDrop1 = @dynamic.DesignPressureDrop1;
                 systemWaterSourceChiller.DesignTemperatureDifference1 = @dynamic.DesignDeltaT1;
