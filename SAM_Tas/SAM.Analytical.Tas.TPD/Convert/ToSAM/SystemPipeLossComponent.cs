@@ -29,7 +29,7 @@ namespace SAM.Analytical.Tas.TPD
             result.InsulationConductivity = dynamic.InsConductivity;
             result.AmbientTemperature = ((ProfileData)dynamic.AmbTemp)?.ToSAM();
 
-            result.IsUnderground = dynamic.IsUnderground == 1;
+            result.IsUnderground = dynamic.IsUnderground;
             result.GroundConductivity = dynamic.GrConductivity;
             result.GroundHeatCapacity = dynamic.GrHeatCapacity;
             result.GroundDensity = dynamic.GrDensity;
