@@ -22,12 +22,18 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
             result.Capacity = dynamic.Capacity;
             result.Length = dynamic.length;
-            result.InsidePipeDiameter = pipeLossComponent.PipeDiamIn;
-            result.OutsidePipeDiameter = pipeLossComponent.PipeDiamOut;
-            result.PipeConductivity = pipeLossComponent.PipeConductivity;
-            result.InsulationThickness = pipeLossComponent.InsThickness;
-            result.InsulationConductivity = pipeLossComponent.InsConductivity;
-            result.AmbientTemperature = pipeLossComponent.AmbTemp?.ToSAM();
+            result.InsidePipeDiameter = dynamic.PipeDiamIn;
+            result.OutsidePipeDiameter = dynamic.PipeDiamOut;
+            result.PipeConductivity = dynamic.PipeConductivity;
+            result.InsulationThickness = dynamic.InsThickness;
+            result.InsulationConductivity = dynamic.InsConductivity;
+            result.AmbientTemperature = ((ProfileData)dynamic.AmbTemp)?.ToSAM();
+
+            result.IsUnderground = dynamic.IsUnderground == 1;
+            result.GroundConductivity = dynamic.GrConductivity;
+            result.GroundHeatCapacity = dynamic.GrHeatCapacity;
+            result.GroundDensity = dynamic.GrDensity;
+            result.GroundTemperature = dynamic.GrTemp;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
