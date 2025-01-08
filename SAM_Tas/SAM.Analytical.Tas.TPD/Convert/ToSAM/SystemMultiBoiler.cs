@@ -35,7 +35,8 @@ namespace SAM.Analytical.Tas.TPD
                 systemMultiBoilerItem.Percentage = multiBoiler.GetBoilerPercentage(i);
                 systemMultiBoilerItem.Threshold = multiBoiler.GetBoilerThreshold(i);
                 systemMultiBoilerItem.AncillaryLoad = multiBoiler.GetBoilerAncillaryLoad(i)?.ToSAM();
-                systemMultiBoilerItem.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[i].Name);
+                systemMultiBoilerItem.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[(i - 1) * 2]?.Name);
+                systemMultiBoilerItem.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[((i - 1) * 2) + 1]?.Name);
                 result.Add(systemMultiBoilerItem);
             }
 

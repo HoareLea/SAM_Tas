@@ -35,7 +35,8 @@ namespace SAM.Analytical.Tas.TPD
                 systemMultiChillerItem.Efficiency = multiChiller.GetChillerEfficiency(i)?.ToSAM();
                 systemMultiChillerItem.Percentage = multiChiller.GetChillerPercentage(i);
                 systemMultiChillerItem.Threshold = multiChiller.GetChillerThreshold(i);
-                systemMultiChillerItem.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[i].Name);
+                systemMultiChillerItem.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[(i - 1) * 2]?.Name);
+                systemMultiChillerItem.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[((i - 1) * 2) + 1]?.Name);
 
                 result.Add(systemMultiChillerItem);
             }
