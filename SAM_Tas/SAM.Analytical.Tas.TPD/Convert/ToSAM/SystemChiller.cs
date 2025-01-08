@@ -181,7 +181,27 @@ namespace SAM.Analytical.Tas.TPD
             SystemChiller result = null;
             if (directAbsorptionChiller)
             {
-                result = new SystemWaterSourceDirectAbsorptionChiller(@dynamic.Name);
+                SystemWaterSourceDirectAbsorptionChiller systemWaterSourceDirectAbsorptionChiller = new SystemWaterSourceDirectAbsorptionChiller(@dynamic.Name);
+                systemWaterSourceDirectAbsorptionChiller.Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM();
+                systemWaterSourceDirectAbsorptionChiller.Efficiency = ((ProfileData)@dynamic.Efficiency)?.ToSAM();
+                systemWaterSourceDirectAbsorptionChiller.Capacity1 = @dynamic.Capacity1;
+                systemWaterSourceDirectAbsorptionChiller.DesignPressureDrop1 = @dynamic.DesignPressureDrop1;
+                systemWaterSourceDirectAbsorptionChiller.DesignTemperatureDifference1 = @dynamic.DesignDeltaT1;
+                systemWaterSourceDirectAbsorptionChiller.Capacity2 = @dynamic.Capacity2;
+                systemWaterSourceDirectAbsorptionChiller.DesignPressureDrop2 = @dynamic.DesignPressureDrop2;
+                systemWaterSourceDirectAbsorptionChiller.DesignTemperatureDifference2 = @dynamic.DesignDeltaT2;
+                systemWaterSourceDirectAbsorptionChiller.LossesInSizing = dynamic.LossesInSizing;
+                systemWaterSourceDirectAbsorptionChiller.MotorEfficiency = ((ProfileData)@dynamic.MotorEfficiency)?.ToSAM();
+
+                systemWaterSourceDirectAbsorptionChiller.ExchangerCalculationMethod = ((tpdExchangerCalcMethod)@dynamic.ExchCalcType).ToSAM();
+                systemWaterSourceDirectAbsorptionChiller.ExchangerEfficiency = ((ProfileData)@dynamic.ExchangerEfficiency)?.ToSAM();
+                systemWaterSourceDirectAbsorptionChiller.HeatTransferSurfaceArea = dynamic.HeatTransSurfArea;
+                systemWaterSourceDirectAbsorptionChiller.HeatTransferCoefficient = dynamic.HeatTransCoeff;
+                systemWaterSourceDirectAbsorptionChiller.ExchangerType = ((tpdExchangerType)@dynamic.ExchangerType).ToSAM();
+                systemWaterSourceDirectAbsorptionChiller.AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM();
+                systemWaterSourceDirectAbsorptionChiller.FreeCoolingType = ((tpdFreeCoolingType)@dynamic.FreeCoolingType).ToSAM();
+
+                result = systemWaterSourceDirectAbsorptionChiller;
             }
             else
             {
