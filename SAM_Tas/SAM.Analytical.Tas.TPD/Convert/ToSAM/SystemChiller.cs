@@ -101,7 +101,16 @@ namespace SAM.Analytical.Tas.TPD
             SystemChiller result = null;
             if (directAbsorptionChiller)
             {
-                result = new SystemAirSourceDirectAbsorptionChiller(@dynamic.Name);
+                SystemAirSourceDirectAbsorptionChiller systemAirSourceDirectAbsorptionChiller = new SystemAirSourceDirectAbsorptionChiller(@dynamic.Name);
+                systemAirSourceDirectAbsorptionChiller.Setpoint = chiller.Setpoint?.ToSAM();
+                systemAirSourceDirectAbsorptionChiller.Efficiency = chiller.Efficiency?.ToSAM();
+                systemAirSourceDirectAbsorptionChiller.CondenserFanLoad = chiller.CondenserFanLoad?.ToSAM();
+                systemAirSourceDirectAbsorptionChiller.DesignTemperatureDifference = chiller.DesignDeltaT;
+                systemAirSourceDirectAbsorptionChiller.Capacity = chiller.Capacity;
+                systemAirSourceDirectAbsorptionChiller.DesignPressureDrop = chiller.DesignPressureDrop;
+                systemAirSourceDirectAbsorptionChiller.LossesInSizing = dynamic.LossesInSizing;
+
+                result = systemAirSourceDirectAbsorptionChiller;
             }
             else
             {
