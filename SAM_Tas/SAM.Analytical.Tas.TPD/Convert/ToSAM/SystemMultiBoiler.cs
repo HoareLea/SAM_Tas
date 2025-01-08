@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -25,6 +26,8 @@ namespace SAM.Analytical.Tas.TPD
             result.LossesInSizing = multiBoiler.LossesInSizing == 1;
             result.Sequence = multiBoiler.Sequence.ToSAM();
 
+            List<FuelSource> fuelSources = Query.FuelSources(multiBoiler as PlantComponent);
+
             for (int i = 1; i <= multiBoiler.Multiplicity; i++)
             {
                 SystemMultiBoilerItem systemMultiBoilerItem = new SystemMultiBoilerItem();
@@ -32,6 +35,7 @@ namespace SAM.Analytical.Tas.TPD
                 systemMultiBoilerItem.Percentage = multiBoiler.GetBoilerPercentage(i);
                 systemMultiBoilerItem.Threshold = multiBoiler.GetBoilerThreshold(i);
                 systemMultiBoilerItem.AncillaryLoad = multiBoiler.GetBoilerAncillaryLoad(i)?.ToSAM();
+                systemMultiBoilerItem.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[i].Name);
                 result.Add(systemMultiBoilerItem);
             }
 

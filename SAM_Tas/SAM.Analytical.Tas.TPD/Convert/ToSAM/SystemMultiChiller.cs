@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -26,12 +27,16 @@ namespace SAM.Analytical.Tas.TPD
             result.Capacity = @dynamic.Capacity;
             result.Sequence = ((tpdBoilerSequence)@dynamic.Sequence).ToSAM();
 
+            List<FuelSource> fuelSources = Query.FuelSources(multiChiller as PlantComponent);
+
             for (int i = 1; i <= multiChiller.Multiplicity; i++)
             {
                 SystemMultiChillerItem systemMultiChillerItem = new SystemMultiChillerItem();
                 systemMultiChillerItem.Efficiency = multiChiller.GetChillerEfficiency(i)?.ToSAM();
                 systemMultiChillerItem.Percentage = multiChiller.GetChillerPercentage(i);
                 systemMultiChillerItem.Threshold = multiChiller.GetChillerThreshold(i);
+                systemMultiChillerItem.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[i].Name);
+
                 result.Add(systemMultiChillerItem);
             }
 
