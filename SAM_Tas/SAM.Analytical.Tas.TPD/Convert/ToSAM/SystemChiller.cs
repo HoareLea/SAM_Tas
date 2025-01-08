@@ -299,7 +299,26 @@ namespace SAM.Analytical.Tas.TPD
             }
             else
             {
-                result = new SystemIceStorageChiller(@dynamic.Name);
+                SystemIceStorageChiller systemIceStorageChiller = new SystemIceStorageChiller(@dynamic.Name)
+                {
+                    Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM(),
+                    Efficiency = ((ProfileData)@dynamic.Efficiency)?.ToSAM(),
+                    IceMakingEfficiency = ((ProfileData)@dynamic.IceMakingEfficiency)?.ToSAM(),
+                    Capacity1 = @dynamic.Capacity1,
+                    DesignPressureDrop1 = @dynamic.DesignPressureDrop1,
+                    DesignTemperatureDifference1 = @dynamic.DesignDeltaT1,
+                    Capacity2 = @dynamic.Capacity2,
+                    DesignPressureDrop2 = @dynamic.DesignPressureDrop2,
+                    DesignTemperatureDifference2 = @dynamic.DesignDeltaT2,
+                    IceCapacity = ((SizedVariable)dynamic.IceCapacity)?.ToSAM(),
+                    InitialIceReserve = @dynamic.InitialIceReserve,
+                    CondenserFanLoad = ((ProfileData)@dynamic.CondenserFanLoad)?.ToSAM(),
+                    MotorEfficiency = ((ProfileData)@dynamic.MotorEfficiency)?.ToSAM(),
+                    IceMeltChillerFraction = @dynamic.IceMeltChillerFraction,
+                    AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM(),
+                    LossesInSizing = dynamic.LossesInSizing
+                };
+
                 if (fuelSources != null && fuelSources.Count > 0)
                 {
                     result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
@@ -312,9 +331,12 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
                 }
+
+                result = systemIceStorageChiller;
             }
 
             result.Description = dynamic.Description;
+            result.Duty = ((SizedVariable)dynamic.Duty)?.ToSAM();
             Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
