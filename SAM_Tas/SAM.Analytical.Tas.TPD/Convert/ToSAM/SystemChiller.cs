@@ -172,6 +172,14 @@ namespace SAM.Analytical.Tas.TPD
                 systemWaterSourceChiller.LossesInSizing = dynamic.LossesInSizing;
                 systemWaterSourceChiller.MotorEfficiency = ((ProfileData)@dynamic.MotorEfficiency)?.ToSAM();
 
+                systemWaterSourceChiller.ExchangerCalculationMethod = ((tpdExchangerCalcMethod)@dynamic.ExchCalcType).ToSAM();
+                systemWaterSourceChiller.ExchangerEfficiency = ((ProfileData)@dynamic.ExchangerEfficiency)?.ToSAM();
+                systemWaterSourceChiller.HeatTransferSurfaceArea = dynamic.HeatTransSurfArea;
+                systemWaterSourceChiller.HeatTransferCoefficient = dynamic.HeatTransCoeff;
+                systemWaterSourceChiller.ExchangerType = ((tpdExchangerType)@dynamic.ExchangerType).ToSAM();
+                systemWaterSourceChiller.AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM();
+                systemWaterSourceChiller.FreeCoolingType = ((tpdFreeCoolingType)@dynamic.FreeCoolingType).ToSAM();
+
                 result = systemWaterSourceChiller;
             }
 
