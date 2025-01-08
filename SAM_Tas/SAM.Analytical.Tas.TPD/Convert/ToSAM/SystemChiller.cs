@@ -33,9 +33,17 @@ namespace SAM.Analytical.Tas.TPD
             {
                 systemChiller = new SystemAbsorptionChiller(@dynamic.Name)
                 {
-                    DesignPressureDrop1 = absorptionChiller.DesignPressureDrop1,
-                    DesignPressureDrop2 = absorptionChiller.DesignPressureDrop2,
-                    DesignPressureDrop3 = absorptionChiller.DesignPressureDrop3,
+                    Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM(),
+                    Efficiency = ((ProfileData)@dynamic.Efficiency)?.ToSAM(),
+                    Capacity1 = @dynamic.Capacity1,
+                    Capacity2 = @dynamic.Capacity2,
+                    Capacity3 = @dynamic.Capacity3,
+                    DesignPressureDrop1 = @dynamic.DesignPressureDrop1,
+                    DesignPressureDrop2 = @dynamic.DesignPressureDrop2,
+                    DesignPressureDrop3 = @dynamic.DesignPressureDrop3,
+                    AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM(),
+                    MinimalOutSourceTemperature = ((ProfileData)@dynamic.MinOutTempSource)?.ToSAM(),
+                    LossesInSizing = dynamic.LossesInSizing
                 };
             }
 
