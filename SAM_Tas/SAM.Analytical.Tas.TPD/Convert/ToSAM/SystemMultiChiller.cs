@@ -22,6 +22,9 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop = @dynamic.DesignPressureDrop;
             result.DesignTemperatureDiffrence = @dynamic.DesignDeltaT;
             result.Duty = ((SizedVariable)@dynamic.Duty)?.ToSAM();
+            result.Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM();
+            result.Capacity = @dynamic.Capacity;
+            result.Sequence = ((tpdBoilerSequence)@dynamic.Sequence).ToSAM();
 
             for (int i = 1; i <= multiChiller.Multiplicity; i++)
             {

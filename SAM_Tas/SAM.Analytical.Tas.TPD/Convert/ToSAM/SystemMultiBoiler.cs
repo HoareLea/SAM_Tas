@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Duty = multiBoiler.Duty?.ToSAM();
             result.DesignTemperatureDifference = multiBoiler.DesignDeltaT;
             result.LossesInSizing = multiBoiler.LossesInSizing == 1;
-            result.BoilerSequence = multiBoiler.Sequence.ToSAM();
+            result.Sequence = multiBoiler.Sequence.ToSAM();
 
             for (int i = 1; i <= multiBoiler.Multiplicity; i++)
             {

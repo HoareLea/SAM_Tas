@@ -5,18 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SAM.Analytical.Systems.BoilerSequence ToSAM(this tpdBoilerSequence tpdBoilerSequence)
+        public static EquipmentSequence ToSAM(this tpdBoilerSequence tpdBoilerSequence)
         {
             switch(tpdBoilerSequence)
             {
                 case tpdBoilerSequence.tpdBoilerSequenceParallel:
-                    return BoilerSequence.Parallel;
+                    return EquipmentSequence.Parallel;
 
                 case tpdBoilerSequence.tpdBoilerSequenceSerial:
-                    return BoilerSequence.Serial;
+                    return EquipmentSequence.Serial;
 
                 case tpdBoilerSequence.tpdBoilerSequenceStaging:
-                    return BoilerSequence.Staging;
+                    return EquipmentSequence.Staging;
             }
 
             throw new System.NotImplementedException();
