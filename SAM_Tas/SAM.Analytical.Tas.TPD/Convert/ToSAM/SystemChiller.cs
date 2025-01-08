@@ -48,9 +48,9 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             systemChiller.Description = dynamic.Description;
-            systemChiller.Duty = dynamic.Duty?.ToSAM();
+            systemChiller.Duty = ((SizedVariable)dynamic.Duty)?.ToSAM();
 
-            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+            Point2D location = ((TasPosition)dynamic.GetPosition())?.ToSAM();
 
             IDisplaySystemObject result = null;
             if (waterSource)
@@ -169,11 +169,27 @@ namespace SAM.Analytical.Tas.TPD
                 systemWaterSourceChiller.Capacity2 = @dynamic.Capacity2;
                 systemWaterSourceChiller.DesignPressureDrop2 = @dynamic.DesignPressureDrop2;
                 systemWaterSourceChiller.DesignTemperatureDifference2 = @dynamic.DesignDeltaT2;
+                systemWaterSourceChiller.LossesInSizing = dynamic.LossesInSizing;
+                systemWaterSourceChiller.MotorEfficiency = ((ProfileData)@dynamic.MotorEfficiency)?.ToSAM();
 
                 result = systemWaterSourceChiller;
             }
 
             result.Description = dynamic.Description;
+
+            result.Duty = ((SizedVariable)dynamic.Duty)?.ToSAM();
+
+
+            List<FuelSource> fuelSources = Query.FuelSources(waterSourceChiller as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
+            {
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0].Name);
+                if (fuelSources.Count > 1)
+                {
+                    result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1].Name);
+                }
+            }
+
             Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
