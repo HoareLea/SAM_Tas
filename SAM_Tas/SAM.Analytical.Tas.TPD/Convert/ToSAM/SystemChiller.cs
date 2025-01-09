@@ -321,13 +321,13 @@ namespace SAM.Analytical.Tas.TPD
 
                 if (fuelSources != null && fuelSources.Count > 0)
                 {
-                    result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
+                    systemIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
                     if (fuelSources.Count > 1)
                     {
-                        result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
+                        systemIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
                         if (fuelSources.Count > 2)
                         {
-                            result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[2]?.Name);
+                            systemIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[2]?.Name);
                         }
                     }
                 }
