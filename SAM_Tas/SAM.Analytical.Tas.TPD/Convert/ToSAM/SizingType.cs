@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas.TPD
                     return SizingType.Value;
 
                 case global::TPD.tpdSizedVariable.tpdSizedVariableNone:
-                    return SizingType.Value;
+                    return SizingType.None;
             }
 
             throw new System.NotImplementedException();
