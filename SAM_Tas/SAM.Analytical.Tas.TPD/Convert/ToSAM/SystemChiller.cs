@@ -312,7 +312,7 @@ namespace SAM.Analytical.Tas.TPD
                     systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
                     if (fuelSources.Count > 1)
                     {
-                        systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
+                        systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1]?.Name);
                     }
                 }
 
