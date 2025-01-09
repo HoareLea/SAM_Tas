@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -15,7 +16,38 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = airSourceHeatPump;
 
-            SystemAirSourceHeatPump result = new SystemAirSourceHeatPump(@dynamic.Name);
+            SystemAirSourceHeatPump result = new SystemAirSourceHeatPump(@dynamic.Name)
+            {
+                HeatPumpType = ((tpdHeatPumpType)@dynamic.Type).ToSAM(),
+                CoolingCapacity = ((SizedVariable)@dynamic.CoolingCapacity)?.ToSAM(),
+                CoolingPower = ((ProfileData)@dynamic.CoolingPower)?.ToSAM(),
+                HeatingCapacity = ((ProfileData)@dynamic.HeatingCapacity)?.ToSAM(),
+                HeatingPower = ((ProfileData)@dynamic.HeatingPower)?.ToSAM(),
+                CondenserFanLoad = ((ProfileData)@dynamic.CondenserFanLoad)?.ToSAM(),
+                HeatingCoolingDutyRatio = @dynamic.HeatCoolDutyRatio,
+                HeatingCapacityPowerRatio = @dynamic.HeatCapPowRatio,
+                CoolingCapacityPowerRatio = @dynamic.CoolCapPowRatio,
+                MaxDemandFanRatio = @dynamic.MaxDemFanRatio,
+                StandbyPower = @dynamic.StandbyPower,
+                ADFHeatingMode = @dynamic.ADFHeatMode,
+                ADFCoolingMode = @dynamic.ADFCoolMode,
+                PortHeatingPower = @dynamic.PowHeatPort,
+                PortCoolingPower = @dynamic.PowCoolPort,
+                WaterPipeLength = @dynamic.WaterPipeLength,
+                AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM(),
+                HeatSizeFraction = @dynamic.HeatSizeFraction
+            };
+
+            List<FuelSource> fuelSources = Query.FuelSources(airSourceHeatPump as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
+            {
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0].Name);
+                if (fuelSources.Count > 1)
+                {
+                    result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1].Name);
+                }
+            }
+
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;
