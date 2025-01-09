@@ -30,26 +30,27 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             result.Description = dynamic.Description;
+            
             result.Capacity = @dynamic.Capacity;
             result.DesignPressureDrop = @dynamic.DesignPressureDrop;
-            result.Setpoint = @dynamic.Setpoint.ToSAM();
+            result.Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM();
             result.MinApproach = @dynamic.MinApproach;
-            result.VariableFans = @dynamic.VariableFans == 1;
-            result.FanSFP = @dynamic.FanSFP.ToSAM();
+            result.VariableFans = @dynamic.VariableFans;
+            result.FanSFP = ((ProfileData)@dynamic.FanSFP)?.ToSAM();
             result.HeatTransferCoefficient = @dynamic.HeatTransCoeff;
-            result.HeatTransferSurfaceArea = @dynamic.HeatTransSurfArea?.ToSAM();
+            result.HeatTransferSurfaceArea = ((SizedVariable)@dynamic.HeatTransSurfArea)?.ToSAM();
             result.LimitingWetBulbTemperature = @dynamic.LimitingWetbulb;
             result.DesignApproach = @dynamic.DesignApproach;
             result.DesignRange = @dynamic.DesignRange;
             result.DesignWaterFlowRate = @dynamic.DesignWaterFlowRate;
-            result.MaxAirFlowRate = @dynamic.MaxAirFlowRate?.ToSAM();
+            result.MaxAirFlowRate = ((ProfileData)@dynamic.MaxAirFlowRate)?.ToSAM();
             result.FanLoadRatio = @dynamic.FanLoadRatio;
             result.AirWaterFlowRatio = @dynamic.AirWaterFlowRatio;
             result.MinAirFlowRate = @dynamic.MinAirFlowRate;
             result.FanMode2Ratio = @dynamic.FanMode2Ratio;
             result.WaterDriftLoss = @dynamic.WaterDriftLoss;
             result.BlowdownConcentrationRatio = @dynamic.BlowdownConcentrationRatio;
-            result.AncillaryLoad = @dynamic.AncillaryLoad?.ToSAM();
+            result.AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
