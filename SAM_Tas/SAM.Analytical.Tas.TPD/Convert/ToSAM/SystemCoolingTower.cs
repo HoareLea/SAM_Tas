@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
                 result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
                 if(fuelSources.Count > 1)
                 {
-                    result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1]?.Name);
+                    result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
                 }
             }
 
@@ -39,13 +39,16 @@ namespace SAM.Analytical.Tas.TPD
             result.FanSFP = ((ProfileData)@dynamic.FanSFP)?.ToSAM();
             result.HeatTransferCoefficient = @dynamic.HeatTransCoeff;
             result.HeatTransferSurfaceArea = ((SizedVariable)@dynamic.HeatTransSurfArea)?.ToSAM();
+            result.LimitingWetBulbTemperatureSizingType = ((tpdSizedVariable)@dynamic.DesignExternalWetbulbSource).ToSAM();
             result.LimitingWetBulbTemperature = @dynamic.LimitingWetbulb;
             result.DesignApproach = @dynamic.DesignApproach;
             result.DesignRange = @dynamic.DesignRange;
+            result.DesignWaterFlowRateSizingType = ((tpdSizedVariable)@dynamic.WaterFlowSizingType).ToSAM();
             result.DesignWaterFlowRate = @dynamic.DesignWaterFlowRate;
             result.MaxAirFlowRate = ((ProfileData)@dynamic.MaxAirFlowRate)?.ToSAM();
             result.FanLoadRatio = @dynamic.FanLoadRatio;
             result.AirWaterFlowRatio = @dynamic.AirWaterFlowRatio;
+            result.MinAirFlowRateSizingType = ((tpdSizedVariable)@dynamic.FanSizingType).ToSAM();
             result.MinAirFlowRate = @dynamic.MinAirFlowRate;
             result.FanMode2Ratio = @dynamic.FanMode2Ratio;
             result.WaterDriftLoss = @dynamic.WaterDriftLoss;
