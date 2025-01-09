@@ -20,8 +20,8 @@ namespace SAM.Analytical.Tas.TPD
             {
                 HeatingSetpoint = ((ProfileData)@dynamic.HeatingSetpoint)?.ToSAM(),
                 CoolingSetpoint = ((ProfileData)@dynamic.CoolingSetpoint)?.ToSAM(),
-                HeatingEfficiency = ((ProfileData)@dynamic.CoolingEfficiency)?.ToSAM(),
-                CoolingEfficiency = ((ProfileData)@dynamic.CoolingSetpoint)?.ToSAM(),
+                HeatingEfficiency = ((ProfileData)@dynamic.HeatingEfficiency)?.ToSAM(),
+                CoolingEfficiency = ((ProfileData)@dynamic.CoolingEfficiency)?.ToSAM(),
                 HeatingDuty = ((SizedVariable)@dynamic.HeatingDuty)?.ToSAM(),
                 CoolingDuty = ((SizedVariable)@dynamic.CoolingDuty)?.ToSAM(),
                 Capacity1 = @dynamic.Capacity1,
