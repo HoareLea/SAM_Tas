@@ -287,19 +287,7 @@ namespace SAM.Analytical.Tas.TPD
             SystemChiller result = null;
             if (waterSource)
             {
-                result = new SystemWaterSourceIceStorageChiller(@dynamic.Name);
-                if (fuelSources != null && fuelSources.Count > 0)
-                {
-                    result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
-                    if (fuelSources.Count > 1)
-                    {
-                        result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
-                    }
-                }
-            }
-            else
-            {
-                SystemIceStorageChiller systemIceStorageChiller = new SystemIceStorageChiller(@dynamic.Name)
+                SystemWaterSourceIceStorageChiller systemWaterSourceIceStorageChiller = new SystemWaterSourceIceStorageChiller(@dynamic.Name)
                 {
                     Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM(),
                     Efficiency = ((ProfileData)@dynamic.Efficiency)?.ToSAM(),
@@ -310,6 +298,36 @@ namespace SAM.Analytical.Tas.TPD
                     Capacity2 = @dynamic.Capacity2,
                     DesignPressureDrop2 = @dynamic.DesignPressureDrop2,
                     DesignTemperatureDifference2 = @dynamic.DesignDeltaT2,
+                    IceCapacity = ((SizedVariable)dynamic.IceCapacity)?.ToSAM(),
+                    InitialIceReserve = @dynamic.InitialIceReserve,
+                    CondenserFanLoad = ((ProfileData)@dynamic.CondenserFanLoad)?.ToSAM(),
+                    MotorEfficiency = ((ProfileData)@dynamic.MotorEfficiency)?.ToSAM(),
+                    IceMeltChillerFraction = @dynamic.IceMeltChillerFraction,
+                    AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM(),
+                    LossesInSizing = dynamic.LossesInSizing
+                };
+
+                if (fuelSources != null && fuelSources.Count > 0)
+                {
+                    systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
+                    if (fuelSources.Count > 1)
+                    {
+                        systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
+                    }
+                }
+
+                result = systemWaterSourceIceStorageChiller;
+            }
+            else
+            {
+                SystemIceStorageChiller systemIceStorageChiller = new SystemIceStorageChiller(@dynamic.Name)
+                {
+                    Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM(),
+                    Efficiency = ((ProfileData)@dynamic.Efficiency)?.ToSAM(),
+                    IceMakingEfficiency = ((ProfileData)@dynamic.IceMakingEfficiency)?.ToSAM(),
+                    Capacity = @dynamic.Capacity1,
+                    DesignPressureDrop = @dynamic.DesignPressureDrop1,
+                    DesignTemperatureDifference = @dynamic.DesignDeltaT1,
                     IceCapacity = ((SizedVariable)dynamic.IceCapacity)?.ToSAM(),
                     InitialIceReserve = @dynamic.InitialIceReserve,
                     CondenserFanLoad = ((ProfileData)@dynamic.CondenserFanLoad)?.ToSAM(),
