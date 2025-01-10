@@ -46,10 +46,10 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignRange = @dynamic.DesignRange;
             result.DesignWaterFlowRateSizingType = ((tpdSizedVariable)@dynamic.WaterFlowSizingType).ToSAM();
             result.DesignWaterFlowRate = @dynamic.DesignWaterFlowRate;
+            result.MaxAirFlowRateSizingType = ((tpdSizedVariable)@dynamic.FanSizingType).ToSAM();
             result.MaxAirFlowRate = ((ProfileData)@dynamic.MaxAirFlowRate)?.ToSAM();
             result.FanLoadRatio = @dynamic.FanLoadRatio;
             result.AirWaterFlowRatio = @dynamic.AirWaterFlowRatio;
-            result.MinAirFlowRateSizingType = ((tpdSizedVariable)@dynamic.FanSizingType).ToSAM();
             result.MinAirFlowRate = @dynamic.MinAirFlowRate;
             result.FanMode2Ratio = @dynamic.FanMode2Ratio;
             result.WaterDriftLoss = @dynamic.WaterDriftLoss;
