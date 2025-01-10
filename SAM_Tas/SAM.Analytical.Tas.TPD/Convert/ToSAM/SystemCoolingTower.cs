@@ -40,13 +40,13 @@ namespace SAM.Analytical.Tas.TPD
             result.HeatTransferCoefficient = @dynamic.HeatTransCoeff;
             result.HeatTransferSurfaceAreaSizingType = ((tpdSizedVariable)@dynamic.HeatTransSurfArea.Type).ToSAM();
             result.HeatTransferSurfaceArea = ((SizedVariable)@dynamic.HeatTransSurfArea)?.ToSAM();
-            result.LimitingWetBulbTemperatureSizingType = ((tpdSizedVariable)@dynamic.DesignExternalWetbulbSource).ToSAM();
-            result.LimitingWetBulbTemperature = @dynamic.LimitingWetbulb;
+            result.ExternalWetBulbTemperatureSizingType = ((tpdSizedVariable)@dynamic.DesignExternalWetbulbSource).ToSAM_ExternalWetBulbTemperatureSizingType();
+            result.ExternalWetBulbTemperature = @dynamic.LimitingWetbulb;
             result.DesignApproach = @dynamic.DesignApproach;
             result.DesignRange = @dynamic.DesignRange;
-            result.DesignWaterFlowRateSizingType = ((tpdSizedVariable)@dynamic.WaterFlowSizingType).ToSAM();
+            result.DesignWaterFlowRateSizingType = ((tpdSizedVariable)@dynamic.WaterFlowSizingType).ToSAM_DesignWaterFlowRateSizingType();
             result.DesignWaterFlowRate = @dynamic.DesignWaterFlowRate;
-            result.MaxAirFlowRateSizingType = ((tpdSizedVariable)@dynamic.FanSizingType).ToSAM();
+            result.MaxAirFlowRateSizingType = ((tpdSizedVariable)@dynamic.FanSizingType).ToSAM_MaxAirFlowRateSizingType();
             result.MaxAirFlowRate = ((ProfileData)@dynamic.MaxAirFlowRate)?.ToSAM();
             result.FanLoadRatio = @dynamic.FanLoadRatio;
             result.AirWaterFlowRatio = @dynamic.AirWaterFlowRatio;
