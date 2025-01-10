@@ -4,21 +4,21 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static ExternalWetBulbTemperatureSizingType ToSAM_ExternalWetBulbTemperatureSizingType(this global::TPD.tpdSizedVariable tpdSizedVariable)
+        public static TemperatureSizingType ToSAM_TemperatureSizingType(this global::TPD.tpdSizedVariable tpdSizedVariable)
         {
             switch(tpdSizedVariable)
             {
                 case global::TPD.tpdSizedVariable.tpdSizedVariableSize:
-                    return ExternalWetBulbTemperatureSizingType.MaxOperating;
+                    return TemperatureSizingType.MaxOperating;
 
                 case global::TPD.tpdSizedVariable.tpdSizedVariableSizeDone:
-                    return ExternalWetBulbTemperatureSizingType.MaxOperating;
+                    return TemperatureSizingType.MaxOperating;
 
                 case global::TPD.tpdSizedVariable.tpdSizedVariableValue:
-                    return ExternalWetBulbTemperatureSizingType.Value;
+                    return TemperatureSizingType.Value;
 
                 case global::TPD.tpdSizedVariable.tpdSizedVariableNone:
-                    return ExternalWetBulbTemperatureSizingType.PeakExternal;
+                    return TemperatureSizingType.PeakExternal;
             }
 
             throw new System.NotImplementedException();

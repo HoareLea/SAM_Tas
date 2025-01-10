@@ -52,8 +52,8 @@ namespace SAM.Analytical.Tas.TPD
             result.MinAirFlowRate = dynamic.MinAirFlowRate;
             result.MinAirFlowRatio = dynamic.MinAFRRatio;
             result.VariableFans = dynamic.VariableFans;
-            result.ExternalWetBulbTemperature = dynamic.DesignExternalDB;
-            result.ExternalWetBulbTemperatureSizingType = ((tpdSizedVariable)dynamic.DesignExternalDBSource).ToSAM_ExternalWetBulbTemperatureSizingType();
+            result.ExternalDryBulbTemperature = dynamic.DesignExternalDB;
+            result.ExternalDryBulbTemperatureSizingType = ((tpdSizedVariable)dynamic.DesignExternalDBSource).ToSAM_TemperatureSizingType();
             result.LimitingDryBulbTemperature = dynamic.LimitingDB;
             result.DesignRange = dynamic.DesignRange;
             result.DesignWaterFlowRate = dynamic.DesignWaterFlowRate;

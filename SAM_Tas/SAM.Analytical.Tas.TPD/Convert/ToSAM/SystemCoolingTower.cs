@@ -40,7 +40,7 @@ namespace SAM.Analytical.Tas.TPD
             result.HeatTransferCoefficient = @dynamic.HeatTransCoeff;
             result.HeatTransferSurfaceAreaSizingType = ((tpdSizedVariable)@dynamic.HeatTransSurfArea.Type).ToSAM();
             result.HeatTransferSurfaceArea = ((SizedVariable)@dynamic.HeatTransSurfArea)?.ToSAM();
-            result.ExternalWetBulbTemperatureSizingType = ((tpdSizedVariable)@dynamic.DesignExternalWetbulbSource).ToSAM_ExternalWetBulbTemperatureSizingType();
+            result.ExternalWetBulbTemperatureSizingType = ((tpdSizedVariable)@dynamic.DesignExternalWetbulbSource).ToSAM_TemperatureSizingType();
             result.ExternalWetBulbTemperature = @dynamic.LimitingWetbulb;
             result.DesignApproach = @dynamic.DesignApproach;
             result.DesignRange = @dynamic.DesignRange;
