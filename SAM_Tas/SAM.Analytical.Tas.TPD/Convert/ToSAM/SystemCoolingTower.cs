@@ -38,6 +38,7 @@ namespace SAM.Analytical.Tas.TPD
             result.VariableFans = @dynamic.VariableFans;
             result.FanSFP = ((ProfileData)@dynamic.FanSFP)?.ToSAM();
             result.HeatTransferCoefficient = @dynamic.HeatTransCoeff;
+            result.HeatTransferSurfaceAreaSizingType = ((tpdSizedVariable)@dynamic.HeatTransSurfArea.Type).ToSAM();
             result.HeatTransferSurfaceArea = ((SizedVariable)@dynamic.HeatTransSurfArea)?.ToSAM();
             result.LimitingWetBulbTemperatureSizingType = ((tpdSizedVariable)@dynamic.DesignExternalWetbulbSource).ToSAM();
             result.LimitingWetBulbTemperature = @dynamic.LimitingWetbulb;
