@@ -52,12 +52,12 @@ namespace SAM.Analytical.Tas.TPD
             result.MinAirFlowRate = dynamic.MinAirFlowRate;
             result.MinAirFlowRatio = dynamic.MinAFRRatio;
             result.VariableFans = dynamic.VariableFans;
-            result.DesignExternalDryBulbTemperature = dynamic.MinAirFlDesignExternalDBowRate;
-            result.DesignExternalDryBulbTemperatureSizingType = ((tpdSizedVariable)dynamic.DesignExternalDBSource).ToSAM();
+            result.ExternalWetBulbTemperature = dynamic.DesignExternalDB;
+            result.ExternalWetBulbTemperatureSizingType = ((tpdSizedVariable)dynamic.DesignExternalDBSource).ToSAM_ExternalWetBulbTemperatureSizingType();
             result.LimitingDryBulbTemperature = dynamic.LimitingDB;
             result.DesignRange = dynamic.DesignRange;
             result.DesignWaterFlowRate = dynamic.DesignWaterFlowRate;
-            result.WaterFlowSizingType = ((tpdSizedVariable)dynamic.WaterFlowSizingType).ToSAM();
+            result.DesignWaterFlowRateSizingType = ((tpdSizedVariable)dynamic.WaterFlowSizingType).ToSAM_DesignWaterFlowRateSizingType();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
