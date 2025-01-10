@@ -28,7 +28,7 @@ namespace SAM.Analytical.Tas.TPD
             result.GroundHeatCapacity = dynamic.GroundHeatCapacity;
             result.GroundDensity = dynamic.GroundDensity;
             result.GFunction = ((ControllerProfileData)dynamic.Gfunction).ToSAM();
-            result.NumberOfBoreholes = dynamic.NumBoreholes;
+            result.NumberOfBoreholes = System.Convert.ToInt32(dynamic.NumBoreholes);
             result.GFunctionReferenceRatio = dynamic.GfunctionReferenceRatio;
             result.PipeInDiameter = dynamic.PipeInDiameter;
             result.PipeOutDiameter = dynamic.PipeOutDiameter;
