@@ -20,6 +20,22 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
 
+            result.Capacity = dynamic.Capacity;
+            result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            result.Length = dynamic.Bhlength;
+            result.Diameter = dynamic.Bhdiameter;
+            result.GroundConductivity = dynamic.GroundConductivity;
+            result.GroundHeatCapacity = dynamic.GroundHeatCapacity;
+            result.GroundDensity = dynamic.GroundDensity;
+            result.GFunction = ((ControllerProfileData)dynamic.Gfunction).ToSAM();
+            result.Count = dynamic.NumBoreholes;
+            result.ReferenceRatio = dynamic.GfunctionReferenceRatio;
+            result.PipeInDiameter = dynamic.PipeInDiameter;
+            result.PipeOutDiameter = dynamic.PipeOutDiameter;
+            result.PipeConductivity = dynamic.PipeConductivity;
+            result.GroutConductivity = dynamic.GroutConductivity;
+            result.GroundTemperature = dynamic.GroundTemp;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemVerticalBorehole displaySystemVerticalBorehole = Systems.Create.DisplayObject<DisplaySystemVerticalBorehole>(result, location, Systems.Query.DefaultDisplaySystemManager());
