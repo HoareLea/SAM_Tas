@@ -18,6 +18,13 @@ namespace SAM.Analytical.Tas.TPD
             SystemWindTurbine result = new SystemWindTurbine(@dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
 
+            result.HubHeight = @dynamic.HubHeight;
+            result.Area = @dynamic.Area;
+            result.MinSpeed = @dynamic.MinSpeed;
+            result.CutOffSpeed = @dynamic.CutOffSpeed;
+            result.Multiplicity = @dynamic.Multiplicity;
+            result.Efficiency = ((ProfileData)@dynamic.Efficiency).ToSAM();
+
             result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
