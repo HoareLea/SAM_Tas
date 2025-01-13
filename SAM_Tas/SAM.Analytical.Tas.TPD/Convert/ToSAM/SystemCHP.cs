@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -27,6 +28,16 @@ namespace SAM.Analytical.Tas.TPD
             result.Capacity = dynamic.Capacity;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
             result.LossesInSizing = dynamic.LossesInSizing;
+
+            List<FuelSource> fuelSources = Query.FuelSources(cHP as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
+            {
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0].Name);
+                if(fuelSources.Count > 1)
+                {
+                    result.SetValue(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName, fuelSources[1].Name);
+                }
+            }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
