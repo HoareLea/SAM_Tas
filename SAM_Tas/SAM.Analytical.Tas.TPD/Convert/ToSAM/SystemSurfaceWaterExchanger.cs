@@ -20,6 +20,15 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
 
+            result.Capacity = dynamic.Capacity;
+            result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            result.Efficiency = ((ProfileData)dynamic.Efficiency)?.ToSAM();
+            result.PondVolume = dynamic.PondVolume;
+            result.PondSurfaceArea = dynamic.PondSurfaceArea;
+            result.PondPerimeter = dynamic.PondPerimeter;
+            result.GroundConductivity = dynamic.GroundConductivity;
+            result.WaterTableDepth = dynamic.WaterTableDepth;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemSurfaceWaterExchanger displaySystemSurfaceWaterExchanger = Systems.Create.DisplayObject<DisplaySystemSurfaceWaterExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());
