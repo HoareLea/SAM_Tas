@@ -18,6 +18,22 @@ namespace SAM.Analytical.Tas.TPD
             SystemPhotovoltaicPanel result = new SystemPhotovoltaicPanel(@dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
 
+            result.PanelEfficiency = ((ProfileData)@dynamic.PanelEfficiency).ToSAM();
+            result.InverterSize = ((SizedVariable)@dynamic.InverterSize).ToSAM();
+            result.Multiplicity = System.Convert.ToInt32(@dynamic.Multiplicity);
+            result.InverterEfficiency = ((ProfileData)@dynamic.PanelEfficiency).ToSAM();
+            result.UseZoneSurface = dynamic.UseZoneSurface;
+            result.Area = dynamic.Area;
+            result.PanelEfficiency = ((ProfileData)@dynamic.Inclination).ToSAM();
+            result.Orientation = ((ProfileData)@dynamic.Orientation).ToSAM();
+            result.Reflectance = @dynamic.Reflectance;
+            result.MinIrradiance = @dynamic.MinIrradiance;
+            result.NOCT = @dynamic.NOCT;
+            result.PowerTemperatureCoefficient = @dynamic.PowerTempCoeff;
+            result.UseSTC = dynamic.UseSTC;
+            result.OutputAtSTC = dynamic.OutputAtSTC;
+            result.DeratingFactor = dynamic.DeratingFactor;
+
             result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
