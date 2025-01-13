@@ -18,6 +18,19 @@ namespace SAM.Analytical.Tas.TPD
             SystemHorizontalExchanger result = new SystemHorizontalExchanger(@dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
 
+            result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            result.Capacity = dynamic.Capacity;
+            result.GroundDensity = dynamic.GroundDensity;
+            result.GroundHeatCapacity = dynamic.GroundHeatCap;
+            result.GroundConductivity = dynamic.GroundConductivity;
+            result.GroundSolarReflectance = dynamic.GroundSolarReflectance;
+            result.InsidePipeDiameter = dynamic.PipeDiamIn;
+            result.OutsidePipeDiameter = dynamic.PipeDiamOut;
+            result.PipeConductivity = dynamic.PipeConductivity;
+            result.PipeLength = dynamic.PipeLength;
+            result.PipeSeparation = dynamic.PipeSeparation;
+            result.PipeDepth = dynamic.PipeDepth;
+
             result.Description = dynamic.Description;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
