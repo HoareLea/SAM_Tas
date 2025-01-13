@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
             
             result.Description = dynamic.Description;
             result.DesignPressureDrop = @dynamic.DesignPressureDrop;
-            result.DesignTemperatureDiffrence = @dynamic.DesignDeltaT;
+            result.DesignTemperatureDifference = @dynamic.DesignDeltaT;
             result.Duty = ((SizedVariable)@dynamic.Duty)?.ToSAM();
             result.Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM();
             result.Capacity = @dynamic.Capacity;

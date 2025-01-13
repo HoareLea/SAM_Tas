@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Efficiency = dynamic.Efficiency?.ToSAM();
             result.HeatPowerRatio = dynamic.HeatPowerRatio?.ToSAM();
             result.Duty = dynamic.Duty?.ToSAM();
-            result.DesignTemperatureDiffrence = dynamic.DesignDeltaT;
+            result.DesignTemperatureDifference = dynamic.DesignDeltaT;
             result.Capacity = dynamic.Capacity;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
             result.LossesInSizing = dynamic.LossesInSizing == 1;

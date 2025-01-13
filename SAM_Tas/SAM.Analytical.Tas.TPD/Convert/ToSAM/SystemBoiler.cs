@@ -31,12 +31,11 @@ namespace SAM.Analytical.Tas.TPD
 
 
             result.DesignPressureDrop = @dynamic.DesignPressureDrop;
-            result.DesignTemperatureDiffrence = @dynamic.DesignDeltaT;
             result.Description = dynamic.Description;
             result.Setpoint = boilerPlant.Setpoint?.ToSAM();
             result.Efficiency = boilerPlant?.Efficiency?.ToSAM();
             result.Duty = boilerPlant.Duty?.ToSAM();
-            result.DesignTemperatureDiffrence = boilerPlant.DesignDeltaT;
+            result.DesignTemperatureDifference = boilerPlant.DesignDeltaT;
             result.Capacity = boilerPlant.Capacity;
             result.DesignPressureDrop = boilerPlant.DesignPressureDrop;
             result.AncillaryLoad = boilerPlant.AncillaryLoad?.ToSAM();
