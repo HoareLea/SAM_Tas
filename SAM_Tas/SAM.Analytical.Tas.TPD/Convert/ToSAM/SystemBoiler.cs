@@ -33,12 +33,12 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop = @dynamic.DesignPressureDrop;
             result.Description = dynamic.Description;
             result.Setpoint = ((ProfileData)dynamic.Setpoint)?.ToSAM();
-            result.Efficiency = boilerPlant?.Efficiency?.ToSAM();
+            result.Efficiency = ((ProfileData)dynamic.Efficiency)?.ToSAM();
             result.Duty = ((SizedVariable)dynamic.Duty)?.ToSAM();
             result.DesignTemperatureDifference = dynamic.DesignDeltaT;
             result.Capacity = dynamic.Capacity;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
-            result.AncillaryLoad = dynamic.AncillaryLoad?.ToSAM();
+            result.AncillaryLoad = ((ProfileData)dynamic.AncillaryLoad)?.ToSAM();
             result.LossesInSizing = dynamic.LossesInSizing;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
