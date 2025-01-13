@@ -22,10 +22,10 @@ namespace SAM.Analytical.Tas.TPD
             result.PanelEfficiency = ((ProfileData)@dynamic.PanelEfficiency).ToSAM();
             result.InverterSize = ((SizedVariable)@dynamic.InverterSize).ToSAM();
             result.Multiplicity = System.Convert.ToInt32(@dynamic.Multiplicity);
-            result.InverterEfficiency = ((ProfileData)@dynamic.PanelEfficiency).ToSAM();
+            result.InverterEfficiency = ((ProfileData)@dynamic.InverterEfficiency).ToSAM();
             result.UseZoneSurface = dynamic.UseZoneSurface;
             result.Area = dynamic.Area;
-            result.PanelEfficiency = ((ProfileData)@dynamic.Inclination).ToSAM();
+            result.Inclination = ((ProfileData)@dynamic.Inclination).ToSAM();
             result.Orientation = ((ProfileData)@dynamic.Orientation).ToSAM();
             result.Reflectance = @dynamic.Reflectance;
             result.MinIrradiance = @dynamic.MinIrradiance;
