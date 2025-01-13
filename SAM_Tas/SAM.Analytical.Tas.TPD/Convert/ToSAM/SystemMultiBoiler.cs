@@ -20,11 +20,12 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;
-            result.Setpoint = multiBoiler.Setpoint?.ToSAM();
-            result.Duty = multiBoiler.Duty?.ToSAM();
+            result.Setpoint = ((ProfileData)dynamic.Setpoint)?.ToSAM();
+            result.Duty = ((SizedVariable)dynamic.Duty)?.ToSAM();
+            result.DesignPressureDrop = dynamic.DesignPressureDrop;
             result.DesignTemperatureDifference = multiBoiler.DesignDeltaT;
-            result.LossesInSizing = multiBoiler.LossesInSizing == 1;
-            result.Sequence = multiBoiler.Sequence.ToSAM();
+            result.LossesInSizing = dynamic.LossesInSizing;
+            result.Sequence = ((tpdBoilerSequence)dynamic.Sequence).ToSAM();
 
             List<FuelSource> fuelSources = Query.FuelSources(multiBoiler as PlantComponent);
 
