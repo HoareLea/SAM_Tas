@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -35,6 +36,12 @@ namespace SAM.Analytical.Tas.TPD
             result.DeratingFactor = dynamic.DeratingFactor;
 
             result.Description = dynamic.Description;
+
+            List<FuelSource> fuelSources = Query.FuelSources(pVPanel as PlantComponent);
+            if (fuelSources != null && fuelSources.Count > 0)
+            {
+                result.SetValue(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName, fuelSources[0].Name);
+            }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
