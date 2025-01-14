@@ -20,6 +20,20 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
 
+            result.EtaZero = dynamic.EtaZero;
+            result.AlphaOne = dynamic.AlphaOne;
+            result.AlphaTwo = dynamic.AlphaTwo;
+            result.Multiplicity = System.Convert.ToInt32(dynamic.Multiplicity);
+            result.Capacity = dynamic.Capacity;
+            result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            result.NoNegativeLoad = dynamic.NoNegativeLoad;
+            result.UseZoneSurface = dynamic.UseZoneSurface;
+            result.Area = dynamic.Area;
+            result.Inclination = ((ProfileData)dynamic.Inclination)?.ToSAM();
+            result.Orientation = ((ProfileData)dynamic.Orientation)?.ToSAM();
+            result.Reflectance = dynamic.Reflectance;
+            result.DesignFlowPerM2 = dynamic.DesignFlowPerM2;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemSolarPanel displaySystemSolarPanel = Systems.Create.DisplayObject<DisplaySystemSolarPanel>(result, location, Systems.Query.DefaultDisplaySystemManager());
