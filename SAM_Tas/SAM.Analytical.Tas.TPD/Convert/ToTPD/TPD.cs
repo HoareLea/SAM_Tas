@@ -546,6 +546,10 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemMultiChiller)systemComponent_Temp, plantRoom) as PlantComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemMultiBoiler)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemMultiBoiler)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
                                     else if (systemComponent_Temp is DisplaySystemPhotovoltaicPanel)
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemPhotovoltaicPanel)systemComponent_Temp, plantRoom) as PlantComponent;
