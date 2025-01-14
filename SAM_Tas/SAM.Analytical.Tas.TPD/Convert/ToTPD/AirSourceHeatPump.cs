@@ -13,7 +13,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            dynamic result = plantRoom.AddChiller();
+            dynamic result = plantRoom.AddAirSourceHeatPump();
             result.Name = displaySystemAirSourceHeatPump.Name;
             result.Description = displaySystemAirSourceHeatPump.Description;
 
