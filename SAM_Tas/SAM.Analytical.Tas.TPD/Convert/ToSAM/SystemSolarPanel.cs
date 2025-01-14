@@ -28,7 +28,7 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
             result.NoNegativeLoad = dynamic.NoNegativeLoad;
             result.UseZoneSurface = dynamic.UseZoneSurface;
-            result.Area = dynamic.Area;
+            result.SweptArea = dynamic.Area;
             result.Inclination = ((ProfileData)dynamic.Inclination)?.ToSAM();
             result.Orientation = ((ProfileData)dynamic.Orientation)?.ToSAM();
             result.Reflectance = dynamic.Reflectance;
