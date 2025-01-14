@@ -618,6 +618,7 @@ namespace SAM.Analytical.Tas.TPD
                                 }
 
                                 Create.Pipes(systemPlantRoom, plantRoom, dictionary_TPD);
+                                Create.PlantControllers(systemPlantRoom, plantRoom, liquidSystem, dictionary_TPD);
                             }
                         }
 
@@ -785,6 +786,7 @@ namespace SAM.Analytical.Tas.TPD
                                 }
 
                                 Create.Ducts(systemPlantRoom, system, dictionary_TPD);
+                                Create.Controllers(systemPlantRoom, system, airSystem, dictionary_TPD);
 
                                 foreach (Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple in tuples)
                                 {
