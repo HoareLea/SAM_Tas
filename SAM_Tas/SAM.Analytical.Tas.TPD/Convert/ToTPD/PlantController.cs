@@ -47,9 +47,9 @@ namespace SAM.Analytical.Tas.TPD
                 result.ControlType = tpdControlType.tpdControlIf;
             }
 
-            (result as dynamic).SetLocation(result as SystemComponent);
+            displaySystemController.SetLocation(result);
 
-            return result as PlantController;
+            return result;
         }
     }
 }
