@@ -5,7 +5,6 @@ using SAM.Core.Systems;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Systems;
 using System.Linq;
-using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -13,7 +12,7 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static List<Controller> Controllers(this SystemPlantRoom systemPlantRoom, global::TPD.System system, AirSystem airSystem, Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponent, Dictionary<Guid, Duct> dictionary_Duct)
         {
-            if (dictionary_SystemComponent == null || dictionary_SystemComponent.Count == 0)
+            if (systemPlantRoom == null || airSystem == null|| dictionary_SystemComponent == null)
             {
                 return null;
             }

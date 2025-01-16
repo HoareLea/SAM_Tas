@@ -428,8 +428,8 @@ namespace SAM.Analytical.Tas.TPD
                                     continue;
                                 }
 
-                                Dictionary<Guid, PlantComponent> dictionary_TPD = new Dictionary<Guid, PlantComponent>();
-                                Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
+                                Dictionary<Guid, PlantComponent> dictionary_SystemComponents_TPD = new Dictionary<Guid, PlantComponent>();
+                                Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SystemComponents_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
 
                                 List<ISystemCollection> systemCollections = systemPlantRoom.GetSystemComponents<ISystemCollection>(liquidSystem);
                                 if(systemCollections != null)
@@ -443,7 +443,7 @@ namespace SAM.Analytical.Tas.TPD
 
                                         PlantComponent plantComponent_TPD = ToTPD(systemCollection as dynamic, plantRoom) as PlantComponent;
 
-                                        dictionary_TPD[(systemCollection as dynamic).Guid] = plantComponent_TPD;
+                                        dictionary_SystemComponents_TPD[(systemCollection as dynamic).Guid] = plantComponent_TPD;
                                         systemCollection.SetReference(Query.Reference(plantComponent_TPD));
                                         systemPlantRoom.Add(systemCollection);
                                     }
@@ -459,10 +459,10 @@ namespace SAM.Analytical.Tas.TPD
 
                                 foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents)
                                 {
-                                    dictionary_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
+                                    dictionary_SystemComponents_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
                                 }
 
-                                foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SAM.Values)
+                                foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SystemComponents_SAM.Values)
                                 {
                                     PlantComponent plantComponent_TPD = null;
 
@@ -612,13 +612,13 @@ namespace SAM.Analytical.Tas.TPD
                                         continue;
                                     }
 
-                                    dictionary_TPD[systemComponent_Temp.Guid] = plantComponent_TPD;
+                                    dictionary_SystemComponents_TPD[systemComponent_Temp.Guid] = plantComponent_TPD;
                                     systemComponent_Temp.SetReference(Query.Reference(plantComponent_TPD));
                                     systemPlantRoom.Add(systemComponent_Temp);
                                 }
 
-                                Create.Pipes(systemPlantRoom, plantRoom, dictionary_TPD);
-                                Create.PlantControllers(systemPlantRoom, plantRoom, liquidSystem, dictionary_TPD);
+                                Create.Pipes(systemPlantRoom, plantRoom, dictionary_SystemComponents_TPD, out Dictionary<Guid, Pipe> dictionary_Pipes);
+                                Create.PlantControllers(systemPlantRoom, plantRoom, liquidSystem, dictionary_SystemComponents_TPD, dictionary_Pipes);
                             }
                         }
 

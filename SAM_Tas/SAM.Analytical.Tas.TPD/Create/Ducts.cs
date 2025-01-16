@@ -124,11 +124,7 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
-                        string reference = duct.Reference();
-                        if(reference != null)
-                        {
-                            dictionary_Ducts[systemConnection.Guid] = duct;
-                        }
+                        dictionary_Ducts[systemConnection.Guid] = duct;
 
                         result.Add(duct);
 

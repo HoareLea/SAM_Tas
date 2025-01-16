@@ -11,9 +11,11 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Create
     {
-        public static List<Pipe> Pipes(this SystemPlantRoom systemPlantRoom, PlantRoom plantRoom, Dictionary<Guid, PlantComponent> dictionary)
+        public static List<Pipe> Pipes(this SystemPlantRoom systemPlantRoom, PlantRoom plantRoom, Dictionary<Guid, PlantComponent> dictionary_PlantComponents, out Dictionary<Guid, Pipe> dictionary_Pipes)
         {
-            if(dictionary == null || dictionary.Count == 0)
+            dictionary_Pipes = null;
+
+            if (dictionary_PlantComponents == null || dictionary_PlantComponents.Count == 0)
             {
                 return null;
             }
@@ -27,6 +29,8 @@ namespace SAM.Analytical.Tas.TPD
             SystemType systemType = new SystemType(typeof(LiquidSystem));
 
             List<Pipe> result = new List<Pipe>();
+
+            dictionary_Pipes = new Dictionary<Guid, Pipe>();
 
             foreach (ISystemConnection systemConnection in systemConnections)
             {
@@ -46,7 +50,7 @@ namespace SAM.Analytical.Tas.TPD
                     for (int j = i + 1; j < systemComponents_SystemConnection.Count; j++)
                     {
                         Core.Systems.SystemComponent systemComponent_Temp_1 = systemComponents_SystemConnection[i];
-                        if (!dictionary.TryGetValue(systemComponent_Temp_1.Guid, out PlantComponent plantComponent_1) || plantComponent_1 == null)
+                        if (!dictionary_PlantComponents.TryGetValue(systemComponent_Temp_1.Guid, out PlantComponent plantComponent_1) || plantComponent_1 == null)
                         {
                             continue;
                         }
@@ -67,7 +71,7 @@ namespace SAM.Analytical.Tas.TPD
                         }
 
                         Core.Systems.SystemComponent systemComponent_Temp_2 = systemComponents_SystemConnection[j];
-                        if (!dictionary.TryGetValue(systemComponent_Temp_2.Guid, out PlantComponent plantComponent_2) || plantComponent_2 == null)
+                        if (!dictionary_PlantComponents.TryGetValue(systemComponent_Temp_2.Guid, out PlantComponent plantComponent_2) || plantComponent_2 == null)
                         {
                             continue;
                         }
@@ -108,6 +112,8 @@ namespace SAM.Analytical.Tas.TPD
                         {
                             continue;
                         }
+
+                        dictionary_Pipes[systemConnection.Guid] = pipe;
 
                         result.Add(pipe);
 
