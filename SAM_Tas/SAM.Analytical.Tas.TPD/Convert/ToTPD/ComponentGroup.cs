@@ -73,7 +73,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            Create.Ducts(systemPlantRoom, system, dictionary);
+            Create.Ducts(systemPlantRoom, system, dictionary, out Dictionary<Guid, Duct> dictionary_Ducts);
 
             ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers);
             componentGroup.SetMultiplicity(zoneLoads.Count);

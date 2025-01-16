@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using SAM.Core.Systems;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Systems;
-using System.Runtime.InteropServices.ComTypes;
+using System.Linq;
+using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Create
     {
-        public static List<Controller> Controllers(this SystemPlantRoom systemPlantRoom, global::TPD.System system, AirSystem airSystem, Dictionary<Guid, global::TPD.ISystemComponent> dictionary)
+        public static List<Controller> Controllers(this SystemPlantRoom systemPlantRoom, global::TPD.System system, AirSystem airSystem, Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponent, Dictionary<Guid, Duct> dictionary_Duct)
         {
-            if (dictionary == null || dictionary.Count == 0)
+            if (dictionary_SystemComponent == null || dictionary_SystemComponent.Count == 0)
             {
                 return null;
             }
@@ -60,14 +61,14 @@ namespace SAM.Analytical.Tas.TPD
                     }
                 }
 
-                if(dictionary != null)
+                if(dictionary_SystemComponent != null)
                 {
                     List<Core.Systems.SystemComponent> systemComponents_Connected = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(tuple.Item2);
                     if (systemComponents_Connected != null)
                     {
                         foreach (Core.Systems.SystemComponent systemComponent_Connected in systemComponents_Connected)
                         {
-                            if(!dictionary.TryGetValue(systemComponent_Connected.Guid, out global::TPD.ISystemComponent systemComponent_TPD) || systemComponent_TPD == null)
+                            if(!dictionary_SystemComponent.TryGetValue(systemComponent_Connected.Guid, out global::TPD.ISystemComponent systemComponent_TPD) || systemComponent_TPD == null)
                             {
                                 continue;
                             }
@@ -92,14 +93,35 @@ namespace SAM.Analytical.Tas.TPD
                     }
                 }
 
-                List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(tuple.Item2);
-                if(systemSensors_Connected != null)
-                {
-                    foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
-                    {
 
+                if(dictionary_Duct != null)
+                {
+                    List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(tuple.Item2);
+                    if (systemSensors_Connected != null)
+                    {
+                        foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
+                        {
+                            ISystemConnection systemConnection = systemPlantRoom.GetRelatedObjects<ISystemConnection>(systemSensor_Connected)?.FirstOrDefault();
+                            if (systemConnection == null || !dictionary_Duct.TryGetValue(systemConnection.Guid, out Duct duct) || duct == null)
+                            {
+                                continue;
+                            }
+
+                            SensorArc sensorArc = tuple.Item1.AddSensorArc(duct);
+
+                            if(systemSensor_Connected is DisplaySystemSensor)
+                            {
+                                SystemPolyline systemPolyline = ((DisplaySystemSensor)systemSensor_Connected).SystemGeometry;
+                                List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
+                                for (int i = 1; i < point2Ds.Count - 1; i++)
+                                {
+                                    sensorArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                }
+                            }
+                        }
                     }
                 }
+
             }
 
             return tuples.ConvertAll(x => x.Item1);

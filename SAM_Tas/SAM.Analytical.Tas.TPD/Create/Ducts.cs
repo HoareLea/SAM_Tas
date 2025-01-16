@@ -11,9 +11,11 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Create
     {
-        public static List<Duct> Ducts(this SystemPlantRoom systemPlantRoom, global::TPD.System system, Dictionary<Guid, global::TPD.ISystemComponent> dictionary)
+        public static List<Duct> Ducts(this SystemPlantRoom systemPlantRoom, global::TPD.System system, Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponents, out Dictionary<Guid, Duct> dictionary_Ducts)
         {
-            if(dictionary == null || dictionary.Count == 0)
+            dictionary_Ducts = null;
+
+            if(dictionary_SystemComponents == null || dictionary_SystemComponents.Count == 0)
             {
                 return null;
             }
@@ -27,6 +29,8 @@ namespace SAM.Analytical.Tas.TPD
             SystemType systemType = new SystemType(typeof(AirSystem));
 
             List<Duct> result = new List<Duct>();
+
+            dictionary_Ducts = new Dictionary<Guid, Duct>();
 
             foreach (ISystemConnection systemConnection in systemConnections)
             {
@@ -46,7 +50,7 @@ namespace SAM.Analytical.Tas.TPD
                     for (int j = i + 1; j < systemComponents_SystemConnection.Count; j++)
                     {
                         Core.Systems.SystemComponent systemComponent_Temp_1 = systemComponents_SystemConnection[i];
-                        if (!dictionary.TryGetValue(systemComponent_Temp_1.Guid, out global::TPD.ISystemComponent systemComponent_1) || systemComponent_1 == null)
+                        if (!dictionary_SystemComponents.TryGetValue(systemComponent_Temp_1.Guid, out global::TPD.ISystemComponent systemComponent_1) || systemComponent_1 == null)
                         {
                             continue;
                         }
@@ -67,7 +71,7 @@ namespace SAM.Analytical.Tas.TPD
                         }
 
                         Core.Systems.SystemComponent systemComponent_Temp_2 = systemComponents_SystemConnection[j];
-                        if (!dictionary.TryGetValue(systemComponent_Temp_2.Guid, out global::TPD.ISystemComponent systemComponent_2) || systemComponent_2 == null)
+                        if (!dictionary_SystemComponents.TryGetValue(systemComponent_Temp_2.Guid, out global::TPD.ISystemComponent systemComponent_2) || systemComponent_2 == null)
                         {
                             continue;
                         }
@@ -118,6 +122,12 @@ namespace SAM.Analytical.Tas.TPD
                         if (duct == null)
                         {
                             continue;
+                        }
+
+                        string reference = duct.Reference();
+                        if(reference != null)
+                        {
+                            dictionary_Ducts[systemConnection.Guid] = duct;
                         }
 
                         result.Add(duct);

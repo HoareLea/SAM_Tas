@@ -641,8 +641,8 @@ namespace SAM.Analytical.Tas.TPD
                         {
                             foreach (AirSystem airSystem in airSystems)
                             {
-                                Dictionary<Guid, global::TPD.ISystemComponent> dictionary_TPD = new Dictionary<Guid, global::TPD.ISystemComponent>();
-                                Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
+                                Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponent_TPD = new Dictionary<Guid, global::TPD.ISystemComponent>();
+                                Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SystemComponent_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
 
                                 global::TPD.System system = airSystem.ToTPD(plantRoom);
                                 if (system == null)
@@ -671,7 +671,7 @@ namespace SAM.Analytical.Tas.TPD
 
                                 foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
                                 {
-                                    dictionary_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
+                                    dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
                                 }
 
                                 systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
@@ -694,7 +694,7 @@ namespace SAM.Analytical.Tas.TPD
                                 {
                                     if (!Query.TryGetSystemSpace(systemPlantRoom, systemComponent_Temp, out ISystemSpace systemSpace, out AirSystemGroup airSystemGroup) || systemSpace == null)
                                     {
-                                        dictionary_SAM[systemPlantRoom.GetGuid(systemComponent_Temp)] = systemComponent_Temp;
+                                        dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(systemComponent_Temp)] = systemComponent_Temp;
                                         continue;
                                     }
 
@@ -708,7 +708,7 @@ namespace SAM.Analytical.Tas.TPD
                                         systemComponents.Add(systemSpace);
                                     }
 
-                                    systemComponents.ForEach(x => dictionary_SAM[systemPlantRoom.GetGuid(x)] = x);
+                                    systemComponents.ForEach(x => dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(x)] = x);
 
                                     Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple = tuples.Find(x => x.Item1.Guid == airSystemGroup.Guid);
                                     if (tuple == null)
@@ -718,7 +718,7 @@ namespace SAM.Analytical.Tas.TPD
                                     }
                                 }
 
-                                foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SAM.Values)
+                                foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SystemComponent_SAM.Values)
                                 {
                                     global::TPD.ISystemComponent systemComponent_TPD = null;
 
@@ -780,13 +780,13 @@ namespace SAM.Analytical.Tas.TPD
                                         continue;
                                     }
 
-                                    dictionary_TPD[systemComponent_Temp.Guid] = systemComponent_TPD;
+                                    dictionary_SystemComponent_TPD[systemComponent_Temp.Guid] = systemComponent_TPD;
                                     systemComponent_Temp.SetReference(Query.Reference(systemComponent_TPD));
                                     systemPlantRoom.Add(systemComponent_Temp);
                                 }
 
-                                Create.Ducts(systemPlantRoom, system, dictionary_TPD);
-                                Create.Controllers(systemPlantRoom, system, airSystem, dictionary_TPD);
+                                Create.Ducts(systemPlantRoom, system, dictionary_SystemComponent_TPD, out Dictionary<Guid, Duct> dictionary_Ducts);
+                                Create.Controllers(systemPlantRoom, system, airSystem, dictionary_SystemComponent_TPD, dictionary_Ducts);
 
                                 foreach (Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple in tuples)
                                 {
@@ -798,7 +798,7 @@ namespace SAM.Analytical.Tas.TPD
                                         continue;
                                     }
 
-                                    global::TPD.ISystemComponent[] systemComponents_TPD = tuple.Item2.ConvertAll(x => dictionary_TPD[(x as dynamic).Guid] as global::TPD.ISystemComponent).ToArray();
+                                    global::TPD.ISystemComponent[] systemComponents_TPD = tuple.Item2.ConvertAll(x => dictionary_SystemComponent_TPD[(x as dynamic).Guid] as global::TPD.ISystemComponent).ToArray();
 
                                     Controller[] controllers = new Controller[0];
 
@@ -849,7 +849,7 @@ namespace SAM.Analytical.Tas.TPD
                                         }
                                     }
 
-                                    dictionary_TPD[tuple.Item1.Guid] = (global::TPD.ISystemComponent)componentGroup;
+                                    dictionary_SystemComponent_TPD[tuple.Item1.Guid] = (global::TPD.ISystemComponent)componentGroup;
                                 }
                             }
 
