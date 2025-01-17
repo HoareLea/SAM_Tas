@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using SAM.Core.Systems;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Systems;
+using System.Data;
+using System.Linq;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -35,10 +37,9 @@ namespace SAM.Analytical.Tas.TPD
 
             foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
             {
-
                 IDisplaySystemController displaySystemController = tuple.Item2;
 
-                if(!(displaySystemController is SystemLiquidNormalController))
+                if (!(displaySystemController is SystemLiquidNormalController))
                 {
                     List<IDisplaySystemController> displaySystemControllers_Connected = systemPlantRoom.GetRelatedObjects<IDisplaySystemController>(displaySystemController);
                     if (displaySystemControllers_Connected != null)
@@ -77,10 +78,15 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
                 }
+            }
 
-                if (dictionary_PlantComponents != null)
+            if (dictionary_PlantComponents != null)
+            {
+                foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
                 {
-                    List<Core.Systems.SystemComponent> systemComponents_Connected = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(tuple.Item2);
+                    IDisplaySystemController displaySystemController = tuple.Item2;
+
+                    List<Core.Systems.SystemComponent> systemComponents_Connected = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(displaySystemController);
                     if (systemComponents_Connected != null)
                     {
                         foreach (Core.Systems.SystemComponent systemComponent_Connected in systemComponents_Connected)
@@ -109,36 +115,75 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
                 }
+            }
 
+            if (dictionary_Pipes != null)
+            {
+                foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
+                {
+                    IDisplaySystemController displaySystemController = tuple.Item2;
 
-                //if (dictionary_Pipes != null)
-                //{
-                //    List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(tuple.Item2);
-                //    if (systemSensors_Connected != null)
-                //    {
-                //        foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
-                //        {
-                //            ISystemConnection systemConnection = systemPlantRoom.GetRelatedObjects<ISystemConnection>(systemSensor_Connected)?.FirstOrDefault();
-                //            if (systemConnection == null || !dictionary_Pipes.TryGetValue(systemConnection.Guid, out Pipe pipe) || pipe == null)
-                //            {
-                //                continue;
-                //            }
+                    List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(displaySystemController);
+                    if (systemSensors_Connected != null)
+                    {
+                        foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
+                        {
+                            PlantSensorArc plantSensorArc = null;
 
-                //            PlantSensorArc plantSensorArc = tuple.Item1.AddSensorArc(pipe);
+                            ISystemConnection systemConnection = systemPlantRoom.GetRelatedObjects<ISystemConnection>(systemSensor_Connected)?.FirstOrDefault();
+                            if (systemConnection != null)
+                            {
+                                if (!dictionary_Pipes.TryGetValue(systemConnection.Guid, out Pipe pipe) || pipe == null)
+                                {
+                                    continue;
+                                }
 
-                //            if (systemSensor_Connected is DisplaySystemSensor)
-                //            {
-                //                SystemPolyline systemPolyline = ((DisplaySystemSensor)systemSensor_Connected).SystemGeometry;
-                //                List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
-                //                for (int i = 1; i < point2Ds.Count - 1; i++)
-                //                {
-                //                    plantSensorArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
+                                plantSensorArc = tuple.Item1.AddSensorArc(pipe);
+                            }
+                            else
+                            {
+                                List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(systemSensor_Connected);
+                                if(systemComponents == null || systemComponents.Count == 0)
+                                {
+                                    continue;
+                                }
 
+                                foreach(Core.Systems.SystemComponent systemComponent in systemComponents)
+                                {
+                                    if(!dictionary_PlantComponents.TryGetValue(systemComponent.Guid, out PlantComponent plantComponent) || plantComponent == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    int count = ((dynamic)plantComponent).GetSensorPortCount();
+                                    if(count < 1)
+                                    {
+                                        continue;
+                                    }
+
+                                    plantSensorArc = tuple.Item1.AddSensorArcToComponent(plantComponent, 1);
+                                    break;
+                                }
+
+                            }
+
+                            if(plantSensorArc == null)
+                            {
+                                continue;
+                            }
+
+                            if (systemSensor_Connected is DisplaySystemSensor)
+                            {
+                                SystemPolyline systemPolyline = ((DisplaySystemSensor)systemSensor_Connected).SystemGeometry;
+                                List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
+                                for (int i = 1; i < point2Ds.Count - 1; i++)
+                                {
+                                    plantSensorArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             return tuples.ConvertAll(x => x.Item1);
