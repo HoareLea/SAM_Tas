@@ -32,28 +32,42 @@ namespace SAM.Analytical.Tas.TPD
                 tuples.Add(new Tuple<Controller, IDisplaySystemController>(controller, displaySystemController));
             }
 
+            List<Tuple<Guid, Guid>> tuples_Controllers = new List<Tuple<Guid, Guid>>();
+
             foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
             {
-                List<IDisplaySystemController> displaySystemControllers_Connected = systemPlantRoom.GetRelatedObjects<IDisplaySystemController>(tuple.Item2);
-                if (displaySystemControllers_Connected != null)
+                IDisplaySystemController displaySystemController = tuple.Item2;
+
+                if (!(displaySystemController is SystemNormalController))
                 {
-                    foreach (IDisplaySystemController displaySystemController_Connected in displaySystemControllers_Connected)
+                    List<IDisplaySystemController> displaySystemControllers_Connected = systemPlantRoom.GetRelatedObjects<IDisplaySystemController>(displaySystemController);
+                    if (displaySystemControllers_Connected != null)
                     {
-                        Controller controller_Connected = tuples.Find(x => x.Item2.Guid == displaySystemController_Connected.Guid)?.Item1;
-
-                        ControlArc controlArc = tuple.Item1.AddChainArc(controller_Connected);
-
-                        List<ISystemConnection> systemConnections = systemPlantRoom.GetSystemConnections(tuple.Item2, displaySystemController_Connected, new SystemType(airSystem));
-                        if(systemConnections != null && systemConnections.Count > 0)
+                        foreach (IDisplaySystemController displaySystemController_Connected in displaySystemControllers_Connected)
                         {
-                            DisplaySystemConnection displaySystemConnection = systemConnections.Find(x => x is DisplaySystemConnection) as DisplaySystemConnection;
-                            if (displaySystemConnection != null)
+                            Controller controller_Connected = tuples.Find(x => x.Item2.Guid == displaySystemController_Connected.Guid)?.Item1;
+
+                            if (tuples_Controllers.Find(x => (x.Item1 == displaySystemController.Guid && x.Item2 == displaySystemController_Connected.Guid) || (x.Item2 == displaySystemController.Guid && x.Item1 == displaySystemController_Connected.Guid)) != null)
                             {
-                                SystemPolyline systemPolyline = displaySystemConnection.SystemGeometry;
-                                List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
-                                for (int i = 1; i < point2Ds.Count - 1; i++)
+                                continue;
+                            }
+
+                            tuples_Controllers.Add(new Tuple<Guid, Guid>(displaySystemController.Guid, displaySystemController_Connected.Guid));
+
+                            ControlArc controlArc = tuple.Item1.AddChainArc(controller_Connected);
+
+                            List<ISystemConnection> systemConnections = systemPlantRoom.GetSystemConnections(displaySystemController, displaySystemController_Connected, new SystemType(airSystem));
+                            if (systemConnections != null && systemConnections.Count > 0)
+                            {
+                                DisplaySystemConnection displaySystemConnection = systemConnections.Find(x => x is DisplaySystemConnection) as DisplaySystemConnection;
+                                if (displaySystemConnection != null)
                                 {
-                                    controlArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                    SystemPolyline systemPolyline = displaySystemConnection.SystemGeometry;
+                                    List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
+                                    for (int i = 1; i < point2Ds.Count - 1; i++)
+                                    {
+                                        controlArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                    }
                                 }
                             }
                         }

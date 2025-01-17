@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using SAM.Core.Systems;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Systems;
-using System.Linq;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -32,65 +31,84 @@ namespace SAM.Analytical.Tas.TPD
                 tuples.Add(new Tuple<PlantController, IDisplaySystemController>(plantController, displaySystemController));
             }
 
+            List<Tuple<Guid, Guid>> tuples_Controllers = new List<Tuple<Guid, Guid>>();
+
             foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
             {
-                List<IDisplaySystemController> displaySystemControllers_Connected = systemPlantRoom.GetRelatedObjects<IDisplaySystemController>(tuple.Item2);
-                if (displaySystemControllers_Connected != null)
+
+                IDisplaySystemController displaySystemController = tuple.Item2;
+
+                if(!(displaySystemController is SystemLiquidNormalController))
                 {
-                    foreach (IDisplaySystemController displaySystemController_Connected in displaySystemControllers_Connected)
+                    List<IDisplaySystemController> displaySystemControllers_Connected = systemPlantRoom.GetRelatedObjects<IDisplaySystemController>(displaySystemController);
+                    if (displaySystemControllers_Connected != null)
                     {
-                        PlantController plantController_Connected = tuples.Find(x => x.Item2.Guid == displaySystemController_Connected.Guid)?.Item1;
-
-                        PlantControlArc plantControlArc = tuple.Item1.AddChainArc(plantController_Connected);
-
-                        List<ISystemConnection> systemConnections = systemPlantRoom.GetSystemConnections(tuple.Item2, displaySystemController_Connected, new SystemType(liquidSystem));
-                        if (systemConnections != null && systemConnections.Count > 0)
+                        foreach (IDisplaySystemController displaySystemController_Connected in displaySystemControllers_Connected)
                         {
-                            DisplaySystemConnection displaySystemConnection = systemConnections.Find(x => x is DisplaySystemConnection) as DisplaySystemConnection;
-                            if (displaySystemConnection != null)
+                            PlantController plantController_Connected = tuples.Find(x => x.Item2.Guid == displaySystemController_Connected.Guid)?.Item1;
+                            if (plantController_Connected == null)
                             {
-                                SystemPolyline systemPolyline = displaySystemConnection.SystemGeometry;
-                                List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
-                                for (int i = 1; i < point2Ds.Count - 1; i++)
+                                continue;
+                            }
+
+                            if (tuples_Controllers.Find(x => (x.Item1 == displaySystemController.Guid && x.Item2 == displaySystemController_Connected.Guid) || (x.Item2 == displaySystemController.Guid && x.Item1 == displaySystemController_Connected.Guid)) != null)
+                            {
+                                continue;
+                            }
+
+                            tuples_Controllers.Add(new Tuple<Guid, Guid>(displaySystemController.Guid, displaySystemController_Connected.Guid));
+
+                            PlantControlArc plantControlArc = tuple.Item1.AddChainArc(plantController_Connected);
+
+                            List<ISystemConnection> systemConnections = systemPlantRoom.GetSystemConnections(displaySystemController, displaySystemController_Connected, new SystemType(liquidSystem));
+                            if (systemConnections != null && systemConnections.Count > 0)
+                            {
+                                DisplaySystemConnection displaySystemConnection = systemConnections.Find(x => x is DisplaySystemConnection) as DisplaySystemConnection;
+                                if (displaySystemConnection != null)
                                 {
-                                    plantControlArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                    SystemPolyline systemPolyline = displaySystemConnection.SystemGeometry;
+                                    List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
+                                    for (int i = 1; i < point2Ds.Count - 1; i++)
+                                    {
+                                        plantControlArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                //if (dictionary_PlantComponents != null)
-                //{
-                //    List<Core.Systems.SystemComponent> systemComponents_Connected = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(tuple.Item2);
-                //    if (systemComponents_Connected != null)
-                //    {
-                //        foreach (Core.Systems.SystemComponent systemComponent_Connected in systemComponents_Connected)
-                //        {
-                //            if (!dictionary_PlantComponents.TryGetValue(systemComponent_Connected.Guid, out PlantComponent plantComponent_TPD) || plantComponent_TPD == null)
-                //            {
-                //                continue;
-                //            }
+                if (dictionary_PlantComponents != null)
+                {
+                    List<Core.Systems.SystemComponent> systemComponents_Connected = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(tuple.Item2);
+                    if (systemComponents_Connected != null)
+                    {
+                        foreach (Core.Systems.SystemComponent systemComponent_Connected in systemComponents_Connected)
+                        {
+                            if (!dictionary_PlantComponents.TryGetValue(systemComponent_Connected.Guid, out PlantComponent plantComponent_TPD) || plantComponent_TPD == null)
+                            {
+                                continue;
+                            }
 
-                //            PlantControlArc plantControlArc = tuple.Item1.AddControlArc(plantComponent_TPD);
+                            PlantControlArc plantControlArc = tuple.Item1.AddControlArc(plantComponent_TPD);
 
-                //            List<ISystemConnection> systemConnections = systemPlantRoom.GetSystemConnections(tuple.Item2, systemComponent_Connected, new SystemType(liquidSystem));
-                //            if (systemConnections != null && systemConnections.Count > 0)
-                //            {
-                //                DisplaySystemConnection displaySystemConnection = systemConnections.Find(x => x is DisplaySystemConnection) as DisplaySystemConnection;
-                //                if (displaySystemConnection != null)
-                //                {
-                //                    SystemPolyline systemPolyline = displaySystemConnection.SystemGeometry;
-                //                    List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
-                //                    for (int i = 1; i < point2Ds.Count - 1; i++)
-                //                    {
-                //                        plantControlArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
-                //                    }
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
+                            List<ISystemConnection> systemConnections = systemPlantRoom.GetSystemConnections(tuple.Item2, systemComponent_Connected, new SystemType(liquidSystem));
+                            if (systemConnections != null && systemConnections.Count > 0)
+                            {
+                                DisplaySystemConnection displaySystemConnection = systemConnections.Find(x => x is DisplaySystemConnection) as DisplaySystemConnection;
+                                if (displaySystemConnection != null)
+                                {
+                                    SystemPolyline systemPolyline = displaySystemConnection.SystemGeometry;
+                                    List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
+                                    for (int i = 1; i < point2Ds.Count - 1; i++)
+                                    {
+                                        plantControlArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
 
                 //if (dictionary_Pipes != null)

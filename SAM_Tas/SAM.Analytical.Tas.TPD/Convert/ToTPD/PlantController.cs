@@ -14,7 +14,7 @@ namespace SAM.Analytical.Tas.TPD
 
             PlantController result = plantRoom.AddController();
             
-            if(displaySystemController is SystemNormalController)
+            if(displaySystemController is SystemLiquidNormalController)
             {
                 result.ControlType = tpdControlType.tpdControlNormal;
             }
@@ -22,7 +22,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 result.ControlType = tpdControlType.tpdControlOutdoor;
             }
-            else if (displaySystemController is SystemDifferenceController)
+            else if (displaySystemController is SystemLiquidDifferenceController)
             {
                 result.ControlType = tpdControlType.tpdControlDifference;
             }
@@ -45,6 +45,10 @@ namespace SAM.Analytical.Tas.TPD
             else if (displaySystemController is SystemIfLogicalController)
             {
                 result.ControlType = tpdControlType.tpdControlIf;
+            }
+            else if (displaySystemController is SystemLiquidPassthroughController)
+            {
+                result.ControlType = tpdControlType.tpdControlPassThrough;
             }
 
             displaySystemController.SetLocation(result);

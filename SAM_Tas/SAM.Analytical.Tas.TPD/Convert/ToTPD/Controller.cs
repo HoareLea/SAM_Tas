@@ -45,6 +45,10 @@ namespace SAM.Analytical.Tas.TPD
             {
                 result.ControlType = tpdControlType.tpdControlIf;
             }
+            else if (displaySystemController is SystemPassthroughController)
+            {
+                result.ControlType = tpdControlType.tpdControlIf;
+            }
 
             displaySystemController.SetLocation(result);
 
