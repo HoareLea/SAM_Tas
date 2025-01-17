@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using SAM.Core.Systems;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Systems;
-using System.Data;
 using System.Linq;
 
 namespace SAM.Analytical.Tas.TPD
@@ -20,6 +19,7 @@ namespace SAM.Analytical.Tas.TPD
 
             List<Tuple<PlantController, IDisplaySystemController>> tuples = new List<Tuple<PlantController, IDisplaySystemController>>();
 
+            #region Create all PlantControllers
             List<IDisplaySystemController> displaySystemControllers = systemPlantRoom.GetSystemComponents<IDisplaySystemController>(liquidSystem);
             foreach (IDisplaySystemController displaySystemController in displaySystemControllers)
             {
@@ -32,6 +32,14 @@ namespace SAM.Analytical.Tas.TPD
 
                 tuples.Add(new Tuple<PlantController, IDisplaySystemController>(plantController, displaySystemController));
             }
+            #endregion
+
+            if (tuples == null || tuples.Count == 0)
+            {
+                return null;
+            }
+
+            #region Create PlantController to PlantController connection
 
             List<Tuple<Guid, Guid>> tuples_Controllers = new List<Tuple<Guid, Guid>>();
 
@@ -79,7 +87,9 @@ namespace SAM.Analytical.Tas.TPD
                     }
                 }
             }
+            #endregion
 
+            #region Create PlantController to PlantComponent connection
             if (dictionary_PlantComponents != null)
             {
                 foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
@@ -116,7 +126,9 @@ namespace SAM.Analytical.Tas.TPD
                     }
                 }
             }
+            #endregion
 
+            #region Create PlantController to Pipe sensor connection
             if (dictionary_Pipes != null)
             {
                 foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
@@ -140,32 +152,6 @@ namespace SAM.Analytical.Tas.TPD
 
                                 plantSensorArc = tuple.Item1.AddSensorArc(pipe);
                             }
-                            else
-                            {
-                                List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(systemSensor_Connected);
-                                if(systemComponents == null || systemComponents.Count == 0)
-                                {
-                                    continue;
-                                }
-
-                                foreach(Core.Systems.SystemComponent systemComponent in systemComponents)
-                                {
-                                    if(!dictionary_PlantComponents.TryGetValue(systemComponent.Guid, out PlantComponent plantComponent) || plantComponent == null)
-                                    {
-                                        continue;
-                                    }
-
-                                    int count = ((dynamic)plantComponent).GetSensorPortCount();
-                                    if(count < 1)
-                                    {
-                                        continue;
-                                    }
-
-                                    plantSensorArc = tuple.Item1.AddSensorArcToComponent(plantComponent, 1);
-                                    break;
-                                }
-
-                            }
 
                             if(plantSensorArc == null)
                             {
@@ -185,9 +171,66 @@ namespace SAM.Analytical.Tas.TPD
                     }
                 }
             }
+            #endregion
+
+            #region Create PlantController to PlantComponent sensor connection
+            if (dictionary_Pipes != null)
+            {
+                foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
+                {
+                    IDisplaySystemController displaySystemController = tuple.Item2;
+
+                    List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(displaySystemController);
+                    if (systemSensors_Connected != null)
+                    {
+                        foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
+                        {
+                            List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(systemSensor_Connected);
+                            if (systemComponents == null || systemComponents.Count == 0)
+                            {
+                                continue;
+                            }
+
+                            PlantSensorArc plantSensorArc = null;
+
+                            foreach (Core.Systems.SystemComponent systemComponent in systemComponents)
+                            {
+                                if (!dictionary_PlantComponents.TryGetValue(systemComponent.Guid, out PlantComponent plantComponent) || plantComponent == null)
+                                {
+                                    continue;
+                                }
+
+                                int count = ((dynamic)plantComponent).GetSensorPortCount();
+                                if (count < 1)
+                                {
+                                    continue;
+                                }
+
+                                plantSensorArc = tuple.Item1.AddSensorArcToComponent(plantComponent, 1);
+                                break;
+                            }
+
+                            if (plantSensorArc == null)
+                            {
+                                continue;
+                            }
+
+                            if (systemSensor_Connected is DisplaySystemSensor)
+                            {
+                                SystemPolyline systemPolyline = ((DisplaySystemSensor)systemSensor_Connected).SystemGeometry;
+                                List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
+                                for (int i = 1; i < point2Ds.Count - 1; i++)
+                                {
+                                    plantSensorArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
 
             return tuples.ConvertAll(x => x.Item1);
         }
-
     }
 }

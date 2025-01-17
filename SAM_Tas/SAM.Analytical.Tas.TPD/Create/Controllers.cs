@@ -19,6 +19,7 @@ namespace SAM.Analytical.Tas.TPD
 
             List<Tuple<Controller, IDisplaySystemController>> tuples = new List<Tuple<Controller, IDisplaySystemController>>();
 
+            #region Create all Controllers
             List<IDisplaySystemController> displaySystemControllers = systemPlantRoom.GetSystemComponents<IDisplaySystemController>(airSystem);
             foreach(IDisplaySystemController displaySystemController in displaySystemControllers)
             {
@@ -31,6 +32,14 @@ namespace SAM.Analytical.Tas.TPD
 
                 tuples.Add(new Tuple<Controller, IDisplaySystemController>(controller, displaySystemController));
             }
+            #endregion
+
+            if (tuples == null || tuples.Count == 0)
+            {
+                return null;
+            }
+
+            #region Create Controller to Controller connection
 
             List<Tuple<Guid, Guid>> tuples_Controllers = new List<Tuple<Guid, Guid>>();
 
@@ -46,6 +55,10 @@ namespace SAM.Analytical.Tas.TPD
                         foreach (IDisplaySystemController displaySystemController_Connected in displaySystemControllers_Connected)
                         {
                             Controller controller_Connected = tuples.Find(x => x.Item2.Guid == displaySystemController_Connected.Guid)?.Item1;
+                            if (controller_Connected == null)
+                            {
+                                continue;
+                            }
 
                             if (tuples_Controllers.Find(x => (x.Item1 == displaySystemController.Guid && x.Item2 == displaySystemController_Connected.Guid) || (x.Item2 == displaySystemController.Guid && x.Item1 == displaySystemController_Connected.Guid)) != null)
                             {
@@ -73,20 +86,27 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
                 }
+            }
+            #endregion
 
-                if(dictionary_SystemComponent != null)
+            #region Create Controller to SystemComponent connection
+            if (dictionary_SystemComponent != null)
+            {
+                foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
                 {
-                    List<Core.Systems.SystemComponent> systemComponents_Connected = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(tuple.Item2);
+                    IDisplaySystemController displaySystemController = tuple.Item2;
+
+                    List<Core.Systems.SystemComponent> systemComponents_Connected = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(displaySystemController);
                     if (systemComponents_Connected != null)
                     {
                         foreach (Core.Systems.SystemComponent systemComponent_Connected in systemComponents_Connected)
                         {
-                            if(!dictionary_SystemComponent.TryGetValue(systemComponent_Connected.Guid, out global::TPD.ISystemComponent systemComponent_TPD) || systemComponent_TPD == null)
+                            if (!dictionary_SystemComponent.TryGetValue(systemComponent_Connected.Guid, out global::TPD.ISystemComponent systemComponent_TPD) || systemComponent_TPD == null)
                             {
                                 continue;
                             }
 
-                            ControlArc controlArc = tuple.Item1.AddControlArc(systemComponent_TPD as global::TPD.SystemComponent);
+                            ControlArc controlArc = tuple.Item1.AddControlArc((global::TPD.SystemComponent)systemComponent_TPD);
 
                             List<ISystemConnection> systemConnections = systemPlantRoom.GetSystemConnections(tuple.Item2, systemComponent_Connected, new SystemType(airSystem));
                             if (systemConnections != null && systemConnections.Count > 0)
@@ -105,24 +125,40 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
                 }
+            }
+            #endregion
 
-
-                if(dictionary_Duct != null)
+            #region Create Controller to Duct sensor connection
+            if (dictionary_Duct != null)
+            {
+                foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
                 {
-                    List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(tuple.Item2);
+                    IDisplaySystemController displaySystemController = tuple.Item2;
+
+                    List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(displaySystemController);
                     if (systemSensors_Connected != null)
                     {
                         foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
                         {
+                            SensorArc sensorArc = null;
+
                             ISystemConnection systemConnection = systemPlantRoom.GetRelatedObjects<ISystemConnection>(systemSensor_Connected)?.FirstOrDefault();
-                            if (systemConnection == null || !dictionary_Duct.TryGetValue(systemConnection.Guid, out Duct duct) || duct == null)
+                            if (systemConnection != null)
+                            {
+                                if (!dictionary_Duct.TryGetValue(systemConnection.Guid, out Duct duct) || duct == null)
+                                {
+                                    continue;
+                                }
+
+                                sensorArc = tuple.Item1.AddSensorArc(duct);
+                            }
+
+                            if (sensorArc == null)
                             {
                                 continue;
                             }
 
-                            SensorArc sensorArc = tuple.Item1.AddSensorArc(duct);
-
-                            if(systemSensor_Connected is DisplaySystemSensor)
+                            if (systemSensor_Connected is DisplaySystemSensor)
                             {
                                 SystemPolyline systemPolyline = ((DisplaySystemSensor)systemSensor_Connected).SystemGeometry;
                                 List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
@@ -134,8 +170,65 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
                 }
-
             }
+            #endregion
+
+            #region Create Controller to Component sensor connection
+            if (dictionary_Duct != null)
+            {
+                foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
+                {
+                    IDisplaySystemController displaySystemController = tuple.Item2;
+
+                    List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(displaySystemController);
+                    if (systemSensors_Connected != null)
+                    {
+                        foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
+                        {
+                            List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(systemSensor_Connected);
+                            if (systemComponents == null || systemComponents.Count == 0)
+                            {
+                                continue;
+                            }
+
+                            SensorArc sensorArc = null;
+
+                            foreach (Core.Systems.SystemComponent systemComponent in systemComponents)
+                            {
+                                if (!dictionary_SystemComponent.TryGetValue(systemComponent.Guid, out global::TPD.ISystemComponent systemComponent_TPD) || systemComponent_TPD == null)
+                                {
+                                    continue;
+                                }
+
+                                int count = ((dynamic)systemComponent_TPD).GetSensorPortCount();
+                                if (count < 1)
+                                {
+                                    continue;
+                                }
+
+                                sensorArc = tuple.Item1.AddSensorArcToComponent((global::TPD.SystemComponent)systemComponent_TPD, 1);
+                                break;
+                            }
+
+                            if (sensorArc == null)
+                            {
+                                continue;
+                            }
+
+                            if (systemSensor_Connected is DisplaySystemSensor)
+                            {
+                                SystemPolyline systemPolyline = ((DisplaySystemSensor)systemSensor_Connected).SystemGeometry;
+                                List<Geometry.Planar.Point2D> point2Ds = systemPolyline.GetPoints().ConvertAll(x => x.ToTPD());
+                                for (int i = 1; i < point2Ds.Count - 1; i++)
+                                {
+                                    sensorArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
 
             return tuples.ConvertAll(x => x.Item1);
         }
