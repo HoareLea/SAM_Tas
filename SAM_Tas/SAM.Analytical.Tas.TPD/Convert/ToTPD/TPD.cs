@@ -538,6 +538,10 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemIceStorageChiller)systemComponent_Temp, plantRoom) as PlantComponent;
                                     }
+                                    else if (systemComponent_Temp is DisplaySystemWaterSourceIceStorageChiller)
+                                    {
+                                        plantComponent_TPD = ToTPD((DisplaySystemWaterSourceIceStorageChiller)systemComponent_Temp, plantRoom) as PlantComponent;
+                                    }
                                     else if (systemComponent_Temp is DisplaySystemLiquidExchanger)
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemLiquidExchanger)systemComponent_Temp, plantRoom) as PlantComponent;

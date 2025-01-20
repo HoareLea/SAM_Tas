@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Name = displaySystemWaterSourceChiller.Name;
             result.Description = displaySystemWaterSourceChiller.Description;
 
-            result.IsDirectAbsChiller = 1;
+            result.IsDirectAbsChiller = false;
 
             displaySystemWaterSourceChiller.SetLocation(result as PlantComponent);
 
@@ -34,7 +34,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Name = displaySystemWaterSourceDirectAbsorptionChiller.Name;
             result.Description = displaySystemWaterSourceDirectAbsorptionChiller.Description;
 
-            result.IsDirectAbsChiller = -1;
+            result.IsDirectAbsChiller = true;
 
             displaySystemWaterSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
 
