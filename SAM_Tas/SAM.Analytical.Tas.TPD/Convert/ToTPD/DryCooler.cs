@@ -5,20 +5,20 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static CoolingTower ToTPD(this DisplaySystemCoolingTower displaySystemCoolingTower, PlantRoom plantRoom)
+        public static DryCooler ToTPD(this DisplaySystemDryCooler displaySystemDryCooler, PlantRoom plantRoom)
         {
-            if (displaySystemCoolingTower == null || plantRoom == null)
+            if (displaySystemDryCooler == null || plantRoom == null)
             {
                 return null;
             }
 
             dynamic result = plantRoom.AddDryCooler();
-            result.Name = displaySystemCoolingTower.Name;
-            result.Description = displaySystemCoolingTower.Description;
+            result.Name = displaySystemDryCooler.Name;
+            result.Description = displaySystemDryCooler.Description;
 
-            displaySystemCoolingTower.SetLocation(result as PlantComponent);
+            displaySystemDryCooler.SetLocation(result as PlantComponent);
 
-            return result as CoolingTower;
+            return result as DryCooler;
         }
     }
 }
