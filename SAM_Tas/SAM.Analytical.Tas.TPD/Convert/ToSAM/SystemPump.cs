@@ -33,7 +33,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Capacity = pump.Capacity;
             result.PartLoad = pump.PartLoad?.ToSAM();
 
-            if(result.DesignFlowRate == -1000)
+            if(result.DesignFlowRate == 0 )
             {
                 Pipe pipe = Query.Pipes((PlantComponent)pump, Core.Direction.Out)?.FirstOrDefault();
                 if(pipe != null)

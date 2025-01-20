@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetReference(result, @dynamic.GUID);
 
-            if (result.DesignFlowRate == -1000)
+            if (result.DesignFlowRate == 0)
             {
                 Pipe pipe = Query.Pipes((PlantComponent)valve, Core.Direction.Out)?.FirstOrDefault();
                 if (pipe != null)
