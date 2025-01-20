@@ -16,16 +16,21 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = multiBoiler;
 
-            SystemMultiBoiler result = new SystemMultiBoiler(@dynamic.Name);
+            SystemMultiBoiler result = new SystemMultiBoiler(@dynamic.Name)
+            {
+                Description = dynamic.Description,
+                Setpoint = ((ProfileData)dynamic.Setpoint)?.ToSAM(),
+                Duty = ((SizedVariable)dynamic.Duty)?.ToSAM(),
+                DesignPressureDrop = dynamic.DesignPressureDrop,
+                DesignTemperatureDifference = multiBoiler.DesignDeltaT,
+                LossesInSizing = dynamic.LossesInSizing,
+                Sequence = ((tpdBoilerSequence)dynamic.Sequence).ToSAM()
+            };
+
+            tpdMultiBoilerFlags tpdMultiBoilerFlags = (tpdMultiBoilerFlags)multiBoiler.Flags;
+            result.IsDomesticHotWater = tpdMultiBoilerFlags.HasFlag(tpdMultiBoilerFlags.tpdMultiBoilerIsDHW);
+
             Modify.SetReference(result, @dynamic.GUID);
-            
-            result.Description = dynamic.Description;
-            result.Setpoint = ((ProfileData)dynamic.Setpoint)?.ToSAM();
-            result.Duty = ((SizedVariable)dynamic.Duty)?.ToSAM();
-            result.DesignPressureDrop = dynamic.DesignPressureDrop;
-            result.DesignTemperatureDifference = multiBoiler.DesignDeltaT;
-            result.LossesInSizing = dynamic.LossesInSizing;
-            result.Sequence = ((tpdBoilerSequence)dynamic.Sequence).ToSAM();
 
             List<FuelSource> fuelSources = Query.FuelSources(multiBoiler as PlantComponent);
 

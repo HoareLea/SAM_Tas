@@ -38,6 +38,10 @@ namespace SAM.Analytical.Tas.TPD
                 HeatSizeFraction = @dynamic.HeatSizeFraction
             };
 
+            tpdAirSourceHeatPumpFlags tpdAirSourceHeatPumpFlags = (tpdAirSourceHeatPumpFlags)airSourceHeatPump.Flags;
+            result.IsDomesticHotWater = tpdAirSourceHeatPumpFlags.HasFlag(tpdAirSourceHeatPumpFlags.tpdAirSourceHeatPumpIsDHW);
+
+
             List<FuelSource> fuelSources = Query.FuelSources(airSourceHeatPump as PlantComponent);
             if (fuelSources != null && fuelSources.Count > 0)
             {

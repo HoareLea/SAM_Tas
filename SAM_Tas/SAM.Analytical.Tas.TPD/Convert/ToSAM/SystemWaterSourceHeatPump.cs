@@ -39,6 +39,9 @@ namespace SAM.Analytical.Tas.TPD
                 AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM()
             };
 
+            tpdHeatPumpFlags tpdHeatPumpFlags = (tpdHeatPumpFlags)heatPump.Flags;
+            result.IsDomesticHotWater = tpdHeatPumpFlags.HasFlag(tpdHeatPumpFlags.tpdHeatPumpIsDHW);
+
             List<FuelSource> fuelSources = Query.FuelSources(heatPump as PlantComponent);
             if (fuelSources != null && fuelSources.Count > 0)
             {

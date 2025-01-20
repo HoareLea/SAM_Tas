@@ -16,18 +16,24 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = cHP;
 
-            SystemCHP result = new SystemCHP(@dynamic.Name);
-            Modify.SetReference(result, @dynamic.GUID);
+            SystemCHP result = new SystemCHP(@dynamic.Name)
+            {
+                Description = dynamic.Description,
+                Setpoint = ((ProfileData)dynamic.Setpoint)?.ToSAM(),
+                Efficiency = ((ProfileData)dynamic.Efficiency)?.ToSAM(),
+                HeatPowerRatio = ((ProfileData)dynamic.HeatPowerRatio)?.ToSAM(),
+                Duty = ((SizedVariable)dynamic.Duty)?.ToSAM(),
+                DesignTemperatureDifference = dynamic.DesignDeltaT,
+                Capacity = dynamic.Capacity,
+                DesignPressureDrop = dynamic.DesignPressureDrop,
+                LossesInSizing = dynamic.LossesInSizing
+            };
 
-            result.Description = dynamic.Description;
-            result.Setpoint = ((ProfileData)dynamic.Setpoint)?.ToSAM();
-            result.Efficiency = ((ProfileData)dynamic.Efficiency)?.ToSAM();
-            result.HeatPowerRatio = ((ProfileData)dynamic.HeatPowerRatio)?.ToSAM();
-            result.Duty = ((SizedVariable)dynamic.Duty)?.ToSAM();
-            result.DesignTemperatureDifference = dynamic.DesignDeltaT;
-            result.Capacity = dynamic.Capacity;
-            result.DesignPressureDrop = dynamic.DesignPressureDrop;
-            result.LossesInSizing = dynamic.LossesInSizing;
+            tpdCHPFlags tpdCHPFlags = (tpdCHPFlags)cHP.Flags;
+            result.IsDomesticHotWater = tpdCHPFlags.HasFlag(tpdCHPFlags.tpdCHPIsDHW);
+
+
+            Modify.SetReference(result, @dynamic.GUID);
 
             List<FuelSource> fuelSources = Query.FuelSources(cHP as PlantComponent);
             if (fuelSources != null && fuelSources.Count > 0)

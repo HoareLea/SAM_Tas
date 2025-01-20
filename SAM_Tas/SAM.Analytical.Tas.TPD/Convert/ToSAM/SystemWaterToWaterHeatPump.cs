@@ -35,6 +35,9 @@ namespace SAM.Analytical.Tas.TPD
                 LossesInSizing = @dynamic.LossesInSizing
             };
 
+            tpdWaterToWaterHeatPumpFlags tpdWaterToWaterHeatPumpFlags = (tpdWaterToWaterHeatPumpFlags)waterToWaterHeatPump.Flags;
+            result.IsDomesticHotWater = tpdWaterToWaterHeatPumpFlags.HasFlag(tpdWaterToWaterHeatPumpFlags.tpdWaterToWaterHeatPumpIsDHW);
+
             List<FuelSource> fuelSources = Query.FuelSources(waterToWaterHeatPump as PlantComponent);
             if (fuelSources != null && fuelSources.Count > 0)
             {
