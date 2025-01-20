@@ -2,6 +2,7 @@
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -31,6 +32,16 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignFlowRate = pump.DesignFlowRate;
             result.Capacity = pump.Capacity;
             result.PartLoad = pump.PartLoad?.ToSAM();
+
+            if(result.DesignFlowRate == -1000)
+            {
+                Pipe pipe = Query.Pipes((PlantComponent)pump, Core.Direction.Out)?.FirstOrDefault();
+                if(pipe != null)
+                {
+                    result.DesignFlowRate = pipe.DesignFlowRate;
+                }
+            }
+
             //result.FanControlType = pump.ControlType.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();

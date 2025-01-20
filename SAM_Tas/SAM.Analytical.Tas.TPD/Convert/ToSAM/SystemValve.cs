@@ -1,6 +1,7 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
+using System.Linq;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -15,14 +16,25 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = valve;
 
-            SystemValve result = new SystemValve(@dynamic.Name);
+            SystemValve result = new SystemValve(@dynamic.Name)
+            {
+                Description = dynamic.Description,
+                Capacity = dynamic.Capacity,
+                DesignCapacitySignal = dynamic.DesignCapacitySignal,
+                DesignFlowRate = dynamic.DesignFlowRate,
+                DesignPressureDrop = dynamic.DesignPressureDrop
+            };
+
             Modify.SetReference(result, @dynamic.GUID);
 
-            result.Description = dynamic.Description;
-            result.Capacity = dynamic.Capacity;
-            result.DesignCapacitySignal = dynamic.DesignCapacitySignal;
-            result.DesignFlowRate = dynamic.DesignFlowRate;
-            result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            if (result.DesignFlowRate == -1000)
+            {
+                Pipe pipe = Query.Pipes((PlantComponent)valve, Core.Direction.Out)?.FirstOrDefault();
+                if (pipe != null)
+                {
+                    result.DesignFlowRate = pipe.DesignFlowRate;
+                }
+            }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
