@@ -96,9 +96,22 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     dynamic systemZone_Group = systemZones[i];
                     systemZone_Group.AddZoneLoad(zoneLoads[i]);
-                    systemZone_Group.SetDHWGroup(dHWGroup);
-                    systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
-                    systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                    
+                    if(dHWGroup != null)
+                    {
+                        systemZone_Group.SetDHWGroup(dHWGroup);
+                    }
+                    
+                    if(electricalGroup_SmallPower != null)
+                    {
+                        systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
+                    }
+                    
+                    if(electricalGroup_Lighting != null)
+                    {
+                        systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                    }
+
                     systemZone_Group.FlowRate.Type = tpdSizedVariable.tpdSizedVariableSize;
                     systemZone_Group.FlowRate.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
                     //systemZone_Group.FlowRate.Value = 100;

@@ -1276,9 +1276,22 @@ namespace SAM.Analytical.Tas
                 // System Zone
                 dynamic systemZone_Group = componentGroup.GetComponent(2 + (index * 2) + 2);
                 systemZone_Group.AddZoneLoad(zoneLoad);
-                systemZone_Group.SetDHWGroup(dHWGroup);
-                systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
-                systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+
+                if(dHWGroup != null)
+                {
+                    systemZone_Group.SetDHWGroup(dHWGroup);
+                }
+
+                if (electricalGroup_SmallPower != null)
+                {
+                    systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
+                }
+
+                if(electricalGroup_Lighting != null)
+                {
+                    systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                }
+
                 systemZone_Group.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FlowRate.Method = global::TPD.tpdSizeFlowMethod.tpdSizeFlowDeltaT;
                 for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
@@ -1535,9 +1548,20 @@ namespace SAM.Analytical.Tas
                 // System Zone
                 dynamic systemZone_Group = componentGroup.GetComponent(2 + (index * 2) + 2);
                 systemZone_Group.AddZoneLoad(zoneLoad);
-                systemZone_Group.SetDHWGroup(dHWGroup);
-                systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
-                systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                if (dHWGroup != null)
+                {
+                    systemZone_Group.SetDHWGroup(dHWGroup);
+                }
+
+                if (electricalGroup_SmallPower != null)
+                {
+                    systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
+                }
+
+                if (electricalGroup_Lighting != null)
+                {
+                    systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                }
                 systemZone_Group.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FlowRate.Method = global::TPD.tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
                 //systemZone_Group.FlowRate.Value = 100;
@@ -1795,9 +1819,20 @@ namespace SAM.Analytical.Tas
                 // System Zone
                 dynamic systemZone_Group = componentGroup.GetComponent(2 + (index * 2) + 2);
                 systemZone_Group.AddZoneLoad(zoneLoad);
-                systemZone_Group.SetDHWGroup(dHWGroup);
-                systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
-                systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                if (dHWGroup != null)
+                {
+                    systemZone_Group.SetDHWGroup(dHWGroup);
+                }
+
+                if (electricalGroup_SmallPower != null)
+                {
+                    systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
+                }
+
+                if (electricalGroup_Lighting != null)
+                {
+                    systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                }
                 systemZone_Group.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FlowRate.Method = global::TPD.tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
                 //systemZone_Group.FlowRate.Value = 100;
@@ -1980,9 +2015,20 @@ namespace SAM.Analytical.Tas
                 // System Zone
                 dynamic systemZone_Group = componentGroup.GetComponent(2 + (index * 2) + 2);
                 systemZone_Group.AddZoneLoad(zoneLoad);
-                systemZone_Group.SetDHWGroup(dHWGroup);
-                systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
-                systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                if (dHWGroup != null)
+                {
+                    systemZone_Group.SetDHWGroup(dHWGroup);
+                }
+
+                if (electricalGroup_SmallPower != null)
+                {
+                    systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
+                }
+
+                if (electricalGroup_Lighting != null)
+                {
+                    systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                }
                 systemZone_Group.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FlowRate.Method = global::TPD.tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
                 //systemZone_Group.FlowRate.Value = 100;
@@ -2149,9 +2195,21 @@ namespace SAM.Analytical.Tas
                 // System Zone
                 dynamic systemZone_Group = componentGroup.GetComponent(2 + (index * 2) + 2);
                 systemZone_Group.AddZoneLoad(zoneLoad);
-                systemZone_Group.SetDHWGroup(dHWGroup);
-                systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
-                systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                if(dHWGroup != null)
+                {
+                    systemZone_Group.SetDHWGroup(dHWGroup);
+                }
+
+                if(electricalGroup_SmallPower != null)
+                {
+                    systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
+                }
+
+                if(electricalGroup_Lighting != null)
+                {
+                    systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                }
+
                 systemZone_Group.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FlowRate.Method = global::TPD.tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
                 //systemZone_Group.FlowRate.Value = 100;
