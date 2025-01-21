@@ -12,13 +12,21 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddPump();
-            result.Name = displaySystemPump.Name;
-            result.Description = displaySystemPump.Description;
+            Pump result = plantRoom.AddPump();
+            
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemPump.Name;
+            @dynamic.Description = displaySystemPump.Description;
+
+            result.OverallEfficiency = displaySystemPump.OverallEfficiency.ToTPD();
+            result.Pressure = displaySystemPump.Pressure;
+            result.DesignFlowRate = displaySystemPump.DesignFlowRate;
+            result.Capacity = displaySystemPump.Capacity;
+            result.PartLoad = displaySystemPump.PartLoad.ToTPD();
 
             displaySystemPump.SetLocation(result as PlantComponent);
 
-            return result as Pump;
+            return result;
         }
     }
 }

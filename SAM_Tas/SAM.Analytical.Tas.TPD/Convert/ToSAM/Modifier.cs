@@ -175,7 +175,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            LuaModifier result = new LuaModifier(profileDataModifierLua.Multiplier.ArithmeticOperator().Value, null);
+            LuaModifier result = new LuaModifier(profileDataModifierLua.Multiplier.ArithmeticOperator().Value, profileDataModifierLua.Code);
 
             return result;
         }

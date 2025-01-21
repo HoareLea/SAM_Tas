@@ -21,6 +21,7 @@ namespace SAM.Analytical.Tas.TPD
                 Description = dynamic.Description,
                 Setpoint = ((ProfileData)dynamic.Setpoint)?.ToSAM(),
                 Duty = ((SizedVariable)dynamic.Duty)?.ToSAM(),
+                Capacity = dynamic.Capacity,
                 DesignPressureDrop = dynamic.DesignPressureDrop,
                 DesignTemperatureDifference = multiBoiler.DesignDeltaT,
                 LossesInSizing = dynamic.LossesInSizing,
