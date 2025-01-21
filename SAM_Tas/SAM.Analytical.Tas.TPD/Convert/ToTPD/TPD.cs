@@ -554,10 +554,6 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemMultiBoiler)systemComponent_Temp, plantRoom) as PlantComponent;
                                     }
-                                    else if (systemComponent_Temp is DisplaySystemPhotovoltaicPanel)
-                                    {
-                                        plantComponent_TPD = ToTPD((DisplaySystemPhotovoltaicPanel)systemComponent_Temp, plantRoom) as PlantComponent;
-                                    }
                                     else if (systemComponent_Temp is DisplaySystemPipeLossComponent)
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemPipeLossComponent)systemComponent_Temp, plantRoom) as PlantComponent;
@@ -606,10 +602,6 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         plantComponent_TPD = ToTPD((DisplaySystemWaterToWaterHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
                                     }
-                                    else if (systemComponent_Temp is DisplaySystemWindTurbine)
-                                    {
-                                        plantComponent_TPD = ToTPD((DisplaySystemWindTurbine)systemComponent_Temp, plantRoom) as PlantComponent;
-                                    }
 
                                     if (plantComponent_TPD == null)
                                     {
@@ -623,6 +615,38 @@ namespace SAM.Analytical.Tas.TPD
 
                                 Create.Pipes(systemPlantRoom, plantRoom, dictionary_SystemComponents_TPD, out Dictionary<Guid, Pipe> dictionary_Pipes);
                                 Create.PlantControllers(systemPlantRoom, plantRoom, liquidSystem, dictionary_SystemComponents_TPD, dictionary_Pipes);
+                            }
+                        }
+
+                        List<Core.Systems.ISystemComponent> systemComponents_All = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>();
+                        if(systemComponents_All != null)
+                        {
+                            foreach(Core.Systems.ISystemComponent systemComponent_Temp in systemComponents_All)
+                            {
+                                List<Core.Systems.ISystem> systems = systemPlantRoom.GetRelatedObjects<Core.Systems.ISystem>(systemComponent_Temp);
+                                if(systems != null && systems.Count != 0)
+                                {
+                                    continue;
+                                }
+
+                                PlantComponent plantComponent_TPD = null;
+
+                                if (systemComponent_Temp is DisplaySystemWindTurbine)
+                                {
+                                    plantComponent_TPD = ToTPD((DisplaySystemWindTurbine)systemComponent_Temp, plantRoom) as PlantComponent;
+                                }
+                                else if (systemComponent_Temp is DisplaySystemPhotovoltaicPanel)
+                                {
+                                    plantComponent_TPD = ToTPD((DisplaySystemPhotovoltaicPanel)systemComponent_Temp, plantRoom) as PlantComponent;
+                                }
+
+                                if (plantComponent_TPD == null)
+                                {
+                                    continue;
+                                }
+
+                                systemComponent_Temp.SetReference(Query.Reference(plantComponent_TPD));
+                                systemPlantRoom.Add(systemComponent_Temp);
                             }
                         }
 
