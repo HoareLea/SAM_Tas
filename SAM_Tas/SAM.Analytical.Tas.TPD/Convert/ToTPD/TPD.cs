@@ -451,11 +451,15 @@ namespace SAM.Analytical.Tas.TPD
 
 
                                 List<Core.Systems.ISystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Undefined, Direction.Out);
-                                if(systemComponents  == null)
+                                if (systemComponents == null || systemComponents.Count == 0)
+                                {
+                                    systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem);
+                                }
+
+                                if (systemComponents  == null || systemComponents.Count == 0)
                                 {
                                     continue;
                                 }
-
 
                                 foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents)
                                 {

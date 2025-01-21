@@ -957,6 +957,11 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
+                        if(systemJSAMObject is SystemPhotovoltaicPanel || systemJSAMObject is SystemWindTurbine)
+                        {
+                            continue;
+                        }
+
                         systemPlantRoom.Connect(liquidSystem, systemComponent);
                     }
 
