@@ -21,16 +21,18 @@ namespace SAM.Analytical.Tas.TPD
 
             #region Create all PlantControllers
             List<IDisplaySystemController> displaySystemControllers = systemPlantRoom.GetSystemComponents<IDisplaySystemController>(liquidSystem);
-            foreach (IDisplaySystemController displaySystemController in displaySystemControllers)
+            if(displaySystemControllers != null && displaySystemControllers.Count != 0)
             {
-                PlantController plantController = displaySystemController.ToTPD(plantRoom);
-                if (plantController == null)
+                foreach (IDisplaySystemController displaySystemController in displaySystemControllers)
                 {
-                    continue;
+                    PlantController plantController = displaySystemController.ToTPD(plantRoom);
+                    if (plantController == null)
+                    {
+                        continue;
+                    }
+
+                    tuples.Add(new Tuple<PlantController, IDisplaySystemController>(plantController, displaySystemController));
                 }
-
-
-                tuples.Add(new Tuple<PlantController, IDisplaySystemController>(plantController, displaySystemController));
             }
             #endregion
 
