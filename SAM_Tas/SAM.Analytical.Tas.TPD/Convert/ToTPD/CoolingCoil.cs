@@ -12,18 +12,20 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddCoolingCoil();
+            global::TPD.CoolingCoil result = system.AddCoolingCoil();
 
-            result.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
-            result.Duty.SizeFraction = 1.0;
-            result.BypassFactor.Value = displaySystemCoolingCoil.BypassFactor;
-            result.MinimumOffcoil.Value = 16;
+            dynamic @dynamic = result;
+            result.Duty.Update(displaySystemCoolingCoil.Duty);
+            result.BypassFactor.Update(displaySystemCoolingCoil.BypassFactor);
+            result.MinimumOffcoil.Update(displaySystemCoolingCoil.MinimumOffcoil);
+
+            //result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint);
 
             displaySystemCoolingCoil.SetLocation(result as SystemComponent);
 
             if (coolingGroup != null)
             {
-                result.SetCoolingGroup(coolingGroup);
+                @dynamic.SetCoolingGroup(coolingGroup);
             }
 
             if(designConditionLoad != null)
@@ -31,7 +33,7 @@ namespace SAM.Analytical.Tas.TPD
                 result.Duty.AddDesignCondition(designConditionLoad);
             }
 
-            return result as global::TPD.CoolingCoil;
+            return result;
         }
     }
 }

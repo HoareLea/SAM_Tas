@@ -12,13 +12,32 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddChp();
-            result.Name = displaySystemCHP.Name;
-            result.Description = displaySystemCHP.Description;
+            CHP result = plantRoom.AddChp();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemCHP.Name;
+            @dynamic.Description = displaySystemCHP.Description;
+
+            result.Setpoint?.Update(displaySystemCHP.Setpoint);
+            result.Efficiency?.Update(displaySystemCHP.Efficiency);
+            result.HeatPowerRatio?.Update(displaySystemCHP.HeatPowerRatio);
+            result.Duty?.Update(displaySystemCHP.Duty);
+            result.DesignDeltaT = displaySystemCHP.DesignTemperatureDifference;
+            result.Capacity = displaySystemCHP.Capacity;
+            result.DesignPressureDrop = displaySystemCHP.DesignPressureDrop;
+            result.LossesInSizing = displaySystemCHP.LossesInSizing.ToTPD();
+
+            if (displaySystemCHP.LossesInSizing || displaySystemCHP.IsDomesticHotWater)
+            {
+                tpdCHPFlags tpdCHPFlags = displaySystemCHP.LossesInSizing && displaySystemCHP.IsDomesticHotWater ? tpdCHPFlags.tpdCHPLossesInSizing | tpdCHPFlags.tpdCHPIsDHW :
+                    displaySystemCHP.LossesInSizing ? tpdCHPFlags.tpdCHPLossesInSizing : tpdCHPFlags.tpdCHPIsDHW;
+
+                result.Flags = (int)tpdCHPFlags;
+            }
 
             displaySystemCHP.SetLocation(result as PlantComponent);
 
-            return result as CHP;
+            return result;
         }
     }
 }

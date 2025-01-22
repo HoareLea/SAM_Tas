@@ -12,13 +12,22 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddCoolingGroup();
-            result.Name = displayCoolingSystemCollection.Name;
-            result.Description = displayCoolingSystemCollection.Description;
+            CoolingGroup result = plantRoom.AddCoolingGroup();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displayCoolingSystemCollection.Name;
+            @dynamic.Description = displayCoolingSystemCollection.Description;
+
+            result.MaximumReturnTemp = displayCoolingSystemCollection.MaximumReturnTemperature;
+            result.VariableFlowCapacity = displayCoolingSystemCollection.VariableFlowCapacity.ToTPD();
+            result.PeakDemand = displayCoolingSystemCollection.PeakDemand;
+            result.SizeFraction = displayCoolingSystemCollection.SizeFraction;
+            result.DistributionHeatGainProfile?.Update(displayCoolingSystemCollection.Distribution);
+            result.UseDistributionHeatGainProfile = displayCoolingSystemCollection.Distribution == null ? (false).ToTPD() : displayCoolingSystemCollection.Distribution.IsEfficiency.ToTPD();
 
             displayCoolingSystemCollection.SetLocation(result as PlantComponent);
 
-            return result as CoolingGroup;
+            return result;
         }
     }
 }

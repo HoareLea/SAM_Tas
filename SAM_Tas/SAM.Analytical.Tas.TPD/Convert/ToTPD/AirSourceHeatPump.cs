@@ -12,14 +12,39 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            AirSourceHeatPump result = plantRoom.AddAirSourceHeatPump();
+            
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemAirSourceHeatPump.Name;
+            @dynamic.Description = displaySystemAirSourceHeatPump.Description;
 
-            dynamic result = plantRoom.AddAirSourceHeatPump();
-            result.Name = displaySystemAirSourceHeatPump.Name;
-            result.Description = displaySystemAirSourceHeatPump.Description;
+            result.Type = displaySystemAirSourceHeatPump.HeatPumpType.ToTPD();
+            result.CoolingCapacity?.Update(displaySystemAirSourceHeatPump.CoolingCapacity);
+            result.CoolingPower?.Update(displaySystemAirSourceHeatPump.CoolingPower);
+            result.HeatingCapacity?.Update(displaySystemAirSourceHeatPump.HeatingCapacity);
+            result.HeatingPower?.Update(displaySystemAirSourceHeatPump.HeatingPower);
+            result.CondenserFanLoad?.Update(displaySystemAirSourceHeatPump.CondenserFanLoad);
+            result.HeatCoolDutyRatio = displaySystemAirSourceHeatPump.HeatingCoolingDutyRatio;
+            result.HeatCapPowRatio = displaySystemAirSourceHeatPump.HeatingCapacityPowerRatio;
+            result.CoolCapPowRatio = displaySystemAirSourceHeatPump.CoolingCapacityPowerRatio;
+            result.MaxDemFanRatio = displaySystemAirSourceHeatPump.MaxDemandFanRatio;
+            result.StandbyPower = displaySystemAirSourceHeatPump.StandbyPower;
+            result.ADFHeatMode = displaySystemAirSourceHeatPump.ADFHeatingMode;
+            result.ADFCoolMode = displaySystemAirSourceHeatPump.ADFCoolingMode;
+            result.PowHeatPort = displaySystemAirSourceHeatPump.PortHeatingPower;
+            result.PowCoolPort = displaySystemAirSourceHeatPump.PortCoolingPower;
+            result.WaterPipeLength = displaySystemAirSourceHeatPump.WaterPipeLength;
+            result.AncillaryLoad?.Update(displaySystemAirSourceHeatPump.AncillaryLoad);
+            result.HeatSizeFraction = displaySystemAirSourceHeatPump.HeatSizeFraction;
+
+            if (displaySystemAirSourceHeatPump.IsDomesticHotWater)
+            {
+                result.Flags = (int)tpdAirSourceHeatPumpFlags.tpdAirSourceHeatPumpIsDHW;
+            }
 
             displaySystemAirSourceHeatPump.SetLocation(result as PlantComponent);
 
-            return result as AirSourceHeatPump;
+            return result;
         }
     }
 }

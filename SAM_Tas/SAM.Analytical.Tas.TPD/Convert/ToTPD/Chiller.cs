@@ -13,15 +13,25 @@ namespace SAM.Analytical.Tas.TPD
             }
             
 
-            dynamic result = plantRoom.AddChiller();
-            result.Name = displaySystemAirSourceChiller.Name;
-            result.Description = displaySystemAirSourceChiller.Description;
+            Chiller result = plantRoom.AddChiller();
 
-            result.IsDirectAbsChiller = false;
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemAirSourceChiller.Name;
+            @dynamic.Description = displaySystemAirSourceChiller.Description;
+            @dynamic.IsDirectAbsChiller = false;
+
+            result.Setpoint?.Update(displaySystemAirSourceChiller.Setpoint);
+            result.Efficiency?.Update(displaySystemAirSourceChiller.Efficiency);
+            result.CondenserFanLoad?.Update(displaySystemAirSourceChiller.CondenserFanLoad);
+            result.Duty?.Update(displaySystemAirSourceChiller.Duty);
+            result.DesignDeltaT = displaySystemAirSourceChiller.DesignTemperatureDifference;
+            result.Capacity = displaySystemAirSourceChiller.Capacity;
+            result.DesignPressureDrop = displaySystemAirSourceChiller.DesignPressureDrop;
+            result.LossesInSizing = displaySystemAirSourceChiller.LossesInSizing.ToTPD();
 
             displaySystemAirSourceChiller.SetLocation(result as PlantComponent);
 
-            return result as Chiller;
+            return result;
         }
 
         public static AbsorptionChiller ToTPD(this DisplaySystemAirSourceDirectAbsorptionChiller displaySystemAirSourceDirectAbsorptionChiller, PlantRoom plantRoom)
@@ -31,16 +41,25 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddChiller();
-            result.Name = displaySystemAirSourceDirectAbsorptionChiller.Name;
-            result.Description = displaySystemAirSourceDirectAbsorptionChiller.Description;
+            AbsorptionChiller result = plantRoom.AddAbsorptionChiller();
 
-            result.IsDirectAbsChiller = true;
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemAirSourceDirectAbsorptionChiller.Name;
+            @dynamic.Description = displaySystemAirSourceDirectAbsorptionChiller.Description;
+            @dynamic.IsDirectAbsChiller = true;
 
+            result.Setpoint?.Update(displaySystemAirSourceDirectAbsorptionChiller.Setpoint);
+            result.Efficiency?.Update(displaySystemAirSourceDirectAbsorptionChiller.Efficiency);
+            result.Duty?.Update(displaySystemAirSourceDirectAbsorptionChiller.Duty);
+            result.Capacity1 = displaySystemAirSourceDirectAbsorptionChiller.Capacity;
+            result.DesignPressureDrop1 = displaySystemAirSourceDirectAbsorptionChiller.DesignPressureDrop;
+            //result.AncillaryLoad?.Update(displaySystemAirSourceDirectAbsorptionChiller.AnciliaryLoad);
+            //result.MinOutTempSource?.Update(displaySystemAirSourceDirectAbsorptionChiller.MinOutTempSource);
+            result.LossesInSizing = displaySystemAirSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
 
             displaySystemAirSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
 
-            return result as AbsorptionChiller;
+            return result;
         }
     }
 }

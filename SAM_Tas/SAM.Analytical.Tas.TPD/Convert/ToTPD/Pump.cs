@@ -18,11 +18,11 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemPump.Name;
             @dynamic.Description = displaySystemPump.Description;
 
-            result.OverallEfficiency = displaySystemPump.OverallEfficiency.ToTPD();
+            result.OverallEfficiency?.Update(displaySystemPump.OverallEfficiency);
             result.Pressure = displaySystemPump.Pressure;
             result.DesignFlowRate = displaySystemPump.DesignFlowRate;
             result.Capacity = displaySystemPump.Capacity;
-            result.PartLoad = displaySystemPump.PartLoad.ToTPD();
+            result.PartLoad?.Update(displaySystemPump.PartLoad);
 
             displaySystemPump.SetLocation(result as PlantComponent);
 

@@ -5,9 +5,9 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SizedVariable ToTPD(this SizableValue sizableValue)
+        public static int ToTPD(this bool @bool)
         {
-            return null;
+            return @bool ? 1 : -1;
         }
     }
 }
