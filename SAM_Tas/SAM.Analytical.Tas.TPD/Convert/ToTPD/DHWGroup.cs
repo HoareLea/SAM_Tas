@@ -12,9 +12,16 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddDHWGroup();
-            result.Name = displayDomesticHotWaterSystemCollection.Name;
-            result.Description = displayDomesticHotWaterSystemCollection.Description;
+            DHWGroup result = plantRoom.AddDHWGroup();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displayDomesticHotWaterSystemCollection.Name;
+            @dynamic.Description = displayDomesticHotWaterSystemCollection.Description;
+
+            result.LoadDistribution = displayDomesticHotWaterSystemCollection.LoadDistribution.ToTPD();
+            result.MinimumReturnTemp = displayDomesticHotWaterSystemCollection.MinimumReturnTemperature;
+            result.UseDistributionHeatLossProfile = displayDomesticHotWaterSystemCollection.Distribution == null ? (false).ToTPD() : displayDomesticHotWaterSystemCollection.Distribution.IsEfficiency.ToTPD();
+            result.DistributionHeatLossProfile.Update(displayDomesticHotWaterSystemCollection.Distribution);
 
             displayDomesticHotWaterSystemCollection.SetLocation(result as PlantComponent);
 
