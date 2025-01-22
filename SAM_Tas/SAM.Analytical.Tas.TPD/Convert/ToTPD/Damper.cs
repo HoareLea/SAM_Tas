@@ -12,11 +12,17 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddDamper();
+            Damper result = system.AddDamper();
+
+            result.Capacity = displaySystemDamper.Capacity;
+            result.DesignCapacitySignal = displaySystemDamper.DesignCapacitySignal;
+            result.MinimumFlowFraction = displaySystemDamper.MinimumFlowFraction;
+            result.DesignPressureDrop = displaySystemDamper.DesignPressureDrop;
+
 
             displaySystemDamper.SetLocation(result as SystemComponent);
 
-            return result as Damper;
+            return result;
         }
     }
 }
