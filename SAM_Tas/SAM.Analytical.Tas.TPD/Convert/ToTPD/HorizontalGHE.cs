@@ -12,13 +12,28 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddHorizontalGHE();
-            result.Name = displaySystemHorizontalExchanger.Name;
-            result.Description = displaySystemHorizontalExchanger.Description;
+            HorizontalGHE result = plantRoom.AddHorizontalGHE();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemHorizontalExchanger.Name;
+            @dynamic.Description = displaySystemHorizontalExchanger.Description;
+
+            result.DesignPressureDrop = displaySystemHorizontalExchanger.DesignPressureDrop;
+            result.Capacity = displaySystemHorizontalExchanger.Capacity;
+            result.GroundDensity = displaySystemHorizontalExchanger.GroundDensity;
+            result.GroundHeatCap = displaySystemHorizontalExchanger.GroundHeatCapacity;
+            result.GroundConductivity = displaySystemHorizontalExchanger.GroundConductivity;
+            result.GroundSolarReflectance = displaySystemHorizontalExchanger.GroundSolarReflectance;
+            result.PipeDiamIn = displaySystemHorizontalExchanger.InsidePipeDiameter;
+            result.PipeDiamOut = displaySystemHorizontalExchanger.OutsidePipeDiameter;
+            result.PipeConductivity = displaySystemHorizontalExchanger.PipeConductivity;
+            result.PipeLength = displaySystemHorizontalExchanger.PipeLength;
+            result.PipeSeparation = displaySystemHorizontalExchanger.PipeSeparation;
+            result.PipeLength = displaySystemHorizontalExchanger.PipeLength;
 
             displaySystemHorizontalExchanger.SetLocation(result as PlantComponent);
 
-            return result as HorizontalGHE;
+            return result;
         }
     }
 }
