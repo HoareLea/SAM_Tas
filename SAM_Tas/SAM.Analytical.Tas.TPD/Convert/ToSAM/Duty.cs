@@ -30,10 +30,10 @@ namespace SAM.Analytical.Tas.TPD
             switch ((tpdSizedVariable)@dynamic.Type)
             {
                 case tpdSizedVariable.tpdSizedVariableSizeDone:
-                    return new Duty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames);
+                    return new DesignConditionSizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames);
 
                 case tpdSizedVariable.tpdSizedVariableSize:
-                    return new Duty(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames);
+                    return new DesignConditionSizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames);
 
                 case tpdSizedVariable.tpdSizedVariableNone:
                     return new UnlimitedValue();

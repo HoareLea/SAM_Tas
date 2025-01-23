@@ -35,5 +35,18 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
+        public static bool Update(this SizedFlowVariable sizedFlowVariable, SizedFlowValue sizedFlowValue)
+        {
+            if (sizedFlowVariable == null || sizedFlowValue == null)
+            {
+                return false;
+            }
+
+            sizedFlowVariable.Value = sizedFlowValue.Value;
+            sizedFlowVariable.SizeFraction = sizedFlowValue.SizeFranction;
+
+            return true;
+        }
+
     }
 }

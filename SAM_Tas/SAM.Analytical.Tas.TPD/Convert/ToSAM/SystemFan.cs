@@ -15,31 +15,30 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = fan;
 
-            SystemFan result = new SystemFan(@dynamic.Name);
+            SystemFan result = new SystemFan(@dynamic.Name)
+            {
+                Description = dynamic.Description,
+                OverallEfficiency = fan.OverallEfficiency?.ToSAM(),
+                HeatGainFactor = fan.HeatGainFactor,
+                Pressure = fan.Pressure,
+                DesignFlowRate = fan.DesignFlowRate?.ToSAM(),
+                DesignFlowType = fan.DesignFlowType.ToSAM(),
+                MinimumFlowRate = fan.MinimumFlowRate?.ToSAM(),
+                MinimumFlowType = fan.MinimumFlowType.ToSAM(),
+                MinimumFlowFraction = fan.MinimumFlowFraction,
+                Capacity = fan.Capacity,
+                FanControlType = fan.ControlType.ToSAM(),
+                PartLoad = fan.PartLoad?.ToSAM(),
+            };
+
+
             Modify.SetReference(result, @dynamic.GUID);
             
-            result.Description = dynamic.Description;
-            result.OverallEfficiency = fan.OverallEfficiency.Value;
-            result.HeatGainFactor = fan.HeatGainFactor;
-            result.Pressure = fan.Pressure;
-
-            switch (fan.DesignFlowType)
-            {
-                case tpdFlowRateType.tpdFlowRateValue:
-                case tpdFlowRateType.tpdFlowRateNearestZoneFlowRate:
-                case tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate:
-                case tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir:
-                case tpdFlowRateType.tpdFlowRateNearestZoneFreshAir:
-                    result.DesignFlowRate = System.Convert.ToDouble(fan.DesignFlowRate.Value);
-                    break;
-            }
-
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemFan displaySystemFan = Systems.Create.DisplayObject<DisplaySystemFan>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if(displaySystemFan != null)
             {
-
                 ITransform2D transform2D = ((ISystemComponent)fan).Transform2D();
                 if (transform2D != null)
                 {
