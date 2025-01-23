@@ -12,13 +12,35 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddSlinkyCoil();
-            result.Name = displaySystemSlinkyCoil.Name;
-            result.Description = displaySystemSlinkyCoil.Description;
+            SlinkyCoil result = plantRoom.AddSlinkyCoil();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemSlinkyCoil.Name;
+            @dynamic.Description = displaySystemSlinkyCoil.Description;
+
+            result.DesignPressureDrop = displaySystemSlinkyCoil.DesignPressureDrop;
+            result.Capacity = displaySystemSlinkyCoil.Capacity;
+            result.GroundDensity = displaySystemSlinkyCoil.GroundDensity;
+            result.GroundHeatCap = displaySystemSlinkyCoil.GroundHeatCapacity;
+            result.GroundConductivity = displaySystemSlinkyCoil.GroundConductivity;
+            result.GroundSolarReflectance = displaySystemSlinkyCoil.GroundSolarReflectance;
+            result.PipeDiamIn = displaySystemSlinkyCoil.InsidePipeDiameter;
+            result.PipeDiamOut = displaySystemSlinkyCoil.OutsidePipeDiameter;
+            result.PipeConductivity = displaySystemSlinkyCoil.PipeConductivity;
+            result.LoopPitch = displaySystemSlinkyCoil.LoopPitch;
+            result.LoopWidth = displaySystemSlinkyCoil.LoopWidth;
+            result.LoopHeight = displaySystemSlinkyCoil.LoopHeight;
+            result.IsUprightCoil = displaySystemSlinkyCoil.IsUprightCoil.ToTPD();
+            result.FillDensity = displaySystemSlinkyCoil.FillDensity;
+            result.FillHeatCap = displaySystemSlinkyCoil.FillHeatCapacity;
+            result.FillConductivity = displaySystemSlinkyCoil.FillConductivity;
+            result.TrenchLength = displaySystemSlinkyCoil.TrenchLength;
+            result.TrenchDepth = displaySystemSlinkyCoil.TrenchDepth;
+            result.TrenchWidth = displaySystemSlinkyCoil.TrenchWidth;
 
             displaySystemSlinkyCoil.SetLocation(result as PlantComponent);
 
-            return result as SlinkyCoil;
+            return result;
         }
     }
 }

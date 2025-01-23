@@ -12,13 +12,17 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddRefrigerantGroup();
-            result.Name = displayRefrigerantSystemCollection.Name;
-            result.Description = displayRefrigerantSystemCollection.Description;
+            RefrigerantGroup result = plantRoom.AddRefrigerantGroup();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displayRefrigerantSystemCollection.Name;
+            @dynamic.Description = displayRefrigerantSystemCollection.Description;
+
+            result.PipeLength?.Update(displayRefrigerantSystemCollection.PipeLength);
 
             displayRefrigerantSystemCollection.SetLocation(result as PlantComponent);
 
-            return result as RefrigerantGroup;
+            return result;
         }
     }
 }
