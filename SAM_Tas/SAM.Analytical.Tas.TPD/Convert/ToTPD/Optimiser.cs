@@ -27,7 +27,6 @@ namespace SAM.Analytical.Tas.TPD
             result.ScheduleMode = displaySystemEconomiser.ScheduleMode.ToTPD();
             result.DesignPressureDrop = displaySystemEconomiser.DesignPressureDrop;
 
-
             //result.ScheduleMode = tpdOptimiserScheduleMode.tpdOptimiserScheduleRecirc;
             //result.MinFreshAirType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir;
             //result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
@@ -51,16 +50,34 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddOptimiser();
-            result.SetSchedule(plantSchedule);
+            Optimiser result = system.AddOptimiser();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemMixingBox.Name;
+            @dynamic.Description = displaySystemMixingBox.Description;
+
+            result.Capacity = displaySystemMixingBox.Capacity;
+            result.DesignFlowRate?.Update(displaySystemMixingBox.DesignFlowRate);
+            result.DesignFlowType = displaySystemMixingBox.DesignFlowType.ToTPD();
+            result.Setpoint?.Update(displaySystemMixingBox.Setpoint);
+            result.MinFreshAirRate?.Update(displaySystemMixingBox.MinFreshAirRate);
+            result.MinFreshAirType = displaySystemMixingBox.MinFreshAirType.ToTPD();
+            result.ScheduleMode = displaySystemMixingBox.ScheduleMode.ToTPD();
+            result.DesignPressureDrop = displaySystemMixingBox.DesignPressureDrop;
+
+            //result.ScheduleMode = tpdOptimiserScheduleMode.tpdOptimiserScheduleRecirc;
+            //result.MinFreshAirType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir;
+            //result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+
             result.Flags = (int)tpdOptimiserFlags.tpdOptimiserFlagFreshAirMixingBox;
-            result.ScheduleMode = tpdOptimiserScheduleMode.tpdOptimiserScheduleRecirc;
-            result.MinFreshAirType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir;
-            result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+            if (plantSchedule != null)
+            {
+                @dynamic.SetSchedule(plantSchedule);
+            }
 
             displaySystemMixingBox.SetLocation(result as SystemComponent);
 
-            return result as Optimiser;
+            return result;
         }
     }
 }
