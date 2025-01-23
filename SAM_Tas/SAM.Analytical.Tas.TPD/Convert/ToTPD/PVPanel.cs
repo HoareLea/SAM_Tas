@@ -12,13 +12,31 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddPVPanel();
-            result.Name = displaySystemPhotovoltaicPanel.Name;
-            result.Description = displaySystemPhotovoltaicPanel.Description;
+            PVPanel result = plantRoom.AddPVPanel();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemPhotovoltaicPanel.Name;
+            @dynamic.Description = displaySystemPhotovoltaicPanel.Description;
+
+            result.PanelEfficiency?.Update(displaySystemPhotovoltaicPanel.PanelEfficiency);
+            result.InverterSize?.Update(displaySystemPhotovoltaicPanel.InverterSize);
+            result.Multiplicity = System.Convert.ToDouble(displaySystemPhotovoltaicPanel.Multiplicity);
+            result.InverterEfficiency?.Update(displaySystemPhotovoltaicPanel.InverterEfficiency);
+            result.UseZoneSurface = displaySystemPhotovoltaicPanel.UseZoneSurface.ToTPD();
+            result.Area = displaySystemPhotovoltaicPanel.Area;
+            result.Inclination?.Update(displaySystemPhotovoltaicPanel.Inclination);
+            result.Orientation?.Update(displaySystemPhotovoltaicPanel.Orientation);
+            result.Reflectance = displaySystemPhotovoltaicPanel.Reflectance;
+            result.MinIrradiance = displaySystemPhotovoltaicPanel.MinIrradiance;
+            result.NOCT = displaySystemPhotovoltaicPanel.NOCT;
+            result.PowerTempCoeff = displaySystemPhotovoltaicPanel.PowerTemperatureCoefficient;
+            result.UseSTC = displaySystemPhotovoltaicPanel.UseSTC.ToTPD();
+            result.OutputAtSTC = displaySystemPhotovoltaicPanel.OutputAtSTC;
+            result.DeratingFactor = displaySystemPhotovoltaicPanel.DeratingFactor;
 
             displaySystemPhotovoltaicPanel.SetLocation(result as PlantComponent);
 
-            return result as PVPanel;
+            return result;
         }
     }
 }
