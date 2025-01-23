@@ -12,13 +12,15 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddJunction();
-            result.Name = displaySystemAirJunction.Name;
-            result.Description = displaySystemAirJunction.Description;
+            Junction result = system.AddJunction();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemAirJunction.Name;
+            @dynamic.Description = displaySystemAirJunction.Description;
 
             displaySystemAirJunction.SetLocation(result as SystemComponent);
 
-            return result as Junction;
+            return result;
         }
     }
 }
