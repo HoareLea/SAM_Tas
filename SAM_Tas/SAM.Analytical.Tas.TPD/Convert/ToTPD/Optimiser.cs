@@ -12,16 +12,36 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddOptimiser();
-            result.SetSchedule(plantSchedule);
+            Optimiser result = system.AddOptimiser();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemEconomiser.Name;
+            @dynamic.Description = displaySystemEconomiser.Description;
+
+            result.Capacity = displaySystemEconomiser.Capacity;
+            result.DesignFlowRate?.Update(displaySystemEconomiser.DesignFlowRate);
+            result.DesignFlowType = displaySystemEconomiser.DesignFlowType.ToTPD();
+            result.Setpoint?.Update(displaySystemEconomiser.Setpoint);
+            result.MinFreshAirRate?.Update(displaySystemEconomiser.MinFreshAirRate);
+            result.MinFreshAirType = displaySystemEconomiser.MinFreshAirType.ToTPD();
+            result.ScheduleMode = displaySystemEconomiser.ScheduleMode.ToTPD();
+            result.DesignPressureDrop = displaySystemEconomiser.DesignPressureDrop;
+
+
+            //result.ScheduleMode = tpdOptimiserScheduleMode.tpdOptimiserScheduleRecirc;
+            //result.MinFreshAirType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir;
+            //result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+
             result.Flags = 0;
-            result.ScheduleMode = tpdOptimiserScheduleMode.tpdOptimiserScheduleRecirc;
-            result.MinFreshAirType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir;
-            result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
+
+            if (plantSchedule != null)
+            {
+                @dynamic.SetSchedule(plantSchedule);
+            }
 
             displaySystemEconomiser.SetLocation(result as SystemComponent);
 
-            return result as Optimiser;
+            return result;
         }
 
         public static Optimiser ToTPD(this DisplaySystemMixingBox displaySystemMixingBox, global::TPD.System system, PlantSchedule plantSchedule)
@@ -33,7 +53,7 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic result = system.AddOptimiser();
             result.SetSchedule(plantSchedule);
-            result.Flags = 1;
+            result.Flags = (int)tpdOptimiserFlags.tpdOptimiserFlagFreshAirMixingBox;
             result.ScheduleMode = tpdOptimiserScheduleMode.tpdOptimiserScheduleRecirc;
             result.MinFreshAirType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFreshAir;
             result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
