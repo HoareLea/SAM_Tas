@@ -12,7 +12,21 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddDXCoil();
+            DXCoil result = system.AddDXCoil();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemDXCoil.Name;
+            @dynamic.Description = displaySystemDXCoil.Description;
+
+            result.CoolingSetpoint?.Update(displaySystemDXCoil.CoolingSetpoint);
+            result.HeatingSetpoint?.Update(displaySystemDXCoil.HeatingSetpoint);
+            result.MinimumOffcoil?.Update(displaySystemDXCoil.MinOffcoilTemperature);
+            result.MaximumOffcoil?.Update(displaySystemDXCoil.MaxOffcoilTemperature);
+            result.BypassFactor?.Update(displaySystemDXCoil.BypassFactor);
+            result.CoolingDuty?.Update(displaySystemDXCoil.CoolingDuty);
+            result.HeatingDuty?.Update(displaySystemDXCoil.HeatingDuty);
+
+
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
@@ -21,7 +35,7 @@ namespace SAM.Analytical.Tas.TPD
 
             displaySystemDXCoil.SetLocation(systemComponent);
 
-            return result as DXCoil;
+            return result;
         }
     }
 }
