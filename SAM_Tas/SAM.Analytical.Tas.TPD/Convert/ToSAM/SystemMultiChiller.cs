@@ -33,6 +33,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 SystemMultiChillerItem systemMultiChillerItem = new SystemMultiChillerItem();
                 systemMultiChillerItem.Efficiency = multiChiller.GetChillerEfficiency(i)?.ToSAM();
+                systemMultiChillerItem.CondenserFanLoad = multiChiller.GetChillerCondenserFanLoad(i)?.ToSAM();
                 systemMultiChillerItem.Percentage = multiChiller.GetChillerPercentage(i);
                 systemMultiChillerItem.Threshold = multiChiller.GetChillerThreshold(i);
                 systemMultiChillerItem.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[(i - 1) * 2]?.Name);
