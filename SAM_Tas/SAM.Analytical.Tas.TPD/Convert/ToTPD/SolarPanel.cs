@@ -12,13 +12,29 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddSolarPanel();
-            result.Name = displaySystemSolarPanel.Name;
-            result.Description = displaySystemSolarPanel.Description;
+            SolarPanel result = plantRoom.AddSolarPanel();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemSolarPanel.Name;
+            @dynamic.Description = displaySystemSolarPanel.Description;
+
+            result.EtaZero = displaySystemSolarPanel.EtaZero;
+            result.AlphaOne = displaySystemSolarPanel.AlphaOne;
+            result.AlphaTwo = displaySystemSolarPanel.AlphaTwo;
+            result.Multiplicity = System.Convert.ToDouble(displaySystemSolarPanel.Multiplicity);
+            result.Capacity = displaySystemSolarPanel.Capacity;
+            result.DesignPressureDrop = displaySystemSolarPanel.DesignPressureDrop;
+            result.NoNegativeLoad = displaySystemSolarPanel.NoNegativeLoad.ToTPD();
+            result.UseZoneSurface = displaySystemSolarPanel.UseZoneSurface.ToTPD();
+            result.Area = displaySystemSolarPanel.SweptArea;
+            result.Inclination?.Update(displaySystemSolarPanel.Inclination);
+            result.Orientation?.Update(displaySystemSolarPanel.Orientation);
+            result.Reflectance = displaySystemSolarPanel.Reflectance;
+            result.DesignFlowPerM2 = displaySystemSolarPanel.DesignFlowPerM2;
 
             displaySystemSolarPanel.SetLocation(result as PlantComponent);
 
-            return result as SolarPanel;
+            return result;
         }
     }
 }
