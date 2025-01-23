@@ -48,5 +48,15 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
+        public static bool Update(this ControllerProfileData controllerProfileData, GFunction gFunction)
+        {
+            if (controllerProfileData == null || gFunction == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
     }
 }

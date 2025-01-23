@@ -12,13 +12,31 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddGroundSource();
-            result.Name = displaySystemVerticalBorehole.Name;
-            result.Description = displaySystemVerticalBorehole.Description;
+            GroundSource result = plantRoom.AddGroundSource();
+
+            dynamic @dynamic = result;
+            dynamic.Name = displaySystemVerticalBorehole.Name;
+            dynamic.Description = displaySystemVerticalBorehole.Description;
+
+            result.Capacity = displaySystemVerticalBorehole.Capacity;
+            result.DesignPressureDrop = displaySystemVerticalBorehole.DesignPressureDrop;
+            result.Bhlength = displaySystemVerticalBorehole.Length;
+            result.Bhdiameter = displaySystemVerticalBorehole.Diameter;
+            result.GroundConductivity = displaySystemVerticalBorehole.GroundConductivity;
+            result.GroundHeatCapacity = displaySystemVerticalBorehole.GroundHeatCapacity;
+            result.GroundDensity = displaySystemVerticalBorehole.GroundDensity;
+            result.NumBoreholes = displaySystemVerticalBorehole.NumberOfBoreholes;
+            result.Gfunction?.Update(displaySystemVerticalBorehole.GFunction);
+            result.GfunctionReferenceRatio = displaySystemVerticalBorehole.GFunctionReferenceRatio;
+            result.PipeInDiameter = displaySystemVerticalBorehole.PipeInDiameter;
+            result.PipeOutDiameter = displaySystemVerticalBorehole.PipeOutDiameter;
+            result.PipeConductivity = displaySystemVerticalBorehole.PipeConductivity;
+            result.GroutConductivity = displaySystemVerticalBorehole.GroutConductivity;
+            result.GroundTemp = displaySystemVerticalBorehole.GroundTemperatureAve;
 
             displaySystemVerticalBorehole.SetLocation(result as PlantComponent);
 
-            return result as GroundSource;
+            return result;
         }
     }
 }
