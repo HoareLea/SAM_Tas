@@ -12,25 +12,34 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddHeatingCoil();
-            result.Setpoint.Value = 14;
-            result.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
-            result.Duty.SizeFraction = 1.0;
-            result.MaximumOffcoil.Value = 28;
+            global::TPD.HeatingCoil result = system.AddHeatingCoil();
+
+            dynamic @dynamic = result;
+
+            result.Setpoint?.Update(displaySystemHeatingCoil.Setpoint);
+            result.Efficiency?.Update(displaySystemHeatingCoil.Efficiency);
+            result.Duty?.Update(displaySystemHeatingCoil.Duty);
+            result.MaximumOffcoil?.Update(displaySystemHeatingCoil.MaximumOffcoil);
+
+
+            //result.Setpoint.Value = 14;
+            //result.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
+            //result.Duty.SizeFraction = 1.0;
+            //result.MaximumOffcoil.Value = 28;
 
             displaySystemHeatingCoil.SetLocation(result as SystemComponent);
 
             if (heatingGroup != null)
             {
-                result.SetHeatingGroup(heatingGroup);
+                @dynamic.SetHeatingGroup(heatingGroup);
             }
 
             if(designConditionLoad != null)
             {
-                result.Duty.AddDesignCondition(designConditionLoad);
+                @dynamic.Duty.AddDesignCondition(designConditionLoad);
             }
 
-            return result as global::TPD.HeatingCoil;
+            return result;
         }
     }
 }
