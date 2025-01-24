@@ -12,14 +12,32 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddIceStorageChiller();
-            result.Name = displaySystemIceStorageChiller.Name;
-            result.Description = displaySystemIceStorageChiller.Description;
-            result.IsWaterSource = false;
+            IceStorageChiller result = plantRoom.AddIceStorageChiller();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemIceStorageChiller.Name;
+            @dynamic.Description = displaySystemIceStorageChiller.Description;
+
+            result.Setpoint?.Update(displaySystemIceStorageChiller.Setpoint);
+            result.Efficiency?.Update(displaySystemIceStorageChiller.Efficiency);
+            result.IceMakingEfficiency?.Update(displaySystemIceStorageChiller.IceMakingEfficiency);
+            result.Duty?.Update(displaySystemIceStorageChiller.Duty);
+            result.DesignDeltaT1 = displaySystemIceStorageChiller.DesignTemperatureDifference;
+            result.Capacity1 = displaySystemIceStorageChiller.Capacity;
+            result.DesignPressureDrop1 = displaySystemIceStorageChiller.DesignPressureDrop;
+            result.IceCapacity?.Update(displaySystemIceStorageChiller.IceCapacity);
+            result.InitialIceReserve = displaySystemIceStorageChiller.InitialIceReserve;
+            result.CondenserFanLoad?.Update(displaySystemIceStorageChiller.CondenserFanLoad);
+            result.MotorEfficiency?.Update(displaySystemIceStorageChiller.MotorEfficiency);
+            result.IceMeltChillerFraction = displaySystemIceStorageChiller.IceMeltChillerFraction;
+            result.AncillaryLoad?.Update(displaySystemIceStorageChiller.AncillaryLoad);
+            result.LossesInSizing = displaySystemIceStorageChiller.LossesInSizing.ToTPD();
+
+            @dynamic.IsWaterSource = false;
 
             displaySystemIceStorageChiller.SetLocation(result as PlantComponent);
 
-            return result as IceStorageChiller;
+            return result;
         }
 
         public static IceStorageChiller ToTPD(this DisplaySystemWaterSourceIceStorageChiller displaySystemWaterSourceIceStorageChiller, PlantRoom plantRoom)
@@ -29,14 +47,35 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddIceStorageChiller();
-            result.Name = displaySystemWaterSourceIceStorageChiller.Name;
-            result.Description = displaySystemWaterSourceIceStorageChiller.Description;
-            result.IsWaterSource = true;
+            IceStorageChiller result = plantRoom.AddIceStorageChiller();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemWaterSourceIceStorageChiller.Name;
+            @dynamic.Description = displaySystemWaterSourceIceStorageChiller.Description;
+
+            result.Setpoint?.Update(displaySystemWaterSourceIceStorageChiller.Setpoint);
+            result.Efficiency?.Update(displaySystemWaterSourceIceStorageChiller.Efficiency);
+            result.IceMakingEfficiency?.Update(displaySystemWaterSourceIceStorageChiller.IceMakingEfficiency);
+            result.Duty?.Update(displaySystemWaterSourceIceStorageChiller.Duty);
+            result.DesignDeltaT1 = displaySystemWaterSourceIceStorageChiller.DesignTemperatureDifference1;
+            result.Capacity1 = displaySystemWaterSourceIceStorageChiller.Capacity1;
+            result.DesignPressureDrop1 = displaySystemWaterSourceIceStorageChiller.DesignPressureDrop1;
+            result.DesignDeltaT2 = displaySystemWaterSourceIceStorageChiller.DesignTemperatureDifference2;
+            result.Capacity2 = displaySystemWaterSourceIceStorageChiller.Capacity2;
+            result.DesignPressureDrop2 = displaySystemWaterSourceIceStorageChiller.DesignPressureDrop2;
+            result.IceCapacity?.Update(displaySystemWaterSourceIceStorageChiller.IceCapacity);
+            result.InitialIceReserve = displaySystemWaterSourceIceStorageChiller.InitialIceReserve;
+            result.CondenserFanLoad?.Update(displaySystemWaterSourceIceStorageChiller.CondenserFanLoad);
+            result.MotorEfficiency?.Update(displaySystemWaterSourceIceStorageChiller.MotorEfficiency);
+            result.IceMeltChillerFraction = displaySystemWaterSourceIceStorageChiller.IceMeltChillerFraction;
+            result.AncillaryLoad?.Update(displaySystemWaterSourceIceStorageChiller.AncillaryLoad);
+            result.LossesInSizing = displaySystemWaterSourceIceStorageChiller.LossesInSizing.ToTPD();
+
+            @dynamic.IsWaterSource = true;
 
             displaySystemWaterSourceIceStorageChiller.SetLocation(result as PlantComponent);
 
-            return result as IceStorageChiller;
+            return result;
         }
 
         

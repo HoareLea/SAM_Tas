@@ -34,6 +34,7 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop2 = tank.DesignPressureDrop2;
             result.DesignPressureDrop3 = tank.DesignPressureDrop3;
             result.DefinedHeatLossRate = tank.DefinedHeatLoss;
+            result.SetpointMode = tank.SetpointMethod.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

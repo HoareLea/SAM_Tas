@@ -12,13 +12,20 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddValve();
-            result.Name = displaySystemValve.Name;
-            result.Description = displaySystemValve.Description;
+            Valve result = plantRoom.AddValve();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemValve.Name;
+            @dynamic.Description = displaySystemValve.Description;
+
+            result.Capacity = displaySystemValve.Capacity;
+            result.DesignCapacitySignal = displaySystemValve.DesignCapacitySignal;
+            result.DesignFlowRate = displaySystemValve.DesignFlowRate;
+            result.DesignPressureDrop = displaySystemValve.DesignPressureDrop;
 
             displaySystemValve.SetLocation(result as PlantComponent);
 
-            return result as Valve;
+            return result;
         }
     }
 }
