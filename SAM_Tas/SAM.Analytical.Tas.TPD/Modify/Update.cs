@@ -32,6 +32,8 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
+            sizedVariable.SizeFraction = sizedVariable.SizeFraction;
+
             return true;
         }
 

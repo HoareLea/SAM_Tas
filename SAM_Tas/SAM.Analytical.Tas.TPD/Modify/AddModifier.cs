@@ -84,8 +84,7 @@ namespace SAM.Analytical.Tas.TPD
 
             ProfileDataModifierCurve profileDataModifierCurve = profileData.AddModifierCurve();
             profileDataModifierCurve.Multiplier = polynomialModifier.ArithmeticOperator.ToTPD();
-            
-            
+
             return true;
         }
 
