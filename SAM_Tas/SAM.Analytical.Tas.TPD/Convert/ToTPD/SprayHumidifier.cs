@@ -12,7 +12,17 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddSprayHumidifier();
+            SprayHumidifier result = system.AddSprayHumidifier();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemSprayHumidifier.Name;
+            @dynamic.Description = displaySystemSprayHumidifier.Description;
+
+            result.Setpoint?.Update(displaySystemSprayHumidifier.Setpoint);
+            result.Effectiveness?.Update(displaySystemSprayHumidifier.Effectiveness);
+            result.WaterFlowCapacity?.Update(displaySystemSprayHumidifier.WaterFlowCapacity);
+            result.ElectricalLoad?.Update(displaySystemSprayHumidifier.ElectricalLoad);
+
             result.Flags = 0;
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;
@@ -20,7 +30,7 @@ namespace SAM.Analytical.Tas.TPD
 
             displaySystemSprayHumidifier.SetLocation(result as SystemComponent);
 
-            return result as SprayHumidifier;
+            return result;
         }
 
         public static SprayHumidifier ToTPD(this DisplaySystemDirectEvaporativeCooler displaySystemDirectEvaporativeCooler, global::TPD.System system)
@@ -30,15 +40,27 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddSprayHumidifier();
-            result.Flags = 1;
+            SprayHumidifier result = system.AddSprayHumidifier();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemDirectEvaporativeCooler.Name;
+            @dynamic.Description = displaySystemDirectEvaporativeCooler.Description;
+
+            result.Setpoint?.Update(displaySystemDirectEvaporativeCooler.Setpoint);
+            result.Effectiveness?.Update(displaySystemDirectEvaporativeCooler.Effectiveness);
+            result.WaterFlowCapacity?.Update(displaySystemDirectEvaporativeCooler.WaterFlowCapacity);
+            result.ElectricalLoad?.Update(displaySystemDirectEvaporativeCooler.ElectricalLoad);
+            result.TankVolume?.Update(displaySystemDirectEvaporativeCooler.TankVolume);
+            result.TankHours = System.Convert.ToInt32(displaySystemDirectEvaporativeCooler.HoursBeforePurgingTank);
+
+            result.Flags = (int)tpdSprayHumidifierFlags.tpdSprayHumidifierEvaporativeCooler;
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
             displaySystemDirectEvaporativeCooler.SetLocation(result as SystemComponent);
 
-            return result as SprayHumidifier;
+            return result;
         }
     }
 }

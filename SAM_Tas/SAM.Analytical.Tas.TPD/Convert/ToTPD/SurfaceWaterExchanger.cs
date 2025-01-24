@@ -12,13 +12,24 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddSurfaceWaterExchanger();
-            result.Name = displaySystemSurfaceWaterExchanger.Name;
-            result.Description = displaySystemSurfaceWaterExchanger.Description;
+            SurfaceWaterExchanger result = plantRoom.AddSurfaceWaterExchanger();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemSurfaceWaterExchanger.Name;
+            @dynamic.Description = displaySystemSurfaceWaterExchanger.Description;
+
+            result.Capacity = displaySystemSurfaceWaterExchanger.Capacity;
+            result.DesignPressureDrop = displaySystemSurfaceWaterExchanger.DesignPressureDrop;
+            result.Efficiency?.Update(displaySystemSurfaceWaterExchanger.Efficiency);
+            result.PondVolume = displaySystemSurfaceWaterExchanger.PondVolume;
+            result.PondSurfaceArea = displaySystemSurfaceWaterExchanger.PondSurfaceArea;
+            result.PondPerimeter = displaySystemSurfaceWaterExchanger.PondPerimeter;
+            result.GroundConductivity = displaySystemSurfaceWaterExchanger.GroundConductivity;
+            result.WaterTableDepth = displaySystemSurfaceWaterExchanger.WaterTableDepth;
 
             displaySystemSurfaceWaterExchanger.SetLocation(result as PlantComponent);
 
-            return result as SurfaceWaterExchanger;
+            return result;
         }
     }
 }

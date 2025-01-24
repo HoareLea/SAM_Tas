@@ -12,14 +12,25 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = system.AddSteamHumidifier();
+            SteamHumidifier result = system.AddSteamHumidifier();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemSteamHumidifier.Name;
+            @dynamic.Description = displaySystemSteamHumidifier.Description;
+
+            result.Setpoint?.Update(displaySystemSteamHumidifier.Setpoint);
+            result.WaterSupplyTemp?.Update(displaySystemSteamHumidifier.WaterSupplyTemperature);
+            result.Duty?.Update(displaySystemSteamHumidifier.Duty);
+            result.WaterTempSource = displaySystemSteamHumidifier.WaterTemperatureSource.ToTPD();
+
+
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
             displaySystemSteamHumidifier.SetLocation(result as SystemComponent);
 
-            return result as SteamHumidifier;
+            return result;
         }
     }
 }
