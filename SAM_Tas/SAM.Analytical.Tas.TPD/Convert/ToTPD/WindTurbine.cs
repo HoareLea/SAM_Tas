@@ -12,13 +12,22 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddWindTurbine();
-            result.Name = displaySystemWindTurbine.Name;
-            result.Description = displaySystemWindTurbine.Description;
+            WindTurbine result = plantRoom.AddWindTurbine();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemWindTurbine.Name;
+            @dynamic.Description = displaySystemWindTurbine.Description;
+
+            result.HubHeight = displaySystemWindTurbine.HubHeight;
+            result.Area = displaySystemWindTurbine.Area;
+            result.MinSpeed = displaySystemWindTurbine.MinSpeed;
+            result.CutOffSpeed = displaySystemWindTurbine.CutOffSpeed;
+            result.Multiplicity = displaySystemWindTurbine.Multiplicity;
+            result.Efficiency?.Update(displaySystemWindTurbine.Efficiency);
 
             displaySystemWindTurbine.SetLocation(result as PlantComponent);
 
-            return result as WindTurbine;
+            return result;
         }
     }
 }
