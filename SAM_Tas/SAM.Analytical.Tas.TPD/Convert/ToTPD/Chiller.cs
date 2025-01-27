@@ -11,7 +11,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 return null;
             }
-            
+
 
             Chiller result = plantRoom.AddChiller();
 
@@ -30,34 +30,6 @@ namespace SAM.Analytical.Tas.TPD
             result.LossesInSizing = displaySystemAirSourceChiller.LossesInSizing.ToTPD();
 
             displaySystemAirSourceChiller.SetLocation(result as PlantComponent);
-
-            return result;
-        }
-
-        public static AbsorptionChiller ToTPD(this DisplaySystemAirSourceDirectAbsorptionChiller displaySystemAirSourceDirectAbsorptionChiller, PlantRoom plantRoom)
-        {
-            if (displaySystemAirSourceDirectAbsorptionChiller == null || plantRoom == null)
-            {
-                return null;
-            }
-
-            AbsorptionChiller result = plantRoom.AddAbsorptionChiller();
-
-            dynamic @dynamic = result;
-            @dynamic.Name = displaySystemAirSourceDirectAbsorptionChiller.Name;
-            @dynamic.Description = displaySystemAirSourceDirectAbsorptionChiller.Description;
-            @dynamic.IsDirectAbsChiller = true;
-
-            result.Setpoint?.Update(displaySystemAirSourceDirectAbsorptionChiller.Setpoint);
-            result.Efficiency?.Update(displaySystemAirSourceDirectAbsorptionChiller.Efficiency);
-            result.Duty?.Update(displaySystemAirSourceDirectAbsorptionChiller.Duty);
-            result.Capacity1 = displaySystemAirSourceDirectAbsorptionChiller.Capacity;
-            result.DesignPressureDrop1 = displaySystemAirSourceDirectAbsorptionChiller.DesignPressureDrop;
-            //result.AncillaryLoad?.Update(displaySystemAirSourceDirectAbsorptionChiller.AnciliaryLoad);
-            //result.MinOutTempSource?.Update(displaySystemAirSourceDirectAbsorptionChiller.MinOutTempSource);
-            result.LossesInSizing = displaySystemAirSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
-
-            displaySystemAirSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
 
             return result;
         }

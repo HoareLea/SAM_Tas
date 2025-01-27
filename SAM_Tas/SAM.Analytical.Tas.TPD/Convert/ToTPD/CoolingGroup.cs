@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.MaximumReturnTemp = displayCoolingSystemCollection.MaximumReturnTemperature;
             result.VariableFlowCapacity = displayCoolingSystemCollection.VariableFlowCapacity.ToTPD();
-            result.PeakDemand = displayCoolingSystemCollection.PeakDemand;
+            //result.PeakDemand = displayCoolingSystemCollection.PeakDemand;
             result.SizeFraction = displayCoolingSystemCollection.SizeFraction;
             result.DistributionHeatGainProfile?.Update(displayCoolingSystemCollection.Distribution);
             result.UseDistributionHeatGainProfile = displayCoolingSystemCollection.Distribution == null ? (false).ToTPD() : displayCoolingSystemCollection.Distribution.IsEfficiency.ToTPD();
