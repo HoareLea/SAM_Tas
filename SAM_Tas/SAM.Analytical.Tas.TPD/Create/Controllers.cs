@@ -140,6 +140,8 @@ namespace SAM.Analytical.Tas.TPD
                     List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(displaySystemController);
                     if (systemSensors_Connected != null)
                     {
+
+                        Dictionary<string, SensorArc> dictionary = new Dictionary<string, SensorArc>();
                         foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
                         {
                             SensorArc sensorArc = null;
@@ -169,6 +171,35 @@ namespace SAM.Analytical.Tas.TPD
                                     sensorArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
                                 }
                             }
+
+                            dictionary[systemSensor_Connected.Guid.ToString()] = sensorArc;
+                        }
+
+                        if(dictionary != null && dictionary.Count != 0)
+                        {
+                            string reference = null;
+
+                            if (displaySystemController is SystemNormalController)
+                            {
+                                reference = ((SystemNormalController)displaySystemController).SensorReference;
+                            }
+                            else if (displaySystemController is SystemOutdoorController)
+                            {
+                                reference = ((SystemOutdoorController)displaySystemController).SensorReference;
+                            }
+                            else if (displaySystemController is SystemDifferenceController)
+                            {
+                                reference = ((SystemDifferenceController)displaySystemController).SensorReference;
+                            }
+                            else if (displaySystemController is SystemPassthroughController)
+                            {
+                                reference = ((SystemPassthroughController)displaySystemController).SensorReference;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out SensorArc sensorArc_Temp))
+                            {
+                                tuple.Item1.SensorArc1 = sensorArc_Temp;
+                            }
                         }
                     }
                 }
@@ -185,6 +216,8 @@ namespace SAM.Analytical.Tas.TPD
                     List<ISystemSensor> systemSensors_Connected = systemPlantRoom.GetRelatedObjects<ISystemSensor>(displaySystemController);
                     if (systemSensors_Connected != null)
                     {
+
+                        Dictionary<string, SensorArc> dictionary = new Dictionary<string, SensorArc>();
                         foreach (ISystemSensor systemSensor_Connected in systemSensors_Connected)
                         {
                             List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(systemSensor_Connected);
@@ -225,6 +258,35 @@ namespace SAM.Analytical.Tas.TPD
                                 {
                                     sensorArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
                                 }
+                            }
+
+                            dictionary[systemSensor_Connected.Guid.ToString()] = sensorArc;
+                        }
+
+                        if (dictionary != null && dictionary.Count != 0)
+                        {
+                            string reference = null;
+
+                            if (displaySystemController is SystemNormalController)
+                            {
+                                reference = ((SystemNormalController)displaySystemController).SensorReference;
+                            }
+                            else if (displaySystemController is SystemOutdoorController)
+                            {
+                                reference = ((SystemOutdoorController)displaySystemController).SensorReference;
+                            }
+                            else if (displaySystemController is SystemDifferenceController)
+                            {
+                                reference = ((SystemDifferenceController)displaySystemController).SensorReference;
+                            }
+                            else if (displaySystemController is SystemPassthroughController)
+                            {
+                                reference = ((SystemPassthroughController)displaySystemController).SensorReference;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out SensorArc sensorArc_Temp))
+                            {
+                                tuple.Item1.SensorArc1 = sensorArc_Temp;
                             }
                         }
                     }
