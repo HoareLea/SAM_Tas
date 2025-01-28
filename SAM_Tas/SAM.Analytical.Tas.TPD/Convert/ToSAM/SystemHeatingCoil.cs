@@ -16,10 +16,16 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = heatingCoil;
 
             SystemHeatingCoil result = new SystemHeatingCoil(dynamic.Name);
-            Modify.SetReference(result, @dynamic.GUID);
-            
             result.Description = dynamic.Description;
-            result.Duty = heatingCoil.Duty.ToSAM();
+
+            result.Setpoint = heatingCoil.Setpoint?.ToSAM();
+            result.Efficiency = heatingCoil.Efficiency?.ToSAM();
+            result.Duty = heatingCoil.Duty?.ToSAM(); 
+            result.MaximumOffcoil = heatingCoil.MaximumOffcoil?.ToSAM();
+
+            Modify.SetReference(result, @dynamic.GUID);
+
+
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

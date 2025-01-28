@@ -16,11 +16,14 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = coolingCoil;
 
             SystemCoolingCoil result = new SystemCoolingCoil(@dynamic.Name);
-            Modify.SetReference(result, @dynamic.GUID);
-            
             result.Description = dynamic.Description;
+
+            result.Setpoint = coolingCoil.Setpoint?.ToSAM();
             result.BypassFactor = coolingCoil.BypassFactor?.ToSAM();
             result.Duty = coolingCoil.Duty?.ToSAM();
+            result.MinimumOffcoil = coolingCoil.MinimumOffcoil?.ToSAM();
+
+            Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

@@ -15,9 +15,13 @@ namespace SAM.Analytical.Tas.TPD
             global::TPD.CoolingCoil result = system.AddCoolingCoil();
 
             dynamic @dynamic = result;
-            result.Duty.Update(displaySystemCoolingCoil.Duty);
-            result.BypassFactor.Update(displaySystemCoolingCoil.BypassFactor);
-            result.MinimumOffcoil.Update(displaySystemCoolingCoil.MinimumOffcoil);
+            @dynamic.Name = displaySystemCoolingCoil.Name;
+            @dynamic.Description = displaySystemCoolingCoil.Description;
+
+            result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint);
+            result.BypassFactor?.Update(displaySystemCoolingCoil.BypassFactor);
+            result.Duty?.Update(displaySystemCoolingCoil.Duty);
+            result.MinimumOffcoil?.Update(displaySystemCoolingCoil.MinimumOffcoil);
 
             //result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint);
 

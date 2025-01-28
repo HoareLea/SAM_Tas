@@ -15,12 +15,13 @@ namespace SAM.Analytical.Tas.TPD
             global::TPD.HeatingCoil result = system.AddHeatingCoil();
 
             dynamic @dynamic = result;
+            @dynamic.Name = displaySystemHeatingCoil.Name;
+            @dynamic.Description = displaySystemHeatingCoil.Description;
 
             result.Setpoint?.Update(displaySystemHeatingCoil.Setpoint);
             result.Efficiency?.Update(displaySystemHeatingCoil.Efficiency);
             result.Duty?.Update(displaySystemHeatingCoil.Duty);
             result.MaximumOffcoil?.Update(displaySystemHeatingCoil.MaximumOffcoil);
-
 
             //result.Setpoint.Value = 14;
             //result.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
