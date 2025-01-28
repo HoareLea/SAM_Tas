@@ -687,213 +687,226 @@ namespace SAM.Analytical.Tas.TPD
 
                                 offset = new Point(0, 0);
 
-                                Core.Systems.ISystemComponent systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.Out)?.FirstOrDefault();
-                                if (systemComponent == null)
+                                List<Core.Systems.ISystemComponent> systemComponents_AirSystem = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.Out);
+                                if(systemComponents_AirSystem == null || systemComponents_AirSystem.Count == 0)
                                 {
                                     continue;
                                 }
 
-                                List<Core.Systems.ISystemComponent> systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, airSystem, Direction.In);
-                                if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
+                                while(systemComponents_AirSystem.Count > 0)
                                 {
-                                    continue;
-                                }
+                                    Core.Systems.ISystemComponent systemComponent = systemComponents_AirSystem[0];
+                                    systemComponents_AirSystem.RemoveAt(0);
 
-                                systemComponents_Ordered.Insert(0, systemComponent);
-
-                                foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
-                                {
-                                    dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
-                                }
-
-                                systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
-                                if (systemComponent == null)
-                                {
-                                    continue;
-                                }
-
-                                systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, airSystem, Direction.Out);
-                                if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
-                                {
-                                    continue;
-                                }
-
-                                systemComponents_Ordered.Insert(0, systemComponent);
-
-                                List<Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>> tuples = new List<Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>>();
-
-                                foreach (Core.Systems.ISystemComponent systemComponent_Temp in systemComponents_Ordered)
-                                {
-                                    if (!Query.TryGetSystemSpace(systemPlantRoom, systemComponent_Temp, out ISystemSpace systemSpace, out AirSystemGroup airSystemGroup) || systemSpace == null)
-                                    {
-                                        dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(systemComponent_Temp)] = systemComponent_Temp;
-                                        continue;
-                                    }
-
-                                    List<Core.Systems.ISystemComponent> systemComponents = Query.ConnectedSystemComponents(systemPlantRoom, airSystemGroup, systemSpace);
-                                    if (systemComponents == null || systemComponents.Count == 0)
-                                    {
-                                        systemComponents = new List<Core.Systems.ISystemComponent>() { systemSpace };
-                                    }
-                                    else
-                                    {
-                                        systemComponents.Add(systemSpace);
-                                    }
-
-                                    systemComponents.ForEach(x => dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(x)] = x);
-
-                                    Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple = tuples.Find(x => x.Item1.Guid == airSystemGroup.Guid);
-                                    if (tuple == null)
-                                    {
-                                        tuple = new Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>(airSystemGroup, systemComponents);
-                                        tuples.Add(tuple);
-                                    }
-                                }
-
-                                foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SystemComponent_SAM.Values)
-                                {
-                                    global::TPD.ISystemComponent systemComponent_TPD = null;
-
-                                    if (systemComponent_Temp is DisplaySystemAirJunction)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemAirJunction)systemComponent_Temp, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemCoolingCoil)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemCoolingCoil)systemComponent_Temp, system, coolingGroup, energyCentre.GetDesignCondition(2)) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemHeatingCoil)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemHeatingCoil)systemComponent_Temp, system, heatingGroup, energyCentre.GetDesignCondition(3)) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemExchanger)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemExchanger)systemComponent_Temp, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemFan)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemFan)systemComponent_Temp, system, electricalGroup_Fans, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemDamper)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemDamper)systemComponent_Temp, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemSpace)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemSpace)systemComponent_Temp, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemEconomiser)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemEconomiser)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemSprayHumidifier)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemSprayHumidifier)systemComponent_Temp, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemSteamHumidifier)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemSteamHumidifier)systemComponent_Temp, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemDesiccantWheel)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemDesiccantWheel)systemComponent_Temp, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemDXCoil)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemDXCoil)systemComponent_Temp, system) as global::TPD.ISystemComponent;
-                                    }
-                                    else if (systemComponent_Temp is DisplaySystemMixingBox)
-                                    {
-                                        systemComponent_TPD = ToTPD((DisplaySystemMixingBox)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
-                                    }
-
-                                    if (systemComponent_TPD == null)
+                                    if (systemComponent == null)
                                     {
                                         continue;
                                     }
 
-                                    dictionary_SystemComponent_TPD[systemComponent_Temp.Guid] = systemComponent_TPD;
-                                    systemComponent_Temp.SetReference(Query.Reference(systemComponent_TPD));
-                                    systemPlantRoom.Add(systemComponent_Temp);
-                                }
-
-                                Create.Ducts(systemPlantRoom, system, dictionary_SystemComponent_TPD, out Dictionary<Guid, Duct> dictionary_Ducts);
-                                Create.Controllers(systemPlantRoom, system, airSystem, dictionary_SystemComponent_TPD, dictionary_Ducts);
-
-                                foreach (Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple in tuples)
-                                {
-                                    List<SystemSpace> systemSpaces = systemPlantRoom.GetRelatedObjects<SystemSpace>(tuple.Item1);
-
-                                    List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1), systemSpaces);
-                                    if (zoneLoads == null || zoneLoads.Count == 0)
+                                    List<Core.Systems.ISystemComponent> systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, airSystem, Direction.In);
+                                    if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
                                     {
                                         continue;
                                     }
 
-                                    global::TPD.ISystemComponent[] systemComponents_TPD = tuple.Item2.ConvertAll(x => dictionary_SystemComponent_TPD[(x as dynamic).Guid] as global::TPD.ISystemComponent).ToArray();
+                                    systemComponents_Ordered.Insert(0, systemComponent);
 
-                                    Controller[] controllers = new Controller[0];
-
-                                    ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD, controllers);
-                                    componentGroup.SetMultiplicity(zoneLoads.Count);
-
-                                    tuple.Item1.SetReference(componentGroup.Reference());
-                                    systemPlantRoom.Add(tuple.Item1);
-
-                                    List<global::TPD.SystemComponent> systemComponents_ComponentGroup = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
-
-                                    List<Damper> dampers = systemComponents_ComponentGroup.FindAll(x => x is Damper).ConvertAll(x => (Damper)x);
-                                    if (dampers != null)
+                                    foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
                                     {
-                                        foreach (Damper damper in dampers)
+                                        dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
+                                    }
+
+                                    systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
+                                    if (systemComponent == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, airSystem, Direction.Out);
+                                    if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    systemComponents_Ordered.Insert(0, systemComponent);
+
+                                    List<Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>> tuples = new List<Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>>();
+
+                                    foreach (Core.Systems.ISystemComponent systemComponent_Temp in systemComponents_Ordered)
+                                    {
+                                        systemComponents_AirSystem.RemoveAll(x => ((dynamic)x).Guid == ((dynamic)systemComponent_Temp).Guid);
+                                        
+                                        if (!Query.TryGetSystemSpace(systemPlantRoom, systemComponent_Temp, out ISystemSpace systemSpace, out AirSystemGroup airSystemGroup) || systemSpace == null)
                                         {
-                                            damper.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
+                                            dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(systemComponent_Temp)] = systemComponent_Temp;
+                                            continue;
+                                        }
+
+                                        List<Core.Systems.ISystemComponent> systemComponents = Query.ConnectedSystemComponents(systemPlantRoom, airSystemGroup, systemSpace);
+                                        if (systemComponents == null || systemComponents.Count == 0)
+                                        {
+                                            systemComponents = new List<Core.Systems.ISystemComponent>() { systemSpace };
+                                        }
+                                        else
+                                        {
+                                            systemComponents.Add(systemSpace);
+                                        }
+
+                                        systemComponents.ForEach(x => dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(x)] = x);
+
+                                        Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple = tuples.Find(x => x.Item1.Guid == airSystemGroup.Guid);
+                                        if (tuple == null)
+                                        {
+                                            tuple = new Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>(airSystemGroup, systemComponents);
+                                            tuples.Add(tuple);
                                         }
                                     }
 
-                                    List<SystemZone> systemZones = systemComponents_ComponentGroup.FindAll(x => x is SystemZone).ConvertAll(x => (SystemZone)x);
-                                    if (systemZones != null && systemZones.Count == zoneLoads.Count)
+                                    foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SystemComponent_SAM.Values)
                                     {
-                                        for (int i = 0; i < zoneLoads.Count; i++)
+                                        global::TPD.ISystemComponent systemComponent_TPD = null;
+
+                                        if (systemComponent_Temp is DisplaySystemAirJunction)
                                         {
-                                            dynamic systemZone_Group = systemZones[i];
-                                            systemZone_Group.AddZoneLoad(zoneLoads[i]);
-                                            if(dHWGroup != null)
-                                            {
-                                                systemZone_Group.SetDHWGroup(dHWGroup);
-                                            }
-
-                                            if(electricalGroup_SmallPower != null)
-                                            {
-                                                systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
-                                            }
-
-                                            if(electricalGroup_Lighting != null)
-                                            {
-                                                systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
-                                            }
-
-                                            systemZone_Group.FlowRate.Type = tpdSizedVariable.tpdSizedVariableSize;
-                                            systemZone_Group.FlowRate.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
-                                            //systemZone_Group.FlowRate.Value = 100;
-                                            for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
-                                            {
-                                                systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
-                                            }
-
-                                            //systemZone_Group.DisplacementVent = displacementVent ? 1 : 0;
-
-                                            systemZone_Group.FreshAir.Type = tpdSizedVariable.tpdSizedVariableSize;
-                                            systemZone_Group.FreshAir.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
-                                            //systemZone_Group.FreshAir.Value = 100;
-                                            for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
-                                            {
-                                                systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(j));
-                                            }
+                                            systemComponent_TPD = ToTPD((DisplaySystemAirJunction)systemComponent_Temp, system) as global::TPD.ISystemComponent;
                                         }
+                                        else if (systemComponent_Temp is DisplaySystemCoolingCoil)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemCoolingCoil)systemComponent_Temp, system, coolingGroup, energyCentre.GetDesignCondition(2)) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemHeatingCoil)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemHeatingCoil)systemComponent_Temp, system, heatingGroup, energyCentre.GetDesignCondition(3)) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemExchanger)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemExchanger)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemFan)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemFan)systemComponent_Temp, system, electricalGroup_Fans, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemDamper)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemDamper)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemSpace)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemSpace)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemEconomiser)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemEconomiser)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemSprayHumidifier)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemSprayHumidifier)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemSteamHumidifier)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemSteamHumidifier)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemDesiccantWheel)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemDesiccantWheel)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemDXCoil)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemDXCoil)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                        }
+                                        else if (systemComponent_Temp is DisplaySystemMixingBox)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemMixingBox)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                        }
+
+                                        if (systemComponent_TPD == null)
+                                        {
+                                            continue;
+                                        }
+
+                                        dictionary_SystemComponent_TPD[systemComponent_Temp.Guid] = systemComponent_TPD;
+                                        systemComponent_Temp.SetReference(Query.Reference(systemComponent_TPD));
+                                        systemPlantRoom.Add(systemComponent_Temp);
                                     }
 
-                                    dictionary_SystemComponent_TPD[tuple.Item1.Guid] = (global::TPD.ISystemComponent)componentGroup;
+                                    Create.Ducts(systemPlantRoom, system, dictionary_SystemComponent_TPD, out Dictionary<Guid, Duct> dictionary_Ducts);
+                                    Create.Controllers(systemPlantRoom, system, airSystem, dictionary_SystemComponent_TPD, dictionary_Ducts);
+
+                                    foreach (Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>> tuple in tuples)
+                                    {
+                                        List<SystemSpace> systemSpaces = systemPlantRoom.GetRelatedObjects<SystemSpace>(tuple.Item1);
+
+                                        List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1), systemSpaces);
+                                        if (zoneLoads == null || zoneLoads.Count == 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        global::TPD.ISystemComponent[] systemComponents_TPD = tuple.Item2.ConvertAll(x => dictionary_SystemComponent_TPD[(x as dynamic).Guid] as global::TPD.ISystemComponent).ToArray();
+
+                                        Controller[] controllers = new Controller[0];
+
+                                        ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD, controllers);
+                                        componentGroup.SetMultiplicity(zoneLoads.Count);
+
+                                        tuple.Item1.SetReference(componentGroup.Reference());
+                                        systemPlantRoom.Add(tuple.Item1);
+
+                                        List<global::TPD.SystemComponent> systemComponents_ComponentGroup = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
+
+                                        List<Damper> dampers = systemComponents_ComponentGroup.FindAll(x => x is Damper).ConvertAll(x => (Damper)x);
+                                        if (dampers != null)
+                                        {
+                                            foreach (Damper damper in dampers)
+                                            {
+                                                damper.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
+                                            }
+                                        }
+
+                                        List<SystemZone> systemZones = systemComponents_ComponentGroup.FindAll(x => x is SystemZone).ConvertAll(x => (SystemZone)x);
+                                        if (systemZones != null && systemZones.Count == zoneLoads.Count)
+                                        {
+                                            for (int i = 0; i < zoneLoads.Count; i++)
+                                            {
+                                                dynamic systemZone_Group = systemZones[i];
+                                                systemZone_Group.AddZoneLoad(zoneLoads[i]);
+                                                if (dHWGroup != null)
+                                                {
+                                                    systemZone_Group.SetDHWGroup(dHWGroup);
+                                                }
+
+                                                if (electricalGroup_SmallPower != null)
+                                                {
+                                                    systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
+                                                }
+
+                                                if (electricalGroup_Lighting != null)
+                                                {
+                                                    systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                                                }
+
+                                                systemZone_Group.FlowRate.Type = tpdSizedVariable.tpdSizedVariableSize;
+                                                systemZone_Group.FlowRate.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
+                                                //systemZone_Group.FlowRate.Value = 100;
+                                                for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
+                                                {
+                                                    systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                                                }
+
+                                                //systemZone_Group.DisplacementVent = displacementVent ? 1 : 0;
+
+                                                systemZone_Group.FreshAir.Type = tpdSizedVariable.tpdSizedVariableSize;
+                                                systemZone_Group.FreshAir.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
+                                                //systemZone_Group.FreshAir.Value = 100;
+                                                for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
+                                                {
+                                                    systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                                                }
+                                            }
+                                        }
+
+                                        dictionary_SystemComponent_TPD[tuple.Item1.Guid] = (global::TPD.ISystemComponent)componentGroup;
+                                    }
                                 }
                             }
 
