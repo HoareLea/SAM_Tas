@@ -19,8 +19,8 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;
-            result.BypassFactor = coolingCoil.BypassFactor.Value;
-            result.Duty = coolingCoil.Duty.ToSAM();
+            result.BypassFactor = coolingCoil.BypassFactor?.ToSAM();
+            result.Duty = coolingCoil.Duty?.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

@@ -39,10 +39,10 @@ namespace SAM.Analytical.Tas.TPD
             switch (tpdSizedVariable)
             {
                 case tpdSizedVariable.tpdSizedVariableSizeDone:
-                    return new DesignConditionSizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames) { SizeMethod = sizeMethod, SizingType = SizingType.Sized };
+                    return new DesignConditionSizableValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames) { SizeMethod = sizeMethod, SizingType = SizingType.Sized };
 
                 case tpdSizedVariable.tpdSizedVariableSize:
-                    return new DesignConditionSizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames) { SizeMethod = sizeMethod, SizingType = SizingType.Sized };
+                    return new DesignConditionSizableValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames) { SizeMethod = sizeMethod, SizingType = SizingType.Sized };
 
                 case tpdSizedVariable.tpdSizedVariableValue:
                     return new SizableValue(System.Convert.ToDouble(@dynamic.Value)) { SizeMethod = sizeMethod, SizingType = SizingType.Value };

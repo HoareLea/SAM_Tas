@@ -64,10 +64,10 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
             
-            if(sizedVariable is DesignConditionSizedValue)
+            if(sizedVariable is DesignConditionSizableValue)
             {
-                DesignConditionSizedValue designConditionSizedValue = (DesignConditionSizedValue)sizedVariable;
-                HashSet<string> designCondtionSizedValues = designConditionSizedValue.DesignConditionNames;
+                DesignConditionSizableValue designConditionSizableValue = (DesignConditionSizableValue)sizedVariable;
+                HashSet<string> designCondtionSizedValues = designConditionSizableValue.DesignConditionNames;
                 if(designCondtionSizedValues != null)
                 {
                     //TODO: Implement
