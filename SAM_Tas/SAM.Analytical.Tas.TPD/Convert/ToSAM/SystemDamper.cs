@@ -16,6 +16,15 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = damper;
 
             SystemDamper result = new SystemDamper(@dynamic.Name);
+            result.Capacity = damper.Capacity;
+            result.DesignCapacitySignal = damper.DesignCapacitySignal;
+            result.DesignFlowRate = damper.DesignFlowRate?.ToSAM();
+            result.DesignFlowType = damper.DesignFlowType.ToSAM();
+            result.MinimumFlowRate = damper.MinimumFlowRate?.ToSAM();
+            result.MinimumFlowType = damper.MinimumFlowType.ToSAM();
+            result.MinimumFlowFraction = damper.MinimumFlowFraction;
+            result.DesignPressureDrop = damper.DesignPressureDrop;
+
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;

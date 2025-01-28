@@ -16,6 +16,10 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Capacity = displaySystemDamper.Capacity;
             result.DesignCapacitySignal = displaySystemDamper.DesignCapacitySignal;
+            result.DesignFlowRate?.Update(displaySystemDamper.DesignFlowRate);
+            result.DesignFlowType = displaySystemDamper.DesignFlowType.ToTPD();
+            result.MinimumFlowRate?.Update(displaySystemDamper.MinimumFlowRate);
+            result.MinimumFlowType = displaySystemDamper.MinimumFlowType.ToTPD();
             result.MinimumFlowFraction = displaySystemDamper.MinimumFlowFraction;
             result.DesignPressureDrop = displaySystemDamper.DesignPressureDrop;
 
