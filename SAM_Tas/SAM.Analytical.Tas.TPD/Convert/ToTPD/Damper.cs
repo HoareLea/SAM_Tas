@@ -14,6 +14,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Damper result = system.AddDamper();
 
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemDamper.Name;
+            @dynamic.Description = displaySystemDamper.Description;
+
             result.Capacity = displaySystemDamper.Capacity;
             result.DesignCapacitySignal = displaySystemDamper.DesignCapacitySignal;
             result.DesignFlowRate?.Update(displaySystemDamper.DesignFlowRate);

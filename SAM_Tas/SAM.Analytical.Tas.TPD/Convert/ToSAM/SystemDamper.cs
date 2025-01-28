@@ -16,6 +16,7 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = damper;
 
             SystemDamper result = new SystemDamper(@dynamic.Name);
+            result.Description = dynamic.Description;
             result.Capacity = damper.Capacity;
             result.DesignCapacitySignal = damper.DesignCapacitySignal;
             result.DesignFlowRate = damper.DesignFlowRate?.ToSAM();
@@ -25,9 +26,7 @@ namespace SAM.Analytical.Tas.TPD
             result.MinimumFlowFraction = damper.MinimumFlowFraction;
             result.DesignPressureDrop = damper.DesignPressureDrop;
 
-            Modify.SetReference(result, @dynamic.GUID);
-            
-            result.Description = dynamic.Description;
+            Modify.SetReference(result, @dynamic.GUID);            
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
