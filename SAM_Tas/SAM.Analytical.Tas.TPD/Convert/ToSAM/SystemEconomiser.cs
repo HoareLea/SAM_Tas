@@ -16,11 +16,18 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = optimizer;
 
             SystemEconomiser result = new SystemEconomiser(@dynamic.Name);
-            Modify.SetReference(result, @dynamic.GUID);
-            
             result.Description = dynamic.Description;
-            result.Setpoint = optimizer.Setpoint.ToSAM();
 
+            result.Capacity = optimizer.Capacity;
+            result.DesignFlowRate = optimizer.DesignFlowRate?.ToSAM();
+            result.DesignFlowType = optimizer.DesignFlowType.ToSAM();
+            result.Setpoint = optimizer.Setpoint?.ToSAM();
+            result.MinFreshAirRate = optimizer.MinFreshAirRate?.ToSAM();
+            result.MinFreshAirType = optimizer.MinFreshAirType.ToSAM();
+            result.ScheduleMode = optimizer.ScheduleMode.ToSAM();
+            result.DesignPressureDrop = optimizer.DesignPressureDrop;
+
+            Modify.SetReference(result, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
