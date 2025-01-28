@@ -60,7 +60,7 @@ namespace SAM.Analytical.Tas.TPD
             List<FuelSource> fuelSources = Query.FuelSources(absorptionChiller as PlantComponent);
             if (fuelSources != null && fuelSources.Count > 0)
             {
-                systemChiller.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[0].Name);
+                systemChiller.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[0]?.Name);
             }
 
             systemChiller.Description = dynamic.Description;
@@ -131,10 +131,10 @@ namespace SAM.Analytical.Tas.TPD
             List<FuelSource> fuelSources = Query.FuelSources(chiller as PlantComponent);
             if (fuelSources != null && fuelSources.Count > 0)
             {
-                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0].Name);
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
                 if (fuelSources.Count > 1)
                 {
-                    result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1].Name);
+                    result.SetValue(Core.Systems.SystemObjectParameter.FanEnergySourceName, fuelSources[1]?.Name);
                 }
             }
 
@@ -236,10 +236,10 @@ namespace SAM.Analytical.Tas.TPD
             List<FuelSource> fuelSources = Query.FuelSources(waterSourceChiller as PlantComponent);
             if (fuelSources != null && fuelSources.Count > 0)
             {
-                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0].Name);
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
                 if (fuelSources.Count > 1)
                 {
-                    result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1].Name);
+                    result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1]?.Name);
                 }
             }
 

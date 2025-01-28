@@ -37,10 +37,10 @@ namespace SAM.Analytical.Tas.TPD
             List<FuelSource> fuelSources = Query.FuelSources(boilerPlant as PlantComponent);
             if (fuelSources != null && fuelSources.Count > 0)
             {
-                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0].Name);
+                result.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
                 if(fuelSources.Count > 1)
                 {
-                    result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1].Name);
+                    result.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1]?.Name);
                 }
             }
 

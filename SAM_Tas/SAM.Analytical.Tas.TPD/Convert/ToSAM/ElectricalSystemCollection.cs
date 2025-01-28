@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas.TPD
             List<FuelSource> fuelSources = Query.FuelSources(electricalGroup as PlantComponent);
             if(fuelSources != null && fuelSources.Count > 0)
             {
-                result.SetValue(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName, fuelSources[0].Name);
+                result.SetValue(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName, fuelSources[0]?.Name);
             }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
