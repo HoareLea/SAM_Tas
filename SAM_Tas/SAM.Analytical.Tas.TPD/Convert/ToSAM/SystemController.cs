@@ -146,6 +146,12 @@ namespace SAM.Analytical.Tas.TPD
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
+            List<PlantDayType> plantDayTypes = controller.PlantDayTypes();
+            if(plantDayTypes != null && plantDayTypes.Count != 0)
+            {
+                result.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
+            }
+
             IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if(displaySystemController != null)
             {
@@ -286,6 +292,12 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
             //Modify.SetReference(systemController, @dynamic.GUID);
+
+            List<PlantDayType> plantDayTypes = plantController.PlantDayTypes();
+            if (plantDayTypes != null && plantDayTypes.Count != 0)
+            {
+                result.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
+            }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

@@ -1,4 +1,5 @@
 ﻿using SAM.Analytical.Systems;
+using System.Collections.Generic;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -49,6 +50,24 @@ namespace SAM.Analytical.Tas.TPD
             else if (displaySystemController is SystemLiquidPassthroughController)
             {
                 result.ControlType = tpdControlType.tpdControlPassThrough;
+            }
+
+            HashSet<string> dayTypeNames = (displaySystemController as SystemController)?.DayTypeNames;
+            if (dayTypeNames != null)
+            {
+                List<PlantDayType> plantDayTypes = Query.PlantDayTypes(plantRoom.GetEnergyCentre()?.GetCalendar());
+                if (plantDayTypes != null)
+                {
+                    foreach (PlantDayType plantDayType in plantDayTypes)
+                    {
+                        if (!dayTypeNames.Contains(plantDayType.Name))
+                        {
+                            continue;
+                        }
+
+                        result.AddDayType(plantDayType);
+                    }
+                }
             }
 
             displaySystemController.SetLocation(result);
