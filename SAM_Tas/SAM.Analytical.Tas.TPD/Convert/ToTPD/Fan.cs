@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.name = displaySystemFan.Name;
             @dynamic.Description = displaySystemFan.Description;
 
-            result.OverallEfficiency?.Update(displaySystemFan.Capacity);
+            result.OverallEfficiency?.Update(displaySystemFan.OverallEfficiency);
             result.HeatGainFactor = displaySystemFan.HeatGainFactor;
             result.Pressure = displaySystemFan.Pressure;
             result.DesignFlowRate?.Update(displaySystemFan.DesignFlowRate);
