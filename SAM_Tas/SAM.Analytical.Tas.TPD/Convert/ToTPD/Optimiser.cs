@@ -1,11 +1,12 @@
 ﻿using SAM.Analytical.Systems;
+using System.Collections.Generic;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Optimiser ToTPD(this DisplaySystemEconomiser displaySystemEconomiser, global::TPD.System system, PlantSchedule plantSchedule)
+        public static Optimiser ToTPD(this DisplaySystemEconomiser displaySystemEconomiser, global::TPD.System system)
         {
             if(displaySystemEconomiser == null || system == null)
             {
@@ -33,9 +34,17 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Flags = 0;
 
-            if (plantSchedule != null)
+            if(!string.IsNullOrEmpty(displaySystemEconomiser.ScheduleName))
             {
-                @dynamic.SetSchedule(plantSchedule);
+                List<PlantSchedule> plantSchedules = system.Schedules();
+                if (plantSchedules != null)
+                {
+                    PlantSchedule plantSchedule = plantSchedules.Find(x => x.Name == displaySystemEconomiser.ScheduleName);
+                    if(plantSchedule != null)
+                    {
+                        @dynamic.SetSchedule(plantSchedule);
+                    }
+                }
             }
 
             displaySystemEconomiser.SetLocation(result as SystemComponent);
