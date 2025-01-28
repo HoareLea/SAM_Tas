@@ -1,6 +1,9 @@
 ﻿using SAM.Core;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using TPD;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -97,7 +100,105 @@ namespace SAM.Analytical.Tas.TPD
 
             ProfileDataModifierTable profileDataModifierTable = profileData.AddModifierTable();
             profileDataModifierTable.Multiplier = tableModifier.ArithmeticOperator.ToTPD();
+            profileDataModifierTable.Clear();
 
+            IEnumerable<string> headers = tableModifier.Headers;
+
+            if (headers.Count() == 2)
+            {
+                profileDataModifierTable.Multiplier = tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
+
+                if (System.Enum.TryParse(headers.ElementAt(0), true, out tpdProfileDataVariableType tpdProfileDataVariableType))
+                {
+                    profileDataModifierTable.SetVariable(1, tpdProfileDataVariableType);
+                }
+
+                for (int i = 0; i < tableModifier.RowCount; i++)
+                {
+                    Dictionary<int, double> values = tableModifier.GetDictionary(i);
+                    if(values == null || !values.ContainsKey(0) || !values.ContainsKey(1))
+                    {
+                        continue;
+                    }
+
+                    profileDataModifierTable.AddPoint(values[0], values[1]);
+                }
+            }
+            else
+            {
+                //TODO: Check and validate
+
+                int count_x = tableModifier.RowCount;
+                if (count_x == -1)
+                {
+                    count_x = 0;
+                }
+
+                List<double> columnValues = null;
+
+                columnValues = tableModifier.GetColumnValues(1)?.Distinct()?.ToList();
+                int count_y = columnValues == null ? 0 : columnValues.Count;
+
+                columnValues = tableModifier.GetColumnValues(2)?.Distinct()?.ToList();
+                int count_z = columnValues == null ? 0 : columnValues.Count;
+
+                profileDataModifierTable.SetSize(count_x, count_y, count_z);
+
+                int columnCount = -1;
+
+                if (headers != null)
+                {
+                    columnCount = headers.Count();
+
+                    for (int i = 0; i < columnCount - 1; i++)
+                    {
+                        string text = headers.ElementAt(i);
+                        if (System.Enum.TryParse(text, true, out tpdProfileDataVariableType tpdProfileDataVariableType))
+                        {
+                            profileDataModifierTable.SetVariable(i + 1, tpdProfileDataVariableType);
+                        }
+                    }
+                }
+
+                if (count_x == 0)
+                {
+                    count_x++;
+                }
+
+                if (count_y == 0)
+                {
+                    count_y++;
+                }
+
+                if (count_z == 0)
+                {
+                    count_z++;
+                }
+
+                for (int i = 0; i < tableModifier.RowCount; i++)
+                {
+                    Dictionary<int, double> values = tableModifier.GetDictionary(i);
+
+                    int x = i + 1;
+                    int y = 1;
+                    int z = 1;
+
+                    if (columnCount > 1)
+                    {
+                        profileDataModifierTable.SetAxisValue(1, i + 1, values[0]);
+                        if (columnCount > 2)
+                        {
+                            profileDataModifierTable.SetAxisValue(2, i + 1, values[1]);
+                            if (columnCount > 3)
+                            {
+                                profileDataModifierTable.SetAxisValue(3, i + 1, values[2]);
+                            }
+                        }
+                    }
+
+                    profileDataModifierTable.SetDataValue(x, y, z, values[values.Keys.Max()]);
+                }
+            }
 
             return true;
         }

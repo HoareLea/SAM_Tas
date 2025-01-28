@@ -6,7 +6,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SizableValue ToSAM(this SizedVariable sizedVariable)
+        public static ISizableValue ToSAM(this SizedVariable sizedVariable)
         {
             if(sizedVariable == null)
             {
@@ -14,6 +14,13 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             dynamic @dynamic = sizedVariable as dynamic;
+
+            tpdSizedVariable tpdSizedVariable = (tpdSizedVariable)@dynamic.Type;
+            if(tpdSizedVariable == tpdSizedVariable.tpdSizedVariableNone)
+            {
+                return new UnlimitedValue();
+            }
+
 
             HashSet<string> designConditionNames = null;
 
@@ -27,19 +34,18 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            switch ((tpdSizedVariable)@dynamic.Type)
+            SizeMethod sizeMethod = sizedVariable.Method.ToSAM();
+
+            switch (tpdSizedVariable)
             {
                 case tpdSizedVariable.tpdSizedVariableSizeDone:
-                    return new DesignConditionSizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames);
+                    return new DesignConditionSizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames) { SizeMethod = sizeMethod, SizingType = SizingType.Sized };
 
                 case tpdSizedVariable.tpdSizedVariableSize:
-                    return new DesignConditionSizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames);
-
-                case tpdSizedVariable.tpdSizedVariableNone:
-                    return new UnlimitedValue();
+                    return new DesignConditionSizedValue(System.Convert.ToDouble(@dynamic.Value), @dynamic.SizeFraction, designConditionNames) { SizeMethod = sizeMethod, SizingType = SizingType.Sized };
 
                 case tpdSizedVariable.tpdSizedVariableValue:
-                    return new SizableValue(System.Convert.ToDouble(@dynamic.Value));
+                    return new SizableValue(System.Convert.ToDouble(@dynamic.Value)) { SizeMethod = sizeMethod, SizingType = SizingType.Value };
             }
 
             return null;

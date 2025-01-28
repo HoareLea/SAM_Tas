@@ -20,19 +20,59 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             profileData.Value = modifiableValue.Value;
+            profileData.ClearModifiers();
             profileData.AddModifier(modifiableValue.Modifier);
 
             return true;
         }
 
-        public static bool Update(this SizedVariable sizedVariable, SizableValue sizableValue)
+        public static bool Update(this SizedVariable sizedVariable, ISizableValue sizableValue)
         {
             if (sizableValue == null || sizedVariable == null)
             {
                 return false;
             }
 
-            sizedVariable.SizeFraction = sizedVariable.SizeFraction;
+            dynamic @dynamic = sizableValue;
+
+            if(sizableValue is UnlimitedValue)
+            {
+                sizedVariable.Type = tpdSizedVariable.tpdSizedVariableNone;
+                return true;
+            }
+
+
+            if(sizableValue is SizableValue)
+            {
+                SizableValue sizableValue_Temp = (SizableValue)sizableValue;
+
+                sizedVariable.Type = sizableValue_Temp.SizingType.ToTPD();
+                sizedVariable.Method = sizableValue_Temp.SizeMethod.ToTPD();
+                sizedVariable.SizeFraction = sizableValue_Temp.SizeFraction;
+
+                ModifiableValue modifiableValue = sizableValue_Temp.ModifiableValue;
+                if(modifiableValue != null)
+                {
+                    try
+                    {
+                        dynamic.Value = modifiableValue.Value;
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            
+            if(sizedVariable is DesignConditionSizedValue)
+            {
+                DesignConditionSizedValue designConditionSizedValue = (DesignConditionSizedValue)sizedVariable;
+                HashSet<string> designCondtionSizedValues = designConditionSizedValue.DesignConditionNames;
+                if(designCondtionSizedValues != null)
+                {
+                    //TODO: Implement
+                }
+            }
 
             return true;
         }
