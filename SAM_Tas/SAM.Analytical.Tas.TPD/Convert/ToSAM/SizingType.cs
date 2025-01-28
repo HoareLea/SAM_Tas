@@ -17,6 +17,9 @@ namespace SAM.Analytical.Tas.TPD
                 case global::TPD.tpdSizeMethod.tpdSizeMethodNormal:
                     return SizeMethod.Normal;
 
+                case global::TPD.tpdSizeMethod.tpdSizeMethodAddLoadAllAttached:
+                    return SizeMethod.AddLoadAllAttached;
+
                 case global::TPD.tpdSizeMethod.tpdSizeMethodAddLoadAllAttachedChiller:
                     return SizeMethod.AddLoadAllAttachedChiller;
 
