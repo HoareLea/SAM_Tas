@@ -201,36 +201,57 @@ namespace SAM.Analytical.Tas.TPD
                 //}
 
                 ////Schedules
+                ///
 
-                //Occupancy
-                dynamic plantSchedule_Occupancy = energyCentre.PlantSchedule("Occupancy Schedule");
-                if (plantSchedule_Occupancy == null)
+                dynamic plantSchedule_Occupancy = null;
+
+                AnalyticalSystemsProperties analyticalSystemsProperties = systemEnergyCentre.GetValue<AnalyticalSystemsProperties>(SystemEnergyCentreParameter.AnalyticalSystemsProperties);
+                if (analyticalSystemsProperties != null)
                 {
-                    plantSchedule_Occupancy = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleFunction);
-                    plantSchedule_Occupancy.Name = "Occupancy Schedule";
-                    plantSchedule_Occupancy.FunctionType = tpdScheduleFunctionType.tpdScheduleFunctionAllZonesLoad;
-                    plantSchedule_Occupancy.FunctionLoads = 1024; // occupant sensible
+                    List<ISchedule> schedules = analyticalSystemsProperties.Schedules;
+                    if (schedules != null)
+                    {
+                        foreach (ISchedule schedule in schedules)
+                        {
+                            PlantSchedule plantSchedule = energyCentre.Add(schedule);
+                            if(plantSchedule.Name == "Occupancy Schedule")
+                            {
+                                plantSchedule_Occupancy = plantSchedule;
+                            }
+                        }
+                    }
                 }
 
-                ////System
-                dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
-                if (plantSchedule_System == null)
-                {
-                    plantSchedule_System = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleFunction);
-                    plantSchedule_System.Name = "System Schedule";
-                    plantSchedule_System.FunctionType = tpdScheduleFunctionType.tpdScheduleFunctionAllZonesLoad;
-                    plantSchedule_System.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
-                }
 
-                //Zone
-                dynamic plantSchedule_Zone = energyCentre.PlantSchedule("Zone Schedule");
-                if (plantSchedule_Zone == null)
-                {
-                    plantSchedule_Zone = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleFunction);
-                    plantSchedule_Zone.Name = "Zone Schedule";
-                    plantSchedule_Zone.FunctionType = tpdScheduleFunctionType.tpdScheduleFunctionAllZonesLoad;
-                    plantSchedule_Zone.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
-                }
+                ////Occupancy
+                //dynamic plantSchedule_Occupancy = energyCentre.PlantSchedule("Occupancy Schedule");
+                //if (plantSchedule_Occupancy == null)
+                //{
+                //    plantSchedule_Occupancy = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleFunction);
+                //    plantSchedule_Occupancy.Name = "Occupancy Schedule";
+                //    plantSchedule_Occupancy.FunctionType = tpdScheduleFunctionType.tpdScheduleFunctionAllZonesLoad;
+                //    plantSchedule_Occupancy.FunctionLoads = 1024; // occupant sensible
+                //}
+
+                //////System
+                //dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
+                //if (plantSchedule_System == null)
+                //{
+                //    plantSchedule_System = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleFunction);
+                //    plantSchedule_System.Name = "System Schedule";
+                //    plantSchedule_System.FunctionType = tpdScheduleFunctionType.tpdScheduleFunctionAllZonesLoad;
+                //    plantSchedule_System.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
+                //}
+
+                ////Zone
+                //dynamic plantSchedule_Zone = energyCentre.PlantSchedule("Zone Schedule");
+                //if (plantSchedule_Zone == null)
+                //{
+                //    plantSchedule_Zone = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleFunction);
+                //    plantSchedule_Zone.Name = "Zone Schedule";
+                //    plantSchedule_Zone.FunctionType = tpdScheduleFunctionType.tpdScheduleFunctionAllZonesLoad;
+                //    plantSchedule_Zone.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
+                //}
 
                 ////Design Condition Load
 

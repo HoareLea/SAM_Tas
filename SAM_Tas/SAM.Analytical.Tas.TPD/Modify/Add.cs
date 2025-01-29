@@ -2119,5 +2119,70 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static PlantSchedule Add(this EnergyCentre energyCentre, ISchedule schedule)
+        {
+            if(energyCentre == null || schedule == null)
+            {
+                return null;
+            }
+
+            PlantSchedule result = null;
+
+            if(schedule is FunctionSchedule)
+            {
+                result = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleFunction);
+
+                FunctionSchedule functionSchedule = (FunctionSchedule)schedule;
+                result.FunctionType = functionSchedule.ScheduleFunctionType.ToTPD();
+                if(functionSchedule.Heating && functionSchedule.Cooling && functionSchedule.OccupancySensible)
+                {
+                    result.FunctionLoads = 4 + 8 + 1024;
+                }
+                else if (functionSchedule.Heating && functionSchedule.Cooling)
+                {
+                    result.FunctionLoads = 4 + 8;
+                }
+                else if (functionSchedule.Heating && functionSchedule.OccupancySensible)
+                {
+                    result.FunctionLoads = 4 + 1024;
+                }
+                else if(functionSchedule.Cooling && functionSchedule.OccupancySensible)
+                {
+                    result.FunctionLoads = 8 + 1024;
+                }
+                else if(functionSchedule.Heating)
+                {
+                    result.FunctionLoads = 4;
+                }
+                else if(functionSchedule.Cooling)
+                {
+                    result.FunctionLoads = 8;
+                }
+                else if(functionSchedule.OccupancySensible)
+                {
+                    result.FunctionLoads = 1024;
+                }
+
+            }
+            else if (schedule is DailySchedule)
+            {
+                result = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleHourly);
+            }
+            else if (schedule is YearlySchedule)
+            {
+                result = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleYearly);
+            }
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            result.Name = schedule.Name;
+            result.Description = schedule.Description;
+
+            return result;
+        }
     }
 }

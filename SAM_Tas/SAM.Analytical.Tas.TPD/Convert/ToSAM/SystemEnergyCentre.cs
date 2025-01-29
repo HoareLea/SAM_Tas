@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SAM.Core.Tas;
 using SAM.Core.Systems;
+using SAM.Analytical.Systems;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -70,6 +71,24 @@ namespace SAM.Analytical.Tas.TPD
 
             ComponentConversionSettings componentConversionSettings = systemEnergyCentreConversionSettings.GetComponentConversionSettings();
 
+            AnalyticalSystemsProperties analyticalSystemsProperties = new AnalyticalSystemsProperties();
+            List<PlantSchedule> plantSchedules = energyCentre.Schedules();
+            if (plantSchedules != null)
+            {
+                foreach(PlantSchedule plantSchedule in plantSchedules)
+                {
+                    ISchedule schedule = plantSchedule.ToSAM();
+                    if(schedule == null)
+                    {
+                        continue;
+                    }
+
+
+                    analyticalSystemsProperties.Add(schedule);
+                }
+            }
+
+            result.SetValue(SystemEnergyCentreParameter.AnalyticalSystemsProperties, analyticalSystemsProperties);
             foreach (PlantRoom plantRoom in plantRooms)
             {
                 if (systemEnergyCentreConversionSettings.Simulate)
