@@ -42,6 +42,8 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            result.ScheduleName = (pump as SystemComponent)?.GetSchedule()?.Name;
+
             //result.FanControlType = pump.ControlType.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();

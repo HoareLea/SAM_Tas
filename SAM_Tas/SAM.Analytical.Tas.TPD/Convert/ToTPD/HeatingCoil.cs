@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static global::TPD.HeatingCoil ToTPD(this DisplaySystemHeatingCoil displaySystemHeatingCoil, global::TPD.System system, HeatingGroup heatingGroup, DesignConditionLoad designConditionLoad)
+        public static global::TPD.HeatingCoil ToTPD(this DisplaySystemHeatingCoil displaySystemHeatingCoil, global::TPD.System system, HeatingGroup heatingGroup)
         {
             if(displaySystemHeatingCoil == null || system == null)
             {
@@ -28,6 +28,8 @@ namespace SAM.Analytical.Tas.TPD
             //result.Duty.SizeFraction = 1.0;
             //result.MaximumOffcoil.Value = 28;
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemHeatingCoil.ScheduleName);
+
             displaySystemHeatingCoil.SetLocation(result as SystemComponent);
 
             if (heatingGroup != null)
@@ -35,10 +37,10 @@ namespace SAM.Analytical.Tas.TPD
                 @dynamic.SetHeatingGroup(heatingGroup);
             }
 
-            if(designConditionLoad != null)
-            {
-                @dynamic.Duty.AddDesignCondition(designConditionLoad);
-            }
+            //if(designConditionLoad != null)
+            //{
+            //    @dynamic.Duty.AddDesignCondition(designConditionLoad);
+            //}
 
             return result;
         }

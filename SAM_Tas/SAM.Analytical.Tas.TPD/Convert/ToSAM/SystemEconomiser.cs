@@ -26,8 +26,8 @@ namespace SAM.Analytical.Tas.TPD
             result.MinFreshAirType = optimizer.MinFreshAirType.ToSAM();
             result.ScheduleMode = optimizer.ScheduleMode.ToSAM();
             result.DesignPressureDrop = optimizer.DesignPressureDrop;
-            
-            result.ScheduleName = dynamic.GetSchedule()?.Name;
+
+            result.ScheduleName = (optimizer as SystemComponent)?.GetSchedule()?.Name;
 
             Modify.SetReference(result, @dynamic.GUID);
 

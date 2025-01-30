@@ -22,6 +22,8 @@ namespace SAM.Analytical.Tas.TPD
             result.SensibleEfficiency = exchanger.SensibleEfficiency.Value;
             result.LatentEfficiency = exchanger.LatentEfficiency.Value;
 
+            result.ScheduleName = (exchanger as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemExchanger displaySystemExchanger = Systems.Create.DisplayObject<DisplaySystemExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());

@@ -42,6 +42,8 @@ namespace SAM.Analytical.Tas.TPD
                 result.Add(systemMultiChillerItem);
             }
 
+            result.ScheduleName = (multiChiller as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemMultiChiller displaySystemMultiChiller = Systems.Create.DisplayObject<DisplaySystemMultiChiller>(result, location, Systems.Query.DefaultDisplaySystemManager());

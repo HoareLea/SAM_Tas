@@ -26,6 +26,7 @@ namespace SAM.Analytical.Tas.TPD
             result.CoolingDuty?.Update(displaySystemDXCoil.CoolingDuty);
             result.HeatingDuty?.Update(displaySystemDXCoil.HeatingDuty);
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemDXCoil.ScheduleName);
 
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;

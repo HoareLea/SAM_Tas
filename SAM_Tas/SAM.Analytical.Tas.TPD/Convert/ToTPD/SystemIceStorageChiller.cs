@@ -35,6 +35,8 @@ namespace SAM.Analytical.Tas.TPD
 
             @dynamic.IsWaterSource = false;
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemIceStorageChiller.ScheduleName);
+
             displaySystemIceStorageChiller.SetLocation(result as PlantComponent);
 
             return result;
@@ -72,6 +74,8 @@ namespace SAM.Analytical.Tas.TPD
             result.LossesInSizing = displaySystemWaterSourceIceStorageChiller.LossesInSizing.ToTPD();
 
             @dynamic.IsWaterSource = true;
+
+            Modify.SetSchedule((SystemComponent)result, displaySystemWaterSourceIceStorageChiller.ScheduleName);
 
             displaySystemWaterSourceIceStorageChiller.SetLocation(result as PlantComponent);
 

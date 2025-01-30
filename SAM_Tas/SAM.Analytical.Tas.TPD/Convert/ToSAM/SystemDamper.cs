@@ -26,7 +26,9 @@ namespace SAM.Analytical.Tas.TPD
             result.MinimumFlowFraction = damper.MinimumFlowFraction;
             result.DesignPressureDrop = damper.DesignPressureDrop;
 
-            Modify.SetReference(result, @dynamic.GUID);            
+            Modify.SetReference(result, @dynamic.GUID);
+
+            result.ScheduleName = (damper as SystemComponent)?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

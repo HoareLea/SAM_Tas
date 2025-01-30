@@ -31,6 +31,8 @@ namespace SAM.Analytical.Tas.TPD
             result.HeatTransSurfArea = displaySystemLiquidExchanger.HeatTransferSurfaceArea;
             result.HeatTransCoeff = displaySystemLiquidExchanger.HeatTransferCoefficient;
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemLiquidExchanger.ScheduleName);
+
             displaySystemLiquidExchanger.SetLocation(result as PlantComponent);
 
             return result;

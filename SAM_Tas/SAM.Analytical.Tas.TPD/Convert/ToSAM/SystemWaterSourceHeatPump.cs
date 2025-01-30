@@ -36,7 +36,8 @@ namespace SAM.Analytical.Tas.TPD
                 PortCoolingPower = @dynamic.PowCoolPort,
                 MotorEfficiency = ((ProfileData)@dynamic.MotorEfficiency)?.ToSAM(),
                 HeatSizeFraction = @dynamic.HeatSizeFraction,
-                AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM()
+                AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM(),
+                ScheduleName = (heatPump as SystemComponent)?.GetSchedule()?.Name
             };
 
             tpdHeatPumpFlags tpdHeatPumpFlags = (tpdHeatPumpFlags)heatPump.Flags;

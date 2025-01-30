@@ -27,6 +27,8 @@ namespace SAM.Analytical.Tas.TPD
             result.CoolingDuty = dxCoil.CoolingDuty.ToSAM();
             result.HeatingDuty = dxCoil.HeatingDuty.ToSAM();
 
+            result.ScheduleName = (dxCoil as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemDXCoil displaySystemDXCoil = Systems.Create.DisplayObject<DisplaySystemDXCoil>(result, location, Systems.Query.DefaultDisplaySystemManager());

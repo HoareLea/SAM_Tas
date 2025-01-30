@@ -59,6 +59,8 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignWaterFlowRate = dynamic.DesignWaterFlowRate;
             result.DesignWaterFlowRateSizingType = ((tpdSizedVariable)dynamic.WaterFlowSizingType).ToSAM_DesignWaterFlowRateSizingType();
 
+            result.ScheduleName = (dryCooler as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemDryCooler displaySystemDryCooler = Systems.Create.DisplayObject<DisplaySystemDryCooler>(result, location, Systems.Query.DefaultDisplaySystemManager());

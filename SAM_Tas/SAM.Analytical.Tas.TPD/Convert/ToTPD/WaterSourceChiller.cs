@@ -39,6 +39,8 @@ namespace SAM.Analytical.Tas.TPD
 
             @dynamic.IsDirectAbsChiller = false;
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemWaterSourceChiller.ScheduleName);
+
             displaySystemWaterSourceChiller.SetLocation(result as PlantComponent);
 
             return result;
@@ -77,6 +79,8 @@ namespace SAM.Analytical.Tas.TPD
             result.LossesInSizing = displaySystemWaterSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
 
             @dynamic.IsDirectAbsChiller = true;
+
+            Modify.SetSchedule((SystemComponent)result, displaySystemWaterSourceDirectAbsorptionChiller.ScheduleName);
 
             displaySystemWaterSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
 

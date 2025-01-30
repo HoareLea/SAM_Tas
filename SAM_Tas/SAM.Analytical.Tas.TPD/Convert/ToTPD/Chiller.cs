@@ -29,6 +29,8 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop = displaySystemAirSourceChiller.DesignPressureDrop;
             result.LossesInSizing = displaySystemAirSourceChiller.LossesInSizing.ToTPD();
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemAirSourceChiller.ScheduleName);
+
             displaySystemAirSourceChiller.SetLocation(result as PlantComponent);
 
             return result;

@@ -20,6 +20,8 @@ namespace SAM.Analytical.Tas.TPD
             
             result.Description = dynamic.Description;
 
+            result.ScheduleName = (desiccantWheel as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemDesiccantWheel displaySystemDesiccantWheel = Systems.Create.DisplayObject<DisplaySystemDesiccantWheel>(result, location, Systems.Query.DefaultDisplaySystemManager());

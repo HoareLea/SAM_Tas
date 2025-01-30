@@ -55,6 +55,7 @@ namespace SAM.Analytical.Tas.TPD
             result.WaterDriftLoss = @dynamic.WaterDriftLoss;
             result.BlowdownConcentrationRatio = @dynamic.BlowdownConcentrationRatio;
             result.AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM();
+            result.ScheduleName = (coolingTower as SystemComponent)?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

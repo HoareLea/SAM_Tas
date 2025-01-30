@@ -27,6 +27,8 @@ namespace SAM.Analytical.Tas.TPD
             result.MinimumFlowFraction = displaySystemDamper.MinimumFlowFraction;
             result.DesignPressureDrop = displaySystemDamper.DesignPressureDrop;
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemDamper.ScheduleName);
+
 
             displaySystemDamper.SetLocation(result as SystemComponent);
 

@@ -34,20 +34,9 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Flags = 0;
 
-            if(!string.IsNullOrEmpty(displaySystemEconomiser.ScheduleName))
-            {
-                List<PlantSchedule> plantSchedules = system.Schedules();
-                if (plantSchedules != null)
-                {
-                    PlantSchedule plantSchedule = plantSchedules.Find(x => x.Name == displaySystemEconomiser.ScheduleName);
-                    if(plantSchedule != null)
-                    {
-                        @dynamic.SetSchedule(plantSchedule);
-                    }
-                }
-            }
+            Modify.SetSchedule((SystemComponent)result, displaySystemEconomiser.ScheduleName);
 
-            displaySystemEconomiser.SetLocation(result as SystemComponent);
+            displaySystemEconomiser.SetLocation((SystemComponent)result);
 
             return result;
         }
@@ -84,7 +73,9 @@ namespace SAM.Analytical.Tas.TPD
                 @dynamic.SetSchedule(plantSchedule);
             }
 
-            displaySystemMixingBox.SetLocation(result as SystemComponent);
+            Modify.SetSchedule((SystemComponent)result, displaySystemMixingBox.ScheduleName);
+
+            displaySystemMixingBox.SetLocation((SystemComponent)result);
 
             return result;
         }

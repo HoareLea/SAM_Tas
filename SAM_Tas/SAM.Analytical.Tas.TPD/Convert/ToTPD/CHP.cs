@@ -35,6 +35,8 @@ namespace SAM.Analytical.Tas.TPD
                 result.Flags = (int)tpdCHPFlags;
             }
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemCHP.ScheduleName);
+
             displaySystemCHP.SetLocation(result as PlantComponent);
 
             return result;

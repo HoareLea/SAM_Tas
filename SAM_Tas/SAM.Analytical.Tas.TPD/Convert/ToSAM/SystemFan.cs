@@ -33,7 +33,9 @@ namespace SAM.Analytical.Tas.TPD
 
 
             Modify.SetReference(result, @dynamic.GUID);
-            
+
+            result.ScheduleName = (fan as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemFan displaySystemFan = Systems.Create.DisplayObject<DisplaySystemFan>(result, location, Systems.Query.DefaultDisplaySystemManager());

@@ -45,6 +45,8 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            result.ScheduleName = (cHP as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemCHP displaySystemCHP = Systems.Create.DisplayObject<DisplaySystemCHP>(result, location, Systems.Query.DefaultDisplaySystemManager());

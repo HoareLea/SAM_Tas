@@ -36,6 +36,8 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            result.ScheduleName = (valve as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemValve displaySystemValve = Systems.Create.DisplayObject<DisplaySystemValve>(result, location, Systems.Query.DefaultDisplaySystemManager());

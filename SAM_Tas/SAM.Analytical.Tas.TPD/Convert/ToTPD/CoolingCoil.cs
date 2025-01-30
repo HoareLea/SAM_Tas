@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static global::TPD.CoolingCoil ToTPD(this DisplaySystemCoolingCoil displaySystemCoolingCoil, global::TPD.System system, CoolingGroup coolingGroup, DesignConditionLoad designConditionLoad)
+        public static global::TPD.CoolingCoil ToTPD(this DisplaySystemCoolingCoil displaySystemCoolingCoil, global::TPD.System system, CoolingGroup coolingGroup)
         {
             if(displaySystemCoolingCoil == null || system == null)
             {
@@ -25,16 +25,13 @@ namespace SAM.Analytical.Tas.TPD
 
             //result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint);
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemCoolingCoil.ScheduleName);
+
             displaySystemCoolingCoil.SetLocation(result as SystemComponent);
 
             if (coolingGroup != null)
             {
                 @dynamic.SetCoolingGroup(coolingGroup);
-            }
-
-            if(designConditionLoad != null)
-            {
-                result.Duty.AddDesignCondition(designConditionLoad);
             }
 
             return result;

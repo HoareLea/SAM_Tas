@@ -45,6 +45,8 @@ namespace SAM.Analytical.Tas.TPD
             result.HeatTransferSurfaceArea = @dynamic.HeatTransSurfArea;
             result.HeatTransferCoefficient = @dynamic.HeatTransCoeff;
 
+            result.ScheduleName = (heatExchanger as SystemComponent)?.GetSchedule()?.Name;
+
             DisplaySystemLiquidExchanger displaySystemLiquidExchanger = Systems.Create.DisplayObject<DisplaySystemLiquidExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if (displaySystemLiquidExchanger != null)
             {

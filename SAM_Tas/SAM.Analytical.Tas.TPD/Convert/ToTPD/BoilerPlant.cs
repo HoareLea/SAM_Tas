@@ -5,9 +5,9 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static BoilerPlant ToTPD(this DisplaySystemBoiler displaySystemAirSourceHeatPump, PlantRoom plantRoom)
+        public static BoilerPlant ToTPD(this DisplaySystemBoiler displaySystemBoiler, PlantRoom plantRoom)
         {
-            if (displaySystemAirSourceHeatPump == null || plantRoom == null)
+            if (displaySystemBoiler == null || plantRoom == null)
             {
                 return null;
             }
@@ -15,29 +15,31 @@ namespace SAM.Analytical.Tas.TPD
             BoilerPlant result = plantRoom.AddBoiler();
 
             dynamic @dynamic = result;
-            @dynamic.Name = displaySystemAirSourceHeatPump.Name;
-            @dynamic.Description = displaySystemAirSourceHeatPump.Description;
+            @dynamic.Name = displaySystemBoiler.Name;
+            @dynamic.Description = displaySystemBoiler.Description;
 
-            result.Setpoint?.Update(displaySystemAirSourceHeatPump.Setpoint);
-            result.Efficiency?.Update(displaySystemAirSourceHeatPump.Efficiency);
-            result.Duty?.Update(displaySystemAirSourceHeatPump.Duty);
-            result.DesignDeltaT = displaySystemAirSourceHeatPump.DesignTemperatureDifference;
-            result.Capacity = displaySystemAirSourceHeatPump.Capacity;
-            result.DesignPressureDrop = displaySystemAirSourceHeatPump.DesignPressureDrop;
-            result.AncillaryLoad?.Update(displaySystemAirSourceHeatPump.AncillaryLoad);
-            result.LossesInSizing = displaySystemAirSourceHeatPump.LossesInSizing.ToTPD();
+            result.Setpoint?.Update(displaySystemBoiler.Setpoint);
+            result.Efficiency?.Update(displaySystemBoiler.Efficiency);
+            result.Duty?.Update(displaySystemBoiler.Duty);
+            result.DesignDeltaT = displaySystemBoiler.DesignTemperatureDifference;
+            result.Capacity = displaySystemBoiler.Capacity;
+            result.DesignPressureDrop = displaySystemBoiler.DesignPressureDrop;
+            result.AncillaryLoad?.Update(displaySystemBoiler.AncillaryLoad);
+            result.LossesInSizing = displaySystemBoiler.LossesInSizing.ToTPD();
 
-            if (displaySystemAirSourceHeatPump.LossesInSizing || displaySystemAirSourceHeatPump.IsDomesticHotWater)
+            if (displaySystemBoiler.LossesInSizing || displaySystemBoiler.IsDomesticHotWater)
             {
-                tpdBoilerPlantFlags tpdBoilerPlantFlags = displaySystemAirSourceHeatPump.LossesInSizing && displaySystemAirSourceHeatPump.IsDomesticHotWater ? tpdBoilerPlantFlags.tpdBoilerPlantLossesInSizing | tpdBoilerPlantFlags.tpdBoilerPlantIsDHW:
-                    displaySystemAirSourceHeatPump.LossesInSizing ? tpdBoilerPlantFlags.tpdBoilerPlantLossesInSizing : tpdBoilerPlantFlags.tpdBoilerPlantIsDHW;
+                tpdBoilerPlantFlags tpdBoilerPlantFlags = displaySystemBoiler.LossesInSizing && displaySystemBoiler.IsDomesticHotWater ? tpdBoilerPlantFlags.tpdBoilerPlantLossesInSizing | tpdBoilerPlantFlags.tpdBoilerPlantIsDHW:
+                    displaySystemBoiler.LossesInSizing ? tpdBoilerPlantFlags.tpdBoilerPlantLossesInSizing : tpdBoilerPlantFlags.tpdBoilerPlantIsDHW;
 
                 result.Flags = (int)tpdBoilerPlantFlags;
             }
 
-            displaySystemAirSourceHeatPump.SetLocation(result as PlantComponent);
+            Modify.SetSchedule((SystemComponent)result, displaySystemBoiler.ScheduleName);
 
-            return result as BoilerPlant;
+            displaySystemBoiler.SetLocation(result as PlantComponent);
+
+            return result;
         }
     }
 }

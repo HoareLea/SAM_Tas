@@ -44,6 +44,8 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            result.ScheduleName = (boilerPlant as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemBoiler displaySystemBoiler = Systems.Create.DisplayObject<DisplaySystemBoiler>(result, location, Systems.Query.DefaultDisplaySystemManager());

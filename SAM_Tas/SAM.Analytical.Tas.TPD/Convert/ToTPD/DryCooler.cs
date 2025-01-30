@@ -46,6 +46,8 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignWaterFlowRate = displaySystemDryCooler.DesignWaterFlowRate;
             //result.WaterFlowSizingType = displaySystemDryCooler.DesignWaterFlowRateSizingType.ToTPD();
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemDryCooler.ScheduleName);
+
             displaySystemDryCooler.SetLocation(result as PlantComponent);
 
             return result;

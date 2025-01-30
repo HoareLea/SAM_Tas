@@ -27,6 +27,8 @@ namespace SAM.Analytical.Tas.TPD
             result.HESetpoint?.Update(displaySystemDesiccantWheel.HESetpoint);
             result.ElectricalLoad?.Update(displaySystemDesiccantWheel.ElectricalLoad);
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemDesiccantWheel.ScheduleName);
+
             displaySystemDesiccantWheel.SetLocation(result as SystemComponent);
 
             return result;

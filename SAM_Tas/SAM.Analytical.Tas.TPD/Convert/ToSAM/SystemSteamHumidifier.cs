@@ -23,6 +23,8 @@ namespace SAM.Analytical.Tas.TPD
             result.WaterSupplyTemperature = steamHumidifier.WaterSupplyTemp.ToSAM();
             result.Setpoint = steamHumidifier.Setpoint.ToSAM();
 
+            result.ScheduleName = (steamHumidifier as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemSteamHumidifier displaySystemSteamHumidifier = Systems.Create.DisplayObject<DisplaySystemSteamHumidifier>(result, location, Systems.Query.DefaultDisplaySystemManager());

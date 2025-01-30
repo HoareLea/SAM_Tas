@@ -23,6 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Duty?.Update(displaySystemSteamHumidifier.Duty);
             result.WaterTempSource = displaySystemSteamHumidifier.WaterTemperatureSource.ToTPD();
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemSteamHumidifier.ScheduleName);
 
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;

@@ -32,7 +32,8 @@ namespace SAM.Analytical.Tas.TPD
                 DesignTemperatureDifference2 = @dynamic.DesignDeltaT2,
                 MotorEfficiency = ((ProfileData)@dynamic.MotorEfficiency)?.ToSAM(),
                 AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM(),
-                LossesInSizing = @dynamic.LossesInSizing
+                LossesInSizing = @dynamic.LossesInSizing,
+                ScheduleName = (waterToWaterHeatPump as SystemComponent)?.GetSchedule()?.Name
             };
 
             tpdWaterToWaterHeatPumpFlags tpdWaterToWaterHeatPumpFlags = (tpdWaterToWaterHeatPumpFlags)waterToWaterHeatPump.Flags;

@@ -47,6 +47,8 @@ namespace SAM.Analytical.Tas.TPD
                 result.Add(systemMultiBoilerItem);
             }
 
+            result.ScheduleName = (multiBoiler as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemMultiBoiler displaySystemMultiBoiler = Systems.Create.DisplayObject<DisplaySystemMultiBoiler>(result, location, Systems.Query.DefaultDisplaySystemManager());

@@ -28,6 +28,8 @@ namespace SAM.Analytical.Tas.TPD
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemSprayHumidifier.ScheduleName);
+
             displaySystemSprayHumidifier.SetLocation(result as SystemComponent);
 
             return result;
@@ -57,6 +59,8 @@ namespace SAM.Analytical.Tas.TPD
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
+
+            Modify.SetSchedule((SystemComponent)result, displaySystemDirectEvaporativeCooler.ScheduleName);
 
             displaySystemDirectEvaporativeCooler.SetLocation(result as SystemComponent);
 

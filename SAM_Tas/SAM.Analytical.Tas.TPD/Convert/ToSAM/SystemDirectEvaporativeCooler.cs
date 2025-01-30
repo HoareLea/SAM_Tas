@@ -26,6 +26,8 @@ namespace SAM.Analytical.Tas.TPD
             result.HoursBeforePurgingTank = System.Convert.ToDouble(sprayHumidifier.TankHours);
             result.TankVolume = sprayHumidifier.TankVolume.ToSAM();
 
+            result.ScheduleName = (sprayHumidifier as SystemComponent)?.GetSchedule()?.Name;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemDirectEvaporativeCooler displaySystemDirectEvaporativeCooler = Systems.Create.DisplayObject<DisplaySystemDirectEvaporativeCooler>(result, location, Systems.Query.DefaultDisplaySystemManager());

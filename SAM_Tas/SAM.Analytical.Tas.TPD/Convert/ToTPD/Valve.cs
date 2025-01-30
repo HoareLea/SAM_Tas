@@ -23,6 +23,8 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignFlowRate = displaySystemValve.DesignFlowRate;
             result.DesignPressureDrop = displaySystemValve.DesignPressureDrop;
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemValve.ScheduleName);
+
             displaySystemValve.SetLocation(result as PlantComponent);
 
             return result;

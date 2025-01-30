@@ -30,6 +30,8 @@ namespace SAM.Analytical.Tas.TPD
             result.ControlType = displaySystemFan.FanControlType.ToTPD();
             result.PartLoad?.Update(displaySystemFan.PartLoad);
 
+            Modify.SetSchedule((SystemComponent)result, displaySystemFan.ScheduleName);
+
             // result.DesignFlowRate.Value = displaySystemFan.DesignFlowRate;
             // result.OverallEfficiency.Value = displaySystemFan.OverallEfficiency;
             // result.Pressure = displaySystemFan.Pressure;
