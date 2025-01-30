@@ -12,7 +12,7 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
-            List<PlantSchedule> plantSchedules = systemComponent.GetSystem()?.Schedules();
+            List<PlantSchedule> plantSchedules = Query.Schedules(((dynamic)systemComponent).GetSystem().GetPlantRoom()?.GetEnergyCentre() as EnergyCentre);
             if(plantSchedules == null || plantSchedules.Count == 0)
             {
                 return false;
@@ -22,7 +22,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 if(plantSchedule?.Name == scheduleName)
                 {
-                    systemComponent.SetSchedule(plantSchedule);
+                    ((dynamic)systemComponent).SetSchedule(plantSchedule); ;
                     return true;
                 }
             }
@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
-            List<PlantSchedule> plantSchedules = ((dynamic)plantComponent).GetPlantRoom()?.GetEnergyCentre()?.Schedules();
+            List<PlantSchedule> plantSchedules = Query.Schedules(((dynamic)plantComponent).GetPlantRoom()?.GetEnergyCentre() as EnergyCentre);
             if (plantSchedules == null || plantSchedules.Count == 0)
             {
                 return false;
@@ -48,7 +48,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 if (plantSchedule?.Name == scheduleName)
                 {
-                    plantComponent.SetSchedule(plantSchedule);
+                    ((dynamic)plantComponent).SetSchedule(plantSchedule);
                     return true;
                 }
             }
