@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetReference(result, @dynamic.GUID);
 
-            result.ScheduleName = (coolingCoil as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)coolingCoil)?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

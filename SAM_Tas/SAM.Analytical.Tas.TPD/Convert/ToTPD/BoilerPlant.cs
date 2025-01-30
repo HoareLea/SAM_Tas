@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas.TPD
                 result.Flags = (int)tpdBoilerPlantFlags;
             }
 
-            Modify.SetSchedule((SystemComponent)result, displaySystemBoiler.ScheduleName);
+            Modify.SetSchedule((PlantComponent)result, displaySystemBoiler.ScheduleName);
 
             displaySystemBoiler.SetLocation(result as PlantComponent);
 

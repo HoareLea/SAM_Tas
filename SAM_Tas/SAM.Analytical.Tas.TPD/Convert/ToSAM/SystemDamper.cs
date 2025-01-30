@@ -28,7 +28,7 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetReference(result, @dynamic.GUID);
 
-            result.ScheduleName = (damper as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)damper )?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

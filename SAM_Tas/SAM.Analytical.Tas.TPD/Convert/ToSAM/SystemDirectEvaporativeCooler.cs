@@ -26,7 +26,7 @@ namespace SAM.Analytical.Tas.TPD
             result.HoursBeforePurgingTank = System.Convert.ToDouble(sprayHumidifier.TankHours);
             result.TankVolume = sprayHumidifier.TankVolume.ToSAM();
 
-            result.ScheduleName = (sprayHumidifier as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)sprayHumidifier)?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

@@ -42,7 +42,7 @@ namespace SAM.Analytical.Tas.TPD
                 result.Add(systemMultiChillerItem);
             }
 
-            result.ScheduleName = (multiChiller as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)multiChiller )?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

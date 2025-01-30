@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
             result.ScheduleMode = optimizer.ScheduleMode.ToSAM();
             result.DesignPressureDrop = optimizer.DesignPressureDrop;
 
-            result.ScheduleName = (optimizer as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)optimizer )?.GetSchedule()?.Name;
 
             Modify.SetReference(result, @dynamic.GUID);
 

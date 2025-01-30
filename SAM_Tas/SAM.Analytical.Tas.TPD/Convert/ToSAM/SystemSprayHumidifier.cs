@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas.TPD
             result.WaterFlowCapacity = sprayHumidifier.WaterFlowCapacity.ToSAM();
             result.ElectricalLoad = sprayHumidifier?.ElectricalLoad.ToSAM();
 
-            result.ScheduleName = (sprayHumidifier as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)sprayHumidifier )?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

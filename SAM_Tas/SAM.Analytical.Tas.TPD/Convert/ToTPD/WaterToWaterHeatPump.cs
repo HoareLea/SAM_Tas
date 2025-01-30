@@ -42,7 +42,7 @@ namespace SAM.Analytical.Tas.TPD
                 result.Flags = (int)tpdWaterToWaterHeatPumpFlags;
             }
 
-            Modify.SetSchedule((SystemComponent)result, displaySystemWaterToWaterHeatPump.ScheduleName);
+            Modify.SetSchedule((PlantComponent)result, displaySystemWaterToWaterHeatPump.ScheduleName);
 
             displaySystemWaterToWaterHeatPump.SetLocation(result as PlantComponent);
 

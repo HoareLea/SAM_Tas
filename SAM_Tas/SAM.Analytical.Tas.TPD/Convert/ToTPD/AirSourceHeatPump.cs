@@ -42,7 +42,7 @@ namespace SAM.Analytical.Tas.TPD
                 result.Flags = (int)tpdAirSourceHeatPumpFlags.tpdAirSourceHeatPumpIsDHW;
             }
 
-            Modify.SetSchedule((SystemComponent)result, displaySystemAirSourceHeatPump.ScheduleName);
+            Modify.SetSchedule((PlantComponent)result, displaySystemAirSourceHeatPump.ScheduleName);
 
             displaySystemAirSourceHeatPump.SetLocation(result as PlantComponent);
 

@@ -45,7 +45,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            result.ScheduleName = (cHP as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)cHP )?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

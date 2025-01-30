@@ -34,7 +34,7 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetReference(result, @dynamic.GUID);
 
-            result.ScheduleName = (fan as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)fan )?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

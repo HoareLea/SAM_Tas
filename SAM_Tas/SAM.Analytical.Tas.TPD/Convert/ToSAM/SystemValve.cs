@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            result.ScheduleName = (valve as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)valve )?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

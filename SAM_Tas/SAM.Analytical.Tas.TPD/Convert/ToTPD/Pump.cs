@@ -24,7 +24,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Capacity = displaySystemPump.Capacity;
             result.PartLoad?.Update(displaySystemPump.PartLoad);
 
-            Modify.SetSchedule((SystemComponent)result, displaySystemPump.ScheduleName);
+            Modify.SetSchedule((PlantComponent)result, displaySystemPump.ScheduleName);
 
             displaySystemPump.SetLocation(result as PlantComponent);
 

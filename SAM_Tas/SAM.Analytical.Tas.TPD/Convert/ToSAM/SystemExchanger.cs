@@ -22,7 +22,7 @@ namespace SAM.Analytical.Tas.TPD
             result.SensibleEfficiency = exchanger.SensibleEfficiency.Value;
             result.LatentEfficiency = exchanger.LatentEfficiency.Value;
 
-            result.ScheduleName = (exchanger as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)exchanger )?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

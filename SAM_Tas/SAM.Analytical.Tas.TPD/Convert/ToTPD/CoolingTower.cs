@@ -42,7 +42,7 @@ namespace SAM.Analytical.Tas.TPD
             result.BlowdownConcentrationRatio = displaySystemCoolingTower.BlowdownConcentrationRatio;
             result.AncillaryLoad?.Update(displaySystemCoolingTower.AncillaryLoad);
 
-            Modify.SetSchedule((SystemComponent)result, displaySystemCoolingTower.ScheduleName);
+            Modify.SetSchedule((PlantComponent)result, displaySystemCoolingTower.ScheduleName);
 
             displaySystemCoolingTower.SetLocation(result as PlantComponent);
 

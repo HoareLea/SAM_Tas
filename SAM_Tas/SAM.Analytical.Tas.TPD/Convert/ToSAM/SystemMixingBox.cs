@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas.TPD
             SystemMixingBox result = new SystemMixingBox(@dynamic.Name);
             result.Description = dynamic.Description;
 
-            result.ScheduleName = (optimizer as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)optimizer )?.GetSchedule()?.Name;
 
             Modify.SetReference(result, @dynamic.GUID);
 

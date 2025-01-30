@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
             result.CoolingDuty = dxCoil.CoolingDuty.ToSAM();
             result.HeatingDuty = dxCoil.HeatingDuty.ToSAM();
 
-            result.ScheduleName = (dxCoil as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)dxCoil )?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 

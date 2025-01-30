@@ -52,7 +52,7 @@ namespace SAM.Analytical.Tas.TPD
                     AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM(),
                     MinimalOutSourceTemperature = ((ProfileData)@dynamic.MinOutTempSource)?.ToSAM(),
                     LossesInSizing = dynamic.LossesInSizing,
-                    ScheduleName = (systemChiller as SystemComponent)?.GetSchedule()?.Name
+                    ScheduleName = ((dynamic)systemChiller )?.GetSchedule()?.Name
                 };
             }
 
@@ -111,7 +111,7 @@ namespace SAM.Analytical.Tas.TPD
                 systemAirSourceDirectAbsorptionChiller.DesignPressureDrop = chiller.DesignPressureDrop;
                 systemAirSourceDirectAbsorptionChiller.LossesInSizing = dynamic.LossesInSizing;
 
-                systemAirSourceDirectAbsorptionChiller.ScheduleName = (chiller as SystemComponent)?.GetSchedule()?.Name;
+                systemAirSourceDirectAbsorptionChiller.ScheduleName = ((dynamic)chiller )?.GetSchedule()?.Name;
 
 
                 result = systemAirSourceDirectAbsorptionChiller;
@@ -127,7 +127,7 @@ namespace SAM.Analytical.Tas.TPD
                 systemAirSourceChiller.DesignPressureDrop = chiller.DesignPressureDrop;
                 systemAirSourceChiller.LossesInSizing = dynamic.LossesInSizing;
 
-                systemAirSourceChiller.ScheduleName = (chiller as SystemComponent)?.GetSchedule()?.Name;
+                systemAirSourceChiller.ScheduleName = ((dynamic)chiller )?.GetSchedule()?.Name;
 
                 result = systemAirSourceChiller;
             }
@@ -207,7 +207,7 @@ namespace SAM.Analytical.Tas.TPD
                 systemWaterSourceDirectAbsorptionChiller.AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM();
                 systemWaterSourceDirectAbsorptionChiller.FreeCoolingType = ((tpdFreeCoolingType)@dynamic.FreeCoolingType).ToSAM();
 
-                systemWaterSourceDirectAbsorptionChiller.ScheduleName = (waterSourceChiller as SystemComponent)?.GetSchedule()?.Name;
+                systemWaterSourceDirectAbsorptionChiller.ScheduleName = ((dynamic)waterSourceChiller )?.GetSchedule()?.Name;
 
                 result = systemWaterSourceDirectAbsorptionChiller;
             }
@@ -233,7 +233,7 @@ namespace SAM.Analytical.Tas.TPD
                 systemWaterSourceChiller.AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM();
                 systemWaterSourceChiller.FreeCoolingType = ((tpdFreeCoolingType)@dynamic.FreeCoolingType).ToSAM();
 
-                systemWaterSourceChiller.ScheduleName = (waterSourceChiller as SystemComponent)?.GetSchedule()?.Name;
+                systemWaterSourceChiller.ScheduleName = ((dynamic)waterSourceChiller)?.GetSchedule()?.Name;
 
                 result = systemWaterSourceChiller;
             }

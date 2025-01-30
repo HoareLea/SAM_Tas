@@ -42,7 +42,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            result.ScheduleName = (pump as SystemComponent)?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)pump )?.GetSchedule()?.Name;
 
             //result.FanControlType = pump.ControlType.ToSAM();
 

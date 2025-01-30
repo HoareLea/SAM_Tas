@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas.TPD
                 WaterPipeLength = @dynamic.WaterPipeLength,
                 AncillaryLoad = ((ProfileData)@dynamic.AncillaryLoad)?.ToSAM(),
                 HeatSizeFraction = @dynamic.HeatSizeFraction,
-                ScheduleName = (airSourceHeatPump as SystemComponent)?.GetSchedule()?.Name
+                ScheduleName = ((dynamic)airSourceHeatPump )?.GetSchedule()?.Name
             };
 
             tpdAirSourceHeatPumpFlags tpdAirSourceHeatPumpFlags = (tpdAirSourceHeatPumpFlags)airSourceHeatPump.Flags;
