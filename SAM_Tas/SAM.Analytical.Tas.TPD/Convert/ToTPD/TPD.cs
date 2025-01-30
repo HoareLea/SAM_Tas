@@ -470,8 +470,7 @@ namespace SAM.Analytical.Tas.TPD
                                     }
                                 }
 
-
-                                List<Core.Systems.ISystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Undefined, Direction.Out);
+                                 List<Core.Systems.ISystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Undefined, Direction.Out);
                                 if (systemComponents == null || systemComponents.Count == 0)
                                 {
                                     systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem);
@@ -839,6 +838,11 @@ namespace SAM.Analytical.Tas.TPD
                                         {
                                             systemComponent_TPD = ToTPD((DisplaySystemMixingBox)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
                                         }
+                                        else if (systemComponent_Temp is DisplaySystemLoadComponent)
+                                        {
+                                            systemComponent_TPD = ToTPD((DisplaySystemLoadComponent)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                        }
+
 
                                         if (systemComponent_TPD == null)
                                         {

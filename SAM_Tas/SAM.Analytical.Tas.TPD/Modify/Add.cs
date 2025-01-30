@@ -574,6 +574,37 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, LoadComponent loadComponent, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || loadComponent == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemLoadComponent systemLoadComponent = loadComponent.ToSAM();
+            systemPlantRoom.Add(systemLoadComponent);
+            result.Add(systemLoadComponent);
+
+            if (componentConversionSettings.IncludeComponentResults)
+            {
+                SystemLoadComponentResult systemLoadComponentResult = loadComponent.ToSAM_SystemLoadComponentResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemLoadComponentResult);
+
+                systemPlantRoom.Connect(systemLoadComponentResult, systemLoadComponent);
+                result.Add(systemLoadComponentResult);
+            }
+
+            return result;
+        }
+
+
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Damper damper, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
         {
             if (systemPlantRoom == null || damper == null)
