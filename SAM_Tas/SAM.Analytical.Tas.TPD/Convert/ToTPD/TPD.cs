@@ -733,18 +733,21 @@ namespace SAM.Analytical.Tas.TPD
                                             continue;
                                         }
 
-                                        systemComponents_Ordered.Insert(0, systemComponent);
+                                        if(systemComponents_Ordered.Count > 1)
+                                        {
+                                            systemComponents_Ordered.Insert(0, systemComponent);
+                                        }
 
                                         foreach (Core.Systems.ISystemComponent systemComponents_Temp in systemComponents_Ordered)
                                         {
                                             dictionary_SystemComponent_SAM[systemPlantRoom.GetGuid(systemComponents_Temp)] = systemComponents_Temp;
                                         }
 
-                                        systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
-                                        if (systemComponent == null)
-                                        {
-                                            continue;
-                                        }
+                                        //systemComponent = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem, ConnectorStatus.Unconnected, Direction.In)?.FirstOrDefault();
+                                        //if (systemComponent == null)
+                                        //{
+                                        //    continue;
+                                        //}
 
                                         systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, airSystem, Direction.Out);
                                         if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
@@ -752,7 +755,10 @@ namespace SAM.Analytical.Tas.TPD
                                             continue;
                                         }
 
-                                        systemComponents_Ordered.Insert(0, systemComponent);
+                                        if (systemComponents_Ordered.Count > 1)
+                                        {
+                                            systemComponents_Ordered.Insert(0, systemComponent);
+                                        }
 
                                         List<Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>> tuples = new List<Tuple<AirSystemGroup, List<Core.Systems.ISystemComponent>>>();
 
@@ -786,7 +792,7 @@ namespace SAM.Analytical.Tas.TPD
                                             }
                                         }
 
-                                        foreach (Core.Systems.SystemComponent systemComponent_Temp in dictionary_SystemComponent_SAM.Values)
+                                        foreach (Core.Systems.SystemComponent systemComponent_Temp in systemComponents_Ordered)
                                         {
                                             global::TPD.ISystemComponent systemComponent_TPD = null;
 
@@ -846,7 +852,10 @@ namespace SAM.Analytical.Tas.TPD
                                             {
                                                 systemComponent_TPD = ToTPD((DisplaySystemLoadComponent)systemComponent_Temp, system) as global::TPD.ISystemComponent;
                                             }
-
+                                            else if (systemComponent_Temp is DisplaySystemDirectEvaporativeCooler)
+                                            {
+                                                systemComponent_TPD = ToTPD((DisplaySystemDirectEvaporativeCooler)systemComponent_Temp, system) as global::TPD.ISystemComponent;
+                                            }
 
                                             if (systemComponent_TPD == null)
                                             {
