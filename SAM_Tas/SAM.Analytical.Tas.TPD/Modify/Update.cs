@@ -68,9 +68,9 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
             
-            if(sizedVariable is DesignConditionSizableValue && energyCentre != null)
+            if(sizableValue is DesignConditionSizableValue && energyCentre != null)
             {
-                DesignConditionSizableValue designConditionSizableValue = (DesignConditionSizableValue)sizedVariable;
+                DesignConditionSizableValue designConditionSizableValue = (DesignConditionSizableValue)sizableValue;
                 HashSet<string> designConditionNames = designConditionSizableValue.DesignConditionNames;
                 if(designConditionNames != null)
                 {
