@@ -49,5 +49,28 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static List<FuelSource> FuelSources(this SystemComponent systemComponent)
+        {
+            if (systemComponent == null)
+            {
+                return null;
+            }
+
+            List<FuelSource> result = new List<FuelSource>();
+
+            dynamic @dynamic = (dynamic)systemComponent;
+
+            HeatingGroup heatingGroup = @dynamic.GetHeatingGroup();
+            CoolingGroup coolingGroup = @dynamic.GetCoolingGroup();
+            DHWGroup dHWGroup = @dynamic.GetDHWGroup();
+            RefrigerantGroup refrigerantGroup = @dynamic.GetRefrigerantGroup();
+            SteamGroup steamGroup = @dynamic.GetSteamGroup();
+            FuelGroup fuelGroup = @dynamic.GetFuelGroup();
+            ElectricalGroup electricalGroup1 = @dynamic.GetElectricalGroup1();
+            ElectricalGroup electricalGroup2 = @dynamic.GetElectricalGroup2();
+
+            return result;
+        }
     }
 }
