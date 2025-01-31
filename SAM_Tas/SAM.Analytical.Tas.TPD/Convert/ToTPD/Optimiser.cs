@@ -41,7 +41,7 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static Optimiser ToTPD(this DisplaySystemMixingBox displaySystemMixingBox, global::TPD.System system, PlantSchedule plantSchedule)
+        public static Optimiser ToTPD(this DisplaySystemMixingBox displaySystemMixingBox, global::TPD.System system)
         {
             if (displaySystemMixingBox == null || system == null)
             {
@@ -68,10 +68,8 @@ namespace SAM.Analytical.Tas.TPD
             //result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
             result.Flags = (int)tpdOptimiserFlags.tpdOptimiserFlagFreshAirMixingBox;
-            if (plantSchedule != null)
-            {
-                @dynamic.SetSchedule(plantSchedule);
-            }
+
+            Modify.SetSchedule((SystemComponent)result, displaySystemMixingBox.ScheduleName);
 
             Modify.SetSchedule((SystemComponent)result, displaySystemMixingBox.ScheduleName);
 

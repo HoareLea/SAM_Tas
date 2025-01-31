@@ -846,7 +846,7 @@ namespace SAM.Analytical.Tas.TPD
                                             }
                                             else if (systemComponent_Temp is DisplaySystemMixingBox)
                                             {
-                                                systemComponent_TPD = ToTPD((DisplaySystemMixingBox)systemComponent_Temp, system, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                                systemComponent_TPD = ToTPD((DisplaySystemMixingBox)systemComponent_Temp, system) as global::TPD.ISystemComponent;
                                             }
                                             else if (systemComponent_Temp is DisplaySystemLoadComponent)
                                             {
