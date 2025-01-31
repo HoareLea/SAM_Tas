@@ -155,6 +155,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (DXCoil)systemComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (systemComponent is LoadComponent)
+            {
+                return Add(systemPlantRoom, (LoadComponent)systemComponent, tPDDoc, componentConversionSettings);
+            }
+
             return null;
         }
 
