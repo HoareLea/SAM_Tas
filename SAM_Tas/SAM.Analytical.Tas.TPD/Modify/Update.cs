@@ -33,7 +33,7 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
-            dynamic @dynamic = sizableValue;
+            dynamic @dynamic = sizedVariable;
 
             if(sizableValue is UnlimitedValue)
             {
@@ -53,14 +53,7 @@ namespace SAM.Analytical.Tas.TPD
                 ModifiableValue modifiableValue = sizableValue_Temp.ModifiableValue;
                 if(modifiableValue != null)
                 {
-                    try
-                    {
-                        dynamic.Value = modifiableValue.Value;
-                    }
-                    catch
-                    {
-
-                    }
+                    dynamic.Value = modifiableValue.Value;
                 }
             }
             

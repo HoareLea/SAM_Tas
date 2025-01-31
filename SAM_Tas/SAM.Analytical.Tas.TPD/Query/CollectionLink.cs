@@ -25,24 +25,24 @@ namespace SAM.Analytical.Tas.TPD
 
             CollectionLink result = null;
 
-            if(systemComponent is CoolingCoil)
+            if(systemComponent is global::TPD.CoolingCoil)
             {
                 if (coolingGroup == null)
                 {
                     return null;
                 }
 
-                result = new CollectionLink(CollectionType.Cooling, ((dynamic)electricalGroup1).Name);
+                result = new CollectionLink(CollectionType.Cooling, ((dynamic)coolingGroup).Name);
             }
-            else if(systemComponent is HeatingCoil)
+            else if(systemComponent is global::TPD.HeatingCoil)
             {
                 if (heatingGroup != null)
                 {
-                    result = new CollectionLink(CollectionType.Heating, ((dynamic)electricalGroup1).Name);
+                    result = new CollectionLink(CollectionType.Heating, ((dynamic)heatingGroup).Name);
                 }
                 else if (fuelGroup != null)
                 {
-                    result = new CollectionLink(CollectionType.Fuel, ((dynamic)electricalGroup1).Name);
+                    result = new CollectionLink(CollectionType.Fuel, ((dynamic)fuelGroup).Name);
                 }
                 else if (electricalGroup1 != null)
                 {
