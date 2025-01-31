@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
             DisplaySystemMixingBox displaySystemMixingBox = Systems.Create.DisplayObject<DisplaySystemMixingBox>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if(displaySystemMixingBox != null)
             {
-                ITransform2D transform2D = ((ISystemComponent)result).Transform2D();
+                ITransform2D transform2D = ((ISystemComponent)optimizer).Transform2D();
                 if (transform2D != null)
                 {
                     displaySystemMixingBox.Transform(transform2D);
