@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
             DisplaySystemLoadComponent displaySystemLoadComponent = Systems.Create.DisplayObject<DisplaySystemLoadComponent>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if (displaySystemLoadComponent != null)
             {
-                ITransform2D transform2D = ((IPlantComponent)loadComponent).Transform2D();
+                ITransform2D transform2D = ((ISystemComponent)loadComponent).Transform2D();
                 if (transform2D != null)
                 {
                     displaySystemLoadComponent.Transform(transform2D);
