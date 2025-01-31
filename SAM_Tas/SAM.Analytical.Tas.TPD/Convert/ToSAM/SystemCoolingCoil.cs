@@ -27,6 +27,12 @@ namespace SAM.Analytical.Tas.TPD
 
             result.ScheduleName = ((dynamic)coolingCoil)?.GetSchedule()?.Name;
 
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)coolingCoil);
+            if(collectionLink != null)
+            {
+                result.SetValue(SystemCoolingCoilParameter.CoolingCollection, collectionLink);
+            }
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemCoolingCoil displaySystemCoolingCoil = Systems.Create.DisplayObject<DisplaySystemCoolingCoil>(result, location, Systems.Query.DefaultDisplaySystemManager());

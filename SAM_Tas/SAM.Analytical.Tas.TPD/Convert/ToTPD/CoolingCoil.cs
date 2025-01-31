@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static global::TPD.CoolingCoil ToTPD(this DisplaySystemCoolingCoil displaySystemCoolingCoil, global::TPD.System system, CoolingGroup coolingGroup)
+        public static global::TPD.CoolingCoil ToTPD(this DisplaySystemCoolingCoil displaySystemCoolingCoil, global::TPD.System system)
         {
             if(displaySystemCoolingCoil == null || system == null)
             {
@@ -29,9 +29,15 @@ namespace SAM.Analytical.Tas.TPD
 
             displaySystemCoolingCoil.SetLocation(result as SystemComponent);
 
-            if (coolingGroup != null)
+
+            CollectionLink collectionLink = displaySystemCoolingCoil.GetValue<CollectionLink>(SystemCoolingCoilParameter.CoolingCollection);
+            if(collectionLink != null)
             {
-                @dynamic.SetCoolingGroup(coolingGroup);
+                CoolingGroup coolingGroup = system.GetPlantRoom()?.CoolingGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if(coolingGroup != null)
+                {
+                    @dynamic.SetCoolingGroup(coolingGroup);
+                }
             }
 
             return result;

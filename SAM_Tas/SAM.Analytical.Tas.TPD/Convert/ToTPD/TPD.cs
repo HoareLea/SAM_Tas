@@ -802,7 +802,7 @@ namespace SAM.Analytical.Tas.TPD
                                             }
                                             else if (systemComponent_Temp is DisplaySystemCoolingCoil)
                                             {
-                                                systemComponent_TPD = ToTPD((DisplaySystemCoolingCoil)systemComponent_Temp, system, coolingGroup) as global::TPD.ISystemComponent;
+                                                systemComponent_TPD = ToTPD((DisplaySystemCoolingCoil)systemComponent_Temp, system) as global::TPD.ISystemComponent;
                                             }
                                             else if (systemComponent_Temp is DisplaySystemHeatingCoil)
                                             {
