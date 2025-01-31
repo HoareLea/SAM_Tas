@@ -32,6 +32,37 @@ namespace SAM.Analytical.Tas.TPD
 
             displaySystemHeatingCoil.SetLocation(result as SystemComponent);
 
+            CollectionLink collectionLink = displaySystemHeatingCoil.GetValue<CollectionLink>(SystemHeatingColiParameter.HeatingCollection);
+            if (collectionLink != null)
+            {
+                switch(collectionLink.CollectionType)
+                {
+                    case CollectionType.Heating:
+                        HeatingGroup heatingGroup = system.GetPlantRoom()?.HeatingGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                        if (heatingGroup != null)
+                        {
+                            @dynamic.SetHeatingGroup(heatingGroup);
+                        }
+                        break;
+
+                    case CollectionType.Fuel:
+                        FuelGroup fuelGroup = system.GetPlantRoom()?.FuelGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                        if (fuelGroup != null)
+                        {
+                            @dynamic.SetFuelGroup(fuelGroup);
+                        }
+                        break;
+
+                    case CollectionType.Electrical:
+                        ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                        if (electricalGroup != null)
+                        {
+                            @dynamic.SetElectricalGroup1(electricalGroup);
+                        }
+                        break;
+                }
+            }
+
             //if (heatingGroup != null)
             //{
             //    @dynamic.SetHeatingGroup(heatingGroup);

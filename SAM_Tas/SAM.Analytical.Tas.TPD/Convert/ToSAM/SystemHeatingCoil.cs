@@ -1,7 +1,6 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
-using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -28,10 +27,10 @@ namespace SAM.Analytical.Tas.TPD
 
             result.ScheduleName = ((dynamic)heatingCoil )?.GetSchedule()?.Name;
 
-            List<FuelSource> fuelSources = Query.FuelSources(heatingCoil as SystemComponent);
-            if (fuelSources != null && fuelSources.Count > 0)
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)heatingCoil);
+            if (collectionLink != null)
             {
-
+                result.SetValue(SystemHeatingColiParameter.HeatingCollection, collectionLink);
             }
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
