@@ -23,8 +23,8 @@ namespace SAM.Analytical.Tas.TPD
             result.MinimumOffcoil?.Update(displaySystemDXCoil.MinOffcoilTemperature);
             result.MaximumOffcoil?.Update(displaySystemDXCoil.MaxOffcoilTemperature);
             result.BypassFactor?.Update(displaySystemDXCoil.BypassFactor);
-            result.CoolingDuty?.Update(displaySystemDXCoil.CoolingDuty);
-            result.HeatingDuty?.Update(displaySystemDXCoil.HeatingDuty);
+            result.CoolingDuty?.Update(displaySystemDXCoil.CoolingDuty, system);
+            result.HeatingDuty?.Update(displaySystemDXCoil.HeatingDuty, system);
 
             Modify.SetSchedule((SystemComponent)result, displaySystemDXCoil.ScheduleName);
 

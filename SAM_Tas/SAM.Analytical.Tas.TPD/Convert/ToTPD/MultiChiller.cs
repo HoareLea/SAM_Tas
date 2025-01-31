@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Description = displaySystemMultiChiller.Description;
 
             result.Setpoint?.Update(displaySystemMultiChiller.Setpoint);
-            result.Duty?.Update(displaySystemMultiChiller.Duty);
+            result.Duty?.Update(displaySystemMultiChiller.Duty, plantRoom);
             result.DesignDeltaT = displaySystemMultiChiller.DesignTemperatureDifference;
             result.Capacity = displaySystemMultiChiller.Capacity;
             result.DesignPressureDrop = displaySystemMultiChiller.DesignPressureDrop;

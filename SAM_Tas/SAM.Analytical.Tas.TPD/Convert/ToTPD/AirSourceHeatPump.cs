@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Description = displaySystemAirSourceHeatPump.Description;
 
             result.Type = displaySystemAirSourceHeatPump.HeatPumpType.ToTPD();
-            result.CoolingCapacity?.Update(displaySystemAirSourceHeatPump.CoolingCapacity);
+            result.CoolingCapacity?.Update(displaySystemAirSourceHeatPump.CoolingCapacity, plantRoom);
             result.CoolingPower?.Update(displaySystemAirSourceHeatPump.CoolingPower);
             result.HeatingCapacity?.Update(displaySystemAirSourceHeatPump.HeatingCapacity);
             result.HeatingPower?.Update(displaySystemAirSourceHeatPump.HeatingPower);

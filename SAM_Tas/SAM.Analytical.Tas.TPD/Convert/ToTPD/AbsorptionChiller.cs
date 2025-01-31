@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemAbsorptionChiller.Setpoint);
             result.Efficiency?.Update(displaySystemAbsorptionChiller.Efficiency);
-            result.Duty?.Update(displaySystemAbsorptionChiller.Duty);
+            result.Duty?.Update(displaySystemAbsorptionChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemAbsorptionChiller.Capacity1;
             result.DesignPressureDrop1 = displaySystemAbsorptionChiller.DesignPressureDrop1;
             result.Capacity2 = displaySystemAbsorptionChiller.Capacity2;
@@ -50,7 +50,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemWaterSourceAbsorptionChiller.Setpoint);
             result.Efficiency?.Update(displaySystemWaterSourceAbsorptionChiller.Efficiency);
-            result.Duty?.Update(displaySystemWaterSourceAbsorptionChiller.Duty);
+            result.Duty?.Update(displaySystemWaterSourceAbsorptionChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemWaterSourceAbsorptionChiller.Capacity1;
             result.DesignPressureDrop1 = displaySystemWaterSourceAbsorptionChiller.DesignPressureDrop1;
             result.Capacity2 = displaySystemWaterSourceAbsorptionChiller.Capacity2;
@@ -79,7 +79,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemAirSourceDirectAbsorptionChiller.Setpoint);
             result.Efficiency?.Update(displaySystemAirSourceDirectAbsorptionChiller.Efficiency);
-            result.Duty?.Update(displaySystemAirSourceDirectAbsorptionChiller.Duty);
+            result.Duty?.Update(displaySystemAirSourceDirectAbsorptionChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemAirSourceDirectAbsorptionChiller.Capacity;
             result.DesignPressureDrop1 = displaySystemAirSourceDirectAbsorptionChiller.DesignPressureDrop;
             //result.AncillaryLoad?.Update(displaySystemAirSourceDirectAbsorptionChiller.AnciliaryLoad);

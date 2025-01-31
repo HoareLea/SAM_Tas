@@ -19,7 +19,7 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Description = displaySystemPhotovoltaicPanel.Description;
 
             result.PanelEfficiency?.Update(displaySystemPhotovoltaicPanel.PanelEfficiency);
-            result.InverterSize?.Update(displaySystemPhotovoltaicPanel.InverterSize);
+            result.InverterSize?.Update(displaySystemPhotovoltaicPanel.InverterSize, plantRoom);
             result.Multiplicity = System.Convert.ToDouble(displaySystemPhotovoltaicPanel.Multiplicity);
             result.InverterEfficiency?.Update(displaySystemPhotovoltaicPanel.InverterEfficiency);
             result.UseZoneSurface = displaySystemPhotovoltaicPanel.UseZoneSurface.ToTPD();

@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Description = displaySystemMultiBoiler.Description;
 
             result.Setpoint?.Update(displaySystemMultiBoiler.Setpoint);
-            result.Duty.Update(displaySystemMultiBoiler.Duty);
+            result.Duty.Update(displaySystemMultiBoiler.Duty, plantRoom);
             result.DesignDeltaT = displaySystemMultiBoiler.DesignTemperatureDifference;
             result.Capacity = displaySystemMultiBoiler.Capacity;
             result.DesignPressureDrop = displaySystemMultiBoiler.DesignPressureDrop;

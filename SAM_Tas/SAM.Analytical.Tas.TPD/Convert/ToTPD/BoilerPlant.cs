@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemBoiler.Setpoint);
             result.Efficiency?.Update(displaySystemBoiler.Efficiency);
-            result.Duty?.Update(displaySystemBoiler.Duty);
+            result.Duty?.Update(displaySystemBoiler.Duty, plantRoom);
             result.DesignDeltaT = displaySystemBoiler.DesignTemperatureDifference;
             result.Capacity = displaySystemBoiler.Capacity;
             result.DesignPressureDrop = displaySystemBoiler.DesignPressureDrop;

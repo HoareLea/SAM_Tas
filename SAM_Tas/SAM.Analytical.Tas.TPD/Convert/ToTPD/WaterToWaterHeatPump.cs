@@ -22,8 +22,8 @@ namespace SAM.Analytical.Tas.TPD
             result.CoolingSetpoint?.Update(displaySystemWaterToWaterHeatPump.CoolingSetpoint);
             result.HeatingEfficiency?.Update(displaySystemWaterToWaterHeatPump.HeatingEfficiency);
             result.CoolingEfficiency?.Update(displaySystemWaterToWaterHeatPump?.CoolingEfficiency);
-            result.HeatingDuty?.Update(displaySystemWaterToWaterHeatPump.HeatingDuty);
-            result.CoolingDuty?.Update(displaySystemWaterToWaterHeatPump.CoolingDuty);
+            result.HeatingDuty?.Update(displaySystemWaterToWaterHeatPump.HeatingDuty, plantRoom);
+            result.CoolingDuty?.Update(displaySystemWaterToWaterHeatPump.CoolingDuty, plantRoom);
             result.Capacity1 = displaySystemWaterToWaterHeatPump.Capacity1;
             result.DesignPressureDrop1 = displaySystemWaterToWaterHeatPump.DesignPressureDrop1;
             result.Capacity2 = displaySystemWaterToWaterHeatPump.Capacity2;

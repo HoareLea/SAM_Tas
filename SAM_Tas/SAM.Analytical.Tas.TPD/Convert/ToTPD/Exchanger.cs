@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
             result.SetpointMethod = displaySystemExchanger.SetpointMode.ToTPD();
             result.Setpoint?.Update(displaySystemExchanger.Setpoint);
             result.ElectricalLoad?.Update(displaySystemExchanger.ElectricalLoad);
-            result.Duty?.Update(displaySystemExchanger.Duty);
+            result.Duty?.Update(displaySystemExchanger.Duty, system);
             result.BypassFactor?.Update(displaySystemExchanger.BypassFactor);
 
             //result.LatentEfficiency.Value = displaySystemExchanger.LatentEfficiency;

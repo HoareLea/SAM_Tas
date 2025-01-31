@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemWaterSourceChiller.Setpoint);
             result.Efficiency?.Update(displaySystemWaterSourceChiller.Efficiency);
-            result.Duty?.Update(displaySystemWaterSourceChiller.Duty);
+            result.Duty?.Update(displaySystemWaterSourceChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemWaterSourceChiller.Capacity1;
             result.DesignPressureDrop1 = displaySystemWaterSourceChiller.DesignPressureDrop1;
             result.DesignDeltaT1 = displaySystemWaterSourceChiller.DesignPressureDrop1;
@@ -61,7 +61,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Setpoint);
             result.Efficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Efficiency);
-            result.Duty?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Duty);
+            result.Duty?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemWaterSourceDirectAbsorptionChiller.Capacity1;
             result.DesignPressureDrop1 = displaySystemWaterSourceDirectAbsorptionChiller.DesignPressureDrop1;
             result.DesignDeltaT1 = displaySystemWaterSourceDirectAbsorptionChiller.DesignPressureDrop1;

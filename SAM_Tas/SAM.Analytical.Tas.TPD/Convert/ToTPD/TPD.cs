@@ -806,7 +806,7 @@ namespace SAM.Analytical.Tas.TPD
                                             }
                                             else if (systemComponent_Temp is DisplaySystemHeatingCoil)
                                             {
-                                                systemComponent_TPD = ToTPD((DisplaySystemHeatingCoil)systemComponent_Temp, system, heatingGroup) as global::TPD.ISystemComponent;
+                                                systemComponent_TPD = ToTPD((DisplaySystemHeatingCoil)systemComponent_Temp, system) as global::TPD.ISystemComponent;
                                             }
                                             else if (systemComponent_Temp is DisplaySystemExchanger)
                                             {

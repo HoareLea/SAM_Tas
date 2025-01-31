@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint);
             result.BypassFactor?.Update(displaySystemCoolingCoil.BypassFactor);
-            result.Duty?.Update(displaySystemCoolingCoil.Duty);
+            result.Duty?.Update(displaySystemCoolingCoil.Duty, system);
             result.MinimumOffcoil?.Update(displaySystemCoolingCoil.MinimumOffcoil);
 
             //result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint);

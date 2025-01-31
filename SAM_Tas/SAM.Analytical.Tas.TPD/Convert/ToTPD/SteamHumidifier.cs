@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemSteamHumidifier.Setpoint);
             result.WaterSupplyTemp?.Update(displaySystemSteamHumidifier.WaterSupplyTemperature);
-            result.Duty?.Update(displaySystemSteamHumidifier.Duty);
+            result.Duty?.Update(displaySystemSteamHumidifier.Duty, system);
             result.WaterTempSource = displaySystemSteamHumidifier.WaterTemperatureSource.ToTPD();
 
             Modify.SetSchedule((SystemComponent)result, displaySystemSteamHumidifier.ScheduleName);

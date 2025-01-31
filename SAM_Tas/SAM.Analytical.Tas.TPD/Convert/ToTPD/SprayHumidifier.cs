@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemSprayHumidifier.Setpoint);
             result.Effectiveness?.Update(displaySystemSprayHumidifier.Effectiveness);
-            result.WaterFlowCapacity?.Update(displaySystemSprayHumidifier.WaterFlowCapacity);
+            result.WaterFlowCapacity?.Update(displaySystemSprayHumidifier.WaterFlowCapacity, system);
             result.ElectricalLoad?.Update(displaySystemSprayHumidifier.ElectricalLoad);
 
             result.Flags = 0;
@@ -50,9 +50,9 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Setpoint?.Update(displaySystemDirectEvaporativeCooler.Setpoint);
             result.Effectiveness?.Update(displaySystemDirectEvaporativeCooler.Effectiveness);
-            result.WaterFlowCapacity?.Update(displaySystemDirectEvaporativeCooler.WaterFlowCapacity);
+            result.WaterFlowCapacity?.Update(displaySystemDirectEvaporativeCooler.WaterFlowCapacity, system);
             result.ElectricalLoad?.Update(displaySystemDirectEvaporativeCooler.ElectricalLoad);
-            result.TankVolume?.Update(displaySystemDirectEvaporativeCooler.TankVolume);
+            result.TankVolume?.Update(displaySystemDirectEvaporativeCooler.TankVolume, system);
             result.TankHours = System.Convert.ToInt32(displaySystemDirectEvaporativeCooler.HoursBeforePurgingTank);
 
             result.Flags = (int)tpdSprayHumidifierFlags.tpdSprayHumidifierEvaporativeCooler;

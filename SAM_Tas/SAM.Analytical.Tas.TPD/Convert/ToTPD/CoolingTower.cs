@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TPD
             result.VariableFans = displaySystemCoolingTower.VariableFans.ToTPD();
             result.FanSFP?.Update(displaySystemCoolingTower.FanSFP);
             result.HeatTransCoeff = displaySystemCoolingTower.HeatTransferCoefficient;
-            result.HeatTransSurfArea?.Update(displaySystemCoolingTower.HeatTransferSurfaceArea);
+            result.HeatTransSurfArea?.Update(displaySystemCoolingTower.HeatTransferSurfaceArea, plantRoom);
             result.DesignExternalWetbulb = displaySystemCoolingTower.ExternalWetBulbTemperature;
             //result.DesignExternalWetbulbSource = displaySystemCoolingTower.DesignWaterFlowRateSizingType;
             //result.LimitingWetbulb = displaySystemCoolingTower.limi

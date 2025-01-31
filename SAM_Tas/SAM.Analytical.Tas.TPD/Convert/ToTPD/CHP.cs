@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Setpoint?.Update(displaySystemCHP.Setpoint);
             result.Efficiency?.Update(displaySystemCHP.Efficiency);
             result.HeatPowerRatio?.Update(displaySystemCHP.HeatPowerRatio);
-            result.Duty?.Update(displaySystemCHP.Duty);
+            result.Duty?.Update(displaySystemCHP.Duty, plantRoom);
             result.DesignDeltaT = displaySystemCHP.DesignTemperatureDifference;
             result.Capacity = displaySystemCHP.Capacity;
             result.DesignPressureDrop = displaySystemCHP.DesignPressureDrop;

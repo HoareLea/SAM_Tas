@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Setpoint?.Update(displaySystemAirSourceChiller.Setpoint);
             result.Efficiency?.Update(displaySystemAirSourceChiller.Efficiency);
             result.CondenserFanLoad?.Update(displaySystemAirSourceChiller.CondenserFanLoad);
-            result.Duty?.Update(displaySystemAirSourceChiller.Duty);
+            result.Duty?.Update(displaySystemAirSourceChiller.Duty, plantRoom);
             result.DesignDeltaT = displaySystemAirSourceChiller.DesignTemperatureDifference;
             result.Capacity = displaySystemAirSourceChiller.Capacity;
             result.DesignPressureDrop = displaySystemAirSourceChiller.DesignPressureDrop;

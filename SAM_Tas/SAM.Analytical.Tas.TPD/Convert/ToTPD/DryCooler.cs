@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop = displaySystemDryCooler.DesignPressureDrop;
             result.Capacity = displaySystemDryCooler.Capacity;
             result.CoolingSetpoint?.Update(displaySystemDryCooler.CoolingSetpoint);
-            result.MaxFlowRate?.Update(displaySystemDryCooler.MaxFlowRate);
+            result.MaxFlowRate?.Update(displaySystemDryCooler.MaxFlowRate, plantRoom);
             result.FanSFP?.Update(displaySystemDryCooler.FanSFP);
             result.DryCoolerExchType = displaySystemDryCooler.DryCoolerExchangerCalculationMethod.ToTPD();
             result.Efficiency?.Update(displaySystemDryCooler.Efficiency);
@@ -35,7 +35,7 @@ namespace SAM.Analytical.Tas.TPD
             result.HasPreCooling = displaySystemDryCooler.HasPreCooling.ToTPD();
             result.PreCoolEffectiveness?.Update(displaySystemDryCooler.PreCoolingEffectiveness);
             result.AncillaryLoad?.Update(displaySystemDryCooler.AncillaryLoad);
-            result.PreCoolWaterFlowCap?.Update(displaySystemDryCooler.PreCoolingWaterFlowCapacity);
+            result.PreCoolWaterFlowCap?.Update(displaySystemDryCooler.PreCoolingWaterFlowCapacity, plantRoom);
             result.MinAirFlowRate = displaySystemDryCooler.MinAirFlowRate;
             result.MinAFRRatio = displaySystemDryCooler.MinAirFlowRatio;
             result.VariableFans = displaySystemDryCooler.VariableFans.ToTPD();

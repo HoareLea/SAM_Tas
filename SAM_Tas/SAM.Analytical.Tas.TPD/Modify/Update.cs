@@ -26,7 +26,18 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
-        public static bool Update(this SizedVariable sizedVariable, ISizableValue sizableValue)
+        public static bool Update(this SizedVariable sizedVariable, ISizableValue sizableValue, PlantRoom plantRoom)
+        {
+            return Update(sizedVariable, sizableValue, plantRoom?.GetEnergyCentre());
+        }
+
+        public static bool Update(this SizedVariable sizedVariable, ISizableValue sizableValue, global::TPD.System system)
+        {
+            return Update(sizedVariable, sizableValue, system?.GetPlantRoom()?.GetEnergyCentre());
+        }
+
+
+        public static bool Update(this SizedVariable sizedVariable, ISizableValue sizableValue, EnergyCentre energyCentre)
         {
             if (sizableValue == null || sizedVariable == null)
             {
@@ -57,13 +68,20 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
             
-            if(sizedVariable is DesignConditionSizableValue)
+            if(sizedVariable is DesignConditionSizableValue && energyCentre != null)
             {
                 DesignConditionSizableValue designConditionSizableValue = (DesignConditionSizableValue)sizedVariable;
-                HashSet<string> designCondtionSizedValues = designConditionSizableValue.DesignConditionNames;
-                if(designCondtionSizedValues != null)
+                HashSet<string> designConditionNames = designConditionSizableValue.DesignConditionNames;
+                if(designConditionNames != null)
                 {
-                    //TODO: Implement
+                    foreach(string designConditionName in designConditionNames)
+                    {
+                        DesignConditionLoad designConditionLoad = energyCentre.DesignConditionLoad(designConditionName);
+                        if(designConditionLoad != null)
+                        {
+                            sizedVariable.AddDesignCondition(designConditionLoad);
+                        }
+                    }
                 }
             }
 
