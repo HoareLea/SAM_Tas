@@ -18,6 +18,15 @@ namespace SAM.Analytical.Tas.TPD
             SystemMixingBox result = new SystemMixingBox(@dynamic.Name);
             result.Description = dynamic.Description;
 
+            result.Capacity = optimizer.Capacity;
+            result.DesignFlowRate = optimizer.DesignFlowRate?.ToSAM();
+            result.DesignFlowType = optimizer.DesignFlowType.ToSAM();
+            result.Setpoint = optimizer.Setpoint?.ToSAM();
+            result.MinFreshAirRate = optimizer.MinFreshAirRate?.ToSAM();
+            result.MinFreshAirType = optimizer.MinFreshAirType.ToSAM();
+            result.ScheduleMode = optimizer.ScheduleMode.ToSAM();
+            result.DesignPressureDrop = optimizer.DesignPressureDrop;
+
             result.ScheduleName = ((dynamic)optimizer )?.GetSchedule()?.Name;
 
             Modify.SetReference(result, @dynamic.GUID);
