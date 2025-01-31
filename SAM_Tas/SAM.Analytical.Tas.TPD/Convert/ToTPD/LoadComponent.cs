@@ -5,9 +5,9 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static LoadComponent ToTPD(this DisplaySystemLoadComponent displaySystemAirJunction, global::TPD.System system)
+        public static LoadComponent ToTPD(this DisplaySystemLoadComponent displaySystemLoadComponent, global::TPD.System system)
         {
-            if (displaySystemAirJunction == null || system == null)
+            if (displaySystemLoadComponent == null || system == null)
             {
                 return null;
             }
@@ -15,10 +15,12 @@ namespace SAM.Analytical.Tas.TPD
             LoadComponent result = system.AddLoadComponent();
 
             dynamic @dynamic = result;
-            @dynamic.Name = displaySystemAirJunction.Name;
-            @dynamic.Description = displaySystemAirJunction.Description;
+            @dynamic.Name = displaySystemLoadComponent.Name;
+            @dynamic.Description = displaySystemLoadComponent.Description;
 
-            displaySystemAirJunction.SetLocation(result as SystemComponent);
+            result.Load?.Update(displaySystemLoadComponent.Load);
+
+            displaySystemLoadComponent.SetLocation(result as SystemComponent);
 
             return result;
         }
