@@ -25,6 +25,16 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemSteamHumidifier.ScheduleName);
 
+            CollectionLink collectionLink = displaySystemSteamHumidifier.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
+            if (collectionLink != null)
+            {
+                ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if (electricalGroup != null)
+                {
+                    @dynamic.SetElectricalGroup1(electricalGroup);
+                }
+            }
+
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
