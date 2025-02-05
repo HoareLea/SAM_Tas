@@ -12,7 +12,16 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            SystemEnergySource result = new SystemEnergySource(fuelSource.Name);
+            SystemEnergySource result = null;
+
+            if (fuelSource.Electrical == 1)
+            {
+                result = new ElectricalEnergySource(fuelSource.Name);
+            }
+            else
+            {
+                result = new SystemEnergySource(fuelSource.Name);
+            }
 
             return result;
         }

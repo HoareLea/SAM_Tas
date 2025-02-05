@@ -55,6 +55,30 @@ namespace SAM.Analytical.Tas.TPD
                     plantRoom.Name = "Main PlantRoom";
                 }
 
+                AnalyticalSystemsProperties analyticalSystemsProperties = systemEnergyCentre.GetValue<AnalyticalSystemsProperties>(SystemEnergyCentreParameter.AnalyticalSystemsProperties);
+                if (analyticalSystemsProperties != null)
+                {
+                    List<ISchedule> schedules = analyticalSystemsProperties.Schedules;
+                    if (schedules != null)
+                    {
+                        foreach (ISchedule schedule in schedules)
+                        {
+                            PlantSchedule plantSchedule = energyCentre.Add(schedule);
+                        }
+                    }
+                }
+
+                List<SystemEnergySource> systemEnergySources = systemEnergyCentre.GetSystemEnergySources();
+                if(systemEnergySources != null && systemEnergySources.Count != 0)
+                {
+                    foreach(SystemEnergySource systemEnergySource in systemEnergySources)
+                    {
+                        FuelSource fuelSource = energyCentre.AddFuelSource();
+                        fuelSource.Name = systemEnergySource.Name;
+                        fuelSource.Electrical = (systemEnergySource is ElectricalEnergySource).ToTPD();
+                    }
+                }
+
 
 
                 Point offset = new Point(0, 0);
@@ -203,24 +227,9 @@ namespace SAM.Analytical.Tas.TPD
                 ////Schedules
                 ///
 
-                dynamic plantSchedule_Occupancy = null;
+                //dynamic plantSchedule_Occupancy = null;
 
-                AnalyticalSystemsProperties analyticalSystemsProperties = systemEnergyCentre.GetValue<AnalyticalSystemsProperties>(SystemEnergyCentreParameter.AnalyticalSystemsProperties);
-                if (analyticalSystemsProperties != null)
-                {
-                    List<ISchedule> schedules = analyticalSystemsProperties.Schedules;
-                    if (schedules != null)
-                    {
-                        foreach (ISchedule schedule in schedules)
-                        {
-                            PlantSchedule plantSchedule = energyCentre.Add(schedule);
-                            if(plantSchedule.Name == "Occupancy Schedule")
-                            {
-                                plantSchedule_Occupancy = plantSchedule;
-                            }
-                        }
-                    }
-                }
+
 
 
                 ////Occupancy
@@ -255,13 +264,13 @@ namespace SAM.Analytical.Tas.TPD
 
                 ////Design Condition Load
 
-                dynamic designConditionLoad_Annual = energyCentre.DesignConditionLoad("Annual Design Condition");
-                if (designConditionLoad_Annual == null)
-                {
-                    designConditionLoad_Annual = energyCentre.AddDesignCondition();
-                    designConditionLoad_Annual.Name = "Annual Design Condition";
-                    designConditionLoad_Annual.PrecondHours = 48;
-                }
+                //dynamic designConditionLoad_Annual = energyCentre.DesignConditionLoad("Annual Design Condition");
+                //if (designConditionLoad_Annual == null)
+                //{
+                //    designConditionLoad_Annual = energyCentre.AddDesignCondition();
+                //    designConditionLoad_Annual.Name = "Annual Design Condition";
+                //    designConditionLoad_Annual.PrecondHours = 48;
+                //}
 
                 ////Components
 
