@@ -43,10 +43,10 @@ namespace SAM.Analytical.Tas.TPD
                 result = displaySystemDXCoil;
             }
 
-            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)dxCoil);
-            if (collectionLink != null)
+            RefrigerantGroup refrigerantGroup = @dynamic.GetRefrigerantGroup();
+            if (refrigerantGroup != null)
             {
-                result.SetValue(SystemDXColiParameter.RefrigerantCollection, collectionLink);
+                result.SetValue(SystemDXColiParameter.RefrigerantCollection, new CollectionLink(CollectionType.Refrigerant, ((dynamic)refrigerantGroup).Name));
             }
 
             return result;

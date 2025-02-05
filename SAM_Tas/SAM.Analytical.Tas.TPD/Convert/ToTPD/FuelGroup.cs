@@ -12,7 +12,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            dynamic result = plantRoom.AddElectricalGroup();
+            dynamic result = plantRoom.AddFuelGroup();
             result.Name = displayFuelSystemCollection.Name;
             result.Description = displayFuelSystemCollection.Description;
 
