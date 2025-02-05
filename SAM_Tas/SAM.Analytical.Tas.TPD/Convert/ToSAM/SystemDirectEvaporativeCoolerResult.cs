@@ -36,6 +36,12 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)sprayHumidifier);
+            if (collectionLink != null)
+            {
+                result.SetValue(AirSystemComponentParameter.ElectricalCollection, collectionLink);
+            }
+
             string reference = Query.Reference((SystemComponent)sprayHumidifier);
 
             SystemDirectEvaporativeCoolerResult result = new SystemDirectEvaporativeCoolerResult(reference, string.Empty, Query.Source(), dictionary);

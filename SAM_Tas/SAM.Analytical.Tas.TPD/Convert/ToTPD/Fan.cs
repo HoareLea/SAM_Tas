@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static global::TPD.Fan ToTPD(this DisplaySystemFan displaySystemFan, global::TPD.System system, ElectricalGroup electricalGroup, PlantSchedule plantSchedule)
+        public static global::TPD.Fan ToTPD(this DisplaySystemFan displaySystemFan, global::TPD.System system)
         {
             if(displaySystemFan == null || system == null)
             {
@@ -43,14 +43,16 @@ namespace SAM.Analytical.Tas.TPD
 
             displaySystemFan.SetLocation(result as SystemComponent);
 
-            if (electricalGroup != null)
-            {
-                @dynamic.SetElectricalGroup1(electricalGroup);
-            }
+            Modify.SetSchedule((SystemComponent)result, displaySystemFan.ScheduleName);
 
-            if (plantSchedule != null)
+            CollectionLink collectionLink = displaySystemFan.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
+            if (collectionLink != null)
             {
-                @dynamic.SetSchedule(plantSchedule);
+                ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if (electricalGroup != null)
+                {
+                    @dynamic.SetElectricalGroup1(electricalGroup);
+                }
             }
 
             //ProfileDataModifierTable profileDataModifierTable = result.PartLoad.AddModifierTable();
@@ -70,7 +72,7 @@ namespace SAM.Analytical.Tas.TPD
             //profileDataModifierTable.AddPoint(90, 83);
             //profileDataModifierTable.AddPoint(100, 100);
 
-            return result as global::TPD.Fan;
+            return result;
         }
     }
 }

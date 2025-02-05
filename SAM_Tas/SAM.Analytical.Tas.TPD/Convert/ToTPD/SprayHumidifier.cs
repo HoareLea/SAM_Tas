@@ -28,6 +28,16 @@ namespace SAM.Analytical.Tas.TPD
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
+            CollectionLink collectionLink = displaySystemSprayHumidifier.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
+            if (collectionLink != null)
+            {
+                ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if (electricalGroup != null)
+                {
+                    @dynamic.SetElectricalGroup1(electricalGroup);
+                }
+            }
+
             Modify.SetSchedule((SystemComponent)result, displaySystemSprayHumidifier.ScheduleName);
 
             displaySystemSprayHumidifier.SetLocation(result as SystemComponent);
@@ -59,6 +69,16 @@ namespace SAM.Analytical.Tas.TPD
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
+
+            CollectionLink collectionLink = displaySystemDirectEvaporativeCooler.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
+            if (collectionLink != null)
+            {
+                ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if (electricalGroup != null)
+                {
+                    @dynamic.SetElectricalGroup1(electricalGroup);
+                }
+            }
 
             Modify.SetSchedule((SystemComponent)result, displaySystemDirectEvaporativeCooler.ScheduleName);
 

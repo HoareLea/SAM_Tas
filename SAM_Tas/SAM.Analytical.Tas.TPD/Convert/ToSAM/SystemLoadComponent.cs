@@ -22,6 +22,12 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
 
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)loadComponent);
+            if (collectionLink != null)
+            {
+                result.SetValue(SystemLoadComponentParameter.Collection, collectionLink);
+            }
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemLoadComponent displaySystemLoadComponent = Systems.Create.DisplayObject<DisplaySystemLoadComponent>(result, location, Systems.Query.DefaultDisplaySystemManager());

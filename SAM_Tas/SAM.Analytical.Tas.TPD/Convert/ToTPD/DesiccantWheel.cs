@@ -29,6 +29,16 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemDesiccantWheel.ScheduleName);
 
+            CollectionLink collectionLink = displaySystemDesiccantWheel.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
+            if (collectionLink != null)
+            {
+                ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if (electricalGroup != null)
+                {
+                    @dynamic.SetElectricalGroup1(electricalGroup);
+                }
+            }
+
             displaySystemDesiccantWheel.SetLocation(result as SystemComponent);
 
             return result;

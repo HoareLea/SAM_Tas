@@ -22,6 +22,12 @@ namespace SAM.Analytical.Tas.TPD
 
             result.ScheduleName = ((dynamic)desiccantWheel )?.GetSchedule()?.Name;
 
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)desiccantWheel);
+            if (collectionLink != null)
+            {
+                result.SetValue(AirSystemComponentParameter.ElectricalCollection, collectionLink);
+            }
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemDesiccantWheel displaySystemDesiccantWheel = Systems.Create.DisplayObject<DisplaySystemDesiccantWheel>(result, location, Systems.Query.DefaultDisplaySystemManager());

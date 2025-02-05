@@ -36,6 +36,12 @@ namespace SAM.Analytical.Tas.TPD
 
             result.ScheduleName = ((dynamic)fan )?.GetSchedule()?.Name;
 
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)fan);
+            if (collectionLink != null)
+            {
+                result.SetValue(AirSystemComponentParameter.ElectricalCollection, collectionLink);
+            }
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemFan displaySystemFan = Systems.Create.DisplayObject<DisplaySystemFan>(result, location, Systems.Query.DefaultDisplaySystemManager());

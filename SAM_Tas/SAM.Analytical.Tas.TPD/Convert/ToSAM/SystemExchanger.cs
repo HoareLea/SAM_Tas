@@ -24,6 +24,12 @@ namespace SAM.Analytical.Tas.TPD
 
             result.ScheduleName = ((dynamic)exchanger )?.GetSchedule()?.Name;
 
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)exchanger);
+            if (collectionLink != null)
+            {
+                result.SetValue(AirSystemComponentParameter.ElectricalCollection, collectionLink);
+            }
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemExchanger displaySystemExchanger = Systems.Create.DisplayObject<DisplaySystemExchanger>(result, location, Systems.Query.DefaultDisplaySystemManager());

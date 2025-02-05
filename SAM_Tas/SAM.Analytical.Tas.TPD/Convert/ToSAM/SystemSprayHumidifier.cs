@@ -26,6 +26,12 @@ namespace SAM.Analytical.Tas.TPD
 
             result.ScheduleName = ((dynamic)sprayHumidifier )?.GetSchedule()?.Name;
 
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)sprayHumidifier);
+            if (collectionLink != null)
+            {
+                result.SetValue(AirSystemComponentParameter.ElectricalCollection, collectionLink);
+            }
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemSprayHumidifier displaySystemSprayHumidifier = Systems.Create.DisplayObject<DisplaySystemSprayHumidifier>(result, location, Systems.Query.DefaultDisplaySystemManager());

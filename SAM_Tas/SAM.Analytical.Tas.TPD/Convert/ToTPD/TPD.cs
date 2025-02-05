@@ -819,7 +819,7 @@ namespace SAM.Analytical.Tas.TPD
                                             }
                                             else if (systemComponent_Temp is DisplaySystemFan)
                                             {
-                                                systemComponent_TPD = ToTPD((DisplaySystemFan)systemComponent_Temp, system, electricalGroup_Fans, plantSchedule_Occupancy) as global::TPD.ISystemComponent;
+                                                systemComponent_TPD = ToTPD((DisplaySystemFan)systemComponent_Temp, system) as global::TPD.ISystemComponent;
                                             }
                                             else if (systemComponent_Temp is DisplaySystemDamper)
                                             {

@@ -28,6 +28,18 @@ namespace SAM.Analytical.Tas.TPD
             result.Duty?.Update(displaySystemExchanger.Duty, system);
             result.BypassFactor?.Update(displaySystemExchanger.BypassFactor);
 
+            CollectionLink collectionLink = displaySystemExchanger.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
+            if (collectionLink != null)
+            {
+                ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if (electricalGroup != null)
+                {
+                    @dynamic.SetElectricalGroup1(electricalGroup);
+                }
+            }
+
+            Modify.SetSchedule((SystemComponent)result, displaySystemExchanger.ScheduleName);
+
             //result.LatentEfficiency.Value = displaySystemExchanger.LatentEfficiency;
             //result.SensibleEfficiency.Value = displaySystemExchanger.SensibleEfficiency;
             //result.Setpoint.Value = 14;
