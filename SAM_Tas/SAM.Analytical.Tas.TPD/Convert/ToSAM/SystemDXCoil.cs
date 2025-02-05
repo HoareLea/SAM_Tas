@@ -43,6 +43,12 @@ namespace SAM.Analytical.Tas.TPD
                 result = displaySystemDXCoil;
             }
 
+            CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)dxCoil);
+            if (collectionLink != null)
+            {
+                result.SetValue(SystemDXColiParameter.RefrigerantCollection, collectionLink);
+            }
+
             return result;
         }
     }

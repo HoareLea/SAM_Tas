@@ -45,6 +45,24 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
 
+            ElectricalGroup electricalGroup1 = @dynamic.GetElectricalGroup1();
+            if(electricalGroup1 != null)
+            {
+                result.SetValue(SystemSpaceParameter.EquipmentElectricalCollection, new CollectionLink(CollectionType.Electrical, ((dynamic)electricalGroup1).Name));
+            }
+
+            ElectricalGroup electricalGroup2 = @dynamic.GetElectricalGroup2();
+            if (electricalGroup2 != null)
+            {
+                result.SetValue(SystemSpaceParameter.LightingElectricalCollection, new CollectionLink(CollectionType.Electrical, ((dynamic)electricalGroup2).Name));
+            }
+
+            DHWGroup dHWGroup = @dynamic.GetDHWGroup();
+            if (dHWGroup != null)
+            {
+                result.SetValue(SystemSpaceParameter.DomesticHotWaterCollection, new CollectionLink(CollectionType.DomesticHotWater, ((dynamic)dHWGroup).Name));
+            }
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemSpace displaySystemSpace = Systems.Create.DisplayObject<DisplaySystemSpace>(result, location, Systems.Query.DefaultDisplaySystemManager());

@@ -32,6 +32,16 @@ namespace SAM.Analytical.Tas.TPD
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
+            CollectionLink collectionLink = displaySystemDXCoil.GetValue<CollectionLink>(SystemDXColiParameter.RefrigerantCollection);
+            if (collectionLink != null)
+            {
+                RefrigerantGroup refrigerantGroup = system.GetPlantRoom()?.RefrigerantGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if (refrigerantGroup != null)
+                {
+                    @dynamic.SetRefrigerantGroup(refrigerantGroup);
+                }
+            }
+
             SystemComponent systemComponent = result as SystemComponent;
 
             displaySystemDXCoil.SetLocation(systemComponent);
