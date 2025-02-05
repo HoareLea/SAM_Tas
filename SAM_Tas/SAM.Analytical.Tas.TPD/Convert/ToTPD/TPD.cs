@@ -452,6 +452,12 @@ namespace SAM.Analytical.Tas.TPD
                                 Dictionary<Guid, PlantComponent> dictionary_SystemComponents_TPD = new Dictionary<Guid, PlantComponent>();
                                 Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SystemComponents_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
 
+                                List<Core.Systems.ISystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Undefined, Direction.Out);
+                                if (systemComponents == null || systemComponents.Count == 0)
+                                {
+                                    systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem);
+                                }
+
                                 List<ISystemCollection> systemCollections = systemPlantRoom.GetSystemComponents<ISystemCollection>(liquidSystem);
                                 if(systemCollections != null)
                                 {
@@ -467,13 +473,12 @@ namespace SAM.Analytical.Tas.TPD
                                         dictionary_SystemComponents_TPD[(systemCollection as dynamic).Guid] = plantComponent_TPD;
                                         systemCollection.SetReference(Query.Reference(plantComponent_TPD));
                                         systemPlantRoom.Add(systemCollection);
-                                    }
-                                }
 
-                                 List<Core.Systems.ISystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Undefined, Direction.Out);
-                                if (systemComponents == null || systemComponents.Count == 0)
-                                {
-                                    systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem);
+                                        if(systemComponents != null)
+                                        {
+                                            systemComponents.RemoveAll(x => x is ISystemCollection && ((dynamic)x).Guid == ((dynamic)x).Guid);
+                                        }
+                                    }
                                 }
 
                                 if (systemComponents  == null || systemComponents.Count == 0)
