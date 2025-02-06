@@ -42,7 +42,7 @@ namespace SAM.Analytical.Tas.TPD
             List<PlantComponentGroup> plantComponentGroups = null;
 
             plantComponents = new List<PlantComponent>(dictionary_PlantComponent.Values);
-            if(plantComponents != null && plantComponents.Count != 0)
+            if (plantComponents != null && plantComponents.Count != 0)
             {
                 plantComponentGroups = new List<PlantComponentGroup>();
 
@@ -107,16 +107,27 @@ namespace SAM.Analytical.Tas.TPD
                             }
 
                             ISystemConnection systemConnection = Connect(
-                                systemPlantRoom, 
-                                systemComponent_SAM_1, 
-                                connectionIndex_1, 
-                                systemComponent_SAM_2, 
-                                connectionIndex_2, 
-                                liquidSystem, 
-                                direction, 
+                                systemPlantRoom,
+                                systemComponent_SAM_1,
+                                connectionIndex_1,
+                                systemComponent_SAM_2,
+                                connectionIndex_2,
+                                liquidSystem,
+                                direction,
                                 point2Ds);
+
+
                             if (systemConnection != null)
                             {
+                                if (systemConnection is SAMObject)
+                                {
+                                    string fluidTypeName = pipe.GetFluid()?.Name;
+                                    if (string.IsNullOrWhiteSpace(fluidTypeName))
+                                    {
+                                        ((SAMObject)systemConnection).SetValue(SystemConnectionParameter.FluidTypeName, fluidTypeName);
+                                    }                                    
+                                }
+
                                 systemConnection.SetReference(Query.Reference(pipe));
                                 systemPlantRoom.Add(systemConnection);
 

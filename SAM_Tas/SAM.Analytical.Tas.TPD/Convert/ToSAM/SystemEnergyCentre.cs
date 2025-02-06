@@ -83,8 +83,21 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-
                     analyticalSystemsProperties.Add(schedule);
+                }
+            }
+
+            List<fluid> fluids = energyCentre.fluids();
+            if(fluids != null)
+            {
+                foreach(fluid fluid in fluids)
+                {
+                    FluidType fluidType = fluid.ToSAM();
+                    if(fluidType != null)
+                    {
+                        continue;
+                    }
+                    analyticalSystemsProperties.Add(fluidType);
                 }
             }
 

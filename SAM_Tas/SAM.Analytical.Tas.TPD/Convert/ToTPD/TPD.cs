@@ -66,6 +66,15 @@ namespace SAM.Analytical.Tas.TPD
                             PlantSchedule plantSchedule = energyCentre.Add(schedule);
                         }
                     }
+
+                    List<FluidType> fluidTypes = analyticalSystemsProperties.FluidTypes;
+                    if (fluidTypes != null)
+                    {
+                        foreach (FluidType fluidType in fluidTypes)
+                        {
+                            fluid fluid = energyCentre.Add(fluidType);
+                        }
+                    }
                 }
 
                 List<SystemEnergySource> systemEnergySources = systemEnergyCentre.GetSystemEnergySources();

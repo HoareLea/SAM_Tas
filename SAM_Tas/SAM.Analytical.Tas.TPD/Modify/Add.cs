@@ -2220,5 +2220,27 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static fluid Add(this EnergyCentre energyCentre, FluidType fluidType)
+        {
+            if (energyCentre == null || fluidType == null)
+            {
+                return null;
+            }
+
+            fluid result = energyCentre.fluids().Find(x => x.Name == fluidType.Name);
+            if(result == null)
+            {
+                result = energyCentre.AddFluid();
+                result.Name = fluidType.Name;
+            }
+
+            result.SpecificHeatCapacity = fluidType.SpecificHeatCapacity;
+            result.Density = fluidType.Density;
+            result.Description = fluidType.Description;
+            result.FreezingPoint = fluidType.FreezingPoint;
+
+            return result;
+        }
     }
 }
