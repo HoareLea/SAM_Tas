@@ -30,6 +30,7 @@ namespace SAM.Analytical.Tas.TPD
             result.CustomerMonthlyCharge = fuelSource.CustomerMonthlyCharge;
             result.FuelCostAdjustment = fuelSource.FuelCostAdjustment;
             result.Discount = fuelSource.Discount;
+            result.OffPeakCost = fuelSource.OffPeakCost;
 
             result.PeakCost = new Core.IndexedDoubles();
             switch (fuelSource.TimeOfUseType)

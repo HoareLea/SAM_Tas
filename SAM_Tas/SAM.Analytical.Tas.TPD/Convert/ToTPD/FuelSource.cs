@@ -24,6 +24,7 @@ namespace SAM.Analytical.Tas.TPD
             result.CustomerMonthlyCharge = System.Convert.ToSingle(systemEnergySource.CustomerMonthlyCharge);
             result.FuelCostAdjustment = System.Convert.ToSingle(systemEnergySource.FuelCostAdjustment);
             result.Discount = System.Convert.ToSingle(systemEnergySource.Discount);
+            result.OffPeakCost = systemEnergySource.OffPeakCost;
 
             IndexedDoubles indexedDoubles = null;
 
