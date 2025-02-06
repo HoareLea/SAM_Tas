@@ -75,7 +75,7 @@ namespace SAM.Analytical.Tas.TPD
                     {
                         FuelSource fuelSource = energyCentre.AddFuelSource();
                         fuelSource.Name = systemEnergySource.Name;
-                        fuelSource.Electrical = (systemEnergySource is ElectricalEnergySource).ToTPD();
+                        ((dynamic)fuelSource).Electrical = systemEnergySource is ElectricalEnergySource;
                     }
                 }
 
