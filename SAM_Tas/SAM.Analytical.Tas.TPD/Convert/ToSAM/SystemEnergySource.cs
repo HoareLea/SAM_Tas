@@ -14,7 +14,9 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemEnergySource result = null;
 
-            if (fuelSource.Electrical == 1)
+            dynamic @dynamic = fuelSource;
+
+            if (@dynamic.Electrical)
             {
                 result = new ElectricalEnergySource(fuelSource.Name);
             }
