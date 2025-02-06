@@ -39,11 +39,17 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case tpdTimeOfUseType.tpdTimeOfUseHourly:
-                    
+                    for (int i = 0; i < 24; i++)
+                    {
+                        result.PeakCost.Add(i, fuelSource.GetHourlyValue(i + 1));
+                    }
                     break;
 
                 case tpdTimeOfUseType.tpdTimeOfUseYearly:
-
+                    for (int i = 0; i < 8760; i++)
+                    {
+                        result.PeakCost.Add(i, fuelSource.GetYearlyValue(i + 1));
+                    }
                     break;
             }
 
@@ -54,12 +60,18 @@ namespace SAM.Analytical.Tas.TPD
                     result.CO2Factor.Add(0, fuelSource.CO2Factor);
                     break;
 
-                case tpdTimeOfUseType.tpdTimeOfUseHourly:
-
+                case tpdTimeOfUseType.tpdTimeOfUseMonthly:
+                    for (int i = 0; i < 12; i++)
+                    {
+                        result.CO2Factor.Add(i, fuelSource.GetCO2MonthlyValue(i + 1));
+                    }
                     break;
 
                 case tpdTimeOfUseType.tpdTimeOfUseYearly:
-
+                    for (int i = 0; i < 8760; i++)
+                    {
+                        result.CO2Factor.Add(i, fuelSource.GetCO2YearlyValue(i + 1));
+                    }
                     break;
             }
 
@@ -67,15 +79,21 @@ namespace SAM.Analytical.Tas.TPD
             switch (fuelSource.PEFTimeOfUseType)
             {
                 case tpdTimeOfUseType.tpdTimeOfUseValue:
-                    result.PrimaryEnergyFactor.Add(0, fuelSource.PrimaryEnergyFactor);
+                    result.PrimaryEnergyFactor.Add(0, fuelSource.CO2Factor);
                     break;
 
-                case tpdTimeOfUseType.tpdTimeOfUseHourly:
-
+                case tpdTimeOfUseType.tpdTimeOfUseMonthly:
+                    for (int i = 0; i < 12; i++)
+                    {
+                        result.PrimaryEnergyFactor.Add(i, fuelSource.GetPEFMonthlyValue(i + 1));
+                    }
                     break;
 
                 case tpdTimeOfUseType.tpdTimeOfUseYearly:
-
+                    for (int i = 0; i < 8760; i++)
+                    {
+                        result.PrimaryEnergyFactor.Add(i, fuelSource.GetPEFYearlyValue(i + 1));
+                    }
                     break;
             }
 

@@ -73,13 +73,9 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     foreach(SystemEnergySource systemEnergySource in systemEnergySources)
                     {
-                        FuelSource fuelSource = energyCentre.AddFuelSource();
-                        fuelSource.Name = systemEnergySource.Name;
-                        ((dynamic)fuelSource).Electrical = systemEnergySource is ElectricalEnergySource;
+                        FuelSource fuelSource = systemEnergySource.ToTPD(energyCentre);
                     }
                 }
-
-
 
                 Point offset = new Point(0, 0);
                 //double circuitLength = 10;
