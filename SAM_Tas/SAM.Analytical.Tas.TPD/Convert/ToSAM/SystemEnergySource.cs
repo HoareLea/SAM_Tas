@@ -79,7 +79,7 @@ namespace SAM.Analytical.Tas.TPD
             switch (fuelSource.PEFTimeOfUseType)
             {
                 case tpdTimeOfUseType.tpdTimeOfUseValue:
-                    result.PrimaryEnergyFactor.Add(0, fuelSource.CO2Factor);
+                    result.PrimaryEnergyFactor.Add(0, fuelSource.PrimaryEnergyFactor);
                     break;
 
                 case tpdTimeOfUseType.tpdTimeOfUseMonthly:
