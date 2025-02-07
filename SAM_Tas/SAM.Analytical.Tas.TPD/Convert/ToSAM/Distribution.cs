@@ -1,24 +1,31 @@
 ﻿using SAM.Analytical.Systems;
+using SAM.Core;
+using System.Collections.Generic;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static FluidType ToSAM(this fluid fluid)
+        public static Distribution ToSAM(this IProfileData profileData, bool isEfficiency)
         {
-            if (fluid == null)
+            if (profileData == null)
             {
                 return null;
             }
 
-            FluidType result = new FluidType(fluid.Name);
-            result.Density = fluid.Density;
-            result.Description = fluid.Description;
-            result.FreezingPoint = fluid.FreezingPoint;
-            result.SpecificHeatCapacity = fluid.SpecificHeatCapacity;
+            double value = profileData.Value;
 
-            return result;
+            IModifier modifier = null;
+
+            List<ProfileDataModifier> profileDataModifiers = Query.ProfileDataModifiers(profileData);
+            if (profileDataModifiers != null && profileDataModifiers.Count != 0)
+            {
+                modifier = ToSAM(profileDataModifiers);
+            }
+
+            return new Distribution(modifier, value, isEfficiency);
         }
     }
 }
+

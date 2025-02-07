@@ -93,7 +93,7 @@ namespace SAM.Analytical.Tas.TPD
                 foreach(fluid fluid in fluids)
                 {
                     FluidType fluidType = fluid.ToSAM();
-                    if(fluidType != null)
+                    if(fluidType == null)
                     {
                         continue;
                     }
