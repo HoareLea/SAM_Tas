@@ -14,11 +14,8 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             Controller result = system.AddController();
-            if(displaySystemController is SystemNormalController)
-            {
-                result.ControlType = tpdControlType.tpdControlNormal;
-            }
-            else if (displaySystemController is SystemOutdoorController)
+
+            if (displaySystemController is SystemOutdoorController)
             {
                 result.ControlType = tpdControlType.tpdControlOutdoor;
             }
@@ -49,6 +46,10 @@ namespace SAM.Analytical.Tas.TPD
             else if (displaySystemController is SystemPassthroughController)
             {
                 result.ControlType = tpdControlType.tpdControlIf;
+            }
+            else if (displaySystemController is SystemNormalController)
+            {
+                result.ControlType = tpdControlType.tpdControlNormal;
             }
 
             HashSet<string> dayTypeNames = (displaySystemController as SystemController)?.DayTypeNames;

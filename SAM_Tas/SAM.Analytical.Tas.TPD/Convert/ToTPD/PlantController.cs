@@ -15,11 +15,8 @@ namespace SAM.Analytical.Tas.TPD
 
             PlantController result = plantRoom.AddController();
             
-            if(displaySystemController is SystemLiquidNormalController)
-            {
-                result.ControlType = tpdControlType.tpdControlNormal;
-            }
-            else if (displaySystemController is SystemOutdoorController)
+
+            if (displaySystemController is SystemOutdoorController)
             {
                 result.ControlType = tpdControlType.tpdControlOutdoor;
             }
@@ -50,6 +47,10 @@ namespace SAM.Analytical.Tas.TPD
             else if (displaySystemController is SystemLiquidPassthroughController)
             {
                 result.ControlType = tpdControlType.tpdControlPassThrough;
+            }
+            else if (displaySystemController is SystemLiquidNormalController)
+            {
+                result.ControlType = tpdControlType.tpdControlNormal;
             }
 
             HashSet<string> dayTypeNames = (displaySystemController as SystemController)?.DayTypeNames;
