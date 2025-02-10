@@ -25,5 +25,27 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static List<global::TPD.DesignConditionLoad> DesignConditionLoads(this global::TPD.EnergyCentre energyCentre)
+        {
+            if (energyCentre is null)
+            {
+                return null;
+            }
+
+            List<global::TPD.DesignConditionLoad> result = new List<global::TPD.DesignConditionLoad>();
+            for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
+            {
+                global::TPD.DesignConditionLoad designConditionLoad = energyCentre.GetDesignCondition(i);
+                if (designConditionLoad == null)
+                {
+                    continue;
+                }
+
+                result.Add(designConditionLoad);
+            }
+
+            return result;
+        }
     }
 }

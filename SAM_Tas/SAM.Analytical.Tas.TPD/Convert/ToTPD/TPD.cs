@@ -75,6 +75,15 @@ namespace SAM.Analytical.Tas.TPD
                             fluid fluid = energyCentre.Add(fluidType);
                         }
                     }
+
+                    List<DesignCondition> designConditions = analyticalSystemsProperties.DesignConditions;
+                    if(designConditions != null)
+                    {
+                        foreach(DesignCondition designCondition in designConditions)
+                        {
+                            DesignConditionLoad designConditionLoad = energyCentre.Add(designCondition);
+                        }
+                    }
                 }
 
                 List<SystemEnergySource> systemEnergySources = systemEnergyCentre.GetSystemEnergySources();

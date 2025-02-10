@@ -2242,5 +2242,28 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static DesignConditionLoad Add(this EnergyCentre energyCentre, DesignCondition designCondition)
+        {
+            if (energyCentre == null || designCondition == null)
+            {
+                return null;
+            }
+
+            DesignConditionLoad result = energyCentre.DesignConditionLoads().Find(x => x.Name == designCondition.Name);
+            if (result != null)
+            {
+                return result;
+            }
+
+            result = energyCentre.AddDesignCondition();
+            result.Name = designCondition.Name;
+            result.Description = designCondition.Description;
+            result.PrecondHours = designCondition.PrecondHours;
+            result.StartHour = designCondition.StartHour;
+            result.EndHour = designCondition.EndHour;
+
+            return result;
+        }
     }
 }

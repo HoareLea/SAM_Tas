@@ -101,6 +101,21 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            List<DesignConditionLoad> designConditionLoads = energyCentre.DesignConditionLoads();
+            if(designConditionLoads != null)
+            {
+                foreach(DesignConditionLoad designConditionLoad in designConditionLoads)
+                {
+                    DesignCondition designCondition = designConditionLoad.ToSAM();
+                    if (designCondition == null)
+                    {
+                        continue;
+                    }
+                    analyticalSystemsProperties.Add(designCondition);
+                }
+            }
+
+
             result.SetValue(SystemEnergyCentreParameter.AnalyticalSystemsProperties, analyticalSystemsProperties);
             foreach (PlantRoom plantRoom in plantRooms)
             {
