@@ -768,11 +768,11 @@ namespace SAM.Analytical.Tas.TPD
                                         //    continue;
                                         //}
 
-                                        systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, airSystem, Direction.Out);
-                                        if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
-                                        {
-                                            continue;
-                                        }
+                                        //systemComponents_Ordered = systemPlantRoom.GetOrderedSystemComponents(systemComponent, airSystem, Direction.Out);
+                                        //if (systemComponents_Ordered == null || systemComponents_Ordered.Count == 0)
+                                        //{
+                                        //    continue;
+                                        //}
 
                                         if (systemComponents_Ordered.Count > 1)
                                         {
