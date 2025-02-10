@@ -453,6 +453,63 @@ namespace SAM.Analytical.Tas.TPD
 
             Point2D point2D = coordinateSystem2D.Origin;
 
+            if (displaySystemObject is SystemMixingBox ||
+                displaySystemObject is SystemEconomiser)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.2, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.4, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.2));
+                }
+
+                return null;
+            }
+
+            if (displaySystemObject is SystemDamper)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.4, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.4, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.4));
+                }
+
+                return null;
+            }
+
             if (displaySystemObject is SystemSpace)
             {
                 if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
