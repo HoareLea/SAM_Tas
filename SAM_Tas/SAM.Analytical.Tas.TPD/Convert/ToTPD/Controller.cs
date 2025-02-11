@@ -17,7 +17,12 @@ namespace SAM.Analytical.Tas.TPD
             Controller result = system.AddController();
             result.Description = ((dynamic)displaySystemController).Description;
 
-            if(displaySystemController is SystemSetpointController)
+            if(displaySystemController is SystemNormalController)
+            {
+                result.SensorType = ((SystemNormalController)displaySystemController).NormalControllerDataType.ToTPD();
+            }
+
+            if (displaySystemController is SystemSetpointController)
             {
                 ISetpoint setpoint = ((SystemSetpointController)displaySystemController).Setpoint;
                 if(setpoint is ProfileSetpoint)
@@ -25,6 +30,7 @@ namespace SAM.Analytical.Tas.TPD
                     ProfileSetpoint profileSetpoint = (ProfileSetpoint)setpoint;
 
                     ControllerProfileData controllerProfileData = result.GetProfile();
+                    controllerProfileData.Clear();
 
                     List<Point2D> point2Ds = profileSetpoint.Point2Ds;
                     if(point2Ds != null)
@@ -32,6 +38,24 @@ namespace SAM.Analytical.Tas.TPD
                         foreach (Point2D point2D in point2Ds)
                         {
                             controllerProfileData.AddPoint(point2D.X, point2D.Y);
+                        }
+
+                        if(point2Ds.Count == 2)
+                        {
+                            result.Gradient = point2Ds[1].Y > point2Ds[0].Y ? 1 : -1;
+                            if(result.Gradient > 0)
+                            {
+                                result.Setpoint = point2Ds[1].X;
+                                result.Band = (point2Ds[0].X - point2Ds[1].X) * (-result.Gradient);
+                            }
+                            else
+                            {
+                                result.Setpoint = point2Ds[0].X;
+                                result.Band = (point2Ds[1].X - point2Ds[0].X) * (-result.Gradient);
+                            }
+
+                            result.Max = System.Math.Max(point2Ds[0].Y, point2Ds[1].Y);
+                            result.Min = System.Math.Min(point2Ds[0].Y, point2Ds[1].Y);
                         }
                     }
                 }
@@ -80,6 +104,7 @@ namespace SAM.Analytical.Tas.TPD
                             ProfileSetpoint profileSetpoint = (ProfileSetpoint)setpoint;
 
                             ControllerProfileData controllerProfileData = result.GetSetbackProfile();
+                            controllerProfileData.Clear();
 
                             List<Point2D> point2Ds = profileSetpoint.Point2Ds;
                             if (point2Ds != null)
