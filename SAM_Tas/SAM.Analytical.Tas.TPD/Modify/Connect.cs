@@ -849,13 +849,26 @@ namespace SAM.Analytical.Tas.TPD
             SystemSensorController systemSensorController = systemPlantRoom.SystemController<SystemSensorController>(controller.Reference());
             if (systemSensorController != null)
             {
-                string reference = controller.SensorArc1.Reference();
+                string reference = null;
+
+                reference = controller.SensorArc1.Reference();
                 if (reference != null)
                 {
                     ISystemSensor systemSensor = systemPlantRoom.GetSystemObject<ISystemSensor>(x => x.Reference() == reference);
                     if(systemSensor != null)
                     {
                         systemSensorController.SensorReference = systemSensor.Guid.ToString();
+                        systemPlantRoom.Add(systemSensorController);
+                    }
+                }
+
+                reference = controller.SensorArc2.Reference();
+                if (reference != null && systemSensorController is SystemDifferenceController)
+                {
+                    ISystemSensor systemSensor = systemPlantRoom.GetSystemObject<ISystemSensor>(x => x.Reference() == reference);
+                    if (systemSensor != null)
+                    {
+                        ((SystemDifferenceController)systemSensorController).SecondarySensorReference = systemSensor.Guid.ToString();
                         systemPlantRoom.Add(systemSensorController);
                     }
                 }
@@ -891,13 +904,26 @@ namespace SAM.Analytical.Tas.TPD
             SystemSensorController systemSensorController = systemPlantRoom.SystemController<SystemSensorController>(plantController.Reference());
             if (systemSensorController != null)
             {
-                string reference = plantController.SensorArc1.Reference();
+                string reference;
+
+                reference = plantController.SensorArc1.Reference();
                 if (reference != null)
                 {
                     ISystemSensor systemSensor = systemPlantRoom.GetSystemObject<ISystemSensor>(x => x.Reference() == reference);
                     if (systemSensor != null)
                     {
                         systemSensorController.SensorReference = systemSensor.Guid.ToString();
+                        systemPlantRoom.Add(systemSensorController);
+                    }
+                }
+
+                reference = plantController.SensorArc2.Reference();
+                if (reference != null && systemSensorController is SystemLiquidDifferenceController)
+                {
+                    ISystemSensor systemSensor = systemPlantRoom.GetSystemObject<ISystemSensor>(x => x.Reference() == reference);
+                    if (systemSensor != null)
+                    {
+                        ((SystemLiquidDifferenceController)systemSensorController).SecondarySensorReference = systemSensor.Guid.ToString();
                         systemPlantRoom.Add(systemSensorController);
                     }
                 }
