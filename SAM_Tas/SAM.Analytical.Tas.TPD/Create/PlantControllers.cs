@@ -293,6 +293,49 @@ namespace SAM.Analytical.Tas.TPD
             }
             #endregion
 
+            foreach(Tuple<PlantController, IDisplaySystemController> tuple in tuples)
+            {
+                IDisplaySystemController displaySystemController = tuple.Item2;
+                PlantController plantController = tuple.Item1;
+
+                if (displaySystemController is SystemOutdoorController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlOutdoor;
+                }
+                else if (displaySystemController is SystemLiquidDifferenceController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlDifference;
+                }
+                else if (displaySystemController is SystemMaxLogicalController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlMax;
+                }
+                else if (displaySystemController is SystemMinLogicalController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlMin;
+                }
+                else if (displaySystemController is SystemNotLogicalController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlNot;
+                }
+                else if (displaySystemController is SystemSigLogicalController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlSig;
+                }
+                else if (displaySystemController is SystemIfLogicalController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlIf;
+                }
+                else if (displaySystemController is SystemLiquidPassthroughController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlPassThrough;
+                }
+                else if (displaySystemController is SystemLiquidNormalController)
+                {
+                    plantController.ControlType = tpdControlType.tpdControlNormal;
+                }
+            }
+
             return tuples.ConvertAll(x => x.Item1);
         }
     }

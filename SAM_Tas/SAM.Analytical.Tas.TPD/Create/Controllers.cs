@@ -5,6 +5,7 @@ using SAM.Core.Systems;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Systems;
 using System.Linq;
+using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -293,6 +294,49 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
             #endregion
+
+            foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
+            {
+                IDisplaySystemController displaySystemController = tuple.Item2;
+                Controller controller = tuple.Item1;
+
+                if (displaySystemController is SystemOutdoorController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlOutdoor;
+                }
+                else if (displaySystemController is SystemDifferenceController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlDifference;
+                }
+                else if (displaySystemController is SystemMaxLogicalController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlMax;
+                }
+                else if (displaySystemController is SystemMinLogicalController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlMin;
+                }
+                else if (displaySystemController is SystemNotLogicalController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlNot;
+                }
+                else if (displaySystemController is SystemSigLogicalController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlSig;
+                }
+                else if (displaySystemController is SystemIfLogicalController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlIf;
+                }
+                else if (displaySystemController is SystemPassthroughController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlIf;
+                }
+                else if (displaySystemController is SystemNormalController)
+                {
+                    controller.ControlType = tpdControlType.tpdControlNormal;
+                }
+            }
 
             return tuples.ConvertAll(x => x.Item1);
         }
