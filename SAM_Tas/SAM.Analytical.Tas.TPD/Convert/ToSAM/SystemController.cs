@@ -19,6 +19,7 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = controller;
 
             string sensorReference = controller.SensorArc1?.Reference();
+            string secondarySensorReference = controller.SensorArc2?.Reference();
 
             ISetpoint setpoint = null;
             
@@ -98,7 +99,7 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemDifferenceController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
+                    result = new SystemDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, normalControllerDataType, setpoint, normalControllerLimit);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
@@ -171,6 +172,7 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = plantController;
 
             string sensorReference = plantController.SensorArc1?.Reference();
+            string secondarySensorReference = plantController.SensorArc2?.Reference();
 
             ISetpoint setpoint = null;
 
@@ -247,7 +249,7 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemLiquidDifferenceController(@dynamic.Name, liquidNormalControllerDataType, setpoint) { SensorReference = sensorReference };
+                    result = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:

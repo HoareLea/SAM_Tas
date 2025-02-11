@@ -5,7 +5,6 @@ using SAM.Core.Systems;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Systems;
 using System.Linq;
-using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -176,9 +175,12 @@ namespace SAM.Analytical.Tas.TPD
                             dictionary[systemSensor_Connected.Guid.ToString()] = sensorArc;
                         }
 
-                        if(dictionary != null && dictionary.Count != 0)
+                        if (dictionary != null && dictionary.Count != 0)
                         {
-                            string reference = null;
+                            string reference;
+                            SensorArc sensorArc_Temp;
+
+                            reference = null;
 
                             if (displaySystemController is SystemNormalController)
                             {
@@ -197,9 +199,20 @@ namespace SAM.Analytical.Tas.TPD
                                 reference = ((SystemPassthroughController)displaySystemController).SensorReference;
                             }
 
-                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out SensorArc sensorArc_Temp))
+                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out sensorArc_Temp))
                             {
                                 tuple.Item1.SensorArc1 = sensorArc_Temp;
+                            }
+
+                            reference = null;
+
+                            if (displaySystemController is SystemDifferenceController)
+                            {
+                                reference = ((SystemDifferenceController)displaySystemController).SecondarySensorReference;
+                                if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out sensorArc_Temp))
+                                {
+                                    tuple.Item1.SensorArc2 = sensorArc_Temp;
+                                }
                             }
                         }
                     }
@@ -266,7 +279,10 @@ namespace SAM.Analytical.Tas.TPD
 
                         if (dictionary != null && dictionary.Count != 0)
                         {
-                            string reference = null;
+                            string reference;
+                            SensorArc sensorArc_Temp;
+
+                            reference = null;
 
                             if (displaySystemController is SystemNormalController)
                             {
@@ -285,9 +301,20 @@ namespace SAM.Analytical.Tas.TPD
                                 reference = ((SystemPassthroughController)displaySystemController).SensorReference;
                             }
 
-                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out SensorArc sensorArc_Temp))
+                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out sensorArc_Temp))
                             {
                                 tuple.Item1.SensorArc1 = sensorArc_Temp;
+                            }
+
+                            reference = null;
+
+                            if (displaySystemController is SystemDifferenceController)
+                            {
+                                reference = ((SystemDifferenceController)displaySystemController).SecondarySensorReference;
+                                if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out sensorArc_Temp))
+                                {
+                                    tuple.Item1.SensorArc2 = sensorArc_Temp;
+                                }
                             }
                         }
                     }
@@ -295,6 +322,7 @@ namespace SAM.Analytical.Tas.TPD
             }
             #endregion
 
+            #region Assign controller type
             foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
             {
                 IDisplaySystemController displaySystemController = tuple.Item2;
@@ -337,6 +365,7 @@ namespace SAM.Analytical.Tas.TPD
                     controller.ControlType = tpdControlType.tpdControlNormal;
                 }
             }
+            #endregion
 
             return tuples.ConvertAll(x => x.Item1);
         }

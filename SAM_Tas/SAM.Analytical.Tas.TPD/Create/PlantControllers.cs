@@ -5,7 +5,6 @@ using SAM.Core.Systems;
 using SAM.Analytical.Systems;
 using SAM.Geometry.Systems;
 using System.Linq;
-using SAM.Core;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -177,28 +176,42 @@ namespace SAM.Analytical.Tas.TPD
 
                         if (dictionary != null && dictionary.Count != 0)
                         {
-                            string reference = null;
+                            string reference;
+                            PlantSensorArc plantSensorArc_Temp;
 
-                            if (displaySystemController is SystemNormalController)
+                            reference = null;
+
+                            if (displaySystemController is SystemLiquidNormalController)
                             {
-                                reference = ((SystemNormalController)displaySystemController).SensorReference;
+                                reference = ((SystemLiquidNormalController)displaySystemController).SensorReference;
                             }
                             else if (displaySystemController is SystemOutdoorController)
                             {
                                 reference = ((SystemOutdoorController)displaySystemController).SensorReference;
                             }
-                            else if (displaySystemController is SystemDifferenceController)
+                            else if (displaySystemController is SystemLiquidDifferenceController)
                             {
-                                reference = ((SystemDifferenceController)displaySystemController).SensorReference;
+                                reference = ((SystemLiquidDifferenceController)displaySystemController).SensorReference;
                             }
-                            else if (displaySystemController is SystemPassthroughController)
+                            else if (displaySystemController is SystemLiquidPassthroughController)
                             {
-                                reference = ((SystemPassthroughController)displaySystemController).SensorReference;
+                                reference = ((SystemLiquidPassthroughController)displaySystemController).SensorReference;
                             }
 
-                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out PlantSensorArc plantSensorArc_Temp))
+                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out plantSensorArc_Temp))
                             {
                                 tuple.Item1.SensorArc1 = plantSensorArc_Temp;
+                            }
+
+                            reference = null;
+
+                            if (displaySystemController is SystemLiquidDifferenceController)
+                            {
+                                reference = ((SystemLiquidDifferenceController)displaySystemController).SecondarySensorReference;
+                                if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out plantSensorArc_Temp))
+                                {
+                                    tuple.Item1.SensorArc2 = plantSensorArc_Temp;
+                                }
                             }
                         }
                     }
@@ -264,28 +277,42 @@ namespace SAM.Analytical.Tas.TPD
 
                         if (dictionary != null && dictionary.Count != 0)
                         {
-                            string reference = null;
+                            string reference;
+                            PlantSensorArc plantSensorArc_Temp;
 
-                            if (displaySystemController is SystemNormalController)
+                            reference = null;
+
+                            if (displaySystemController is SystemLiquidNormalController)
                             {
-                                reference = ((SystemNormalController)displaySystemController).SensorReference;
+                                reference = ((SystemLiquidNormalController)displaySystemController).SensorReference;
                             }
                             else if (displaySystemController is SystemOutdoorController)
                             {
                                 reference = ((SystemOutdoorController)displaySystemController).SensorReference;
                             }
-                            else if (displaySystemController is SystemDifferenceController)
+                            else if (displaySystemController is SystemLiquidDifferenceController)
                             {
-                                reference = ((SystemDifferenceController)displaySystemController).SensorReference;
+                                reference = ((SystemLiquidDifferenceController)displaySystemController).SensorReference;
                             }
-                            else if (displaySystemController is SystemPassthroughController)
+                            else if (displaySystemController is SystemLiquidPassthroughController)
                             {
-                                reference = ((SystemPassthroughController)displaySystemController).SensorReference;
+                                reference = ((SystemLiquidPassthroughController)displaySystemController).SensorReference;
                             }
 
-                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out PlantSensorArc plantSensorArc_Temp))
+                            if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out plantSensorArc_Temp))
                             {
                                 tuple.Item1.SensorArc1 = plantSensorArc_Temp;
+                            }
+
+                            reference = null;
+
+                            if (displaySystemController is SystemLiquidDifferenceController)
+                            {
+                                reference = ((SystemLiquidDifferenceController)displaySystemController).SecondarySensorReference;
+                                if (!string.IsNullOrWhiteSpace(reference) && dictionary.TryGetValue(reference, out plantSensorArc_Temp))
+                                {
+                                    tuple.Item1.SensorArc2 = plantSensorArc_Temp;
+                                }
                             }
                         }
                     }
@@ -293,7 +320,8 @@ namespace SAM.Analytical.Tas.TPD
             }
             #endregion
 
-            foreach(Tuple<PlantController, IDisplaySystemController> tuple in tuples)
+            #region Assign controller type
+            foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
             {
                 IDisplaySystemController displaySystemController = tuple.Item2;
                 PlantController plantController = tuple.Item1;
@@ -335,6 +363,7 @@ namespace SAM.Analytical.Tas.TPD
                     plantController.ControlType = tpdControlType.tpdControlNormal;
                 }
             }
+            #endregion
 
             return tuples.ConvertAll(x => x.Item1);
         }
