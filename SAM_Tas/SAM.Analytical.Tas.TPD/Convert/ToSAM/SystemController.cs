@@ -23,9 +23,9 @@ namespace SAM.Analytical.Tas.TPD
 
             ISetpoint setpoint = null;
             
-            ControllerProfileData ControllerProfileData_Setpoint = controller.GetProfile();
+            ControllerProfileData controllerProfileData_Setpoint = controller.GetProfile();
 
-            List<ControllerProfilePoint> controllerProfilePoints_Setpoint = ControllerProfileData_Setpoint?.ControllerProfilePoints();
+            List<ControllerProfilePoint> controllerProfilePoints_Setpoint = controllerProfileData_Setpoint?.ControllerProfilePoints();
             if(controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
             {
                 ProfileSetpoint profileSetpoint = new ProfileSetpoint();
@@ -40,7 +40,12 @@ namespace SAM.Analytical.Tas.TPD
             if(setpoint == null)
             {
                 RangeSetpoint rangeSetpoint = new RangeSetpoint();
-                rangeSetpoint.InputRange = new Range<double>(controller.Setpoint - (controller.Gradient * controller.Band));
+                if(controller.Gradient < 0)
+                {
+                    rangeSetpoint.InputGradient = Gradient.Negative;
+                }
+
+                rangeSetpoint.InputRange = new Range<double>(controller.Setpoint, controller.Setpoint - (controller.Gradient * controller.Band));
                 rangeSetpoint.OutputRange = new Range<double>(controller.Min, controller.Max);
                 setpoint = rangeSetpoint;
             }
@@ -63,9 +68,9 @@ namespace SAM.Analytical.Tas.TPD
 
             ISetback setback = null;
 
-            ControllerProfileData ControllerProfileData_Setback = controller.GetSetbackProfile();
+            ControllerProfileData controllerProfileData_Setback = controller.GetSetbackProfile();
 
-            List<ControllerProfilePoint> controllerProfilePoints_Setback = ControllerProfileData_Setback?.ControllerProfilePoints();
+            List<ControllerProfilePoint> controllerProfilePoints_Setback = controllerProfileData_Setback?.ControllerProfilePoints();
             if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
             {
                 ProfileSetpoint profileSetpoint = new ProfileSetpoint();
@@ -80,7 +85,7 @@ namespace SAM.Analytical.Tas.TPD
             if (setback == null)
             {
                 RangeSetpoint rangeSetpoint = new RangeSetpoint();
-                rangeSetpoint.InputRange = new Range<double>(controller.SetbackSetpoint - (controller.SetbackGradient * controller.SetbackBand));
+                rangeSetpoint.InputRange = new Range<double>(controller.SetbackSetpoint, controller.SetbackSetpoint - (controller.SetbackGradient * controller.SetbackBand));
                 rangeSetpoint.OutputRange = new Range<double>(controller.SetbackMin, controller.SetbackMax);
                 setback = new SetpointSetback(scheduleName, rangeSetpoint);
             }
@@ -90,16 +95,16 @@ namespace SAM.Analytical.Tas.TPD
             switch(controller.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    result = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, normalControllerLimit) { SensorReference = sensorReference };
+                    result = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, setback, normalControllerLimit) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
                     OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
-                    result = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint) { SensorReference = sensorReference };
+                    result = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint, setback) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, normalControllerDataType, setpoint, normalControllerLimit);
+                    result = new SystemDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, normalControllerDataType, setpoint, setback, normalControllerLimit);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
@@ -176,9 +181,9 @@ namespace SAM.Analytical.Tas.TPD
 
             ISetpoint setpoint = null;
 
-            ControllerProfileData ControllerProfileData_Setpoint = plantController.GetProfile();
+            ControllerProfileData controllerProfileData_Setpoint = plantController.GetProfile();
 
-            List<ControllerProfilePoint> controllerProfilePoints_Setpoint = ControllerProfileData_Setpoint?.ControllerProfilePoints();
+            List<ControllerProfilePoint> controllerProfilePoints_Setpoint = controllerProfileData_Setpoint?.ControllerProfilePoints();
             if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
             {
                 ProfileSetpoint profileSetpoint = new ProfileSetpoint();
@@ -213,9 +218,9 @@ namespace SAM.Analytical.Tas.TPD
 
             ISetback setback = null;
 
-            ControllerProfileData ControllerProfileData_Setback = plantController.GetSetbackProfile();
+            ControllerProfileData controllerProfileData_Setback = plantController.GetSetbackProfile();
 
-            List<ControllerProfilePoint> controllerProfilePoints_Setback = ControllerProfileData_Setback?.ControllerProfilePoints();
+            List<ControllerProfilePoint> controllerProfilePoints_Setback = controllerProfileData_Setback?.ControllerProfilePoints();
             if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
             {
                 ProfileSetpoint profileSetpoint = new ProfileSetpoint();
@@ -240,16 +245,16 @@ namespace SAM.Analytical.Tas.TPD
             switch (plantController.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    result = new SystemLiquidNormalController(@dynamic.Name, liquidNormalControllerDataType, setpoint) { SensorReference = sensorReference };
+                    result = new SystemLiquidNormalController(@dynamic.Name, liquidNormalControllerDataType, setpoint, setback) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
                     OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
-                    result = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint) { SensorReference = sensorReference };
+                    result = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint, setback) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint);
+                    result = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint, setback);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
