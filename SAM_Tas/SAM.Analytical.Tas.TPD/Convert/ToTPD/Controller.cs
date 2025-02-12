@@ -63,29 +63,31 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     RangeSetpoint rangeSetpoint = (RangeSetpoint)setpoint;
 
-                    if(rangeSetpoint.OutputRange != null)
-                    {
-                        result.Min = rangeSetpoint.OutputRange.Min;
-                        result.Max = rangeSetpoint.OutputRange.Max;
-                    }
+                    throw new System.NotImplementedException();
 
-                    if (rangeSetpoint.InputRange != null)
-                    {
-                        switch (rangeSetpoint.InputGradient)
-                        {
-                            case Gradient.Positive:
-                                result.Setpoint = rangeSetpoint.InputRange.Min;
-                                result.Gradient = 1;
-                                result.Band = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
-                                break;
+                    //if(rangeSetpoint.OutputRange != null)
+                    //{
+                    //    result.Min = rangeSetpoint.OutputRange.Min;
+                    //    result.Max = rangeSetpoint.OutputRange.Max;
+                    //}
 
-                            case Gradient.Negative:
-                                result.Setpoint = rangeSetpoint.InputRange.Max;
-                                result.Gradient = -1;
-                                result.Band = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
-                                break;
-                        }
-                    }
+                    //if (rangeSetpoint.InputRange != null)
+                    //{
+                    //    switch (rangeSetpoint.InputGradient)
+                    //    {
+                    //        case Gradient.Positive:
+                    //            result.Setpoint = rangeSetpoint.InputRange.Min;
+                    //            result.Gradient = 1;
+                    //            result.Band = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
+                    //            break;
+
+                    //        case Gradient.Negative:
+                    //            result.Setpoint = rangeSetpoint.InputRange.Max;
+                    //            result.Gradient = -1;
+                    //            result.Band = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
+                    //            break;
+                    //    }
+                    //}
                 }
 
                 ISetback setback = ((SystemSetpointController)displaySystemController).Setback;
@@ -113,35 +115,55 @@ namespace SAM.Analytical.Tas.TPD
                                 {
                                     controllerProfileData.AddPoint(point2D.X, point2D.Y);
                                 }
+
+                                if (point2Ds.Count == 2)
+                                {
+                                    result.Gradient = point2Ds[1].Y > point2Ds[0].Y ? 1 : -1;
+                                    if (result.Gradient > 0)
+                                    {
+                                        result.Setpoint = point2Ds[1].X;
+                                        result.Band = (point2Ds[0].X - point2Ds[1].X) * (-result.Gradient);
+                                    }
+                                    else
+                                    {
+                                        result.Setpoint = point2Ds[0].X;
+                                        result.Band = (point2Ds[1].X - point2Ds[0].X) * (-result.Gradient);
+                                    }
+
+                                    result.Max = System.Math.Max(point2Ds[0].Y, point2Ds[1].Y);
+                                    result.Min = System.Math.Min(point2Ds[0].Y, point2Ds[1].Y);
+                                }
                             }
                         }
                         else if (setpoint is RangeSetpoint)
                         {
                             RangeSetpoint rangeSetpoint = (RangeSetpoint)setpoint;
 
-                            if (rangeSetpoint.OutputRange != null)
-                            {
-                                result.SetbackMin = rangeSetpoint.OutputRange.Min;
-                                result.SetbackMax = rangeSetpoint.OutputRange.Max;
-                            }
+                            throw new System.NotImplementedException();
 
-                            if (rangeSetpoint.InputRange != null)
-                            {
-                                switch (rangeSetpoint.InputGradient)
-                                {
-                                    case Gradient.Positive:
-                                        result.SetbackSetpoint = rangeSetpoint.InputRange.Min;
-                                        result.SetbackGradient = 1;
-                                        result.SetbackBand = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
-                                        break;
+                            //if (rangeSetpoint.OutputRange != null)
+                            //{
+                            //    result.SetbackMin = rangeSetpoint.OutputRange.Min;
+                            //    result.SetbackMax = rangeSetpoint.OutputRange.Max;
+                            //}
 
-                                    case Gradient.Negative:
-                                        result.SetbackSetpoint = rangeSetpoint.InputRange.Max;
-                                        result.SetbackGradient = -1;
-                                        result.SetbackBand = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
-                                        break;
-                                }
-                            }
+                            //if (rangeSetpoint.InputRange != null)
+                            //{
+                            //    switch (rangeSetpoint.InputGradient)
+                            //    {
+                            //        case Gradient.Positive:
+                            //            result.SetbackSetpoint = rangeSetpoint.InputRange.Min;
+                            //            result.SetbackGradient = 1;
+                            //            result.SetbackBand = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
+                            //            break;
+
+                            //        case Gradient.Negative:
+                            //            result.SetbackSetpoint = rangeSetpoint.InputRange.Max;
+                            //            result.SetbackGradient = -1;
+                            //            result.SetbackBand = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
+                            //            break;
+                            //    }
+                            //}
                         }
                     }
                 }
