@@ -118,20 +118,20 @@ namespace SAM.Analytical.Tas.TPD
 
                                 if (point2Ds.Count == 2)
                                 {
-                                    result.Gradient = point2Ds[1].Y > point2Ds[0].Y ? 1 : -1;
-                                    if (result.Gradient > 0)
+                                    result.SetbackGradient = point2Ds[1].Y > point2Ds[0].Y ? 1 : -1;
+                                    if (result.SetbackGradient > 0)
                                     {
-                                        result.Setpoint = point2Ds[1].X;
-                                        result.Band = (point2Ds[0].X - point2Ds[1].X) * (-result.Gradient);
+                                        result.SetbackSetpoint = point2Ds[1].X;
+                                        result.SetbackBand = (point2Ds[0].X - point2Ds[1].X) * (-result.SetbackGradient);
                                     }
                                     else
                                     {
-                                        result.Setpoint = point2Ds[0].X;
-                                        result.Band = (point2Ds[1].X - point2Ds[0].X) * (-result.Gradient);
+                                        result.SetbackSetpoint = point2Ds[0].X;
+                                        result.SetbackBand = (point2Ds[1].X - point2Ds[0].X) * (-result.SetbackGradient);
                                     }
 
-                                    result.Max = System.Math.Max(point2Ds[0].Y, point2Ds[1].Y);
-                                    result.Min = System.Math.Min(point2Ds[0].Y, point2Ds[1].Y);
+                                    result.SetbackMax = System.Math.Max(point2Ds[0].Y, point2Ds[1].Y);
+                                    result.SetbackMin = System.Math.Min(point2Ds[0].Y, point2Ds[1].Y);
                                 }
                             }
                         }

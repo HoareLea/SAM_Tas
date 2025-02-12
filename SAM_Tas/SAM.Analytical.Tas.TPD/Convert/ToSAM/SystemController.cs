@@ -71,10 +71,10 @@ namespace SAM.Analytical.Tas.TPD
             ControllerProfileData controllerProfileData_Setback = controller.GetSetbackProfile();
 
             List<ControllerProfilePoint> controllerProfilePoints_Setback = controllerProfileData_Setback?.ControllerProfilePoints();
-            if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
+            if (controllerProfilePoints_Setback != null && controllerProfilePoints_Setback.Count > 1)
             {
                 ProfileSetpoint profileSetpoint = new ProfileSetpoint();
-                foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setpoint)
+                foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setback)
                 {
                     profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
                 }
