@@ -20,6 +20,7 @@ namespace SAM.Analytical.Tas.TPD
             if(displaySystemController is SystemNormalController)
             {
                 result.SensorType = ((SystemNormalController)displaySystemController).NormalControllerDataType.ToTPD();
+                result.SensorPresetType = ((SystemNormalController)displaySystemController).NormalControllerLimit.ToTPD();
             }
 
             if (displaySystemController is SystemSetpointController)
