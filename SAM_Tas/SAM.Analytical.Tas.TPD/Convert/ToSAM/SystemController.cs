@@ -21,35 +21,6 @@ namespace SAM.Analytical.Tas.TPD
             string sensorReference = controller.SensorArc1?.Reference();
             string secondarySensorReference = controller.SensorArc2?.Reference();
 
-            ISetpoint setpoint = null;
-            
-            ControllerProfileData controllerProfileData_Setpoint = controller.GetProfile();
-
-            List<ControllerProfilePoint> controllerProfilePoints_Setpoint = controllerProfileData_Setpoint?.ControllerProfilePoints();
-            if(controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
-            {
-                ProfileSetpoint profileSetpoint = new ProfileSetpoint();
-                foreach(ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setpoint)
-                {
-                    profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
-                }
-
-                setpoint = profileSetpoint;
-            }
-
-            if(setpoint == null)
-            {
-                RangeSetpoint rangeSetpoint = new RangeSetpoint();
-                if(controller.Gradient < 0)
-                {
-                    rangeSetpoint.InputGradient = Gradient.Negative;
-                }
-
-                rangeSetpoint.InputRange = new Range<double>(controller.Setpoint, controller.Setpoint - (controller.Gradient * controller.Band));
-                rangeSetpoint.OutputRange = new Range<double>(controller.Min, controller.Max);
-                setpoint = rangeSetpoint;
-            }
-
             tpdSensorType tpdSensorType = (tpdSensorType)@dynamic.SensorType;
 
             NormalControllerDataType normalControllerDataType;
@@ -64,28 +35,83 @@ namespace SAM.Analytical.Tas.TPD
 
             NormalControllerLimit normalControllerLimit = (controller.SensorPresetType).ToSAM();
 
+
+            ISetpoint setpoint = null;
+
+            if(normalControllerDataType != NormalControllerDataType.MinFlow)
+            {
+                ControllerProfileData controllerProfileData_Setpoint = controller.GetProfile();
+
+                List<ControllerProfilePoint> controllerProfilePoints_Setpoint = controllerProfileData_Setpoint?.ControllerProfilePoints();
+                if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
+                {
+                    ProfileSetpoint profileSetpoint = new ProfileSetpoint();
+                    foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setpoint)
+                    {
+                        profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
+                    }
+
+                    setpoint = profileSetpoint;
+                }
+            }
+
+            if(setpoint == null)
+            {
+                RangeSetpoint rangeSetpoint = new RangeSetpoint();
+                if(controller.Gradient < 0)
+                {
+                    rangeSetpoint.OutputGradient = Gradient.Negative;
+                }
+
+                if(normalControllerDataType == NormalControllerDataType.MinFlow)
+                {
+                    rangeSetpoint.InputRange = new Range<double>(controller.Setpoint, controller.Setpoint - (controller.Gradient * (controller.Band / 100) * controller.Setpoint));
+                }
+                else
+                {
+                    rangeSetpoint.InputRange = new Range<double>(controller.Setpoint, controller.Setpoint - (controller.Gradient * controller.Band));
+                }
+
+                rangeSetpoint.OutputRange = new Range<double>(controller.Min, controller.Max);
+                setpoint = rangeSetpoint;
+            }
+
+
+
             string scheduleName = controller.GetSchedule()?.Name;
 
             ISetback setback = null;
 
-            ControllerProfileData controllerProfileData_Setback = controller.GetSetbackProfile();
-
-            List<ControllerProfilePoint> controllerProfilePoints_Setback = controllerProfileData_Setback?.ControllerProfilePoints();
-            if (controllerProfilePoints_Setback != null && controllerProfilePoints_Setback.Count > 1)
+            if (normalControllerDataType != NormalControllerDataType.MinFlow)
             {
-                ProfileSetpoint profileSetpoint = new ProfileSetpoint();
-                foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setback)
-                {
-                    profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
-                }
+                ControllerProfileData controllerProfileData_Setback = controller.GetSetbackProfile();
 
-                setback = new SetpointSetback(scheduleName, profileSetpoint);
+                List<ControllerProfilePoint> controllerProfilePoints_Setback = controllerProfileData_Setback?.ControllerProfilePoints();
+                if (controllerProfilePoints_Setback != null && controllerProfilePoints_Setback.Count > 1)
+                {
+                    ProfileSetpoint profileSetpoint = new ProfileSetpoint();
+                    foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setback)
+                    {
+                        profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
+                    }
+
+                    setback = new SetpointSetback(scheduleName, profileSetpoint);
+                }
             }
 
             if (setback == null)
             {
                 RangeSetpoint rangeSetpoint = new RangeSetpoint();
-                rangeSetpoint.InputRange = new Range<double>(controller.SetbackSetpoint, controller.SetbackSetpoint - (controller.SetbackGradient * controller.SetbackBand));
+
+                if (normalControllerDataType == NormalControllerDataType.MinFlow)
+                {
+                    rangeSetpoint.InputRange = new Range<double>(controller.SetbackSetpoint, controller.SetbackSetpoint - (controller.SetbackGradient * (controller.SetbackBand / 100) * controller.SetbackSetpoint));
+                }
+                else
+                {
+                    rangeSetpoint.InputRange = new Range<double>(controller.SetbackSetpoint, controller.SetbackSetpoint - (controller.SetbackGradient * controller.SetbackBand));
+                }
+
                 rangeSetpoint.OutputRange = new Range<double>(controller.SetbackMin, controller.SetbackMax);
                 setback = new SetpointSetback(scheduleName, rangeSetpoint);
             }

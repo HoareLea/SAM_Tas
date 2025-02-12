@@ -36,16 +36,16 @@ namespace SAM.Analytical.Tas.TPD
                     return NormalControllerDataType.HumidistatRelativeHumidity;
 
                 case global::TPD.tpdSensorType.tpdLoadSensor:
-                    throw new System.NotImplementedException();
+                    return NormalControllerDataType.Load;
 
                 case global::TPD.tpdSensorType.tpdWetbulbSensor:
                     return NormalControllerDataType.WetBulbTemperature;
 
                 case global::TPD.tpdSensorType.tpdMinFlowSensor:
-                    return NormalControllerDataType.MinimalFreshAir;
+                    return NormalControllerDataType.MinFlow;
 
                 case global::TPD.tpdSensorType.tpdPartLoadSensor:
-                    throw new System.NotImplementedException();
+                    return NormalControllerDataType.PartLoad;
             }
 
             throw new System.NotImplementedException();

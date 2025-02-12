@@ -63,31 +63,38 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     RangeSetpoint rangeSetpoint = (RangeSetpoint)setpoint;
 
-                    throw new System.NotImplementedException();
+                    //throw new System.NotImplementedException();
 
-                    //if(rangeSetpoint.OutputRange != null)
-                    //{
-                    //    result.Min = rangeSetpoint.OutputRange.Min;
-                    //    result.Max = rangeSetpoint.OutputRange.Max;
-                    //}
+                    if (rangeSetpoint.OutputRange != null)
+                    {
+                        result.Min = rangeSetpoint.OutputRange.Min;
+                        result.Max = rangeSetpoint.OutputRange.Max;
+                    }
 
-                    //if (rangeSetpoint.InputRange != null)
-                    //{
-                    //    switch (rangeSetpoint.InputGradient)
-                    //    {
-                    //        case Gradient.Positive:
-                    //            result.Setpoint = rangeSetpoint.InputRange.Min;
-                    //            result.Gradient = 1;
-                    //            result.Band = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
-                    //            break;
+                    if (result.SensorType == tpdSensorType.tpdMinFlowSensor)
+                    {
+                        result.Band = (rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min) / rangeSetpoint.InputRange.Max * 100;
+                    }
+                    else
+                    {
+                        result.Band = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
+                    }
 
-                    //        case Gradient.Negative:
-                    //            result.Setpoint = rangeSetpoint.InputRange.Max;
-                    //            result.Gradient = -1;
-                    //            result.Band = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
-                    //            break;
-                    //    }
-                    //}
+                    if (rangeSetpoint.InputRange != null)
+                    {
+                        switch (rangeSetpoint.OutputGradient)
+                        {
+                            case Gradient.Positive:
+                                result.Setpoint = rangeSetpoint.InputRange.Max;
+                                result.Gradient = 1;
+                                break;
+
+                            case Gradient.Negative:
+                                result.Setpoint = rangeSetpoint.InputRange.Min;
+                                result.Gradient = -1;
+                                break;
+                        }
+                    }
                 }
 
                 ISetback setback = ((SystemSetpointController)displaySystemController).Setback;
@@ -139,31 +146,36 @@ namespace SAM.Analytical.Tas.TPD
                         {
                             RangeSetpoint rangeSetpoint = (RangeSetpoint)setpoint;
 
-                            throw new System.NotImplementedException();
+                            if (rangeSetpoint.OutputRange != null)
+                            {
+                                result.SetbackMin = rangeSetpoint.OutputRange.Min;
+                                result.SetbackMax = rangeSetpoint.OutputRange.Max;
+                            }
 
-                            //if (rangeSetpoint.OutputRange != null)
-                            //{
-                            //    result.SetbackMin = rangeSetpoint.OutputRange.Min;
-                            //    result.SetbackMax = rangeSetpoint.OutputRange.Max;
-                            //}
+                            if (result.SensorType == tpdSensorType.tpdMinFlowSensor)
+                            {
+                                result.SetbackBand = (rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min) / rangeSetpoint.InputRange.Max * 100;
+                            }
+                            else
+                            {
+                                result.SetbackBand = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
+                            }
 
-                            //if (rangeSetpoint.InputRange != null)
-                            //{
-                            //    switch (rangeSetpoint.InputGradient)
-                            //    {
-                            //        case Gradient.Positive:
-                            //            result.SetbackSetpoint = rangeSetpoint.InputRange.Min;
-                            //            result.SetbackGradient = 1;
-                            //            result.SetbackBand = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
-                            //            break;
+                            if (rangeSetpoint.InputRange != null)
+                            {
+                                switch (rangeSetpoint.OutputGradient)
+                                {
+                                    case Gradient.Positive:
+                                        result.SetbackSetpoint = rangeSetpoint.InputRange.Max;
+                                        result.SetbackGradient = 1;
+                                        break;
 
-                            //        case Gradient.Negative:
-                            //            result.SetbackSetpoint = rangeSetpoint.InputRange.Max;
-                            //            result.SetbackGradient = -1;
-                            //            result.SetbackBand = rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min;
-                            //            break;
-                            //    }
-                            //}
+                                    case Gradient.Negative:
+                                        result.SetbackSetpoint = rangeSetpoint.InputRange.Min;
+                                        result.SetbackGradient = -1;
+                                        break;
+                                }
+                            }
                         }
                     }
                 }
