@@ -113,6 +113,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
 
                 rangeSetpoint.OutputRange = new Range<double>(controller.SetbackMin, controller.SetbackMax);
+                rangeSetpoint.OutputGradient = controller.SetbackGradient > 0 ? Gradient.Positive : Gradient.Negative;
                 setback = new SetpointSetback(scheduleName, rangeSetpoint);
             }
 

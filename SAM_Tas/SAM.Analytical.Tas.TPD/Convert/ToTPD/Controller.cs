@@ -26,7 +26,7 @@ namespace SAM.Analytical.Tas.TPD
             if (displaySystemController is SystemSetpointController)
             {
                 ISetpoint setpoint = ((SystemSetpointController)displaySystemController).Setpoint;
-                if(setpoint is ProfileSetpoint)
+                if (setpoint is ProfileSetpoint)
                 {
                     ProfileSetpoint profileSetpoint = (ProfileSetpoint)setpoint;
 
@@ -34,17 +34,17 @@ namespace SAM.Analytical.Tas.TPD
                     controllerProfileData.Clear();
 
                     List<Point2D> point2Ds = profileSetpoint.Point2Ds;
-                    if(point2Ds != null)
+                    if (point2Ds != null)
                     {
                         foreach (Point2D point2D in point2Ds)
                         {
                             controllerProfileData.AddPoint(point2D.X, point2D.Y);
                         }
 
-                        if(point2Ds.Count == 2)
+                        if (point2Ds.Count == 2)
                         {
                             result.Gradient = point2Ds[1].Y > point2Ds[0].Y ? 1 : -1;
-                            if(result.Gradient > 0)
+                            if (result.Gradient > 0)
                             {
                                 result.Setpoint = point2Ds[1].X;
                                 result.Band = (point2Ds[0].X - point2Ds[1].X) * (-result.Gradient);
@@ -60,7 +60,7 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
                 }
-                else if(setpoint is RangeSetpoint)
+                else if (setpoint is RangeSetpoint)
                 {
                     RangeSetpoint rangeSetpoint = (RangeSetpoint)setpoint;
 
@@ -99,11 +99,11 @@ namespace SAM.Analytical.Tas.TPD
                 }
 
                 ISetback setback = ((SystemSetpointController)displaySystemController).Setback;
-                if(setback != null)
+                if (setback != null)
                 {
                     result.SetSchedule(setback.ScheduleName);
 
-                    if(setback is SetpointSetback)
+                    if (setback is SetpointSetback)
                     {
                         SetpointSetback setpointSetback = (SetpointSetback)setback;
 
@@ -155,7 +155,14 @@ namespace SAM.Analytical.Tas.TPD
 
                             if (result.SensorType == tpdSensorType.tpdMinFlowSensor)
                             {
-                                result.SetbackBand = (rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min) / rangeSetpoint.InputRange.Max * 100;
+                                if (rangeSetpoint.OutputGradient == Gradient.Positive)
+                                {
+                                    result.SetbackBand = (rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min) / rangeSetpoint.InputRange.Max * 100;
+                                }
+                                else
+                                {
+                                    result.SetbackBand = (rangeSetpoint.InputRange.Max - rangeSetpoint.InputRange.Min) / rangeSetpoint.InputRange.Min * 100;
+                                }
                             }
                             else
                             {
