@@ -38,7 +38,9 @@ namespace SAM.Analytical.Tas.TPD
 
             ISetpoint setpoint = null;
 
-            if(normalControllerDataType != NormalControllerDataType.MinFlow)
+            if(normalControllerDataType != NormalControllerDataType.MinFlow &&
+                normalControllerDataType != NormalControllerDataType.ThermostatTemperature &&
+                normalControllerDataType != NormalControllerDataType.HumidistatRelativeHumidity)
             {
                 ControllerProfileData controllerProfileData_Setpoint = controller.GetProfile();
 
@@ -82,7 +84,9 @@ namespace SAM.Analytical.Tas.TPD
 
             ISetback setback = null;
 
-            if (normalControllerDataType != NormalControllerDataType.MinFlow)
+            if (normalControllerDataType != NormalControllerDataType.MinFlow &&
+                normalControllerDataType != NormalControllerDataType.ThermostatTemperature &&
+                normalControllerDataType != NormalControllerDataType.HumidistatRelativeHumidity)
             {
                 ControllerProfileData controllerProfileData_Setback = controller.GetSetbackProfile();
 
