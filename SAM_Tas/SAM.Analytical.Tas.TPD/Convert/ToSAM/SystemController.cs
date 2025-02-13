@@ -3,7 +3,6 @@ using SAM.Analytical.Systems;
 using SAM.Geometry.Planar;
 using SAM.Core;
 using System.Collections.Generic;
-using System;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -210,64 +209,103 @@ namespace SAM.Analytical.Tas.TPD
             string sensorReference = plantController.SensorArc1?.Reference();
             string secondarySensorReference = plantController.SensorArc2?.Reference();
 
+            tpdSensorType tpdSensorType = (tpdSensorType)@dynamic.SensorType;
+
+            NormalControllerDataType normalControllerDataType;
+            try
+            {
+                normalControllerDataType = tpdSensorType.ToSAM_NormalControllerDataType();
+            }
+            catch
+            {
+                return null;
+            }
+
+            NormalControllerLimit normalControllerLimit = (plantController.SensorPresetType).ToSAM();
+
+
             ISetpoint setpoint = null;
 
-            ControllerProfileData controllerProfileData_Setpoint = plantController.GetProfile();
-
-            List<ControllerProfilePoint> controllerProfilePoints_Setpoint = controllerProfileData_Setpoint?.ControllerProfilePoints();
-            if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
+            if (normalControllerDataType != NormalControllerDataType.MinFlow &&
+                normalControllerDataType != NormalControllerDataType.ThermostatTemperature &&
+                normalControllerDataType != NormalControllerDataType.HumidistatRelativeHumidity)
             {
-                ProfileSetpoint profileSetpoint = new ProfileSetpoint();
-                foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setpoint)
-                {
-                    profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
-                }
+                ControllerProfileData controllerProfileData_Setpoint = plantController.GetProfile();
 
-                setpoint = profileSetpoint;
+                List<ControllerProfilePoint> controllerProfilePoints_Setpoint = controllerProfileData_Setpoint?.ControllerProfilePoints();
+                if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
+                {
+                    ProfileSetpoint profileSetpoint = new ProfileSetpoint();
+                    foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setpoint)
+                    {
+                        profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
+                    }
+
+                    setpoint = profileSetpoint;
+                }
             }
 
             if (setpoint == null)
             {
                 RangeSetpoint rangeSetpoint = new RangeSetpoint();
-                rangeSetpoint.InputRange = new Range<double>(plantController.Setpoint - (plantController.Gradient * plantController.Band));
+                if (plantController.Gradient < 0)
+                {
+                    rangeSetpoint.OutputGradient = Gradient.Negative;
+                }
+
+                if (normalControllerDataType == NormalControllerDataType.MinFlow)
+                {
+                    rangeSetpoint.InputRange = new Range<double>(plantController.Setpoint, plantController.Setpoint - (plantController.Gradient * (plantController.Band / 100) * plantController.Setpoint));
+                }
+                else
+                {
+                    rangeSetpoint.InputRange = new Range<double>(plantController.Setpoint, plantController.Setpoint - (plantController.Gradient * plantController.Band));
+                }
+
                 rangeSetpoint.OutputRange = new Range<double>(plantController.Min, plantController.Max);
                 setpoint = rangeSetpoint;
             }
 
-            LiquidNormalControllerDataType liquidNormalControllerDataType;
 
-            try
-            {
-                liquidNormalControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_LiquidNormalControllerDataType();
-            }
-            catch(Exception exception)
-            {
-                return null;
-            }
 
             string scheduleName = plantController.GetSchedule()?.Name;
 
             ISetback setback = null;
 
-            ControllerProfileData controllerProfileData_Setback = plantController.GetSetbackProfile();
-
-            List<ControllerProfilePoint> controllerProfilePoints_Setback = controllerProfileData_Setback?.ControllerProfilePoints();
-            if (controllerProfilePoints_Setpoint != null && controllerProfilePoints_Setpoint.Count > 1)
+            if (normalControllerDataType != NormalControllerDataType.MinFlow &&
+                normalControllerDataType != NormalControllerDataType.ThermostatTemperature &&
+                normalControllerDataType != NormalControllerDataType.HumidistatRelativeHumidity)
             {
-                ProfileSetpoint profileSetpoint = new ProfileSetpoint();
-                foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setpoint)
-                {
-                    profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
-                }
+                ControllerProfileData controllerProfileData_Setback = plantController.GetSetbackProfile();
 
-                setback = new SetpointSetback(scheduleName, profileSetpoint);
+                List<ControllerProfilePoint> controllerProfilePoints_Setback = controllerProfileData_Setback?.ControllerProfilePoints();
+                if (controllerProfilePoints_Setback != null && controllerProfilePoints_Setback.Count > 1)
+                {
+                    ProfileSetpoint profileSetpoint = new ProfileSetpoint();
+                    foreach (ControllerProfilePoint controllerProfilePoint in controllerProfilePoints_Setback)
+                    {
+                        profileSetpoint.Add(controllerProfilePoint.x, controllerProfilePoint.y);
+                    }
+
+                    setback = new SetpointSetback(scheduleName, profileSetpoint);
+                }
             }
 
             if (setback == null)
             {
                 RangeSetpoint rangeSetpoint = new RangeSetpoint();
-                rangeSetpoint.InputRange = new Range<double>(plantController.SetbackSetpoint - (plantController.SetbackGradient * plantController.SetbackBand));
+
+                if (normalControllerDataType == NormalControllerDataType.MinFlow)
+                {
+                    rangeSetpoint.InputRange = new Range<double>(plantController.SetbackSetpoint, plantController.SetbackSetpoint - (plantController.SetbackGradient * (plantController.SetbackBand / 100) * plantController.SetbackSetpoint));
+                }
+                else
+                {
+                    rangeSetpoint.InputRange = new Range<double>(plantController.SetbackSetpoint, plantController.SetbackSetpoint - (plantController.SetbackGradient * plantController.SetbackBand));
+                }
+
                 rangeSetpoint.OutputRange = new Range<double>(plantController.SetbackMin, plantController.SetbackMax);
+                rangeSetpoint.OutputGradient = plantController.SetbackGradient > 0 ? Gradient.Positive : Gradient.Negative;
                 setback = new SetpointSetback(scheduleName, rangeSetpoint);
             }
 
@@ -276,7 +314,7 @@ namespace SAM.Analytical.Tas.TPD
             switch (plantController.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    result = new SystemLiquidNormalController(@dynamic.Name, liquidNormalControllerDataType, setpoint, setback) { SensorReference = sensorReference };
+                    result = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, setback, normalControllerLimit) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
@@ -285,11 +323,11 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint, setback);
+                    result = new SystemDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, normalControllerDataType, setpoint, setback, normalControllerLimit);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    result = new SystemLiquidPassthroughController(@dynamic.Name, liquidNormalControllerDataType) { SensorReference = sensorReference };
+                    result = new SystemPassthroughController(@dynamic.Name, normalControllerDataType) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlNot:
@@ -331,13 +369,13 @@ namespace SAM.Analytical.Tas.TPD
             result.Description = dynamic.Description;
             //Modify.SetReference(systemController, @dynamic.GUID);
 
+            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
             List<PlantDayType> plantDayTypes = plantController.PlantDayTypes();
             if (plantDayTypes != null && plantDayTypes.Count != 0)
             {
                 result.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
             }
-
-            Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if (displaySystemController != null)
