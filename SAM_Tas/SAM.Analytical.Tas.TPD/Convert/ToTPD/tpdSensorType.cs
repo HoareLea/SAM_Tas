@@ -51,5 +51,25 @@ namespace SAM.Analytical.Tas.TPD
 
             throw new System.NotImplementedException();
         }
+
+        public static tpdSensorType ToTPD(this LiquidNormalControllerDataType liquidNormalControllerDataType)
+        {
+            switch (liquidNormalControllerDataType)
+            {
+                case LiquidNormalControllerDataType.Flow:
+                    return tpdSensorType.tpdFlowSensor;
+
+                case LiquidNormalControllerDataType.Temperature:
+                    return tpdSensorType.tpdTempSensor;
+
+                case LiquidNormalControllerDataType.Load:
+                    return tpdSensorType.tpdLoadSensor;
+
+                case LiquidNormalControllerDataType.Pressure:
+                    return tpdSensorType.tpdPressureSensor;
+            }
+
+            throw new System.NotImplementedException();
+        }
     }
 }

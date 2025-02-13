@@ -17,10 +17,9 @@ namespace SAM.Analytical.Tas.TPD
             PlantController result = plantRoom.AddController();
             result.Description = ((dynamic)displaySystemController).Description;
 
-            if (displaySystemController is SystemNormalController)
+            if (displaySystemController is SystemLiquidNormalController)
             {
-                result.SensorType = ((SystemNormalController)displaySystemController).NormalControllerDataType.ToTPD();
-                result.SensorPresetType = ((SystemNormalController)displaySystemController).NormalControllerLimit.ToTPD();
+                result.SensorType = ((SystemLiquidNormalController)displaySystemController).LiquidNormalControllerDataType.ToTPD();
             }
 
             if (displaySystemController is SystemSetpointController)

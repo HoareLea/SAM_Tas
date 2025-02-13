@@ -309,12 +309,32 @@ namespace SAM.Analytical.Tas.TPD
                 setback = new SetpointSetback(scheduleName, rangeSetpoint);
             }
 
+            LiquidNormalControllerDataType liquidNormalControllerDataType = LiquidNormalControllerDataType.Flow;
+            switch(normalControllerDataType)
+            {
+                case NormalControllerDataType.Flow:
+                    liquidNormalControllerDataType = LiquidNormalControllerDataType.Flow;
+                    break;
+
+                case NormalControllerDataType.Pressure:
+                    liquidNormalControllerDataType = LiquidNormalControllerDataType.Pressure;
+                    break;
+
+                case NormalControllerDataType.Load:
+                    liquidNormalControllerDataType = LiquidNormalControllerDataType.Load;
+                    break;
+
+                case NormalControllerDataType.DryBulbTemperature:
+                    liquidNormalControllerDataType = LiquidNormalControllerDataType.Temperature;
+                    break;
+            }
+
             SystemController result = null;
 
             switch (plantController.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    result = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, setback, normalControllerLimit) { SensorReference = sensorReference };
+                    result = new SystemLiquidNormalController(@dynamic.Name, sensorReference, liquidNormalControllerDataType, setpoint, setback);
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
@@ -323,11 +343,11 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, normalControllerDataType, setpoint, setback, normalControllerLimit);
+                    result = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint, setback);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    result = new SystemPassthroughController(@dynamic.Name, normalControllerDataType) { SensorReference = sensorReference };
+                    result = new SystemLiquidPassthroughController(@dynamic.Name, liquidNormalControllerDataType) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlNot:
