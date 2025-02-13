@@ -108,5 +108,31 @@ namespace SAM.Analytical.Tas.TPD
             return false; ;
 
         }
+
+        public static bool SetSchedule(this PlantController plantController, string scheduleName)
+        {
+            if (plantController == null || scheduleName == null)
+            {
+                return false;
+            }
+
+            List<PlantSchedule> plantSchedules = Query.Schedules(((dynamic)plantController).GetPlantRoom()?.GetEnergyCentre() as EnergyCentre);
+            if (plantSchedules == null || plantSchedules.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (PlantSchedule plantSchedule in plantSchedules)
+            {
+                if (plantSchedule?.Name == scheduleName)
+                {
+                    ((dynamic)plantController).SetSchedule(plantSchedule);
+                    return true;
+                }
+            }
+
+            return false; ;
+
+        }
     }
 }
