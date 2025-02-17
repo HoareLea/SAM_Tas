@@ -485,6 +485,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             if (displaySystemObject is SystemExchanger ||
+                displaySystemObject is SystemLiquidExchanger ||
                 displaySystemObject is SystemDesiccantWheel)
             {
                 if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
