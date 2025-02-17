@@ -453,6 +453,242 @@ namespace SAM.Analytical.Tas.TPD
 
             Point2D point2D = coordinateSystem2D.Origin;
 
+            if (displaySystemObject is SystemSolarPanel ||
+                displaySystemObject is SystemPhotovoltaicPanel ||
+                displaySystemObject is SystemWindTurbine)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.6, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.6, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.6));
+                }
+
+                return null;
+            }
+
+            if (displaySystemObject is SystemCoolingTower ||
+                displaySystemObject is SystemDryCooler ||
+                displaySystemObject is SystemVerticalBorehole ||
+                displaySystemObject is SystemSlinkyCoil ||
+                displaySystemObject is SystemSurfaceWaterExchanger ||
+                displaySystemObject is SystemHorizontalExchanger)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.6, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.8, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.6));
+                }
+
+                return null;
+            }
+
+            if (displaySystemObject is SystemChiller ||
+                displaySystemObject is SystemMultiChiller ||
+                displaySystemObject is SystemMultiBoiler ||
+                displaySystemObject is SystemHeatPump ||
+                displaySystemObject is SystemBoiler ||
+                displaySystemObject is SystemCHP)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.6, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-1.0, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.6));
+                }
+
+                return null;
+            }
+
+            if (displaySystemObject is SystemPipeLossComponent)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.6, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.2, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.6));
+                }
+
+                return null;
+            }
+
+            if (displaySystemObject is SystemValve)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.3, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.3));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.2, 0));
+                }
+
+                return null;
+            }
+
+            if (displaySystemObject is SystemTank)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.6, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-1.0, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.6));
+                }
+
+                return null;
+            }
+
+            if (displaySystemObject is SystemPump)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.6, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.4, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.6));
+                }
+
+                return null;
+            }
+
+            if (displaySystemObject is SystemLiquidExchanger)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.5, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-1.0, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.5));
+                }
+
+                return null;
+            }
+
             if (displaySystemObject is SystemHumidifier ||
                 displaySystemObject is SystemSprayHumidifier ||
                 displaySystemObject is SystemLoadComponent ||
@@ -485,7 +721,6 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             if (displaySystemObject is SystemExchanger ||
-                displaySystemObject is SystemLiquidExchanger ||
                 displaySystemObject is SystemDesiccantWheel)
             {
                 if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
@@ -657,7 +892,8 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            if (displaySystemObject is SystemAirJunction)
+            if (displaySystemObject is SystemAirJunction ||
+                displaySystemObject is SystemLiquidJunction)
             {
                 if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
                 {
