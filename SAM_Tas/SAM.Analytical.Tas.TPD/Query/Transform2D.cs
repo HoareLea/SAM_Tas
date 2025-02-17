@@ -442,7 +442,7 @@ namespace SAM.Analytical.Tas.TPD
             tpdDirection = tpdDirection.tpdLeftRight;
 
             CoordinateSystem2D coordinateSystem2D = displaySystemObject?.SystemGeometry.CoordinateSystem2D;
-            if(coordinateSystem2D == null)
+            if (coordinateSystem2D == null)
             {
                 return null;
             }
@@ -452,6 +452,39 @@ namespace SAM.Analytical.Tas.TPD
             Vector2D axis_Y = coordinateSystem2D.AxisY;
 
             Point2D point2D = coordinateSystem2D.Origin;
+
+            if (displaySystemObject is HeatingSystemCollection ||
+                displaySystemObject is CoolingSystemCollection ||
+                displaySystemObject is RefrigerantSystemCollection ||
+                displaySystemObject is FuelSystemCollection ||
+                displaySystemObject is DomesticHotWaterSystemCollection ||
+                displaySystemObject is ElectricalSystemCollection)
+            {
+                if (Vector2D.WorldX.AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    return null;
+                }
+
+                if (Vector2D.WorldX.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldY.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdRightLeft;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-0.6, 0));
+                }
+
+                if (Vector2D.WorldY.GetNegated().AlmostEqual(axis_X) && Vector2D.WorldX.AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdTopBottom;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(-1.0, 0));
+                }
+
+                if (Vector2D.WorldY.AlmostEqual(axis_X) && Vector2D.WorldX.GetNegated().AlmostEqual(axis_Y))
+                {
+                    tpdDirection = tpdDirection.tpdBottomTop;
+                    return Geometry.Planar.Transform2D.GetTranslation(new Vector2D(0, 0.6));
+                }
+
+                return null;
+            }
 
             if (displaySystemObject is SystemSolarPanel ||
                 displaySystemObject is SystemPhotovoltaicPanel ||
