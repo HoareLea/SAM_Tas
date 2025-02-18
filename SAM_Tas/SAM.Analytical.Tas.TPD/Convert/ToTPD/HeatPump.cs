@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas.TPD
             result.HeatSizeFraction = displaySystemWaterSourceHeatPump.HeatSizeFraction;
             result.AncillaryLoad?.Update(displaySystemWaterSourceHeatPump.AncillaryLoad);
 
-            if(displaySystemWaterSourceHeatPump.IsDomesticHotWater)
+            if (displaySystemWaterSourceHeatPump.IsDomesticHotWater)
             {
                 result.Flags = (int)tpdHeatPumpFlags.tpdHeatPumpIsDHW;
             }

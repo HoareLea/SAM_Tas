@@ -1,9 +1,7 @@
 ﻿using SAM.Core;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using TPD;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -106,7 +104,7 @@ namespace SAM.Analytical.Tas.TPD
 
             if (headers.Count() == 2)
             {
-                profileDataModifierTable.Multiplier = tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
+                //profileDataModifierTable.Multiplier = tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
 
                 if (System.Enum.TryParse(headers.ElementAt(0), true, out tpdProfileDataVariableType tpdProfileDataVariableType))
                 {

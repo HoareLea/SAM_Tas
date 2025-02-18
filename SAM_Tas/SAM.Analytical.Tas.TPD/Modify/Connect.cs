@@ -95,16 +95,22 @@ namespace SAM.Analytical.Tas.TPD
                             List<Point2D> point2Ds = Query.Point2Ds(pipe);
 
                             int connectionIndex_1 = direction == Direction.In ? pipe.GetDownstreamComponentPort() : pipe.GetUpstreamComponentPort();
-                            if (systemComponent_SAM_1 is SystemWaterSourceHeatPump)
-                            {
-                                connectionIndex_1++;
-                            }
+                            //if (systemComponent_SAM_1 is SystemWaterSourceHeatPump)
+                            //{
+                            //    if(connectionIndex_1 == 2)
+                            //    {
+                            //        connectionIndex_1 += 2;
+                            //    }
+                            //}
 
                             int connectionIndex_2 = direction == Direction.In ? pipe.GetUpstreamComponentPort() : pipe.GetDownstreamComponentPort();
-                            if (systemComponent_SAM_2 is SystemWaterSourceHeatPump)
-                            {
-                                connectionIndex_2++;
-                            }
+                            //if (systemComponent_SAM_2 is SystemWaterSourceHeatPump)
+                            //{
+                            //    if (connectionIndex_2 == 2)
+                            //    {
+                            //        connectionIndex_2 += 2;
+                            //    }
+                            //}
 
                             ISystemConnection systemConnection = Connect(
                                 systemPlantRoom,
