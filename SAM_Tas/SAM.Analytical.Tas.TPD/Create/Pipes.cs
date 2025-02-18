@@ -76,13 +76,24 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
+                        if ((plantComponent_2 as dynamic).GUID == (plantComponent_1 as dynamic).GUID)
+                        {
+                            continue;
+                        }
+
                         systemConnection.TryGetIndex(systemComponent_Temp_2, out int index_2);
                         Direction direction_2 = systemComponent_Temp_2.SystemConnectorManager.GetDirection(index_2);
 
                         int portIndex_2 = 1;
-                        if ((plantComponent_2 as dynamic).GUID == (plantComponent_1 as dynamic).GUID)
+                        if (systemComponent_Temp_2 is SystemExchanger || systemComponent_Temp_2 is SystemEconomiser || systemComponent_Temp_2 is SystemHeatPump || systemComponent_Temp_2 is SystemLiquidExchanger)
                         {
-                            continue;
+                            if (systemComponent_Temp_2.SystemConnectorManager.TryGetSystemConnector(index_2, out SystemConnector systemConnector_2) && systemConnector_2 != null)
+                            {
+                                if (systemConnector_2.ConnectionIndex != -1)
+                                {
+                                    portIndex_2 = systemConnector_2.ConnectionIndex;
+                                }
+                            }
                         }
 
                         if (direction_1 == Direction.In)
