@@ -41,6 +41,8 @@ namespace SAM.Analytical.Tas.TPD
 
             List<PlantComponentGroup> plantComponentGroups = null;
 
+            HashSet<string> pipeReferences = new HashSet<string>();
+
             plantComponents = new List<PlantComponent>(dictionary_PlantComponent.Values);
             if (plantComponents != null && plantComponents.Count != 0)
             {
@@ -78,6 +80,14 @@ namespace SAM.Analytical.Tas.TPD
 
                         foreach (Pipe pipe in pipes)
                         {
+                            string pipeReference = Query.Reference(pipe);
+                            if(pipeReferences.Contains(pipeReference))
+                            {
+                                continue;
+                            }
+
+                            pipeReferences.Add(pipeReference);
+
                             string reference_2 = (direction == Direction.In ? pipe.GetUpstreamComponent() : pipe.GetDownstreamComponent() as dynamic)?.GUID;
 
                             Core.Systems.ISystemComponent systemComponent_SAM_2 = systemPlantRoom.Find<Core.Systems.ISystemComponent>(x => x.Reference() == reference_2);
@@ -131,10 +141,10 @@ namespace SAM.Analytical.Tas.TPD
                                     if (string.IsNullOrWhiteSpace(fluidTypeName))
                                     {
                                         ((SAMObject)systemConnection).SetValue(SystemConnectionParameter.FluidTypeName, fluidTypeName);
-                                    }                                    
+                                    }
                                 }
 
-                                systemConnection.SetReference(Query.Reference(pipe));
+                                systemConnection.SetReference(pipeReference);
                                 systemPlantRoom.Add(systemConnection);
 
                                 result.Add(systemConnection);
