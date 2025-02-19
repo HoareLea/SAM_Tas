@@ -35,5 +35,43 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static Chiller ToTPD(this DisplaySystemAirSourceDirectAbsorptionChiller displaySystemAirSourceDirectAbsorptionChiller, PlantRoom plantRoom)
+        {
+            if (displaySystemAirSourceDirectAbsorptionChiller == null || plantRoom == null)
+            {
+                return null;
+            }
+
+            Chiller result = plantRoom.AddChiller();
+
+            dynamic @dynamic = result;
+            @dynamic.Name = displaySystemAirSourceDirectAbsorptionChiller.Name;
+            @dynamic.Description = displaySystemAirSourceDirectAbsorptionChiller.Description;
+            @dynamic.IsDirectAbsChiller = true;
+
+            //result.Setpoint?.Update(displaySystemAirSourceDirectAbsorptionChiller.Setpoint);
+            //result.Efficiency?.Update(displaySystemAirSourceDirectAbsorptionChiller.Efficiency);
+            //result.Duty?.Update(displaySystemAirSourceDirectAbsorptionChiller.Duty, plantRoom);
+            //result.Capacity = displaySystemAirSourceDirectAbsorptionChiller.Capacity;
+            //result.DesignPressureDrop = displaySystemAirSourceDirectAbsorptionChiller.DesignPressureDrop;
+            ////result.AncillaryLoad?.Update(displaySystemAirSourceDirectAbsorptionChiller.AnciliaryLoad);
+            ////result.MinOutTempSource?.Update(displaySystemAirSourceDirectAbsorptionChiller.MinOutTempSource);
+            //result.LossesInSizing = displaySystemAirSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
+
+            result.Efficiency?.Update(displaySystemAirSourceDirectAbsorptionChiller.Efficiency);
+            result.CondenserFanLoad?.Update(displaySystemAirSourceDirectAbsorptionChiller.CondenserFanLoad);
+            result.Duty?.Update(displaySystemAirSourceDirectAbsorptionChiller.Duty, plantRoom);
+            result.DesignDeltaT = displaySystemAirSourceDirectAbsorptionChiller.DesignTemperatureDifference;
+            result.Capacity = displaySystemAirSourceDirectAbsorptionChiller.Capacity;
+            result.DesignPressureDrop = displaySystemAirSourceDirectAbsorptionChiller.DesignPressureDrop;
+            result.LossesInSizing = displaySystemAirSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
+
+            Modify.SetSchedule((PlantComponent)result, displaySystemAirSourceDirectAbsorptionChiller.ScheduleName);
+
+            displaySystemAirSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
+
+            return result;
+        }
     }
 }
