@@ -37,6 +37,26 @@ namespace SAM.Analytical.Tas.TPD
             result.AncillaryLoad?.Update(displaySystemAirSourceHeatPump.AncillaryLoad);
             result.HeatSizeFraction = displaySystemAirSourceHeatPump.HeatSizeFraction;
 
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemAirSourceHeatPump.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemAirSourceHeatPump.GetValue<string>(Core.Systems.SystemObjectParameter.FanEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemAirSourceHeatPump.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(3, fuelSource);
+            }
+
             if (displaySystemAirSourceHeatPump.IsDomesticHotWater)
             {
                 result.Flags = (int)tpdAirSourceHeatPumpFlags.tpdAirSourceHeatPumpIsDHW;

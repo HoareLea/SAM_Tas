@@ -55,6 +55,20 @@ namespace SAM.Analytical.Tas.TPD
 
                     profileData = result.GetBoilerAncillaryLoad(index);
                     profileData.Update(systemMultiBoilerItem.AncillaryLoad);
+
+                    FuelSource fuelSource;
+
+                    fuelSource = plantRoom.FuelSource(systemMultiBoilerItem.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+                    if (fuelSource != null)
+                    {
+                        ((@dynamic)result).SetFuelSource((i - 1) * 2, fuelSource);
+                    }
+
+                    fuelSource = plantRoom.FuelSource(systemMultiBoilerItem.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+                    if (fuelSource != null)
+                    {
+                        ((@dynamic)result).SetFuelSource(((i - 1) * 2) + 1, fuelSource);
+                    }
                 }
             }
 

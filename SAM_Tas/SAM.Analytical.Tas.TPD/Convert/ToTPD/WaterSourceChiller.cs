@@ -41,6 +41,20 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemWaterSourceChiller.ScheduleName);
 
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemWaterSourceChiller.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemWaterSourceChiller.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
+
             displaySystemWaterSourceChiller.SetLocation(result as PlantComponent);
 
             return result;
@@ -81,6 +95,20 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.IsDirectAbsChiller = true;
 
             Modify.SetSchedule((PlantComponent)result, displaySystemWaterSourceDirectAbsorptionChiller.ScheduleName);
+
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemWaterSourceDirectAbsorptionChiller.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemWaterSourceDirectAbsorptionChiller.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
 
             displaySystemWaterSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
 

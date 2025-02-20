@@ -37,6 +37,20 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemCHP.ScheduleName);
 
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemCHP.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemCHP.GetValue<string>(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
+
             displaySystemCHP.SetLocation(result as PlantComponent);
 
             return result;

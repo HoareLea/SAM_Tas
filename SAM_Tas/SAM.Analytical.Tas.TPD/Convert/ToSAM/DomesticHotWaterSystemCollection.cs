@@ -27,7 +27,6 @@ namespace SAM.Analytical.Tas.TPD
             ProfileData profileData = isEfficiency ? dynamic.DistributionEfficiency : dynamic.DistributionHeatLossProfile;
             result.Distribution = profileData.ToSAM(isEfficiency);
 
-
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplayDomesticHotWaterSystemCollection displayDomesticHotWaterSystemCollection = Systems.Create.DisplayObject<DisplayDomesticHotWaterSystemCollection>(result, location, Systems.Query.DefaultDisplaySystemManager());

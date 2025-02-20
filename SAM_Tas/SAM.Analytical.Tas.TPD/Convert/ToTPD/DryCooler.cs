@@ -48,6 +48,20 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemDryCooler.ScheduleName);
 
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemDryCooler.GetValue<string>(Core.Systems.SystemObjectParameter.FanEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemDryCooler.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
+
             displaySystemDryCooler.SetLocation(result as PlantComponent);
 
             return result;

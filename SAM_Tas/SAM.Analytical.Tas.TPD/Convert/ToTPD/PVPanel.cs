@@ -34,6 +34,12 @@ namespace SAM.Analytical.Tas.TPD
             result.OutputAtSTC = displaySystemPhotovoltaicPanel.OutputAtSTC;
             result.DeratingFactor = displaySystemPhotovoltaicPanel.DeratingFactor;
 
+            FuelSource fuelSource = plantRoom.FuelSource(displaySystemPhotovoltaicPanel.GetValue<string>(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
             displaySystemPhotovoltaicPanel.SetLocation(result as PlantComponent);
 
             return result;

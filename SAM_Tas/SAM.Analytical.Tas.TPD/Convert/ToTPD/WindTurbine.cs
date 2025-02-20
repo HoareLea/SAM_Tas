@@ -25,6 +25,12 @@ namespace SAM.Analytical.Tas.TPD
             result.Multiplicity = displaySystemWindTurbine.Multiplicity;
             result.Efficiency?.Update(displaySystemWindTurbine.Efficiency);
 
+            FuelSource fuelSource = plantRoom.FuelSource(displaySystemWindTurbine.GetValue<string>(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
             displaySystemWindTurbine.SetLocation(result as PlantComponent);
 
             return result;

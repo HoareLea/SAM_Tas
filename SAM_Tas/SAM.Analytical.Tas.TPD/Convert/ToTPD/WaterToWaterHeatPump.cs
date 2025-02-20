@@ -44,6 +44,20 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemWaterToWaterHeatPump.ScheduleName);
 
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemWaterToWaterHeatPump.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemWaterToWaterHeatPump.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
+
             displaySystemWaterToWaterHeatPump.SetLocation(result as PlantComponent);
 
             return result;

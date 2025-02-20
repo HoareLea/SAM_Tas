@@ -31,6 +31,20 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemAirSourceChiller.ScheduleName);
 
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemAirSourceChiller.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemAirSourceChiller.GetValue<string>(Core.Systems.SystemObjectParameter.FanEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
+
             displaySystemAirSourceChiller.SetLocation(result as PlantComponent);
 
             return result;
@@ -68,6 +82,20 @@ namespace SAM.Analytical.Tas.TPD
             result.LossesInSizing = displaySystemAirSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
 
             Modify.SetSchedule((PlantComponent)result, displaySystemAirSourceDirectAbsorptionChiller.ScheduleName);
+
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemAirSourceDirectAbsorptionChiller.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemAirSourceDirectAbsorptionChiller.GetValue<string>(Core.Systems.SystemObjectParameter.FanEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
 
             displaySystemAirSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
 

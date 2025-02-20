@@ -29,6 +29,12 @@ namespace SAM.Analytical.Tas.TPD
             result.AncillaryLoad?.Update(displaySystemAbsorptionChiller.AncillaryLoad);
             result.MinOutTempSource?.Update(displaySystemAbsorptionChiller.MinimalOutSourceTemperature);
 
+            FuelSource fuelSource = plantRoom.FuelSource(displaySystemAbsorptionChiller.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
             displaySystemAbsorptionChiller.SetLocation(result as PlantComponent);
 
             return result;
@@ -57,6 +63,12 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop2 = displaySystemWaterSourceAbsorptionChiller.DesignPressureDrop2;
             result.AncillaryLoad?.Update(displaySystemWaterSourceAbsorptionChiller.AncillaryLoad);
             result.MinOutTempSource?.Update(displaySystemWaterSourceAbsorptionChiller.MinimalOutSourceTemperature);
+
+            FuelSource fuelSource = plantRoom.FuelSource(displaySystemWaterSourceAbsorptionChiller.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
 
             displaySystemWaterSourceAbsorptionChiller.SetLocation(result as PlantComponent);
 

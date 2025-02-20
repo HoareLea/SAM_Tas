@@ -47,6 +47,20 @@ namespace SAM.Analytical.Tas.TPD
 
                     profileData = result.GetChillerCondenserFanLoad(index);
                     profileData.Update(systemMultiChillerItem.CondenserFanLoad);
+
+                    FuelSource fuelSource;
+
+                    fuelSource = plantRoom.FuelSource(systemMultiChillerItem.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+                    if (fuelSource != null)
+                    {
+                        ((@dynamic)result).SetFuelSource((i - 1) * 2, fuelSource);
+                    }
+
+                    fuelSource = plantRoom.FuelSource(systemMultiChillerItem.GetValue<string>(Core.Systems.SystemObjectParameter.FanEnergySourceName));
+                    if (fuelSource != null)
+                    {
+                        ((@dynamic)result).SetFuelSource(((i - 1) * 2) + 1, fuelSource);
+                    }
                 }
             }
 

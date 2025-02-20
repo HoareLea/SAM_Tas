@@ -35,6 +35,20 @@ namespace SAM.Analytical.Tas.TPD
                 result.Flags = (int)tpdBoilerPlantFlags;
             }
 
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemBoiler.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemBoiler.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
+
             Modify.SetSchedule((PlantComponent)result, displaySystemBoiler.ScheduleName);
 
             displaySystemBoiler.SetLocation(result as PlantComponent);
