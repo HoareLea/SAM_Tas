@@ -20,6 +20,8 @@ namespace SAM.Analytical.Tas.TPD
             
             result.Description = dynamic.Description;
 
+            result.MainsPressure = plantJunction.MainsPressure;
+
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
             DisplaySystemLiquidJunction displaySystemLiquidJunction = Systems.Create.DisplayObject<DisplaySystemLiquidJunction>(result, location, Systems.Query.DefaultDisplaySystemManager());
