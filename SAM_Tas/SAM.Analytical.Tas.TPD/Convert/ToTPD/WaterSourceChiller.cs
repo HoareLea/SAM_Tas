@@ -22,10 +22,10 @@ namespace SAM.Analytical.Tas.TPD
             result.Efficiency?.Update(displaySystemWaterSourceChiller.Efficiency);
             result.Duty?.Update(displaySystemWaterSourceChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemWaterSourceChiller.Capacity1;
-            result.DesignPressureDrop1 = displaySystemWaterSourceChiller.DesignPressureDrop1;
-            result.DesignDeltaT1 = displaySystemWaterSourceChiller.DesignTemperatureDifference1;
             result.Capacity2 = displaySystemWaterSourceChiller.Capacity2;
+            result.DesignPressureDrop1 = displaySystemWaterSourceChiller.DesignPressureDrop1;
             result.DesignPressureDrop2 = displaySystemWaterSourceChiller.DesignPressureDrop2;
+            result.DesignDeltaT1 = displaySystemWaterSourceChiller.DesignTemperatureDifference1;
             result.DesignDeltaT2 = displaySystemWaterSourceChiller.DesignTemperatureDifference2;
             result.MotorEfficiency?.Update(displaySystemWaterSourceChiller.MotorEfficiency);
             result.ExchCalcType = displaySystemWaterSourceChiller.ExchangerCalculationMethod.ToTPD();
@@ -76,12 +76,14 @@ namespace SAM.Analytical.Tas.TPD
             result.Setpoint?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Setpoint);
             result.Efficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Efficiency);
             result.Duty?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Duty, plantRoom);
-            result.Capacity1 = displaySystemWaterSourceDirectAbsorptionChiller.Capacity1;
+
             result.DesignPressureDrop1 = displaySystemWaterSourceDirectAbsorptionChiller.DesignPressureDrop1;
-            result.DesignDeltaT1 = displaySystemWaterSourceDirectAbsorptionChiller.DesignPressureDrop1;
-            result.Capacity2 = displaySystemWaterSourceDirectAbsorptionChiller.Capacity2;
             result.DesignPressureDrop2 = displaySystemWaterSourceDirectAbsorptionChiller.DesignPressureDrop2;
-            result.DesignDeltaT2 = displaySystemWaterSourceDirectAbsorptionChiller.DesignPressureDrop2;
+            result.DesignDeltaT1 = displaySystemWaterSourceDirectAbsorptionChiller.DesignTemperatureDifference1;
+            result.DesignDeltaT2 = displaySystemWaterSourceDirectAbsorptionChiller.DesignTemperatureDifference2;
+            result.Capacity1 = displaySystemWaterSourceDirectAbsorptionChiller.Capacity1;
+            result.Capacity2 = displaySystemWaterSourceDirectAbsorptionChiller.Capacity2;
+
             result.MotorEfficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.MotorEfficiency);
             result.ExchCalcType = displaySystemWaterSourceDirectAbsorptionChiller.ExchangerCalculationMethod.ToTPD();
             result.ExchangerEfficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.ExchangerEfficiency);

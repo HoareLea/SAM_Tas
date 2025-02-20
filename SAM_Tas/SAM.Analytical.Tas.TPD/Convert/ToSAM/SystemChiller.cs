@@ -191,10 +191,10 @@ namespace SAM.Analytical.Tas.TPD
                 systemWaterSourceDirectAbsorptionChiller.Setpoint = ((ProfileData)@dynamic.Setpoint)?.ToSAM();
                 systemWaterSourceDirectAbsorptionChiller.Efficiency = ((ProfileData)@dynamic.Efficiency)?.ToSAM();
                 systemWaterSourceDirectAbsorptionChiller.Capacity1 = @dynamic.Capacity1;
-                systemWaterSourceDirectAbsorptionChiller.DesignPressureDrop1 = @dynamic.DesignPressureDrop1;
-                systemWaterSourceDirectAbsorptionChiller.DesignTemperatureDifference1 = @dynamic.DesignDeltaT1;
                 systemWaterSourceDirectAbsorptionChiller.Capacity2 = @dynamic.Capacity2;
+                systemWaterSourceDirectAbsorptionChiller.DesignPressureDrop1 = @dynamic.DesignPressureDrop1;
                 systemWaterSourceDirectAbsorptionChiller.DesignPressureDrop2 = @dynamic.DesignPressureDrop2;
+                systemWaterSourceDirectAbsorptionChiller.DesignTemperatureDifference1 = @dynamic.DesignDeltaT1;
                 systemWaterSourceDirectAbsorptionChiller.DesignTemperatureDifference2 = @dynamic.DesignDeltaT2;
                 systemWaterSourceDirectAbsorptionChiller.LossesInSizing = dynamic.LossesInSizing;
                 systemWaterSourceDirectAbsorptionChiller.MotorEfficiency = ((ProfileData)@dynamic.MotorEfficiency)?.ToSAM();
