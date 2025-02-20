@@ -24,6 +24,8 @@ namespace SAM.Analytical.Tas.TPD
             result.Capacity = displaySystemPump.Capacity;
             result.PartLoad?.Update(displaySystemPump.PartLoad);
 
+            result.ControlType = displaySystemPump.FanControlType.ToTPD();
+
             FuelSource fuelSource = plantRoom.FuelSource(displaySystemPump.GetValue<string>(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName));
             if(fuelSource != null)
             {
