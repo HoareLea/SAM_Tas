@@ -58,9 +58,10 @@ namespace SAM.Analytical.Tas.TPD
             result.Efficiency?.Update(displaySystemWaterSourceAbsorptionChiller.Efficiency);
             result.Duty?.Update(displaySystemWaterSourceAbsorptionChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemWaterSourceAbsorptionChiller.Capacity1;
-            result.DesignPressureDrop1 = displaySystemWaterSourceAbsorptionChiller.DesignPressureDrop1;
             result.Capacity2 = displaySystemWaterSourceAbsorptionChiller.Capacity2;
+            result.DesignPressureDrop1 = displaySystemWaterSourceAbsorptionChiller.DesignPressureDrop1;
             result.DesignPressureDrop2 = displaySystemWaterSourceAbsorptionChiller.DesignPressureDrop2;
+            result.DesignPressureDrop3 = displaySystemWaterSourceAbsorptionChiller.DesignPressureDrop3;
             result.AncillaryLoad?.Update(displaySystemWaterSourceAbsorptionChiller.AncillaryLoad);
             result.MinOutTempSource?.Update(displaySystemWaterSourceAbsorptionChiller.MinimalOutSourceTemperature);
 
