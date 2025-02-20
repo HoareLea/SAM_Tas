@@ -317,6 +317,8 @@ namespace SAM.Analytical.Tas.TPD
                     LossesInSizing = dynamic.LossesInSizing
                 };
 
+                systemWaterSourceIceStorageChiller.ScheduleName = ((dynamic)iceStorageChiller)?.GetSchedule()?.Name;
+
                 if (fuelSources != null && fuelSources.Count > 0)
                 {
                     systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
