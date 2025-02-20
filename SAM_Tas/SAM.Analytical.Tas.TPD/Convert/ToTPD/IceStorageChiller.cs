@@ -108,7 +108,7 @@ namespace SAM.Analytical.Tas.TPD
             fuelSource = plantRoom.FuelSource(displaySystemWaterSourceIceStorageChiller.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
             if (fuelSource != null)
             {
-                ((@dynamic)result).SetFuelSource(2, fuelSource);
+                ((@dynamic)result).SetFuelSource(3, fuelSource);
             }
 
             displaySystemWaterSourceIceStorageChiller.SetLocation(result as PlantComponent);

@@ -320,9 +320,9 @@ namespace SAM.Analytical.Tas.TPD
                 if (fuelSources != null && fuelSources.Count > 0)
                 {
                     systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.EnergySourceName, fuelSources[0]?.Name);
-                    if (fuelSources.Count > 1)
+                    if (fuelSources.Count > 2)
                     {
-                        systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[1]?.Name);
+                        systemWaterSourceIceStorageChiller.SetValue(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName, fuelSources[2]?.Name);
                     }
                 }
 
