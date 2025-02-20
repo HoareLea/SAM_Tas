@@ -37,6 +37,26 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemIceStorageChiller.ScheduleName);
 
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemIceStorageChiller.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemIceStorageChiller.GetValue<string>(Core.Systems.SystemObjectParameter.FanEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemIceStorageChiller.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(3, fuelSource);
+            }
+
             displaySystemIceStorageChiller.SetLocation(result as PlantComponent);
 
             return result;
@@ -76,6 +96,20 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.IsWaterSource = true;
 
             Modify.SetSchedule((PlantComponent)result, displaySystemWaterSourceIceStorageChiller.ScheduleName);
+
+            FuelSource fuelSource;
+
+            fuelSource = plantRoom.FuelSource(displaySystemWaterSourceIceStorageChiller.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
+            fuelSource = plantRoom.FuelSource(displaySystemWaterSourceIceStorageChiller.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(2, fuelSource);
+            }
 
             displaySystemWaterSourceIceStorageChiller.SetLocation(result as PlantComponent);
 
