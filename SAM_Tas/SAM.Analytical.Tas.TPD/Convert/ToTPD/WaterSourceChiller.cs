@@ -23,10 +23,10 @@ namespace SAM.Analytical.Tas.TPD
             result.Duty?.Update(displaySystemWaterSourceChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemWaterSourceChiller.Capacity1;
             result.DesignPressureDrop1 = displaySystemWaterSourceChiller.DesignPressureDrop1;
-            result.DesignDeltaT1 = displaySystemWaterSourceChiller.DesignPressureDrop1;
+            result.DesignDeltaT1 = displaySystemWaterSourceChiller.DesignTemperatureDifference1;
             result.Capacity2 = displaySystemWaterSourceChiller.Capacity2;
             result.DesignPressureDrop2 = displaySystemWaterSourceChiller.DesignPressureDrop2;
-            result.DesignDeltaT2 = displaySystemWaterSourceChiller.DesignPressureDrop2;
+            result.DesignDeltaT2 = displaySystemWaterSourceChiller.DesignTemperatureDifference2;
             result.MotorEfficiency?.Update(displaySystemWaterSourceChiller.MotorEfficiency);
             result.ExchCalcType = displaySystemWaterSourceChiller.ExchangerCalculationMethod.ToTPD();
             result.ExchangerEfficiency?.Update(displaySystemWaterSourceChiller.ExchangerEfficiency);
