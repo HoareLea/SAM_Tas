@@ -18,6 +18,8 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displayDomesticHotWaterSystemCollection.Name;
             @dynamic.Description = displayDomesticHotWaterSystemCollection.Description;
 
+            dynamic.DesignPressureDrop = displayDomesticHotWaterSystemCollection.DesignPressureDrop;
+
             result.LoadDistribution = displayDomesticHotWaterSystemCollection.LoadDistribution.ToTPD();
             result.MinimumReturnTemp = displayDomesticHotWaterSystemCollection.MinimumReturnTemperature;
             result.UseDistributionHeatLossProfile = displayDomesticHotWaterSystemCollection.Distribution == null ? (false).ToTPD() : displayDomesticHotWaterSystemCollection.Distribution.IsEfficiency.ToTPD();
@@ -25,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
 
             displayDomesticHotWaterSystemCollection.SetLocation(result as PlantComponent);
 
-            return result as DHWGroup;
+            return result;
         }
     }
 }

@@ -18,6 +18,8 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displayCoolingSystemCollection.Name;
             @dynamic.Description = displayCoolingSystemCollection.Description;
 
+            dynamic.DesignPressureDrop = displayCoolingSystemCollection.DesignPressureDrop;
+
             result.MaximumReturnTemp = displayCoolingSystemCollection.MaximumReturnTemperature;
             result.VariableFlowCapacity = displayCoolingSystemCollection.VariableFlowCapacity.ToTPD();
             //result.PeakDemand = displayCoolingSystemCollection.PeakDemand;

@@ -18,6 +18,8 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displayHeatingSystemCollection.Name;
             @dynamic.Description = displayHeatingSystemCollection.Description;
 
+            dynamic.DesignPressureDrop = displayHeatingSystemCollection.DesignPressureDrop;
+
             result.MinimumReturnTemp = displayHeatingSystemCollection.MinimumReturnTemperature;
             result.VariableFlowCapacity = displayHeatingSystemCollection.VariableFlowCapacity.ToTPD();
             //result.PeakDemand = displayHeatingSystemCollection.PeakDemand;
