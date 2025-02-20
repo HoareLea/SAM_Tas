@@ -44,7 +44,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            result.ScheduleName = ((dynamic)(boilerPlant ))?.GetSchedule()?.Name;
+            result.ScheduleName = ((dynamic)(boilerPlant))?.GetSchedule()?.Name;
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
