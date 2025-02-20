@@ -19,6 +19,8 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
 
             result.Description = dynamic.Description;
+
+            result.DefinedHeatLossRate = tank.DefinedHeatLoss > 0;
             result.InsulationConductivity = tank.InsConductivity;
             result.InsulationThickness = tank.InsThickness;
             result.Volume = tank.Volume;
@@ -33,7 +35,7 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop1 = tank.DesignPressureDrop1;
             result.DesignPressureDrop2 = tank.DesignPressureDrop2;
             result.DesignPressureDrop3 = tank.DesignPressureDrop3;
-            result.DefinedHeatLossRate = tank.DefinedHeatLoss;
+
             result.SetpointMode = tank.SetpointMethod.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
