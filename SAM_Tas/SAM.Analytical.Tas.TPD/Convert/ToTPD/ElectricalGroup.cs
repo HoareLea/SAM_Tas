@@ -17,6 +17,12 @@ namespace SAM.Analytical.Tas.TPD
             result.Description = displayElectricalSystemCollection.Description;
             result.ElectricalGroupType = displayElectricalSystemCollection.ElectricalSystemCollectionType.ToTPD();
 
+            FuelSource fuelSource = plantRoom.FuelSource(displayElectricalSystemCollection.GetValue<string>(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName));
+            if (fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
             displayElectricalSystemCollection.SetLocation(result as PlantComponent);
 
             return result as ElectricalGroup;
