@@ -61,13 +61,13 @@ namespace SAM.Analytical.Tas.TPD
                     fuelSource = plantRoom.FuelSource(systemMultiBoilerItem.GetValue<string>(Core.Systems.SystemObjectParameter.EnergySourceName));
                     if (fuelSource != null)
                     {
-                        ((@dynamic)result).SetFuelSource((i - 1) * 2, fuelSource);
+                        ((@dynamic)result).SetFuelSource(((index - 1) * 2) + 1, fuelSource);
                     }
 
                     fuelSource = plantRoom.FuelSource(systemMultiBoilerItem.GetValue<string>(Core.Systems.SystemObjectParameter.AncillaryEnergySourceName));
                     if (fuelSource != null)
                     {
-                        ((@dynamic)result).SetFuelSource(((i - 1) * 2) + 1, fuelSource);
+                        ((@dynamic)result).SetFuelSource(((index - 1) * 2) + 2, fuelSource);
                     }
                 }
             }
