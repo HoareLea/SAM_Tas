@@ -73,6 +73,7 @@ namespace SAM.Analytical.Tas.TPD
             ////result.MinOutTempSource?.Update(displaySystemAirSourceDirectAbsorptionChiller.MinOutTempSource);
             //result.LossesInSizing = displaySystemAirSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
 
+            result.Setpoint?.Update(displaySystemAirSourceDirectAbsorptionChiller.Setpoint);
             result.Efficiency?.Update(displaySystemAirSourceDirectAbsorptionChiller.Efficiency);
             result.CondenserFanLoad?.Update(displaySystemAirSourceDirectAbsorptionChiller.CondenserFanLoad);
             result.Duty?.Update(displaySystemAirSourceDirectAbsorptionChiller.Duty, plantRoom);
@@ -80,6 +81,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Capacity = displaySystemAirSourceDirectAbsorptionChiller.Capacity;
             result.DesignPressureDrop = displaySystemAirSourceDirectAbsorptionChiller.DesignPressureDrop;
             result.LossesInSizing = displaySystemAirSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
+
 
             Modify.SetSchedule((PlantComponent)result, displaySystemAirSourceDirectAbsorptionChiller.ScheduleName);
 
