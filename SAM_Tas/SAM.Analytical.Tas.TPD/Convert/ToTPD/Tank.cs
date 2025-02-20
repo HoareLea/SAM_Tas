@@ -18,7 +18,7 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemTank.Name;
             @dynamic.Description = displaySystemTank.Description;
 
-            result.DefinedHeatLoss = displaySystemTank.DefinedHeatLossRate ? 1 : 0;
+            result.DefinedHeatLoss = displaySystemTank.DefinedHeatLossRate;
             result.InsConductivity = displaySystemTank.InsulationConductivity;
             result.InsThickness = displaySystemTank.InsulationThickness;
             result.Volume = displaySystemTank.Volume;
@@ -34,6 +34,11 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop1 = displaySystemTank.DesignPressureDrop1;
             result.DesignPressureDrop2 = displaySystemTank.DesignPressureDrop2;
             result.DesignPressureDrop3 = displaySystemTank.DesignPressureDrop3;
+
+            if(displaySystemTank.UseDefinedHeatLoss)
+            {
+                result.Flags = (int)tpdTankFlags.tpdTankUseDefinedHeatLoss;
+            }
 
             displaySystemTank.SetLocation(result as PlantComponent);
 

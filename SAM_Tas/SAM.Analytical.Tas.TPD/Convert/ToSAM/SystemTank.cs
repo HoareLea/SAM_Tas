@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Description = dynamic.Description;
 
-            result.DefinedHeatLossRate = tank.DefinedHeatLoss > 0;
+            result.DefinedHeatLossRate = tank.DefinedHeatLoss;
             result.InsulationConductivity = tank.InsConductivity;
             result.InsulationThickness = tank.InsThickness;
             result.Volume = tank.Volume;
@@ -39,6 +39,9 @@ namespace SAM.Analytical.Tas.TPD
             result.SetpointMode = tank.SetpointMethod.ToSAM();
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
+
+            tpdTankFlags tpdTankFlags = (tpdTankFlags)tank.Flags;
+            result.UseDefinedHeatLoss = tpdTankFlags.HasFlag(tpdTankFlags.tpdTankUseDefinedHeatLoss);
 
             DisplaySystemTank displaySystemTank = Systems.Create.DisplayObject<DisplaySystemTank>(result, location, Systems.Query.DefaultDisplaySystemManager());
             if(displaySystemTank != null)
