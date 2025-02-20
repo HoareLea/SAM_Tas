@@ -5,6 +5,11 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Query
     {
+        public static List<FuelSource> FuelSources(this PlantRoom plantRoom)
+        {
+            return FuelSources(plantRoom?.GetEnergyCentre());
+        }
+
         public static List<FuelSource> FuelSources(this EnergyCentre energyCentre)
         {
             if (energyCentre is null)

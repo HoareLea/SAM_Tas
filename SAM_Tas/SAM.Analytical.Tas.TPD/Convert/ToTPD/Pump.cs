@@ -24,6 +24,12 @@ namespace SAM.Analytical.Tas.TPD
             result.Capacity = displaySystemPump.Capacity;
             result.PartLoad?.Update(displaySystemPump.PartLoad);
 
+            FuelSource fuelSource = plantRoom.FuelSource(displaySystemPump.GetValue<string>(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName));
+            if(fuelSource != null)
+            {
+                ((@dynamic)result).SetFuelSource(1, fuelSource);
+            }
+
             Modify.SetSchedule((PlantComponent)result, displaySystemPump.ScheduleName);
 
             displaySystemPump.SetLocation(result as PlantComponent);

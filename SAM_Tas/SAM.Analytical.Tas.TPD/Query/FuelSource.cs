@@ -25,5 +25,10 @@
 
             return null;
         }
+
+        public static global::TPD.FuelSource FuelSource(this global::TPD.PlantRoom plantRoom, string name)
+        {
+            return FuelSource(plantRoom?.GetEnergyCentre(), name);
+        }
     }
 }
