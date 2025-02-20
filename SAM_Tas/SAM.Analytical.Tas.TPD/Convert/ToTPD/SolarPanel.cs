@@ -24,8 +24,8 @@ namespace SAM.Analytical.Tas.TPD
             result.Multiplicity = System.Convert.ToDouble(displaySystemSolarPanel.Multiplicity);
             result.Capacity = displaySystemSolarPanel.Capacity;
             result.DesignPressureDrop = displaySystemSolarPanel.DesignPressureDrop;
-            result.NoNegativeLoad = displaySystemSolarPanel.NoNegativeLoad.ToTPD();
-            result.UseZoneSurface = displaySystemSolarPanel.UseZoneSurface.ToTPD();
+            @dynamic.NoNegativeLoad = displaySystemSolarPanel.NoNegativeLoad;
+            @dynamic.UseZoneSurface = displaySystemSolarPanel.UseZoneSurface;
             result.Area = displaySystemSolarPanel.SweptArea;
             result.Inclination?.Update(displaySystemSolarPanel.Inclination);
             result.Orientation?.Update(displaySystemSolarPanel.Orientation);
