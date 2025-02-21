@@ -144,26 +144,50 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static ProfileModifier ToSAM(IProfileDataModifierHourly profileDataModifierHourly)
+        public static DailyModifier ToSAM(IProfileDataModifierHourly profileDataModifierHourly)
         {
             if (profileDataModifierHourly == null)
             {
                 return null;
             }
 
-            ProfileModifier result = new ProfileModifier(profileDataModifierHourly.Multiplier.ArithmeticOperator().Value, null);
+            Dictionary<string, double[]> values = new Dictionary<string, double[]>();
+
+            int index = 1;
+            ProfileDataModifierHourlyDay profileDataModifierHourlyDay = profileDataModifierHourly.GetDay(index);
+            while(profileDataModifierHourlyDay != null)
+            {
+                double[] values_Day = new double[24];
+                for (int i = 1; i <= 24; i++)
+                {
+                    values_Day[i - 1] = profileDataModifierHourlyDay.GetValue(i);
+                }
+
+                values[profileDataModifierHourlyDay.GetDayType().Name] = values_Day; 
+
+                index++;
+                profileDataModifierHourlyDay = profileDataModifierHourly.GetDay(index);
+            }
+
+            DailyModifier result = new DailyModifier(profileDataModifierHourly.Multiplier.ArithmeticOperator().Value, values);
 
             return result;
         }
 
-        public static ProfileModifier ToSAM(IProfileDataModifierYearly profileDataModifierYearly)
+        public static IndexedDoublesModifier ToSAM(IProfileDataModifierYearly profileDataModifierYearly)
         {
             if (profileDataModifierYearly == null)
             {
                 return null;
             }
 
-            ProfileModifier result = new ProfileModifier(profileDataModifierYearly.Multiplier.ArithmeticOperator().Value, null);
+            List<double> values = new List<double>();
+            for(int i = 1; i <= 8760; i++)
+            {
+                values.Add(profileDataModifierYearly.GetYearlyValue(i));
+            }
+
+            IndexedDoublesModifier result = new IndexedDoublesModifier(profileDataModifierYearly.Multiplier.ArithmeticOperator().Value, new IndexedDoubles(values));
 
             return result;
         }

@@ -63,9 +63,14 @@ namespace SAM.Analytical.Tas.TPD
                 return profileData.AddModifier((TableModifier)simpleModifier);
             }
 
-            if (simpleModifier is ProfileModifier)
+            if (simpleModifier is DailyModifier)
             {
-                return profileData.AddModifier((ProfileModifier)simpleModifier);
+                return profileData.AddModifier((DailyModifier)simpleModifier);
+            }
+
+            if (simpleModifier is IndexedDoublesModifier)
+            {
+                return profileData.AddModifier((IndexedDoublesModifier)simpleModifier);
             }
 
             if (simpleModifier is LuaModifier)
@@ -201,15 +206,56 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
-        public static bool AddModifier(this ProfileData profileData, ProfileModifier profileModifier)
+        public static bool AddModifier(this ProfileData profileData, DailyModifier dailyModifier)
         {
-            if (profileData == null || profileModifier == null)
+            if (profileData == null || dailyModifier == null)
             {
                 return false;
             }
 
             ProfileDataModifierHourly profileDataModifierHourly = profileData.AddModifierHourly();
-            profileDataModifierHourly.Multiplier = profileModifier.ArithmeticOperator.ToTPD();
+            profileDataModifierHourly.Multiplier = dailyModifier.ArithmeticOperator.ToTPD();
+
+            int index = 1;
+
+            ProfileDataModifierHourlyDay profileDataModifierHourlyDay = profileDataModifierHourly.GetDay(index);
+            while (profileDataModifierHourlyDay != null)
+            {
+                string name = profileDataModifierHourlyDay.GetDayType().Name;
+
+                for (int i = 0; i < 24; i++)
+                {
+                    double value = dailyModifier.GetValue(name, i);
+                    if (!double.IsNaN(value))
+                    {
+                        profileDataModifierHourlyDay.SetValue(i + 1, value);
+                    }
+                }
+
+                index++;
+                profileDataModifierHourlyDay = profileDataModifierHourly.GetDay(index);
+            }
+
+            return true;
+        }
+
+        public static bool AddModifier(this ProfileData profileData, IndexedDoublesModifier indexedDoublesModifier)
+        {
+            if (profileData == null || indexedDoublesModifier == null)
+            {
+                return false;
+            }
+
+            ProfileDataModifierYearly profileDataModifierYearly = profileData.AddModifierYearly();
+            profileDataModifierYearly.Multiplier = indexedDoublesModifier.ArithmeticOperator.ToTPD();
+
+            for(int i = 0; i < 8760; i++)
+            {
+                if(indexedDoublesModifier.Values.TryGetValue(i, out double value))
+                {
+                    profileDataModifierYearly.SetYearlyValue(i + 1, value);
+                }
+            }
 
             return true;
         }
