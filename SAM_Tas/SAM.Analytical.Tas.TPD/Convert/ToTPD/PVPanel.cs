@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas.TPD
             result.MinIrradiance = displaySystemPhotovoltaicPanel.MinIrradiance;
             result.NOCT = displaySystemPhotovoltaicPanel.NOCT;
             result.PowerTempCoeff = displaySystemPhotovoltaicPanel.PowerTemperatureCoefficient;
-            result.UseSTC = displaySystemPhotovoltaicPanel.UseSTC.ToTPD();
+            @dynamic.UseSTC = displaySystemPhotovoltaicPanel.UseSTC;
             result.OutputAtSTC = displaySystemPhotovoltaicPanel.OutputAtSTC;
             result.DeratingFactor = displaySystemPhotovoltaicPanel.DeratingFactor;
 
