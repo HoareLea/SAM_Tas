@@ -20,7 +20,9 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemMultiChiller.Name;
             @dynamic.Description = displaySystemMultiChiller.Description;
 
-            result.Setpoint?.Update(displaySystemMultiChiller.Setpoint);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemMultiChiller.Setpoint, energyCentre);
             result.Duty?.Update(displaySystemMultiChiller.Duty, plantRoom);
             result.DesignDeltaT = displaySystemMultiChiller.DesignTemperatureDifference;
             result.Capacity = displaySystemMultiChiller.Capacity;
@@ -43,10 +45,10 @@ namespace SAM.Analytical.Tas.TPD
                     ProfileData profileData;
 
                     profileData = result.GetChillerEfficiency(index);
-                    profileData.Update(systemMultiChillerItem.Efficiency);
+                    profileData.Update(systemMultiChillerItem.Efficiency, energyCentre);
 
                     profileData = result.GetChillerCondenserFanLoad(index);
-                    profileData.Update(systemMultiChillerItem.CondenserFanLoad);
+                    profileData.Update(systemMultiChillerItem.CondenserFanLoad, energyCentre);
 
                     FuelSource fuelSource;
 

@@ -18,12 +18,14 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemAirSourceHeatPump.Name;
             @dynamic.Description = displaySystemAirSourceHeatPump.Description;
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             result.Type = displaySystemAirSourceHeatPump.HeatPumpType.ToTPD();
             result.CoolingCapacity?.Update(displaySystemAirSourceHeatPump.CoolingCapacity, plantRoom);
-            result.CoolingPower?.Update(displaySystemAirSourceHeatPump.CoolingPower);
-            result.HeatingCapacity?.Update(displaySystemAirSourceHeatPump.HeatingCapacity);
-            result.HeatingPower?.Update(displaySystemAirSourceHeatPump.HeatingPower);
-            result.CondenserFanLoad?.Update(displaySystemAirSourceHeatPump.CondenserFanLoad);
+            result.CoolingPower?.Update(displaySystemAirSourceHeatPump.CoolingPower, energyCentre);
+            result.HeatingCapacity?.Update(displaySystemAirSourceHeatPump.HeatingCapacity, energyCentre);
+            result.HeatingPower?.Update(displaySystemAirSourceHeatPump.HeatingPower, energyCentre);
+            result.CondenserFanLoad?.Update(displaySystemAirSourceHeatPump.CondenserFanLoad, energyCentre);
             result.HeatCoolDutyRatio = displaySystemAirSourceHeatPump.HeatingCoolingDutyRatio;
             result.HeatCapPowRatio = displaySystemAirSourceHeatPump.HeatingCapacityPowerRatio;
             result.CoolCapPowRatio = displaySystemAirSourceHeatPump.CoolingCapacityPowerRatio;
@@ -34,7 +36,7 @@ namespace SAM.Analytical.Tas.TPD
             result.PowHeatPort = displaySystemAirSourceHeatPump.PortHeatingPower;
             result.PowCoolPort = displaySystemAirSourceHeatPump.PortCoolingPower;
             result.WaterPipeLength = displaySystemAirSourceHeatPump.WaterPipeLength;
-            result.AncillaryLoad?.Update(displaySystemAirSourceHeatPump.AncillaryLoad);
+            result.AncillaryLoad?.Update(displaySystemAirSourceHeatPump.AncillaryLoad, energyCentre);
             result.HeatSizeFraction = displaySystemAirSourceHeatPump.HeatSizeFraction;
 
             FuelSource fuelSource;

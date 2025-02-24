@@ -18,14 +18,16 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemPhotovoltaicPanel.Name;
             @dynamic.Description = displaySystemPhotovoltaicPanel.Description;
 
-            result.PanelEfficiency?.Update(displaySystemPhotovoltaicPanel.PanelEfficiency);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.PanelEfficiency?.Update(displaySystemPhotovoltaicPanel.PanelEfficiency, energyCentre);
             result.InverterSize?.Update(displaySystemPhotovoltaicPanel.InverterSize, plantRoom);
             result.Multiplicity = System.Convert.ToDouble(displaySystemPhotovoltaicPanel.Multiplicity);
-            result.InverterEfficiency?.Update(displaySystemPhotovoltaicPanel.InverterEfficiency);
+            result.InverterEfficiency?.Update(displaySystemPhotovoltaicPanel.InverterEfficiency, energyCentre);
             @dynamic.UseZoneSurface = displaySystemPhotovoltaicPanel.UseZoneSurface;
             result.Area = displaySystemPhotovoltaicPanel.Area;
-            result.Inclination?.Update(displaySystemPhotovoltaicPanel.Inclination);
-            result.Orientation?.Update(displaySystemPhotovoltaicPanel.Orientation);
+            result.Inclination?.Update(displaySystemPhotovoltaicPanel.Inclination, energyCentre);
+            result.Orientation?.Update(displaySystemPhotovoltaicPanel.Orientation, energyCentre);
             result.Reflectance = displaySystemPhotovoltaicPanel.Reflectance;
             result.MinIrradiance = displaySystemPhotovoltaicPanel.MinIrradiance;
             result.NOCT = displaySystemPhotovoltaicPanel.NOCT;

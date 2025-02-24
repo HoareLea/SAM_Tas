@@ -20,11 +20,13 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic.DesignPressureDrop = displayCoolingSystemCollection.DesignPressureDrop;
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             result.MaximumReturnTemp = displayCoolingSystemCollection.MaximumReturnTemperature;
             result.VariableFlowCapacity = displayCoolingSystemCollection.VariableFlowCapacity.ToTPD();
             //result.PeakDemand = displayCoolingSystemCollection.PeakDemand;
             result.SizeFraction = displayCoolingSystemCollection.SizeFraction;
-            result.DistributionHeatGainProfile?.Update(displayCoolingSystemCollection.Distribution);
+            result.DistributionHeatGainProfile?.Update(displayCoolingSystemCollection.Distribution, energyCentre);
             result.UseDistributionHeatGainProfile = displayCoolingSystemCollection.Distribution == null ? (false).ToTPD() : displayCoolingSystemCollection.Distribution.IsEfficiency.ToTPD();
 
             displayCoolingSystemCollection.SetLocation(result as PlantComponent);

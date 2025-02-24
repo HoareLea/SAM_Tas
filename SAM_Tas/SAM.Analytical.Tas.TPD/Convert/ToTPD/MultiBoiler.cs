@@ -20,7 +20,9 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemMultiBoiler.Name;
             @dynamic.Description = displaySystemMultiBoiler.Description;
 
-            result.Setpoint?.Update(displaySystemMultiBoiler.Setpoint);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemMultiBoiler.Setpoint, energyCentre);
             result.Duty.Update(displaySystemMultiBoiler.Duty, plantRoom);
             result.DesignDeltaT = displaySystemMultiBoiler.DesignTemperatureDifference;
             result.Capacity = displaySystemMultiBoiler.Capacity;
@@ -51,10 +53,10 @@ namespace SAM.Analytical.Tas.TPD
                     ProfileData profileData;
 
                     profileData = result.GetBoilerEfficiency(index);
-                    profileData.Update(systemMultiBoilerItem.Efficiency);
+                    profileData.Update(systemMultiBoilerItem.Efficiency, energyCentre);
 
                     profileData = result.GetBoilerAncillaryLoad(index);
-                    profileData.Update(systemMultiBoilerItem.AncillaryLoad);
+                    profileData.Update(systemMultiBoilerItem.AncillaryLoad, energyCentre);
 
                     FuelSource fuelSource;
 

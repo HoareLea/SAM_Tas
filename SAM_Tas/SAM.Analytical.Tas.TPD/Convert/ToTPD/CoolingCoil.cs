@@ -18,10 +18,14 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemCoolingCoil.Name;
             @dynamic.Description = displaySystemCoolingCoil.Description;
 
-            result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint);
-            result.BypassFactor?.Update(displaySystemCoolingCoil.BypassFactor);
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom?.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint, energyCentre);
+            result.BypassFactor?.Update(displaySystemCoolingCoil.BypassFactor, energyCentre);
             result.Duty?.Update(displaySystemCoolingCoil.Duty, system);
-            result.MinimumOffcoil?.Update(displaySystemCoolingCoil.MinimumOffcoil);
+            result.MinimumOffcoil?.Update(displaySystemCoolingCoil.MinimumOffcoil, energyCentre);
 
             //result.Setpoint?.Update(displaySystemCoolingCoil.Setpoint);
 
@@ -33,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
             CollectionLink collectionLink = displaySystemCoolingCoil.GetValue<CollectionLink>(SystemCoolingCoilParameter.CoolingCollection);
             if(collectionLink != null)
             {
-                CoolingGroup coolingGroup = system.GetPlantRoom()?.CoolingGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                CoolingGroup coolingGroup = plantRoom?.CoolingGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
                 if(coolingGroup != null)
                 {
                     @dynamic.SetCoolingGroup(coolingGroup);

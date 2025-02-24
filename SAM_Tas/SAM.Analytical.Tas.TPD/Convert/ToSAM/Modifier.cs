@@ -1,4 +1,5 @@
-﻿using SAM.Core;
+﻿using SAM.Analytical.Systems;
+using SAM.Core;
 using System.Collections.Generic;
 using System.Linq;
 using TPD;
@@ -72,6 +73,11 @@ namespace SAM.Analytical.Tas.TPD
                 return ToSAM((IProfileDataModifierLua)profileDataModifier);
             }
 
+            if (profileDataModifier is IProfileDataModifierSchedule)
+            {
+                return ToSAM((IProfileDataModifierSchedule)profileDataModifier);
+            }
+
             return null;
         }
 
@@ -83,6 +89,18 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             PolynomialModifier result = new PolynomialModifier(profileDataModifierCurve.Multiplier.ArithmeticOperator().Value, null);
+
+            return result;
+        }
+
+        public static ScheduleModifier ToSAM(IProfileDataModifierSchedule profileDataModifierSchedule)
+        {
+            if (profileDataModifierSchedule == null)
+            {
+                return null;
+            }
+
+            ScheduleModifier result = new ScheduleModifier(profileDataModifierSchedule.Multiplier.ArithmeticOperator().Value, profileDataModifierSchedule.Schedule.ToSAM(), profileDataModifierSchedule.Setback);
 
             return result;
         }

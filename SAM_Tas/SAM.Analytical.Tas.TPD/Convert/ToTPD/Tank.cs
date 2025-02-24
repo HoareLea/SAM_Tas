@@ -18,6 +18,8 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemTank.Name;
             @dynamic.Description = displaySystemTank.Description;
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             result.DefinedHeatLoss = displaySystemTank.DefinedHeatLossRate;
             result.InsConductivity = displaySystemTank.InsulationConductivity;
             result.InsThickness = displaySystemTank.InsulationThickness;
@@ -25,9 +27,9 @@ namespace SAM.Analytical.Tas.TPD
             result.HeatExEff1 = displaySystemTank.HeatExchangeEfficiency1;
             result.HeatExEff2 = displaySystemTank.HeatExchangeEfficiency2;
             result.Height = displaySystemTank.Height;
-            result.AmbTemp?.Update(displaySystemTank.AmbientTemperature);
+            result.AmbTemp?.Update(displaySystemTank.AmbientTemperature, energyCentre);
             result.SetpointMethod = displaySystemTank.SetpointMode.ToTPD();
-            result.Setpoint.Update(displaySystemTank.Setpoint);
+            result.Setpoint.Update(displaySystemTank.Setpoint, energyCentre);
             result.Capacity1 = displaySystemTank.Capacity1;
             result.Capacity2 = displaySystemTank.Capacity2;
             result.Capacity3 = displaySystemTank.Capacity3;

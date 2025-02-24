@@ -18,9 +18,11 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemSurfaceWaterExchanger.Name;
             @dynamic.Description = displaySystemSurfaceWaterExchanger.Description;
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             result.Capacity = displaySystemSurfaceWaterExchanger.Capacity;
             result.DesignPressureDrop = displaySystemSurfaceWaterExchanger.DesignPressureDrop;
-            result.Efficiency?.Update(displaySystemSurfaceWaterExchanger.Efficiency);
+            result.Efficiency?.Update(displaySystemSurfaceWaterExchanger.Efficiency, energyCentre);
             result.PondVolume = displaySystemSurfaceWaterExchanger.PondVolume;
             result.PondSurfaceArea = displaySystemSurfaceWaterExchanger.PondSurfaceArea;
             result.PondPerimeter = displaySystemSurfaceWaterExchanger.PondPerimeter;

@@ -73,7 +73,11 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            result.Load?.Update(displaySystemLoadComponent.Load);
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Load?.Update(displaySystemLoadComponent.Load, energyCentre);
 
             displaySystemLoadComponent.SetLocation(result as SystemComponent);
 

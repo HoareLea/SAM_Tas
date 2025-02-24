@@ -1,4 +1,5 @@
-﻿using SAM.Core;
+﻿using SAM.Analytical.Systems;
+using SAM.Core;
 using System.Collections.Generic;
 using System.Linq;
 using TPD;
@@ -7,7 +8,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Modify
     {
-        public static bool AddModifier(this ProfileData profileData, IModifier modifier)
+        public static bool AddModifier(this ProfileData profileData, IModifier modifier, EnergyCentre energyCentre)
         {
             if(profileData == null || modifier == null)
             {
@@ -18,7 +19,7 @@ namespace SAM.Analytical.Tas.TPD
 
             if (modifier is ISimpleModifier)
             {
-                return AddModifier(profileData, (ISimpleModifier)modifier);
+                return AddModifier(profileData, (ISimpleModifier)modifier, energyCentre);
             }
             else if (modifier is ComplexModifier)
             {
@@ -29,7 +30,7 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     foreach(IModifier modifier_Temp in modifiers)
                     {
-                        bool added = AddModifier(profileData, modifier_Temp);
+                        bool added = AddModifier(profileData, modifier_Temp, energyCentre);
                         if(added)
                         {
                             result = true;
@@ -46,7 +47,7 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static bool AddModifier(this ProfileData profileData, ISimpleModifier simpleModifier)
+        public static bool AddModifier(this ProfileData profileData, ISimpleModifier simpleModifier, EnergyCentre energyCentre)
         {
             if(profileData == null || simpleModifier == null)
             {
@@ -55,33 +56,38 @@ namespace SAM.Analytical.Tas.TPD
 
             if (simpleModifier is PolynomialModifier)
             {
-                return profileData.AddModifier((PolynomialModifier)simpleModifier);
+                return profileData.AddModifier((PolynomialModifier)simpleModifier, energyCentre);
             }
 
             if (simpleModifier is TableModifier)
             {
-                return profileData.AddModifier((TableModifier)simpleModifier);
+                return profileData.AddModifier((TableModifier)simpleModifier, energyCentre);
             }
 
             if (simpleModifier is DailyModifier)
             {
-                return profileData.AddModifier((DailyModifier)simpleModifier);
+                return profileData.AddModifier((DailyModifier)simpleModifier, energyCentre);
             }
 
             if (simpleModifier is IndexedDoublesModifier)
             {
-                return profileData.AddModifier((IndexedDoublesModifier)simpleModifier);
+                return profileData.AddModifier((IndexedDoublesModifier)simpleModifier, energyCentre);
             }
 
             if (simpleModifier is LuaModifier)
             {
-                return profileData.AddModifier((LuaModifier)simpleModifier);
+                return profileData.AddModifier((LuaModifier)simpleModifier, energyCentre);
+            }
+
+            if (simpleModifier is ScheduleModifier)
+            {
+                return profileData.AddModifier((ScheduleModifier)simpleModifier, energyCentre);
             }
 
             return false;
         }
 
-        public static bool AddModifier(this ProfileData profileData, PolynomialModifier polynomialModifier)
+        public static bool AddModifier(this ProfileData profileData, PolynomialModifier polynomialModifier, EnergyCentre energyCentre)
         {
             if (profileData == null || polynomialModifier == null)
             {
@@ -94,7 +100,7 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
-        public static bool AddModifier(this ProfileData profileData, TableModifier tableModifier)
+        public static bool AddModifier(this ProfileData profileData, TableModifier tableModifier, EnergyCentre energyCentre)
         {
             if (profileData == null || tableModifier == null)
             {
@@ -206,7 +212,7 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
-        public static bool AddModifier(this ProfileData profileData, DailyModifier dailyModifier)
+        public static bool AddModifier(this ProfileData profileData, DailyModifier dailyModifier, EnergyCentre energyCentre)
         {
             if (profileData == null || dailyModifier == null)
             {
@@ -248,7 +254,7 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
-        public static bool AddModifier(this ProfileData profileData, IndexedDoublesModifier indexedDoublesModifier)
+        public static bool AddModifier(this ProfileData profileData, IndexedDoublesModifier indexedDoublesModifier, EnergyCentre energyCentre)
         {
             if (profileData == null || indexedDoublesModifier == null)
             {
@@ -269,7 +275,7 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
-        public static bool AddModifier(this ProfileData profileData, LuaModifier luaModifier)
+        public static bool AddModifier(this ProfileData profileData, LuaModifier luaModifier, EnergyCentre energyCentre)
         {
             if (profileData == null || luaModifier == null)
             {
@@ -278,6 +284,23 @@ namespace SAM.Analytical.Tas.TPD
 
             ProfileDataModifierLua profileDataModifierLua = profileData.AddModifierLua();
             profileDataModifierLua.Multiplier = luaModifier.ArithmeticOperator.ToTPD();
+
+            return true;
+        }
+
+        public static bool AddModifier(this ProfileData profileData, ScheduleModifier scheduleModifier, EnergyCentre energyCentre)
+        {
+            if (profileData == null || scheduleModifier == null)
+            {
+                return false;
+            }
+
+            ProfileDataModifierSchedule profileDataModifierSchedule = profileData.AddModifierSchedule();
+            profileDataModifierSchedule.Multiplier = scheduleModifier.ArithmeticOperator.ToTPD();
+
+            profileDataModifierSchedule.Setback = scheduleModifier.Setback;
+
+            profileDataModifierSchedule.Schedule = energyCentre.PlantSchedule(scheduleModifier.Schedule?.Name);
 
             return true;
         }

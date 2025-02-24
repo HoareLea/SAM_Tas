@@ -18,9 +18,11 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemCHP.Name;
             @dynamic.Description = displaySystemCHP.Description;
 
-            result.Setpoint?.Update(displaySystemCHP.Setpoint);
-            result.Efficiency?.Update(displaySystemCHP.Efficiency);
-            result.HeatPowerRatio?.Update(displaySystemCHP.HeatPowerRatio);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemCHP.Setpoint, energyCentre);
+            result.Efficiency?.Update(displaySystemCHP.Efficiency, energyCentre);
+            result.HeatPowerRatio?.Update(displaySystemCHP.HeatPowerRatio, energyCentre);
             result.Duty?.Update(displaySystemCHP.Duty, plantRoom);
             result.DesignDeltaT = displaySystemCHP.DesignTemperatureDifference;
             result.Capacity = displaySystemCHP.Capacity;

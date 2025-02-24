@@ -18,6 +18,8 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemPipeLossComponent.Name;
             @dynamic.Description = displaySystemPipeLossComponent.Description;
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             result.DesignPressureDrop = displaySystemPipeLossComponent.DesignPressureDrop;
             result.Capacity = displaySystemPipeLossComponent.Capacity;
             result.length = displaySystemPipeLossComponent.Length;
@@ -26,7 +28,7 @@ namespace SAM.Analytical.Tas.TPD
             result.PipeConductivity = displaySystemPipeLossComponent.PipeConductivity;
             result.InsThickness = displaySystemPipeLossComponent.InsulationThickness;
             result.InsConductivity = displaySystemPipeLossComponent.InsulationConductivity;
-            result.AmbTemp?.Update(displaySystemPipeLossComponent.AmbientTemperature);
+            result.AmbTemp?.Update(displaySystemPipeLossComponent.AmbientTemperature, energyCentre);
             result.IsUnderground = displaySystemPipeLossComponent.IsUnderground.ToTPD();
             result.GrConductivity = displaySystemPipeLossComponent.GroundConductivity;
             result.GrHeatCapacity = displaySystemPipeLossComponent.GroundHeatCapacity;

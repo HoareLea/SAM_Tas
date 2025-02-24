@@ -14,11 +14,13 @@ namespace SAM.Analytical.Tas.TPD
 
             RefrigerantGroup result = plantRoom.AddRefrigerantGroup();
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             dynamic @dynamic = result;
             @dynamic.Name = displayRefrigerantSystemCollection.Name;
             @dynamic.Description = displayRefrigerantSystemCollection.Description;
 
-            result.PipeLength?.Update(displayRefrigerantSystemCollection.PipeLength);
+            result.PipeLength?.Update(displayRefrigerantSystemCollection.PipeLength, energyCentre);
 
             displayRefrigerantSystemCollection.SetLocation(result as PlantComponent);
 

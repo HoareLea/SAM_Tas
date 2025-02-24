@@ -18,12 +18,14 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemWindTurbine.Name;
             @dynamic.Description = displaySystemWindTurbine.Description;
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             result.HubHeight = displaySystemWindTurbine.HubHeight;
             result.Area = displaySystemWindTurbine.Area;
             result.MinSpeed = displaySystemWindTurbine.MinSpeed;
             result.CutOffSpeed = displaySystemWindTurbine.CutOffSpeed;
             result.Multiplicity = displaySystemWindTurbine.Multiplicity;
-            result.Efficiency?.Update(displaySystemWindTurbine.Efficiency);
+            result.Efficiency?.Update(displaySystemWindTurbine.Efficiency, energyCentre);
 
             FuelSource fuelSource = plantRoom.FuelSource(displaySystemWindTurbine.GetValue<string>(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName));
             if (fuelSource != null)

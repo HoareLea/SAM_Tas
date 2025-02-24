@@ -18,6 +18,8 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemSolarPanel.Name;
             @dynamic.Description = displaySystemSolarPanel.Description;
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             result.EtaZero = displaySystemSolarPanel.EtaZero;
             result.AlphaOne = displaySystemSolarPanel.AlphaOne;
             result.AlphaTwo = displaySystemSolarPanel.AlphaTwo;
@@ -27,8 +29,8 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.NoNegativeLoad = displaySystemSolarPanel.NoNegativeLoad;
             @dynamic.UseZoneSurface = displaySystemSolarPanel.UseZoneSurface;
             result.Area = displaySystemSolarPanel.SweptArea;
-            result.Inclination?.Update(displaySystemSolarPanel.Inclination);
-            result.Orientation?.Update(displaySystemSolarPanel.Orientation);
+            result.Inclination?.Update(displaySystemSolarPanel.Inclination, energyCentre);
+            result.Orientation?.Update(displaySystemSolarPanel.Orientation, energyCentre);
             result.Reflectance = displaySystemSolarPanel.Reflectance;
             result.DesignFlowPerM2 = displaySystemSolarPanel.DesignFlowPerM2;
 

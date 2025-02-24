@@ -18,13 +18,15 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemBoiler.Name;
             @dynamic.Description = displaySystemBoiler.Description;
 
-            result.Setpoint?.Update(displaySystemBoiler.Setpoint);
-            result.Efficiency?.Update(displaySystemBoiler.Efficiency);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemBoiler.Setpoint, energyCentre);
+            result.Efficiency?.Update(displaySystemBoiler.Efficiency, energyCentre);
             result.Duty?.Update(displaySystemBoiler.Duty, plantRoom);
             result.DesignDeltaT = displaySystemBoiler.DesignTemperatureDifference;
             result.Capacity = displaySystemBoiler.Capacity;
             result.DesignPressureDrop = displaySystemBoiler.DesignPressureDrop;
-            result.AncillaryLoad?.Update(displaySystemBoiler.AncillaryLoad);
+            result.AncillaryLoad?.Update(displaySystemBoiler.AncillaryLoad, energyCentre);
             result.LossesInSizing = displaySystemBoiler.LossesInSizing.ToTPD();
 
             if (displaySystemBoiler.LossesInSizing || displaySystemBoiler.IsDomesticHotWater)

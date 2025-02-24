@@ -18,10 +18,14 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemSprayHumidifier.Name;
             @dynamic.Description = displaySystemSprayHumidifier.Description;
 
-            result.Setpoint?.Update(displaySystemSprayHumidifier.Setpoint);
-            result.Effectiveness?.Update(displaySystemSprayHumidifier.Effectiveness);
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemSprayHumidifier.Setpoint, energyCentre);
+            result.Effectiveness?.Update(displaySystemSprayHumidifier.Effectiveness, energyCentre);
             result.WaterFlowCapacity?.Update(displaySystemSprayHumidifier.WaterFlowCapacity, system);
-            result.ElectricalLoad?.Update(displaySystemSprayHumidifier.ElectricalLoad);
+            result.ElectricalLoad?.Update(displaySystemSprayHumidifier.ElectricalLoad, energyCentre);
 
             result.Flags = 0;
             //result.ExchLatType = tpdExchangerLatentType.tpdExchangerLatentHumRat;
@@ -58,10 +62,14 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemDirectEvaporativeCooler.Name;
             @dynamic.Description = displaySystemDirectEvaporativeCooler.Description;
 
-            result.Setpoint?.Update(displaySystemDirectEvaporativeCooler.Setpoint);
-            result.Effectiveness?.Update(displaySystemDirectEvaporativeCooler.Effectiveness);
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom?.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemDirectEvaporativeCooler.Setpoint, energyCentre);
+            result.Effectiveness?.Update(displaySystemDirectEvaporativeCooler.Effectiveness, energyCentre);
             result.WaterFlowCapacity?.Update(displaySystemDirectEvaporativeCooler.WaterFlowCapacity, system);
-            result.ElectricalLoad?.Update(displaySystemDirectEvaporativeCooler.ElectricalLoad);
+            result.ElectricalLoad?.Update(displaySystemDirectEvaporativeCooler.ElectricalLoad, energyCentre);
             result.TankVolume?.Update(displaySystemDirectEvaporativeCooler.TankVolume, system);
             result.TankHours = System.Convert.ToInt32(displaySystemDirectEvaporativeCooler.HoursBeforePurgingTank);
 
@@ -73,7 +81,7 @@ namespace SAM.Analytical.Tas.TPD
             CollectionLink collectionLink = displaySystemDirectEvaporativeCooler.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
             if (collectionLink != null)
             {
-                ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                ElectricalGroup electricalGroup = plantRoom?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
                 if (electricalGroup != null)
                 {
                     @dynamic.SetElectricalGroup1(electricalGroup);

@@ -18,7 +18,11 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.name = displaySystemFan.Name;
             @dynamic.Description = displaySystemFan.Description;
 
-            result.OverallEfficiency?.Update(displaySystemFan.OverallEfficiency);
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.OverallEfficiency?.Update(displaySystemFan.OverallEfficiency, energyCentre);
             result.HeatGainFactor = displaySystemFan.HeatGainFactor;
             result.Pressure = displaySystemFan.Pressure;
             result.DesignFlowRate?.Update(displaySystemFan.DesignFlowRate);
@@ -28,7 +32,7 @@ namespace SAM.Analytical.Tas.TPD
             result.MinimumFlowFraction = displaySystemFan.MinimumFlowFraction;
             result.Capacity = displaySystemFan.Capacity;
             result.ControlType = displaySystemFan.FanControlType.ToTPD();
-            result.PartLoad?.Update(displaySystemFan.PartLoad);
+            result.PartLoad?.Update(displaySystemFan.PartLoad, energyCentre);
 
             Modify.SetSchedule((SystemComponent)result, displaySystemFan.ScheduleName);
 

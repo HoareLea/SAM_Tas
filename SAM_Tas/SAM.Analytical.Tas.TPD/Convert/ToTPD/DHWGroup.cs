@@ -20,10 +20,12 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic.DesignPressureDrop = displayDomesticHotWaterSystemCollection.DesignPressureDrop;
 
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             result.LoadDistribution = displayDomesticHotWaterSystemCollection.LoadDistribution.ToTPD();
             result.MinimumReturnTemp = displayDomesticHotWaterSystemCollection.MinimumReturnTemperature;
             result.UseDistributionHeatLossProfile = displayDomesticHotWaterSystemCollection.Distribution == null ? (false).ToTPD() : displayDomesticHotWaterSystemCollection.Distribution.IsEfficiency.ToTPD();
-            result.DistributionHeatLossProfile.Update(displayDomesticHotWaterSystemCollection.Distribution);
+            result.DistributionHeatLossProfile.Update(displayDomesticHotWaterSystemCollection.Distribution, energyCentre);
 
             displayDomesticHotWaterSystemCollection.SetLocation(result as PlantComponent);
 

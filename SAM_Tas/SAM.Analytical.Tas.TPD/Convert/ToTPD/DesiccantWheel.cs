@@ -18,14 +18,18 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemDesiccantWheel.Name;
             @dynamic.Description = displaySystemDesiccantWheel.Description;
 
-            result.SensibleEfficiency?.Update(displaySystemDesiccantWheel.SensibleEfficiency);
-            result.Reactivation?.Update(displaySystemDesiccantWheel.Reactivation);
-            result.MinimumRH?.Update(displaySystemDesiccantWheel.MinimumRH);
-            result.MaximumRH?.Update(displaySystemDesiccantWheel.MaximumRH);
-            result.SensibleHEEfficiency?.Update(displaySystemDesiccantWheel.SensibleHEEfficiency);
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom?.GetEnergyCentre();
+
+            result.SensibleEfficiency?.Update(displaySystemDesiccantWheel.SensibleEfficiency, energyCentre);
+            result.Reactivation?.Update(displaySystemDesiccantWheel.Reactivation, energyCentre);
+            result.MinimumRH?.Update(displaySystemDesiccantWheel.MinimumRH, energyCentre);
+            result.MaximumRH?.Update(displaySystemDesiccantWheel.MaximumRH, energyCentre);
+            result.SensibleHEEfficiency?.Update(displaySystemDesiccantWheel.SensibleHEEfficiency, energyCentre);
             result.HESetpointMethod = displaySystemDesiccantWheel.HESetpointMethod.ToTPD();
-            result.HESetpoint?.Update(displaySystemDesiccantWheel.HESetpoint);
-            result.ElectricalLoad?.Update(displaySystemDesiccantWheel.ElectricalLoad);
+            result.HESetpoint?.Update(displaySystemDesiccantWheel.HESetpoint, energyCentre);
+            result.ElectricalLoad?.Update(displaySystemDesiccantWheel.ElectricalLoad, energyCentre);
 
             Modify.SetSchedule((SystemComponent)result, displaySystemDesiccantWheel.ScheduleName);
 

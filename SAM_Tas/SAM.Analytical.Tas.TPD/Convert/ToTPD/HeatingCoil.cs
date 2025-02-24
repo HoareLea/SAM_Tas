@@ -18,10 +18,13 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemHeatingCoil.Name;
             @dynamic.Description = displaySystemHeatingCoil.Description;
 
-            result.Setpoint?.Update(displaySystemHeatingCoil.Setpoint);
-            result.Efficiency?.Update(displaySystemHeatingCoil.Efficiency);
+            PlantRoom plantRoom = system.GetPlantRoom();
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemHeatingCoil.Setpoint, energyCentre);
+            result.Efficiency?.Update(displaySystemHeatingCoil.Efficiency, energyCentre);
             result.Duty?.Update(displaySystemHeatingCoil.Duty, system);
-            result.MaximumOffcoil?.Update(displaySystemHeatingCoil.MaximumOffcoil);
+            result.MaximumOffcoil?.Update(displaySystemHeatingCoil.MaximumOffcoil, energyCentre);
 
             //result.Setpoint.Value = 14;
             //result.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;

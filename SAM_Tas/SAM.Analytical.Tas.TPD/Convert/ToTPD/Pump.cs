@@ -18,11 +18,13 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemPump.Name;
             @dynamic.Description = displaySystemPump.Description;
 
-            result.OverallEfficiency?.Update(displaySystemPump.OverallEfficiency);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.OverallEfficiency?.Update(displaySystemPump.OverallEfficiency, energyCentre);
             result.Pressure = displaySystemPump.Pressure;
             result.DesignFlowRate = displaySystemPump.DesignFlowRate;
             result.Capacity = displaySystemPump.Capacity;
-            result.PartLoad?.Update(displaySystemPump.PartLoad);
+            result.PartLoad?.Update(displaySystemPump.PartLoad, energyCentre);
 
             result.ControlType = displaySystemPump.FanControlType.ToTPD();
 

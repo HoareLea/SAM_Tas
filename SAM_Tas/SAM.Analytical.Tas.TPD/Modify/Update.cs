@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Modify
     {
-        public static bool Update(this ProfileData profileData, ModifiableValue modifiableValue)
+        public static bool Update(this ProfileData profileData, ModifiableValue modifiableValue, EnergyCentre energyCentre)
         {
             if(profileData == null || modifiableValue == null)
             {
@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas.TPD
 
             profileData.Value = modifiableValue.Value;
             profileData.ClearModifiers();
-            profileData.AddModifier(modifiableValue.Modifier);
+            profileData.AddModifier(modifiableValue.Modifier, energyCentre);
 
             return true;
         }

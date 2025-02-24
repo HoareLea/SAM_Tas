@@ -20,9 +20,11 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Description = displaySystemAirSourceChiller.Description;
             @dynamic.IsDirectAbsChiller = false;
 
-            result.Setpoint?.Update(displaySystemAirSourceChiller.Setpoint);
-            result.Efficiency?.Update(displaySystemAirSourceChiller.Efficiency);
-            result.CondenserFanLoad?.Update(displaySystemAirSourceChiller.CondenserFanLoad);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemAirSourceChiller.Setpoint, energyCentre);
+            result.Efficiency?.Update(displaySystemAirSourceChiller.Efficiency, energyCentre);
+            result.CondenserFanLoad?.Update(displaySystemAirSourceChiller.CondenserFanLoad, energyCentre);
             result.Duty?.Update(displaySystemAirSourceChiller.Duty, plantRoom);
             result.DesignDeltaT = displaySystemAirSourceChiller.DesignTemperatureDifference;
             result.Capacity = displaySystemAirSourceChiller.Capacity;
@@ -73,9 +75,11 @@ namespace SAM.Analytical.Tas.TPD
             ////result.MinOutTempSource?.Update(displaySystemAirSourceDirectAbsorptionChiller.MinOutTempSource);
             //result.LossesInSizing = displaySystemAirSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
 
-            result.Setpoint?.Update(displaySystemAirSourceDirectAbsorptionChiller.Setpoint);
-            result.Efficiency?.Update(displaySystemAirSourceDirectAbsorptionChiller.Efficiency);
-            result.CondenserFanLoad?.Update(displaySystemAirSourceDirectAbsorptionChiller.CondenserFanLoad);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemAirSourceDirectAbsorptionChiller.Setpoint, energyCentre);
+            result.Efficiency?.Update(displaySystemAirSourceDirectAbsorptionChiller.Efficiency, energyCentre);
+            result.CondenserFanLoad?.Update(displaySystemAirSourceDirectAbsorptionChiller.CondenserFanLoad, energyCentre);
             result.Duty?.Update(displaySystemAirSourceDirectAbsorptionChiller.Duty, plantRoom);
             result.DesignDeltaT = displaySystemAirSourceDirectAbsorptionChiller.DesignTemperatureDifference;
             result.Capacity = displaySystemAirSourceDirectAbsorptionChiller.Capacity;

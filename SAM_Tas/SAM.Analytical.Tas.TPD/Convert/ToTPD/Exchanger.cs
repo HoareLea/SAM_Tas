@@ -14,19 +14,23 @@ namespace SAM.Analytical.Tas.TPD
 
             Exchanger result = system.AddExchanger();
 
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
             dynamic @dynamic = result;
             result.ExchLatType = displaySystemExchanger.ExchangerLatentType.ToTPD();
             result.ExchangerType = displaySystemExchanger.ExchangerType.ToTPD();
-            result.SensibleEfficiency?.Update(displaySystemExchanger.SensibleEfficiency);
+            result.SensibleEfficiency?.Update(displaySystemExchanger.SensibleEfficiency, energyCentre);
             result.HeatTransSurfArea = displaySystemExchanger.HeatTransferSurfaceArea;
             result.HeatTransCoeff = displaySystemExchanger.HeatTransferCoefficient;
             result.ExchLatType = displaySystemExchanger.ExchangerLatentType.ToTPD();
-            result.LatentEfficiency?.Update(displaySystemExchanger.LatentEfficiency);
+            result.LatentEfficiency?.Update(displaySystemExchanger.LatentEfficiency, energyCentre);
             result.SetpointMethod = displaySystemExchanger.SetpointMode.ToTPD();
-            result.Setpoint?.Update(displaySystemExchanger.Setpoint);
-            result.ElectricalLoad?.Update(displaySystemExchanger.ElectricalLoad);
+            result.Setpoint?.Update(displaySystemExchanger.Setpoint, energyCentre);
+            result.ElectricalLoad?.Update(displaySystemExchanger.ElectricalLoad, energyCentre);
             result.Duty?.Update(displaySystemExchanger.Duty, system);
-            result.BypassFactor?.Update(displaySystemExchanger.BypassFactor);
+            result.BypassFactor?.Update(displaySystemExchanger.BypassFactor, energyCentre);
 
             CollectionLink collectionLink = displaySystemExchanger.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
             if (collectionLink != null)

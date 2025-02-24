@@ -18,8 +18,10 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemWaterSourceChiller.Name;
             @dynamic.Description = displaySystemWaterSourceChiller.Description;
 
-            result.Setpoint?.Update(displaySystemWaterSourceChiller.Setpoint);
-            result.Efficiency?.Update(displaySystemWaterSourceChiller.Efficiency);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemWaterSourceChiller.Setpoint, energyCentre);
+            result.Efficiency?.Update(displaySystemWaterSourceChiller.Efficiency, energyCentre);
             result.Duty?.Update(displaySystemWaterSourceChiller.Duty, plantRoom);
             result.Capacity1 = displaySystemWaterSourceChiller.Capacity1;
             result.Capacity2 = displaySystemWaterSourceChiller.Capacity2;
@@ -27,13 +29,13 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop2 = displaySystemWaterSourceChiller.DesignPressureDrop2;
             result.DesignDeltaT1 = displaySystemWaterSourceChiller.DesignTemperatureDifference1;
             result.DesignDeltaT2 = displaySystemWaterSourceChiller.DesignTemperatureDifference2;
-            result.MotorEfficiency?.Update(displaySystemWaterSourceChiller.MotorEfficiency);
+            result.MotorEfficiency?.Update(displaySystemWaterSourceChiller.MotorEfficiency, energyCentre);
             result.ExchCalcType = displaySystemWaterSourceChiller.ExchangerCalculationMethod.ToTPD();
-            result.ExchangerEfficiency?.Update(displaySystemWaterSourceChiller.ExchangerEfficiency);
+            result.ExchangerEfficiency?.Update(displaySystemWaterSourceChiller.ExchangerEfficiency, energyCentre);
             result.HeatTransSurfArea = displaySystemWaterSourceChiller.HeatTransferSurfaceArea;
             result.HeatTransCoeff = displaySystemWaterSourceChiller.HeatTransferCoefficient;
             result.ExchangerType = displaySystemWaterSourceChiller.ExchangerType.ToTPD();
-            result.AncillaryLoad?.Update(displaySystemWaterSourceChiller.AncillaryLoad);
+            result.AncillaryLoad?.Update(displaySystemWaterSourceChiller.AncillaryLoad, energyCentre);
             result.FreeCoolingType = displaySystemWaterSourceChiller.FreeCoolingType.ToTPD();
             result.LossesInSizing = displaySystemWaterSourceChiller.LossesInSizing.ToTPD();
 
@@ -73,8 +75,10 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemWaterSourceDirectAbsorptionChiller.Name;
             @dynamic.Description = displaySystemWaterSourceDirectAbsorptionChiller.Description;
 
-            result.Setpoint?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Setpoint);
-            result.Efficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Efficiency);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Setpoint, energyCentre);
+            result.Efficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Efficiency, energyCentre);
             result.Duty?.Update(displaySystemWaterSourceDirectAbsorptionChiller.Duty, plantRoom);
 
             result.DesignPressureDrop1 = displaySystemWaterSourceDirectAbsorptionChiller.DesignPressureDrop1;
@@ -84,13 +88,13 @@ namespace SAM.Analytical.Tas.TPD
             result.Capacity1 = displaySystemWaterSourceDirectAbsorptionChiller.Capacity1;
             result.Capacity2 = displaySystemWaterSourceDirectAbsorptionChiller.Capacity2;
 
-            result.MotorEfficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.MotorEfficiency);
+            result.MotorEfficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.MotorEfficiency, energyCentre);
             result.ExchCalcType = displaySystemWaterSourceDirectAbsorptionChiller.ExchangerCalculationMethod.ToTPD();
-            result.ExchangerEfficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.ExchangerEfficiency);
+            result.ExchangerEfficiency?.Update(displaySystemWaterSourceDirectAbsorptionChiller.ExchangerEfficiency, energyCentre);
             result.HeatTransSurfArea = displaySystemWaterSourceDirectAbsorptionChiller.HeatTransferSurfaceArea;
             result.HeatTransCoeff = displaySystemWaterSourceDirectAbsorptionChiller.HeatTransferCoefficient;
             result.ExchangerType = displaySystemWaterSourceDirectAbsorptionChiller.ExchangerType.ToTPD();
-            result.AncillaryLoad?.Update(displaySystemWaterSourceDirectAbsorptionChiller.AncillaryLoad);
+            result.AncillaryLoad?.Update(displaySystemWaterSourceDirectAbsorptionChiller.AncillaryLoad, energyCentre);
             result.FreeCoolingType = displaySystemWaterSourceDirectAbsorptionChiller.FreeCoolingType.ToTPD();
             result.LossesInSizing = displaySystemWaterSourceDirectAbsorptionChiller.LossesInSizing.ToTPD();
 

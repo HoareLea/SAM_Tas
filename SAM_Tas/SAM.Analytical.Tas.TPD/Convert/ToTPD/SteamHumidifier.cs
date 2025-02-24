@@ -18,8 +18,12 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemSteamHumidifier.Name;
             @dynamic.Description = displaySystemSteamHumidifier.Description;
 
-            result.Setpoint?.Update(displaySystemSteamHumidifier.Setpoint);
-            result.WaterSupplyTemp?.Update(displaySystemSteamHumidifier.WaterSupplyTemperature);
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.Setpoint?.Update(displaySystemSteamHumidifier.Setpoint, energyCentre);
+            result.WaterSupplyTemp?.Update(displaySystemSteamHumidifier.WaterSupplyTemperature, energyCentre);
             result.Duty?.Update(displaySystemSteamHumidifier.Duty, system);
             result.WaterTempSource = displaySystemSteamHumidifier.WaterTemperatureSource.ToTPD();
 

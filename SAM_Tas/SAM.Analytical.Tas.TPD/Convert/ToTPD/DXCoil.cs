@@ -18,11 +18,15 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemDXCoil.Name;
             @dynamic.Description = displaySystemDXCoil.Description;
 
-            result.CoolingSetpoint?.Update(displaySystemDXCoil.CoolingSetpoint);
-            result.HeatingSetpoint?.Update(displaySystemDXCoil.HeatingSetpoint);
-            result.MinimumOffcoil?.Update(displaySystemDXCoil.MinOffcoilTemperature);
-            result.MaximumOffcoil?.Update(displaySystemDXCoil.MaxOffcoilTemperature);
-            result.BypassFactor?.Update(displaySystemDXCoil.BypassFactor);
+            PlantRoom plantRoom = system.GetPlantRoom();
+
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.CoolingSetpoint?.Update(displaySystemDXCoil.CoolingSetpoint, energyCentre);
+            result.HeatingSetpoint?.Update(displaySystemDXCoil.HeatingSetpoint, energyCentre);
+            result.MinimumOffcoil?.Update(displaySystemDXCoil.MinOffcoilTemperature, energyCentre);
+            result.MaximumOffcoil?.Update(displaySystemDXCoil.MaxOffcoilTemperature, energyCentre);
+            result.BypassFactor?.Update(displaySystemDXCoil.BypassFactor, energyCentre);
             result.CoolingDuty?.Update(displaySystemDXCoil.CoolingDuty, system);
             result.HeatingDuty?.Update(displaySystemDXCoil.HeatingDuty, system);
 
@@ -35,7 +39,7 @@ namespace SAM.Analytical.Tas.TPD
             CollectionLink collectionLink = displaySystemDXCoil.GetValue<CollectionLink>(SystemDXColiParameter.RefrigerantCollection);
             if (collectionLink != null)
             {
-                RefrigerantGroup refrigerantGroup = system.GetPlantRoom()?.RefrigerantGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                RefrigerantGroup refrigerantGroup = plantRoom?.RefrigerantGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
                 if (refrigerantGroup != null)
                 {
                     @dynamic.SetRefrigerantGroup(refrigerantGroup);

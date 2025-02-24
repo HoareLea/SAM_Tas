@@ -18,10 +18,12 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemWaterToWaterHeatPump.Name;
             @dynamic.Description = displaySystemWaterToWaterHeatPump.Description;
 
-            result.HeatingSetpoint?.Update(displaySystemWaterToWaterHeatPump.HeatingSetpoint);
-            result.CoolingSetpoint?.Update(displaySystemWaterToWaterHeatPump.CoolingSetpoint);
-            result.HeatingEfficiency?.Update(displaySystemWaterToWaterHeatPump.HeatingEfficiency);
-            result.CoolingEfficiency?.Update(displaySystemWaterToWaterHeatPump?.CoolingEfficiency);
+            EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
+
+            result.HeatingSetpoint?.Update(displaySystemWaterToWaterHeatPump.HeatingSetpoint, energyCentre);
+            result.CoolingSetpoint?.Update(displaySystemWaterToWaterHeatPump.CoolingSetpoint, energyCentre);
+            result.HeatingEfficiency?.Update(displaySystemWaterToWaterHeatPump.HeatingEfficiency, energyCentre);
+            result.CoolingEfficiency?.Update(displaySystemWaterToWaterHeatPump?.CoolingEfficiency, energyCentre);
             result.HeatingDuty?.Update(displaySystemWaterToWaterHeatPump.HeatingDuty, plantRoom);
             result.CoolingDuty?.Update(displaySystemWaterToWaterHeatPump.CoolingDuty, plantRoom);
             result.Capacity1 = displaySystemWaterToWaterHeatPump.Capacity1;
@@ -30,8 +32,8 @@ namespace SAM.Analytical.Tas.TPD
             result.DesignPressureDrop2 = displaySystemWaterToWaterHeatPump.DesignPressureDrop2;
             result.DesignDeltaT1 = displaySystemWaterToWaterHeatPump.DesignTemperatureDifference1;
             result.DesignDeltaT2 = displaySystemWaterToWaterHeatPump.DesignTemperatureDifference2;
-            result.MotorEfficiency?.Update(displaySystemWaterToWaterHeatPump.MotorEfficiency);
-            result.AncillaryLoad?.Update(displaySystemWaterToWaterHeatPump.AncillaryLoad);
+            result.MotorEfficiency?.Update(displaySystemWaterToWaterHeatPump.MotorEfficiency, energyCentre);
+            result.AncillaryLoad?.Update(displaySystemWaterToWaterHeatPump.AncillaryLoad, energyCentre);
             result.LossesInSizing = displaySystemWaterToWaterHeatPump.LossesInSizing.ToTPD();
 
             if (displaySystemWaterToWaterHeatPump.LossesInSizing || displaySystemWaterToWaterHeatPump.IsDomesticHotWater)
