@@ -233,7 +233,16 @@ namespace SAM.Analytical.Tas.TPD
                 }
 
                 index++;
-                profileDataModifierHourlyDay = profileDataModifierHourly.GetDay(index);
+
+                try
+                {
+                    profileDataModifierHourlyDay = profileDataModifierHourly.GetDay(index);
+                }
+                catch
+                {
+                    profileDataModifierHourlyDay = null;
+                }
+
             }
 
             return true;

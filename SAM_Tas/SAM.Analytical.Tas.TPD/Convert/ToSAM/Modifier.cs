@@ -166,7 +166,14 @@ namespace SAM.Analytical.Tas.TPD
                 values[profileDataModifierHourlyDay.GetDayType().Name] = values_Day; 
 
                 index++;
-                profileDataModifierHourlyDay = profileDataModifierHourly.GetDay(index);
+                try
+                {
+                    profileDataModifierHourlyDay = profileDataModifierHourly.GetDay(index);
+                }
+                catch
+                {
+                    profileDataModifierHourlyDay = null;
+                }
             }
 
             DailyModifier result = new DailyModifier(profileDataModifierHourly.Multiplier.ArithmeticOperator().Value, values);
