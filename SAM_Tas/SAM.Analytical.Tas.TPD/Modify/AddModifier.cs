@@ -54,9 +54,9 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
-            if (simpleModifier is PolynomialModifier)
+            if (simpleModifier is CurveModifier)
             {
-                return profileData.AddModifier((PolynomialModifier)simpleModifier, energyCentre);
+                return profileData.AddModifier((CurveModifier)simpleModifier, energyCentre);
             }
 
             if (simpleModifier is TableModifier)
@@ -87,15 +87,30 @@ namespace SAM.Analytical.Tas.TPD
             return false;
         }
 
-        public static bool AddModifier(this ProfileData profileData, PolynomialModifier polynomialModifier, EnergyCentre energyCentre)
+        public static bool AddModifier(this ProfileData profileData, CurveModifier curveModifier, EnergyCentre energyCentre)
         {
-            if (profileData == null || polynomialModifier == null)
+            if (profileData == null || curveModifier == null)
             {
                 return false;
             }
 
-            ProfileDataModifierCurve profileDataModifierCurve = profileData.AddModifierCurve();
-            profileDataModifierCurve.Multiplier = polynomialModifier.ArithmeticOperator.ToTPD();
+            ProfileDataModifierCurve result = profileData.AddModifierCurve();
+            result.Multiplier = curveModifier.ArithmeticOperator.ToTPD();
+
+            result.Name = curveModifier.Name;
+            result.CurveType = curveModifier.CurveModifierType.ToTPD();
+
+            CurveModifierVariableType[] curveModifierVariableTypes = curveModifier.CurveModifierVariableTypes;
+            for (int i = 0; i < curveModifierVariableTypes.Length; i++)
+            {
+                result.SetVariable(i + 1, curveModifierVariableTypes[i].ToTPD());
+            }
+
+            double[] parameters = curveModifier.Parameters;
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                result.SetParameter(i + 1, parameters[i]);
+            }
 
             return true;
         }

@@ -81,14 +81,79 @@ namespace SAM.Analytical.Tas.TPD
             return null;
         }
 
-        public static PolynomialModifier ToSAM(IProfileDataModifierCurve profileDataModifierCurve)
+        public static CurveModifier ToSAM(IProfileDataModifierCurve profileDataModifierCurve)
         {
             if(profileDataModifierCurve == null)
             {
                 return null; 
             }
 
-            PolynomialModifier result = new PolynomialModifier(profileDataModifierCurve.Multiplier.ArithmeticOperator().Value, null);
+            CurveModifierType curveModifierType = profileDataModifierCurve.CurveType.ToSAM();
+
+            int count_Parameters = -1;
+            int count_Variables = -1;
+
+            switch (curveModifierType)
+            {
+                case CurveModifierType.Linear:
+                    count_Variables = 1;
+                    count_Parameters = 2;
+                    break;
+
+                case CurveModifierType.BiLinear:
+                    count_Variables = 2;
+                    count_Parameters = 3;
+                    break;
+
+                case CurveModifierType.TriLinear:
+                    count_Variables = 3;
+                    count_Parameters = 4;
+                    break;
+
+                case CurveModifierType.Quadratic:
+                    count_Variables = 1;
+                    count_Parameters = 3;
+                    break;
+
+                case CurveModifierType.BiQuadratic:
+                    count_Variables = 2;
+                    count_Parameters = 6;
+                    break;
+
+                case CurveModifierType.TriQuadratic:
+                    count_Variables = 3;
+                    count_Parameters = 10;
+                    break;
+
+                case CurveModifierType.Cubic:
+                    count_Variables = 1;
+                    count_Parameters = 4;
+                    break;
+
+                case CurveModifierType.BiCubic:
+                    count_Variables = 2;
+                    count_Parameters = 10;
+                    break;
+            }
+
+            if(count_Variables == -1 || count_Parameters == -1)
+            {
+                return null;
+            }
+
+            CurveModifierVariableType[] curveModifierVariableTypes = new CurveModifierVariableType[count_Variables];
+            for(int i =0; i < curveModifierVariableTypes.Length; i++)
+            {
+                curveModifierVariableTypes[i] = profileDataModifierCurve.GetVariable(i + 1).ToSAM();
+            }
+
+            double[] parameters = new double[count_Parameters];
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                parameters[i] = profileDataModifierCurve.GetParameter(i + 1);
+            }
+
+            CurveModifier result = new CurveModifier(profileDataModifierCurve.Multiplier.ArithmeticOperator().Value, profileDataModifierCurve.Name, curveModifierType, curveModifierVariableTypes.ToArray(), parameters.ToArray());
 
             return result;
         }
