@@ -18,6 +18,9 @@ namespace SAM.Analytical.Tas.TPD
 
                 case ArithmeticOperator.Multiplication:
                     return tpdProfileDataModifierMultiplier.tpdProfileDataModifierMultiply;
+
+                case ArithmeticOperator.Modulus:
+                    return tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
             }
 
             throw new System.NotImplementedException();
