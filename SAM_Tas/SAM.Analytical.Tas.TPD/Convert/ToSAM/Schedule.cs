@@ -1,5 +1,6 @@
 ﻿using TPD;
 using SAM.Analytical.Systems;
+using System.Collections.Generic;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -17,6 +18,11 @@ namespace SAM.Analytical.Tas.TPD
             {
                 case tpdScheduleType.tpdScheduleYearly:
                     YearlySchedule yearlySchedule = new YearlySchedule(plantSchedule.Name);
+
+                    for (int i = 0; i < 8760; i++)
+                    {
+                        yearlySchedule[i] = plantSchedule.GetYearlyValue(i + 1);
+                    }
 
                     result = yearlySchedule;
                     break;
@@ -75,6 +81,26 @@ namespace SAM.Analytical.Tas.TPD
 
                 case tpdScheduleType.tpdScheduleHourly:
                     DailySchedule dailySchedule = new DailySchedule(plantSchedule.Name);
+                    int count = plantSchedule.GetScheduleDayCount();
+                    for (int i = 0; i < count; i++)
+                    {
+                        PlantScheduleDay plantScheduleDay = plantSchedule.GetScheduleDay(i + 1);
+                        if(plantScheduleDay == null)
+                        {
+                            continue;
+                        }
+
+                        string name = plantScheduleDay.GetDayType()?.Name;
+
+                        List<double> values = new List<double>();
+                        for(int hour = 1; hour <= 24; hour++)
+                        {
+                            values.Add(plantScheduleDay.GetHourlyValue(hour));
+                        }
+
+                        ScheduleDay scheduleDay = new ScheduleDay(name, values);
+                        dailySchedule.Add(scheduleDay);
+                    }
 
                     result = dailySchedule;
                     break;

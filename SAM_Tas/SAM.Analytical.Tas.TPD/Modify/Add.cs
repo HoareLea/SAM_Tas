@@ -1,9 +1,11 @@
 ﻿using SAM.Analytical.Systems;
 using SAM.Core;
+using SAM.Core.Attributes;
 using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Systems;
 using System.Collections.Generic;
+using System.Linq;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -2204,10 +2206,36 @@ namespace SAM.Analytical.Tas.TPD
             else if (schedule is DailySchedule)
             {
                 result = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleHourly);
+
+                DailySchedule dailySchedule = (DailySchedule)schedule;
+
+                int count = result.GetScheduleDayCount();
+                for (int i = 1; i <= count; i++)
+                {
+                    PlantScheduleDay plantScheduleDay = result.GetScheduleDay(i);
+                    ScheduleDay scheduleDay = dailySchedule[plantScheduleDay?.GetDayType()?.Name];
+                    if(scheduleDay == null)
+                    {
+                        continue;
+                    }
+
+                    double[] values = scheduleDay.Values;
+                    for(int hour = 1; hour <= values.Length; hour++)
+                    {
+                        plantScheduleDay.SetHourlyValue(hour, System.Convert.ToInt32(values[hour - 1]));
+                    }
+                }
             }
             else if (schedule is YearlySchedule)
             {
                 result = energyCentre.AddSchedule(tpdScheduleType.tpdScheduleYearly);
+
+                YearlySchedule yearlySchedule = (YearlySchedule)schedule;
+                double[] values = yearlySchedule.Values;
+                for (int i = 0; i < values.Length; i++)
+                {
+                    result.SetYearlyValue(i + 1, System.Convert.ToInt32(values[i]));
+                }
             }
 
             if (result == null)
