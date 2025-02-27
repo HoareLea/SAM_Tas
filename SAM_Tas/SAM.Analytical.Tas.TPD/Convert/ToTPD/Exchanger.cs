@@ -32,6 +32,14 @@ namespace SAM.Analytical.Tas.TPD
             result.Duty?.Update(displaySystemExchanger.Duty, system);
             result.BypassFactor?.Update(displaySystemExchanger.BypassFactor, energyCentre);
 
+            if (displaySystemExchanger.HeatingOnly || displaySystemExchanger.AdjustForOptimiser)
+            {
+                tpdExchangerFlags tpdExchangerFlags = displaySystemExchanger.HeatingOnly && displaySystemExchanger.AdjustForOptimiser ? tpdExchangerFlags.tpdExchangerFlagHeatingOnly | tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser :
+                    displaySystemExchanger.AdjustForOptimiser ? tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser : tpdExchangerFlags.tpdExchangerFlagHeatingOnly;
+
+                result.Flags = (int)tpdExchangerFlags;
+            }
+
             CollectionLink collectionLink = displaySystemExchanger.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
             if (collectionLink != null)
             {

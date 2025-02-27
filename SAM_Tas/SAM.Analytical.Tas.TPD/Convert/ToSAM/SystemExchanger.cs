@@ -22,6 +22,10 @@ namespace SAM.Analytical.Tas.TPD
             result.SensibleEfficiency = exchanger.SensibleEfficiency.Value;
             result.LatentEfficiency = exchanger.LatentEfficiency.Value;
 
+            tpdExchangerFlags tpdExchangerFlags = (tpdExchangerFlags)exchanger.Flags;
+            result.HeatingOnly = tpdExchangerFlags.HasFlag(tpdExchangerFlags.tpdExchangerFlagHeatingOnly);
+            result.AdjustForOptimiser = tpdExchangerFlags.HasFlag(tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser);
+
             result.ScheduleName = ((dynamic)exchanger )?.GetSchedule()?.Name;
 
             CollectionLink collectionLink = Query.CollectionLink((ISystemComponent)exchanger);
