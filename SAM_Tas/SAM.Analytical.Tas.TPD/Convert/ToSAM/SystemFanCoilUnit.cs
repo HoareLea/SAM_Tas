@@ -19,16 +19,26 @@ namespace SAM.Analytical.Tas.TPD
             double heatingEfficiency = fanCoilUnit.HeatingEfficiency.Value;
             double overallEfficiency = fanCoilUnit.OverallEfficiency.Value;
 
-            SystemFanCoilUnit result = new SystemFanCoilUnit(dynamic.Name);
-            result.SetReference(((ZoneComponent)fanCoilUnit).Reference());
+            SystemFanCoilUnit result = new SystemFanCoilUnit(dynamic.Name)
+            {
+                Description = dynamic.Description,
+                HeatingDuty = fanCoilUnit.HeatingDuty?.ToSAM(),
+                CoolingDuty = fanCoilUnit.CoolingDuty?.ToSAM(),
+                BypassFactor = fanCoilUnit.BypassFactor?.ToSAM(),
+                HeatingEfficiency = fanCoilUnit.HeatingEfficiency?.ToSAM(),
+                OverallEfficiency = fanCoilUnit.OverallEfficiency?.ToSAM(),
+                HeatGainFactor = fanCoilUnit.HeatGainFactor,
+                Pressure = fanCoilUnit.Pressure,
+                DesignFlowRate = fanCoilUnit.DesignFlowRate?.ToSAM(),
+                DesignFlowType = fanCoilUnit.DesignFlowType.ToSAM(),
+                MinimumFlowRate = fanCoilUnit.MinimumFlowRate?.ToSAM(),
+                MinimumFlowType = fanCoilUnit.MinimumFlowType.ToSAM(),
+                ZonePosition = fanCoilUnit.ZonePosition.ToSAM(),
+                ControlMethod = fanCoilUnit.ControlMethod.ToSAM(),
+                PartLoad = fanCoilUnit.PartLoad?.ToSAM()
+            };
 
-            result.Description = dynamic.Description;
-            result.Pressure = fanCoilUnit.Pressure;
-            result.CoolingDuty = fanCoilUnit.CoolingDuty?.ToSAM();
-            result.HeatingDuty = fanCoilUnit.HeatingDuty?.ToSAM();
-            result.DesignFlowRate = designFlowRate;
-            result.HeatingEfficiency = heatingEfficiency;
-            result.OverallEfficiency = overallEfficiency;
+            result.SetReference(((ZoneComponent)fanCoilUnit).Reference());
 
             return result;
         }

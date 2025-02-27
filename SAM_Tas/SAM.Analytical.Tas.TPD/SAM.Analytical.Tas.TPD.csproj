@@ -28,8 +28,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
     </Reference>
-    <Reference Include="SAM.Analytical.Systems, Version=1.0.8782.21016, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SAM.Analytical.Systems">
       <HintPath>..\..\..\SAM_Systems\build\SAM.Analytical.Systems.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Core, Version=1.0.8740.23897, Culture=neutral, processorArchitecture=MSIL">

@@ -18,12 +18,15 @@ namespace SAM.Analytical.Tas.TPD
 
             double heatingEfficiency = chilledBeam.HeatingEfficiency.Value;
 
-            SystemChilledBeam result = new SystemChilledBeam(@dynamic.Name) 
+            SystemChilledBeam result = new SystemChilledBeam(@dynamic.Name)
             {
-                CoolingDuty = chilledBeam.CoolingDuty?.ToSAM(),
                 HeatingDuty = chilledBeam.HeatingDuty?.ToSAM(),
-                DesignFlowRate = designFlowRate,
-                HeatingEfficiency = heatingEfficiency,
+                CoolingDuty = chilledBeam.CoolingDuty?.ToSAM(),
+                BypassFactor = chilledBeam.BypassFactor?.ToSAM(),
+                HeatingEfficiency = chilledBeam.HeatingEfficiency?.ToSAM(),
+                DesignFlowRate = chilledBeam.DesignFlowRate?.ToSAM(),
+                DesignFlowType = chilledBeam.DesignFlowType.ToSAM(),
+                ZonePosition = chilledBeam.ZonePosition.ToSAM()
             };
 
             result.SetReference(((ZoneComponent)chilledBeam).Reference());

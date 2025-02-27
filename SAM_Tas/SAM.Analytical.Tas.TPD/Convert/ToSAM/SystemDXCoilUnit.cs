@@ -22,10 +22,20 @@ namespace SAM.Analytical.Tas.TPD
             result.SetReference(((ZoneComponent)dXCoilUnit).Reference());
 
             result.Description = dynamic.Description;
-            result.CoolingDuty = dXCoilUnit.CoolingDuty?.ToSAM();
+
             result.HeatingDuty = dXCoilUnit.HeatingDuty?.ToSAM();
-            result.DesignFlowRate = designFlowRate;
-            result.OverallEfficiency = overallEfficiency;
+            result.CoolingDuty = dXCoilUnit.CoolingDuty?.ToSAM();
+            result.BypassFactor = dXCoilUnit.BypassFactor?.ToSAM();
+            result.OverallEfficiency = dXCoilUnit.OverallEfficiency?.ToSAM();
+            result.HeatGainFactor = dXCoilUnit.HeatGainFactor;
+            result.Pressure = dXCoilUnit.Pressure;
+            result.DesignFlowRate = dXCoilUnit.DesignFlowRate?.ToSAM();
+            result.DesignFlowType = dXCoilUnit.DesignFlowType.ToSAM();
+            result.MinimumFlowRate = dXCoilUnit.MinimumFlowRate?.ToSAM();
+            result.MinimumFlowType = dXCoilUnit.MinimumFlowType.ToSAM();
+            result.ZonePosition = dXCoilUnit.ZonePosition.ToSAM();
+            result.ControlMethod = dXCoilUnit.ControlMethod.ToSAM();
+            result.PartLoad = dXCoilUnit.PartLoad?.ToSAM();
 
             return result;
         }
