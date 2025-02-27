@@ -91,6 +91,7 @@ namespace SAM.Analytical.Tas.TPD
                             fanCoilUnit.HeatingDuty?.Update(systemFanCoilUnit.HeatingDuty, energyCentre);
                             fanCoilUnit.CoolingDuty?.Update(systemFanCoilUnit.CoolingDuty, energyCentre);
                             fanCoilUnit.BypassFactor?.Update(systemFanCoilUnit.BypassFactor, energyCentre);
+                            fanCoilUnit.HeatingEfficiency?.Update(systemFanCoilUnit.HeatingEfficiency, energyCentre);
                             fanCoilUnit.OverallEfficiency?.Update(systemFanCoilUnit.OverallEfficiency, energyCentre);
                             fanCoilUnit.HeatGainFactor = systemFanCoilUnit.HeatGainFactor;
                             fanCoilUnit.Pressure = systemFanCoilUnit.Pressure;
