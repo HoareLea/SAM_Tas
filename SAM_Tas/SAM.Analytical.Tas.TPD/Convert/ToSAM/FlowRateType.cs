@@ -29,6 +29,10 @@ namespace SAM.Analytical.Tas.TPD
 
                 case tpdFlowRateType.tpdFlowRateValue:
                     return FlowRateType.Value;
+
+                case tpdFlowRateType.tpdFlowRateNearestZoneFreshAir:
+                    return FlowRateType.NearestZoneFreshAir
+                        ;
             }
 
             throw new System.NotImplementedException();
