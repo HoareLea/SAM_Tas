@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
                 ScheduleName = @dynamic.GetSchedule()?.Name,
             };
 
-            ElectricalGroup electricalGroup = @dynamic.GetElectricalGroup();
+            ElectricalGroup electricalGroup = @dynamic.GetElectricalGroup1();
             if (electricalGroup != null)
             {
                 result.SetValue(SystemDXCoilUnitParameter.ElectricalCollection, new CollectionLink(CollectionType.Electrical, ((dynamic)electricalGroup).Name));

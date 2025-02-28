@@ -53,7 +53,7 @@ namespace SAM.Analytical.Tas.TPD
                 ElectricalGroup electricalGroup = plantRoom?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
                 if (electricalGroup != null)
                 {
-                    ((dynamic)dXCoilUnit).SetElectricalGroup(electricalGroup);
+                    ((dynamic)dXCoilUnit).SetElectricalGroup1(electricalGroup);
                 }
             }
 
