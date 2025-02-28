@@ -51,11 +51,11 @@ namespace SAM.Analytical.Tas.TPD
                 result.SetValue(SystemFanCoilUnitParameter.CoolingCollection, new CollectionLink(CollectionType.Cooling, ((dynamic)coolingGroup).Name));
             }
 
-            ElectricalGroup electricalGroup = @dynamic.GetElectricalGroup();
-            if (electricalGroup != null)
-            {
-                result.SetValue(SystemFanCoilUnitParameter.ElectricalCollection, new CollectionLink(CollectionType.Electrical, ((dynamic)electricalGroup).Name));
-            }
+            //ElectricalGroup electricalGroup = @dynamic.GetElectricalGroup();
+            //if (electricalGroup != null)
+            //{
+            //    result.SetValue(SystemFanCoilUnitParameter.ElectricalCollection, new CollectionLink(CollectionType.Electrical, ((dynamic)electricalGroup).Name));
+            //}
 
             result.SetReference(((ZoneComponent)fanCoilUnit).Reference());
 
