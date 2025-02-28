@@ -26,8 +26,15 @@ namespace SAM.Analytical.Tas.TPD
                 HeatingEfficiency = chilledBeam.HeatingEfficiency?.ToSAM(),
                 DesignFlowRate = chilledBeam.DesignFlowRate?.ToSAM(),
                 DesignFlowType = chilledBeam.DesignFlowType.ToSAM(),
-                ZonePosition = chilledBeam.ZonePosition.ToSAM()
+                ZonePosition = chilledBeam.ZonePosition.ToSAM(),
+                ScheduleName = @dynamic.GetSchedule()?.Name,
             };
+
+            CoolingGroup coolingGroup = @dynamic.GetCoolingGroup();
+            if (coolingGroup != null)
+            {
+                result.SetValue(SystemChilledBeamParameter.CoolingCollection, new CollectionLink(CollectionType.Cooling, ((dynamic)coolingGroup).Name));
+            }
 
             result.SetReference(((ZoneComponent)chilledBeam).Reference());
             

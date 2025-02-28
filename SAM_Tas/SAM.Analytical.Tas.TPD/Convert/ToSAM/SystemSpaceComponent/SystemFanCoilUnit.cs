@@ -35,8 +35,27 @@ namespace SAM.Analytical.Tas.TPD
                 MinimumFlowType = fanCoilUnit.MinimumFlowType.ToSAM(),
                 ZonePosition = fanCoilUnit.ZonePosition.ToSAM(),
                 ControlMethod = fanCoilUnit.ControlMethod.ToSAM(),
-                PartLoad = fanCoilUnit.PartLoad?.ToSAM()
+                PartLoad = fanCoilUnit.PartLoad?.ToSAM(),
+                ScheduleName = @dynamic.GetSchedule()?.Name,
             };
+
+            HeatingGroup heatingGroup = @dynamic.GetHeatingGroup();
+            if (heatingGroup != null)
+            {
+                result.SetValue(SystemFanCoilUnitParameter.HeatingCollection, new CollectionLink(CollectionType.Heating, ((dynamic)heatingGroup).Name));
+            }
+
+            CoolingGroup coolingGroup = @dynamic.GetCoolingGroup();
+            if (coolingGroup != null)
+            {
+                result.SetValue(SystemFanCoilUnitParameter.CoolingCollection, new CollectionLink(CollectionType.Cooling, ((dynamic)coolingGroup).Name));
+            }
+
+            ElectricalGroup electricalGroup = @dynamic.GetElectricalGroup();
+            if (electricalGroup != null)
+            {
+                result.SetValue(SystemFanCoilUnitParameter.ElectricalCollection, new CollectionLink(CollectionType.Electrical, ((dynamic)electricalGroup).Name));
+            }
 
             result.SetReference(((ZoneComponent)fanCoilUnit).Reference());
 
