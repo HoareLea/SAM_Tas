@@ -64,7 +64,7 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
-            List<PlantSchedule> plantSchedules = Query.Schedules(((dynamic)zoneComponent).GetZone().GetPlantRoom()?.GetEnergyCentre() as EnergyCentre);
+            List<PlantSchedule> plantSchedules = Query.Schedules(((dynamic)zoneComponent)?.GetZone()?.GetSystem()?.GetPlantRoom()?.GetEnergyCentre() as EnergyCentre);
             if (plantSchedules == null || plantSchedules.Count == 0)
             {
                 return false;
