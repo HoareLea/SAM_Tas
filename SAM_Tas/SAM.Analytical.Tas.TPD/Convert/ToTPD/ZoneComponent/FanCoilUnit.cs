@@ -65,7 +65,7 @@ namespace SAM.Analytical.Tas.TPD
                 ElectricalGroup electricalGroup = plantRoom?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
                 if (electricalGroup != null)
                 {
-                    ((dynamic)fanCoilUnit).SetElectricalGroup(electricalGroup);
+                    ((dynamic)fanCoilUnit).SetElectricalGroup1(electricalGroup);
                 }
             }
 
