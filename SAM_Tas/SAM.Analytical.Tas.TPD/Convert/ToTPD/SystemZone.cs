@@ -1,5 +1,4 @@
 ﻿using SAM.Analytical.Systems;
-using SAM.Core;
 using SAM.Core.Systems;
 using System.Collections.Generic;
 using TPD;
@@ -53,28 +52,40 @@ namespace SAM.Analytical.Tas.TPD
 
             EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
 
-            if (energyCentre != null && systemPlantRoom != null)
+            if (energyCentre != null)
             {
-                List<ISystemSpaceComponent> systemSpaceComponents = systemPlantRoom.GetSystemSpaceComponents<ISystemSpaceComponent>(displaySystemSpace);
-                if(systemSpaceComponents != null)
+                List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1));
+                if (zoneLoads != null)
                 {
-                    foreach(ISystemSpaceComponent systemSpaceComponent in systemSpaceComponents)
+                    foreach(ZoneLoad zoneLoad in zoneLoads)
                     {
-                        if (systemSpaceComponent is SystemDXCoilUnit)
+                        @dynamic.AddZoneLoad(zoneLoad);
+                    }
+                }
+
+                if(systemPlantRoom != null)
+                {
+                    List<ISystemSpaceComponent> systemSpaceComponents = systemPlantRoom.GetSystemSpaceComponents<ISystemSpaceComponent>(displaySystemSpace);
+                    if (systemSpaceComponents != null)
+                    {
+                        foreach (ISystemSpaceComponent systemSpaceComponent in systemSpaceComponents)
                         {
-                            DXCoilUnit dXCoilUnit = ((SystemDXCoilUnit)systemSpaceComponent).ToTPD(result);
-                        }
-                        else if (systemSpaceComponent is SystemFanCoilUnit)
-                        {
-                            FanCoilUnit fanCoilUnit = ((SystemFanCoilUnit)systemSpaceComponent).ToTPD(result);
-                        }
-                        else if (systemSpaceComponent is SystemChilledBeam)
-                        {
-                            ChilledBeam chilledBeam = ((SystemChilledBeam)systemSpaceComponent).ToTPD(result);
-                        }
-                        else if (systemSpaceComponent is SystemRadiator)
-                        {
-                            Radiator radiator = ((SystemRadiator)systemSpaceComponent).ToTPD(result);
+                            if (systemSpaceComponent is SystemDXCoilUnit)
+                            {
+                                DXCoilUnit dXCoilUnit = ((SystemDXCoilUnit)systemSpaceComponent).ToTPD(result);
+                            }
+                            else if (systemSpaceComponent is SystemFanCoilUnit)
+                            {
+                                FanCoilUnit fanCoilUnit = ((SystemFanCoilUnit)systemSpaceComponent).ToTPD(result);
+                            }
+                            else if (systemSpaceComponent is SystemChilledBeam)
+                            {
+                                ChilledBeam chilledBeam = ((SystemChilledBeam)systemSpaceComponent).ToTPD(result);
+                            }
+                            else if (systemSpaceComponent is SystemRadiator)
+                            {
+                                Radiator radiator = ((SystemRadiator)systemSpaceComponent).ToTPD(result);
+                            }
                         }
                     }
                 }
