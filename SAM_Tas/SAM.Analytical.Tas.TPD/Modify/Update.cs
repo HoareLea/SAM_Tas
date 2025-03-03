@@ -71,10 +71,18 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     foreach(string designConditionName in designConditionNames)
                     {
-                        DesignConditionLoad designConditionLoad = energyCentre.DesignConditionLoad(designConditionName);
-                        if(designConditionLoad != null)
+                        if(designConditionName == "Simulation Data")
                         {
-                            sizedVariable.AddDesignCondition(designConditionLoad);
+                            //sizedVariable.AddDesignCondition(null);
+                            continue;
+                        }
+                        else
+                        {
+                            DesignConditionLoad designConditionLoad = energyCentre.DesignConditionLoad(designConditionName);
+                            if (designConditionLoad != null)
+                            {
+                                sizedVariable.AddDesignCondition(designConditionLoad);
+                            }
                         }
                     }
                 }
