@@ -17,8 +17,11 @@ namespace SAM.Analytical.Tas.TPD
             EnergyCentre energyCentre = plantRoom?.GetEnergyCentre();
 
             ChilledBeam chilledBeam = systemZone.AddChilledBeam();
+
             ((dynamic)chilledBeam).Name = systemChilledBeam.Name;
             ((dynamic)chilledBeam).Description = systemChilledBeam.Description;
+            
+            chilledBeam.Flags = systemChilledBeam.Heating ? 1 : 0;
             chilledBeam.HeatingDuty?.Update(systemChilledBeam.HeatingDuty, energyCentre);
             chilledBeam.CoolingDuty?.Update(systemChilledBeam.CoolingDuty, energyCentre);
             chilledBeam.BypassFactor?.Update(systemChilledBeam.BypassFactor, energyCentre);

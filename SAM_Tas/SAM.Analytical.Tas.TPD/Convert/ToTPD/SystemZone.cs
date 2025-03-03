@@ -14,9 +14,18 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
+
             SystemZone result = system.AddSystemZone();
 
             dynamic @dynamic = result;
+
+            result.TemperatureSetpoint.Update(displaySystemSpace.TemperatureSetpoint, energyCentre);
+            result.RHSetpoint.Update(displaySystemSpace.RelativeHumiditySetpoint, energyCentre);
+            result.PollutantSetpoint.Update(displaySystemSpace.PollutantSetpoint, energyCentre);
+            result.DisplacementVent = displaySystemSpace.DisplacementVentilation ? 1 : 0;
+            result.FlowRate.Update(displaySystemSpace.FlowRate, energyCentre);
+            result.FreshAir.Update(displaySystemSpace.FreshAir, energyCentre);
 
             CollectionLink collectionLink;
 
@@ -50,7 +59,6 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
 
             if (energyCentre != null)
             {

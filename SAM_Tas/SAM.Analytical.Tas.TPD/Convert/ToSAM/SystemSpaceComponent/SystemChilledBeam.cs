@@ -28,6 +28,7 @@ namespace SAM.Analytical.Tas.TPD
                 DesignFlowType = chilledBeam.DesignFlowType.ToSAM(),
                 ZonePosition = chilledBeam.ZonePosition.ToSAM(),
                 ScheduleName = @dynamic.GetSchedule()?.Name,
+                Heating = (int)@dynamic.Flags == 1
             };
 
             CoolingGroup coolingGroup = @dynamic.GetCoolingGroup();

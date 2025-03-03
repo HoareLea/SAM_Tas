@@ -28,19 +28,14 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = systemZone as dynamic;
 
-            double flowRate = double.NaN;
-            if(systemZone.FlowRate.Type != tpdSizedVariable.tpdSizedVariableNone)
-            {
-                flowRate = systemZone.FlowRate.Value;
-            }
+            Core.ModifiableValue temperatureSetpoint = systemZone.TemperatureSetpoint?.ToSAM();
+            Core.ModifiableValue relativeHumiditySetpoint = systemZone.RHSetpoint?.ToSAM();
+            Core.ModifiableValue pollutantSetpoint = systemZone.PollutantSetpoint?.ToSAM();
+            bool displacementVentilation = systemZone.DisplacementVent == 1;
+            DesignConditionSizedFlowValue flowRate = systemZone.FlowRate.ToSAM();
+            DesignConditionSizedFlowValue freshAir = systemZone.FreshAir.ToSAM();
 
-            double freshAirRate = double.NaN;
-            if (systemZone.FreshAir.Type != tpdSizedVariable.tpdSizedVariableNone)
-            {
-                freshAirRate = systemZone.FreshAir.Value;
-            }
-
-            SystemSpace result = new SystemSpace(name, area, volume, flowRate, freshAirRate);
+            SystemSpace result = new SystemSpace(name, area, volume, temperatureSetpoint, relativeHumiditySetpoint, pollutantSetpoint, displacementVentilation, flowRate, freshAir);
             Modify.SetReference(result, dynamic.GUID);
 
             result.Description = dynamic.Description;
