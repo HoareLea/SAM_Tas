@@ -22,10 +22,10 @@ namespace SAM.Analytical.Tas.TPD
             EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
 
             result.Capacity = displaySystemEconomiser.Capacity;
-            result.DesignFlowRate?.Update(displaySystemEconomiser.DesignFlowRate);
+            result.DesignFlowRate?.Update(displaySystemEconomiser.DesignFlowRate, energyCentre);
             result.DesignFlowType = displaySystemEconomiser.DesignFlowType.ToTPD();
             result.Setpoint?.Update(displaySystemEconomiser.Setpoint, energyCentre);
-            result.MinFreshAirRate?.Update(displaySystemEconomiser.MinFreshAirRate);
+            result.MinFreshAirRate?.Update(displaySystemEconomiser.MinFreshAirRate, energyCentre);
             result.MinFreshAirType = displaySystemEconomiser.MinFreshAirType.ToTPD();
             result.ScheduleMode = displaySystemEconomiser.ScheduleMode.ToTPD();
             result.DesignPressureDrop = displaySystemEconomiser.DesignPressureDrop;
@@ -61,10 +61,10 @@ namespace SAM.Analytical.Tas.TPD
             EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
 
             result.Capacity = displaySystemMixingBox.Capacity;
-            result.DesignFlowRate?.Update(displaySystemMixingBox.DesignFlowRate);
+            result.DesignFlowRate?.Update(displaySystemMixingBox.DesignFlowRate, energyCentre);
             result.DesignFlowType = displaySystemMixingBox.DesignFlowType.ToTPD();
             result.Setpoint?.Update(displaySystemMixingBox.Setpoint, energyCentre);
-            result.MinFreshAirRate?.Update(displaySystemMixingBox.MinFreshAirRate);
+            result.MinFreshAirRate?.Update(displaySystemMixingBox.MinFreshAirRate, energyCentre);
             result.MinFreshAirType = displaySystemMixingBox.MinFreshAirType.ToTPD();
             result.ScheduleMode = displaySystemMixingBox.ScheduleMode.ToTPD();
             result.DesignPressureDrop = displaySystemMixingBox.DesignPressureDrop;

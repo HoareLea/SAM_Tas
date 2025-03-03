@@ -8,7 +8,7 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static ISizableValue ToSAM(this SizedVariable sizedVariable)
         {
-            if(sizedVariable == null)
+            if (sizedVariable == null)
             {
                 return null;
             }
@@ -16,19 +16,18 @@ namespace SAM.Analytical.Tas.TPD
             dynamic @dynamic = sizedVariable as dynamic;
 
             tpdSizedVariable tpdSizedVariable = (tpdSizedVariable)@dynamic.Type;
-            if(tpdSizedVariable == tpdSizedVariable.tpdSizedVariableNone)
+            if (tpdSizedVariable == tpdSizedVariable.tpdSizedVariableNone)
             {
                 return new UnlimitedValue();
             }
 
-
             HashSet<string> designConditionNames = null;
 
             List<DesignConditionLoad> designConditionLoads = sizedVariable.DesignConditionLoads();
-             if(designConditionLoads != null && designConditionLoads.Count != 0)
+            if (designConditionLoads != null && designConditionLoads.Count != 0)
             {
                 designConditionNames = new HashSet<string>();
-                foreach(DesignConditionLoad designConditionLoad in designConditionLoads)
+                foreach (DesignConditionLoad designConditionLoad in designConditionLoads)
                 {
                     designConditionNames.Add(designConditionLoad.Name);
                 }

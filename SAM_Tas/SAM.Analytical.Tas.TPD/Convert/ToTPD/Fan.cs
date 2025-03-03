@@ -25,9 +25,9 @@ namespace SAM.Analytical.Tas.TPD
             result.OverallEfficiency?.Update(displaySystemFan.OverallEfficiency, energyCentre);
             result.HeatGainFactor = displaySystemFan.HeatGainFactor;
             result.Pressure = displaySystemFan.Pressure;
-            result.DesignFlowRate?.Update(displaySystemFan.DesignFlowRate);
+            result.DesignFlowRate?.Update(displaySystemFan.DesignFlowRate, energyCentre);
             result.DesignFlowType = displaySystemFan.DesignFlowType.ToTPD();
-            result.MinimumFlowRate?.Update(displaySystemFan.MinimumFlowRate);
+            result.MinimumFlowRate?.Update(displaySystemFan.MinimumFlowRate, energyCentre);
             result.MinimumFlowType = displaySystemFan.MinimumFlowType.ToTPD();
             result.MinimumFlowFraction = displaySystemFan.MinimumFlowFraction;
             result.Capacity = displaySystemFan.Capacity;

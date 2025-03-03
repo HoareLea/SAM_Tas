@@ -83,7 +83,7 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
-        public static bool Update(this SizedFlowVariable sizedFlowVariable, SizedFlowValue sizedFlowValue)
+        public static bool Update(this SizedFlowVariable sizedFlowVariable, SizedFlowValue sizedFlowValue, EnergyCentre energyCentre)
         {
             if (sizedFlowVariable == null || sizedFlowValue == null)
             {
@@ -92,6 +92,31 @@ namespace SAM.Analytical.Tas.TPD
 
             sizedFlowVariable.Value = sizedFlowValue.Value;
             sizedFlowVariable.SizeFraction = sizedFlowValue.SizeFranction;
+
+            if(sizedFlowValue is DesignConditionSizedFlowValue)
+            {
+                DesignConditionSizedFlowValue designConditionSizedFlowValue = (DesignConditionSizedFlowValue)sizedFlowValue;
+
+                sizedFlowVariable.Type = designConditionSizedFlowValue.SizingType.ToTPD();
+
+                sizedFlowVariable.SizeValue1 = designConditionSizedFlowValue.SizeValue1;
+                sizedFlowVariable.SizeValue2 = designConditionSizedFlowValue.SizeValue2;
+
+                sizedFlowVariable.Method = designConditionSizedFlowValue.SizedFlowMethod.ToTPD();
+
+                HashSet<string> designConditionNames = designConditionSizedFlowValue.DesignConditionNames;
+                if (designConditionNames != null)
+                {
+                    foreach (string designConditionName in designConditionNames)
+                    {
+                        DesignConditionLoad designConditionLoad = energyCentre.DesignConditionLoad(designConditionName);
+                        if (designConditionLoad != null)
+                        {
+                            sizedFlowVariable.AddDesignCondition(designConditionLoad);
+                        }
+                    }
+                }
+            }
 
             return true;
         }

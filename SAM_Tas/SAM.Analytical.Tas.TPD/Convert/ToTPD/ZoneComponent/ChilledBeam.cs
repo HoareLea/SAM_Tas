@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             chilledBeam.CoolingDuty?.Update(systemChilledBeam.CoolingDuty, energyCentre);
             chilledBeam.BypassFactor?.Update(systemChilledBeam.BypassFactor, energyCentre);
             chilledBeam.HeatingEfficiency?.Update(systemChilledBeam.HeatingEfficiency, energyCentre);
-            chilledBeam.DesignFlowRate?.Update(systemChilledBeam.DesignFlowRate);
+            chilledBeam.DesignFlowRate?.Update(systemChilledBeam.DesignFlowRate, energyCentre);
             chilledBeam.DesignFlowType = systemChilledBeam.DesignFlowType.ToTPD();
             chilledBeam.ZonePosition = systemChilledBeam.ZonePosition.ToTPD();
 

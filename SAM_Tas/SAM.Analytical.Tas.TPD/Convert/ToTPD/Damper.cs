@@ -18,11 +18,13 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemDamper.Name;
             @dynamic.Description = displaySystemDamper.Description;
 
+            EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
+
             result.Capacity = displaySystemDamper.Capacity;
             result.DesignCapacitySignal = displaySystemDamper.DesignCapacitySignal;
-            result.DesignFlowRate?.Update(displaySystemDamper.DesignFlowRate);
+            result.DesignFlowRate?.Update(displaySystemDamper.DesignFlowRate, energyCentre);
             result.DesignFlowType = displaySystemDamper.DesignFlowType.ToTPD();
-            result.MinimumFlowRate?.Update(displaySystemDamper.MinimumFlowRate);
+            result.MinimumFlowRate?.Update(displaySystemDamper.MinimumFlowRate, energyCentre);
             result.MinimumFlowType = displaySystemDamper.MinimumFlowType.ToTPD();
             result.MinimumFlowFraction = displaySystemDamper.MinimumFlowFraction;
             result.DesignPressureDrop = displaySystemDamper.DesignPressureDrop;

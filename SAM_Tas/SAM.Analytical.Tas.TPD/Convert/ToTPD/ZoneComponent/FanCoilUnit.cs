@@ -27,9 +27,9 @@ namespace SAM.Analytical.Tas.TPD
             fanCoilUnit.OverallEfficiency?.Update(systemFanCoilUnit.OverallEfficiency, energyCentre);
             fanCoilUnit.HeatGainFactor = systemFanCoilUnit.HeatGainFactor;
             fanCoilUnit.Pressure = systemFanCoilUnit.Pressure;
-            fanCoilUnit.DesignFlowRate?.Update(systemFanCoilUnit.DesignFlowRate);
+            fanCoilUnit.DesignFlowRate?.Update(systemFanCoilUnit.DesignFlowRate, energyCentre);
             fanCoilUnit.DesignFlowType = systemFanCoilUnit.DesignFlowType.ToTPD();
-            fanCoilUnit.MinimumFlowRate?.Update(systemFanCoilUnit.MinimumFlowRate);
+            fanCoilUnit.MinimumFlowRate?.Update(systemFanCoilUnit.MinimumFlowRate, energyCentre);
             fanCoilUnit.MinimumFlowType = systemFanCoilUnit.MinimumFlowType.ToTPD();
             fanCoilUnit.ZonePosition = systemFanCoilUnit.ZonePosition.ToTPD();
             fanCoilUnit.ControlMethod = systemFanCoilUnit.ControlMethod.ToTPD();

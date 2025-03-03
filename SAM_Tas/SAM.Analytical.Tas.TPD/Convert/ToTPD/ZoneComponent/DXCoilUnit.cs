@@ -25,9 +25,9 @@ namespace SAM.Analytical.Tas.TPD
             dXCoilUnit.OverallEfficiency?.Update(systemDXCoilUnit.OverallEfficiency, energyCentre);
             dXCoilUnit.HeatGainFactor = systemDXCoilUnit.HeatGainFactor;
             dXCoilUnit.Pressure = systemDXCoilUnit.Pressure;
-            dXCoilUnit.DesignFlowRate?.Update(systemDXCoilUnit.DesignFlowRate);
+            dXCoilUnit.DesignFlowRate?.Update(systemDXCoilUnit.DesignFlowRate, energyCentre);
             dXCoilUnit.DesignFlowType = systemDXCoilUnit.DesignFlowType.ToTPD();
-            dXCoilUnit.MinimumFlowRate?.Update(systemDXCoilUnit.MinimumFlowRate);
+            dXCoilUnit.MinimumFlowRate?.Update(systemDXCoilUnit.MinimumFlowRate, energyCentre);
             dXCoilUnit.MinimumFlowType = systemDXCoilUnit.MinimumFlowType.ToTPD();
             dXCoilUnit.ZonePosition = systemDXCoilUnit.ZonePosition.ToTPD();
             dXCoilUnit.ControlMethod = systemDXCoilUnit.ControlMethod.ToTPD();
