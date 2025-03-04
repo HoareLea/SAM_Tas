@@ -920,14 +920,14 @@ namespace SAM.Analytical.Tas.TPD
 
                                             List<global::TPD.SystemComponent> systemComponents_ComponentGroup = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
 
-                                            List<Damper> dampers = systemComponents_ComponentGroup.FindAll(x => x is Damper).ConvertAll(x => (Damper)x);
-                                            if (dampers != null)
-                                            {
-                                                foreach (Damper damper in dampers)
-                                                {
-                                                    damper.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
-                                                }
-                                            }
+                                            //List<Damper> dampers = systemComponents_ComponentGroup.FindAll(x => x is Damper).ConvertAll(x => (Damper)x);
+                                            //if (dampers != null)
+                                            //{
+                                            //    foreach (Damper damper in dampers)
+                                            //    {
+                                            //        damper.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
+                                            //    }
+                                            //}
 
                                             List<SystemZone> systemZones = systemComponents_ComponentGroup.FindAll(x => x is SystemZone).ConvertAll(x => (SystemZone)x);
                                             if (systemZones != null && systemZones.Count == zoneLoads.Count)
@@ -936,38 +936,38 @@ namespace SAM.Analytical.Tas.TPD
                                                 {
                                                     dynamic systemZone_Group = systemZones[i];
                                                     systemZone_Group.AddZoneLoad(zoneLoads[i]);
-                                                    if (dHWGroup != null)
-                                                    {
-                                                        systemZone_Group.SetDHWGroup(dHWGroup);
-                                                    }
+                                                    //if (dHWGroup != null)
+                                                    //{
+                                                    //    systemZone_Group.SetDHWGroup(dHWGroup);
+                                                    //}
 
-                                                    if (electricalGroup_SmallPower != null)
-                                                    {
-                                                        systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
-                                                    }
+                                                    //if (electricalGroup_SmallPower != null)
+                                                    //{
+                                                    //    systemZone_Group.SetElectricalGroup1(electricalGroup_SmallPower);
+                                                    //}
 
-                                                    if (electricalGroup_Lighting != null)
-                                                    {
-                                                        systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
-                                                    }
+                                                    //if (electricalGroup_Lighting != null)
+                                                    //{
+                                                    //    systemZone_Group.SetElectricalGroup2(electricalGroup_Lighting);
+                                                    //}
 
-                                                    systemZone_Group.FlowRate.Type = tpdSizedVariable.tpdSizedVariableSize;
-                                                    systemZone_Group.FlowRate.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
-                                                    //systemZone_Group.FlowRate.Value = 100;
-                                                    for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
-                                                    {
-                                                        systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
-                                                    }
+                                                    //systemZone_Group.FlowRate.Type = tpdSizedVariable.tpdSizedVariableSize;
+                                                    //systemZone_Group.FlowRate.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
+                                                    ////systemZone_Group.FlowRate.Value = 100;
+                                                    //for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
+                                                    //{
+                                                    //    systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                                                    //}
 
-                                                    //systemZone_Group.DisplacementVent = displacementVent ? 1 : 0;
+                                                    ////systemZone_Group.DisplacementVent = displacementVent ? 1 : 0;
 
-                                                    systemZone_Group.FreshAir.Type = tpdSizedVariable.tpdSizedVariableSize;
-                                                    systemZone_Group.FreshAir.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
-                                                    //systemZone_Group.FreshAir.Value = 100;
-                                                    for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
-                                                    {
-                                                        systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(j));
-                                                    }
+                                                    //systemZone_Group.FreshAir.Type = tpdSizedVariable.tpdSizedVariableSize;
+                                                    //systemZone_Group.FreshAir.Method = tpdSizeFlowMethod.tpdSizeFlowPeakInternalCondition;
+                                                    ////systemZone_Group.FreshAir.Value = 100;
+                                                    //for (int j = 1; j <= energyCentre.GetDesignConditionCount(); j++)
+                                                    //{
+                                                    //    systemZone_Group.FreshAir.AddDesignCondition(energyCentre.GetDesignCondition(j));
+                                                    //}
                                                 }
                                             }
 
