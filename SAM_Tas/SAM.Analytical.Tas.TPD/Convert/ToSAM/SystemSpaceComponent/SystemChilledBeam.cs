@@ -37,6 +37,12 @@ namespace SAM.Analytical.Tas.TPD
                 result.SetValue(SystemChilledBeamParameter.CoolingCollection, new CollectionLink(CollectionType.Cooling, ((dynamic)coolingGroup).Name));
             }
 
+            HeatingGroup heatingGroup = @dynamic.GetHeatingGroup();
+            if (heatingGroup != null)
+            {
+                result.SetValue(SystemChilledBeamParameter.HeatingCollection, new CollectionLink(CollectionType.Heating, ((dynamic)heatingGroup).Name));
+            }
+
             result.SetReference(((ZoneComponent)chilledBeam).Reference());
             
             result.Description = dynamic.Description;
