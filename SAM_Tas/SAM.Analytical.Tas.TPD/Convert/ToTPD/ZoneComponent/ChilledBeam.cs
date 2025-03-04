@@ -32,13 +32,25 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((ZoneComponent)chilledBeam, systemChilledBeam.ScheduleName);
 
-            CollectionLink collectionLink = systemChilledBeam.GetValue<CollectionLink>(SystemChilledBeamParameter.CoolingCollection);
+            CollectionLink collectionLink;
+
+            collectionLink = systemChilledBeam.GetValue<CollectionLink>(SystemChilledBeamParameter.CoolingCollection);
             if (collectionLink != null)
             {
                 CoolingGroup coolingGroup = plantRoom?.CoolingGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
                 if (coolingGroup != null)
                 {
                     ((dynamic)chilledBeam).SetCoolingGroup(coolingGroup);
+                }
+            }
+
+            collectionLink = systemChilledBeam.GetValue<CollectionLink>(SystemChilledBeamParameter.HeatingCollection);
+            if (collectionLink != null)
+            {
+                HeatingGroup heatingGroup = plantRoom?.HeatingGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
+                if (heatingGroup != null)
+                {
+                    ((dynamic)chilledBeam).SetHeatingGroup(heatingGroup);
                 }
             }
 
