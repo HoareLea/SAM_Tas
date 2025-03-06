@@ -37,8 +37,6 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemHeatingCoil.ScheduleName);
 
-            displaySystemHeatingCoil.SetLocation(result as SystemComponent);
-
             CollectionLink collectionLink = displaySystemHeatingCoil.GetValue<CollectionLink>(SystemHeatingColiParameter.HeatingCollection);
             if (collectionLink != null)
             {
@@ -79,6 +77,11 @@ namespace SAM.Analytical.Tas.TPD
             //{
             //    @dynamic.Duty.AddDesignCondition(designConditionLoad);
             //}
+
+            if(heatingCoil == null)
+            {
+                displaySystemHeatingCoil.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

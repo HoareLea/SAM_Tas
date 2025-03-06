@@ -70,7 +70,10 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            displaySystemMultiChiller.SetLocation(result as PlantComponent);
+            if(multiChiller == null)
+            {
+                displaySystemMultiChiller.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

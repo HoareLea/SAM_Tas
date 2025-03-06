@@ -26,7 +26,10 @@ namespace SAM.Analytical.Tas.TPD
 
             result.PipeLength?.Update(displayRefrigerantSystemCollection.PipeLength, energyCentre);
 
-            displayRefrigerantSystemCollection.SetLocation(result as PlantComponent);
+            if(refrigerantGroup == null)
+            {
+                displayRefrigerantSystemCollection.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

@@ -61,7 +61,10 @@ namespace SAM.Analytical.Tas.TPD
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
-            displaySystemExchanger.SetLocation(result as SystemComponent);
+            if(exchanger == null)
+            {
+                displaySystemExchanger.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

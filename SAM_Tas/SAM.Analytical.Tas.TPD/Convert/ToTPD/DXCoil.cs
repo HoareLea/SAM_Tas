@@ -52,7 +52,10 @@ namespace SAM.Analytical.Tas.TPD
 
             SystemComponent systemComponent = result as SystemComponent;
 
-            displaySystemDXCoil.SetLocation(systemComponent);
+            if(dXCoil == null)
+            {
+                displaySystemDXCoil.SetLocation(systemComponent);
+            }
 
             return result;
         }

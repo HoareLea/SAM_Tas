@@ -46,7 +46,10 @@ namespace SAM.Analytical.Tas.TPD
                 result.Flags = (int)tpdTankFlags.tpdTankUseDefinedHeatLoss;
             }
 
-            displaySystemTank.SetLocation(result as PlantComponent);
+            if(tank == null)
+            {
+                displaySystemTank.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

@@ -80,7 +80,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemMultiBoiler.ScheduleName);
 
-            displaySystemMultiBoiler.SetLocation(result as PlantComponent);
+            if(multiBoiler == null)
+            {
+                displaySystemMultiBoiler.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

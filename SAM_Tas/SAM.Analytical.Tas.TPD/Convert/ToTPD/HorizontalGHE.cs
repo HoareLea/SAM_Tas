@@ -36,7 +36,10 @@ namespace SAM.Analytical.Tas.TPD
             result.PipeLength = displaySystemHorizontalExchanger.PipeLength;
             result.PipeDepth = displaySystemHorizontalExchanger.PipeDepth;
 
-            displaySystemHorizontalExchanger.SetLocation(result as PlantComponent);
+            if(horizontalGHE == null)
+            {
+                displaySystemHorizontalExchanger.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

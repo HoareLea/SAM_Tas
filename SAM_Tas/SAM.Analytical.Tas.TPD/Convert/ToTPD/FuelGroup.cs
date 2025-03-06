@@ -23,7 +23,10 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displayFuelSystemCollection.Name;
             @dynamic.Description = displayFuelSystemCollection.Description;
 
-            displayFuelSystemCollection.SetLocation(result as PlantComponent);
+            if(fuelGroup == null)
+            {
+                displayFuelSystemCollection.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

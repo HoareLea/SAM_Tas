@@ -31,7 +31,10 @@ namespace SAM.Analytical.Tas.TPD
             result.UseDistributionHeatLossProfile = displayDomesticHotWaterSystemCollection.Distribution == null ? (false).ToTPD() : displayDomesticHotWaterSystemCollection.Distribution.IsEfficiency.ToTPD();
             result.DistributionHeatLossProfile.Update(displayDomesticHotWaterSystemCollection.Distribution, energyCentre);
 
-            displayDomesticHotWaterSystemCollection.SetLocation(result as PlantComponent);
+            if(dHWGroup == null)
+            {
+                displayDomesticHotWaterSystemCollection.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

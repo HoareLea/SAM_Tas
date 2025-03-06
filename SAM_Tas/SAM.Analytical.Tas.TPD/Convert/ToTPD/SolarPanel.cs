@@ -38,7 +38,10 @@ namespace SAM.Analytical.Tas.TPD
             result.Reflectance = displaySystemSolarPanel.Reflectance;
             result.DesignFlowPerM2 = displaySystemSolarPanel.DesignFlowPerM2;
 
-            displaySystemSolarPanel.SetLocation(result as PlantComponent);
+            if(solarPanel == null)
+            {
+                displaySystemSolarPanel.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

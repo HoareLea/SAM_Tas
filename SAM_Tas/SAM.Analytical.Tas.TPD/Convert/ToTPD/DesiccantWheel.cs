@@ -47,7 +47,10 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            displaySystemDesiccantWheel.SetLocation(result as SystemComponent);
+            if(desiccantWheel == null)
+            {
+                displaySystemDesiccantWheel.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

@@ -61,19 +61,26 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(2, fuelSource);
             }
 
-            displaySystemWaterSourceChiller.SetLocation(result as PlantComponent);
+            if(waterSourceChiller == null)
+            {
+                displaySystemWaterSourceChiller.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }
 
-        public static WaterSourceChiller ToTPD(this DisplaySystemWaterSourceDirectAbsorptionChiller displaySystemWaterSourceDirectAbsorptionChiller, PlantRoom plantRoom)
+        public static WaterSourceChiller ToTPD(this DisplaySystemWaterSourceDirectAbsorptionChiller displaySystemWaterSourceDirectAbsorptionChiller, PlantRoom plantRoom, WaterSourceChiller waterSourceChiller = null)
         {
             if (displaySystemWaterSourceDirectAbsorptionChiller == null || plantRoom == null)
             {
                 return null;
             }
 
-            WaterSourceChiller result = plantRoom.AddWaterSourceChiller();
+            WaterSourceChiller result = waterSourceChiller;
+            if(waterSourceChiller == null)
+            {
+                result = plantRoom.AddWaterSourceChiller();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemWaterSourceDirectAbsorptionChiller.Name;
@@ -120,7 +127,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(2, fuelSource);
             }
 
-            displaySystemWaterSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
+            if (waterSourceChiller == null)
+            {
+                displaySystemWaterSourceDirectAbsorptionChiller.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

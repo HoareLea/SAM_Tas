@@ -39,7 +39,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemLiquidExchanger.ScheduleName);
 
-            displaySystemLiquidExchanger.SetLocation(result as PlantComponent);
+            if(heatExchanger == null)
+            {
+                displaySystemLiquidExchanger.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

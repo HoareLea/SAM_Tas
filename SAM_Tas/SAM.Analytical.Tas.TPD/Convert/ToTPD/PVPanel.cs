@@ -46,7 +46,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(1, fuelSource);
             }
 
-            displaySystemPhotovoltaicPanel.SetLocation(result as PlantComponent);
+            if(pVPanel == null)
+            {
+                displaySystemPhotovoltaicPanel.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

@@ -30,7 +30,10 @@ namespace SAM.Analytical.Tas.TPD
                 @dynamic.SetFuelSource(1, fuelSource);
             }
 
-            displayElectricalSystemCollection.SetLocation(result as PlantComponent);
+            if(electricalGroup == null)
+            {
+                displayElectricalSystemCollection.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

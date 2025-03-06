@@ -83,7 +83,10 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Load?.Update(displaySystemLoadComponent.Load, energyCentre);
 
-            displaySystemLoadComponent.SetLocation(result as SystemComponent);
+            if(loadComponent == null)
+            {
+                displaySystemLoadComponent.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

@@ -70,7 +70,11 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemAirSourceHeatPump.ScheduleName);
 
-            displaySystemAirSourceHeatPump.SetLocation(result as PlantComponent);
+            if(airSourceHeatPump == null)
+            {
+                displaySystemAirSourceHeatPump.SetLocation(result as PlantComponent);
+            }
+
 
             return result;
         }

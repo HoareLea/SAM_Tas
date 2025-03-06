@@ -37,7 +37,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(1, fuelSource);
             }
 
-            displaySystemWindTurbine.SetLocation(result as PlantComponent);
+            if(windTurbine == null)
+            {
+                displaySystemWindTurbine.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

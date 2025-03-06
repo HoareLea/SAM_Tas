@@ -40,7 +40,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemPump.ScheduleName);
 
-            displaySystemPump.SetLocation(result as PlantComponent);
+            if(pump == null)
+            {
+                displaySystemPump.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

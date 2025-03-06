@@ -33,7 +33,10 @@ namespace SAM.Analytical.Tas.TPD
             result.GroundConductivity = displaySystemSurfaceWaterExchanger.GroundConductivity;
             result.WaterTableDepth = displaySystemSurfaceWaterExchanger.WaterTableDepth;
 
-            displaySystemSurfaceWaterExchanger.SetLocation(result as PlantComponent);
+            if(surfaceWaterExchanger == null)
+            {
+                displaySystemSurfaceWaterExchanger.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

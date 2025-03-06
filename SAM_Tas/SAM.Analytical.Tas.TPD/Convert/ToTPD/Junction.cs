@@ -22,7 +22,10 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Name = displaySystemAirJunction.Name;
             @dynamic.Description = displaySystemAirJunction.Description;
 
-            displaySystemAirJunction.SetLocation(result as SystemComponent);
+            if(junction == null)
+            {
+                displaySystemAirJunction.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

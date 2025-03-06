@@ -33,9 +33,12 @@ namespace SAM.Analytical.Tas.TPD
             result.UseDistributionHeatLossProfile = displayHeatingSystemCollection.Distribution == null ? (false).ToTPD() : displayHeatingSystemCollection.Distribution.IsEfficiency.ToTPD();
             result.DistributionHeatLossProfile?.Update(displayHeatingSystemCollection.Distribution, energyCentre);
 
-            displayHeatingSystemCollection.SetLocation(result as PlantComponent);
+            if(heatingGroup == null)
+            {
+                displayHeatingSystemCollection.SetLocation(result as PlantComponent);
+            }
 
-            return result as HeatingGroup;
+            return result;
         }
     }
 }

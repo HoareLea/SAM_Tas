@@ -40,8 +40,11 @@ namespace SAM.Analytical.Tas.TPD
             {
                 ((@dynamic)result).SetFuelSource(1, fuelSource);
             }
-
-            displaySystemAbsorptionChiller.SetLocation(result as PlantComponent);
+            
+            if(absorptionChiller == null)
+            {
+                displaySystemAbsorptionChiller.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }
@@ -83,7 +86,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(1, fuelSource);
             }
 
-            displaySystemWaterSourceAbsorptionChiller.SetLocation(result as PlantComponent);
+            if (absorptionChiller == null)
+            {
+                displaySystemWaterSourceAbsorptionChiller.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

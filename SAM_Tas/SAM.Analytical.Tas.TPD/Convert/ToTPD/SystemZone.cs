@@ -103,7 +103,10 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            displaySystemSpace.SetLocation(result as global::TPD.SystemComponent);
+            if(systemZone == null)
+            {
+                displaySystemSpace.SetLocation(result as global::TPD.SystemComponent);
+            }
 
             return result;
         }

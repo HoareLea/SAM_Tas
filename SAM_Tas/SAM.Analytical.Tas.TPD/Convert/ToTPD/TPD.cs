@@ -4,7 +4,6 @@ using SAM.Core.Systems;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using TPD;
@@ -974,6 +973,10 @@ namespace SAM.Analytical.Tas.TPD
                                                         {
                                                             ToTPD((DisplaySystemEconomiser)systemComponent_SAM, system, (global::TPD.Optimiser)systemComponent_TPD_New);
                                                         }
+                                                        else if (systemComponent_SAM is DisplaySystemMixingBox && systemComponent_TPD_New is global::TPD.Optimiser)
+                                                        {
+                                                            ToTPD((DisplaySystemMixingBox)systemComponent_SAM, system, (global::TPD.Optimiser)systemComponent_TPD_New);
+                                                        }
                                                         else if (systemComponent_SAM is DisplaySystemSprayHumidifier && systemComponent_TPD_New is global::TPD.SprayHumidifier)
                                                         {
                                                             ToTPD((DisplaySystemSprayHumidifier)systemComponent_SAM, system, (global::TPD.SprayHumidifier)systemComponent_TPD_New);
@@ -981,6 +984,10 @@ namespace SAM.Analytical.Tas.TPD
                                                         else if (systemComponent_SAM is DisplaySystemSteamHumidifier && systemComponent_TPD_New is global::TPD.SteamHumidifier)
                                                         {
                                                             ToTPD((DisplaySystemSteamHumidifier)systemComponent_SAM, system, (global::TPD.SteamHumidifier)systemComponent_TPD_New);
+                                                        }
+                                                        else if (systemComponent_SAM is DisplaySystemDirectEvaporativeCooler && systemComponent_TPD_New is global::TPD.SprayHumidifier)
+                                                        {
+                                                            ToTPD((DisplaySystemDirectEvaporativeCooler)systemComponent_SAM, system, (global::TPD.SprayHumidifier)systemComponent_TPD_New);
                                                         }
                                                     }
 

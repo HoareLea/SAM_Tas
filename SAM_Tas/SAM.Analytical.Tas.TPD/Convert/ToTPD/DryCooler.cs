@@ -68,7 +68,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(2, fuelSource);
             }
 
-            displaySystemDryCooler.SetLocation(result as PlantComponent);
+            if(dryCooler == null)
+            {
+                displaySystemDryCooler.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

@@ -35,9 +35,6 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemCoolingCoil.ScheduleName);
 
-            displaySystemCoolingCoil.SetLocation(result as SystemComponent);
-
-
             CollectionLink collectionLink = displaySystemCoolingCoil.GetValue<CollectionLink>(SystemCoolingCoilParameter.CoolingCollection);
             if(collectionLink != null)
             {
@@ -46,6 +43,11 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     @dynamic.SetCoolingGroup(coolingGroup);
                 }
+            }
+
+            if(coolingCoil == null)
+            {
+                displaySystemCoolingCoil.SetLocation(result as SystemComponent);
             }
 
             return result;

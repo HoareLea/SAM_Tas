@@ -65,7 +65,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(2, fuelSource);
             }
 
-            displaySystemWaterSourceHeatPump.SetLocation(result as PlantComponent);
+            if(heatPump == null)
+            {
+                displaySystemWaterSourceHeatPump.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

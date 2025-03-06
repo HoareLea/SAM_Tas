@@ -38,7 +38,10 @@ namespace SAM.Analytical.Tas.TPD
             result.GroutConductivity = displaySystemVerticalBorehole.GroutConductivity;
             result.GroundTemp = displaySystemVerticalBorehole.GroundTemperatureAve;
 
-            displaySystemVerticalBorehole.SetLocation(result as PlantComponent);
+            if(groundSource == null)
+            {
+                displaySystemVerticalBorehole.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

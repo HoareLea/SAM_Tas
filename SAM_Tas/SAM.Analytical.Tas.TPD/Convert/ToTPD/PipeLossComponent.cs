@@ -39,7 +39,10 @@ namespace SAM.Analytical.Tas.TPD
             result.GrDensity = displaySystemPipeLossComponent.GroundDensity;
             result.GrTemp = displaySystemPipeLossComponent.GroundTemperature;
 
-            displaySystemPipeLossComponent.SetLocation(result as PlantComponent);
+            if(pipeLossComponent == null)
+            {
+                displaySystemPipeLossComponent.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

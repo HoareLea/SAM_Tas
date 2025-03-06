@@ -49,7 +49,7 @@ namespace SAM.Analytical.Tas.TPD
             //// result.SetDirection(tpdDirection.tpdLeftRight);
             // result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
-            displaySystemFan.SetLocation(result as SystemComponent);
+
 
             Modify.SetSchedule((SystemComponent)result, displaySystemFan.ScheduleName);
 
@@ -79,6 +79,11 @@ namespace SAM.Analytical.Tas.TPD
             //profileDataModifierTable.AddPoint(80, 68);
             //profileDataModifierTable.AddPoint(90, 83);
             //profileDataModifierTable.AddPoint(100, 100);
+
+            if(fan == null)
+            {
+                displaySystemFan.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

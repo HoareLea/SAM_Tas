@@ -42,19 +42,26 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemEconomiser.ScheduleName);
 
-            displaySystemEconomiser.SetLocation((SystemComponent)result);
+            if(optimiser == null)
+            {
+                displaySystemEconomiser.SetLocation((SystemComponent)result);
+            }
 
             return result;
         }
 
-        public static Optimiser ToTPD(this DisplaySystemMixingBox displaySystemMixingBox, global::TPD.System system)
+        public static Optimiser ToTPD(this DisplaySystemMixingBox displaySystemMixingBox, global::TPD.System system, Optimiser optimiser = null)
         {
             if (displaySystemMixingBox == null || system == null)
             {
                 return null;
             }
 
-            Optimiser result = system.AddOptimiser();
+            Optimiser result = optimiser;
+            if(result == null)
+            {
+                result = system.AddOptimiser();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemMixingBox.Name;
@@ -83,7 +90,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemMixingBox.ScheduleName);
 
-            displaySystemMixingBox.SetLocation((SystemComponent)result);
+            if(optimiser == null)
+            {
+                displaySystemMixingBox.SetLocation((SystemComponent)result);
+            }
 
             return result;
         }

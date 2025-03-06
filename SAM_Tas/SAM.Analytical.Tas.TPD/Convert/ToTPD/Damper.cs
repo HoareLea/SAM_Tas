@@ -35,8 +35,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemDamper.ScheduleName);
 
-
-            displaySystemDamper.SetLocation(result as SystemComponent);
+            if(damper == null)
+            {
+                displaySystemDamper.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

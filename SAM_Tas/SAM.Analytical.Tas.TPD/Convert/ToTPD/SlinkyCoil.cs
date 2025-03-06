@@ -42,7 +42,10 @@ namespace SAM.Analytical.Tas.TPD
             result.TrenchDepth = displaySystemSlinkyCoil.TrenchDepth;
             result.TrenchWidth = displaySystemSlinkyCoil.TrenchWidth;
 
-            displaySystemSlinkyCoil.SetLocation(result as PlantComponent);
+            if(slinkyCoil == null)
+            {
+                displaySystemSlinkyCoil.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

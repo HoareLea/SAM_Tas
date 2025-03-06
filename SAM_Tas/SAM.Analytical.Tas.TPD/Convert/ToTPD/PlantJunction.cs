@@ -24,7 +24,10 @@ namespace SAM.Analytical.Tas.TPD
 
             result.MainsPressure = displaySystemLiquidJunction.MainsPressure;
 
-            displaySystemLiquidJunction.SetLocation(result as PlantComponent);
+            if(plantJunction == null)
+            {
+                displaySystemLiquidJunction.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

@@ -47,7 +47,10 @@ namespace SAM.Analytical.Tas.TPD
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
-            displaySystemSteamHumidifier.SetLocation(result as SystemComponent);
+            if(steamHumidifier == null)
+            {
+                displaySystemSteamHumidifier.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }
