@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static HeatPump ToTPD(this DisplaySystemWaterSourceHeatPump displaySystemWaterSourceHeatPump, PlantRoom plantRoom)
+        public static HeatPump ToTPD(this DisplaySystemWaterSourceHeatPump displaySystemWaterSourceHeatPump, PlantRoom plantRoom, HeatPump heatPump = null)
         {
             if (displaySystemWaterSourceHeatPump == null || plantRoom == null)
             {
                 return null;
             }
 
-            HeatPump result = plantRoom.AddHeatPump();
+            HeatPump result = heatPump;
+            if(result == null)
+            {
+                result = plantRoom.AddHeatPump();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemWaterSourceHeatPump.Name;

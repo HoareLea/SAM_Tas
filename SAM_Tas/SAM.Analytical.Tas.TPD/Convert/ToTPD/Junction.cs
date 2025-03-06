@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Junction ToTPD(this DisplaySystemAirJunction displaySystemAirJunction, global::TPD.System system)
+        public static Junction ToTPD(this DisplaySystemAirJunction displaySystemAirJunction, global::TPD.System system, Junction junction = null)
         {
             if (displaySystemAirJunction == null || system == null)
             {
                 return null;
             }
 
-            Junction result = system.AddJunction();
+            Junction result = junction;
+            if (result == null)
+            {
+                result = system.AddJunction();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemAirJunction.Name;

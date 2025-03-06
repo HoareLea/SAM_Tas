@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static AbsorptionChiller ToTPD(this DisplaySystemAbsorptionChiller displaySystemAbsorptionChiller, PlantRoom plantRoom)
+        public static AbsorptionChiller ToTPD(this DisplaySystemAbsorptionChiller displaySystemAbsorptionChiller, PlantRoom plantRoom, AbsorptionChiller absorptionChiller = null)
         {
             if (displaySystemAbsorptionChiller == null || plantRoom == null)
             {
                 return null;
             }
 
-            AbsorptionChiller result = plantRoom.AddAbsorptionChiller();
+            AbsorptionChiller result = absorptionChiller;
+            if(result == null)
+            {
+                result = plantRoom.AddAbsorptionChiller();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemAbsorptionChiller.Name;
@@ -42,14 +46,18 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static AbsorptionChiller ToTPD(this DisplaySystemWaterSourceAbsorptionChiller displaySystemWaterSourceAbsorptionChiller, PlantRoom plantRoom)
+        public static AbsorptionChiller ToTPD(this DisplaySystemWaterSourceAbsorptionChiller displaySystemWaterSourceAbsorptionChiller, PlantRoom plantRoom, AbsorptionChiller absorptionChiller = null)
         {
             if (displaySystemWaterSourceAbsorptionChiller == null || plantRoom == null)
             {
                 return null;
             }
 
-            AbsorptionChiller result = plantRoom.AddAbsorptionChiller();
+            AbsorptionChiller result = absorptionChiller;
+            if (result == null)
+            {
+                result = plantRoom.AddAbsorptionChiller();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemWaterSourceAbsorptionChiller.Name;

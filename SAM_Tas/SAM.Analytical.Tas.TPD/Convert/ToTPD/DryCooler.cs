@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static DryCooler ToTPD(this DisplaySystemDryCooler displaySystemDryCooler, PlantRoom plantRoom)
+        public static DryCooler ToTPD(this DisplaySystemDryCooler displaySystemDryCooler, PlantRoom plantRoom, DryCooler dryCooler = null)
         {
             if (displaySystemDryCooler == null || plantRoom == null)
             {
                 return null;
             }
 
-            DryCooler result = plantRoom.AddDryCooler();
+            DryCooler result = dryCooler;
+            if(result == null)
+            {
+                result = plantRoom.AddDryCooler();
+            }
 
             dynamic @dynamic = result;
             dynamic.Name = displaySystemDryCooler.Name;

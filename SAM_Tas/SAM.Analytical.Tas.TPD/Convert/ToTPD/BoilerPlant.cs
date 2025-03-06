@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static BoilerPlant ToTPD(this DisplaySystemBoiler displaySystemBoiler, PlantRoom plantRoom)
+        public static BoilerPlant ToTPD(this DisplaySystemBoiler displaySystemBoiler, PlantRoom plantRoom, BoilerPlant boilerPlant = null)
         {
             if (displaySystemBoiler == null || plantRoom == null)
             {
                 return null;
             }
 
-            BoilerPlant result = plantRoom.AddBoiler();
+            BoilerPlant result = boilerPlant;
+            if(result == null)
+            {
+                result = plantRoom.AddBoiler();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemBoiler.Name;

@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static IceStorageChiller ToTPD(this DisplaySystemIceStorageChiller displaySystemIceStorageChiller, PlantRoom plantRoom)
+        public static IceStorageChiller ToTPD(this DisplaySystemIceStorageChiller displaySystemIceStorageChiller, PlantRoom plantRoom, IceStorageChiller iceStorageChiller = null)
         {
             if (displaySystemIceStorageChiller == null || plantRoom == null)
             {
                 return null;
             }
 
-            IceStorageChiller result = plantRoom.AddIceStorageChiller();
+            IceStorageChiller result = iceStorageChiller;
+            if(result == null)
+            {
+                result = plantRoom.AddIceStorageChiller();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemIceStorageChiller.Name;

@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static DHWGroup ToTPD(this DisplayDomesticHotWaterSystemCollection displayDomesticHotWaterSystemCollection, PlantRoom plantRoom)
+        public static DHWGroup ToTPD(this DisplayDomesticHotWaterSystemCollection displayDomesticHotWaterSystemCollection, PlantRoom plantRoom, DHWGroup dHWGroup = null)
         {
             if (displayDomesticHotWaterSystemCollection == null || plantRoom == null)
             {
                 return null;
             }
 
-            DHWGroup result = plantRoom.AddDHWGroup();
+            DHWGroup result = dHWGroup;
+            if(result == null)
+            {
+                result = plantRoom.AddDHWGroup();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displayDomesticHotWaterSystemCollection.Name;

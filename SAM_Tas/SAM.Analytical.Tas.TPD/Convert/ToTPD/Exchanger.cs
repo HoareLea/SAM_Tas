@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Exchanger ToTPD(this DisplaySystemExchanger displaySystemExchanger, global::TPD.System system)
+        public static Exchanger ToTPD(this DisplaySystemExchanger displaySystemExchanger, global::TPD.System system, Exchanger exchanger = null)
         {
             if(displaySystemExchanger == null || system == null)
             {
                 return null;
             }
 
-            Exchanger result = system.AddExchanger();
+            Exchanger result = exchanger;
+            if (result == null)
+            {
+                result = system.AddExchanger();
+            }
 
             PlantRoom plantRoom = system.GetPlantRoom();
 

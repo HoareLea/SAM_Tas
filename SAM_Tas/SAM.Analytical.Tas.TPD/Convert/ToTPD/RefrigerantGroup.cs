@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static RefrigerantGroup ToTPD(this DisplayRefrigerantSystemCollection displayRefrigerantSystemCollection, PlantRoom plantRoom)
+        public static RefrigerantGroup ToTPD(this DisplayRefrigerantSystemCollection displayRefrigerantSystemCollection, PlantRoom plantRoom, RefrigerantGroup refrigerantGroup = null)
         {
             if (displayRefrigerantSystemCollection == null || plantRoom == null)
             {
                 return null;
             }
 
-            RefrigerantGroup result = plantRoom.AddRefrigerantGroup();
+            RefrigerantGroup result = refrigerantGroup;
+            if(result == null)
+            {
+                result = plantRoom.AddRefrigerantGroup();
+            }
 
             EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
 

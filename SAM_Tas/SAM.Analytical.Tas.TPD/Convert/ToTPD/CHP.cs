@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static CHP ToTPD(this DisplaySystemCHP displaySystemCHP, PlantRoom plantRoom)
+        public static CHP ToTPD(this DisplaySystemCHP displaySystemCHP, PlantRoom plantRoom, CHP cHP = null)
         {
             if (displaySystemCHP == null || plantRoom == null)
             {
                 return null;
             }
 
-            CHP result = plantRoom.AddChp();
+            CHP result = cHP;
+            if(result == null)
+            {
+                result = plantRoom.AddChp();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemCHP.Name;

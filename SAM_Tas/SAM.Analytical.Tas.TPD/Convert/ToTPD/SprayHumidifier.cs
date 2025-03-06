@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SprayHumidifier ToTPD(this DisplaySystemSprayHumidifier displaySystemSprayHumidifier, global::TPD.System system)
+        public static SprayHumidifier ToTPD(this DisplaySystemSprayHumidifier displaySystemSprayHumidifier, global::TPD.System system, SprayHumidifier sprayHumidifier = null)
         {
             if(displaySystemSprayHumidifier == null || system == null)
             {
                 return null;
             }
 
-            SprayHumidifier result = system.AddSprayHumidifier();
+            SprayHumidifier result = sprayHumidifier;
+            if(result == null)
+            {
+                result = system.AddSprayHumidifier();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemSprayHumidifier.Name;

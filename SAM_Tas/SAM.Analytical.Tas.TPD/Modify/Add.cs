@@ -642,20 +642,32 @@ namespace SAM.Analytical.Tas.TPD
 
             BoundingBox2D boundingBox2D = null;
 
-            List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
+            List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup, false, false);
             if (systemComponents != null)
             {
-                foreach (global::TPD.SystemComponent systemComponent_Temp in systemComponents)
-                {
-                    if (systemComponent_Temp is Junction)
-                    {
-                        continue;
-                    }
+                int count = systemComponents.Count / componentGroup.GetMultiplicity();
+                int index = 0;
 
+                for (int i = 0; i < systemComponents.Count; i++)
+                {
+                    global::TPD.SystemComponent systemComponent_Temp = systemComponents[i];
                     List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc, componentConversionSettings);
                     if (systemJSAMObjects != null)
                     {
-                        result.AddRange(systemJSAMObjects);
+                        foreach(ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
+                        {
+                            if(systemJSAMObject is Core.Systems.SystemComponent)
+                            {
+                                ((Core.Systems.SystemComponent)systemJSAMObject).SetValue(AirSystemComponentParameter.GroupIndex, index);
+                            }
+                            result.Add(systemJSAMObject);
+                        }       
+                    }
+
+                    index++;
+                    if(index >= count)
+                    {
+                        index = 0;
                     }
                 }
             }

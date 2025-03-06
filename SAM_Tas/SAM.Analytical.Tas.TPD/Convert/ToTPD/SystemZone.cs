@@ -7,16 +7,20 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemZone ToTPD(this DisplaySystemSpace displaySystemSpace, SystemPlantRoom systemPlantRoom, global::TPD.System system)
+        public static SystemZone ToTPD(this DisplaySystemSpace displaySystemSpace, SystemPlantRoom systemPlantRoom, global::TPD.System system, SystemZone systemZone = null)
         {
             if(displaySystemSpace == null || system == null)
             {
                 return null;
             }
 
-            EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
+            SystemZone result = systemZone;
+            if(systemZone == null)
+            {
+                result = system.AddSystemZone();
+            }
 
-            SystemZone result = system.AddSystemZone();
+            EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
 
             dynamic @dynamic = result;
 

@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Tank ToTPD(this DisplaySystemTank displaySystemTank, PlantRoom plantRoom)
+        public static Tank ToTPD(this DisplaySystemTank displaySystemTank, PlantRoom plantRoom, Tank tank = null)
         {
             if (displaySystemTank == null || plantRoom == null)
             {
                 return null;
             }
 
-            Tank result = plantRoom.AddTank();
+            Tank result = tank;
+            if(result == null)
+            {
+                result = plantRoom.AddTank();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemTank.Name;

@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static PipeLossComponent ToTPD(this DisplaySystemPipeLossComponent displaySystemPipeLossComponent, PlantRoom plantRoom)
+        public static PipeLossComponent ToTPD(this DisplaySystemPipeLossComponent displaySystemPipeLossComponent, PlantRoom plantRoom, PipeLossComponent pipeLossComponent = null)
         {
             if (displaySystemPipeLossComponent == null || plantRoom == null)
             {
                 return null;
             }
 
-            PipeLossComponent result = plantRoom.AddPipeLossComponent();
+            PipeLossComponent result = pipeLossComponent;
+            if(result == null)
+            {
+                result = plantRoom.AddPipeLossComponent();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemPipeLossComponent.Name;

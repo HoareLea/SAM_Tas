@@ -7,14 +7,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static MultiChiller ToTPD(this DisplaySystemMultiChiller displaySystemMultiChiller, PlantRoom plantRoom)
+        public static MultiChiller ToTPD(this DisplaySystemMultiChiller displaySystemMultiChiller, PlantRoom plantRoom, MultiChiller multiChiller = null)
         {
             if (displaySystemMultiChiller == null || plantRoom == null)
             {
                 return null;
             }
 
-            MultiChiller result = plantRoom.AddMultiChiller();
+            MultiChiller result = multiChiller;
+            if(result == null)
+            {
+                result = plantRoom.AddMultiChiller();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemMultiChiller.Name;

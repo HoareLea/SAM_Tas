@@ -6,14 +6,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Optimiser ToTPD(this DisplaySystemEconomiser displaySystemEconomiser, global::TPD.System system)
+        public static Optimiser ToTPD(this DisplaySystemEconomiser displaySystemEconomiser, global::TPD.System system, Optimiser optimiser = null)
         {
             if(displaySystemEconomiser == null || system == null)
             {
                 return null;
             }
 
-            Optimiser result = system.AddOptimiser();
+            Optimiser result = optimiser;
+            if(result == null)
+            {
+                result = system.AddOptimiser();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemEconomiser.Name;

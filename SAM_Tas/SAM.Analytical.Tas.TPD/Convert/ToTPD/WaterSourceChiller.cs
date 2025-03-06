@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static WaterSourceChiller ToTPD(this DisplaySystemWaterSourceChiller displaySystemWaterSourceChiller, PlantRoom plantRoom)
+        public static WaterSourceChiller ToTPD(this DisplaySystemWaterSourceChiller displaySystemWaterSourceChiller, PlantRoom plantRoom, WaterSourceChiller waterSourceChiller = null)
         {
             if (displaySystemWaterSourceChiller == null || plantRoom == null)
             {
                 return null;
             }
 
-            WaterSourceChiller result = plantRoom.AddWaterSourceChiller();
+            WaterSourceChiller result = waterSourceChiller;
+            if(result == null)
+            {
+                result = plantRoom.AddWaterSourceChiller();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemWaterSourceChiller.Name;

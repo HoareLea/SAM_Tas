@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static global::TPD.HeatingCoil ToTPD(this DisplaySystemHeatingCoil displaySystemHeatingCoil, global::TPD.System system)
+        public static global::TPD.HeatingCoil ToTPD(this DisplaySystemHeatingCoil displaySystemHeatingCoil, global::TPD.System system, global::TPD.HeatingCoil heatingCoil = null)
         {
             if(displaySystemHeatingCoil == null || system == null)
             {
                 return null;
             }
 
-            global::TPD.HeatingCoil result = system.AddHeatingCoil();
+            global::TPD.HeatingCoil result = heatingCoil;
+            if(result == null)
+            {
+                result = system.AddHeatingCoil();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemHeatingCoil.Name;

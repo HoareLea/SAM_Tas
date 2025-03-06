@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static DXCoil ToTPD(this DisplaySystemDXCoil displaySystemDXCoil, global::TPD.System system)
+        public static DXCoil ToTPD(this DisplaySystemDXCoil displaySystemDXCoil, global::TPD.System system, DXCoil dXCoil = null)
         {
             if(displaySystemDXCoil == null || system == null)
             {
                 return null;
             }
 
-            DXCoil result = system.AddDXCoil();
+            DXCoil result = dXCoil;
+            if(result == null)
+            {
+                result = system.AddDXCoil();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemDXCoil.Name;
