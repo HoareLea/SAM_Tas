@@ -66,7 +66,7 @@ namespace SAM.Analytical.Tas.TPD
 
             if (energyCentre != null)
             {
-                List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1));
+                List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1), new DisplaySystemSpace[] { displaySystemSpace });
                 if (zoneLoads != null)
                 {
                     foreach(ZoneLoad zoneLoad in zoneLoads)

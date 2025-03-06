@@ -912,6 +912,12 @@ namespace SAM.Analytical.Tas.TPD
                                                     }
 
                                                     systemComponents_TPD.Add(systemComponent_TPD_Temp);
+
+                                                    if(systemComponent_TPD_Temp is SystemZone)
+                                                    {
+                                                        count = tuples.Count;
+                                                    }
+
                                                 }
 
                                                 //TODO: Implement controllers
@@ -930,67 +936,74 @@ namespace SAM.Analytical.Tas.TPD
 
                                                     if(sortedDictionary.TryGetValue(index, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples) && tuples != null && tuples.Count != 0)
                                                     {
-                                                        Core.Systems.ISystemComponent systemComponent_SAM = tuples[0].Item1;
-                                                        tuples.RemoveAt(0);
+                                                        int index_Temp = tuples.FindIndex(x => (x.Item2 as dynamic)?.GUID == ((dynamic)systemComponent_TPD_New).GUID);
+                                                        if(index_Temp != -1)
+                                                        {
+                                                            tuples.RemoveAt(index_Temp);
+                                                        }
+                                                        else
+                                                        {
+                                                            Core.Systems.ISystemComponent systemComponent_SAM = tuples[0].Item1;
+                                                            tuples.RemoveAt(0);
 
-                                                        if(systemComponent_SAM is DisplaySystemSpace && systemComponent_TPD_New is SystemZone)
-                                                        {
-                                                            ToTPD((DisplaySystemSpace)systemComponent_SAM, systemPlantRoom, system, (SystemZone)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemAirJunction && systemComponent_TPD_New is Junction)
-                                                        {
-                                                            ToTPD((DisplaySystemAirJunction)systemComponent_SAM, system, (Junction)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemCoolingCoil && systemComponent_TPD_New is global::TPD.CoolingCoil)
-                                                        {
-                                                            ToTPD((DisplaySystemCoolingCoil)systemComponent_SAM, system, (global::TPD.CoolingCoil)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemDamper && systemComponent_TPD_New is global::TPD.Damper)
-                                                        {
-                                                            ToTPD((DisplaySystemDamper)systemComponent_SAM, system, (global::TPD.Damper)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemDesiccantWheel && systemComponent_TPD_New is global::TPD.DesiccantWheel)
-                                                        {
-                                                            ToTPD((DisplaySystemDesiccantWheel)systemComponent_SAM, system, (global::TPD.DesiccantWheel)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemDXCoil && systemComponent_TPD_New is global::TPD.DXCoil)
-                                                        {
-                                                            ToTPD((DisplaySystemDXCoil)systemComponent_SAM, system, (global::TPD.DXCoil)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemExchanger && systemComponent_TPD_New is global::TPD.Exchanger)
-                                                        {
-                                                            ToTPD((DisplaySystemExchanger)systemComponent_SAM, system, (global::TPD.Exchanger)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemFan && systemComponent_TPD_New is global::TPD.Fan)
-                                                        {
-                                                            ToTPD((DisplaySystemFan)systemComponent_SAM, system, (global::TPD.Fan)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemLoadComponent && systemComponent_TPD_New is global::TPD.LoadComponent)
-                                                        {
-                                                            ToTPD((DisplaySystemLoadComponent)systemComponent_SAM, system, (global::TPD.LoadComponent)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemEconomiser && systemComponent_TPD_New is global::TPD.Optimiser)
-                                                        {
-                                                            ToTPD((DisplaySystemEconomiser)systemComponent_SAM, system, (global::TPD.Optimiser)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemMixingBox && systemComponent_TPD_New is global::TPD.Optimiser)
-                                                        {
-                                                            ToTPD((DisplaySystemMixingBox)systemComponent_SAM, system, (global::TPD.Optimiser)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemSprayHumidifier && systemComponent_TPD_New is global::TPD.SprayHumidifier)
-                                                        {
-                                                            ToTPD((DisplaySystemSprayHumidifier)systemComponent_SAM, system, (global::TPD.SprayHumidifier)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemSteamHumidifier && systemComponent_TPD_New is global::TPD.SteamHumidifier)
-                                                        {
-                                                            ToTPD((DisplaySystemSteamHumidifier)systemComponent_SAM, system, (global::TPD.SteamHumidifier)systemComponent_TPD_New);
-                                                        }
-                                                        else if (systemComponent_SAM is DisplaySystemDirectEvaporativeCooler && systemComponent_TPD_New is global::TPD.SprayHumidifier)
-                                                        {
-                                                            ToTPD((DisplaySystemDirectEvaporativeCooler)systemComponent_SAM, system, (global::TPD.SprayHumidifier)systemComponent_TPD_New);
+                                                            if (systemComponent_SAM is DisplaySystemSpace && systemComponent_TPD_New is SystemZone)
+                                                            {
+                                                                ToTPD((DisplaySystemSpace)systemComponent_SAM, systemPlantRoom, system, (SystemZone)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemAirJunction && systemComponent_TPD_New is Junction)
+                                                            {
+                                                                ToTPD((DisplaySystemAirJunction)systemComponent_SAM, system, (Junction)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemCoolingCoil && systemComponent_TPD_New is global::TPD.CoolingCoil)
+                                                            {
+                                                                ToTPD((DisplaySystemCoolingCoil)systemComponent_SAM, system, (global::TPD.CoolingCoil)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemDamper && systemComponent_TPD_New is global::TPD.Damper)
+                                                            {
+                                                                ToTPD((DisplaySystemDamper)systemComponent_SAM, system, (global::TPD.Damper)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemDesiccantWheel && systemComponent_TPD_New is global::TPD.DesiccantWheel)
+                                                            {
+                                                                ToTPD((DisplaySystemDesiccantWheel)systemComponent_SAM, system, (global::TPD.DesiccantWheel)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemDXCoil && systemComponent_TPD_New is global::TPD.DXCoil)
+                                                            {
+                                                                ToTPD((DisplaySystemDXCoil)systemComponent_SAM, system, (global::TPD.DXCoil)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemExchanger && systemComponent_TPD_New is global::TPD.Exchanger)
+                                                            {
+                                                                ToTPD((DisplaySystemExchanger)systemComponent_SAM, system, (global::TPD.Exchanger)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemFan && systemComponent_TPD_New is global::TPD.Fan)
+                                                            {
+                                                                ToTPD((DisplaySystemFan)systemComponent_SAM, system, (global::TPD.Fan)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemLoadComponent && systemComponent_TPD_New is global::TPD.LoadComponent)
+                                                            {
+                                                                ToTPD((DisplaySystemLoadComponent)systemComponent_SAM, system, (global::TPD.LoadComponent)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemEconomiser && systemComponent_TPD_New is global::TPD.Optimiser)
+                                                            {
+                                                                ToTPD((DisplaySystemEconomiser)systemComponent_SAM, system, (global::TPD.Optimiser)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemMixingBox && systemComponent_TPD_New is global::TPD.Optimiser)
+                                                            {
+                                                                ToTPD((DisplaySystemMixingBox)systemComponent_SAM, system, (global::TPD.Optimiser)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemSprayHumidifier && systemComponent_TPD_New is global::TPD.SprayHumidifier)
+                                                            {
+                                                                ToTPD((DisplaySystemSprayHumidifier)systemComponent_SAM, system, (global::TPD.SprayHumidifier)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemSteamHumidifier && systemComponent_TPD_New is global::TPD.SteamHumidifier)
+                                                            {
+                                                                ToTPD((DisplaySystemSteamHumidifier)systemComponent_SAM, system, (global::TPD.SteamHumidifier)systemComponent_TPD_New);
+                                                            }
+                                                            else if (systemComponent_SAM is DisplaySystemDirectEvaporativeCooler && systemComponent_TPD_New is global::TPD.SprayHumidifier)
+                                                            {
+                                                                ToTPD((DisplaySystemDirectEvaporativeCooler)systemComponent_SAM, system, (global::TPD.SprayHumidifier)systemComponent_TPD_New);
+                                                            }
                                                         }
                                                     }
-
 
                                                     index++;
                                                     if (index >= count)
