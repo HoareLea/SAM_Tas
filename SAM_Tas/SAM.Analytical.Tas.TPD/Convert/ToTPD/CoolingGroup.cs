@@ -31,7 +31,7 @@ namespace SAM.Analytical.Tas.TPD
             //result.PeakDemand = displayCoolingSystemCollection.PeakDemand;
             result.SizeFraction = displayCoolingSystemCollection.SizeFraction;
             result.DistributionHeatGainProfile?.Update(displayCoolingSystemCollection.Distribution, energyCentre);
-            result.UseDistributionHeatGainProfile = displayCoolingSystemCollection.Distribution == null ? (false).ToTPD() : displayCoolingSystemCollection.Distribution.IsEfficiency.ToTPD();
+            result.UseDistributionHeatGainProfile = displayCoolingSystemCollection.Distribution == null ? (false).ToTPD() : (!displayCoolingSystemCollection.Distribution.IsEfficiency).ToTPD();
 
             if(coolingGroup == null)
             {
