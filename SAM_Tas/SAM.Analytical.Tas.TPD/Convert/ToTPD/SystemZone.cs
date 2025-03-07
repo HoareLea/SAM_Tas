@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemZone ToTPD(this DisplaySystemSpace displaySystemSpace, SystemPlantRoom systemPlantRoom, global::TPD.System system, SystemZone systemZone = null)
+        public static SystemZone ToTPD(this DisplaySystemSpace displaySystemSpace, SystemPlantRoom systemPlantRoom, global::TPD.System system, SystemZone systemZone = null, bool addSystemSpaceComponents = true)
         {
             if(displaySystemSpace == null || system == null)
             {
@@ -74,36 +74,14 @@ namespace SAM.Analytical.Tas.TPD
                         @dynamic.AddZoneLoad(zoneLoad);
                     }
                 }
-
-                if(systemPlantRoom != null)
-                {
-                    List<ISystemSpaceComponent> systemSpaceComponents = systemPlantRoom.GetSystemSpaceComponents<ISystemSpaceComponent>(displaySystemSpace);
-                    if (systemSpaceComponents != null)
-                    {
-                        foreach (ISystemSpaceComponent systemSpaceComponent in systemSpaceComponents)
-                        {
-                            if (systemSpaceComponent is SystemDXCoilUnit)
-                            {
-                                DXCoilUnit dXCoilUnit = ((SystemDXCoilUnit)systemSpaceComponent).ToTPD(result);
-                            }
-                            else if (systemSpaceComponent is SystemFanCoilUnit)
-                            {
-                                FanCoilUnit fanCoilUnit = ((SystemFanCoilUnit)systemSpaceComponent).ToTPD(result);
-                            }
-                            else if (systemSpaceComponent is SystemChilledBeam)
-                            {
-                                ChilledBeam chilledBeam = ((SystemChilledBeam)systemSpaceComponent).ToTPD(result);
-                            }
-                            else if (systemSpaceComponent is SystemRadiator)
-                            {
-                                Radiator radiator = ((SystemRadiator)systemSpaceComponent).ToTPD(result);
-                            }
-                        }
-                    }
-                }
             }
 
-            if(systemZone == null)
+            if (addSystemSpaceComponents)
+            {
+                List<IZoneComponent> zoneComponents = Modify.AddSystemZoneComponents(result, displaySystemSpace, systemPlantRoom);
+            }
+
+            if (systemZone == null)
             {
                 displaySystemSpace.SetLocation(result as global::TPD.SystemComponent);
             }

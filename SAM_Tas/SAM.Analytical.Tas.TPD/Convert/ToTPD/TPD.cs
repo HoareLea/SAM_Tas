@@ -787,7 +787,10 @@ namespace SAM.Analytical.Tas.TPD
                                             }
                                             else if (systemComponent_Temp is DisplaySystemSpace)
                                             {
-                                                systemComponent_TPD = ToTPD((DisplaySystemSpace)systemComponent_Temp, systemPlantRoom, system) as global::TPD.ISystemComponent;
+                                                List<AirSystemGroup> airSystemGroups_SystemSpace =  systemPlantRoom.GetRelatedObjects<AirSystemGroup>(systemComponent_Temp);
+                                                bool addSystemSpaceComponets = airSystemGroups_SystemSpace == null || airSystemGroups_SystemSpace.Count == 0;
+
+                                                systemComponent_TPD = ToTPD((DisplaySystemSpace)systemComponent_Temp, systemPlantRoom, system, null, addSystemSpaceComponets) as global::TPD.ISystemComponent;
                                             }
                                             else if (systemComponent_Temp is DisplaySystemEconomiser)
                                             {
@@ -939,6 +942,12 @@ namespace SAM.Analytical.Tas.TPD
                                                         int index_Temp = tuples.FindIndex(x => (x.Item2 as dynamic)?.GUID == ((dynamic)systemComponent_TPD_New).GUID);
                                                         if(index_Temp != -1)
                                                         {
+                                                            Core.Systems.ISystemComponent systemComponent_SAM = tuples[index_Temp].Item1;
+                                                            if (systemComponent_SAM is DisplaySystemSpace && systemComponent_TPD_New is SystemZone)
+                                                            {
+                                                                Modify.AddSystemZoneComponents((SystemZone)systemComponent_TPD_New, (DisplaySystemSpace)systemComponent_SAM, systemPlantRoom);
+                                                            }
+
                                                             tuples.RemoveAt(index_Temp);
                                                         }
                                                         else

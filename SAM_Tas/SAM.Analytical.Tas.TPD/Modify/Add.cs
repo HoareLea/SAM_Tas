@@ -2305,5 +2305,48 @@ namespace SAM.Analytical.Tas.TPD
 
             return result;
         }
+
+        public static List<IZoneComponent> Add(this SystemZone systemZone, IEnumerable<ISystemSpaceComponent> systemSpaceComponents)
+        {
+            if(systemZone == null || systemSpaceComponents == null)
+            {
+                return null;
+            }
+
+            List<IZoneComponent> result = new List<IZoneComponent>();
+
+            foreach (ISystemSpaceComponent systemSpaceComponent in systemSpaceComponents)
+            {
+                IZoneComponent zoneComponent = null;
+
+                if (systemSpaceComponent is SystemDXCoilUnit)
+                {
+                    DXCoilUnit dXCoilUnit = ((SystemDXCoilUnit)systemSpaceComponent).ToTPD(systemZone);
+                    zoneComponent = dXCoilUnit as IZoneComponent;
+                }
+                else if (systemSpaceComponent is SystemFanCoilUnit)
+                {
+                    FanCoilUnit fanCoilUnit = ((SystemFanCoilUnit)systemSpaceComponent).ToTPD(systemZone);
+                    zoneComponent = fanCoilUnit as IZoneComponent;
+                }
+                else if (systemSpaceComponent is SystemChilledBeam)
+                {
+                    ChilledBeam chilledBeam = ((SystemChilledBeam)systemSpaceComponent).ToTPD(systemZone);
+                    zoneComponent = chilledBeam as IZoneComponent;
+                }
+                else if (systemSpaceComponent is SystemRadiator)
+                {
+                    Radiator radiator = ((SystemRadiator)systemSpaceComponent).ToTPD(systemZone);
+                    zoneComponent = radiator as IZoneComponent;
+                }
+
+                if(zoneComponent != null)
+                {
+                    result.Add(zoneComponent);
+                }
+            }
+
+            return result;
+        }
     }
 }
