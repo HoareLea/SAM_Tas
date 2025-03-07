@@ -121,7 +121,7 @@ namespace SAM.Analytical.Tas.TPD
             {
                 if (systemEnergyCentreConversionSettings.Simulate)
                 {
-                    designConditionLoads.Add(energyCentre.GetNullDesignCondition());
+                    //designConditionLoads.Add(energyCentre.GetNullDesignCondition());
 
                     //plantRoom.SimulateExx(
                     //    systemEnergyCentreConversionSettings.StartHour + 1,
