@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static CoolingGroup ToTPD(this DisplayCoolingSystemCollection displayCoolingSystemCollection, PlantRoom plantRoom)
+        public static CoolingGroup ToTPD(this DisplayCoolingSystemCollection displayCoolingSystemCollection, PlantRoom plantRoom, CoolingGroup coolingGroup = null)
         {
             if (displayCoolingSystemCollection == null || plantRoom == null)
             {
                 return null;
             }
 
-            CoolingGroup result = plantRoom.AddCoolingGroup();
+            CoolingGroup result = coolingGroup;
+            if(result == null)
+            {
+                result = plantRoom.AddCoolingGroup();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displayCoolingSystemCollection.Name;
@@ -27,9 +31,13 @@ namespace SAM.Analytical.Tas.TPD
             //result.PeakDemand = displayCoolingSystemCollection.PeakDemand;
             result.SizeFraction = displayCoolingSystemCollection.SizeFraction;
             result.DistributionHeatGainProfile?.Update(displayCoolingSystemCollection.Distribution, energyCentre);
-            result.UseDistributionHeatGainProfile = displayCoolingSystemCollection.Distribution == null ? (false).ToTPD() : displayCoolingSystemCollection.Distribution.IsEfficiency.ToTPD();
+            result.UseDistributionHeatGainProfile = displayCoolingSystemCollection.Distribution == null ? (false).ToTPD() : (!displayCoolingSystemCollection.Distribution.IsEfficiency).ToTPD();
 
-            displayCoolingSystemCollection.SetLocation(result as PlantComponent);
+            if(coolingGroup == null)
+            {
+                displayCoolingSystemCollection.SetLocation(result as PlantComponent);
+            }
+
 
             return result;
         }

@@ -642,20 +642,32 @@ namespace SAM.Analytical.Tas.TPD
 
             BoundingBox2D boundingBox2D = null;
 
-            List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
+            List<global::TPD.SystemComponent> systemComponents = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup, false, false);
             if (systemComponents != null)
             {
-                foreach (global::TPD.SystemComponent systemComponent_Temp in systemComponents)
-                {
-                    if (systemComponent_Temp is Junction)
-                    {
-                        continue;
-                    }
+                int count = systemComponents.Count / componentGroup.GetMultiplicity();
+                int index = 0;
 
+                for (int i = 0; i < systemComponents.Count; i++)
+                {
+                    global::TPD.SystemComponent systemComponent_Temp = systemComponents[i];
                     List<ISystemJSAMObject> systemJSAMObjects = Add(systemPlantRoom, systemComponent_Temp, tPDDoc, componentConversionSettings);
                     if (systemJSAMObjects != null)
                     {
-                        result.AddRange(systemJSAMObjects);
+                        foreach(ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
+                        {
+                            if(systemJSAMObject is Core.Systems.SystemComponent)
+                            {
+                                ((Core.Systems.SystemComponent)systemJSAMObject).SetValue(AirSystemComponentParameter.GroupIndex, index);
+                            }
+                            result.Add(systemJSAMObject);
+                        }       
+                    }
+
+                    index++;
+                    if(index >= count)
+                    {
+                        index = 0;
                     }
                 }
             }
@@ -2290,6 +2302,49 @@ namespace SAM.Analytical.Tas.TPD
             result.PrecondHours = designCondition.PrecondHours;
             result.StartHour = designCondition.StartHour;
             result.EndHour = designCondition.EndHour;
+
+            return result;
+        }
+
+        public static List<IZoneComponent> Add(this SystemZone systemZone, IEnumerable<ISystemSpaceComponent> systemSpaceComponents)
+        {
+            if(systemZone == null || systemSpaceComponents == null)
+            {
+                return null;
+            }
+
+            List<IZoneComponent> result = new List<IZoneComponent>();
+
+            foreach (ISystemSpaceComponent systemSpaceComponent in systemSpaceComponents)
+            {
+                IZoneComponent zoneComponent = null;
+
+                if (systemSpaceComponent is SystemDXCoilUnit)
+                {
+                    DXCoilUnit dXCoilUnit = ((SystemDXCoilUnit)systemSpaceComponent).ToTPD(systemZone);
+                    zoneComponent = dXCoilUnit as IZoneComponent;
+                }
+                else if (systemSpaceComponent is SystemFanCoilUnit)
+                {
+                    FanCoilUnit fanCoilUnit = ((SystemFanCoilUnit)systemSpaceComponent).ToTPD(systemZone);
+                    zoneComponent = fanCoilUnit as IZoneComponent;
+                }
+                else if (systemSpaceComponent is SystemChilledBeam)
+                {
+                    ChilledBeam chilledBeam = ((SystemChilledBeam)systemSpaceComponent).ToTPD(systemZone);
+                    zoneComponent = chilledBeam as IZoneComponent;
+                }
+                else if (systemSpaceComponent is SystemRadiator)
+                {
+                    Radiator radiator = ((SystemRadiator)systemSpaceComponent).ToTPD(systemZone);
+                    zoneComponent = radiator as IZoneComponent;
+                }
+
+                if(zoneComponent != null)
+                {
+                    result.Add(zoneComponent);
+                }
+            }
 
             return result;
         }

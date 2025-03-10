@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static DesiccantWheel ToTPD(this DisplaySystemDesiccantWheel displaySystemDesiccantWheel, global::TPD.System system)
+        public static DesiccantWheel ToTPD(this DisplaySystemDesiccantWheel displaySystemDesiccantWheel, global::TPD.System system, DesiccantWheel desiccantWheel = null)
         {
             if(displaySystemDesiccantWheel == null || system == null)
             {
                 return null;
             }
 
-            DesiccantWheel result = system.AddDesiccantWheel();
+            DesiccantWheel result = desiccantWheel;
+            if(result == null)
+            {
+                result = system.AddDesiccantWheel();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemDesiccantWheel.Name;
@@ -43,7 +47,10 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            displaySystemDesiccantWheel.SetLocation(result as SystemComponent);
+            if(desiccantWheel == null)
+            {
+                displaySystemDesiccantWheel.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

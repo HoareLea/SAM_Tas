@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static HorizontalGHE ToTPD(this DisplaySystemHorizontalExchanger displaySystemHorizontalExchanger, PlantRoom plantRoom)
+        public static HorizontalGHE ToTPD(this DisplaySystemHorizontalExchanger displaySystemHorizontalExchanger, PlantRoom plantRoom, HorizontalGHE horizontalGHE = null)
         {
             if (displaySystemHorizontalExchanger == null || plantRoom == null)
             {
                 return null;
             }
 
-            HorizontalGHE result = plantRoom.AddHorizontalGHE();
+            HorizontalGHE result = horizontalGHE;
+            if(result == null)
+            {
+                result = plantRoom.AddHorizontalGHE();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemHorizontalExchanger.Name;
@@ -32,7 +36,10 @@ namespace SAM.Analytical.Tas.TPD
             result.PipeLength = displaySystemHorizontalExchanger.PipeLength;
             result.PipeDepth = displaySystemHorizontalExchanger.PipeDepth;
 
-            displaySystemHorizontalExchanger.SetLocation(result as PlantComponent);
+            if(horizontalGHE == null)
+            {
+                displaySystemHorizontalExchanger.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

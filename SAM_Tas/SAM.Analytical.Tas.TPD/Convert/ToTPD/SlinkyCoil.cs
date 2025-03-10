@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SlinkyCoil ToTPD(this DisplaySystemSlinkyCoil displaySystemSlinkyCoil, PlantRoom plantRoom)
+        public static SlinkyCoil ToTPD(this DisplaySystemSlinkyCoil displaySystemSlinkyCoil, PlantRoom plantRoom, SlinkyCoil slinkyCoil = null)
         {
             if (displaySystemSlinkyCoil == null || plantRoom == null)
             {
                 return null;
             }
 
-            SlinkyCoil result = plantRoom.AddSlinkyCoil();
+            SlinkyCoil result = slinkyCoil;
+            if(result == null)
+            {
+                result = plantRoom.AddSlinkyCoil();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemSlinkyCoil.Name;
@@ -38,7 +42,10 @@ namespace SAM.Analytical.Tas.TPD
             result.TrenchDepth = displaySystemSlinkyCoil.TrenchDepth;
             result.TrenchWidth = displaySystemSlinkyCoil.TrenchWidth;
 
-            displaySystemSlinkyCoil.SetLocation(result as PlantComponent);
+            if(slinkyCoil == null)
+            {
+                displaySystemSlinkyCoil.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

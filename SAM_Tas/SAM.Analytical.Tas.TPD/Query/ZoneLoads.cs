@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SAM.Analytical.Systems;
+using System.Collections.Generic;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -60,7 +61,7 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static List<ZoneLoad> ZoneLoads<T>(this TSDData tSDData, IEnumerable<T> systemSpaces) where T : Systems.SystemSpace
+        public static List<ZoneLoad> ZoneLoads<T>(this TSDData tSDData, IEnumerable<T> systemSpaces) where T : SystemSpace
         {
             if (tSDData == null)
             {
@@ -81,7 +82,17 @@ namespace SAM.Analytical.Tas.TPD
                     bool exists = false;
                     foreach (T systemSpace in systemSpaces)
                     {
-                        if(systemSpace.Name == zoneLoad.Name)
+                        string spaceName = systemSpace.GetValue<string>(SystemSpaceParameter.SpaceName);
+                        if(spaceName != null)
+                        {
+                            if (spaceName == zoneLoad.Name)
+                            {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        if (systemSpace.Name == zoneLoad.Name)
                         {
                             exists = true;
                             break;

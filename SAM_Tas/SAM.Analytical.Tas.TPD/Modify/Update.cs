@@ -73,7 +73,7 @@ namespace SAM.Analytical.Tas.TPD
                     {
                         if(designConditionName == "Simulation Data")
                         {
-                            //sizedVariable.AddDesignCondition(null);
+                            sizedVariable.AddDesignCondition(energyCentre.GetNullDesignCondition());
                             continue;
                         }
                         else

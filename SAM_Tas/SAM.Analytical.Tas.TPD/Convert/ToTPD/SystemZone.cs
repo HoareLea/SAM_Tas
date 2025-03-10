@@ -7,16 +7,20 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SystemZone ToTPD(this DisplaySystemSpace displaySystemSpace, SystemPlantRoom systemPlantRoom, global::TPD.System system)
+        public static SystemZone ToTPD(this DisplaySystemSpace displaySystemSpace, SystemPlantRoom systemPlantRoom, global::TPD.System system, SystemZone systemZone = null, bool addSystemSpaceComponents = true)
         {
             if(displaySystemSpace == null || system == null)
             {
                 return null;
             }
 
-            EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
+            SystemZone result = systemZone;
+            if(systemZone == null)
+            {
+                result = system.AddSystemZone();
+            }
 
-            SystemZone result = system.AddSystemZone();
+            EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
 
             dynamic @dynamic = result;
 
@@ -62,7 +66,7 @@ namespace SAM.Analytical.Tas.TPD
 
             if (energyCentre != null)
             {
-                List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1));
+                List<ZoneLoad> zoneLoads = Query.ZoneLoads(energyCentre.GetTSDData(1), new DisplaySystemSpace[] { displaySystemSpace });
                 if (zoneLoads != null)
                 {
                     foreach(ZoneLoad zoneLoad in zoneLoads)
@@ -70,36 +74,17 @@ namespace SAM.Analytical.Tas.TPD
                         @dynamic.AddZoneLoad(zoneLoad);
                     }
                 }
-
-                if(systemPlantRoom != null)
-                {
-                    List<ISystemSpaceComponent> systemSpaceComponents = systemPlantRoom.GetSystemSpaceComponents<ISystemSpaceComponent>(displaySystemSpace);
-                    if (systemSpaceComponents != null)
-                    {
-                        foreach (ISystemSpaceComponent systemSpaceComponent in systemSpaceComponents)
-                        {
-                            if (systemSpaceComponent is SystemDXCoilUnit)
-                            {
-                                DXCoilUnit dXCoilUnit = ((SystemDXCoilUnit)systemSpaceComponent).ToTPD(result);
-                            }
-                            else if (systemSpaceComponent is SystemFanCoilUnit)
-                            {
-                                FanCoilUnit fanCoilUnit = ((SystemFanCoilUnit)systemSpaceComponent).ToTPD(result);
-                            }
-                            else if (systemSpaceComponent is SystemChilledBeam)
-                            {
-                                ChilledBeam chilledBeam = ((SystemChilledBeam)systemSpaceComponent).ToTPD(result);
-                            }
-                            else if (systemSpaceComponent is SystemRadiator)
-                            {
-                                Radiator radiator = ((SystemRadiator)systemSpaceComponent).ToTPD(result);
-                            }
-                        }
-                    }
-                }
             }
 
-            displaySystemSpace.SetLocation(result as global::TPD.SystemComponent);
+            if (addSystemSpaceComponents)
+            {
+                List<IZoneComponent> zoneComponents = Modify.AddSystemZoneComponents(result, displaySystemSpace, systemPlantRoom);
+            }
+
+            if (systemZone == null)
+            {
+                displaySystemSpace.SetLocation(result as global::TPD.SystemComponent);
+            }
 
             return result;
         }

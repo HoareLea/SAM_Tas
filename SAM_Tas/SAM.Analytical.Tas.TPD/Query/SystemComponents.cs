@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SAM.Core;
+using System.Collections.Generic;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -65,6 +66,53 @@ namespace SAM.Analytical.Tas.TPD
                     if(ts != null)
                     {
                         result.AddRange(ts);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static List<T> SystemComponents<T>(ComponentGroup componentGroup, bool includeNested, bool includeConnectionJunctionBoxes) where T : SystemComponent
+        {
+            List<T> result = SystemComponents<T>(componentGroup, includeNested);
+            if (includeConnectionJunctionBoxes)
+            {
+                return result;
+            }
+
+            for (int i = result.Count - 1; i >= 0; i--)
+            {
+                SystemComponent systemComponent = result[i];
+
+                if (!(systemComponent is Junction))
+                {
+                    continue;
+                }
+
+                List<Duct> ducts_Temp = new List<Duct>();
+                Ducts(systemComponent, Direction.Out)?.ForEach(x => ducts_Temp.Add(x));
+                Ducts(systemComponent, Direction.In)?.ForEach(x => ducts_Temp.Add(x));
+
+                if (ducts_Temp != null && ducts_Temp.Count != 0)
+                {
+                    foreach (Duct duct in ducts_Temp)
+                    {
+                        SystemComponent systemComponent_Temp = null;
+
+                        systemComponent_Temp = duct.GetDownstreamComponent();
+                        if (systemComponent_Temp != null && result.Find(x => ((dynamic)x).GUID == ((dynamic)systemComponent_Temp).GUID) == null)
+                        {
+                            result.RemoveAt(0);
+                            break;
+                        }
+
+                        systemComponent_Temp = duct.GetUpstreamComponent();
+                        if (systemComponent_Temp != null && result.Find(x => ((dynamic)x).GUID == ((dynamic)systemComponent_Temp).GUID) == null)
+                        {
+                            result.RemoveAt(0);
+                            break;
+                        }
                     }
                 }
             }

@@ -5,20 +5,30 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static FuelGroup ToTPD(this DisplayFuelSystemCollection displayFuelSystemCollection, PlantRoom plantRoom)
+        public static FuelGroup ToTPD(this DisplayFuelSystemCollection displayFuelSystemCollection, PlantRoom plantRoom, FuelGroup fuelGroup = null)
         {
             if (displayFuelSystemCollection == null || plantRoom == null)
             {
                 return null;
             }
 
-            dynamic result = plantRoom.AddFuelGroup();
-            result.Name = displayFuelSystemCollection.Name;
-            result.Description = displayFuelSystemCollection.Description;
+            FuelGroup result = fuelGroup;
+            if(result == null)
+            {
+                result = plantRoom.AddFuelGroup();
+            }
 
-            displayFuelSystemCollection.SetLocation(result as PlantComponent);
+            dynamic @dynamic = result;
 
-            return result as FuelGroup;
+            @dynamic.Name = displayFuelSystemCollection.Name;
+            @dynamic.Description = displayFuelSystemCollection.Description;
+
+            if(fuelGroup == null)
+            {
+                displayFuelSystemCollection.SetLocation(result as PlantComponent);
+            }
+
+            return result;
         }
     }
 }

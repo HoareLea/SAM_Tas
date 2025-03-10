@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SprayHumidifier ToTPD(this DisplaySystemSprayHumidifier displaySystemSprayHumidifier, global::TPD.System system)
+        public static SprayHumidifier ToTPD(this DisplaySystemSprayHumidifier displaySystemSprayHumidifier, global::TPD.System system, SprayHumidifier sprayHumidifier = null)
         {
             if(displaySystemSprayHumidifier == null || system == null)
             {
                 return null;
             }
 
-            SprayHumidifier result = system.AddSprayHumidifier();
+            SprayHumidifier result = sprayHumidifier;
+            if(result == null)
+            {
+                result = system.AddSprayHumidifier();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemSprayHumidifier.Name;
@@ -44,19 +48,26 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemSprayHumidifier.ScheduleName);
 
-            displaySystemSprayHumidifier.SetLocation(result as SystemComponent);
+            if(sprayHumidifier == null)
+            {
+                displaySystemSprayHumidifier.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }
 
-        public static SprayHumidifier ToTPD(this DisplaySystemDirectEvaporativeCooler displaySystemDirectEvaporativeCooler, global::TPD.System system)
+        public static SprayHumidifier ToTPD(this DisplaySystemDirectEvaporativeCooler displaySystemDirectEvaporativeCooler, global::TPD.System system, SprayHumidifier sprayHumidifier = null)
         {
             if (displaySystemDirectEvaporativeCooler == null || system == null)
             {
                 return null;
             }
 
-            SprayHumidifier result = system.AddSprayHumidifier();
+            SprayHumidifier result = sprayHumidifier;
+            if(result == null)
+            {
+                result = system.AddSprayHumidifier();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemDirectEvaporativeCooler.Name;

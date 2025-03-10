@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static GroundSource ToTPD(this DisplaySystemVerticalBorehole displaySystemVerticalBorehole, PlantRoom plantRoom)
+        public static GroundSource ToTPD(this DisplaySystemVerticalBorehole displaySystemVerticalBorehole, PlantRoom plantRoom, GroundSource groundSource = null)
         {
             if (displaySystemVerticalBorehole == null || plantRoom == null)
             {
                 return null;
             }
 
-            GroundSource result = plantRoom.AddGroundSource();
+            GroundSource result = groundSource;
+            if(result == null)
+            {
+                result = plantRoom.AddGroundSource();
+            }
 
             dynamic @dynamic = result;
             dynamic.Name = displaySystemVerticalBorehole.Name;
@@ -34,7 +38,10 @@ namespace SAM.Analytical.Tas.TPD
             result.GroutConductivity = displaySystemVerticalBorehole.GroutConductivity;
             result.GroundTemp = displaySystemVerticalBorehole.GroundTemperatureAve;
 
-            displaySystemVerticalBorehole.SetLocation(result as PlantComponent);
+            if(groundSource == null)
+            {
+                displaySystemVerticalBorehole.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

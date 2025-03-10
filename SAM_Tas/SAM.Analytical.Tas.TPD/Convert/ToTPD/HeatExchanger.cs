@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static HeatExchanger ToTPD(this DisplaySystemLiquidExchanger displaySystemLiquidExchanger, PlantRoom plantRoom)
+        public static HeatExchanger ToTPD(this DisplaySystemLiquidExchanger displaySystemLiquidExchanger, PlantRoom plantRoom, HeatExchanger heatExchanger = null)
         {
             if (displaySystemLiquidExchanger == null || plantRoom == null)
             {
                 return null;
             }
 
-            HeatExchanger result = plantRoom.AddHeatExchanger();
+            HeatExchanger result = heatExchanger;
+            if(result == null)
+            {
+                result = plantRoom.AddHeatExchanger();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemLiquidExchanger.Name;
@@ -35,7 +39,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemLiquidExchanger.ScheduleName);
 
-            displaySystemLiquidExchanger.SetLocation(result as PlantComponent);
+            if(heatExchanger == null)
+            {
+                displaySystemLiquidExchanger.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

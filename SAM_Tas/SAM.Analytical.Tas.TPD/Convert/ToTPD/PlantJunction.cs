@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static PlantJunction ToTPD(this DisplaySystemLiquidJunction displaySystemLiquidJunction, global::TPD.PlantRoom plantRoom)
+        public static PlantJunction ToTPD(this DisplaySystemLiquidJunction displaySystemLiquidJunction, global::TPD.PlantRoom plantRoom, PlantJunction plantJunction = null)
         {
             if (displaySystemLiquidJunction == null || plantRoom == null)
             {
                 return null;
             }
 
-            PlantJunction result = plantRoom.AddJunction();
+            PlantJunction result = plantJunction;
+            if(result == null)
+            {
+                result = plantRoom.AddJunction();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemLiquidJunction.Name;
@@ -20,7 +24,10 @@ namespace SAM.Analytical.Tas.TPD
 
             result.MainsPressure = displaySystemLiquidJunction.MainsPressure;
 
-            displaySystemLiquidJunction.SetLocation(result as PlantComponent);
+            if(plantJunction == null)
+            {
+                displaySystemLiquidJunction.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static WindTurbine ToTPD(this DisplaySystemWindTurbine displaySystemWindTurbine, PlantRoom plantRoom)
+        public static WindTurbine ToTPD(this DisplaySystemWindTurbine displaySystemWindTurbine, PlantRoom plantRoom, WindTurbine windTurbine = null)
         {
             if (displaySystemWindTurbine == null || plantRoom == null)
             {
                 return null;
             }
 
-            WindTurbine result = plantRoom.AddWindTurbine();
+            WindTurbine result = windTurbine;
+            if(result == null)
+            {
+                result = plantRoom.AddWindTurbine();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemWindTurbine.Name;
@@ -33,7 +37,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(1, fuelSource);
             }
 
-            displaySystemWindTurbine.SetLocation(result as PlantComponent);
+            if(windTurbine == null)
+            {
+                displaySystemWindTurbine.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

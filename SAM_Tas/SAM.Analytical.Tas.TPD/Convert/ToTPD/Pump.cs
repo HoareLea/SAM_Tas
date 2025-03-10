@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Pump ToTPD(this DisplaySystemPump displaySystemPump, PlantRoom plantRoom)
+        public static Pump ToTPD(this DisplaySystemPump displaySystemPump, PlantRoom plantRoom, Pump pump = null)
         {
             if (displaySystemPump == null || plantRoom == null)
             {
                 return null;
             }
 
-            Pump result = plantRoom.AddPump();
+            Pump result = pump;
+            if(result == null)
+            {
+                result = plantRoom.AddPump();
+            }
             
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemPump.Name;
@@ -36,7 +40,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((PlantComponent)result, displaySystemPump.ScheduleName);
 
-            displaySystemPump.SetLocation(result as PlantComponent);
+            if(pump == null)
+            {
+                displaySystemPump.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

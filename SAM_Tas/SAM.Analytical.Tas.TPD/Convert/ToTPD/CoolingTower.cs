@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static CoolingTower ToTPD(this DisplaySystemCoolingTower displaySystemCoolingTower, PlantRoom plantRoom)
+        public static CoolingTower ToTPD(this DisplaySystemCoolingTower displaySystemCoolingTower, PlantRoom plantRoom, CoolingTower coolingTower = null)
         {
             if (displaySystemCoolingTower == null || plantRoom == null)
             {
                 return null;
             }
 
-            CoolingTower result = plantRoom.AddCoolingTower();
+            CoolingTower result = coolingTower;
+            if(result == null)
+            {
+                result = plantRoom.AddCoolingTower();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemCoolingTower.Name;
@@ -60,7 +64,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(2, fuelSource);
             }
 
-            displaySystemCoolingTower.SetLocation(result as PlantComponent);
+            if(coolingTower == null)
+            {
+                displaySystemCoolingTower.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

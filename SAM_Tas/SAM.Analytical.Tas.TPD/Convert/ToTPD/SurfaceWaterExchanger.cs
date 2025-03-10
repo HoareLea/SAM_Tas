@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SurfaceWaterExchanger ToTPD(this DisplaySystemSurfaceWaterExchanger displaySystemSurfaceWaterExchanger, PlantRoom plantRoom)
+        public static SurfaceWaterExchanger ToTPD(this DisplaySystemSurfaceWaterExchanger displaySystemSurfaceWaterExchanger, PlantRoom plantRoom, SurfaceWaterExchanger surfaceWaterExchanger = null)
         {
             if (displaySystemSurfaceWaterExchanger == null || plantRoom == null)
             {
                 return null;
             }
 
-            SurfaceWaterExchanger result = plantRoom.AddSurfaceWaterExchanger();
+            SurfaceWaterExchanger result = surfaceWaterExchanger;
+            if(result == null)
+            {
+                result = plantRoom.AddSurfaceWaterExchanger();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemSurfaceWaterExchanger.Name;
@@ -29,7 +33,10 @@ namespace SAM.Analytical.Tas.TPD
             result.GroundConductivity = displaySystemSurfaceWaterExchanger.GroundConductivity;
             result.WaterTableDepth = displaySystemSurfaceWaterExchanger.WaterTableDepth;
 
-            displaySystemSurfaceWaterExchanger.SetLocation(result as PlantComponent);
+            if(surfaceWaterExchanger == null)
+            {
+                displaySystemSurfaceWaterExchanger.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

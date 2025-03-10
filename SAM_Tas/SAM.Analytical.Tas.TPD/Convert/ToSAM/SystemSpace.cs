@@ -14,19 +14,18 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            string name = null;
+            dynamic @dynamic = systemZone as dynamic;
+
+            string name = dynamic.Name;
             double area = double.NaN;
             double volume = double.NaN;
 
             ZoneLoad zoneLoad = systemZone.ZoneLoads()?.FirstOrDefault();
             if (zoneLoad != null)
             {
-                name = zoneLoad.Name;
                 area = zoneLoad.FloorArea;
                 volume = zoneLoad.Volume;
             }
-
-            dynamic @dynamic = systemZone as dynamic;
 
             Core.ModifiableValue temperatureSetpoint = systemZone.TemperatureSetpoint?.ToSAM();
             Core.ModifiableValue relativeHumiditySetpoint = systemZone.RHSetpoint?.ToSAM();
@@ -36,9 +35,13 @@ namespace SAM.Analytical.Tas.TPD
             DesignConditionSizedFlowValue freshAir = systemZone.FreshAir.ToSAM();
 
             SystemSpace result = new SystemSpace(name, area, volume, temperatureSetpoint, relativeHumiditySetpoint, pollutantSetpoint, displacementVentilation, flowRate, freshAir);
-            Modify.SetReference(result, dynamic.GUID);
-
             result.Description = dynamic.Description;
+            if(zoneLoad != null)
+            {
+                result.SetValue(SystemSpaceParameter.SpaceName, zoneLoad.Name);
+            }
+            
+            Modify.SetReference(result, dynamic.GUID);
 
             ElectricalGroup electricalGroup1 = @dynamic.GetElectricalGroup1();
             if(electricalGroup1 != null)

@@ -5,27 +5,37 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static ElectricalGroup ToTPD(this DisplayElectricalSystemCollection displayElectricalSystemCollection, PlantRoom plantRoom)
+        public static ElectricalGroup ToTPD(this DisplayElectricalSystemCollection displayElectricalSystemCollection, PlantRoom plantRoom, ElectricalGroup electricalGroup = null)
         {
             if(displayElectricalSystemCollection == null || plantRoom == null)
             {
                 return null;
             }
 
-            dynamic result = plantRoom.AddElectricalGroup();
-            result.Name = displayElectricalSystemCollection.Name;
-            result.Description = displayElectricalSystemCollection.Description;
+            ElectricalGroup result = electricalGroup;
+            if(result == null)
+            {
+                result = plantRoom.AddElectricalGroup();
+            }
+
+            dynamic @dynamic = result;
+
+            @dynamic.Name = displayElectricalSystemCollection.Name;
+            @dynamic.Description = displayElectricalSystemCollection.Description;
             result.ElectricalGroupType = displayElectricalSystemCollection.ElectricalSystemCollectionType.ToTPD();
 
             FuelSource fuelSource = plantRoom.FuelSource(displayElectricalSystemCollection.GetValue<string>(Core.Systems.SystemObjectParameter.ElectricalEnergySourceName));
             if (fuelSource != null)
             {
-                ((@dynamic)result).SetFuelSource(1, fuelSource);
+                @dynamic.SetFuelSource(1, fuelSource);
             }
 
-            displayElectricalSystemCollection.SetLocation(result as PlantComponent);
+            if(electricalGroup == null)
+            {
+                displayElectricalSystemCollection.SetLocation(result as PlantComponent);
+            }
 
-            return result as ElectricalGroup;
+            return result;
         }
     }
 }

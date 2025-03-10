@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static SteamHumidifier ToTPD(this DisplaySystemSteamHumidifier displaySystemSteamHumidifier, global::TPD.System system)
+        public static SteamHumidifier ToTPD(this DisplaySystemSteamHumidifier displaySystemSteamHumidifier, global::TPD.System system, SteamHumidifier steamHumidifier = null)
         {
             if(displaySystemSteamHumidifier == null || system == null)
             {
                 return null;
             }
 
-            SteamHumidifier result = system.AddSteamHumidifier();
+            SteamHumidifier result = steamHumidifier;
+            if(result == null)
+            {
+                result = system.AddSteamHumidifier();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemSteamHumidifier.Name;
@@ -43,7 +47,10 @@ namespace SAM.Analytical.Tas.TPD
             //result.Setpoint.Value = 14;
             //result.Flags = tpdExchangerFlags.tpdExchangerFlagAdjustForOptimiser;
 
-            displaySystemSteamHumidifier.SetLocation(result as SystemComponent);
+            if(steamHumidifier == null)
+            {
+                displaySystemSteamHumidifier.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

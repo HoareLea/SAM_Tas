@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static global::TPD.Fan ToTPD(this DisplaySystemFan displaySystemFan, global::TPD.System system)
+        public static global::TPD.Fan ToTPD(this DisplaySystemFan displaySystemFan, global::TPD.System system, global::TPD.Fan fan = null)
         {
             if(displaySystemFan == null || system == null)
             {
                 return null;
             }
 
-            global::TPD.Fan result = system.AddFan();
+            global::TPD.Fan result = fan;
+            if(result == null)
+            {
+                result = system.AddFan();
+            }
             
             dynamic @dynamic = result;
             @dynamic.name = displaySystemFan.Name;
@@ -45,7 +49,7 @@ namespace SAM.Analytical.Tas.TPD
             //// result.SetDirection(tpdDirection.tpdLeftRight);
             // result.DesignFlowType = tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
-            displaySystemFan.SetLocation(result as SystemComponent);
+
 
             Modify.SetSchedule((SystemComponent)result, displaySystemFan.ScheduleName);
 
@@ -75,6 +79,11 @@ namespace SAM.Analytical.Tas.TPD
             //profileDataModifierTable.AddPoint(80, 68);
             //profileDataModifierTable.AddPoint(90, 83);
             //profileDataModifierTable.AddPoint(100, 100);
+
+            if(fan == null)
+            {
+                displaySystemFan.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

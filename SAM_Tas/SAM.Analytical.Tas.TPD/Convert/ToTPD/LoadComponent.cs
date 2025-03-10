@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static LoadComponent ToTPD(this DisplaySystemLoadComponent displaySystemLoadComponent, global::TPD.System system)
+        public static LoadComponent ToTPD(this DisplaySystemLoadComponent displaySystemLoadComponent, global::TPD.System system, LoadComponent loadComponent = null)
         {
             if (displaySystemLoadComponent == null || system == null)
             {
                 return null;
             }
 
-            LoadComponent result = system.AddLoadComponent();
+            LoadComponent result = loadComponent;
+            if(result == null)
+            {
+                result = system.AddLoadComponent();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemLoadComponent.Name;
@@ -79,7 +83,10 @@ namespace SAM.Analytical.Tas.TPD
 
             result.Load?.Update(displaySystemLoadComponent.Load, energyCentre);
 
-            displaySystemLoadComponent.SetLocation(result as SystemComponent);
+            if(loadComponent == null)
+            {
+                displaySystemLoadComponent.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

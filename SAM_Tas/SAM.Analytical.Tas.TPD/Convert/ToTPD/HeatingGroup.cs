@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static HeatingGroup ToTPD(this DisplayHeatingSystemCollection displayHeatingSystemCollection, PlantRoom plantRoom)
+        public static HeatingGroup ToTPD(this DisplayHeatingSystemCollection displayHeatingSystemCollection, PlantRoom plantRoom, HeatingGroup heatingGroup = null)
         {
             if (displayHeatingSystemCollection == null || plantRoom == null)
             {
                 return null;
             }
 
-            HeatingGroup result = plantRoom.AddHeatingGroup();
+            HeatingGroup result = heatingGroup;
+            if(result == null)
+            {
+                result = plantRoom.AddHeatingGroup();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displayHeatingSystemCollection.Name;
@@ -26,12 +30,15 @@ namespace SAM.Analytical.Tas.TPD
             result.VariableFlowCapacity = displayHeatingSystemCollection.VariableFlowCapacity.ToTPD();
             //result.PeakDemand = displayHeatingSystemCollection.PeakDemand;
             result.SizeFraction = displayHeatingSystemCollection.SizeFraction;
-            result.UseDistributionHeatLossProfile = displayHeatingSystemCollection.Distribution == null ? (false).ToTPD() : displayHeatingSystemCollection.Distribution.IsEfficiency.ToTPD();
+            result.UseDistributionHeatLossProfile = displayHeatingSystemCollection.Distribution == null ? (false).ToTPD() : (!displayHeatingSystemCollection.Distribution.IsEfficiency).ToTPD();
             result.DistributionHeatLossProfile?.Update(displayHeatingSystemCollection.Distribution, energyCentre);
 
-            displayHeatingSystemCollection.SetLocation(result as PlantComponent);
+            if(heatingGroup == null)
+            {
+                displayHeatingSystemCollection.SetLocation(result as PlantComponent);
+            }
 
-            return result as HeatingGroup;
+            return result;
         }
     }
 }

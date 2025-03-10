@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Damper ToTPD(this DisplaySystemDamper displaySystemDamper, global::TPD.System system)
+        public static Damper ToTPD(this DisplaySystemDamper displaySystemDamper, global::TPD.System system, Damper damper = null)
         {
             if(displaySystemDamper == null || system == null)
             {
                 return null;
             }
 
-            Damper result = system.AddDamper();
+            Damper result = damper;
+            if(result == null)
+            {
+                result = system.AddDamper();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemDamper.Name;
@@ -31,8 +35,10 @@ namespace SAM.Analytical.Tas.TPD
 
             Modify.SetSchedule((SystemComponent)result, displaySystemDamper.ScheduleName);
 
-
-            displaySystemDamper.SetLocation(result as SystemComponent);
+            if(damper == null)
+            {
+                displaySystemDamper.SetLocation(result as SystemComponent);
+            }
 
             return result;
         }

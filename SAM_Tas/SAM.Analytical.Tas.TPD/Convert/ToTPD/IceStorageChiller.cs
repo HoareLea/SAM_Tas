@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static IceStorageChiller ToTPD(this DisplaySystemIceStorageChiller displaySystemIceStorageChiller, PlantRoom plantRoom)
+        public static IceStorageChiller ToTPD(this DisplaySystemIceStorageChiller displaySystemIceStorageChiller, PlantRoom plantRoom, IceStorageChiller iceStorageChiller = null)
         {
             if (displaySystemIceStorageChiller == null || plantRoom == null)
             {
                 return null;
             }
 
-            IceStorageChiller result = plantRoom.AddIceStorageChiller();
+            IceStorageChiller result = iceStorageChiller;
+            if(result == null)
+            {
+                result = plantRoom.AddIceStorageChiller();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemIceStorageChiller.Name;
@@ -59,19 +63,26 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(3, fuelSource);
             }
 
-            displaySystemIceStorageChiller.SetLocation(result as PlantComponent);
+            if(iceStorageChiller == null)
+            {
+                displaySystemIceStorageChiller.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }
 
-        public static IceStorageChiller ToTPD(this DisplaySystemWaterSourceIceStorageChiller displaySystemWaterSourceIceStorageChiller, PlantRoom plantRoom)
+        public static IceStorageChiller ToTPD(this DisplaySystemWaterSourceIceStorageChiller displaySystemWaterSourceIceStorageChiller, PlantRoom plantRoom, IceStorageChiller iceStorageChiller = null)
         {
             if (displaySystemWaterSourceIceStorageChiller == null || plantRoom == null)
             {
                 return null;
             }
 
-            IceStorageChiller result = plantRoom.AddIceStorageChiller();
+            IceStorageChiller result = iceStorageChiller;
+            if(result == null)
+            {
+                result = plantRoom.AddIceStorageChiller();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemWaterSourceIceStorageChiller.Name;
@@ -115,7 +126,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(3, fuelSource);
             }
 
-            displaySystemWaterSourceIceStorageChiller.SetLocation(result as PlantComponent);
+            if(iceStorageChiller == null)
+            {
+                displaySystemWaterSourceIceStorageChiller.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

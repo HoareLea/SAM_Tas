@@ -5,14 +5,18 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static PVPanel ToTPD(this DisplaySystemPhotovoltaicPanel displaySystemPhotovoltaicPanel, PlantRoom plantRoom)
+        public static PVPanel ToTPD(this DisplaySystemPhotovoltaicPanel displaySystemPhotovoltaicPanel, PlantRoom plantRoom, PVPanel pVPanel = null)
         {
             if (displaySystemPhotovoltaicPanel == null || plantRoom == null)
             {
                 return null;
             }
 
-            PVPanel result = plantRoom.AddPVPanel();
+            PVPanel result = pVPanel;
+            if(result == null)
+            {
+                result = plantRoom.AddPVPanel();
+            }
 
             dynamic @dynamic = result;
             @dynamic.Name = displaySystemPhotovoltaicPanel.Name;
@@ -42,7 +46,10 @@ namespace SAM.Analytical.Tas.TPD
                 ((@dynamic)result).SetFuelSource(1, fuelSource);
             }
 
-            displaySystemPhotovoltaicPanel.SetLocation(result as PlantComponent);
+            if(pVPanel == null)
+            {
+                displaySystemPhotovoltaicPanel.SetLocation(result as PlantComponent);
+            }
 
             return result;
         }

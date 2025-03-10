@@ -80,15 +80,6 @@ namespace SAM.Analytical.Tas.TPD
 
             List<global::TPD.SystemComponent> systemComponents_ComponentGroup = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup);
 
-            List<Damper> dampers = systemComponents_ComponentGroup.FindAll(x => x is Damper).ConvertAll(x => (Damper)x);
-            if(dampers != null)
-            {
-                foreach(Damper damper in dampers)
-                {
-                    damper.DesignFlowType = tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
-                }
-            }
-
             List<SystemZone> systemZones = systemComponents_ComponentGroup.FindAll(x => x is SystemZone).ConvertAll(x => (SystemZone)x);
             if (systemZones != null && systemZones.Count == zoneLoads.Count)
             {
