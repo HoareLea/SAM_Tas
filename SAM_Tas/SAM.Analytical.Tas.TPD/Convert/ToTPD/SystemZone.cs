@@ -27,9 +27,24 @@ namespace SAM.Analytical.Tas.TPD
             result.TemperatureSetpoint.Update(displaySystemSpace.TemperatureSetpoint, energyCentre);
             result.RHSetpoint.Update(displaySystemSpace.RelativeHumiditySetpoint, energyCentre);
             result.PollutantSetpoint.Update(displaySystemSpace.PollutantSetpoint, energyCentre);
-            result.DisplacementVent = displaySystemSpace.DisplacementVentilation.ToTPD();
             result.FlowRate.Update(displaySystemSpace.FlowRate, energyCentre);
             result.FreshAir.Update(displaySystemSpace.FreshAir, energyCentre);
+
+            if(displaySystemSpace.DisplacementVentilation)
+            {
+                result.DisplacementVent = displaySystemSpace.DisplacementVentilation.ToTPD();
+                result.Flags = result.Flags | (int)tpdSystemZoneFlags.tpdSystemZoneFlagDisplacementVent;
+            }
+
+            if (displaySystemSpace.ModelInterzoneFlow)
+            {
+                result.Flags = result.Flags | (int)tpdSystemZoneFlags.tpdSystemZoneFlagModelInterzoneFlow;
+            }
+
+            if (displaySystemSpace.ModelVentilationFlow)
+            {
+                result.Flags = result.Flags | (int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+            }
 
             CollectionLink collectionLink;
 
