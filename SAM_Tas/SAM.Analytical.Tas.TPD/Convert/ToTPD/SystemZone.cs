@@ -27,7 +27,7 @@ namespace SAM.Analytical.Tas.TPD
             result.TemperatureSetpoint.Update(displaySystemSpace.TemperatureSetpoint, energyCentre);
             result.RHSetpoint.Update(displaySystemSpace.RelativeHumiditySetpoint, energyCentre);
             result.PollutantSetpoint.Update(displaySystemSpace.PollutantSetpoint, energyCentre);
-            result.DisplacementVent = displaySystemSpace.DisplacementVentilation ? 1 : 0;
+            result.DisplacementVent = displaySystemSpace.DisplacementVentilation.ToTPD();
             result.FlowRate.Update(displaySystemSpace.FlowRate, energyCentre);
             result.FreshAir.Update(displaySystemSpace.FreshAir, energyCentre);
 
