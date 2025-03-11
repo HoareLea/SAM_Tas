@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas.TPD
             Core.ModifiableValue temperatureSetpoint = systemZone.TemperatureSetpoint?.ToSAM();
             Core.ModifiableValue relativeHumiditySetpoint = systemZone.RHSetpoint?.ToSAM();
             Core.ModifiableValue pollutantSetpoint = systemZone.PollutantSetpoint?.ToSAM();
-            bool displacementVentilation = systemZone.DisplacementVent == 1;
+            bool displacementVentilation = @dynamic.DisplacementVent;
             DesignConditionSizedFlowValue flowRate = systemZone.FlowRate.ToSAM();
             DesignConditionSizedFlowValue freshAir = systemZone.FreshAir.ToSAM();
 
