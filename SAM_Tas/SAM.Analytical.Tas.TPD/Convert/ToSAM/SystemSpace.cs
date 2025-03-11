@@ -30,11 +30,17 @@ namespace SAM.Analytical.Tas.TPD
             Core.ModifiableValue temperatureSetpoint = systemZone.TemperatureSetpoint?.ToSAM();
             Core.ModifiableValue relativeHumiditySetpoint = systemZone.RHSetpoint?.ToSAM();
             Core.ModifiableValue pollutantSetpoint = systemZone.PollutantSetpoint?.ToSAM();
-            bool displacementVentilation = systemZone.DisplacementVent == 1;
+            //bool displacementVentilation = @dynamic.DisplacementVent;
             DesignConditionSizedFlowValue flowRate = systemZone.FlowRate.ToSAM();
             DesignConditionSizedFlowValue freshAir = systemZone.FreshAir.ToSAM();
 
-            SystemSpace result = new SystemSpace(name, area, volume, temperatureSetpoint, relativeHumiditySetpoint, pollutantSetpoint, displacementVentilation, flowRate, freshAir);
+
+            tpdSystemZoneFlags tpdSystemZoneFlags = (tpdSystemZoneFlags)systemZone.Flags;
+            bool displacementVentilation = tpdSystemZoneFlags.HasFlag(tpdSystemZoneFlags.tpdSystemZoneFlagDisplacementVent);
+            bool modelInterzoneFlow = tpdSystemZoneFlags.HasFlag(tpdSystemZoneFlags.tpdSystemZoneFlagModelInterzoneFlow);
+            bool modelVentilationFlow = tpdSystemZoneFlags.HasFlag(tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow);
+
+            SystemSpace result = new SystemSpace(name, area, volume, temperatureSetpoint, relativeHumiditySetpoint, pollutantSetpoint, displacementVentilation, modelInterzoneFlow, modelVentilationFlow, flowRate, freshAir);
             result.Description = dynamic.Description;
             if(zoneLoad != null)
             {
