@@ -347,7 +347,8 @@ namespace SAM.Analytical.Tas.TPD
                                 Dictionary<Guid, HashSet<int>> dictionary_AirSystemGroup = new Dictionary<Guid, HashSet<int>>();
                                 
                                 Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponent = new Dictionary<Guid, global::TPD.ISystemComponent>();
-    
+
+                                Dictionary<Guid, Controller> dictionary_Controller = new Dictionary<Guid, Controller>();
 
                                 global::TPD.System system = airSystem.ToTPD(plantRoom);
                                 if (system == null)
@@ -358,9 +359,11 @@ namespace SAM.Analytical.Tas.TPD
                                 Modify.SetReference(airSystem, system.Reference());
                                 systemPlantRoom.Add(airSystem);
 
-                                List <Core.Systems.ISystemComponent> systemComponents_AirSystem = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystem);
+                                List <Core.Systems.SystemComponent> systemComponents_AirSystem = systemPlantRoom.GetSystemComponents<Core.Systems.SystemComponent>(airSystem);
                                 if (systemComponents_AirSystem != null && systemComponents_AirSystem.Count != 0)
                                 {
+                                    systemComponents_AirSystem.RemoveAll(x => x is ISystemController || x is ISystemConnection);
+
                                     foreach (Core.Systems.SystemComponent systemComponent_Temp in systemComponents_AirSystem)
                                     {
                                         AirSystemGroup airSystemGroup = systemPlantRoom.GetRelatedObjects<AirSystemGroup>(systemComponent_Temp)?.FirstOrDefault();
@@ -459,7 +462,7 @@ namespace SAM.Analytical.Tas.TPD
                                     }
 
                                     Create.Ducts(systemPlantRoom, system, dictionary_SystemComponent, out Dictionary<Guid, Duct> dictionary_Ducts);
-                                    Create.Controllers(systemPlantRoom, system, airSystem, dictionary_SystemComponent, dictionary_Ducts);
+                                    dictionary_Controller = Create.Controllers(systemPlantRoom, system, airSystem, dictionary_SystemComponent, dictionary_Ducts, false);
                                 }
 
                                 List<AirSystemGroup> airSystemGroups = systemPlantRoom.GetSystemGroups<AirSystemGroup>(airSystem);
@@ -469,9 +472,11 @@ namespace SAM.Analytical.Tas.TPD
                                     {
                                         SortedDictionary<int, List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>>> sortedDictionary = new SortedDictionary<int, List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>>>();
 
-                                        List<Core.Systems.ISystemComponent> systemComponents_SAM = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(airSystemGroup);
+                                        List<Core.Systems.SystemComponent> systemComponents_SAM = systemPlantRoom.GetSystemComponents<Core.Systems.SystemComponent>(airSystemGroup);
                                         if (systemComponents_SAM != null)
                                         {
+                                            systemComponents_SAM.RemoveAll(x => x is ISystemConnection || x is ISystemController);
+
                                             for (int i = systemComponents_SAM.Count - 1; i >= 0; i--)
                                             {
                                                 Core.Systems.ISystemComponent systemComponent_SAM_Temp = systemComponents_SAM[i];
@@ -547,10 +552,46 @@ namespace SAM.Analytical.Tas.TPD
 
                                         }
 
-                                        //TODO: Implement controllers
-                                        Controller[] controllers = new Controller[0];
+                                        List<Controller> controllers_TPD = new List<Controller>();
+                                        if(dictionary_Controller != null)
+                                        {
+                                            List<SystemController> systemControllers_SAM = systemPlantRoom.GetSystemComponents<SystemController>(airSystemGroup);
+                                            if (systemControllers_SAM != null)
+                                            {
+                                                List<Tuple<SystemController, int>> tuples = new List<Tuple<SystemController, int>>();
+                                                foreach (SystemController systemController_SAM in systemControllers_SAM)
+                                                {
+                                                    if (!systemController_SAM.TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex))
+                                                    {
+                                                        groupIndex = -1;
+                                                    }
+                                                    tuples.Add(new Tuple<SystemController, int>(systemController_SAM, groupIndex));
+                                                }
 
-                                        ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers);
+                                                systemControllers_SAM = new List<SystemController>();
+                                                while (tuples.Count != 0)
+                                                {
+                                                    List<Tuple<SystemController, int>> tuples_Temp = tuples.FindAll(x => x.Item2 == tuples[0].Item2);
+
+                                                    Controller controller = null;
+                                                    foreach (Tuple<SystemController, int> tuple_Temp in tuples_Temp)
+                                                    {
+                                                        if(dictionary_Controller.TryGetValue(tuple_Temp.Item1.Guid, out controller) && controller != null)
+                                                        {
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    controllers_TPD.Add(controller);
+
+                                                    tuples.RemoveAll(x => tuples_Temp.Contains(x));
+                                                }
+
+                                            }
+                                        }
+
+
+                                        ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers_TPD.ToArray());
 
                                         componentGroup.SetMultiplicity(count);
 

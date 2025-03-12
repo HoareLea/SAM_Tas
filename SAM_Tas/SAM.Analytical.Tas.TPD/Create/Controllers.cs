@@ -10,7 +10,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Create
     {
-        public static List<Controller> Controllers(this SystemPlantRoom systemPlantRoom, global::TPD.System system, AirSystem airSystem, Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponent, Dictionary<Guid, Duct> dictionary_Duct)
+        public static Dictionary<Guid, Controller> Controllers(this SystemPlantRoom systemPlantRoom, global::TPD.System system, AirSystem airSystem, Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponent, Dictionary<Guid, Duct> dictionary_Duct, bool inludeGroupedControllers = true)
         {
             if (systemPlantRoom == null || airSystem == null|| dictionary_SystemComponent == null)
             {
@@ -23,8 +23,35 @@ namespace SAM.Analytical.Tas.TPD
             List<IDisplaySystemController> displaySystemControllers = systemPlantRoom.GetSystemComponents<IDisplaySystemController>(airSystem);
             if(displaySystemControllers != null && displaySystemControllers.Count !=0)
             {
+                Dictionary<Guid, HashSet<int>> dictionary_AirSystemGroup = new Dictionary<Guid, HashSet<int>>();
+
                 foreach (IDisplaySystemController displaySystemController in displaySystemControllers)
                 {
+                    if(!inludeGroupedControllers)
+                    {
+                        AirSystemGroup airSystemGroup = systemPlantRoom.GetRelatedObjects<AirSystemGroup>(displaySystemController)?.FirstOrDefault();
+                        if (airSystemGroup != null)
+                        {
+                            if (!dictionary_AirSystemGroup.TryGetValue(airSystemGroup.Guid, out HashSet<int> groupIndexes))
+                            {
+                                groupIndexes = new HashSet<int>();
+                                dictionary_AirSystemGroup[airSystemGroup.Guid] = groupIndexes;
+                            }
+
+                            if (((SystemController)displaySystemController).TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex))
+                            {
+                                if (groupIndexes.Contains(groupIndex))
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    groupIndexes.Add(groupIndex);
+                                }
+                            }
+                        }
+                    }
+
                     Controller controller = displaySystemController.ToTPD(system);
                     if (controller == null)
                     {
@@ -367,7 +394,14 @@ namespace SAM.Analytical.Tas.TPD
             }
             #endregion
 
-            return tuples.ConvertAll(x => x.Item1);
+
+            Dictionary<Guid, Controller> result = new Dictionary<Guid, Controller>();
+            foreach(Tuple<Controller, IDisplaySystemController> tuple in tuples)
+            {
+                    result[tuple.Item2.Guid] = tuple.Item1;
+            }
+
+            return result;
         }
 
     }

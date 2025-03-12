@@ -3,6 +3,7 @@ using SAM.Core;
 using SAM.Core.Attributes;
 using SAM.Core.Systems;
 using SAM.Geometry.Planar;
+using SAM.Geometry.Spatial;
 using SAM.Geometry.Systems;
 using System.Collections.Generic;
 using System.Linq;
@@ -675,12 +676,30 @@ namespace SAM.Analytical.Tas.TPD
             List<Controller> controllers = componentGroup.Controllers();
             if (controllers != null)
             {
-                foreach (Controller controller in controllers)
+                int count = controllers.Count / componentGroup.GetMultiplicity();
+                int index = 0;
+
+                for (int i = 0; i < controllers.Count; i++)
                 {
+                    Controller controller = controllers[i];
+
                     List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(controller, tPDDoc, componentConversionSettings);
                     if (systemJSAMObjects != null)
                     {
-                        result.AddRange(systemJSAMObjects);
+                        foreach (ISystemJSAMObject systemJSAMObject in systemJSAMObjects)
+                        {
+                            if (systemJSAMObject is SystemController)
+                            {
+                                ((SystemController)systemJSAMObject).SetValue(SystemControllerParameter.GroupIndex, index);
+                            }
+                            result.Add(systemJSAMObject);
+                        }
+                    }
+
+                    index++;
+                    if (index >= count)
+                    {
+                        index = 0;
                     }
                 }
             }
@@ -933,6 +952,22 @@ namespace SAM.Analytical.Tas.TPD
             {
                 point2Ds = new List<Point2D>();
             }
+            //else
+            //{
+            //    ComponentGroup componentGroup = duct.GetGroup();
+            //    if (componentGroup != null)
+            //    {
+            //        Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
+            //        if (location != null)
+            //        {
+            //            Transform2D transform2D = Transform2D.GetTranslation(location.ToVector());
+            //            if (transform2D != null)
+            //            {
+            //                point2Ds.ForEach(x => x.Transform(transform2D));
+            //            }
+            //        }
+            //    }
+            //}
 
             Point2D point2D = null;
 

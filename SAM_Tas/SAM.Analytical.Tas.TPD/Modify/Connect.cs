@@ -625,6 +625,20 @@ namespace SAM.Analytical.Tas.TPD
                             List<Point2D> point2Ds = Query.Point2Ds(controlArc);
                             point2Ds = point2Ds == null ? new List<Point2D>() : point2Ds;
 
+                            //ComponentGroup componentGroup = controller.GetGroup();
+                            //if (componentGroup != null)
+                            //{
+                            //    Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
+                            //    if (location != null)
+                            //    {
+                            //        Transform2D transform2D = Transform2D.GetTranslation(location.ToVector());
+                            //        if (transform2D != null)
+                            //        {
+                            //            point2Ds.ForEach(x => x.Transform(transform2D));
+                            //        }
+                            //    }
+                            //}
+
                             Dictionary<int, Point2D> dictionary_1 = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemController as dynamic, systemType_Control, direction: Direction.In);
                             if (dictionary_1 == null || dictionary_1.Count == 0)
                             {

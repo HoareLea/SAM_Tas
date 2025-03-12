@@ -110,6 +110,11 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             ComponentGroup componentGroup = controlArcs.GetGroup();
+            if(componentGroup == null)
+            {
+                componentGroup = controlArcs.GetController()?.GetGroup();
+            }
+
             if (componentGroup != null)
             {
                 Transform2D transform2D = null;
