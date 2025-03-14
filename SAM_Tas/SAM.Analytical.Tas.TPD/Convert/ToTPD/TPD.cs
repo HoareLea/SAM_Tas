@@ -4,6 +4,7 @@ using SAM.Core.Systems;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using TPD;
 
@@ -763,6 +764,7 @@ namespace SAM.Analytical.Tas.TPD
 
                                         count = controllers_TPD_New.Count / componentGroup.GetMultiplicity();
 
+                                        List<Tuple<Controller, IDisplaySystemController>> tuples_ControlType = new List<Tuple<Controller, IDisplaySystemController>>();
                                         for (int i = 0; i < controllers_TPD_New.Count; i++)
                                         {
                                             Controller controller_TPD_New = controllers_TPD_New[i];
@@ -780,7 +782,15 @@ namespace SAM.Analytical.Tas.TPD
                                                     Tuple<SystemController, Controller> tuple = tuples[index_Controller];
                                                     if (tuple.Item2 == null)
                                                     {
-                                                        ToTPD((IDisplaySystemController)tuple.Item1, system, controller_TPD_New);
+                                                        IDisplaySystemController displaySystemController = tuple.Item1 as IDisplaySystemController;
+                                                        if(displaySystemController != null)
+                                                        {
+                                                            Controller controller = ToTPD(displaySystemController, system, controller_TPD_New);
+                                                            if(controller != null)
+                                                            {
+                                                                tuples_ControlType.Add(new Tuple<Controller, IDisplaySystemController>(controller, displaySystemController));
+                                                            }
+                                                        }
                                                     }
 
                                                     tuples.RemoveAt(index_Controller);
@@ -792,6 +802,14 @@ namespace SAM.Analytical.Tas.TPD
                                             {
                                                 index = 0;
                                             }
+                                        }
+
+                                        foreach(Tuple<Controller, IDisplaySystemController> tuple_ControlType in tuples_ControlType)
+                                        {
+                                            IDisplaySystemController displaySystemController = tuple_ControlType.Item2;
+                                            Controller controller = tuple_ControlType.Item1;
+
+                                            controller?.SetControlType(displaySystemController);
                                         }
                                     }
                                 }
