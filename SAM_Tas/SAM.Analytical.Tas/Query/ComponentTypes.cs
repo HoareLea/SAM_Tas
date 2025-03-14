@@ -17,7 +17,7 @@
                 return;
             }
 
-            if(heatingSystem != null)
+            if (heatingSystem != null)
             {
                 if (heatingSystem.Name == "RAD" || heatingSystem.Name == "THR" || heatingSystem.Name == "UFH")
                 {
@@ -37,9 +37,9 @@
                 }
             }
 
-            if(coolingSystem != null)
+            if (coolingSystem != null)
             {
-                if (coolingSystem.Name == "RP" || coolingSystem.Name == "CHB")
+                if (coolingSystem.Name == "RP" || coolingSystem.Name == "CHB" || coolingSystem.Name == "UFC")
                 {
                     chilledBeam_Cooling = true;
                 }
