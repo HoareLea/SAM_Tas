@@ -19,6 +19,7 @@ namespace SAM.Analytical.Tas.TPD
             Modify.SetReference(result, @dynamic.GUID);
             
             result.Description = dynamic.Description;
+            result.DesignTemperatureDifference = dynamic.DesignDeltaT;
             result.MinimumReturnTemperature = dynamic.MinimumReturnTemp;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
             result.LoadDistribution = ((tpdLoadDistribution)dynamic.LoadDistribution).ToSAM();

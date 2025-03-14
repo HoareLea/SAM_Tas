@@ -24,6 +24,7 @@ namespace SAM.Analytical.Tas.TPD
             result.PeakDemand = dynamic.PeakDemand;
             result.SizeFraction = dynamic.SizeFraction;
             result.DesignPressureDrop = dynamic.DesignPressureDrop;
+            result.DesignTemperatureDifference = dynamic.DesignDeltaT;
 
             bool isEfficiency = !dynamic.UseDistributionHeatLossProfile;
             ProfileData profileData = isEfficiency ? dynamic.DistributionEfficiency : dynamic.DistributionHeatLossProfile;

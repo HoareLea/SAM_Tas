@@ -23,6 +23,7 @@ namespace SAM.Analytical.Tas.TPD
             @dynamic.Description = displayDomesticHotWaterSystemCollection.Description;
 
             dynamic.DesignPressureDrop = displayDomesticHotWaterSystemCollection.DesignPressureDrop;
+            dynamic.DesignDeltaT = displayDomesticHotWaterSystemCollection.DesignTemperatureDifference;
 
             EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
 
