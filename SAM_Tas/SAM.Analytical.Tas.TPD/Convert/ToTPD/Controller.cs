@@ -7,14 +7,19 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static Controller ToTPD(this IDisplaySystemController displaySystemController, global::TPD.System system)
+        public static Controller ToTPD(this IDisplaySystemController displaySystemController, global::TPD.System system, Controller controller = null)
         {
             if (displaySystemController == null || system == null)
             {
                 return null;
             }
 
-            Controller result = system.AddController();
+            Controller result = controller;
+            if(result == null)
+            {
+                result = system.AddController();
+            }
+
             result.Description = ((dynamic)displaySystemController).Description;
 
             if(displaySystemController is SystemNormalController)
@@ -207,7 +212,10 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            displaySystemController.SetLocation(result);
+            if (controller == null)
+            {
+                displaySystemController.SetLocation(result);
+            }
 
             return result;
         }

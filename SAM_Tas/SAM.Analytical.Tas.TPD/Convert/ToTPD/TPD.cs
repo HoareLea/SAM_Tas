@@ -470,7 +470,8 @@ namespace SAM.Analytical.Tas.TPD
                                 {
                                     foreach (AirSystemGroup airSystemGroup in airSystemGroups)
                                     {
-                                        SortedDictionary<int, List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>>> sortedDictionary = new SortedDictionary<int, List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>>>();
+                                        SortedDictionary<int, List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>>> sortedDictionary_SystemComponent = new SortedDictionary<int, List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>>>();
+                                        SortedDictionary<int, List<Tuple<SystemController, Controller>>> sortedDictionary_Controller = new SortedDictionary<int, List<Tuple<SystemController, Controller>>>();
 
                                         List<Core.Systems.SystemComponent> systemComponents_SAM = systemPlantRoom.GetSystemComponents<Core.Systems.SystemComponent>(airSystemGroup);
                                         if (systemComponents_SAM != null)
@@ -488,10 +489,10 @@ namespace SAM.Analytical.Tas.TPD
                                                     continue;
                                                 }
 
-                                                if (!sortedDictionary.TryGetValue(groupIndex, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples))
+                                                if (!sortedDictionary_SystemComponent.TryGetValue(groupIndex, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples))
                                                 {
                                                     tuples = new List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>>();
-                                                    sortedDictionary[groupIndex] = tuples;
+                                                    sortedDictionary_SystemComponent[groupIndex] = tuples;
                                                 }
 
                                                 if (!dictionary_SystemComponent.TryGetValue((systemComponent_SAM_Temp as dynamic).Guid, out global::TPD.ISystemComponent systemComponent_TPD_Temp))
@@ -508,12 +509,12 @@ namespace SAM.Analytical.Tas.TPD
                                             {
                                                 Core.Systems.ISystemComponent systemComponent_SAM_Temp = systemComponents_SAM[i];
 
-                                                int groupIndex = sortedDictionary.Count == 0 ? 0 : sortedDictionary.Keys.Max();
+                                                int groupIndex = sortedDictionary_SystemComponent.Count == 0 ? 0 : sortedDictionary_SystemComponent.Keys.Max();
 
-                                                if (!sortedDictionary.TryGetValue(groupIndex, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples))
+                                                if (!sortedDictionary_SystemComponent.TryGetValue(groupIndex, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples))
                                                 {
                                                     tuples = new List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>>();
-                                                    sortedDictionary[groupIndex] = tuples;
+                                                    sortedDictionary_SystemComponent[groupIndex] = tuples;
                                                 }
 
                                                 if (!dictionary_SystemComponent.TryGetValue((systemComponent_SAM_Temp as dynamic).Guid, out global::TPD.ISystemComponent systemComponent_TPD_Temp))
@@ -530,7 +531,7 @@ namespace SAM.Analytical.Tas.TPD
                                         int count = 1;
 
                                         List<global::TPD.ISystemComponent> systemComponents_TPD = new List<global::TPD.ISystemComponent>();
-                                        foreach (List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples in sortedDictionary.Values)
+                                        foreach (List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples in sortedDictionary_SystemComponent.Values)
                                         {
                                             if (tuples == null || tuples.Count == 0)
                                             {
@@ -552,44 +553,112 @@ namespace SAM.Analytical.Tas.TPD
 
                                         }
 
-                                        List<Controller> controllers_TPD = new List<Controller>();
                                         if(dictionary_Controller != null)
                                         {
                                             List<SystemController> systemControllers_SAM = systemPlantRoom.GetSystemComponents<SystemController>(airSystemGroup);
                                             if (systemControllers_SAM != null)
                                             {
-                                                List<Tuple<SystemController, int>> tuples = new List<Tuple<SystemController, int>>();
-                                                foreach (SystemController systemController_SAM in systemControllers_SAM)
+                                                for (int i = systemControllers_SAM.Count - 1; i >= 0; i--)
                                                 {
-                                                    if (!systemController_SAM.TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex))
-                                                    {
-                                                        groupIndex = -1;
-                                                    }
-                                                    tuples.Add(new Tuple<SystemController, int>(systemController_SAM, groupIndex));
-                                                }
+                                                    SystemController systemController_SAM_Temp = systemControllers_SAM[i];
 
-                                                systemControllers_SAM = new List<SystemController>();
-                                                while (tuples.Count != 0)
-                                                {
-                                                    List<Tuple<SystemController, int>> tuples_Temp = tuples.FindAll(x => x.Item2 == tuples[0].Item2);
+                                                    int groupIndex = -1;
 
-                                                    Controller controller = null;
-                                                    foreach (Tuple<SystemController, int> tuple_Temp in tuples_Temp)
+                                                    if (!systemController_SAM_Temp.TryGetValue(SystemControllerParameter.GroupIndex, out groupIndex))
                                                     {
-                                                        if(dictionary_Controller.TryGetValue(tuple_Temp.Item1.Guid, out controller) && controller != null)
-                                                        {
-                                                            break;
-                                                        }
+                                                        continue;
                                                     }
 
-                                                    controllers_TPD.Add(controller);
+                                                    if (!sortedDictionary_Controller.TryGetValue(groupIndex, out List<Tuple<SystemController, Controller>> tuples))
+                                                    {
+                                                        tuples = new List<Tuple<SystemController, Controller>>();
+                                                        sortedDictionary_Controller[groupIndex] = tuples;
+                                                    }
 
-                                                    tuples.RemoveAll(x => tuples_Temp.Contains(x));
+                                                    if (!dictionary_Controller.TryGetValue(systemController_SAM_Temp.Guid, out Controller controller_TPD_Temp))
+                                                    {
+                                                        controller_TPD_Temp = null;
+                                                    }
+
+                                                    tuples.Add(new Tuple<SystemController, Controller>(systemController_SAM_Temp, controller_TPD_Temp));
+
+                                                    systemControllers_SAM.RemoveAt(i);
                                                 }
+
+                                                for (int i = systemControllers_SAM.Count - 1; i >= 0; i--)
+                                                {
+                                                    SystemController systemController_SAM_Temp = systemControllers_SAM[i];
+
+                                                    int groupIndex = sortedDictionary_Controller.Count == 0 ? 0 : sortedDictionary_Controller.Keys.Max();
+
+                                                    if (!sortedDictionary_Controller.TryGetValue(groupIndex, out List<Tuple<SystemController, Controller>> tuples))
+                                                    {
+                                                        tuples = new List<Tuple<SystemController, Controller>>();
+                                                        sortedDictionary_Controller[groupIndex] = tuples;
+                                                    }
+
+                                                    if (!dictionary_Controller.TryGetValue(systemController_SAM_Temp.Guid, out Controller controller_TPD_Temp))
+                                                    {
+                                                        controller_TPD_Temp = null;
+                                                    }
+
+                                                    tuples.Add(new Tuple<SystemController, Controller>(systemController_SAM_Temp, controller_TPD_Temp));
+
+                                                    systemControllers_SAM.RemoveAt(i);
+                                                }
+
+
+
+
+                                                //List<Tuple<SystemController, int>> tuples = new List<Tuple<SystemController, int>>();
+                                                //foreach (SystemController systemController_SAM in systemControllers_SAM)
+                                                //{
+                                                //    if (!systemController_SAM.TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex))
+                                                //    {
+                                                //        groupIndex = -1;
+                                                //    }
+                                                //    tuples.Add(new Tuple<SystemController, int>(systemController_SAM, groupIndex));
+                                                //}
+
+                                                //systemControllers_SAM = new List<SystemController>();
+                                                //while (tuples.Count != 0)
+                                                //{
+                                                //    List<Tuple<SystemController, int>> tuples_Temp = tuples.FindAll(x => x.Item2 == tuples[0].Item2);
+
+                                                //    Controller controller = null;
+                                                //    foreach (Tuple<SystemController, int> tuple_Temp in tuples_Temp)
+                                                //    {
+                                                //        if(dictionary_Controller.TryGetValue(tuple_Temp.Item1.Guid, out controller) && controller != null)
+                                                //        {
+                                                //            break;
+                                                //        }
+                                                //    }
+
+                                                //    controllers_TPD.Add(controller);
+
+                                                //    tuples.RemoveAll(x => tuples_Temp.Contains(x));
+                                                //}
 
                                             }
                                         }
 
+
+                                        List<Controller> controllers_TPD = new List<Controller>();
+                                        foreach (List<Tuple<SystemController, Controller>> tuples in sortedDictionary_Controller.Values)
+                                        {
+                                            if (tuples == null || tuples.Count == 0)
+                                            {
+                                                continue;
+                                            }
+
+                                            Controller controller_TPD_Temp = tuples.Find(x => x.Item2 != null)?.Item2;
+                                            if (controller_TPD_Temp == null)
+                                            {
+                                                continue;
+                                            }
+
+                                            controllers_TPD.Add(controller_TPD_Temp);
+                                        }
 
                                         ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers_TPD.ToArray());
 
@@ -605,7 +674,7 @@ namespace SAM.Analytical.Tas.TPD
                                         {
                                             global::TPD.SystemComponent systemComponent_TPD_New = systemComponents_TPD_New[i];
 
-                                            if (sortedDictionary.TryGetValue(index, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples) && tuples != null && tuples.Count != 0)
+                                            if (sortedDictionary_SystemComponent.TryGetValue(index, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples) && tuples != null && tuples.Count != 0)
                                             {
                                                 int index_Temp = tuples.FindIndex(x => (x.Item2 as dynamic)?.GUID == ((dynamic)systemComponent_TPD_New).GUID);
                                                 if (index_Temp != -1)
@@ -679,6 +748,42 @@ namespace SAM.Analytical.Tas.TPD
                                                     {
                                                         ToTPD((DisplaySystemDirectEvaporativeCooler)systemComponent_SAM, system, (global::TPD.SprayHumidifier)systemComponent_TPD_New);
                                                     }
+                                                }
+                                            }
+
+                                            index++;
+                                            if (index >= count)
+                                            {
+                                                index = 0;
+                                            }
+                                        }
+
+
+                                        List<Controller> controllers_TPD_New = Query.Controllers(componentGroup);
+
+                                        count = controllers_TPD_New.Count / componentGroup.GetMultiplicity();
+
+                                        for (int i = 0; i < controllers_TPD_New.Count; i++)
+                                        {
+                                            Controller controller_TPD_New = controllers_TPD_New[i];
+
+                                            if (sortedDictionary_Controller.TryGetValue(index, out List<Tuple<SystemController, Controller>> tuples) && tuples != null && tuples.Count != 0)
+                                            {
+                                                int index_Controller = tuples.FindIndex(x => x.Item2 == controller_TPD_New);
+                                                if(index_Controller == -1)
+                                                {
+                                                    index_Controller = tuples.FindIndex(x => x.Item2 == null);
+                                                }
+
+                                                if(index_Controller != -1)
+                                                {
+                                                    Tuple<SystemController, Controller> tuple = tuples[index_Controller];
+                                                    if (tuple.Item2 == null)
+                                                    {
+                                                        ToTPD((IDisplaySystemController)tuple.Item1, system, controller_TPD_New);
+                                                    }
+
+                                                    tuples.RemoveAt(index_Controller);
                                                 }
                                             }
 
