@@ -673,7 +673,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            List<Controller> controllers = componentGroup.Controllers();
+            List<Controller> controllers = componentGroup.Controllers()?.FindAll(x => x.ControlType != tpdControlType.tpdControlGroup);
             if (controllers != null)
             {
                 int count = controllers.Count / componentGroup.GetMultiplicity();
