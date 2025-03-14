@@ -138,7 +138,7 @@ namespace SAM.Analytical.Tas.TPD
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    result = new SystemPassthroughController(@dynamic.Name, normalControllerDataType) { SensorReference = sensorReference };
+                    result = new SystemPassthroughController(@dynamic.Name, sensorReference, setpoint, setback, normalControllerDataType);
                     break;
 
                 case tpdControlType.tpdControlNot:
