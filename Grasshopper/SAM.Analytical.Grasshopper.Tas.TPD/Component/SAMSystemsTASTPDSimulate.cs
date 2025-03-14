@@ -4,15 +4,11 @@ using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
-using SAM.Core.Grasshopper.Systems;
-using SAM.Core.Systems;
-using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using TPD;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
@@ -31,7 +27,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTPD;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTPD3;
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
