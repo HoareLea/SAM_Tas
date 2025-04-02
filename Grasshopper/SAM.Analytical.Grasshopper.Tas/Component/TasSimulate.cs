@@ -21,7 +21,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.4";
+        public override string LatestComponentVersion => "1.0.5";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -35,7 +35,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public TasSimulate()
           : base("Tas.Simulate", "Tas.Simulate",
-              "Simulates the TasTBD file.",
+              "Simulates the TasTBD file. \n The TPD file will be saved after the simulation.",
               "SAM", "Tas")
         {
         }

@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.5";
+        public override string LatestComponentVersion => "1.0.6";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -37,7 +37,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// </summary>
         public SAMSystemsFromTPD()
           : base("SAMSystems.FromTPD", "SAMSystems.FromTPD",
-              "Converts from TPD to SystemEnergyCentre",
+              "Converts from TPD to SystemEnergyCentre. \n The TPD file will NOT be saved after the simulation.",
               "SAM", "Tas")
         {
         }
