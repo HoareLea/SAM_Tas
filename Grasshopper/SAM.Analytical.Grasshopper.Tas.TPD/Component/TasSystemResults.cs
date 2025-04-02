@@ -1,10 +1,14 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Systems;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas.TPD;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
@@ -193,6 +197,69 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 dataAccess.SetData(index_successful, SystemEnergyCentreResults != null);
             }
+        }
+
+        public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+        {
+            base.AppendAdditionalMenuItems(menu);
+            Menu_AppendSeparator(menu);
+            AppendOpenTPDAdditionalMenuItem(this, menu);
+        }
+
+        public ToolStripMenuItem AppendOpenTPDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
+        {
+            if (!(gH_SAMComponent is GH_Component gH_Component))
+            {
+                return null;
+            }
+
+            ToolStripMenuItem toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_TasTPD3);
+            if (toolStripMenuItem != null)
+            {
+                toolStripMenuItem.Tag = gH_Component.InstanceGuid;
+            }
+
+            return toolStripMenuItem;
+        }
+
+        private void OnOpenTPDComponentClick(object sender, EventArgs e)
+        {
+            if (Params.Input == null || Params.Input.Count == 0)
+            {
+                return;
+            }
+
+            IEnumerable<object> paths = Params.Input[0]?.VolatileData?.AllData(true);
+            if (paths == null || paths.Count() == 0)
+            {
+                return;
+            }
+
+            string path = null;
+
+            foreach (object path_Temp in paths)
+            {
+                string value = path_Temp?.ToString();
+                if (path_Temp is IGH_Goo)
+                {
+                    value = (path_Temp as dynamic)?.Value;
+                }
+
+                if (string.IsNullOrWhiteSpace(value) || !System.IO.File.Exists(value))
+                {
+                    continue;
+                }
+
+                path = value;
+                break;
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+
+            Process.Start(path);
         }
     }
 }

@@ -163,7 +163,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return null;
             }
 
-            ToolStripMenuItem toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_Small);
+            ToolStripMenuItem toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_TasTPD3);
             if (toolStripMenuItem != null)
             {
                 toolStripMenuItem.Tag = gH_Component.InstanceGuid;
