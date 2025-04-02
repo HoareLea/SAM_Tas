@@ -46,14 +46,6 @@ namespace SAM.Analytical.Tas.TPD
 
                 TSDData tSDData = energyCentre.GetTSDData(1);
 
-
-                PlantRoom plantRoom = energyCentre.PlantRoom("Main PlantRoom");
-                if (plantRoom == null)
-                {
-                    plantRoom = energyCentre.AddPlantRoom();
-                    plantRoom.Name = "Main PlantRoom";
-                }
-
                 AnalyticalSystemsProperties analyticalSystemsProperties = systemEnergyCentre.GetValue<AnalyticalSystemsProperties>(SystemEnergyCentreParameter.AnalyticalSystemsProperties);
                 if (analyticalSystemsProperties != null)
                 {
@@ -99,6 +91,13 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     foreach (SystemPlantRoom systemPlantRoom in systemPlantRooms)
                     {
+                        PlantRoom plantRoom = energyCentre.PlantRoom(systemPlantRoom.Name);
+                        if (plantRoom == null)
+                        {
+                            plantRoom = energyCentre.AddPlantRoom();
+                            plantRoom.Name = systemPlantRoom.Name;
+                        }
+
                         List<LiquidSystem> liquidSystems = systemPlantRoom.GetSystems<LiquidSystem>();
                         if (liquidSystems != null && liquidSystems.Count != 0)
                         {
@@ -826,7 +825,11 @@ namespace SAM.Analytical.Tas.TPD
 
                 if (systemEnergyCentreConversionSettings.Simulate)
                 {
-                    plantRoom.SimulateEx(systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
+                    foreach(PlantRoom plantRoom in energyCentre.PlantRooms())
+                    {
+                        plantRoom.SimulateEx(systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
+                    }
+
                     if (systemEnergyCentreConversionSettings.IncludeComponentResults)
                     {
                         Modify.CopyResults(energyCentre, systemEnergyCentre, systemEnergyCentreConversionSettings.StartHour + 1, systemEnergyCentreConversionSettings.EndHour + 1);
