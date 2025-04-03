@@ -874,25 +874,13 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            List<PlantRoom> plantRooms = tPDDoc?.EnergyCentre?.PlantRooms();
-            if (plantRooms == null)
+            PlantRoom plantRoom = tPDDoc?.EnergyCentre?.PlantRoom(systemPlantRoom.Name);
+            if(plantRoom == null)
             {
                 return null;
             }
 
-            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
-            foreach (PlantRoom plantRoom in plantRooms)
-            {
-                List<ISystemJSAMObject> systemJSAMObjects = null;
-
-                systemJSAMObjects = Add(systemPlantRoom, plantRoom, tPDDoc, componentConversionSettings);
-                if (systemJSAMObjects != null)
-                {
-                    result.AddRange(systemJSAMObjects);
-                }
-            }
-
-            return result;
+            return Add(systemPlantRoom, plantRoom, tPDDoc, componentConversionSettings);
         }
 
         public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, Duct duct)
