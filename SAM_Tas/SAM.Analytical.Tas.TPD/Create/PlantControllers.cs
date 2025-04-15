@@ -129,7 +129,7 @@ namespace SAM.Analytical.Tas.TPD
                                     ISystemConnection systemConnection = displaySystemConnection == null ? systemConnections[0] : displaySystemConnection;
                                     if (systemConnection != null && systemConnection.TryGetIndex(new Core.ObjectReference(systemComponent_Connected), out int index))
                                     {
-                                        plantControlArc.ControlPort = index - 2;
+                                        plantControlArc.ControlPort = index - 4;
                                     }
                                 }
                             }
