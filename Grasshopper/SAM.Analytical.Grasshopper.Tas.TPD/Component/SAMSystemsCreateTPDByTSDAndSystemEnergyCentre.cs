@@ -13,17 +13,17 @@ using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
-    public class SAMSystemsCreateTPDBySystemEnergyCentre : GH_SAMVariableOutputParameterComponent
+    public class SAMSystemsCreateTPDByTSDAndSystemEnergyCentre : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("a28c3e99-ce8d-4101-8e4f-6ade5889bfe5");
+        public override Guid ComponentGuid => new Guid("b73f1277-6817-4160-a4ec-c5dade1f8da9");
 
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.5";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -35,9 +35,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMSystemsCreateTPDBySystemEnergyCentre()
-          : base("SAMSystems.CreateTPDBySystemEnergyCentre", "SAMSystems.CreateTPDBySystemEnergyCentre",
-              "Creates TPD from SystemEnergyCentre",
+        public SAMSystemsCreateTPDByTSDAndSystemEnergyCentre()
+          : base("SAMSystems.CreateTPDByTSDAndSystemEnergyCentre", "SAMSystems.CreateTPDByTSDAndSystemEnergyCentre",
+              "Creates TPD from TSD And SystemEnergyCentre",
               "SAM", "Tas")
         {
         }
@@ -51,9 +51,30 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_TSD", NickName = "_path_TSD", Description = "A file path to TAS TSD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooSystemEnergyCentreParam() { Name = "_systemEnergyCentre", NickName = "_systemEnergyCentre", Description = "SAM Core Systems SystemEnergyCentre", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+
+                SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulate before collecting data", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(systemEnergyCentreConversionSettings.Simulate);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
+                global::Grasshopper.Kernel.Parameters.Param_Integer integer = null;
+
+                integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_startHour_", NickName = "_startHour_", Description = "Simulation start hour", Access = GH_ParamAccess.item };
+                integer.SetPersistentData(systemEnergyCentreConversionSettings.StartHour);
+                result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
+
+                integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHour_", NickName = "_endHour_", Description = "Simulation end hour", Access = GH_ParamAccess.item };
+                integer.SetPersistentData(systemEnergyCentreConversionSettings.EndHour);
+                result.Add(new GH_SAMParam(integer, ParamVisibility.Voluntary));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_includeResults_", NickName = "_includeResults_", Description = "IncludeResults", Access = GH_ParamAccess.item, Optional = true };
+                @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -110,6 +131,14 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
+            string path_TSD = null;
+            index = Params.IndexOfInputParam("_path_TSD");
+            if (index == -1 || !dataAccess.GetData(index, ref path_TSD) || string.IsNullOrWhiteSpace(path_TSD))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
             SystemEnergyCentre systemEnergyCentre = null;
             index = Params.IndexOfInputParam("_systemEnergyCentre");
             if (index == -1 || !dataAccess.GetData(index, ref systemEnergyCentre) || systemEnergyCentre == null)
@@ -121,7 +150,35 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
             SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
 
-            bool successful = Analytical.Tas.TPD.Convert.ToTPD(systemEnergyCentre, path_TPD);
+            bool simulate = systemEnergyCentreConversionSettings.Simulate;
+            index = Params.IndexOfInputParam("_simulate_");
+            if (index != -1 && dataAccess.GetData(index, ref simulate))
+            {
+                systemEnergyCentreConversionSettings.Simulate = simulate;
+            }
+
+            int startHour = systemEnergyCentreConversionSettings.StartHour;
+            index = Params.IndexOfInputParam("_startHour_");
+            if (index != -1 && dataAccess.GetData(index, ref startHour))
+            {
+                systemEnergyCentreConversionSettings.StartHour = startHour;
+            }
+
+            int endHour = systemEnergyCentreConversionSettings.EndHour;
+            index = Params.IndexOfInputParam("_endHour_");
+            if (index != -1 && dataAccess.GetData(index, ref endHour))
+            {
+                systemEnergyCentreConversionSettings.EndHour = endHour;
+            }
+
+            bool includeResults = false;
+            index = Params.IndexOfInputParam("_includeResults_");
+            if (index != -1 && dataAccess.GetData(index, ref includeResults))
+            {
+                systemEnergyCentreConversionSettings.IncludeComponentResults = includeResults;
+            }
+
+            bool successful = Analytical.Tas.TPD.Convert.ToTPD(systemEnergyCentre, path_TPD, path_TSD, systemEnergyCentreConversionSettings);
 
             index = Params.IndexOfOutputParam("systemEnergyCentre");
             if (index != -1)
