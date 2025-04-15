@@ -150,6 +150,15 @@ namespace SAM.Analytical.Tas.TPD
                                         controlArc.AddNode(System.Convert.ToInt32(point2Ds[i].X), System.Convert.ToInt32(point2Ds[i].Y));
                                     }
                                 }
+
+                                if(systemComponent_Connected is SystemDXCoil)
+                                {
+                                    ISystemConnection systemConnection = displaySystemConnection == null ? systemConnections[0] : displaySystemConnection;
+                                    if (systemConnection != null && systemConnection.TryGetIndex(new Core.ObjectReference(systemComponent_Connected), out int index)) 
+                                    {
+                                        controlArc.ControlPort = index - 2;
+                                    }
+                                }
                             }
                         }
                     }
