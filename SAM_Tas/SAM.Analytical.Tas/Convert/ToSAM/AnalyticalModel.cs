@@ -100,13 +100,14 @@ namespace SAM.Analytical.Tas
 
 
             AnalyticalModel result = new AnalyticalModel(buildingData.name, buildingData.description, null, null, adjacencyCluster);
+            result.SetValue(SAM.Analytical.Tas.AnalyticalModelParameter.Path_TBD, tSDDocument?.SimulationData?.buildingPath);
 
             if(tSDConversionSettings.ConvertWeaterData)
             {
                 Weather.WeatherData weatherData = Weather.Tas.Convert.ToSAM_WeatherData(tSDDocument.SimulationData);
                 if (weatherData != null)
                 {
-                    result.SetValue(AnalyticalModelParameter.WeatherData, weatherData);
+                    result.SetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, weatherData);
                 }
             }
 

@@ -85,7 +85,7 @@ namespace SAM.Analytical.Tas
             Weather.WeatherData weatherData_Temp = weatherData;
             if(weatherData_Temp == null)
             {
-                if (!analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out weatherData_Temp, true))
+                if (!analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out weatherData_Temp, true))
                 {
                     weatherData_Temp = null;
                 }
@@ -123,7 +123,7 @@ namespace SAM.Analytical.Tas
 
                 if(coolingDesignDays == null)
                 {
-                    if(analyticalModel.TryGetValue(AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> designDays, true))
+                    if(analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> designDays, true))
                     {
                         coolingDesignDays = designDays;
                     }
@@ -131,7 +131,7 @@ namespace SAM.Analytical.Tas
 
                 if (heatingDesignDays == null)
                 {
-                    if (analyticalModel.TryGetValue(AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> designDays, true))
+                    if (analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> designDays, true))
                     {
                         heatingDesignDays = designDays;
                     }

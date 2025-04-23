@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas
 {
-    public class FromTBD : GH_SAMComponent
+    public class SAMAnalyticalFromTBD : GH_SAMComponent
     {
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -31,7 +31,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public FromTBD()
+        public SAMAnalyticalFromTBD()
           : base("SAMAnalytical.FromTBD", "SAMAnalytical.FromTBD",
               "Create AnalyticalModel From TBD File",
               "SAM", "Tas")

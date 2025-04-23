@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas
             Modify.RemoveUnused(building);
             
             double northAngle = double.NaN;
-            if (analyticalModel.TryGetValue(AnalyticalModelParameter.NorthAngle, out northAngle))
+            if (analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.NorthAngle, out northAngle))
             {
                 building.northAngle = global::System.Math.Round(Units.Convert.ToDegrees(northAngle), 1);
                 if(building.northAngle < 0.5)

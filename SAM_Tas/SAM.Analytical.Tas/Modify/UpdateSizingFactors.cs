@@ -15,11 +15,11 @@ namespace SAM.Analytical.Tas
                 return;
 
             double heatingSizingFactor = double.NaN;
-            if (!analyticalModel.TryGetValue(AnalyticalModelParameter.HeatingSizingFactor, out heatingSizingFactor))
+            if (!analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.HeatingSizingFactor, out heatingSizingFactor))
                 heatingSizingFactor = double.NaN;
 
             double coolingSizingFactor = double.NaN;
-            if (!analyticalModel.TryGetValue(AnalyticalModelParameter.CoolingSizingFactor, out coolingSizingFactor))
+            if (!analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.CoolingSizingFactor, out coolingSizingFactor))
                 coolingSizingFactor = double.NaN;
 
             UpdateSizingFactors(building, spaces, heatingSizingFactor, coolingSizingFactor);

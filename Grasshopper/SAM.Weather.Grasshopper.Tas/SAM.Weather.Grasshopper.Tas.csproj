@@ -27,6 +27,14 @@
     <OutputPath>..\..\build\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Convert\**" />
+    <Compile Remove="Kernel\**" />
+    <EmbeddedResource Remove="Convert\**" />
+    <EmbeddedResource Remove="Kernel\**" />
+    <None Remove="Convert\**" />
+    <None Remove="Kernel\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -75,10 +83,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Convert\ToSAM\" />
-    <Folder Include="Kernel\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SAM_Tas\SAM.Core.Tas\SAM.Core.Tas.csproj" />

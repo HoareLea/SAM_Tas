@@ -43,19 +43,19 @@ namespace SAM.Analytical.Tas
 
             string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
 
-            analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData);
+            analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData);
             if (WorkflowSettings?.WeatherData != null)
             {
                 weatherData = WorkflowSettings.WeatherData;
             }
 
-            analyticalModel.TryGetValue(AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> heatingDesignDays);
+            analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> heatingDesignDays);
             if (WorkflowSettings?.DesignDays_Heating != null)
             {
                 heatingDesignDays = new SAMCollection<DesignDay>(WorkflowSettings.DesignDays_Heating);
             }
 
-            analyticalModel.TryGetValue(AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> coolingDesignDays);
+            analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> coolingDesignDays);
             if (WorkflowSettings?.DesignDays_Cooling != null)
             {
                 coolingDesignDays = new SAMCollection<DesignDay>(WorkflowSettings.DesignDays_Cooling);

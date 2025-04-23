@@ -261,7 +261,7 @@ namespace SAM.Analytical.Tas
 
         public IndexedDoubles GetMaxIndoorComfortTemperatures(Period period = Period.Hourly)
         {
-            if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
+            if (!AnalyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
             {
                 return null;
             }
@@ -285,7 +285,7 @@ namespace SAM.Analytical.Tas
 
         public IndexedDoubles GetMaxIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
         {
-            if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
+            if (!AnalyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
             {
                 return null;
             }
@@ -309,7 +309,7 @@ namespace SAM.Analytical.Tas
 
         public IndexedDoubles GetMinIndoorComfortTemperatures(Period period = Period.Hourly)
         {
-            if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
+            if (!AnalyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
             {
                 return null;
             }
@@ -333,7 +333,7 @@ namespace SAM.Analytical.Tas
 
         public IndexedDoubles GetMinIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
         {
-            if (!AnalyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
+            if (!AnalyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
             {
                 return null;
             }

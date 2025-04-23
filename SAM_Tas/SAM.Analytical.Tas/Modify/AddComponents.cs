@@ -1,10 +1,12 @@
-﻿namespace SAM.Analytical.Tas
+﻿using TPD;
+
+namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
         public static void AddComponents(this TPD.SystemZone systemZone, TPD.EnergyCentre energyCentre, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
         {
-            if(systemZone == null || energyCentre == null)
+            if (systemZone == null || energyCentre == null)
             {
                 return;
             }
@@ -26,7 +28,7 @@
             TPD.RefrigerantGroup refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
 
             Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil_Heating, out bool dXCoil_Cooling, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
-            
+
             if (radiator)  //TODO: 2023-09-25 allow other Zone component as Under Floor Heating Floor etc...read from Zone Internal Condition Heating Emitter Name
             {
                 dynamic radiator_Group = systemZone.AddRadiator();
@@ -163,5 +165,6 @@
                 }
             }
         }
-  }
+    }
 }
+
