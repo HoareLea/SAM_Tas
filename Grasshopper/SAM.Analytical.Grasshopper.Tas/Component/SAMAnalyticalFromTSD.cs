@@ -17,7 +17,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -125,7 +125,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfOutputParam("pathTasTBD");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, path_TBD);
+                dataAccess.SetData(index, path_TBD);
             }
 
             if (index_successful != -1)
