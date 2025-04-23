@@ -183,7 +183,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     if(analyticalObject is Zone)
                     {
                         Zone zone = (Zone)analyticalObject;
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Zone not implemented");
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Zone not implemented");
                     }
                 }
 
