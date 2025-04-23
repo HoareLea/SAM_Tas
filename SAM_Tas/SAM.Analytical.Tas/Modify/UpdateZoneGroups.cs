@@ -30,7 +30,7 @@ namespace SAM.Analytical.Tas
 
                 string name = zone_SAM.Name;
 
-                if (!zone_SAM.TryGetValue(ZoneParameter.ZoneCategory, out string zoneCategory) || string.IsNullOrWhiteSpace(zoneCategory))
+                if (!zone_SAM.TryGetValue(Analytical.ZoneParameter.ZoneCategory, out string zoneCategory) || string.IsNullOrWhiteSpace(zoneCategory))
                 {
                     zoneCategory = null;
                 }

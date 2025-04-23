@@ -21,7 +21,7 @@ namespace SAM.Analytical.Tas
             List<Space> spaces = adjacencyCluster.GetRelatedObjects<Space>(zone_Temp);
             TBD.ZoneGroup result = ZoneGroup(building, zone_Temp.Name, spaces);
 
-            if (zone_Temp.TryGetValue(ZoneParameter.ZoneCategory, out string zoneCategory))
+            if (zone_Temp.TryGetValue(Analytical.ZoneParameter.ZoneCategory, out string zoneCategory))
             {
                 result.description = zoneCategory;
             }

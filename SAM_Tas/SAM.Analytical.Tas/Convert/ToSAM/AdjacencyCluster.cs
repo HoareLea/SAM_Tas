@@ -485,7 +485,8 @@ namespace SAM.Analytical.Tas
                 foreach(TBD.ZoneGroup zoneGroup in zoneGroups)
                 {
                     Zone zone = new Zone(zoneGroup.name);
-                    zone.SetValue(ZoneParameter.ZoneCategory, zoneGroup.description);
+                    zone.SetValue(Analytical.ZoneParameter.ZoneCategory, zoneGroup.description);
+                    zone.SetValue(ZoneParameter.ZoneType, Query.ZoneType(zoneGroup.type));
 
                     adjacencyCluster.AddObject(zone);
 

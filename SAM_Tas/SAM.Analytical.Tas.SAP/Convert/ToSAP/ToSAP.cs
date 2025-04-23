@@ -33,7 +33,7 @@ namespace SAM.Analytical.Tas.SAP
                 {
                     for(int i = zones.Count - 1; i >= 0; i--)
                     {
-                        if(zones[i] == null || !zones[i].TryGetValue(ZoneParameter.ZoneCategory, out string zoneCategory_Temp) || zoneCategory != zoneCategory_Temp)
+                        if(zones[i] == null || !zones[i].TryGetValue(Analytical.ZoneParameter.ZoneCategory, out string zoneCategory_Temp) || zoneCategory != zoneCategory_Temp)
                         {
                             zones.RemoveAt(i);
                         }

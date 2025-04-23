@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas
                 return null;
 
             List<T> result = new List<T>();
-            foreach(object @object in enumerable)
+            foreach (object @object in enumerable)
             {
                 if (@object == null)
                 {
@@ -39,7 +39,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public static List<T> AnnualSurfaceResult<T>(this SurfaceData surfaceData, PanelDataType panelDataType) 
+        public static List<T> AnnualSurfaceResult<T>(this SurfaceData surfaceData, PanelDataType panelDataType)
         {
             if (surfaceData == null || panelDataType == Tas.PanelDataType.Undefined)
                 return null;
