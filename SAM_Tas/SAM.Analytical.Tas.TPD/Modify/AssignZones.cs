@@ -22,6 +22,7 @@ namespace SAM.Analytical.Tas.TPD
             TSDData tSDData = energyCentre.GetTSDData(1);
             if (tSDData == null)
             {
+                return false;
             }
 
             List<ComponentGroup> componentGroups = energyCentre.ComponentGroups();
@@ -62,7 +63,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            componentGroup.SetMultiplicity(zoneLoads.Count);
+            componentGroup.SetMultiplicity(zoneLoads == null ? 0 : zoneLoads.Count);
 
             int index = 0;
 

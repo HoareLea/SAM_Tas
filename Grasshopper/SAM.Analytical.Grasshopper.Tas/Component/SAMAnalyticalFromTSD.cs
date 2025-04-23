@@ -110,10 +110,10 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             string path_TBD = null;
 
-            AnalyticalModel analyticalModel = SAM.Analytical.Tas.Convert.ToSAM(path_TSD, tSDConversionSettings);
+            AnalyticalModel analyticalModel = Analytical.Tas.Convert.ToSAM(path_TSD, tSDConversionSettings);
             if(analyticalModel != null)
             {
-                path_TBD = analyticalModel.GetValue<string>(SAM.Analytical.Tas.AnalyticalModelParameter.Path_TBD);
+                path_TBD = analyticalModel.GetValue<string>(Analytical.Tas.AnalyticalModelParameter.Path_TBD);
             }
             
             index = Params.IndexOfOutputParam("analyticalModel");
