@@ -36,7 +36,7 @@ namespace SAM.Analytical.Tas.TPD
             ComponentGroup componentGroup = componentGroups.Find(x => x.Reference() == reference);
             if(componentGroup == null)
             {
-                componentGroup = componentGroups.Find(x => ((SystemComponent)x).Name == airSystemGroup.Name);
+                componentGroup = componentGroups.Find(x => ((dynamic)x).Name == airSystemGroup.Name);
             }
 
             if(componentGroup == null)
@@ -79,7 +79,7 @@ namespace SAM.Analytical.Tas.TPD
                     continue;
                 }
 
-                systemComponent.AddZoneLoad(zoneLoads[index]);
+                ((dynamic)systemComponent).AddZoneLoad(zoneLoads[index]);
 
                 index++;
             }

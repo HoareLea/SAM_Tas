@@ -154,7 +154,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             }
 
             List<Tuple<AirSystemGroup, List<Space>>> tuples = new List<Tuple<AirSystemGroup, List<Space>>>();
-            for (int i = 0; i <= systemGroups.Count; i++)
+            for (int i = 0; i < systemGroups.Count; i++)
             {
                 AirSystemGroup airSystemGroup = systemGroups[i] as AirSystemGroup;
                 if(airSystemGroup == null)
@@ -162,7 +162,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     continue;
                 }
 
-                List<GooAnalyticalObject> gooAnalyticalObjects = analyticalObjects[new GH_Path(i)];
+                List<GooAnalyticalObject> gooAnalyticalObjects = analyticalObjects[i];
                 if(gooAnalyticalObjects == null)
                 {
                     continue;
@@ -212,6 +212,8 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                                 succedded = true;
                             }
                         }
+
+                        tPDDoc.Save();
                     }
                 }
             }
