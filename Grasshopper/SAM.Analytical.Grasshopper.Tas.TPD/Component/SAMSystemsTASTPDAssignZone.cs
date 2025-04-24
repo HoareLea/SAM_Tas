@@ -121,6 +121,12 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
+            if(!System.IO.File.Exists(path_TPD))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "TPD file does not exists");
+                return;
+            }
+
             string path_TSD = null;
             index = Params.IndexOfInputParam("_path_TSD");
             if (index == -1 || !dataAccess.GetData(index, ref path_TSD) || string.IsNullOrWhiteSpace(path_TSD))
@@ -200,9 +206,30 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     if (tPDDoc != null)
                     {
                         EnergyCentre energyCentre = tPDDoc.EnergyCentre;
-                        energyCentre.AddTSDData(path_TSD, 1);
 
-                        TSDData tSDData = energyCentre.GetTSDData(1);
+                        TSDData tSDData = null;
+
+                        int i = 1;
+
+                        while(energyCentre.GetTSDData(i) != null)
+                        {
+                            TSDData tSDData_Temp = energyCentre.GetTSDData(i);
+                            if(tSDData_Temp.TSDPath == path_TSD)
+                            {
+                                tSDData = tSDData_Temp;
+                                break;
+                            }
+                            else
+                            {
+                                i++;
+                            }
+                        }
+
+                        if(tSDData == null)
+                        {
+                            energyCentre.AddTSDData(path_TSD, i);
+                            tSDData = energyCentre.GetTSDData(i);
+                        }
 
                         foreach (Tuple<AirSystemGroup, List<Space>> tuple in tuples)
                         {
