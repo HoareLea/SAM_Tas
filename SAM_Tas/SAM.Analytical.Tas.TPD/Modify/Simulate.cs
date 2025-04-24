@@ -1,6 +1,4 @@
-﻿using SAM.Analytical.Systems;
-using SAM.Core;
-using SAM.Core.Tas;
+﻿using SAM.Core.Tas;
 using System.Collections.Generic;
 using System.IO;
 using TPD;

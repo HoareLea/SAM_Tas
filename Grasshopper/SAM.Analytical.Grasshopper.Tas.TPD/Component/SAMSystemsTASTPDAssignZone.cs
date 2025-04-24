@@ -5,7 +5,6 @@ using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Systems;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Systems;
-using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
 using SAM.Core.Systems;
 using SAM.Core.Tas;
@@ -184,6 +183,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     {
                         Zone zone = (Zone)analyticalObject;
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Zone not implemented");
+                        continue;
                     }
                 }
 
@@ -196,7 +196,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
                 {
-                    global::TPD.TPDDoc tPDDoc = sAMTPDDocument.TPDDocument;
+                    TPDDoc tPDDoc = sAMTPDDocument.TPDDocument;
                     if (tPDDoc != null)
                     {
                         EnergyCentre energyCentre = tPDDoc.EnergyCentre;
@@ -233,6 +233,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             base.AppendAdditionalMenuItems(menu);
             Menu_AppendSeparator(menu);
             AppendOpenTPDAdditionalMenuItem(this, menu);
+            AppendOpenTSDAdditionalMenuItem(this, menu);
         }
 
         public ToolStripMenuItem AppendOpenTPDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
@@ -242,7 +243,27 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return null;
             }
 
-            ToolStripMenuItem toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_TasTPD3);
+            ToolStripMenuItem toolStripMenuItem = null;
+
+            toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_TasTPD3);
+            if (toolStripMenuItem != null)
+            {
+                toolStripMenuItem.Tag = gH_Component.InstanceGuid;
+            }
+
+            return toolStripMenuItem;
+        }
+
+        public ToolStripMenuItem AppendOpenTSDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
+        {
+            if (!(gH_SAMComponent is GH_Component gH_Component))
+            {
+                return null;
+            }
+
+            ToolStripMenuItem toolStripMenuItem = null;
+
+            toolStripMenuItem = Menu_AppendItem(menu, "Open TSD", OnOpenTSDComponentClick, Resources.SAM_TasTSD3);
             if (toolStripMenuItem != null)
             {
                 toolStripMenuItem.Tag = gH_Component.InstanceGuid;
@@ -253,28 +274,38 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
         private void OnOpenTPDComponentClick(object sender, EventArgs e)
         {
+            OnOpen(0);
+        }
+
+        private void OnOpenTSDComponentClick(object sender, EventArgs e)
+        {
+            OnOpen(1);
+        }
+
+        private void OnOpen(int inputIndex)
+        {
             if (Params.Input == null || Params.Input.Count == 0)
             {
                 return;
             }
 
-            IEnumerable<object> paths =  Params.Input[0]?.VolatileData?.AllData(true);
-            if(paths == null || paths.Count() == 0)
+            IEnumerable<object> paths = Params.Input[inputIndex]?.VolatileData?.AllData(true);
+            if (paths == null || paths.Count() == 0)
             {
                 return;
             }
 
             string path = null;
 
-            foreach(object path_Temp in paths)
+            foreach (object path_Temp in paths)
             {
                 string value = path_Temp?.ToString();
-                if(path_Temp is IGH_Goo)
+                if (path_Temp is IGH_Goo)
                 {
                     value = (path_Temp as dynamic)?.Value;
                 }
 
-                if(string.IsNullOrWhiteSpace(value) || !System.IO.File.Exists(value))
+                if (string.IsNullOrWhiteSpace(value) || !System.IO.File.Exists(value))
                 {
                     continue;
                 }
@@ -283,7 +314,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 break;
             }
 
-            if(string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(path))
             {
                 return;
             }

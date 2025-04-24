@@ -788,7 +788,7 @@ namespace SAM.Analytical.Tas.TPD
             }
 
 
-            global::TPD.PlantComponent plantComponent_TPD = plantControlArc.GetComponent();
+            PlantComponent plantComponent_TPD = plantControlArc.GetComponent();
             if (plantComponent_TPD == null)
             {
                 return null;

@@ -5,7 +5,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static PlantJunction ToTPD(this DisplaySystemLiquidJunction displaySystemLiquidJunction, global::TPD.PlantRoom plantRoom, PlantJunction plantJunction = null)
+        public static PlantJunction ToTPD(this DisplaySystemLiquidJunction displaySystemLiquidJunction, PlantRoom plantRoom, PlantJunction plantJunction = null)
         {
             if (displaySystemLiquidJunction == null || plantRoom == null)
             {

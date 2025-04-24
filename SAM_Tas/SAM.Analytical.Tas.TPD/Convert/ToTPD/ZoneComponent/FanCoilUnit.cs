@@ -1,5 +1,4 @@
 ﻿using SAM.Analytical.Systems;
-using SAM.Core;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD

@@ -1,12 +1,4 @@
 ﻿using SAM.Analytical.Systems;
-using SAM.Core;
-using SAM.Core.Attributes;
-using SAM.Core.Systems;
-using SAM.Geometry.Planar;
-using SAM.Geometry.Spatial;
-using SAM.Geometry.Systems;
-using System.Collections.Generic;
-using System.Linq;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD

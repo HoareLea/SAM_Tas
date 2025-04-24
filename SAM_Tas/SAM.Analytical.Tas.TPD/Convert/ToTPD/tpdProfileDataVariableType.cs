@@ -17,7 +17,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
