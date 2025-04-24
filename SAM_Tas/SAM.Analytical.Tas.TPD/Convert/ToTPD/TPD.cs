@@ -657,155 +657,158 @@ namespace SAM.Analytical.Tas.TPD
                                         controllers_TPD.Add(controller_TPD_Temp);
                                     }
 
-                                    ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers_TPD.ToArray());
-
-                                    componentGroup.SetMultiplicity(count);
-
-                                    int index = 0;
-
-                                    List<global::TPD.SystemComponent> systemComponents_TPD_New = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup, false, false);
-
-                                    count = systemComponents_TPD_New.Count / componentGroup.GetMultiplicity();
-
-                                    for (int i = 0; i < systemComponents_TPD_New.Count; i++)
+                                    if (systemComponents_TPD.Count > 0)
                                     {
-                                        global::TPD.SystemComponent systemComponent_TPD_New = systemComponents_TPD_New[i];
+                                        ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers_TPD.ToArray());
 
-                                        if (sortedDictionary_SystemComponent.TryGetValue(index, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples) && tuples != null && tuples.Count != 0)
+                                        componentGroup.SetMultiplicity(count);
+
+                                        int index = 0;
+
+                                        List<global::TPD.SystemComponent> systemComponents_TPD_New = Query.SystemComponents<global::TPD.SystemComponent>(componentGroup, false, false);
+
+                                        count = systemComponents_TPD_New.Count / componentGroup.GetMultiplicity();
+
+                                        for (int i = 0; i < systemComponents_TPD_New.Count; i++)
                                         {
-                                            int index_Temp = tuples.FindIndex(x => (x.Item2 as dynamic)?.GUID == ((dynamic)systemComponent_TPD_New).GUID);
-                                            if (index_Temp != -1)
+                                            global::TPD.SystemComponent systemComponent_TPD_New = systemComponents_TPD_New[i];
+
+                                            if (sortedDictionary_SystemComponent.TryGetValue(index, out List<Tuple<Core.Systems.ISystemComponent, global::TPD.ISystemComponent>> tuples) && tuples != null && tuples.Count != 0)
                                             {
-                                                Core.Systems.ISystemComponent systemComponent_SAM = tuples[index_Temp].Item1;
-                                                if (systemComponent_SAM is DisplaySystemSpace && systemComponent_TPD_New is SystemZone)
+                                                int index_Temp = tuples.FindIndex(x => (x.Item2 as dynamic)?.GUID == ((dynamic)systemComponent_TPD_New).GUID);
+                                                if (index_Temp != -1)
                                                 {
-                                                    Modify.AddSystemZoneComponents((SystemZone)systemComponent_TPD_New, (DisplaySystemSpace)systemComponent_SAM, systemPlantRoom);
-                                                }
-
-                                                tuples.RemoveAt(index_Temp);
-                                            }
-                                            else
-                                            {
-                                                Core.Systems.ISystemComponent systemComponent_SAM = tuples[0].Item1;
-                                                tuples.RemoveAt(0);
-
-                                                if (systemComponent_SAM is DisplaySystemSpace && systemComponent_TPD_New is SystemZone)
-                                                {
-                                                    ToTPD((DisplaySystemSpace)systemComponent_SAM, systemPlantRoom, system, (SystemZone)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemAirJunction && systemComponent_TPD_New is Junction)
-                                                {
-                                                    ToTPD((DisplaySystemAirJunction)systemComponent_SAM, system, (Junction)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemCoolingCoil && systemComponent_TPD_New is global::TPD.CoolingCoil)
-                                                {
-                                                    ToTPD((DisplaySystemCoolingCoil)systemComponent_SAM, system, (global::TPD.CoolingCoil)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemDamper && systemComponent_TPD_New is Damper)
-                                                {
-                                                    ToTPD((DisplaySystemDamper)systemComponent_SAM, system, (Damper)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemDesiccantWheel && systemComponent_TPD_New is DesiccantWheel)
-                                                {
-                                                    ToTPD((DisplaySystemDesiccantWheel)systemComponent_SAM, system, (DesiccantWheel)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemDXCoil && systemComponent_TPD_New is DXCoil)
-                                                {
-                                                    ToTPD((DisplaySystemDXCoil)systemComponent_SAM, system, (DXCoil)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemExchanger && systemComponent_TPD_New is Exchanger)
-                                                {
-                                                    ToTPD((DisplaySystemExchanger)systemComponent_SAM, system, (Exchanger)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemFan && systemComponent_TPD_New is global::TPD.Fan)
-                                                {
-                                                    ToTPD((DisplaySystemFan)systemComponent_SAM, system, (global::TPD.Fan)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemLoadComponent && systemComponent_TPD_New is LoadComponent)
-                                                {
-                                                    ToTPD((DisplaySystemLoadComponent)systemComponent_SAM, system, (LoadComponent)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemEconomiser && systemComponent_TPD_New is Optimiser)
-                                                {
-                                                    ToTPD((DisplaySystemEconomiser)systemComponent_SAM, system, (Optimiser)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemMixingBox && systemComponent_TPD_New is Optimiser)
-                                                {
-                                                    ToTPD((DisplaySystemMixingBox)systemComponent_SAM, system, (Optimiser)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemSprayHumidifier && systemComponent_TPD_New is SprayHumidifier)
-                                                {
-                                                    ToTPD((DisplaySystemSprayHumidifier)systemComponent_SAM, system, (SprayHumidifier)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemSteamHumidifier && systemComponent_TPD_New is SteamHumidifier)
-                                                {
-                                                    ToTPD((DisplaySystemSteamHumidifier)systemComponent_SAM, system, (SteamHumidifier)systemComponent_TPD_New);
-                                                }
-                                                else if (systemComponent_SAM is DisplaySystemDirectEvaporativeCooler && systemComponent_TPD_New is SprayHumidifier)
-                                                {
-                                                    ToTPD((DisplaySystemDirectEvaporativeCooler)systemComponent_SAM, system, (SprayHumidifier)systemComponent_TPD_New);
-                                                }
-                                            }
-                                        }
-
-                                        index++;
-                                        if (index >= count)
-                                        {
-                                            index = 0;
-                                        }
-                                    }
-
-
-                                    List<Controller> controllers_TPD_New = Query.Controllers(componentGroup)?.FindAll(x => x.ControlType != tpdControlType.tpdControlGroup);
-
-                                    count = controllers_TPD_New.Count / componentGroup.GetMultiplicity();
-
-                                    List<Tuple<Controller, IDisplaySystemController>> tuples_ControlType = new List<Tuple<Controller, IDisplaySystemController>>();
-                                    for (int i = 0; i < controllers_TPD_New.Count; i++)
-                                    {
-                                        Controller controller_TPD_New = controllers_TPD_New[i];
-
-                                        if (sortedDictionary_Controller.TryGetValue(index, out List<Tuple<SystemController, Controller>> tuples) && tuples != null && tuples.Count != 0)
-                                        {
-                                            int index_Controller = tuples.FindIndex(x => x.Item2 == controller_TPD_New);
-                                            if (index_Controller == -1)
-                                            {
-                                                index_Controller = tuples.FindIndex(x => x.Item2 == null);
-                                            }
-
-                                            if (index_Controller != -1)
-                                            {
-                                                Tuple<SystemController, Controller> tuple = tuples[index_Controller];
-                                                if (tuple.Item2 == null)
-                                                {
-                                                    IDisplaySystemController displaySystemController = tuple.Item1 as IDisplaySystemController;
-                                                    if (displaySystemController != null)
+                                                    Core.Systems.ISystemComponent systemComponent_SAM = tuples[index_Temp].Item1;
+                                                    if (systemComponent_SAM is DisplaySystemSpace && systemComponent_TPD_New is SystemZone)
                                                     {
-                                                        Controller controller = ToTPD(displaySystemController, system, controller_TPD_New);
-                                                        if (controller != null)
-                                                        {
-                                                            tuples_ControlType.Add(new Tuple<Controller, IDisplaySystemController>(controller, displaySystemController));
-                                                        }
+                                                        Modify.AddSystemZoneComponents((SystemZone)systemComponent_TPD_New, (DisplaySystemSpace)systemComponent_SAM, systemPlantRoom);
+                                                    }
+
+                                                    tuples.RemoveAt(index_Temp);
+                                                }
+                                                else
+                                                {
+                                                    Core.Systems.ISystemComponent systemComponent_SAM = tuples[0].Item1;
+                                                    tuples.RemoveAt(0);
+
+                                                    if (systemComponent_SAM is DisplaySystemSpace && systemComponent_TPD_New is SystemZone)
+                                                    {
+                                                        ToTPD((DisplaySystemSpace)systemComponent_SAM, systemPlantRoom, system, (SystemZone)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemAirJunction && systemComponent_TPD_New is Junction)
+                                                    {
+                                                        ToTPD((DisplaySystemAirJunction)systemComponent_SAM, system, (Junction)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemCoolingCoil && systemComponent_TPD_New is global::TPD.CoolingCoil)
+                                                    {
+                                                        ToTPD((DisplaySystemCoolingCoil)systemComponent_SAM, system, (global::TPD.CoolingCoil)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemDamper && systemComponent_TPD_New is Damper)
+                                                    {
+                                                        ToTPD((DisplaySystemDamper)systemComponent_SAM, system, (Damper)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemDesiccantWheel && systemComponent_TPD_New is DesiccantWheel)
+                                                    {
+                                                        ToTPD((DisplaySystemDesiccantWheel)systemComponent_SAM, system, (DesiccantWheel)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemDXCoil && systemComponent_TPD_New is DXCoil)
+                                                    {
+                                                        ToTPD((DisplaySystemDXCoil)systemComponent_SAM, system, (DXCoil)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemExchanger && systemComponent_TPD_New is Exchanger)
+                                                    {
+                                                        ToTPD((DisplaySystemExchanger)systemComponent_SAM, system, (Exchanger)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemFan && systemComponent_TPD_New is global::TPD.Fan)
+                                                    {
+                                                        ToTPD((DisplaySystemFan)systemComponent_SAM, system, (global::TPD.Fan)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemLoadComponent && systemComponent_TPD_New is LoadComponent)
+                                                    {
+                                                        ToTPD((DisplaySystemLoadComponent)systemComponent_SAM, system, (LoadComponent)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemEconomiser && systemComponent_TPD_New is Optimiser)
+                                                    {
+                                                        ToTPD((DisplaySystemEconomiser)systemComponent_SAM, system, (Optimiser)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemMixingBox && systemComponent_TPD_New is Optimiser)
+                                                    {
+                                                        ToTPD((DisplaySystemMixingBox)systemComponent_SAM, system, (Optimiser)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemSprayHumidifier && systemComponent_TPD_New is SprayHumidifier)
+                                                    {
+                                                        ToTPD((DisplaySystemSprayHumidifier)systemComponent_SAM, system, (SprayHumidifier)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemSteamHumidifier && systemComponent_TPD_New is SteamHumidifier)
+                                                    {
+                                                        ToTPD((DisplaySystemSteamHumidifier)systemComponent_SAM, system, (SteamHumidifier)systemComponent_TPD_New);
+                                                    }
+                                                    else if (systemComponent_SAM is DisplaySystemDirectEvaporativeCooler && systemComponent_TPD_New is SprayHumidifier)
+                                                    {
+                                                        ToTPD((DisplaySystemDirectEvaporativeCooler)systemComponent_SAM, system, (SprayHumidifier)systemComponent_TPD_New);
                                                     }
                                                 }
+                                            }
 
-                                                tuples.RemoveAt(index_Controller);
+                                            index++;
+                                            if (index >= count)
+                                            {
+                                                index = 0;
                                             }
                                         }
 
-                                        index++;
-                                        if (index >= count)
+
+                                        List<Controller> controllers_TPD_New = Query.Controllers(componentGroup)?.FindAll(x => x.ControlType != tpdControlType.tpdControlGroup);
+
+                                        count = controllers_TPD_New.Count / componentGroup.GetMultiplicity();
+
+                                        List<Tuple<Controller, IDisplaySystemController>> tuples_ControlType = new List<Tuple<Controller, IDisplaySystemController>>();
+                                        for (int i = 0; i < controllers_TPD_New.Count; i++)
                                         {
-                                            index = 0;
+                                            Controller controller_TPD_New = controllers_TPD_New[i];
+
+                                            if (sortedDictionary_Controller.TryGetValue(index, out List<Tuple<SystemController, Controller>> tuples) && tuples != null && tuples.Count != 0)
+                                            {
+                                                int index_Controller = tuples.FindIndex(x => x.Item2 == controller_TPD_New);
+                                                if (index_Controller == -1)
+                                                {
+                                                    index_Controller = tuples.FindIndex(x => x.Item2 == null);
+                                                }
+
+                                                if (index_Controller != -1)
+                                                {
+                                                    Tuple<SystemController, Controller> tuple = tuples[index_Controller];
+                                                    if (tuple.Item2 == null)
+                                                    {
+                                                        IDisplaySystemController displaySystemController = tuple.Item1 as IDisplaySystemController;
+                                                        if (displaySystemController != null)
+                                                        {
+                                                            Controller controller = ToTPD(displaySystemController, system, controller_TPD_New);
+                                                            if (controller != null)
+                                                            {
+                                                                tuples_ControlType.Add(new Tuple<Controller, IDisplaySystemController>(controller, displaySystemController));
+                                                            }
+                                                        }
+                                                    }
+
+                                                    tuples.RemoveAt(index_Controller);
+                                                }
+                                            }
+
+                                            index++;
+                                            if (index >= count)
+                                            {
+                                                index = 0;
+                                            }
                                         }
-                                    }
 
-                                    foreach (Tuple<Controller, IDisplaySystemController> tuple_ControlType in tuples_ControlType)
-                                    {
-                                        IDisplaySystemController displaySystemController = tuple_ControlType.Item2;
-                                        Controller controller = tuple_ControlType.Item1;
+                                        foreach (Tuple<Controller, IDisplaySystemController> tuple_ControlType in tuples_ControlType)
+                                        {
+                                            IDisplaySystemController displaySystemController = tuple_ControlType.Item2;
+                                            Controller controller = tuple_ControlType.Item1;
 
-                                        controller?.SetControlType(displaySystemController);
+                                            controller?.SetControlType(displaySystemController);
+                                        }
                                     }
                                 }
                             }
