@@ -63,6 +63,11 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
+            if(zoneLoads.Count == 0)
+            {
+                return false;
+            }
+
             componentGroup.SetMultiplicity(zoneLoads == null ? 0 : zoneLoads.Count);
 
             int index = 0;
