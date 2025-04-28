@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.7";
+        public override string LatestComponentVersion => "1.0.8";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -58,6 +58,10 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_simulate_", NickName = "_simulate_", Description = "Simulate before collecting data", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(systemEnergyCentreConversionSettings.Simulate);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_renameGroups_", NickName = "_renameGroups_", Description = "Rename groups.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Integer integer = null;
@@ -167,6 +171,13 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
+            }
+
+            bool renameAirSystemGroups = systemEnergyCentreConversionSettings.RenameAirSystemGroups;
+            index = Params.IndexOfInputParam("_renameGroups_");
+            if (index != -1 && dataAccess.GetData(index, ref renameAirSystemGroups))
+            {
+                systemEnergyCentreConversionSettings.RenameAirSystemGroups = renameAirSystemGroups;
             }
 
             SystemEnergyCentre systemEnergyCentre = Analytical.Tas.TPD.Convert.ToSAM(path, systemEnergyCentreConversionSettings);

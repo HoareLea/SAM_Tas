@@ -115,7 +115,6 @@ namespace SAM.Analytical.Tas.TPD
                 }
             }
 
-
             result.SetValue(SystemEnergyCentreParameter.AnalyticalSystemsProperties, analyticalSystemsProperties);
             foreach (PlantRoom plantRoom in plantRooms)
             {
@@ -154,6 +153,11 @@ namespace SAM.Analytical.Tas.TPD
                 systemPlantRoom.Add(tPDDoc, componentConversionSettings);
 
                 result.Add(systemPlantRoom);
+            }
+
+            if (systemEnergyCentreConversionSettings.RenameAirSystemGroups)
+            {
+                result.RenameAirSystemGroups();
             }
 
             return result;

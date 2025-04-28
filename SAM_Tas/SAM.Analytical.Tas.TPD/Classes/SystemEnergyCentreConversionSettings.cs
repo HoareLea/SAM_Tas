@@ -10,6 +10,7 @@ namespace SAM.Analytical.Tas.TPD
         public int EndHour { get; set; } = 8759;
         public bool IncludeComponentResults { get; set; } = true;
         public bool IncludeControllerResults { get; set; } = false;
+        public bool RenameAirSystemGroups { get; set; } = false;
 
         public SystemEnergyCentreConversionSettings() 
         { 
@@ -29,6 +30,7 @@ namespace SAM.Analytical.Tas.TPD
                 EndHour = systemEnergyCentreConversionSettings.EndHour;
                 IncludeComponentResults = systemEnergyCentreConversionSettings.IncludeComponentResults;
                 IncludeControllerResults = systemEnergyCentreConversionSettings.IncludeControllerResults;
+                RenameAirSystemGroups = systemEnergyCentreConversionSettings.RenameAirSystemGroups;
             }
         }
 
@@ -69,6 +71,11 @@ namespace SAM.Analytical.Tas.TPD
                 IncludeControllerResults = jObject.Value<bool>("IncludeControllerResults");
             }
 
+            if (jObject.ContainsKey("RenameAirSystemGroups"))
+            {
+                RenameAirSystemGroups = jObject.Value<bool>("RenameAirSystemGroups");
+            }
+
             return true;
         }
 
@@ -85,6 +92,8 @@ namespace SAM.Analytical.Tas.TPD
             result.Add("IncludeComponentResults", IncludeComponentResults);
 
             result.Add("IncludeControllerResults", IncludeControllerResults);
+
+            result.Add("RenameAirSystemGroups", RenameAirSystemGroups);
 
             return result;
         }
