@@ -660,6 +660,8 @@ namespace SAM.Analytical.Tas.TPD
                                     if (systemComponents_TPD.Count > 0)
                                     {
                                         ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers_TPD.ToArray());
+                                        airSystemGroup.SetReference(componentGroup.Reference());
+                                        systemPlantRoom.Add(airSystemGroup);
 
                                         componentGroup.SetMultiplicity(count);
 
