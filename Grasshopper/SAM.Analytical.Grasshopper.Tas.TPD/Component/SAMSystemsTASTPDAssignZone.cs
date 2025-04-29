@@ -5,6 +5,7 @@ using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Systems;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Systems;
+using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
 using SAM.Core.Systems;
 using SAM.Core.Tas;
@@ -155,7 +156,15 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 }
             }
 
-            if(analyticalObjects == null)
+            bool simulate = false;
+            index = Params.IndexOfInputParam("_simulate_");
+            if (index == -1 || !dataAccess.GetData(index, ref simulate))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
+            if (analyticalObjects == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
@@ -239,6 +248,18 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                             if(zonesAssigned)
                             {
                                 succedded = true;
+                            }
+                        }
+
+                        if (simulate)
+                        {
+                            int index_PlantRoom = 1;
+
+                            while(energyCentre.GetPlantRoom(index_PlantRoom) != null)
+                            {
+                                energyCentre.GetPlantRoom(index_PlantRoom).SimulateEx(1, 365, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
+
+                                index_PlantRoom++;
                             }
                         }
 
