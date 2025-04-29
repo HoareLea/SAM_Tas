@@ -1,5 +1,6 @@
 ﻿using SAM.Analytical.Systems;
 using System.Collections.Generic;
+using System.Threading;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -22,7 +23,12 @@ namespace SAM.Analytical.Tas.TPD
             TSDData tSDData = energyCentre.GetTSDData(1);
             if (tSDData == null)
             {
-                return false;
+                Thread.Sleep(2000);
+                tSDData = energyCentre.GetTSDData(1);
+                if (tSDData == null)
+                {
+                    return false;
+                }
             }
 
             List<ComponentGroup> componentGroups = energyCentre.ComponentGroups();
