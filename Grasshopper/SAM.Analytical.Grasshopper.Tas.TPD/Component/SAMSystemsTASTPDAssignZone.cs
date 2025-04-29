@@ -57,7 +57,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 result.Add(new GH_SAMParam(new Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new Param_FilePath() { Name = "_path_TSD", NickName = "_path_TSD", Description = "A file path to TAS TSD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
-                result.Add(new GH_SAMParam(new GooSystemGroupParam() { Name = "_airSystemGroup", NickName = "_airSystemGroup", Description = "Air System Groups", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
+                GooSystemGroupParam gooSystemGroupParam = new GooSystemGroupParam() { Name = "_airSystemGroup", NickName = "_airSystemGroup", Description = "Air System Groups", Access = GH_ParamAccess.list };
+                gooSystemGroupParam.DataMapping = GH_DataMapping.Flatten;
+                result.Add(new GH_SAMParam(gooSystemGroupParam, ParamVisibility.Binding));
 
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "_zonesOrSpaces", NickName = "_zonesOrSpaces", Description = "Zones or spaces", Access = GH_ParamAccess.tree }, ParamVisibility.Binding));
 
