@@ -19,6 +19,8 @@ namespace SAM.Analytical.Tas.TPD
 
             List<Tuple<Controller, IDisplaySystemController>> tuples = new List<Tuple<Controller, IDisplaySystemController>>();
 
+            List<Tuple<Guid, int, IDisplaySystemController>> tuples_GroupIndex = new List<Tuple<Guid, int, IDisplaySystemController>>();
+
             #region Create all Controllers
             List<IDisplaySystemController> displaySystemControllers = systemPlantRoom.GetSystemComponents<IDisplaySystemController>(airSystem);
             if(displaySystemControllers != null && displaySystemControllers.Count !=0)
@@ -40,6 +42,8 @@ namespace SAM.Analytical.Tas.TPD
 
                             if (((SystemController)displaySystemController).TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex))
                             {
+                                tuples_GroupIndex.Add(new Tuple<Guid, int, IDisplaySystemController>(airSystemGroup.Guid, groupIndex, displaySystemController));
+
                                 if (groupIndexes.Contains(groupIndex))
                                 {
                                     continue;
@@ -68,6 +72,27 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            Func<IDisplaySystemController, Controller> getController = new Func<IDisplaySystemController, Controller>( displaySystemController =>  
+            {
+                Tuple<Guid, int, IDisplaySystemController> tuple_Temp = tuples_GroupIndex?.Find(x => x.Item3.Guid == displaySystemController.Guid);
+                if (tuple_Temp == null)
+                {
+                    return null;
+                }
+
+                List<Tuple<Guid, int, IDisplaySystemController>> tuples_GroupIndex_Temp = tuples_GroupIndex?.FindAll(x => x.Item1 == tuple_Temp.Item1 && x.Item2 == tuple_Temp.Item2);
+                foreach (Tuple<Guid, int, IDisplaySystemController> tuple_GroupIndex_Temp in tuples_GroupIndex_Temp)
+                {
+                    Controller controller = tuples.Find(x => x.Item2.Guid == tuple_GroupIndex_Temp.Item3.Guid)?.Item1;
+                    if (controller != null)
+                    {
+                        return controller;
+                    }
+                }
+
+                return null;
+            }); 
+
             #region Create Controller to Controller connection
 
             List<Tuple<Guid, Guid>> tuples_Controllers = new List<Tuple<Guid, Guid>>();
@@ -84,6 +109,11 @@ namespace SAM.Analytical.Tas.TPD
                         foreach (IDisplaySystemController displaySystemController_Connected in displaySystemControllers_Connected)
                         {
                             Controller controller_Connected = tuples.Find(x => x.Item2.Guid == displaySystemController_Connected.Guid)?.Item1;
+                            if (controller_Connected == null)
+                            {
+                                controller_Connected = getController.Invoke(displaySystemController_Connected);
+                            }
+
                             if (controller_Connected == null)
                             {
                                 continue;
