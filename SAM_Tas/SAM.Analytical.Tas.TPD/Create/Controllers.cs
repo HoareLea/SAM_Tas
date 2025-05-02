@@ -12,7 +12,7 @@ namespace SAM.Analytical.Tas.TPD
     {
         public static Dictionary<Guid, Controller> Controllers(this SystemPlantRoom systemPlantRoom, global::TPD.System system, AirSystem airSystem, Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponent, Dictionary<Guid, Duct> dictionary_Duct, bool inludeGroupedControllers = true)
         {
-            if (systemPlantRoom == null || airSystem == null|| dictionary_SystemComponent == null)
+            if (systemPlantRoom == null || airSystem == null || dictionary_SystemComponent == null)
             {
                 return null;
             }
@@ -23,13 +23,13 @@ namespace SAM.Analytical.Tas.TPD
 
             #region Create all Controllers
             List<IDisplaySystemController> displaySystemControllers = systemPlantRoom.GetSystemComponents<IDisplaySystemController>(airSystem);
-            if(displaySystemControllers != null && displaySystemControllers.Count !=0)
+            if (displaySystemControllers != null && displaySystemControllers.Count != 0)
             {
                 Dictionary<Guid, HashSet<int>> dictionary_AirSystemGroup = new Dictionary<Guid, HashSet<int>>();
 
                 foreach (IDisplaySystemController displaySystemController in displaySystemControllers)
                 {
-                    if(!inludeGroupedControllers)
+                    if (!inludeGroupedControllers)
                     {
                         AirSystemGroup airSystemGroup = systemPlantRoom.GetRelatedObjects<AirSystemGroup>(displaySystemController)?.FirstOrDefault();
                         if (airSystemGroup != null)
@@ -72,7 +72,11 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            Func<IDisplaySystemController, Controller> getController = new Func<IDisplaySystemController, Controller>( displaySystemController =>  
+            #region Create Controller to Controller connection
+
+            List<Tuple<Guid, Guid>> tuples_Controllers = new List<Tuple<Guid, Guid>>();
+
+            Func<IDisplaySystemController, Controller> getController = new Func<IDisplaySystemController, Controller>(displaySystemController =>
             {
                 Tuple<Guid, int, IDisplaySystemController> tuple_Temp = tuples_GroupIndex?.Find(x => x.Item3.Guid == displaySystemController.Guid);
                 if (tuple_Temp == null)
@@ -91,11 +95,7 @@ namespace SAM.Analytical.Tas.TPD
                 }
 
                 return null;
-            }); 
-
-            #region Create Controller to Controller connection
-
-            List<Tuple<Guid, Guid>> tuples_Controllers = new List<Tuple<Guid, Guid>>();
+            });
 
             foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
             {
@@ -181,10 +181,10 @@ namespace SAM.Analytical.Tas.TPD
                                     }
                                 }
 
-                                if(systemComponent_Connected is SystemDXCoil)
+                                if (systemComponent_Connected is SystemDXCoil)
                                 {
                                     ISystemConnection systemConnection = displaySystemConnection == null ? systemConnections[0] : displaySystemConnection;
-                                    if (systemConnection != null && systemConnection.TryGetIndex(new Core.ObjectReference(systemComponent_Connected), out int index)) 
+                                    if (systemConnection != null && systemConnection.TryGetIndex(new Core.ObjectReference(systemComponent_Connected), out int index))
                                     {
                                         controlArc.ControlPort = index - 2;
                                     }
@@ -289,6 +289,57 @@ namespace SAM.Analytical.Tas.TPD
             #region Create Controller to Component sensor connection
             if (dictionary_Duct != null)
             {
+                Func<Core.Systems.SystemComponent, global::TPD.ISystemComponent> getSystemComponent = new Func<Core.Systems.SystemComponent, global::TPD.ISystemComponent>(systemComponent =>
+                {
+                    AirSystemGroup airSystemGroup = systemPlantRoom.GetRelatedObjects<AirSystemGroup>(systemComponent)?.FirstOrDefault();
+                    if (airSystemGroup == null)
+                    {
+                        return null;
+                    }
+
+                    if (!systemComponent.TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex))
+                    {
+                        groupIndex = -1;
+                    }
+
+                    List<Core.Systems.SystemComponent> systemComponents = systemPlantRoom.GetRelatedObjects<Core.Systems.SystemComponent>(airSystemGroup);
+                    if (systemComponents == null || systemComponents.Count == 0)
+                    {
+                        return null;
+                    }
+
+                    foreach (Core.Systems.SystemComponent systemComponent_Temp in systemComponents)
+                    {
+                        if (systemComponent_Temp == null)
+                        {
+                            continue;
+                        }
+
+                        if (!systemComponent_Temp.TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex_Temp))
+                        {
+                            if (!systemComponent_Temp.GetType().IsAssignableFrom(systemComponent.GetType()) && !systemComponent.GetType().IsAssignableFrom(systemComponent_Temp.GetType()))
+                            {
+                                continue;
+                            }
+
+                            groupIndex_Temp = -1;
+                        }
+
+                        if (groupIndex != groupIndex_Temp)
+                        {
+                            continue;
+                        }
+
+                        if (dictionary_SystemComponent.TryGetValue(systemComponent_Temp.Guid, out global::TPD.ISystemComponent systemComponent_TPD) && systemComponent_TPD != null)
+                        {
+                            return systemComponent_TPD;
+                        }
+
+                    }
+
+                    return null;
+                });
+
                 foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
                 {
                     IDisplaySystemController displaySystemController = tuple.Item2;
@@ -311,6 +362,11 @@ namespace SAM.Analytical.Tas.TPD
                             foreach (Core.Systems.SystemComponent systemComponent in systemComponents)
                             {
                                 if (!dictionary_SystemComponent.TryGetValue(systemComponent.Guid, out global::TPD.ISystemComponent systemComponent_TPD) || systemComponent_TPD == null)
+                                {
+                                    systemComponent_TPD = getSystemComponent.Invoke(systemComponent);
+                                }
+
+                                if (systemComponent_TPD == null)
                                 {
                                     continue;
                                 }
@@ -398,11 +454,10 @@ namespace SAM.Analytical.Tas.TPD
             }
             #endregion
 
-
             Dictionary<Guid, Controller> result = new Dictionary<Guid, Controller>();
-            foreach(Tuple<Controller, IDisplaySystemController> tuple in tuples)
+            foreach (Tuple<Controller, IDisplaySystemController> tuple in tuples)
             {
-                    result[tuple.Item2.Guid] = tuple.Item1;
+                result[tuple.Item2.Guid] = tuple.Item1;
             }
 
             return result;
