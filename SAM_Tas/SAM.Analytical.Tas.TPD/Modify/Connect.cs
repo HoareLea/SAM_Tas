@@ -870,10 +870,12 @@ namespace SAM.Analytical.Tas.TPD
             foreach (SensorArc sensorArc in sensorArcs)
             {
                 ISystemSensor systemSensor = Connect(systemPlantRoom, sensorArc);
-                if (systemSensor != null)
+                if (systemSensor == null)
                 {
-                    result.Add(systemSensor);
+                    continue;
                 }
+
+                result.Add(systemSensor);
             }
 
             SystemSensorController systemSensorController = systemPlantRoom.SystemController<SystemSensorController>(controller.Reference());
@@ -964,13 +966,13 @@ namespace SAM.Analytical.Tas.TPD
 
         private static ISystemSensor Connect(SystemPlantRoom systemPlantRoom, SensorArc sensorArc)
         {
-            if(systemPlantRoom == null || sensorArc == null)
+            if (systemPlantRoom == null || sensorArc == null)
             {
                 return null;
             }
 
             Controller controller = sensorArc.GetController();
-            if(controller == null)
+            if (controller == null)
             {
                 return null;
             }
@@ -1007,7 +1009,7 @@ namespace SAM.Analytical.Tas.TPD
                 {
 
                     dictionary = Geometry.Systems.Query.Point2DDictionary(systemPlantRoom, systemJSAMObject as dynamic, systemType_Control, direction: Direction.Out);
-                    if(dictionary != null && dictionary.Count != 0)
+                    if (dictionary != null && dictionary.Count != 0)
                     {
                         point2Ds.Insert(0, dictionary.Values.First());
                     }
@@ -1043,6 +1045,26 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            ComponentGroup componentGroup = controller.GetGroup();
+            if (componentGroup != null)
+            {
+                Transform2D transform2D = null;
+
+                Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
+                if (location != null)
+                {
+                    transform2D = Transform2D.GetTranslation(location.ToVector());
+                }
+
+                if (transform2D != null)
+                {
+                    for (int i = 0; i < point2Ds.Count; i++)
+                    {
+                        point2Ds[i].Transform(transform2D);
+                    }
+                }
+            }
+
             DisplaySystemSensor result = new DisplaySystemSensor(new SystemSensor(), point2Ds?.ToArray());
             SetReference(result, sensorArc.Reference());
 
@@ -1050,6 +1072,15 @@ namespace SAM.Analytical.Tas.TPD
 
             systemPlantRoom.Connect(result, systemJSAMObject as dynamic);
             systemPlantRoom.Connect(result, systemController);
+
+            if (componentGroup != null)
+            {
+                AirSystemGroup airSystemGroup = systemPlantRoom.GetRelatedObjects<AirSystemGroup>(systemController).Find(x => x.Reference() == componentGroup.Reference());
+                if (airSystemGroup != null)
+                {
+                    systemPlantRoom.Connect(airSystemGroup, result);
+                }
+            }
 
             return result;
         }

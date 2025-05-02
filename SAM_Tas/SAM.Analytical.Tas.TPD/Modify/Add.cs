@@ -979,6 +979,8 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
+            result.SetReference(duct.Reference());
+
             systemPlantRoom.Connect(result, airSystem);
 
             return new List<ISystemJSAMObject>() { result };
