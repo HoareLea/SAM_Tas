@@ -199,6 +199,11 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             ComponentGroup componentGroup = (sensorArc?.GetComponent() as dynamic)?.GetGroup();
+            if(componentGroup == null)
+            {
+                componentGroup = (sensorArc?.GetDuct() as dynamic)?.GetGroup();
+            }
+
             if (componentGroup != null)
             {
                 Transform2D transform2D = null;

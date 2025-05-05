@@ -1037,6 +1037,25 @@ namespace SAM.Analytical.Tas.TPD
                     point2Ds.Insert(0, polyline2D.Closest(point2Ds[0], true));
                 }
 
+                //if (componentGroup != null)
+                //{
+                //    Transform2D transform2D = null;
+
+                //    Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
+                //    if (location != null)
+                //    {
+                //        transform2D = Transform2D.GetTranslation(location.ToVector());
+                //    }
+
+                //    if (transform2D != null)
+                //    {
+                //        for (int i = 1; i < point2Ds.Count - 1; i++)
+                //        {
+                //            point2Ds[i].Transform(transform2D);
+                //        }
+                //    }
+                //}
+
                 systemJSAMObject = displaySystemConnection;
             }
 
@@ -1045,25 +1064,7 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            ComponentGroup componentGroup = controller.GetGroup();
-            if (componentGroup != null)
-            {
-                Transform2D transform2D = null;
 
-                Point2D location = ((TasPosition)(componentGroup as dynamic).GetPosition())?.ToSAM();
-                if (location != null)
-                {
-                    transform2D = Transform2D.GetTranslation(location.ToVector());
-                }
-
-                if (transform2D != null)
-                {
-                    for (int i = 0; i < point2Ds.Count; i++)
-                    {
-                        point2Ds[i].Transform(transform2D);
-                    }
-                }
-            }
 
             DisplaySystemSensor result = new DisplaySystemSensor(new SystemSensor(), point2Ds?.ToArray());
             SetReference(result, sensorArc.Reference());
@@ -1073,6 +1074,7 @@ namespace SAM.Analytical.Tas.TPD
             systemPlantRoom.Connect(result, systemJSAMObject as dynamic);
             systemPlantRoom.Connect(result, systemController);
 
+            ComponentGroup componentGroup = controller.GetGroup();
             if (componentGroup != null)
             {
                 AirSystemGroup airSystemGroup = systemPlantRoom.GetRelatedObjects<AirSystemGroup>(systemController).Find(x => x.Reference() == componentGroup.Reference());
