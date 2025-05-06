@@ -1650,7 +1650,7 @@ namespace SAM.Analytical.Tas.TPD
 
             if (plantGroup is ElectricalGroup)
             {
-                system = new ElectricalSystem(name);
+                //system = new ElectricalSystem(name);
 
                 ElectricalGroup electricalGroup = (ElectricalGroup)plantGroup;
 
@@ -1662,7 +1662,7 @@ namespace SAM.Analytical.Tas.TPD
             }
             else if(plantGroup is RefrigerantGroup)
             {
-                system = new RefrigerantSystem(name);
+                //system = new RefrigerantSystem(name);
 
                 RefrigerantGroup refrigerantGroup = (RefrigerantGroup)plantGroup;
 
@@ -1674,7 +1674,7 @@ namespace SAM.Analytical.Tas.TPD
             }
             else if (plantGroup is HeatingGroup)
             {
-                system = new Systems.HeatingSystem(name);
+                //system = new Systems.HeatingSystem(name);
 
                 HeatingGroup heatingGroup = (HeatingGroup)plantGroup;
 
@@ -1686,7 +1686,7 @@ namespace SAM.Analytical.Tas.TPD
             }
             else if (plantGroup is CoolingGroup)
             {
-                system = new Systems.CoolingSystem(name);
+                //system = new Systems.CoolingSystem(name);
 
                 CoolingGroup coolingGroup = (CoolingGroup)plantGroup;
 
@@ -1698,7 +1698,7 @@ namespace SAM.Analytical.Tas.TPD
             }
             else if (plantGroup is DHWGroup)
             {
-                system = new DomesticHotWaterSystem(name);
+                //system = new DomesticHotWaterSystem(name);
 
                 DHWGroup dHWGroup = (DHWGroup)plantGroup;
 
@@ -1710,7 +1710,7 @@ namespace SAM.Analytical.Tas.TPD
             }
             else if (plantGroup is FuelGroup)
             {
-                system = new FuelSystem(name);
+                //system = new FuelSystem(name);
 
                 FuelGroup fuelGroup = (FuelGroup)plantGroup;
 

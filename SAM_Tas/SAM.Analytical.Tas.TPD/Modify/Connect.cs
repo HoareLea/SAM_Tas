@@ -4,6 +4,7 @@ using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Spatial;
 using SAM.Geometry.Systems;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TPD;
@@ -1222,8 +1223,62 @@ namespace SAM.Analytical.Tas.TPD
             }
             else
             {
-                point2Ds_Temp.Insert(0, point2D_2);
-                point2Ds_Temp.Add(point2D_1);
+                List<Point2D> point2Ds_Check_1 = new List<Point2D>();
+                point2Ds_Check_1.Add(point2D_2);
+                point2Ds_Check_1.AddRange(point2Ds_Temp);
+                point2Ds_Check_1.Add(point2D_1);
+
+                Polygon2D polygon2D_1 = new Polygon2D(point2Ds_Check_1);
+
+                List<Point2D> point2Ds_Check_2 = new List<Point2D>();
+                point2Ds_Check_2.Add(point2D_1);
+                point2Ds_Check_2.AddRange(point2Ds_Temp);
+                point2Ds_Check_2.Add(point2D_2);
+
+                Polygon2D polygon2D_2 = new Polygon2D(point2Ds_Check_2);
+
+                Func<Polygon2D, bool> selfIntersect = new Func<Polygon2D, bool>(x =>
+                {
+                    List<Segment2D> segment2Ds = x?.Segment2Ds();
+                    if (segment2Ds == null || segment2Ds.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    for (int i = 0; i < segment2Ds.Count; i++)
+                    {
+                        for (int j = i + 1; j < segment2Ds.Count - 1; j++)
+                        {
+                            Point2D point2D = segment2Ds[i].Intersection(segment2Ds[j]);
+                            if (point2D == null)
+                            {
+                                continue;
+                            }
+
+                            if (segment2Ds[i][0].AlmostSimilar(point2D) || segment2Ds[i][1].AlmostSimilar(point2D))
+                            {
+                                continue;
+                            }
+
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+
+                if (polygon2D_2.GetLength() < polygon2D_1.GetLength() && !selfIntersect.Invoke(polygon2D_2))
+                {
+                    point2Ds_Temp = polygon2D_2.Points;
+                }
+                else
+                {
+                    point2Ds_Temp = polygon2D_1.Points;
+                }
+
+
+                //point2Ds_Temp.Insert(0, point2D_2);
+                //point2Ds_Temp.Add(point2D_1);
 
                 //if (point2D_1.Distance(point2Ds_Temp.First()) + point2D_2.Distance(point2Ds_Temp.Last()) < point2D_1.Distance(point2Ds_Temp.Last()) + point2D_2.Distance(point2Ds_Temp.First()))
                 //{
