@@ -257,7 +257,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
                             while(energyCentre.GetPlantRoom(index_PlantRoom) != null)
                             {
-                                energyCentre.GetPlantRoom(index_PlantRoom).SimulateEx(1, 365, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
+                                energyCentre.GetPlantRoom(index_PlantRoom).SimulateEx(1,8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
 
                                 index_PlantRoom++;
                             }
