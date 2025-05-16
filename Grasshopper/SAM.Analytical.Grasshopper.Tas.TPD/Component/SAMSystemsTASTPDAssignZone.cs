@@ -5,7 +5,6 @@ using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Systems;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Systems;
-using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
 using SAM.Core.Systems;
 using SAM.Core.Tas;
@@ -124,7 +123,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            if(!System.IO.File.Exists(path_TPD))
+            if (!System.IO.File.Exists(path_TPD))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "TPD file does not exists");
                 return;
@@ -174,29 +173,29 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             for (int i = 0; i < systemGroups.Count; i++)
             {
                 AirSystemGroup airSystemGroup = systemGroups[i] as AirSystemGroup;
-                if(airSystemGroup == null)
+                if (airSystemGroup == null)
                 {
                     continue;
                 }
 
                 List<GooAnalyticalObject> gooAnalyticalObjects = analyticalObjects[i];
-                if(gooAnalyticalObjects == null)
+                if (gooAnalyticalObjects == null)
                 {
                     continue;
                 }
 
                 List<Space> spaces = new List<Space>();
 
-                foreach(GooAnalyticalObject gooAnalyticalObject in gooAnalyticalObjects)
+                foreach (GooAnalyticalObject gooAnalyticalObject in gooAnalyticalObjects)
                 {
                     IAnalyticalObject analyticalObject = gooAnalyticalObject.Value;
-                    if(analyticalObject is Space)
+                    if (analyticalObject is Space)
                     {
                         spaces.Add((Space)analyticalObject);
                         continue;
                     }
-                    
-                    if(analyticalObject is Zone)
+
+                    if (analyticalObject is Zone)
                     {
                         Zone zone = (Zone)analyticalObject;
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Zone not implemented");
@@ -222,10 +221,10 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
                         int i = 1;
 
-                        while(energyCentre.GetTSDData(i) != null)
+                        while (energyCentre.GetTSDData(i) != null)
                         {
                             TSDData tSDData_Temp = energyCentre.GetTSDData(i);
-                            if(tSDData_Temp.TSDPath == path_TSD)
+                            if (tSDData_Temp.TSDPath == path_TSD)
                             {
                                 tSDData = tSDData_Temp;
                                 break;
@@ -236,7 +235,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                             }
                         }
 
-                        if(tSDData == null)
+                        if (tSDData == null)
                         {
                             energyCentre.AddTSDData(path_TSD, i);
                             tSDData = energyCentre.GetTSDData(i);
@@ -245,7 +244,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                         foreach (Tuple<AirSystemGroup, List<Space>> tuple in tuples)
                         {
                             bool zonesAssigned = Analytical.Tas.TPD.Modify.AssignZones(tPDDoc, tuple.Item1, tuple.Item2);
-                            if(zonesAssigned)
+                            if (zonesAssigned)
                             {
                                 succedded = true;
                             }
@@ -255,9 +254,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                         {
                             int index_PlantRoom = 1;
 
-                            while(energyCentre.GetPlantRoom(index_PlantRoom) != null)
+                            while (energyCentre.GetPlantRoom(index_PlantRoom) != null)
                             {
-                                energyCentre.GetPlantRoom(index_PlantRoom).SimulateEx(1,8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
+                                energyCentre.GetPlantRoom(index_PlantRoom).SimulateEx(1, 8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
 
                                 index_PlantRoom++;
                             }

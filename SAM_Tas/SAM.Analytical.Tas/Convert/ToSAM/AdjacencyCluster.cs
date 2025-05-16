@@ -486,7 +486,7 @@ namespace SAM.Analytical.Tas
                 {
                     Zone zone = new Zone(zoneGroup.name);
                     zone.SetValue(Analytical.ZoneParameter.ZoneCategory, zoneGroup.description);
-                    zone.SetValue(ZoneParameter.ZoneType, Query.ZoneType(zoneGroup.type));
+                    zone.SetValue(ZoneParameter.TBDZoneGroup, Query.TBDZoneGroup(zoneGroup.type));
 
                     adjacencyCluster.AddObject(zone);
 

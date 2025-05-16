@@ -2,7 +2,7 @@
 {
     public static partial class Query
     {
-        public static string ZoneType(int index)
+        public static string TBDZoneGroup(int index)
         {
             switch (index)
             {
