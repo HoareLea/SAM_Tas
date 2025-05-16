@@ -17,15 +17,25 @@ namespace SAM.Analytical.Tas.TPD
             using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
             {
                 TPDDoc tPDDoc = sAMTPDDocument.TPDDocument;
-                if (tPDDoc != null)
+                if (tPDDoc?.EnergyCentre != null)
                 {
-                    List<PlantRoom> plantRooms = tPDDoc?.EnergyCentre?.PlantRooms();
-                    if (plantRooms != null)
+                    EnergyCentre energyCentre = tPDDoc.EnergyCentre;
+
+                    int count = energyCentre.GetPlantRoomCount();
+                    for(int i = 1; i <= count; i++)
                     {
-                        foreach (PlantRoom plantRoom in plantRooms)
-                        {
-                            plantRoom.SimulateEx(startHour + 1, endHour + 1, 0, tPDDoc.EnergyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
-                        }
+                        PlantRoom plantRoom = energyCentre.GetPlantRoom(i);
+                        string value = plantRoom.SimulateEx(
+                            startHour + 1,
+                            endHour + 1,
+                            0,
+                            tPDDoc.EnergyCentre.ExternalPollutant.Value,
+                            10.0,
+                            (int)tpdSimulationData.tpdSimulationDataLoad + (int)tpdSimulationData.tpdSimulationDataPipe + (int)tpdSimulationData.tpdSimulationDataDuct + (int)tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont,
+                            1,
+                            0);
+
+                        //string result = plantRoom.SimulateEx(1, 8760, 0, tPDDoc.EnergyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad, 1, 0);
                     }
 
                     tPDDoc.Save();
