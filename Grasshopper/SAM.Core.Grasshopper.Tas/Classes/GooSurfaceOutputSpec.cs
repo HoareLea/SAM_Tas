@@ -52,7 +52,7 @@ namespace SAM.Core.Grasshopper.Tas
 
         public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
         {
-            Menu_AppendItem(menu, "Save As...", Menu_SaveAs, VolatileData.AllData(true).Any());
+            Menu_AppendItem(menu, "Save As...", Menu_SaveAs, Resources.SAM_Small3, VolatileData.AllData(true).Any());
 
             //Menu_AppendSeparator(menu);
 

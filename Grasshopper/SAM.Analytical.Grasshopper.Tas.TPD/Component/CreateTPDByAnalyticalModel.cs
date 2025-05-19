@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -249,7 +249,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return null;
             }
 
-            ToolStripMenuItem toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_Small);
+            ToolStripMenuItem toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_TasTPD3);
             if (toolStripMenuItem != null)
             {
                 toolStripMenuItem.Tag = gH_Component.InstanceGuid;
