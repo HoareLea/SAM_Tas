@@ -8,7 +8,7 @@ namespace SAM.Analytical.Tas.TPD
         public bool Simulate { get; set; } = true;
         public int StartHour { get; set; } = 0;
         public int EndHour { get; set; } = 8759;
-        public bool IncludeComponentResults { get; set; } = true;
+        public bool IncludeComponentResults { get; set; } = false;
         public bool IncludeControllerResults { get; set; } = false;
         public bool RenameAirSystemGroups { get; set; } = false;
 
