@@ -23,7 +23,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -97,11 +97,6 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             if (index == -1 || !dataAccess.GetData(index, ref run))
                 run = false;
 
-            if (!run)
-            {
-                return;
-            }
-
             string path_TPD = null;
             index = Params.IndexOfInputParam("_path_TPD");
             if (index == -1 || !dataAccess.GetData(index, ref path_TPD) || string.IsNullOrWhiteSpace(path_TPD))
@@ -109,6 +104,19 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
+
+            string path_TPD_Temp = System.IO.File.Exists(path_TPD) ? path_TPD : null;
+            index = Params.IndexOfOutputParam("path_TPD");
+            if (index != -1)
+            {
+                dataAccess.SetData(index, path_TPD);
+            }
+
+            if (!run)
+            {
+                return;
+            }
+
 
             SystemEnergyCentre systemEnergyCentre = null;
             index = Params.IndexOfInputParam("_systemEnergyCentre");
@@ -127,12 +135,6 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             if (index != -1)
             {
                 dataAccess.SetData(index, new GooSystemEnergyCentre(systemEnergyCentre));
-            }
-
-            index = Params.IndexOfOutputParam("path_TPD");
-            if (index != -1)
-            {
-                dataAccess.SetData(index, path_TPD);
             }
 
             if (index_successful != -1)
