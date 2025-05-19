@@ -5,6 +5,7 @@ using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Systems;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Analytical.Systems;
+using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
 using SAM.Core.Systems;
 using SAM.Core.Tas;
@@ -69,6 +70,20 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
+                @boolean = new Param_Boolean() { Name = "_renameGroups_", NickName = "_renameGroups_", Description = "Rename groups.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
+                SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
+
+                @boolean = new Param_Boolean() { Name = "_includeResults_", NickName = "_includeResults_", Description = "Include Results.", Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(systemEnergyCentreConversionSettings.IncludeComponentResults);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
+                @boolean = new Param_Boolean() { Name = "_includeControllerResults_", NickName = "_includeControllerResults_", Description = "Include Controller Results.", Access = GH_ParamAccess.item, Optional = true };
+                @boolean.SetPersistentData(systemEnergyCentreConversionSettings.IncludeControllerResults);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
+
                 @boolean = new Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
@@ -86,6 +101,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 List<GH_SAMParam> result = new List<GH_SAMParam>();
                 result.Add(new GH_SAMParam(new Param_FilePath() { Name = "path_TPD", NickName = "path_TPD", Description = "Path TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new GooSystemEnergyCentreParam() { Name = "systemEnergyCentre", NickName = "systemEnergyCentre", Description = "SAM Core Systems SystemEnergyCentre", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 return result.ToArray();
             }
@@ -265,6 +281,43 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                         tPDDoc.Save();
                     }
                 }
+            }
+
+            SystemEnergyCentre systemEnergyCentre = null;
+
+            if (System.IO.File.Exists(path_TPD))
+            {
+                SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
+
+
+                bool includeResults = systemEnergyCentreConversionSettings.IncludeComponentResults;
+                index = Params.IndexOfInputParam("_includeResults_");
+                if (index != -1 && dataAccess.GetData(index, ref includeResults))
+                {
+                    systemEnergyCentreConversionSettings.IncludeComponentResults = includeResults;
+                }
+
+                bool includeControllerResults = systemEnergyCentreConversionSettings.IncludeControllerResults;
+                index = Params.IndexOfInputParam("_includeControllerResults_");
+                if (index != -1 && dataAccess.GetData(index, ref includeControllerResults))
+                {
+                    systemEnergyCentreConversionSettings.IncludeControllerResults = includeControllerResults;
+                }
+
+                bool renameAirSystemGroups = systemEnergyCentreConversionSettings.RenameAirSystemGroups;
+                index = Params.IndexOfInputParam("_renameGroups_");
+                if (index != -1 && dataAccess.GetData(index, ref renameAirSystemGroups))
+                {
+                    systemEnergyCentreConversionSettings.RenameAirSystemGroups = renameAirSystemGroups;
+                }
+
+                systemEnergyCentre = Analytical.Tas.TPD.Convert.ToSAM(path_TPD, systemEnergyCentreConversionSettings);
+            }
+
+            index = Params.IndexOfOutputParam("systemEnergyCentre");
+            if (index != -1)
+            {
+                dataAccess.SetData(index, systemEnergyCentre);
             }
 
             index = Params.IndexOfOutputParam("path_TPD");
