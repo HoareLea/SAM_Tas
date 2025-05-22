@@ -183,7 +183,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            Process.Start(path);
+            Core.Query.StartProcess(path);
         }
     }
 }

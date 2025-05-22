@@ -203,7 +203,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            Process.Start(path);
+            Core.Query.StartProcess(path);
         }
     }
 }

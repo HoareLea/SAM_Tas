@@ -294,7 +294,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 return;
             }
 
-            Process.Start(path);
+            Core.Query.StartProcess(path);
         }
     }
 }

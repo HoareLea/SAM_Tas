@@ -289,7 +289,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            Process.Start(path);
+            Core.Query.StartProcess(path);
         }
 
         private void Menu_OpenTSD(object sender, EventArgs e)
@@ -315,7 +315,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            Process.Start(path);
+            Core.Query.StartProcess(path);
         }
     }
 }

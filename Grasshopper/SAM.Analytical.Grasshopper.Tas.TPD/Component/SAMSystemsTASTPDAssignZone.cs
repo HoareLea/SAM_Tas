@@ -11,7 +11,6 @@ using SAM.Core.Systems;
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using TPD;
@@ -204,7 +203,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
                 foreach (GooAnalyticalObject gooAnalyticalObject in gooAnalyticalObjects)
                 {
-                    IAnalyticalObject analyticalObject = gooAnalyticalObject.Value;
+                    IAnalyticalObject analyticalObject = gooAnalyticalObject?.Value;
                     if (analyticalObject is Space)
                     {
                         spaces.Add((Space)analyticalObject);
@@ -423,7 +422,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            Process.Start(path);
+            Core.Query.StartProcess(path);
         }
     }
 }
