@@ -8,7 +8,6 @@ using SAM.Core.Tas;
 using SAM.Weather;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 

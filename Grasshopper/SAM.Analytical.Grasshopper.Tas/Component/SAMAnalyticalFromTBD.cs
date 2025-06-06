@@ -3,7 +3,6 @@ using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Core.Grasshopper;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 

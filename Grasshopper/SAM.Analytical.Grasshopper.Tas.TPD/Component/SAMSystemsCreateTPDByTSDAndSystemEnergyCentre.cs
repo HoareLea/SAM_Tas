@@ -7,7 +7,6 @@ using SAM.Core.Grasshopper;
 using SAM.Core.Systems;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 

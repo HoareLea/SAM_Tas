@@ -72,7 +72,7 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
-                if(apertureConstruction.TryGetValue(ApertureConstructionParameter.AdditionalHeatTransfer, out double additionalHeatTransfer) && !double.IsNaN(additionalHeatTransfer))
+                if(apertureConstruction.TryGetValue(ApertureConstructionParameter.PaneAdditionalHeatTransfer, out double additionalHeatTransfer) && !double.IsNaN(additionalHeatTransfer))
                 {
                     construction.additionalHeatTransfer = System.Convert.ToSingle(additionalHeatTransfer);
                 }
@@ -105,7 +105,7 @@ namespace SAM.Analytical.Tas
                     }
                 }
 
-                if (apertureConstruction.TryGetValue(ApertureConstructionParameter.AdditionalHeatTransfer, out double additionalHeatTransfer) && !double.IsNaN(additionalHeatTransfer))
+                if (apertureConstruction.TryGetValue(ApertureConstructionParameter.FrameAdditionalHeatTransfer, out double additionalHeatTransfer) && !double.IsNaN(additionalHeatTransfer))
                 {
                     construction.additionalHeatTransfer = System.Convert.ToSingle(additionalHeatTransfer);
                 }
