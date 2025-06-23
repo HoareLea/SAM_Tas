@@ -253,6 +253,22 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                         if (tSDData == null)
                         {
                             energyCentre.AddTSDData(path_TSD, i);
+
+                            i = 1;
+                            while (energyCentre.GetTSDData(i) != null)
+                            {
+                                TSDData tSDData_Temp = energyCentre.GetTSDData(i);
+                                if (tSDData_Temp.TSDPath == path_TSD)
+                                {
+                                    tSDData = tSDData_Temp;
+                                    break;
+                                }
+                                else
+                                {
+                                    i++;
+                                }
+                            }
+
                             tSDData = energyCentre.GetTSDData(i);
                         }
 
