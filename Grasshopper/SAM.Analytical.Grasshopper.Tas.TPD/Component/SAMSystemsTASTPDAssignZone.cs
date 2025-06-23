@@ -83,6 +83,10 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 @boolean.SetPersistentData(systemEnergyCentreConversionSettings.IncludeControllerResults);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
 
+                //@boolean = new Param_Boolean() { Name = "_replaceTSD_", NickName = "_replaceTSD_", Description = "Replace TSD", Access = GH_ParamAccess.item };
+                //@boolean.SetPersistentData(true);
+                //result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
+
                 @boolean = new Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
@@ -184,6 +188,14 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
+            //bool replaceTSD = false;
+            //index = Params.IndexOfInputParam("_replaceTSD_");
+            //if (index == -1 || !dataAccess.GetData(index, ref replaceTSD))
+            //{
+            //    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+            //    return;
+            //}
+
             List<Tuple<AirSystemGroup, List<Space>>> tuples = new List<Tuple<AirSystemGroup, List<Space>>>();
             for (int i = 0; i < systemGroups.Count; i++)
             {
@@ -236,23 +248,30 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
                         int i = 1;
 
-                        while (energyCentre.GetTSDData(i) != null)
+                        //if(replaceTSD)
+                        //{
+
+                        //}
+                        //else
                         {
-                            TSDData tSDData_Temp = energyCentre.GetTSDData(i);
-                            if (tSDData_Temp.TSDPath == path_TSD)
+                            while (energyCentre.GetTSDData(i) != null)
                             {
-                                tSDData = tSDData_Temp;
-                                break;
-                            }
-                            else
-                            {
-                                i++;
+                                TSDData tSDData_Temp = energyCentre.GetTSDData(i);
+                                if (tSDData_Temp.TSDPath == path_TSD)
+                                {
+                                    tSDData = tSDData_Temp;
+                                    break;
+                                }
+                                else
+                                {
+                                    i++;
+                                }
                             }
                         }
 
                         if (tSDData == null)
                         {
-                            energyCentre.AddTSDData(path_TSD, i);
+                            energyCentre.AddTSDData(path_TSD, 0);
 
                             i = 1;
                             while (energyCentre.GetTSDData(i) != null)
