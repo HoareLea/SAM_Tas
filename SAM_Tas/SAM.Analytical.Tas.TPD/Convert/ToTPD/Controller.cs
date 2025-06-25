@@ -218,20 +218,132 @@ namespace SAM.Analytical.Tas.TPD
                 displaySystemController.SetLocation(result);
             }
 
-            if(displaySystemController is SAMObject)
+            if (displaySystemController is SAMObject)
             {
                 dynamic @dynamic = (dynamic)result;
 
                 SAMObject sAMObject = (SAMObject)displaySystemController;
 
-                if (sAMObject.TryGetValue(SystemControllerParameter.LUAEnabled, out bool enabled) && enabled)
+                bool value = false;
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.LUAEnabled, out value) && value)
                 {
-                    @dynamic.Flags = @dynamic.Flags | (int)global::TPD.tpdControllerFlags.tpdControllerFlagLua;
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagLua;
                 }
 
-                if(sAMObject.TryGetValue(SystemControllerParameter.LUACode, out string lUACode))
+                if (sAMObject.TryGetValue(SystemControllerParameter.LUACode, out string lUACode))
                 {
                     @dynamic.Code = lUACode;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.DampenValue, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagDampenValue;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.DampenSignal, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagDampenSignal;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.LuaHidden, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagLuaHidden;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasControlType, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasControlType;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasControllerType, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasControllerType;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSensorType, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSensorType;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSensorPresetType, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSensorPresetType;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSensorArc1, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSensorArc1;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSensorArc2, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSensorArc2;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasProfile, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasProfile;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSetbackProfile, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSetbackProfile;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSchedule, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSchedule;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSetpoint, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSetpoint;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasBand, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasBand;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasGradient, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasGradient;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasMin, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasMin;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasMax, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasMax;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSetbackSetpoint, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSetbackSetpoint;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSetbackBand, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSetbackBand;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSetbackGradient, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSetbackGradient;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSetbackMin, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSetbackMin;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.HasSetbackMax, out value) && value)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)tpdControllerFlags.tpdControllerFlagHasSetbackMax;
                 }
             }
 
