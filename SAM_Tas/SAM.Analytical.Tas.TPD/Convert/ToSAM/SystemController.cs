@@ -330,45 +330,45 @@ namespace SAM.Analytical.Tas.TPD
                     break;
             }
 
-            SystemController result = null;
+            SystemController systemController = null;
 
             switch (plantController.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    result = new SystemLiquidNormalController(@dynamic.Name, sensorReference, liquidNormalControllerDataType, setpoint, setback);
+                    systemController = new SystemLiquidNormalController(@dynamic.Name, sensorReference, liquidNormalControllerDataType, setpoint, setback);
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
                     OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
-                    result = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint, setback) { SensorReference = sensorReference };
+                    systemController = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint, setback) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint, setback);
+                    systemController = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint, setback);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    result = new SystemLiquidPassthroughController(@dynamic.Name, liquidNormalControllerDataType) { SensorReference = sensorReference };
+                    systemController = new SystemLiquidPassthroughController(@dynamic.Name, liquidNormalControllerDataType) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlNot:
-                    result = new SystemNotLogicalController(@dynamic.Name);
+                    systemController = new SystemNotLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlMin:
-                    result = new SystemMinLogicalController(@dynamic.Name);
+                    systemController = new SystemMinLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlMax:
-                    result = new SystemMaxLogicalController(@dynamic.Name);
+                    systemController = new SystemMaxLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlSig:
-                    result = new SystemSigLogicalController(@dynamic.Name);
+                    systemController = new SystemSigLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlIf:
-                    result = new SystemIfLogicalController(@dynamic.Name);
+                    systemController = new SystemIfLogicalController(@dynamic.Name);
                     break;
 
                     //case tpdControlType.tpdControlGroup:
@@ -376,7 +376,7 @@ namespace SAM.Analytical.Tas.TPD
                     //    break;
             }
 
-            if (result == null)
+            if (systemController == null)
             {
                 return null;
             }
@@ -384,10 +384,10 @@ namespace SAM.Analytical.Tas.TPD
             IReference reference = Create.Reference(plantController);
             if (reference != null)
             {
-                Modify.SetReference(result, reference.ToString());
+                Modify.SetReference(systemController, reference.ToString());
             }
 
-            result.Description = dynamic.Description;
+            systemController.Description = dynamic.Description;
             //Modify.SetReference(systemController, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
@@ -395,13 +395,36 @@ namespace SAM.Analytical.Tas.TPD
             List<PlantDayType> plantDayTypes = plantController.PlantDayTypes();
             if (plantDayTypes != null && plantDayTypes.Count != 0)
             {
-                result.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
+                systemController.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
             }
 
-            IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            ISystemController result = systemController;
+
+            IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(systemController, location, Systems.Query.DefaultDisplaySystemManager());
             if (displaySystemController != null)
             {
-                return displaySystemController;
+                result = displaySystemController;
+            }
+
+            if(result is SAMObject)
+            {
+                SAMObject sAMObject = (SAMObject)result;
+
+                string lUACode= (string)@dynamic.Code;
+                if(!string.IsNullOrWhiteSpace(lUACode))
+                {
+                    sAMObject.SetValue(SystemControllerParameter.LUACode, lUACode);
+                }
+
+                tpdControllerFlags tpdControllerFlags = (tpdControllerFlags)@dynamic.Flags;
+                if (tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagLua))
+                {
+                    sAMObject.SetValue(SystemControllerParameter.LUAEnabled, true);
+                }
+                else
+                {
+                    sAMObject.SetValue(SystemControllerParameter.LUAEnabled, false);
+                }
             }
 
             return result;

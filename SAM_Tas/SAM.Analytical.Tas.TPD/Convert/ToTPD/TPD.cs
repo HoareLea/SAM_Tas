@@ -593,7 +593,7 @@ namespace SAM.Analytical.Tas.TPD
 
                                                 int groupIndex = -1;
 
-                                                if (!systemController_SAM_Temp.TryGetValue(SystemControllerParameter.GroupIndex, out groupIndex))
+                                                if (!systemController_SAM_Temp.TryGetValue(SAM.Analytical.Systems.SystemControllerParameter.GroupIndex, out groupIndex))
                                                 {
                                                     continue;
                                                 }

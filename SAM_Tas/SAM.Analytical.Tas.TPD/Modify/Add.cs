@@ -687,7 +687,7 @@ namespace SAM.Analytical.Tas.TPD
                         {
                             if (systemJSAMObject is SystemController)
                             {
-                                ((SystemController)systemJSAMObject).SetValue(SystemControllerParameter.GroupIndex, index);
+                                ((SystemController)systemJSAMObject).SetValue(Systems.SystemControllerParameter.GroupIndex, index);
                             }
                             result.Add(systemJSAMObject);
                         }
