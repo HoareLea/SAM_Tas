@@ -220,17 +220,18 @@ namespace SAM.Analytical.Tas.TPD
 
             if(displaySystemController is SAMObject)
             {
-                dynamic @dynamic = (dynamic)displaySystemController;
+                dynamic @dynamic = (dynamic)result;
 
                 SAMObject sAMObject = (SAMObject)displaySystemController;
-                if(sAMObject.TryGetValue(SystemControllerParameter.LUACode, out string lUACode))
-                {
-                    @dynamic.Code = lUACode;
-                }
 
                 if (sAMObject.TryGetValue(SystemControllerParameter.LUAEnabled, out bool enabled) && enabled)
                 {
-                    @dynamic.Flags = @dynamic.Flags | ~(int)global::TPD.tpdControllerFlags.tpdControllerFlagLua;
+                    @dynamic.Flags = @dynamic.Flags | (int)global::TPD.tpdControllerFlags.tpdControllerFlagLua;
+                }
+
+                if(sAMObject.TryGetValue(SystemControllerParameter.LUACode, out string lUACode))
+                {
+                    @dynamic.Code = lUACode;
                 }
             }
 

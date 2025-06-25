@@ -1,4 +1,5 @@
 ﻿using SAM.Analytical.Systems;
+using SAM.Core;
 using SAM.Geometry.Planar;
 using System.Collections.Generic;
 using TPD;
@@ -207,6 +208,23 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             displaySystemController.SetLocation(result);
+
+            if (displaySystemController is SAMObject)
+            {
+                dynamic @dynamic = (dynamic)result;
+
+                SAMObject sAMObject = (SAMObject)displaySystemController;
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.LUAEnabled, out bool enabled) && enabled)
+                {
+                    @dynamic.Flags = @dynamic.Flags | (int)global::TPD.tpdControllerFlags.tpdControllerFlagLua;
+                }
+
+                if (sAMObject.TryGetValue(SystemControllerParameter.LUACode, out string lUACode))
+                {
+                    @dynamic.Code = lUACode;
+                }
+            }
 
             return result;
 
