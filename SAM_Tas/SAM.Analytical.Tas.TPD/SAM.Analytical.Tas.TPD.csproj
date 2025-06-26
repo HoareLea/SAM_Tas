@@ -35,16 +35,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SAM.Core.Systems, Version=1.0.8782.21016, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SAM.Core.Systems">
       <HintPath>..\..\..\SAM_Systems\build\SAM.Core.Systems.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Geometry, Version=1.0.8810.23906, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
     </Reference>
-    <Reference Include="SAM.Geometry.Systems, Version=1.0.8823.22638, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SAM.Geometry.Systems">
       <HintPath>..\..\..\SAM_Systems\build\SAM.Geometry.Systems.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Math, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
