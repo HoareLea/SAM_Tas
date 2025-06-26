@@ -152,6 +152,14 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
 
+                    if(systemComponent is global::TPD.ComponentGroup)
+                    {
+                        if((systemComponent as dynamic).GUID == guid_1 || (systemComponent as dynamic).GUID == guid_2)
+                        {
+                            continue;
+                        }
+                    }
+
                     result.RemoveAt(i);
                     continue;
                 }
