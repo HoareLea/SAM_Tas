@@ -40,7 +40,7 @@ namespace SAM.Analytical.Tas.TPD
                                 dictionary_AirSystemGroup[airSystemGroup.Guid] = groupIndexes;
                             }
 
-                            if (((SystemController)displaySystemController).TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex))
+                            if (((SystemController)displaySystemController).TryGetValue(SAM.Analytical.Systems.SystemControllerParameter.GroupIndex, out int groupIndex))
                             {
                                 tuples_GroupIndex.Add(new Tuple<Guid, int, IDisplaySystemController>(airSystemGroup.Guid, groupIndex, displaySystemController));
 
@@ -297,7 +297,7 @@ namespace SAM.Analytical.Tas.TPD
                         return null;
                     }
 
-                    if (!systemComponent.TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex))
+                    if (!systemComponent.TryGetValue(Systems.SystemControllerParameter.GroupIndex, out int groupIndex))
                     {
                         groupIndex = -1;
                     }
@@ -315,7 +315,7 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
-                        if (!systemComponent_Temp.TryGetValue(SystemControllerParameter.GroupIndex, out int groupIndex_Temp))
+                        if (!systemComponent_Temp.TryGetValue(Systems.SystemControllerParameter.GroupIndex, out int groupIndex_Temp))
                         {
                             if (!systemComponent_Temp.GetType().IsAssignableFrom(systemComponent.GetType()) && !systemComponent.GetType().IsAssignableFrom(systemComponent_Temp.GetType()))
                             {

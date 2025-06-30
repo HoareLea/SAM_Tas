@@ -6,7 +6,6 @@ using SAM.Core.Grasshopper;
 using SAM.Weather;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -273,7 +272,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            Process.Start(path);
+            Core.Query.StartProcess(path);
         }
     }
 }

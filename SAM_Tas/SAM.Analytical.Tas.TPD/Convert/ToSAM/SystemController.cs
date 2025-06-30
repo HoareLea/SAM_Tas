@@ -121,45 +121,45 @@ namespace SAM.Analytical.Tas.TPD
                 setback = new SetpointSetback(scheduleName, rangeSetpoint);
             }
 
-            SystemController result = null;
+            SystemController systemController = null;
 
             switch(controller.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    result = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, setback, normalControllerLimit) { SensorReference = sensorReference };
+                    systemController = new SystemNormalController(@dynamic.Name, normalControllerDataType, setpoint, setback, normalControllerLimit) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
                     OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
-                    result = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint, setback) { SensorReference = sensorReference };
+                    systemController = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint, setback) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, normalControllerDataType, setpoint, setback, normalControllerLimit);
+                    systemController = new SystemDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, normalControllerDataType, setpoint, setback, normalControllerLimit);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    result = new SystemPassthroughController(@dynamic.Name, sensorReference, setpoint, setback, normalControllerDataType);
+                    systemController = new SystemPassthroughController(@dynamic.Name, sensorReference, setpoint, setback, normalControllerDataType);
                     break;
 
                 case tpdControlType.tpdControlNot:
-                    result = new SystemNotLogicalController(@dynamic.Name);
+                    systemController = new SystemNotLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlMin:
-                    result = new SystemMinLogicalController(@dynamic.Name);
+                    systemController = new SystemMinLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlMax:
-                    result = new SystemMaxLogicalController(@dynamic.Name);
+                    systemController = new SystemMaxLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlSig:
-                    result = new SystemSigLogicalController(@dynamic.Name);
+                    systemController = new SystemSigLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlIf:
-                    result = new SystemIfLogicalController(@dynamic.Name);
+                    systemController = new SystemIfLogicalController(@dynamic.Name);
                     break;
 
                 //case tpdControlType.tpdControlGroup:
@@ -167,7 +167,7 @@ namespace SAM.Analytical.Tas.TPD
                 //    break;
             }
 
-            if(result == null)
+            if(systemController == null)
             {
                 return null;
             }
@@ -175,10 +175,10 @@ namespace SAM.Analytical.Tas.TPD
             IReference reference = Create.Reference(controller);
             if (reference != null)
             {
-                Modify.SetReference(result, reference.ToString());
+                Modify.SetReference(systemController, reference.ToString());
             }
 
-            result.Description = dynamic.Description;
+            systemController.Description = dynamic.Description;
             //Modify.SetReference(systemController, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
@@ -186,13 +186,52 @@ namespace SAM.Analytical.Tas.TPD
             List<PlantDayType> plantDayTypes = controller.PlantDayTypes();
             if(plantDayTypes != null && plantDayTypes.Count != 0)
             {
-                result.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
+                systemController.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
             }
 
-            IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            ISystemController result = systemController;
+
+            IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(systemController, location, Systems.Query.DefaultDisplaySystemManager());
             if(displaySystemController != null)
             {
-                return displaySystemController;
+                result = displaySystemController;
+            }
+
+            if (result is SAMObject)
+            {
+                SAMObject sAMObject = (SAMObject)result;
+
+                string lUACode = (string)@dynamic.Code;
+                if (!string.IsNullOrWhiteSpace(lUACode))
+                {
+                    sAMObject.SetValue(SystemControllerParameter.LUACode, lUACode);
+                }
+
+                tpdControllerFlags tpdControllerFlags = (tpdControllerFlags)@dynamic.Flags;
+
+                sAMObject.SetValue(SystemControllerParameter.LUAEnabled, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagLua));
+                sAMObject.SetValue(SystemControllerParameter.DampenValue, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagDampenValue));
+                sAMObject.SetValue(SystemControllerParameter.DampenSignal, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagDampenSignal));
+                sAMObject.SetValue(SystemControllerParameter.LuaHidden, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagLuaHidden));
+                sAMObject.SetValue(SystemControllerParameter.HasControlType, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasControlType));
+                sAMObject.SetValue(SystemControllerParameter.HasControllerType, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasControllerType));
+                sAMObject.SetValue(SystemControllerParameter.HasSensorType, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSensorType));
+                sAMObject.SetValue(SystemControllerParameter.HasSensorPresetType, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSensorPresetType));
+                sAMObject.SetValue(SystemControllerParameter.HasSensorArc1, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSensorArc1));
+                sAMObject.SetValue(SystemControllerParameter.HasSensorArc2, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSensorArc2));
+                sAMObject.SetValue(SystemControllerParameter.HasProfile, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasProfile));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackProfile, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackProfile));
+                sAMObject.SetValue(SystemControllerParameter.HasSchedule, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSchedule));
+                sAMObject.SetValue(SystemControllerParameter.HasSetpoint, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetpoint));
+                sAMObject.SetValue(SystemControllerParameter.HasBand, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasBand));
+                sAMObject.SetValue(SystemControllerParameter.HasGradient, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasGradient));
+                sAMObject.SetValue(SystemControllerParameter.HasMin, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasMin));
+                sAMObject.SetValue(SystemControllerParameter.HasMax, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasMax));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackSetpoint, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackSetpoint));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackBand, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackBand));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackGradient, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackGradient));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackMin, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackMin));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackMax, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackMax));
             }
 
             return result;
@@ -330,45 +369,45 @@ namespace SAM.Analytical.Tas.TPD
                     break;
             }
 
-            SystemController result = null;
+            SystemController systemController = null;
 
             switch (plantController.ControlType)
             {
                 case tpdControlType.tpdControlNormal:
-                    result = new SystemLiquidNormalController(@dynamic.Name, sensorReference, liquidNormalControllerDataType, setpoint, setback);
+                    systemController = new SystemLiquidNormalController(@dynamic.Name, sensorReference, liquidNormalControllerDataType, setpoint, setback);
                     break;
 
                 case tpdControlType.tpdControlOutdoor:
                     OutdoorControllerDataType outdoorControllerDataType = ((tpdSensorType)@dynamic.SensorType).ToSAM_OutdoorControllerDataType();
-                    result = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint, setback) { SensorReference = sensorReference };
+                    systemController = new SystemOutdoorController(@dynamic.Name, outdoorControllerDataType, setpoint, setback) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlDifference:
-                    result = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint, setback);
+                    systemController = new SystemLiquidDifferenceController(@dynamic.Name, sensorReference, secondarySensorReference, liquidNormalControllerDataType, setpoint, setback);
                     break;
 
                 case tpdControlType.tpdControlPassThrough:
-                    result = new SystemLiquidPassthroughController(@dynamic.Name, liquidNormalControllerDataType) { SensorReference = sensorReference };
+                    systemController = new SystemLiquidPassthroughController(@dynamic.Name, liquidNormalControllerDataType) { SensorReference = sensorReference };
                     break;
 
                 case tpdControlType.tpdControlNot:
-                    result = new SystemNotLogicalController(@dynamic.Name);
+                    systemController = new SystemNotLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlMin:
-                    result = new SystemMinLogicalController(@dynamic.Name);
+                    systemController = new SystemMinLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlMax:
-                    result = new SystemMaxLogicalController(@dynamic.Name);
+                    systemController = new SystemMaxLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlSig:
-                    result = new SystemSigLogicalController(@dynamic.Name);
+                    systemController = new SystemSigLogicalController(@dynamic.Name);
                     break;
 
                 case tpdControlType.tpdControlIf:
-                    result = new SystemIfLogicalController(@dynamic.Name);
+                    systemController = new SystemIfLogicalController(@dynamic.Name);
                     break;
 
                     //case tpdControlType.tpdControlGroup:
@@ -376,7 +415,7 @@ namespace SAM.Analytical.Tas.TPD
                     //    break;
             }
 
-            if (result == null)
+            if (systemController == null)
             {
                 return null;
             }
@@ -384,10 +423,10 @@ namespace SAM.Analytical.Tas.TPD
             IReference reference = Create.Reference(plantController);
             if (reference != null)
             {
-                Modify.SetReference(result, reference.ToString());
+                Modify.SetReference(systemController, reference.ToString());
             }
 
-            result.Description = dynamic.Description;
+            systemController.Description = dynamic.Description;
             //Modify.SetReference(systemController, @dynamic.GUID);
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
@@ -395,13 +434,52 @@ namespace SAM.Analytical.Tas.TPD
             List<PlantDayType> plantDayTypes = plantController.PlantDayTypes();
             if (plantDayTypes != null && plantDayTypes.Count != 0)
             {
-                result.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
+                systemController.DayTypeNames = new HashSet<string>(plantDayTypes.ConvertAll(x => x.Name));
             }
 
-            IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(result, location, Systems.Query.DefaultDisplaySystemManager());
+            ISystemController result = systemController;
+
+            IDisplaySystemController displaySystemController = Systems.Create.DisplayObject<IDisplaySystemController>(systemController, location, Systems.Query.DefaultDisplaySystemManager());
             if (displaySystemController != null)
             {
-                return displaySystemController;
+                result = displaySystemController;
+            }
+
+            if(result is SAMObject)
+            {
+                SAMObject sAMObject = (SAMObject)result;
+
+                string lUACode= (string)@dynamic.Code;
+                if(!string.IsNullOrWhiteSpace(lUACode))
+                {
+                    sAMObject.SetValue(SystemControllerParameter.LUACode, lUACode);
+                }
+
+                tpdControllerFlags tpdControllerFlags = (tpdControllerFlags)@dynamic.Flags;
+
+                sAMObject.SetValue(SystemControllerParameter.LUAEnabled, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagLua));
+                sAMObject.SetValue(SystemControllerParameter.DampenValue, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagDampenValue));
+                sAMObject.SetValue(SystemControllerParameter.DampenSignal, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagDampenSignal));
+                sAMObject.SetValue(SystemControllerParameter.LuaHidden, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagLuaHidden));
+                sAMObject.SetValue(SystemControllerParameter.HasControlType, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasControlType));
+                sAMObject.SetValue(SystemControllerParameter.HasControllerType, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasControllerType));
+                sAMObject.SetValue(SystemControllerParameter.HasSensorType, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSensorType));
+                sAMObject.SetValue(SystemControllerParameter.HasSensorPresetType, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSensorPresetType));
+                sAMObject.SetValue(SystemControllerParameter.HasSensorArc1, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSensorArc1));
+                sAMObject.SetValue(SystemControllerParameter.HasSensorArc2, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSensorArc2));
+                sAMObject.SetValue(SystemControllerParameter.HasProfile, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasProfile));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackProfile, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackProfile));
+                sAMObject.SetValue(SystemControllerParameter.HasSchedule, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSchedule));
+                sAMObject.SetValue(SystemControllerParameter.HasSetpoint, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetpoint));
+                sAMObject.SetValue(SystemControllerParameter.HasBand, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasBand));
+                sAMObject.SetValue(SystemControllerParameter.HasGradient, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasGradient));
+                sAMObject.SetValue(SystemControllerParameter.HasMin, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasMin));
+                sAMObject.SetValue(SystemControllerParameter.HasMax, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasMax)); 
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackSetpoint, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackSetpoint));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackBand, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackBand));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackGradient, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackGradient));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackMin, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackMin));
+                sAMObject.SetValue(SystemControllerParameter.HasSetbackMax, tpdControllerFlags.HasFlag(tpdControllerFlags.tpdControllerFlagHasSetbackMax));
             }
 
             return result;

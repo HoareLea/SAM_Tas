@@ -59,7 +59,7 @@ namespace SAM.Analytical.Tas.TPD
                         Direction direction_1 = systemComponent_Temp_1.SystemConnectorManager.GetDirection(index_1);
 
                         int portIndex_1 = 1;
-                        if (systemComponent_Temp_1 is SystemExchanger || systemComponent_Temp_1 is SystemEconomiser)
+                        if (systemComponent_Temp_1 is SystemExchanger || systemComponent_Temp_1 is SystemEconomiser || systemComponent_Temp_1 is SystemDesiccantWheel)
                         {
                             if (systemComponent_Temp_1.SystemConnectorManager.TryGetSystemConnector(index_1, out SystemConnector systemConnector_1) && systemConnector_1 != null)
                             {
@@ -80,7 +80,7 @@ namespace SAM.Analytical.Tas.TPD
                         Direction direction_2 = systemComponent_Temp_2.SystemConnectorManager.GetDirection(index_2);
 
                         int portIndex_2 = 1;
-                        if (systemComponent_Temp_2 is SystemExchanger || systemComponent_Temp_2 is SystemEconomiser)
+                        if (systemComponent_Temp_2 is SystemExchanger || systemComponent_Temp_2 is SystemEconomiser || systemComponent_Temp_2 is SystemDesiccantWheel)
                         {
                             if (systemComponent_Temp_2.SystemConnectorManager.TryGetSystemConnector(index_2, out SystemConnector systemConnector_2) && systemConnector_2 != null)
                             {

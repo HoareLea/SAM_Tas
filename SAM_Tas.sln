@@ -7,9 +7,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAM.Core.Tas", "SAM_Tas\SAM.Core.Tas\SAM.Core.Tas.csproj", "{86DE2672-4961-4D74-A337-0933FDDAE79B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grasshopper", "Grasshopper", "{06F63504-B0DA-4C13-8883-4F1906D72216}"
-	ProjectSection(SolutionItems) = preProject
-		Grasshopper\SAM.Analytical.Grasshopper.Tas.TPD\Component\SAMSystemsCreateTPDBySystemEnergyCentre.cs = Grasshopper\SAM.Analytical.Grasshopper.Tas.TPD\Component\SAMSystemsCreateTPDBySystemEnergyCentre.cs
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Core.Grasshopper.Tas", "Grasshopper\SAM.Core.Grasshopper.Tas\SAM.Core.Grasshopper.Tas.csproj", "{B8F0EE34-A776-4518-ADA2-E047E468B47B}"
 EndProject
