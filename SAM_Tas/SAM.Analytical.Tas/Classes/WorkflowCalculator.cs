@@ -8,12 +8,6 @@ namespace SAM.Analytical.Tas
 {
     public class WorkflowCalculator : IJSAMObject
     {
-        public event WorkflowCalculatorStartedEventHandler Started;
-        public event WorkflowCalculatorUpdatingEventHandler Updating;
-        public event WorkflowCalculatorStartedEventHandler Ended;
-
-        public WorkflowSettings WorkflowSettings { get; set; }
-
         public WorkflowCalculator()
         {
 
@@ -29,8 +23,17 @@ namespace SAM.Analytical.Tas
             WorkflowSettings = workflowSettings == null ? null : new WorkflowSettings(workflowSettings);
         }
 
+        public event WorkflowCalculatorStartedEventHandler Ended;
+        public event WorkflowCalculatorStartedEventHandler Started;
+        public event WorkflowCalculatorStepsCountedEventHandler StepsCounted;
+        public event WorkflowCalculatorUpdatingEventHandler Updating;
+        
+        public WorkflowSettings WorkflowSettings { get; set; }
+        
         public AnalyticalModel Calculate(AnalyticalModel analyticalModel)
         {
+            Started?.Invoke(this, new System.EventArgs());
+
             if (analyticalModel == null || WorkflowSettings == null)
             {
                 return null;
@@ -43,19 +46,19 @@ namespace SAM.Analytical.Tas
 
             string path_TSD = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "tsd"));
 
-            analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData);
+            analyticalModel.TryGetValue(Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData);
             if (WorkflowSettings?.WeatherData != null)
             {
                 weatherData = WorkflowSettings.WeatherData;
             }
 
-            analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> heatingDesignDays);
+            analyticalModel.TryGetValue(Analytical.AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> heatingDesignDays);
             if (WorkflowSettings?.DesignDays_Heating != null)
             {
                 heatingDesignDays = new SAMCollection<DesignDay>(WorkflowSettings.DesignDays_Heating);
             }
 
-            analyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> coolingDesignDays);
+            analyticalModel.TryGetValue(Analytical.AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> coolingDesignDays);
             if (WorkflowSettings?.DesignDays_Cooling != null)
             {
                 coolingDesignDays = new SAMCollection<DesignDay>(WorkflowSettings.DesignDays_Cooling);
@@ -81,6 +84,28 @@ namespace SAM.Analytical.Tas
             {
                 count++;
             }
+
+            if (WorkflowSettings.SurfaceOutputSpecs != null && WorkflowSettings.SurfaceOutputSpecs.Count > 0)
+            {
+                count = count + 2;
+            }
+
+            if (WorkflowSettings.Simulate)
+            {
+                count = count + 2;
+            }
+
+            if (WorkflowSettings.UnmetHours)
+            {
+                count++;
+            }
+
+            if (!WorkflowSettings.Sizing)
+            {
+                count--;
+            }
+
+            StepsCounted?.Invoke(this, new WorkflowCalculatorStepsCountedEventArgs(count));
 
             AdjacencyCluster adjacencyCluster = null;
 
@@ -193,7 +218,7 @@ namespace SAM.Analytical.Tas
                 Modify.AssignAdiabaticConstruction(tBDDocument, "Adiabatic", new string[] { "-unzoned", "-internal", "-exposed" }, false, true);
 
                 Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Setting Adiabatic"));
-                Modify.UpdateAdiabatic(tBDDocument, result, Core.Tolerance.MacroDistance);
+                Modify.UpdateAdiabatic(tBDDocument, result, Tolerance.MacroDistance);
 
                 Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Updating Building Elements"));
                 Modify.UpdateBuildingElements(tBDDocument, result);
@@ -224,7 +249,7 @@ namespace SAM.Analytical.Tas
                 if (!string.IsNullOrWhiteSpace(WorkflowSettings.Path_gbXML))
                 {
                     Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Updating Aperture Types"));
-                    Modify.SetApertureTypes(tBDDocument.Building, adjacencyCluster, Core.Tolerance.MacroDistance);
+                    Modify.SetApertureTypes(tBDDocument.Building, adjacencyCluster, Tolerance.MacroDistance);
                 }
 
                 if (WorkflowSettings.AddIZAMs)
@@ -268,27 +293,6 @@ namespace SAM.Analytical.Tas
             if (!hasWeatherData)
             {
                 return result;
-            }
-
-            count = 2;
-            if (WorkflowSettings.SurfaceOutputSpecs != null && WorkflowSettings.SurfaceOutputSpecs.Count > 0)
-            {
-                count = count + 2;
-            }
-
-            if (WorkflowSettings.Simulate)
-            {
-                count = count + 2;
-            }
-
-            if (WorkflowSettings.UnmetHours)
-            {
-                count++;
-            }
-
-            if (!WorkflowSettings.Sizing)
-            {
-                count--;
             }
 
             if (WorkflowSettings.Sizing)
@@ -356,7 +360,11 @@ namespace SAM.Analytical.Tas
             Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Updating Design Loads"));
             adjacencyCluster = Modify.UpdateDesignLoads(WorkflowSettings.Path_TBD, adjacencyCluster);
 
-            return new AnalyticalModel(result, adjacencyCluster);
+            result = new AnalyticalModel(result, adjacencyCluster);
+
+            Ended?.Invoke(this, new System.EventArgs());
+
+            return result;
         }
 
         public bool FromJObject(JObject jObject)

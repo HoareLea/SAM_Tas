@@ -4,8 +4,17 @@
     {
         public static AnalyticalModel RunWorkflow(this AnalyticalModel analyticalModel, WorkflowSettings workflowSettings)
         {
-            WorkflowCalculator workflowCalculator = new WorkflowCalculator(workflowSettings);
+            if(analyticalModel == null)
+            {
+                return null;
+            }
 
+            if(workflowSettings == null)
+            {
+                workflowSettings = new WorkflowSettings();
+            }
+
+            WorkflowCalculator workflowCalculator = new WorkflowCalculator(workflowSettings);
             return workflowCalculator.Calculate(analyticalModel);
 
             //if (analyticalModel == null || workflowSettings == null)

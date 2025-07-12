@@ -333,7 +333,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 RemoveExistingTBD = removeExistingTBD,
             };
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, workflowSettings);
+            analyticalModel = Modify.RunWorkflow(analyticalModel, workflowSettings);
 
             bool saveWeather = false;
             index = Params.IndexOfInputParam("saveWeather_");

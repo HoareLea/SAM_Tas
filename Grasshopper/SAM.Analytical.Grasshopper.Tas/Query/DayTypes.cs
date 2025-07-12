@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SAM.Analytical.Grashopper.Tas
+namespace SAM.Analytical.Grasshopper.Tas
 {
     public static partial class Query
     {

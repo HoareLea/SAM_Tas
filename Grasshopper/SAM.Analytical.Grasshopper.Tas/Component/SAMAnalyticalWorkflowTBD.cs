@@ -5,6 +5,7 @@ using SAM.Analytical.Tas;
 using SAM.Core;
 using SAM.Core.Grasshopper;
 using SAM.Core.Tas;
+using SAM.Core.Windows.Forms;
 using SAM.Weather;
 using System;
 using System.Collections.Generic;
@@ -331,7 +332,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
 
-                    List<TBD.dayType> dayTypes = Grashopper.Tas.Query.DayTypes(calendar);
+                    List<TBD.dayType> dayTypes = Grasshopper.Tas.Query.DayTypes(calendar);
                     if (dayTypes.Find(x => x.name == "HDD") == null)
                     {
                         TBD.dayType dayType = calendar.AddDayType();
@@ -414,7 +415,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             analyticalModel.TryGetValue(AnalyticalModelParameter.WeatherData, out WeatherData weatherData_Temp);
             analyticalModel.RemoveValue(AnalyticalModelParameter.WeatherData);
 
-            analyticalModel = Analytical.Tas.Modify.RunWorkflow(analyticalModel, workflowSettings);
+            Modify.RunWorkflow(analyticalModel, workflowSettings);
 
             if(weatherData_Temp != null)
             {
