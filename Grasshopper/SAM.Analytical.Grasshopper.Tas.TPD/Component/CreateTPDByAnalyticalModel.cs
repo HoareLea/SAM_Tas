@@ -192,7 +192,11 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             
             if(systemEnergyCentre == null)
             {
-                systemEnergyCentre = Analytical.Systems.Create.SystemEnergyCentre(analyticalModel);
+                systemEnergyCentre = Analytical.Systems.Create.SystemEnergyCentre(analyticalModel, out HashSet<string> unavailableSystemTypeNames);
+                if (unavailableSystemTypeNames != null && unavailableSystemTypeNames.Count != 0)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Format("Following system types not defined: {0}", string.Join(", ", unavailableSystemTypeNames)));
+                }
             }
 
             if (systemEnergyCentre == null)
