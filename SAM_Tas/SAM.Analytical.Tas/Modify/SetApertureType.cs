@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TBD;
 
 namespace SAM.Analytical.Tas
@@ -45,11 +46,13 @@ namespace SAM.Analytical.Tas
                 result.description = description;
             }
 
-            result.dischargeCoefficient = (float)singleOpeningProperties.GetDischargeCoefficient();
+            dynamic @dynamic = result;
 
-            profile profile = result.GetProfile();
+            @dynamic.dischargeCoefficient = System.Convert.ToSingle(singleOpeningProperties.GetDischargeCoefficient());
+
+            profile profile = @dynamic.GetProfile();
             profile.value = 1;
-            profile.factor = (float)singleOpeningProperties.GetFactor();
+            profile.factor = System.Convert.ToSingle(singleOpeningProperties.GetFactor());
 
             if(singleOpeningProperties is ProfileOpeningProperties)
             {
@@ -91,12 +94,12 @@ namespace SAM.Analytical.Tas
             {
                 dayTypes.RemoveAll(x => x.name.Equals("HDD") || x.name.Equals("CDD"));
                 foreach (dayType dayType in dayTypes)
-                    result.SetDayType(dayType, true);
+                    @dynamic.SetDayType(dayType, true);
             }
 
-            if(buildingElement.ApertureTypes().Find(x => x.name == result.name) == null)
+            if(buildingElement.ApertureTypes().Find(x => x.name == @dynamic.name) == null)
             {
-                buildingElement.AssignApertureType(result);
+                buildingElement.AssignApertureType(@dynamic);
             }
 
             return result;
