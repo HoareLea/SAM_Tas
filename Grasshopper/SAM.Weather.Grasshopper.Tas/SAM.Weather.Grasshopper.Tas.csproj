@@ -27,14 +27,6 @@
     <OutputPath>..\..\build\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Convert\**" />
-    <Compile Remove="Kernel\**" />
-    <EmbeddedResource Remove="Convert\**" />
-    <EmbeddedResource Remove="Kernel\**" />
-    <None Remove="Convert\**" />
-    <None Remove="Kernel\**" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -90,17 +82,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Grasshopper">
-      <Version>8.19.25132.1001</Version>
+      <Version>8.21.25188.17001</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ToTAS\GH_Curve.cs" />
-    <Compile Remove="ToTAS\GH_Line.cs" />
-    <Compile Remove="ToTAS\GH_Point.cs" />
   </ItemGroup>
   <PropertyGroup />
   <PropertyGroup>
