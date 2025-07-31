@@ -50,6 +50,9 @@
     <Reference Include="SAM.Geometry">
       <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
     </Reference>
+	<Reference Include="SAM.Geometry.Rhino">
+		<HintPath>..\..\..\SAM\build\SAM.Geometry.Rhino.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
@@ -73,11 +76,6 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ToTAS\GH_Curve.cs" />
-    <Compile Remove="ToTAS\GH_Line.cs" />
-    <Compile Remove="ToTAS\GH_Point.cs" />
   </ItemGroup>
   <PropertyGroup />
   <PropertyGroup>

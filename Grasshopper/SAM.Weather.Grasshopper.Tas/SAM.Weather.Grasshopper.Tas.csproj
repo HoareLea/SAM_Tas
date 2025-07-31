@@ -47,7 +47,7 @@
       <HintPath>..\..\references_buildonly\Interop.TWD.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SAM.Core, Version=1.0.8014.28389, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SAM.Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
     </Reference>
@@ -60,7 +60,7 @@
     <Reference Include="SAM.Geometry.Rhino">
       <HintPath>..\..\..\SAM\build\SAM.Geometry.Rhino.dll</HintPath>
     </Reference>
-    <Reference Include="SAM.Weather, Version=1.0.8014.25537, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SAM.Weather">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Weather.dll</HintPath>
     </Reference>
