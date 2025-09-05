@@ -176,13 +176,18 @@ namespace SAM.Analytical.Tas
 
                     //bool ground = Analytical.Query.Ground(panelType);
 
+                    Construction construction = null;
+
                     TBD.Construction construction_TBD = buildingElement.GetConstruction();
 
-                    if (!dictionary_Construction.TryGetValue(construction_TBD.GUID, out Construction construction) || construction == null)
+                    if(construction_TBD != null)
                     {
-                        construction = construction_TBD.ToSAM();
-                        construction.SetValue(Analytical.ConstructionParameter.DefaultPanelType, panelType);
-                        dictionary_Construction[construction_TBD.GUID] = construction;
+                        if (!dictionary_Construction.TryGetValue(construction_TBD.GUID, out construction) || construction == null)
+                        {
+                            construction = construction_TBD.ToSAM();
+                            construction.SetValue(Analytical.ConstructionParameter.DefaultPanelType, panelType);
+                            dictionary_Construction[construction_TBD.GUID] = construction;
+                        }
                     }
 
                     List<Panel> panels_Link = null;
