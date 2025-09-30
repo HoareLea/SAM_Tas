@@ -82,6 +82,11 @@ namespace SAM.Analytical.Tas
                 space.SetValue(Analytical.SpaceParameter.DesignHeatingLoad, zone.maxHeatingLoad);
                 space.SetValue(Analytical.SpaceParameter.DesignCoolingLoad, zone.maxCoolingLoad);
 
+                if(!space.TryGetValue(SpaceParameter.ZoneGuid, out string zoneGuid) || string.IsNullOrWhiteSpace(zoneGuid))
+                {
+                    space.SetValue(SpaceParameter.ZoneGuid, zone.GUID);
+                }
+
                 result.AddObject(space);
 
                 List<SpaceSimulationResult> spaceSimulationResults = result.GetResults<SpaceSimulationResult>(space, Query.Source());
