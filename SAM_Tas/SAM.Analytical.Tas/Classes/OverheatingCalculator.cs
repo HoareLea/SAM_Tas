@@ -201,9 +201,12 @@ namespace SAM.Analytical.Tas
 
                 for (int i = 0; i < jArray_OccupantSensibleGain.Count; i++)
                 {
-                    if (i < startHourOfYear || i > endHourOfYear)
+                    if(!string.IsNullOrWhiteSpace(systemTypeName) && systemTypeName.Equals("NV"))
                     {
-                        continue;
+                        if (i < startHourOfYear || i > endHourOfYear)
+                        {
+                            continue;
+                        }
                     }
 
                     if (!Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
