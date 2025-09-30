@@ -21,7 +21,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.5";
+        public override string LatestComponentVersion => "1.0.6";
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
@@ -64,14 +64,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 result.Add(new GH_SAMParam(@string, ParamVisibility.Binding));
 
                 global::Grasshopper.Kernel.Parameters.Param_Integer @integer;
-
-                @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_startHourOfYear_", NickName = "_startHourOfYear_", Description = "Start Hour of Year Index \nDefault start summer 01 May", Access = GH_ParamAccess.item, Optional = true };
-                @integer.SetPersistentData(HourOfYear.SummerStartIndex);
-                result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
-
-                @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHourOfYear_", NickName = "_endHourOfYear_", Description = "End Hour of Year Index \nDefault end summer 30 September", Access = GH_ParamAccess.item, Optional = true };
-                @integer.SetPersistentData(HourOfYear.SummerEndIndex);
-                result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
 
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(false);
@@ -192,26 +184,6 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            index = Params.IndexOfInputParam("_startHourOfYear_");
-            int startHourOfYear = HourOfYear.SummerStartIndex;
-            if (index != -1)
-            {
-                if (!dataAccess.GetData(index, ref startHourOfYear))
-                {
-                    startHourOfYear = HourOfYear.SummerStartIndex;
-                }
-            }
-
-            index = Params.IndexOfInputParam("_endHourOfYear_");
-            int endHourOfYear = HourOfYear.SummerEndIndex;
-            if (index != -1)
-            {
-                if (!dataAccess.GetData(index, ref endHourOfYear))
-                {
-                    endHourOfYear = HourOfYear.SummerEndIndex;
-                }
-            }
-
             bool extended = false;
             index = Params.IndexOfInputParam("_extended_");
             if (index != -1)
@@ -314,7 +286,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            List<TM59ExtendedResult> tM59ExtendedResults = overheatingCalculator.Calculate_TM59(spaces_Result, startHourOfYear, endHourOfYear);
+            List<TM59ExtendedResult> tM59ExtendedResults = overheatingCalculator.Calculate_TM59(spaces_Result);
 
             List<TMResult> tM59MechanicalVentilationResults = tM59ExtendedResults.FindAll(x => x is TM59MechanicalVentilationExtendedResult)?.ConvertAll(x => (TMResult)x);
             List<TMResult> tM59NaturalVentilationResults = tM59ExtendedResults.FindAll(x => x is TM59NaturalVentilationExtendedResult)?.ConvertAll(x => (TMResult)x);
