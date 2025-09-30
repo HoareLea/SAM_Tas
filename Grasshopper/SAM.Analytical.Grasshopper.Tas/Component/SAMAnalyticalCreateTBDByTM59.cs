@@ -18,7 +18,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -152,14 +152,14 @@ namespace SAM.Analytical.Grasshopper.Tas
                 textMap = Analytical.Query.DefaultInternalConditionTextMap_TM59();
             }
 
-            List<DesignDay> heatingDesignDays = new List<DesignDay>();
+            List<DesignDay> heatingDesignDays = [];
             index = Params.IndexOfInputParam("heatingDesignDays_");
             if (index == -1 || !dataAccess.GetDataList(index, heatingDesignDays) || heatingDesignDays == null || heatingDesignDays.Count == 0)
             {
                 heatingDesignDays = null;
             }
 
-            List<DesignDay> coolingDesignDays = new List<DesignDay>();
+            List<DesignDay> coolingDesignDays = [];
             index = Params.IndexOfInputParam("coolingDesignDays_");
             if (index == -1 || !dataAccess.GetDataList(index, coolingDesignDays) || coolingDesignDays == null || coolingDesignDays.Count == 0)
             {
@@ -217,7 +217,9 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             index = Params.IndexOfOutputParam("analyticalModel");
             if (index != -1)
+            {
                 dataAccess.SetData(index, analyticalModel);
+            }
 
             if (index_successful != -1)
             {

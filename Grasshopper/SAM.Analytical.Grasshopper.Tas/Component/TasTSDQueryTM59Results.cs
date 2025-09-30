@@ -48,7 +48,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                List<GH_SAMParam> result = [];
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_pathTasTSD", NickName = "_pathTasTSD", Description = "A file path to a TasTSD file.", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooAnalyticalObjectParam() { Name = "_spaces_", NickName = "_spaces_", Description = "SAM Analytical Spaces or Zone", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding));
@@ -63,11 +63,21 @@ namespace SAM.Analytical.Grasshopper.Tas
                 @string.SetPersistentData(TM52BuildingCategory.CategoryII.ToString());
                 result.Add(new GH_SAMParam(@string, ParamVisibility.Binding));
 
+                global::Grasshopper.Kernel.Parameters.Param_Integer @integer;
+
+                @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_startHourOfYear_", NickName = "_startHourOfYear_", Description = "Start Hour of Year Index \nDefault start summer 01 May", Access = GH_ParamAccess.item, Optional = true };
+                @integer.SetPersistentData(HourOfYear.SummerStartIndex);
+                result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
+
+                @integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_endHourOfYear_", NickName = "_endHourOfYear_", Description = "End Hour of Year Index \nDefault end summer 30 September", Access = GH_ParamAccess.item, Optional = true };
+                @integer.SetPersistentData(HourOfYear.SummerEndIndex);
+                result.Add(new GH_SAMParam(@integer, ParamVisibility.Binding));
+
                 boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(boolean, ParamVisibility.Binding));
 
-                return result.ToArray();
+                return [.. result];
             }
         }
 
@@ -78,7 +88,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                List<GH_SAMParam> result = [];
                 result.Add(new GH_SAMParam(new GooSpaceParam() { Name = "spaces", NickName = "spaces", Description = "SAM Analytical Spaces", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooResultParam() { Name = "tM59MechanicalVentilationResults", NickName = "tM59MechanicalVentilationResults", Description = "SAM TM59 Mechanical Ventilation Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooResultParam() { Name = "tM59NaturalVentilationResults", NickName = "tM59NaturalVentilationResults", Description = "SAM TM59 Natural Ventilation Results", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
@@ -88,7 +98,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly extracted?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
-                return result.ToArray();
+                return [.. result];
             }
         }
 
@@ -141,7 +151,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfInputParam("_spaces_");
             if (index != -1)
             {
-                List<IAnalyticalObject> analyticalObjects = new List<IAnalyticalObject>();
+                List<IAnalyticalObject> analyticalObjects = [];
                 if (!dataAccess.GetDataList(index, analyticalObjects))
                 {
                     analyticalObjects = null;
@@ -182,6 +192,26 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
+            index = Params.IndexOfInputParam("_startHourOfYear_");
+            int startHourOfYear = HourOfYear.SummerStartIndex;
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref startHourOfYear))
+                {
+                    startHourOfYear = HourOfYear.SummerStartIndex;
+                }
+            }
+
+            index = Params.IndexOfInputParam("_endHourOfYear_");
+            int endHourOfYear = HourOfYear.SummerEndIndex;
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref endHourOfYear))
+                {
+                    endHourOfYear = HourOfYear.SummerEndIndex;
+                }
+            }
+
             bool extended = false;
             index = Params.IndexOfInputParam("_extended_");
             if (index != -1)
@@ -192,11 +222,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            TSDConversionSettings tSDConversionSettings = new TSDConversionSettings()
+            TSDConversionSettings tSDConversionSettings = new ()
             {
                 SpaceDataTypes = new HashSet<SpaceDataType>() { SpaceDataType.ResultantTemperature, SpaceDataType.OccupantSensibleGain },
-                SpaceNames = spaces == null ? null : new HashSet<string>(spaces.ConvertAll(x => x?.Name)),
-                ZoneNames = zones == null ? null : new HashSet<string>(zones.ConvertAll(x => x?.Name)),
+                SpaceNames = spaces == null ? null : [.. spaces.ConvertAll(x => x?.Name)],
+                ZoneNames = zones == null ? null : [.. zones.ConvertAll(x => x?.Name)],
                 ConvertWeaterData = true,
                 ConvertZones = true
             };
@@ -226,7 +256,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            OverheatingCalculator overheatingCalculator = new OverheatingCalculator(analyticalModel_TSD)
+            OverheatingCalculator overheatingCalculator = new (analyticalModel_TSD)
             {
                 TM52BuildingCategory = tM52BuildingCategory,
             };
@@ -238,7 +268,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             }
             else
             {
-                spaces_Result = new List<Space>();
+                spaces_Result = [];
                 foreach (Space space in spaces)
                 {
                     Space space_Result = analyticalModel_TSD.GetSpaces()?.Find(x => x.Name == space.Name);
@@ -255,7 +285,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 if (spaces_Result == null)
                 {
-                    spaces_Result = new List<Space>();
+                    spaces_Result = [];
                 }
 
                 foreach (Zone zone in zones)
@@ -284,7 +314,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            List<TM59ExtendedResult> tM59ExtendedResults = overheatingCalculator.Calculate_TM59(spaces_Result);
+            List<TM59ExtendedResult> tM59ExtendedResults = overheatingCalculator.Calculate_TM59(spaces_Result, startHourOfYear, endHourOfYear);
 
             List<TMResult> tM59MechanicalVentilationResults = tM59ExtendedResults.FindAll(x => x is TM59MechanicalVentilationExtendedResult)?.ConvertAll(x => (TMResult)x);
             List<TMResult> tM59NaturalVentilationResults = tM59ExtendedResults.FindAll(x => x is TM59NaturalVentilationExtendedResult)?.ConvertAll(x => (TMResult)x);

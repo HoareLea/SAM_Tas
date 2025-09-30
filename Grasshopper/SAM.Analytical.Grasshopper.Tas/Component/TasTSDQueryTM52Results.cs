@@ -203,17 +203,17 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            TSDConversionSettings tSDConversionSettings = new TSDConversionSettings()
+            TSDConversionSettings tSDConversionSettings = new()
             {
                 SpaceDataTypes = new HashSet<SpaceDataType>() { SpaceDataType.ResultantTemperature, SpaceDataType.OccupantSensibleGain },
-                SpaceNames = spaces == null ? null : new HashSet<string>(spaces.ConvertAll(x => x?.Name)),
-                ZoneNames = zones == null ? null : new HashSet<string>(zones.ConvertAll(x => x?.Name)),
+                SpaceNames = spaces == null ? null : [.. spaces.ConvertAll(x => x?.Name)],
+                ZoneNames = zones == null ? null : [.. zones.ConvertAll(x => x?.Name)],
                 ConvertWeaterData = true,
             };
 
             AnalyticalModel analyticalModel = Analytical.Tas.Convert.ToSAM(path, tSDConversionSettings);
 
-            OverheatingCalculator overheatingCalculator = new OverheatingCalculator(analyticalModel)
+            OverheatingCalculator overheatingCalculator = new (analyticalModel)
             {
                 TM52BuildingCategory = tM52BuildingCategory,
             };
@@ -242,7 +242,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 if(spaces_Result == null)
                 {
-                    spaces_Result = new List<Space>();
+                    spaces_Result = [];
                 }
 
                 foreach (Zone zone in zones)

@@ -117,7 +117,7 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        public List<TM59ExtendedResult> Calculate_TM59(IEnumerable<Space> spaces)
+        public List<TM59ExtendedResult> Calculate_TM59(IEnumerable<Space> spaces, int startHourOfYear = 2880, int endHourOfYear = 6528)
         {
             if (AnalyticalModel == null || spaces == null || textMap == null)
             {
@@ -201,6 +201,11 @@ namespace SAM.Analytical.Tas
 
                 for (int i = 0; i < jArray_OccupantSensibleGain.Count; i++)
                 {
+                    if (i < startHourOfYear || i > endHourOfYear)
+                    {
+                        continue;
+                    }
+
                     if (!Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
                     {
                         continue;
