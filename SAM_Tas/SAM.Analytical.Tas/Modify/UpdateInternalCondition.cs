@@ -131,13 +131,16 @@ namespace SAM.Analytical.Tas
             }
 
             Profile profile = null;
-            
+
+            TBD.profile profile_TBD;
+
+
             profile = internalCondition.GetProfile(ProfileType.Infiltration, profileLibrary);
             if (profile != null)
             {
                 if(internalCondition.TryGetValue(InternalConditionParameter.InfiltrationAirChangesPerHour, out value))
                 {
-                    TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
+                    profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
                     if (profile_TBD != null)
                         Update(profile_TBD, profile, value);
                 }
@@ -148,39 +151,40 @@ namespace SAM.Analytical.Tas
                 area = double.NaN;
 
             profile = internalCondition.GetProfile(ProfileType.Lighting, profileLibrary);
-            if (profile != null)
+            profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLG);
+            if (profile_TBD != null)
             {
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticLG);
-                if (profile_TBD != null)
+                double gain = Analytical.Query.CalculatedLightingGain(space);
+                if (double.IsNaN(area) || area == 0 || double.IsNaN(gain))
+                    gain = 0;
+                else
+                    gain = gain / area;
+
+                Update(profile_TBD, profile, gain);
+
+                if (internalCondition.TryGetValue(InternalConditionParameter.LightingControlFunction, out string lightingControlFunction) && !string.IsNullOrWhiteSpace(lightingControlFunction))
                 {
-                    double gain = Analytical.Query.CalculatedLightingGain(space);
-                    if (double.IsNaN(area) || area == 0 || double.IsNaN(gain))
-                        gain = 0;
-                    else
-                        gain = gain / area;
-
-                    Update(profile_TBD, profile, gain);
-
-                    if(internalCondition.TryGetValue(InternalConditionParameter.LightingControlFunction, out string lightingControlFunction) && !string.IsNullOrWhiteSpace(lightingControlFunction))
+                    if (profile_TBD.type == TBD.ProfileTypes.ticHourlyProfile)
                     {
-                        if(profile_TBD.type == TBD.ProfileTypes.ticHourlyProfile)
-                        {
-                            profile_TBD.type = TBD.ProfileTypes.ticHourlyFunctionProfile;
-                        }
-                        else if(profile_TBD.type == TBD.ProfileTypes.ticYearlyProfile)
-                        {
-                            profile_TBD.type = TBD.ProfileTypes.ticYearlyFunctionProfile;
-                        }
-
-                        profile_TBD.function = lightingControlFunction;
+                        profile_TBD.type = TBD.ProfileTypes.ticHourlyFunctionProfile;
                     }
+                    else if (profile_TBD.type == TBD.ProfileTypes.ticYearlyProfile)
+                    {
+                        profile_TBD.type = TBD.ProfileTypes.ticYearlyFunctionProfile;
+                    }
+                    else
+                    {
+                        profile_TBD.type = TBD.ProfileTypes.ticFunctionProfile;
+                    }
+
+                    profile_TBD.function = lightingControlFunction;
                 }
             }
 
             profile = internalCondition.GetProfile(ProfileType.Occupancy, profileLibrary);
             if (profile != null)
             {
-                TBD.profile profile_TBD = null;
+                profile_TBD = null;
 
                 profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticOLG);
                 if (profile_TBD != null)
@@ -210,7 +214,7 @@ namespace SAM.Analytical.Tas
             profile = internalCondition.GetProfile(ProfileType.EquipmentSensible, profileLibrary);
             if (profile != null)
             {
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticESG);
+                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticESG);
                 if (profile_TBD != null)
                 {
                     double gain = Analytical.Query.CalculatedEquipmentSensibleGain(space);
@@ -226,7 +230,7 @@ namespace SAM.Analytical.Tas
             profile = internalCondition.GetProfile(ProfileType.EquipmentLatent, profileLibrary);
             if (profile != null)
             {
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticELG);
+                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticELG);
                 if (profile_TBD != null)
                 {
                     double gain = Analytical.Query.CalculatedEquipmentLatentGain(space);
@@ -242,7 +246,7 @@ namespace SAM.Analytical.Tas
             profile = internalCondition.GetProfile(ProfileType.Pollutant, profileLibrary);
             if (profile != null)
             {
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticCOG);
+                profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticCOG);
                 if (profile_TBD != null)
                 {
                     double generation = Analytical.Query.CalculatedPollutantGeneration(space);
@@ -256,54 +260,58 @@ namespace SAM.Analytical.Tas
             }
 
             profile = internalCondition.GetProfile(ProfileType.Ventilation, profileLibrary);
-            if (profile != null)
+            profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticV);
+            if (profile_TBD != null)
             {
-                TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticV);
-                if (profile_TBD != null)
+                double value_Temp = Analytical.Query.CalculatedSupplyAirFlow(space);
+                if (!double.IsNaN(value_Temp))
                 {
-                    double value_Temp = Analytical.Query.CalculatedSupplyAirFlow(space);
-                    if(!double.IsNaN(value_Temp))
+                    if (space.TryGetValue(Analytical.SpaceParameter.Volume, out double volume) && !double.IsNaN(volume) && volume > 0)
                     {
-                        if (space.TryGetValue(Analytical.SpaceParameter.Volume, out double volume) && !double.IsNaN(volume) && volume > 0)
-                        {
-                            value_Temp = value_Temp / volume * 3600;
-                        }
+                        value_Temp = value_Temp / volume * 3600;
                     }
+                }
 
-                    if(double.IsNaN(value_Temp))
-                    {
-                        value_Temp = 1;
-                    }
+                if (double.IsNaN(value_Temp))
+                {
+                    value_Temp = 1;
+                }
 
+                if (profile != null)
+                {
                     Update(profile_TBD, profile, value_Temp);
+                }
 
-                    if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunction, out string ventilationFunction) && !string.IsNullOrWhiteSpace(ventilationFunction))
+                if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunction, out string ventilationFunction) && !string.IsNullOrWhiteSpace(ventilationFunction))
+                {
+                    if (profile_TBD.type == TBD.ProfileTypes.ticHourlyProfile)
                     {
-                        if (profile_TBD.type == TBD.ProfileTypes.ticHourlyProfile)
-                        {
-                            profile_TBD.type = TBD.ProfileTypes.ticHourlyFunctionProfile;
-                        }
-                        else if (profile_TBD.type == TBD.ProfileTypes.ticYearlyProfile)
-                        {
-                            profile_TBD.type = TBD.ProfileTypes.ticYearlyFunctionProfile;
-                        }
+                        profile_TBD.type = TBD.ProfileTypes.ticHourlyFunctionProfile;
+                    }
+                    else if (profile_TBD.type == TBD.ProfileTypes.ticYearlyProfile)
+                    {
+                        profile_TBD.type = TBD.ProfileTypes.ticYearlyFunctionProfile;
+                    }
+                    else 
+                    {
+                        profile_TBD.type = TBD.ProfileTypes.ticFunctionProfile;
+                    }
 
-                        profile_TBD.function = ventilationFunction;
+                    profile_TBD.function = ventilationFunction;
 
-                        if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionDescription, out string ventilationFunctionDescription))
-                        {
-                            profile_TBD.description = ventilationFunctionDescription;
-                        }
+                    if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionDescription, out string ventilationFunctionDescription))
+                    {
+                        profile_TBD.description = ventilationFunctionDescription;
+                    }
 
-                        if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionSetback, out double ventilationFunctionSetback) && double.IsNaN(ventilationFunctionSetback))
-                        {
-                            profile_TBD.setbackValue = System.Convert.ToSingle(ventilationFunctionSetback);
-                        }
+                    if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionSetback, out double ventilationFunctionSetback) && double.IsNaN(ventilationFunctionSetback))
+                    {
+                        profile_TBD.setbackValue = System.Convert.ToSingle(ventilationFunctionSetback);
+                    }
 
-                        if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionFactor, out double ventilationFunctionFactor) && double.IsNaN(ventilationFunctionFactor))
-                        {
-                            profile_TBD.value = System.Convert.ToSingle(ventilationFunctionFactor);
-                        }
+                    if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionFactor, out double ventilationFunctionFactor) && double.IsNaN(ventilationFunctionFactor))
+                    {
+                        profile_TBD.value = System.Convert.ToSingle(ventilationFunctionFactor);
                     }
                 }
             }
@@ -321,7 +329,7 @@ namespace SAM.Analytical.Tas
                 {
                     names.Add(profile.Name);
 
-                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticUL);
+                    profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticUL);
                     if (profile_TBD != null)
                         Update(profile_TBD, profile, 1);
                 }
@@ -331,7 +339,7 @@ namespace SAM.Analytical.Tas
                 {
                     names.Add(profile.Name);
 
-                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticLL);
+                    profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticLL);
                     if (profile_TBD != null)
                         Update(profile_TBD, profile, 1);
                 }
@@ -341,7 +349,7 @@ namespace SAM.Analytical.Tas
                 {
                     names.Add(profile.Name);
 
-                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHLL);
+                    profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHLL);
                     if (profile_TBD != null)
                         Update(profile_TBD, profile, 1);
                 }
@@ -351,7 +359,7 @@ namespace SAM.Analytical.Tas
                 {
                     names.Add(profile.Name);
 
-                    TBD.profile profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHUL);
+                    profile_TBD = thermostat.GetProfile((int)TBD.Profiles.ticHUL);
                     if (profile_TBD != null)
                         Update(profile_TBD, profile, 1);
                 }
