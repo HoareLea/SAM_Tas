@@ -289,6 +289,21 @@ namespace SAM.Analytical.Tas
                         }
 
                         profile_TBD.function = ventilationFunction;
+
+                        if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionDescription, out string ventilationFunctionDescription))
+                        {
+                            profile_TBD.description = ventilationFunctionDescription;
+                        }
+
+                        if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionSetback, out double ventilationFunctionSetback) && double.IsNaN(ventilationFunctionSetback))
+                        {
+                            profile_TBD.setbackValue = System.Convert.ToSingle(ventilationFunctionSetback);
+                        }
+
+                        if (internalCondition.TryGetValue(InternalConditionParameter.VentilationFunctionFactor, out double ventilationFunctionFactor) && double.IsNaN(ventilationFunctionFactor))
+                        {
+                            profile_TBD.value = System.Convert.ToSingle(ventilationFunctionFactor);
+                        }
                     }
                 }
             }
