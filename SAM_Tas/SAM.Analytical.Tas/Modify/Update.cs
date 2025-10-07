@@ -587,7 +587,6 @@ namespace SAM.Analytical.Tas
                             face3D.FlipNormal(false);
                         }
 
-
                         List<Space> spaces_Adjacent = adjacencyCluster.GetSpaces(panel);
                         bool reverse = false;
                         if (panel.PanelGroup == PanelGroup.Floor && spaces_Adjacent != null && spaces_Adjacent.Count > 1)
@@ -690,6 +689,22 @@ namespace SAM.Analytical.Tas
                             zoneSurface_Panel.buildingElement = buildingElement_Panel;
                             panel_Temp.SetValue(PanelParameter.BuildingElementGuid, buildingElement_Panel.GUID);
                         }
+
+                        //FeatureShade
+                        //if (buildingElement_Panel != null)
+                        //{
+                        //    buildingElement_Panel.RemoveFeatureShades();
+
+                        //    FeatureShade featureShade = panel_Temp.GetValue<FeatureShade>(Analytical.PanelParameter.FeatureShade);
+                        //    if (featureShade != null)
+                        //    {
+                        //        TBD.FeatureShade featureShade_TBD = Convert.ToTBD(featureShade, building);
+                        //        if(featureShade_TBD != null)
+                        //        {
+                        //            buildingElement_Panel.AssignFeatureShade(featureShade_TBD);
+                        //        }
+                        //    }
+                        //}
 
                         zoneSurface_Panel.type = SurfaceType.tbdExposed;
 

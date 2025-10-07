@@ -135,8 +135,6 @@ namespace SAM.Analytical.Tas
 
                     if(aperturePart != AperturePart.Undefined)
                     {
-                        
-                        
                         if (aperture != null)
                         {
                             buildingElement.SetColor(aperture, aperturePart);
@@ -147,9 +145,17 @@ namespace SAM.Analytical.Tas
                         }
                     }
 
-                    if(aperture != null && aperturePart == AperturePart.Pane && aperture.TryGetValue(Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
+                    if(aperture != null && aperturePart == AperturePart.Pane)
                     {
-                        List<TBD.ApertureType> apertureTypes = SetApertureTypes(building, buildingElement, openingProperties);
+                        if(aperture.TryGetValue(Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
+                        {
+                            List<TBD.ApertureType> apertureTypes = SetApertureTypes(building, buildingElement, openingProperties);
+                        }
+
+                        if (aperture.TryGetValue(Analytical.ApertureParameter.FeatureShade, out FeatureShade featureShade))
+                        {
+                            List<TBD.FeatureShade> featureShades = SetFeatureShades(building, buildingElement, featureShade);
+                        }
                     }
                 }
 
