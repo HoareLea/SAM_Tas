@@ -3,14 +3,14 @@
     public static partial class Convert
     {
 
-        public static TBD.FeatureShade ToTBD(this FeatureShade featureShade)
+        public static TBD.FeatureShade ToTBD(this FeatureShade featureShade, TBD.Building building)
         {
-            if(featureShade == null)
+            if(featureShade == null || building == null)
             {
                 return null;
             }
 
-            TBD.FeatureShade result = new TBD.FeatureShade();
+            TBD.FeatureShade result = building.AddFeatureShade(null);
             result.name = featureShade.Name;
             result.description = featureShade.Description;
             result.surfaceHeight = System.Convert.ToSingle(featureShade.SurfaceHeight);
