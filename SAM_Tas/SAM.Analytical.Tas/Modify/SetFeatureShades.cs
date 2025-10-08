@@ -26,6 +26,16 @@ namespace SAM.Analytical.Tas
             {
                 buildingElement.AssignFeatureShade(featureShade_TBD);
                 result.Add(featureShade_TBD);
+
+                List<dayType> dayTypes = building.DayTypes();
+                if (dayTypes != null)
+                {
+                    dayTypes.RemoveAll(x => x.name.Equals("HDD") || x.name.Equals("CDD"));
+                    foreach (dayType dayType in dayTypes)
+                    {
+                        featureShade_TBD.SetDayType(dayType, true);
+                    }
+                }
             }
 
             return result;
