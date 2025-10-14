@@ -43,7 +43,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                List<GH_SAMParam> result = [];
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM AnalyticalModel", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooApertureParam() { Name = "_apertures", NickName = "_apertures", Description = "SAM Analytical Apertures", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
 
@@ -53,7 +53,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
-                return result.ToArray();
+                return [.. result];
             }
         }
 
@@ -64,9 +64,9 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                List<GH_SAMParam> result = [];
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Number() { Name = "thermalTransmittances", NickName = "thermalTransmittances", Description = "Thermal Transmittances", Access = GH_ParamAccess.list }, ParamVisibility.Binding));
-                return result.ToArray();
+                return [.. result];
             }
         }
 
@@ -96,7 +96,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             List<Guid> guids = null;
 
-            List<Aperture> apertures = new List<Aperture>();
+            List<Aperture> apertures = [];
             index = Params.IndexOfInputParam("_apertures");
             if (index == -1 || !dataAccess.GetDataList(index, apertures) || apertures == null)
             {
