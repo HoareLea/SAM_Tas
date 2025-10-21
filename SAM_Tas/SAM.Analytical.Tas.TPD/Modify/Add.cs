@@ -2440,7 +2440,7 @@ namespace SAM.Analytical.Tas.TPD
                 Pipe pipe = plantLabel.GetPipe();
                 if (pipe != null)
                 {
-                    throw new NotImplementedException();
+                    systemObject = systemPlantRoom.GetSystemConnections()?.Find(x => x.Reference() == pipe.Reference());
                 }
             }
 
@@ -2493,7 +2493,7 @@ namespace SAM.Analytical.Tas.TPD
                 Duct duct = systemLabel.GetDuct();
                 if (duct != null)
                 {
-                    throw new System.NotImplementedException();
+                    systemObject = systemPlantRoom.GetSystemConnections()?.Find(x => x.Reference() == duct.Reference());
                 }
             }
 
