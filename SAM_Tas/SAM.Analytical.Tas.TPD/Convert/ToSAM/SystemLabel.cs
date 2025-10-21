@@ -23,7 +23,7 @@ namespace SAM.Analytical.Tas.TPD
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemLabel displaySystemLabel = new DisplaySystemLabel(result, location, labelDirection, plantLabel.GetHeight());
+            DisplaySystemLabel displaySystemLabel = new DisplaySystemLabel(result, location, labelDirection, plantLabel.GetHeight(), plantLabel.GetWidth());
             if(displaySystemLabel != null)
             {
                 result = displaySystemLabel;
@@ -44,7 +44,7 @@ namespace SAM.Analytical.Tas.TPD
 
             Point2D location = ((TasPosition)@dynamic.GetPosition())?.ToSAM();
 
-            DisplaySystemLabel displaySystemLabel = new DisplaySystemLabel(result, location, labelDirection, systemLabel.GetHeight());
+            DisplaySystemLabel displaySystemLabel = new DisplaySystemLabel(result, location, labelDirection, systemLabel.GetHeight(), systemLabel.GetWidth());
             if (displaySystemLabel != null)
             {
                 result = displaySystemLabel;

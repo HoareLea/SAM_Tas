@@ -19,6 +19,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 result.SetPosition(System.Convert.ToInt32(displaySystemLabel.Location.X), System.Convert.ToInt32(displaySystemLabel.Location.Y));
                 result.SetDirection(displaySystemLabel.LabelDirection.ToTPD());
+                result.SetSize(System.Convert.ToInt32(displaySystemLabel.Width), System.Convert.ToInt32(displaySystemLabel.Height));
             }
 
             return result;
@@ -39,6 +40,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 result.SetPosition(System.Convert.ToInt32(displaySystemLabel.Location.X), System.Convert.ToInt32(displaySystemLabel.Location.Y));
                 result.SetDirection(displaySystemLabel.LabelDirection.ToTPD());
+                result.SetSize(System.Convert.ToInt32(displaySystemLabel.Width), System.Convert.ToInt32(displaySystemLabel.Height));
             }
 
             return result;
@@ -59,6 +61,7 @@ namespace SAM.Analytical.Tas.TPD
 
                 result.SetPosition(System.Convert.ToInt32(displaySystemLabel.Location.X), System.Convert.ToInt32(displaySystemLabel.Location.Y));
                 result.SetDirection(displaySystemLabel.LabelDirection.ToTPD());
+                result.SetSize(System.Convert.ToInt32(displaySystemLabel.Width), System.Convert.ToInt32(displaySystemLabel.Height));
             }
 
             return result;
