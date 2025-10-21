@@ -2,6 +2,7 @@
 using SAM.Core.Systems;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using TPD;
 
 namespace SAM.Analytical.Tas.TPD
@@ -223,6 +224,70 @@ namespace SAM.Analytical.Tas.TPD
             };
 
             values.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+            return string.Join("-", values);
+        }
+
+        public static string Reference(this PlantLabel plantLabel)
+        {
+            if (plantLabel == null)
+            {
+                return null;
+            }
+
+            string reference = Reference(plantLabel.GetComponent());
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                if(Create.Reference(plantLabel.GetController()) is IReference reference_Temp)
+                {
+                    reference = reference_Temp?.ToString();
+                }
+
+                if (string.IsNullOrWhiteSpace(reference))
+                {
+                    reference = Reference(plantLabel.GetPipe());
+                }
+            }
+
+            if(string.IsNullOrWhiteSpace(reference))
+            {
+                return null;
+            }
+
+            List<string> values = new List<string>() { plantLabel.GetPosition().x.ToString(), plantLabel.GetPosition().y.ToString(), reference };
+            values.RemoveAll(x => x == null);
+
+            return string.Join("-", values);
+        }
+
+        public static string Reference(this global::TPD.SystemLabel systemLabel)
+        {
+            if (systemLabel == null)
+            {
+                return null;
+            }
+
+            string reference = Reference(systemLabel.GetComponent());
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                if (Create.Reference(systemLabel.GetController()) is IReference reference_Temp)
+                {
+                    reference = reference_Temp?.ToString();
+                }
+
+                if (string.IsNullOrWhiteSpace(reference))
+                {
+                    reference = Reference(systemLabel.GetDuct());
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                return null;
+            }
+
+            List<string> values = new List<string>() { systemLabel.GetPosition().x.ToString(), systemLabel.GetPosition().y.ToString(), reference };
+            values.RemoveAll(x => x == null);
 
             return string.Join("-", values);
         }

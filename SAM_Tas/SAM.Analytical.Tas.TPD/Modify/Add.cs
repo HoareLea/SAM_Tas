@@ -3,6 +3,7 @@ using SAM.Core;
 using SAM.Core.Systems;
 using SAM.Geometry.Planar;
 using SAM.Geometry.Systems;
+using System;
 using System.Collections.Generic;
 using TPD;
 
@@ -861,6 +862,22 @@ namespace SAM.Analytical.Tas.TPD
                 result.AddRange(systemConnections);
             }
 
+            int labelCount = system.GetLabelCount();
+            for(int i = 1; i <= labelCount; i++)
+            {
+                global::TPD.SystemLabel systemLabel = system.GetLabel(i);
+                if (systemLabel is null)
+                {
+                    continue;
+                }
+
+                List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(systemLabel, tPDDoc, componentConversionSettings);
+                if(systemJSAMObjects != null)
+                {
+                    result.AddRange(systemJSAMObjects);
+                }
+            }
+
             return result;
         }
 
@@ -1058,6 +1075,23 @@ namespace SAM.Analytical.Tas.TPD
             {
                 result.AddRange(systemConnections);
             }
+
+            int labelCount = plantRoom.GetLabelCount();
+            for (int i = 1; i <= labelCount; i++)
+            {
+                PlantLabel plantLabel = plantRoom.GetLabel(i);
+                if (plantLabel is null)
+                {
+                    continue;
+                }
+
+                List<ISystemJSAMObject> systemJSAMObjects = systemPlantRoom.Add(plantLabel, tPDDoc, componentConversionSettings);
+                if (systemJSAMObjects != null)
+                {
+                    result.AddRange(systemJSAMObjects);
+                }
+            }
+
 
             return result;
         }
@@ -2366,6 +2400,112 @@ namespace SAM.Analytical.Tas.TPD
                 {
                     result.Add(zoneComponent);
                 }
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, PlantLabel plantLabel, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || plantLabel == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            Core.Systems.SystemLabel systemLabel = plantLabel.ToSAM();
+            if (systemLabel == null)
+            {
+                return null;
+            }
+
+            ISystemObject systemObject = null;
+
+            PlantComponent systemComponent = plantLabel.GetComponent();
+            if (systemComponent != null)
+            {
+                systemObject = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, (systemComponent as dynamic).GUID);
+            }
+
+            if (systemObject == null)
+            {
+                PlantController controller = plantLabel.GetController();
+                if (controller != null)
+                {
+                    systemObject = systemPlantRoom.SystemController<ISystemController>(Create.Reference(controller));
+                }
+            }
+
+            if (systemObject == null)
+            {
+                Pipe pipe = plantLabel.GetPipe();
+                if (pipe != null)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            if (systemObject != null)
+            {
+                systemPlantRoom.Connect(systemObject as dynamic, systemLabel);
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+            if (systemPlantRoom.Add(systemLabel))
+            {
+                result.Add(systemLabel);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, global::TPD.SystemLabel systemLabel, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || systemLabel == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            Core.Systems.SystemLabel systemLabel_SAM = systemLabel.ToSAM();
+            if (systemLabel == null)
+            {
+                return null;
+            }
+
+            ISystemObject systemObject = null;
+
+            global::TPD.SystemComponent systemComponent = systemLabel.GetComponent();
+            if(systemComponent != null)
+            {
+                systemObject = Query.SystemComponent<Core.Systems.ISystemComponent>(systemPlantRoom, (systemComponent as dynamic).GUID);
+            }
+
+            if (systemObject == null)
+            {
+                Controller controller = systemLabel.GetController();
+                if (controller != null)
+                {
+                    systemObject = systemPlantRoom.SystemController<ISystemController>(Create.Reference(controller));
+                }
+            }
+
+            if (systemObject == null)
+            {
+                Duct duct = systemLabel.GetDuct();
+                if (duct != null)
+                {
+                    throw new System.NotImplementedException();
+                }
+            }
+
+            if (systemObject != null)
+            {
+                systemPlantRoom.Connect(systemObject as dynamic, systemLabel_SAM);
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+            if (systemPlantRoom.Add(systemLabel_SAM))
+            {
+                result.Add(systemLabel_SAM);
             }
 
             return result;

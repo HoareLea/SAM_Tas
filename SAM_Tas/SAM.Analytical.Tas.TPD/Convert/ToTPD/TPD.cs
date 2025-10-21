@@ -128,6 +128,8 @@ namespace SAM.Analytical.Tas.TPD
                         plantRoom.Name = systemPlantRoom.Name;
                     }
 
+                    List<Core.Systems.SystemLabel> systemLabels = systemPlantRoom.GetSystemObjects<Core.Systems.SystemLabel>();
+
                     List<LiquidSystem> liquidSystems = systemPlantRoom.GetSystems<LiquidSystem>();
                     if (liquidSystems != null && liquidSystems.Count != 0)
                     {
@@ -333,6 +335,25 @@ namespace SAM.Analytical.Tas.TPD
 
                             Create.Pipes(systemPlantRoom, plantRoom, dictionary_SystemComponents_TPD, out Dictionary<Guid, Pipe> dictionary_Pipes);
                             Create.PlantControllers(systemPlantRoom, plantRoom, liquidSystem, dictionary_SystemComponents_TPD, dictionary_Pipes);
+
+                            foreach(Core.Systems.SystemLabel systemLabel in systemLabels)
+                            {
+                                PlantComponent plantComponent = null;
+
+                                ISystemJSAMObject systemJSAMObject = systemPlantRoom.GetRelatedObjects<ISystemJSAMObject>(systemLabel)?.FirstOrDefault();
+                                if(systemJSAMObject != null)
+                                {
+                                    if(systemJSAMObject is ISystemConnection && dictionary_Pipes.TryGetValue(((ISystemConnection)systemJSAMObject).Guid, out Pipe pipe) && pipe != null)
+                                    {
+                                        systemLabel.ToTPD(pipe);
+                                    }
+                                    else if(systemJSAMObject is Core.Systems.ISystemComponent && dictionary_SystemComponents_TPD.TryGetValue((systemJSAMObject as dynamic).Guid, out plantComponent) && plantComponent != null)
+                                    {
+                                        systemLabel.ToTPD(plantComponent);
+                                    }
+                                }
+                            }
+
                         }
                     }
 
@@ -492,6 +513,24 @@ namespace SAM.Analytical.Tas.TPD
 
                                 Create.Ducts(systemPlantRoom, system, dictionary_SystemComponent, out Dictionary<Guid, Duct> dictionary_Ducts);
                                 dictionary_Controller = Create.Controllers(systemPlantRoom, system, airSystem, dictionary_SystemComponent, dictionary_Ducts, false);
+
+                                foreach (Core.Systems.SystemLabel systemLabel in systemLabels)
+                                {
+                                    ISystemJSAMObject systemJSAMObject = systemPlantRoom.GetRelatedObjects<ISystemJSAMObject>(systemLabel)?.FirstOrDefault();
+                                    if (systemJSAMObject != null)
+                                    {
+                                        global::TPD.ISystemComponent systemComponent = null;
+
+                                        if (systemJSAMObject is ISystemConnection && dictionary_Ducts.TryGetValue(((ISystemConnection)systemJSAMObject).Guid, out Duct duct) && duct != null)
+                                        {
+                                            systemLabel.ToTPD(duct);
+                                        }
+                                        else if (systemJSAMObject is Core.Systems.ISystemComponent && dictionary_SystemComponent.TryGetValue((systemJSAMObject as dynamic).Guid, out systemComponent) && systemComponent != null)
+                                        {
+                                            systemLabel.ToTPD(systemComponent);
+                                        }
+                                    }
+                                }
                             }
 
                             List<AirSystemGroup> airSystemGroups = systemPlantRoom.GetSystemGroups<AirSystemGroup>(airSystem);
@@ -818,6 +857,7 @@ namespace SAM.Analytical.Tas.TPD
 
                         systemEnergyCentre.Add(systemPlantRoom);
                     }
+
                 }
             }
 
