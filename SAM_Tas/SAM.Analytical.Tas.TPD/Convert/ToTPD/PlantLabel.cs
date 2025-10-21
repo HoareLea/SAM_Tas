@@ -1,4 +1,5 @@
-﻿using TPD;
+﻿using SAM.Geometry.Planar;
+using TPD;
 
 namespace SAM.Analytical.Tas.TPD
 {
@@ -12,12 +13,14 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             PlantLabel result = plantComponent.AddLabel(systemLabel.Text);
+            result.Label = systemLabel.Text;
 
-            if(systemLabel is Geometry.Systems.DisplaySystemLabel)
+            if (systemLabel is Geometry.Systems.DisplaySystemLabel)
             {
                 Geometry.Systems.DisplaySystemLabel displaySystemLabel = (Geometry.Systems.DisplaySystemLabel)systemLabel;
 
-                result.SetPosition(System.Convert.ToInt32(displaySystemLabel.Location.X), System.Convert.ToInt32(displaySystemLabel.Location.Y));
+                Point2D point2D = displaySystemLabel.Location.ToTPD();
+                result.SetPosition(System.Convert.ToInt32(point2D.X), System.Convert.ToInt32(point2D.Y));
                 result.SetDirection(displaySystemLabel.LabelDirection.ToTPD());
                 result.SetSize(System.Convert.ToInt32(displaySystemLabel.Width), System.Convert.ToInt32(displaySystemLabel.Height));
             }
@@ -33,12 +36,14 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             PlantLabel result = pipe.AddLabel(systemLabel.Text);
+            result.Label = systemLabel.Text;
 
             if (systemLabel is Geometry.Systems.DisplaySystemLabel)
             {
                 Geometry.Systems.DisplaySystemLabel displaySystemLabel = (Geometry.Systems.DisplaySystemLabel)systemLabel;
 
-                result.SetPosition(System.Convert.ToInt32(displaySystemLabel.Location.X), System.Convert.ToInt32(displaySystemLabel.Location.Y));
+                Point2D point2D = displaySystemLabel.Location.ToTPD();
+                result.SetPosition(System.Convert.ToInt32(point2D.X), System.Convert.ToInt32(point2D.Y));
                 result.SetDirection(displaySystemLabel.LabelDirection.ToTPD());
                 result.SetSize(System.Convert.ToInt32(displaySystemLabel.Width), System.Convert.ToInt32(displaySystemLabel.Height));
             }
@@ -54,12 +59,14 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             PlantLabel result = plantController.AddLabel(systemLabel.Text);
+            result.Label = systemLabel.Text;
 
             if (systemLabel is Geometry.Systems.DisplaySystemLabel)
             {
                 Geometry.Systems.DisplaySystemLabel displaySystemLabel = (Geometry.Systems.DisplaySystemLabel)systemLabel;
 
-                result.SetPosition(System.Convert.ToInt32(displaySystemLabel.Location.X), System.Convert.ToInt32(displaySystemLabel.Location.Y));
+                Point2D point2D = displaySystemLabel.Location.ToTPD();
+                result.SetPosition(System.Convert.ToInt32(point2D.X), System.Convert.ToInt32(point2D.Y));
                 result.SetDirection(displaySystemLabel.LabelDirection.ToTPD());
                 result.SetSize(System.Convert.ToInt32(displaySystemLabel.Width), System.Convert.ToInt32(displaySystemLabel.Height));
             }
