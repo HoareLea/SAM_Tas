@@ -10,7 +10,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Create
     {
-        public static List<PlantController> PlantControllers(this SystemPlantRoom systemPlantRoom, PlantRoom plantRoom, LiquidSystem liquidSystem, Dictionary<Guid, PlantComponent> dictionary_PlantComponents, Dictionary<Guid, Pipe> dictionary_Pipes)
+        public static Dictionary<Guid, PlantController> PlantControllers(this SystemPlantRoom systemPlantRoom, PlantRoom plantRoom, LiquidSystem liquidSystem, Dictionary<Guid, PlantComponent> dictionary_PlantComponents, Dictionary<Guid, Pipe> dictionary_Pipes)
         {
             if (systemPlantRoom == null || plantRoom == null || dictionary_PlantComponents == null)
             {
@@ -374,7 +374,13 @@ namespace SAM.Analytical.Tas.TPD
             }
             #endregion
 
-            return tuples.ConvertAll(x => x.Item1);
+            Dictionary<Guid, PlantController> result = new Dictionary<Guid, PlantController>();
+            foreach (Tuple<PlantController, IDisplaySystemController> tuple in tuples)
+            {
+                result[tuple.Item2.Guid] = tuple.Item1;
+            }
+
+            return result;
         }
     }
 }

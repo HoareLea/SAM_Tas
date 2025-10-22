@@ -12,7 +12,9 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            PlantLabel result = plantComponent.AddLabel(systemLabel.Text);
+            dynamic @dynamic = plantComponent;
+
+            PlantLabel result = @dynamic.AddLabel(systemLabel.Text);
             result.Label = systemLabel.Text;
 
             if (systemLabel is Geometry.Systems.DisplaySystemLabel)

@@ -143,6 +143,8 @@ namespace SAM.Analytical.Tas.TPD
                             Dictionary<Guid, PlantComponent> dictionary_SystemComponents_TPD = new Dictionary<Guid, PlantComponent>();
                             Dictionary<Guid, Core.Systems.ISystemComponent> dictionary_SystemComponents_SAM = new Dictionary<Guid, Core.Systems.ISystemComponent>();
 
+                            Dictionary<Guid, PlantController> dictionary_PlantController = new Dictionary<Guid, PlantController>();
+
                             List<Core.Systems.ISystemComponent> systemComponents = systemPlantRoom.GetSystemComponents<Core.Systems.ISystemComponent>(liquidSystem, ConnectorStatus.Undefined, Direction.Out);
                             if (systemComponents == null || systemComponents.Count == 0)
                             {
@@ -334,13 +336,14 @@ namespace SAM.Analytical.Tas.TPD
                             }
 
                             Create.Pipes(systemPlantRoom, plantRoom, dictionary_SystemComponents_TPD, out Dictionary<Guid, Pipe> dictionary_Pipes);
-                            Create.PlantControllers(systemPlantRoom, plantRoom, liquidSystem, dictionary_SystemComponents_TPD, dictionary_Pipes);
+                            dictionary_PlantController = Create.PlantControllers(systemPlantRoom, plantRoom, liquidSystem, dictionary_SystemComponents_TPD, dictionary_Pipes);
 
                             if(systemLabels != null)
                             {
                                 foreach (Core.Systems.SystemLabel systemLabel in systemLabels)
                                 {
                                     PlantComponent plantComponent = null;
+                                    PlantController plantController = null;
 
                                     ISystemJSAMObject systemJSAMObject = systemPlantRoom.GetRelatedObjects<ISystemJSAMObject>(systemLabel)?.FirstOrDefault();
                                     if (systemJSAMObject != null)
@@ -348,6 +351,10 @@ namespace SAM.Analytical.Tas.TPD
                                         if (systemJSAMObject is ISystemConnection && dictionary_Pipes.TryGetValue(((ISystemConnection)systemJSAMObject).Guid, out Pipe pipe) && pipe != null)
                                         {
                                             systemLabel.ToTPD(pipe);
+                                        }
+                                        else if (systemJSAMObject is ISystemController && dictionary_PlantController.TryGetValue((systemJSAMObject as dynamic).Guid, out plantController) && plantController != null)
+                                        {
+                                            systemLabel.ToTPD(plantController);
                                         }
                                         else if (systemJSAMObject is Core.Systems.ISystemComponent && dictionary_SystemComponents_TPD.TryGetValue((systemJSAMObject as dynamic).Guid, out plantComponent) && plantComponent != null)
                                         {
@@ -526,10 +533,15 @@ namespace SAM.Analytical.Tas.TPD
                                         if (systemJSAMObject != null)
                                         {
                                             global::TPD.ISystemComponent systemComponent = null;
+                                            Controller controller = null;
 
                                             if (systemJSAMObject is ISystemConnection && dictionary_Ducts.TryGetValue(((ISystemConnection)systemJSAMObject).Guid, out Duct duct) && duct != null)
                                             {
                                                 systemLabel.ToTPD(duct);
+                                            }
+                                            else if (systemJSAMObject is ISystemController && dictionary_Controller.TryGetValue((systemJSAMObject as dynamic).Guid, out controller) && controller != null)
+                                            {
+                                                systemLabel.ToTPD(controller);
                                             }
                                             else if (systemJSAMObject is Core.Systems.ISystemComponent && dictionary_SystemComponent.TryGetValue((systemJSAMObject as dynamic).Guid, out systemComponent) && systemComponent != null)
                                             {
