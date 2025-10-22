@@ -18,7 +18,19 @@ namespace SAM.Analytical.Tas.TPD
             SystemLoadComponent result = new SystemLoadComponent(@dynamic.Name);
             Modify.SetReference(result, @dynamic.GUID);
 
-            result.Load = ((ProfileData)@dynamic.Load).ToSAM();
+            bool useFlowRate = dynamic.UseFlowRate == -1;
+
+            if (useFlowRate)
+            {
+                result.Value = ((ProfileData)@dynamic.FlowRate).ToSAM();
+                result.TemperatureDifference = @dynamic.FluidDeltaT;
+                result.SpecificHeatCapacity = @dynamic.FluidSHC;
+                result.Density = @dynamic.FluidDensity;
+            }
+            else
+            {
+                result.Value = ((ProfileData)@dynamic.Load).ToSAM();
+            }
 
             result.Description = dynamic.Description;
 

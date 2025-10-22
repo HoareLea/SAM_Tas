@@ -81,7 +81,19 @@ namespace SAM.Analytical.Tas.TPD
 
             EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
 
-            result.Load?.Update(displaySystemLoadComponent.Load, energyCentre);
+            if(displaySystemLoadComponent.Type == LoadComponentValueType.FlowRate)
+            {
+                result.UseFlowRate = -1;
+                result.FlowRate?.Update(displaySystemLoadComponent.Value, energyCentre);
+                result.FluidDeltaT = displaySystemLoadComponent.TemperatureDifference;
+                result.FluidSHC = displaySystemLoadComponent.SpecificHeatCapacity;
+                result.FluidDensity = displaySystemLoadComponent.Density;
+            }
+            else
+            {
+                result.UseFlowRate = 1;
+                result.Load?.Update(displaySystemLoadComponent.Value, energyCentre);
+            }
 
             if(loadComponent == null)
             {
