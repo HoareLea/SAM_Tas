@@ -30,7 +30,9 @@ namespace SAM.Analytical.Tas.TPD
             result.FlowRate.Update(displaySystemSpace.FlowRate, energyCentre);
             result.FreshAir.Update(displaySystemSpace.FreshAir, energyCentre);
 
-            if(displaySystemSpace.DisplacementVentilation)
+            result.MinimumFlowFraction = displaySystemSpace.MinimumDesignFlowFraction;
+
+            if (displaySystemSpace.DisplacementVentilation)
             {
                 result.DisplacementVent = displaySystemSpace.DisplacementVentilation.ToTPD();
                 result.Flags = result.Flags | (int)tpdSystemZoneFlags.tpdSystemZoneFlagDisplacementVent;

@@ -30,6 +30,8 @@ namespace SAM.Analytical.Tas.TPD
             result.Duty?.Update(displaySystemHeatingCoil.Duty, system);
             result.MaximumOffcoil?.Update(displaySystemHeatingCoil.MaximumOffcoil, energyCentre);
 
+            result.SetpointControlBand = displaySystemHeatingCoil.ControlBand;
+
             //result.Setpoint.Value = 14;
             //result.Duty.Type = tpdSizedVariable.tpdSizedVariableSize;
             //result.Duty.SizeFraction = 1.0;

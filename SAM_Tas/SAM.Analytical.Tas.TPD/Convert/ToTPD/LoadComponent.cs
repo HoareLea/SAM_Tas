@@ -83,7 +83,7 @@ namespace SAM.Analytical.Tas.TPD
 
             if(displaySystemLoadComponent.Type == LoadComponentValueType.FlowRate)
             {
-                result.UseFlowRate = -1;
+                (result as dynamic).UseFlowRate = true;
                 result.FlowRate?.Update(displaySystemLoadComponent.Value, energyCentre);
                 result.FluidDeltaT = displaySystemLoadComponent.TemperatureDifference;
                 result.FluidSHC = displaySystemLoadComponent.SpecificHeatCapacity;
@@ -91,7 +91,7 @@ namespace SAM.Analytical.Tas.TPD
             }
             else
             {
-                result.UseFlowRate = 1;
+                (result as dynamic).UseFlowRate = false;
                 result.Load?.Update(displaySystemLoadComponent.Value, energyCentre);
             }
 

@@ -22,6 +22,7 @@ namespace SAM.Analytical.Tas.TPD
             result.Efficiency = heatingCoil.Efficiency?.ToSAM();
             result.Duty = heatingCoil.Duty?.ToSAM(); 
             result.MaximumOffcoil = heatingCoil.MaximumOffcoil?.ToSAM();
+            result.ControlBand = heatingCoil.SetpointControlBand;
 
             Modify.SetReference(result, @dynamic.GUID);
 

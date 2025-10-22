@@ -34,13 +34,14 @@ namespace SAM.Analytical.Tas.TPD
             DesignConditionSizedFlowValue flowRate = systemZone.FlowRate.ToSAM();
             DesignConditionSizedFlowValue freshAir = systemZone.FreshAir.ToSAM();
 
+            double minimumFlowFraction = systemZone.MinimumFlowFraction;
 
             tpdSystemZoneFlags tpdSystemZoneFlags = (tpdSystemZoneFlags)systemZone.Flags;
             bool displacementVentilation = tpdSystemZoneFlags.HasFlag(tpdSystemZoneFlags.tpdSystemZoneFlagDisplacementVent);
             bool modelInterzoneFlow = tpdSystemZoneFlags.HasFlag(tpdSystemZoneFlags.tpdSystemZoneFlagModelInterzoneFlow);
             bool modelVentilationFlow = tpdSystemZoneFlags.HasFlag(tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow);
 
-            SystemSpace result = new SystemSpace(name, area, volume, temperatureSetpoint, relativeHumiditySetpoint, pollutantSetpoint, displacementVentilation, modelInterzoneFlow, modelVentilationFlow, flowRate, freshAir);
+            SystemSpace result = new SystemSpace(name, area, volume, temperatureSetpoint, relativeHumiditySetpoint, pollutantSetpoint, displacementVentilation, modelInterzoneFlow, modelVentilationFlow, flowRate, freshAir, minimumFlowFraction);
             result.Description = dynamic.Description;
             if(zoneLoad != null)
             {
