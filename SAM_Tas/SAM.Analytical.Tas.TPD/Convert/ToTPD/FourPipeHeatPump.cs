@@ -24,20 +24,24 @@ namespace SAM.Analytical.Tas.TPD
 
             EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
 
-            @dynamic.HeatingSetpoint?.Update(displaySystemFourPipeHeatPump.HeatingSetpoint, energyCentre);
-            @dynamic.CoolingSetpoint?.Update(displaySystemFourPipeHeatPump.CoolingSetpoint, energyCentre);
-            @dynamic.HeatingEfficiency?.Update(displaySystemFourPipeHeatPump.HeatingEfficiency, energyCentre);
-            @dynamic.CoolingEfficiency?.Update(displaySystemFourPipeHeatPump?.CoolingEfficiency, energyCentre);
-            @dynamic.HeatingDuty?.Update(displaySystemFourPipeHeatPump.HeatingDuty, plantRoom);
-            @dynamic.CoolingDuty?.Update(displaySystemFourPipeHeatPump.CoolingDuty, plantRoom);
+            Modify.Update((result as dynamic).HeatingSetpoint, displaySystemFourPipeHeatPump.HeatingSetpoint, energyCentre);
+            Modify.Update((result as dynamic).CoolingSetpoint, displaySystemFourPipeHeatPump.CoolingSetpoint, energyCentre);
+            Modify.Update((result as dynamic).HeatingEfficiency, displaySystemFourPipeHeatPump.HeatingEfficiency, energyCentre);
+            Modify.Update((result as dynamic).CoolingEfficiency, displaySystemFourPipeHeatPump.CoolingEfficiency, energyCentre);
+
+            Modify.Update((result as dynamic).HeatingDuty, displaySystemFourPipeHeatPump.HeatingDuty, plantRoom);
+            Modify.Update((result as dynamic).CoolingDuty, displaySystemFourPipeHeatPump.CoolingDuty, plantRoom);
+
             @dynamic.Capacity1 = displaySystemFourPipeHeatPump.Capacity_1;
             @dynamic.DesignPressureDrop1 = displaySystemFourPipeHeatPump.DesignPressureDrop_1;
             @dynamic.Capacity2 = displaySystemFourPipeHeatPump.Capacity_2;
             @dynamic.DesignPressureDrop2 = displaySystemFourPipeHeatPump.DesignPressureDrop_2;
             @dynamic.DesignDeltaT1 = displaySystemFourPipeHeatPump.DesignTemperatureDifference_1;
             @dynamic.DesignDeltaT2 = displaySystemFourPipeHeatPump.DesignTemperatureDifference_2;
-            @dynamic.MotorEfficiency?.Update(displaySystemFourPipeHeatPump.MotorEfficiency, energyCentre);
-            @dynamic.AncillaryLoad?.Update(displaySystemFourPipeHeatPump.AncillaryLoad, energyCentre);
+
+            Modify.Update((result as dynamic).MotorEfficiency, displaySystemFourPipeHeatPump.MotorEfficiency, energyCentre);
+            Modify.Update((result as dynamic).AncillaryLoad, displaySystemFourPipeHeatPump.AncillaryLoad, energyCentre);
+            
             @dynamic.ADFCoolMode = displaySystemFourPipeHeatPump.ADFCoolingMode;
             @dynamic.ADFHeatMode = displaySystemFourPipeHeatPump.ADFHeatingMode;
 

@@ -539,15 +539,15 @@ namespace SAM.Analytical.Tas.TPD
                                             global::TPD.ISystemComponent systemComponent = null;
                                             Controller controller = null;
 
-                                            if (systemJSAMObject is ISystemConnection && dictionary_Ducts.TryGetValue(((ISystemConnection)systemJSAMObject).Guid, out Duct duct) && duct != null)
+                                            if (systemJSAMObject is ISystemConnection && dictionary_Ducts != null && dictionary_Ducts != null && dictionary_Ducts.TryGetValue(((ISystemConnection)systemJSAMObject).Guid, out Duct duct) && duct != null)
                                             {
                                                 systemLabel.ToTPD(duct);
                                             }
-                                            else if (systemJSAMObject is ISystemController && dictionary_Controller.TryGetValue((systemJSAMObject as dynamic).Guid, out controller) && controller != null)
+                                            else if (systemJSAMObject is ISystemController && dictionary_Controller != null && dictionary_Controller != null && dictionary_Controller.TryGetValue((systemJSAMObject as dynamic).Guid, out controller) && controller != null)
                                             {
                                                 systemLabel.ToTPD(controller);
                                             }
-                                            else if (systemJSAMObject is Core.Systems.ISystemComponent && dictionary_SystemComponent.TryGetValue((systemJSAMObject as dynamic).Guid, out systemComponent) && systemComponent != null)
+                                            else if (systemJSAMObject is Core.Systems.ISystemComponent && dictionary_SystemComponent != null && dictionary_SystemComponent != null && dictionary_SystemComponent.TryGetValue((systemJSAMObject as dynamic).Guid, out systemComponent) && systemComponent != null)
                                             {
                                                 systemLabel.ToTPD(systemComponent);
                                             }
