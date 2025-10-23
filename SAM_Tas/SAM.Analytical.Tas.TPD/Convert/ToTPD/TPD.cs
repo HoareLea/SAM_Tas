@@ -324,6 +324,10 @@ namespace SAM.Analytical.Tas.TPD
                                 {
                                     plantComponent_TPD = ToTPD((DisplaySystemWaterToWaterHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
                                 }
+                                else if (systemComponent_Temp is DisplaySystemFourPipeHeatPump)
+                                {
+                                    plantComponent_TPD = ToTPD((DisplaySystemFourPipeHeatPump)systemComponent_Temp, plantRoom) as PlantComponent;
+                                }
 
                                 if (plantComponent_TPD == null)
                                 {

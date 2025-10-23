@@ -1168,6 +1168,11 @@ namespace SAM.Analytical.Tas.TPD
                 return Add(systemPlantRoom, (WaterToWaterHeatPump)plantComponent, tPDDoc, componentConversionSettings);
             }
 
+            if (plantComponent is FourPipeHeatPump)
+            {
+                return Add(systemPlantRoom, (FourPipeHeatPump)plantComponent, tPDDoc, componentConversionSettings);
+            }
+
             if (plantComponent is HeatPump)
             {
                 return Add(systemPlantRoom, (HeatPump)plantComponent, tPDDoc, componentConversionSettings);
@@ -2161,6 +2166,36 @@ namespace SAM.Analytical.Tas.TPD
 
                 systemPlantRoom.Connect(systemWaterToWaterHeatPumpResult, systemWaterToWaterHeatPump);
                 result.Add(systemWaterToWaterHeatPumpResult);
+            }
+
+            return result;
+        }
+
+        public static List<ISystemJSAMObject> Add(this SystemPlantRoom systemPlantRoom, FourPipeHeatPump fourPipeHeatPump, TPDDoc tPDDoc, ComponentConversionSettings componentConversionSettings = null)
+        {
+            if (systemPlantRoom == null || fourPipeHeatPump == null || tPDDoc == null)
+            {
+                return null;
+            }
+
+            if (componentConversionSettings == null)
+            {
+                componentConversionSettings = new ComponentConversionSettings();
+            }
+
+            List<ISystemJSAMObject> result = new List<ISystemJSAMObject>();
+
+            SystemFourPipeHeatPump systemFourPipeHeatPump = fourPipeHeatPump.ToSAM();
+            systemPlantRoom.Add(systemFourPipeHeatPump);
+            result.Add(systemFourPipeHeatPump);
+
+            if (componentConversionSettings.IncludeComponentResults)
+            {
+                SystemFourPipeHeatPumpResult systemFourPipeHeatPumpResult = fourPipeHeatPump.ToSAM_SystemFourPipeHeatPumpResult(componentConversionSettings.StartHour + 1, componentConversionSettings.EndHour + 1);
+                systemPlantRoom.Add(systemFourPipeHeatPumpResult);
+
+                systemPlantRoom.Connect(systemFourPipeHeatPumpResult, systemFourPipeHeatPump);
+                result.Add(systemFourPipeHeatPumpResult);
             }
 
             return result;
