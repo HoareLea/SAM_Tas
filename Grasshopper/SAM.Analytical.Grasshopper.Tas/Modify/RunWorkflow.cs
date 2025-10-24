@@ -56,7 +56,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 AnalyticalModel analyticalModel = analyticalModels.ElementAt(i);
 
-                if(analyticalModel.TryGetValue("CaseDescription", out string caseDescription) || string.IsNullOrWhiteSpace(caseDescription))
+                if(!analyticalModel.TryGetValue("CaseDescription", out string caseDescription) || string.IsNullOrWhiteSpace(caseDescription))//CaseDescription
                 {
                     caseDescription = i.ToString();
                 }
@@ -66,7 +66,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     name = i.ToString();
                 }
                 
-                string directory_AnalyticalModel = Path.Combine(directory, string.Format("{0} {1}", i, caseDescription));
+                string directory_AnalyticalModel = Path.Combine(directory, i.ToString() == caseDescription ? caseDescription : string.Format("{0} {1}", i, caseDescription));
                 if(!Directory.Exists(directory_AnalyticalModel))
                 {
                     Directory.CreateDirectory(directory_AnalyticalModel);

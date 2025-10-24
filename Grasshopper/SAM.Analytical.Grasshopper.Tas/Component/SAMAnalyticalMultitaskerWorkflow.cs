@@ -8,6 +8,7 @@ using SAM.Core.Tas;
 using SAM.Weather;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -23,12 +24,12 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_gbXML3;
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_Small3;
 
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
@@ -38,7 +39,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// </summary>
         public SAMAnalyticalMultitaskerWorkflow()
           : base("SAMAnalytical.MultitaskerWorkflow", "SAMAnalytical.MultitaskerWorkflow",
-              "",
+              "MultitaskerWorkflow",
               "SAM WIP", "Tas")
         {
         }
@@ -344,12 +345,12 @@ namespace SAM.Analytical.Grasshopper.Tas
             base.AppendAdditionalMenuItems(menu);
 
             Menu_AppendSeparator(menu);
-            Menu_AppendItem(menu, "Open TBD", Menu_OpenTBD, Resources.SAM_TasTBD3, true, false);
+            Menu_AppendItem(menu, "Open Directory", Menu_OpenTBD, Resources.SAM_Small, true, false);
         }
 
         private void Menu_OpenTBD(object sender, EventArgs e)
         {
-            int index_Path = Params.IndexOfInputParam("_pathTasTBD");
+            int index_Path = Params.IndexOfInputParam("_directory");
             if (index_Path == -1)
             {
                 return;
@@ -365,12 +366,12 @@ namespace SAM.Analytical.Grasshopper.Tas
                 path = (@object as dynamic).Value?.ToString();
             }
 
-            if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+            if (string.IsNullOrWhiteSpace(path) || !System.IO.Directory.Exists(path))
             {
                 return;
             }
 
-            Core.Query.StartProcess(path);
+            Process.Start("explorer.exe", path);
         }
     }
 }
