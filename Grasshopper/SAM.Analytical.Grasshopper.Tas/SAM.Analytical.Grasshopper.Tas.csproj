@@ -33,6 +33,9 @@
     <None Remove="Convert\**" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="gbXMLSerializer">
+      <HintPath>..\..\..\SAM_gbXML\references\gbXMLSerializer.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -69,6 +72,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Analytical.gbXML">
+      <HintPath>..\..\..\SAM_gbXML\build\SAM.Analytical.gbXML.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Analytical.Grasshopper">
       <HintPath>..\..\..\SAM\build\SAM.Analytical.Grasshopper.dll</HintPath>
     </Reference>
@@ -79,6 +85,9 @@
     <Reference Include="SAM.Core, Version=1.0.7509.27571, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core.gbXML">
+      <HintPath>..\..\..\SAM_gbXML\build\SAM.Core.gbXML.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Core.Grasshopper">
       <HintPath>..\..\..\SAM\build\SAM.Core.Grasshopper.dll</HintPath>
