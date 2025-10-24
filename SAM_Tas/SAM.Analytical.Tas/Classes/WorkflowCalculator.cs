@@ -362,6 +362,14 @@ namespace SAM.Analytical.Tas
 
             result = new AnalyticalModel(result, adjacencyCluster);
 
+            if(result != null)
+            {
+                Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Saving Model"));
+                string path_Json = System.IO.Path.Combine(directory, string.Format("{0}.{1}", fileName, "json"));
+
+                Core.Convert.ToFile(result, path_Json, SAMFileType.Json);
+            }
+
             Ended?.Invoke(this, new System.EventArgs());
 
             return result;

@@ -177,7 +177,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 weatherData = new WeatherData(weatherData);
             }
 
-            List<DesignDay> heatingDesignDays = new List<DesignDay>();
+            List<DesignDay> heatingDesignDays = [];
             index = Params.IndexOfInputParam("heatingDesignDays_");
             if (index == -1 || !dataAccess.GetDataList(index, heatingDesignDays) || heatingDesignDays == null || heatingDesignDays.Count == 0)
             {
@@ -189,7 +189,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 heatingDesignDays = heatingDesignDays.ConvertAll(x => x.Clone());
             }
 
-            List<DesignDay> coolingDesignDays = new List<DesignDay>();
+            List<DesignDay> coolingDesignDays = [];
             index = Params.IndexOfInputParam("coolingDesignDays_");
             if (index == -1 || !dataAccess.GetDataList(index, coolingDesignDays) || coolingDesignDays == null || coolingDesignDays.Count == 0)
             {
@@ -203,11 +203,11 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             List<SurfaceOutputSpec> surfaceOutputSpecs = null;
 
-            List<GH_ObjectWrapper> objectWrappers = new List<GH_ObjectWrapper>();
+            List<GH_ObjectWrapper> objectWrappers = [];
             index = Params.IndexOfInputParam("surfaceOutputSpec_");
             if (index != -1 && dataAccess.GetDataList(index, objectWrappers) && objectWrappers != null && objectWrappers.Count != 0)
             {
-                surfaceOutputSpecs = new List<SurfaceOutputSpec>();
+                surfaceOutputSpecs = [];
                 foreach (GH_ObjectWrapper objectWrapper in objectWrappers)
                 {
                     object value = objectWrapper.Value;
@@ -218,7 +218,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if (value is bool && ((bool)value))
                     {
-                        SurfaceOutputSpec surfaceOutputSpec = new SurfaceOutputSpec("Tas.Simulate");
+                        SurfaceOutputSpec surfaceOutputSpec = new ("Tas.Simulate");
                         surfaceOutputSpec.SolarGain = true;
                         surfaceOutputSpec.Conduction = true;
                         surfaceOutputSpec.ApertureData = false;
@@ -231,7 +231,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     }
                     else if (Core.Query.IsNumeric(value) && Core.Query.TryConvert(value, out double @double) && @double == 2.0)
                     {
-                        surfaceOutputSpecs = new List<SurfaceOutputSpec>() { new SurfaceOutputSpec("Tas.Simulate") };
+                        surfaceOutputSpecs = [new ("Tas.Simulate")];
                         surfaceOutputSpecs[0].SolarGain = true;
                         surfaceOutputSpecs[0].Conduction = true;
                         surfaceOutputSpecs[0].ApertureData = true;
@@ -304,10 +304,10 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             bool shadingUpdated = false;
 
-            using (Core.Windows.Forms.ProgressForm progressForm = new Core.Windows.Forms.ProgressForm("SAM Workflow - TBD Update", count))
+            using (Core.Windows.Forms.ProgressForm progressForm = new ("SAM Workflow - TBD Update", count))
             {
                 progressForm.Update("Opening TBD document");
-                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
+                using (SAMTBDDocument sAMTBDDocument = new (path_TBD))
                 {
                     TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
 
@@ -332,7 +332,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     TBD.Calendar calendar = tBDDocument.Building.GetCalendar();
 
-                    List<TBD.dayType> dayTypes = Grasshopper.Tas.Query.DayTypes(calendar);
+                    List<TBD.dayType> dayTypes = Query.DayTypes(calendar);
                     if (dayTypes.Find(x => x.name == "HDD") == null)
                     {
                         TBD.dayType dayType = calendar.AddDayType();
@@ -393,7 +393,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            WorkflowSettings workflowSettings = new WorkflowSettings()
+            WorkflowSettings workflowSettings = new ()
             {
                 Path_TBD = path_TBD,
                 Path_gbXML = null,
