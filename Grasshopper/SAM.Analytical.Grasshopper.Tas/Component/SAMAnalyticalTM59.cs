@@ -112,15 +112,13 @@ namespace SAM.Analytical.Grasshopper.Tas
             if (index != -1)
             {
                 dataAccess.GetData(index, ref directory);
-                return;
             }
 
             string path = null;
             index = Params.IndexOfInputParam("_path_xml_");
-            if (index == -1)
+            if (index != -1)
             {
                 dataAccess.GetData(index, ref path);
-
             }
 
             if (string.IsNullOrWhiteSpace(path))
@@ -137,13 +135,32 @@ namespace SAM.Analytical.Grasshopper.Tas
                     name = System.IO.Path.GetFileNameWithoutExtension(directory);
                 }
 
+                if(!System.IO.Directory.Exists(directory))
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Directory does not exist");
+                    return;
+                }
+
+                string directoryName = "Report XMLs";
+
+                directory = System.IO.Path.Combine(directory, directoryName);
+                if(!System.IO.Directory.Exists(directory))
+                {
+                    System.IO.Directory.CreateDirectory(directory);
+                }
+
                 path = System.IO.Path.Combine(directory, name + "DomOv.xml");
             }
 
-
-            if(string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(path))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
+            if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(path)))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Directory does not exist");
                 return;
             }
 

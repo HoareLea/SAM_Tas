@@ -3,6 +3,7 @@ using SAM.Core;
 using SAM.Core.Tas;
 using SAM.Weather;
 using System.Collections.Generic;
+using TBD;
 
 namespace SAM.Analytical.Tas
 {
@@ -301,25 +302,24 @@ namespace SAM.Analytical.Tas
                 Query.Sizing(WorkflowSettings.Path_TBD, new SizingSettings() { ExcludeOutdoorAir = false, ExcludePositiveInternalGains = true }, result);
             }
 
-            Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Opening TBD"));
-            using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(WorkflowSettings.Path_TBD))
+            if (WorkflowSettings.SurfaceOutputSpecs != null && WorkflowSettings.SurfaceOutputSpecs.Count > 0)
             {
-                TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
-
-                if (WorkflowSettings.SurfaceOutputSpecs != null && WorkflowSettings.SurfaceOutputSpecs.Count > 0)
+                Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Opening TBD"));
+                using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(WorkflowSettings.Path_TBD))
                 {
+                    TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
                     Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Updating Surface Output Specs"));
                     Core.Tas.Modify.UpdateSurfaceOutputSpecs(tBDDocument, WorkflowSettings.SurfaceOutputSpecs);
                     Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Assigning Surface Output Specs"));
                     Core.Tas.Modify.AssignSurfaceOutputSpecs(tBDDocument, WorkflowSettings.SurfaceOutputSpecs[0].Name);
                     sAMTBDDocument.Save();
                 }
+            }
 
-                if (WorkflowSettings.Simulate)
-                {
-                    Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Simulating Model"));
-                    Modify.Simulate(tBDDocument, path_TSD, WorkflowSettings.SimulateFrom, WorkflowSettings.SimulateTo);
-                }
+            if (WorkflowSettings.Simulate)
+            {
+                Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs("Simulating Model"));
+                Modify.Simulate(WorkflowSettings.Path_TBD, path_TSD, WorkflowSettings.SimulateFrom, WorkflowSettings.SimulateTo);
             }
 
             if (!WorkflowSettings.Simulate)
