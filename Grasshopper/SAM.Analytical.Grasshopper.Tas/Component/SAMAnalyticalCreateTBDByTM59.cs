@@ -13,7 +13,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("4759368e-268c-4f12-b320-cb3941476062");
+        public override Guid ComponentGuid => new ("4759368e-268c-4f12-b320-cb3941476062");
 
         /// <summary>
         /// The latest version of this component
@@ -45,7 +45,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                List<GH_SAMParam> result = [];
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_TBD", NickName = "_path_TBD", Description = "A file path to a Tas file TBD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
@@ -69,7 +69,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
-                return result.ToArray();
+                return [.. result];
             }
         }
 

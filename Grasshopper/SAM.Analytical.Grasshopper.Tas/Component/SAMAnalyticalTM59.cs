@@ -16,7 +16,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -43,17 +43,19 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                List<GH_SAMParam> result = [];
                 result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "_analyticalModel", NickName = "_analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_path_xml", NickName = "_path_xml", Description = "A file path to TM59 xml file to be saved", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_String() { Name = "_directory_", NickName = "_directory_", Description = "Directory", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Binding));
+                
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_FilePath() { Name = "_path_xml_", NickName = "_path_xml", Description = "A file path to TM59 xml file to be saved", Access = GH_ParamAccess.item, Optional = true }, ParamVisibility.Voluntary));
 
-                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean = null;
+                global::Grasshopper.Kernel.Parameters.Param_Boolean @boolean;
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
-                return result.ToArray();
+                return [.. result];
             }
         }
 
@@ -64,10 +66,10 @@ namespace SAM.Analytical.Grasshopper.Tas
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
-                result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "analyticalModel", NickName = "analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                return result.ToArray();
+                List<GH_SAMParam> result = [];
+                result.Add(new GH_SAMParam(new GooAnalyticalModelParam() { Name = "AnalyticalModel", NickName = "analyticalModel", Description = "SAM Analytical Model", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                result.Add(new GH_SAMParam(new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "Successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
+                return [.. result];
             }
         }
 
@@ -77,7 +79,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            int index_successful = Params.IndexOfOutputParam("successful");
+            int index_successful = Params.IndexOfOutputParam("Successful");
             if(index_successful != -1)
             {
                 dataAccess.SetData(index_successful, false);
@@ -88,16 +90,12 @@ namespace SAM.Analytical.Grasshopper.Tas
             bool run = false;
             index = Params.IndexOfInputParam("_run");
             if (index == -1 || !dataAccess.GetData(index, ref run))
+            {
                 run = false;
+            }
 
             if (!run)
-                return;
-
-            string path = null;
-            index = Params.IndexOfInputParam("_path_xml");
-            if (index == -1 || !dataAccess.GetData(index, ref path) || string.IsNullOrWhiteSpace(path))
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
@@ -109,11 +107,53 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
+            string directory = null;
+            index = Params.IndexOfInputParam("_directory_");
+            if (index != -1)
+            {
+                dataAccess.GetData(index, ref directory);
+                return;
+            }
+
+            string path = null;
+            index = Params.IndexOfInputParam("_path_xml_");
+            if (index == -1)
+            {
+                dataAccess.GetData(index, ref path);
+
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                if (string.IsNullOrWhiteSpace(directory))
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                    return;
+                }
+
+                string name = analyticalModel.Name;
+                if(string.IsNullOrWhiteSpace(name))
+                {
+                    name = System.IO.Path.GetFileNameWithoutExtension(directory);
+                }
+
+                path = System.IO.Path.Combine(directory, name + "DomOv.xml");
+            }
+
+
+            if(string.IsNullOrWhiteSpace(path))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
+                return;
+            }
+
             bool result = Analytical.Tas.TM59.Convert.ToXml(analyticalModel, path);
 
-            index = Params.IndexOfOutputParam("analyticalModel");
+            index = Params.IndexOfOutputParam("AnalyticalModel");
             if (index != -1)
+            {
                 dataAccess.SetData(index, analyticalModel);
+            }
 
             if (index_successful != -1)
             {
