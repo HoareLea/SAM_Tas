@@ -102,6 +102,11 @@ namespace SAM.Analytical.Grasshopper.Tas
             Dictionary<string, AnalyticalModel> result = [];
             foreach(Tuple<string, AnalyticalModel> tuple in tuples)
             {
+                if(tuple is null)
+                {
+                    continue;
+                }
+
                 result[tuple.Item1] = tuple.Item2;
             }
 

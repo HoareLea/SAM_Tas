@@ -320,6 +320,11 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             Dictionary<string, AnalyticalModel> dictionary = Modify.RunWorkflow(analyticalModels, workflowSettings, directory);
 
+            if(analyticalModels.Count != dictionary.Count)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Some of the models could not be calculated.");
+            }
+
             index = Params.IndexOfOutputParam("CaseDescriptions");
             if (index != -1)
             {
