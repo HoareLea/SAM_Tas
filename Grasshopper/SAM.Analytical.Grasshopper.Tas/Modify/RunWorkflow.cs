@@ -52,7 +52,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             List<Tuple<string, AnalyticalModel>> tuples = [.. Enumerable.Repeat<Tuple<string, AnalyticalModel>>(null, analyticalModels.Count())];
 
-            Parallel.For(0, analyticalModels.Count(), i => 
+            Parallel.For(0, analyticalModels.Count(), new ParallelOptions() { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 } ,i => 
             {
                 AnalyticalModel analyticalModel = analyticalModels.ElementAt(i);
 
