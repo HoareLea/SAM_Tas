@@ -24,7 +24,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -92,6 +92,10 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_removeTBD_", NickName = "_removeTBD_", Description = "If True existing TBD file will be deleted before simulation", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
+                result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
+
+                @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_parallel_", NickName = "_parallel_", Description = "Parallel.", Optional = true, Access = GH_ParamAccess.item };
+                @boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
@@ -258,7 +262,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             {
                 if (!dataAccess.GetData(index, ref useBEWidths))
                 {
-                    simulate = false;
+                    useBEWidths = false;
                 }
             }
 
@@ -318,7 +322,17 @@ namespace SAM.Analytical.Grasshopper.Tas
                 RemoveExistingTBD = removeExistingTBD,
             };
 
-            Dictionary<string, AnalyticalModel> dictionary = Modify.RunWorkflow(analyticalModels, workflowSettings, directory);
+            bool parallel = true;
+            index = Params.IndexOfInputParam("_parallel_");
+            if (index != -1)
+            {
+                if (!dataAccess.GetData(index, ref parallel))
+                {
+                    parallel = true;
+                }
+            }
+
+            Dictionary<string, AnalyticalModel> dictionary = Modify.RunWorkflow(analyticalModels, workflowSettings, directory, parallel);
 
             if(analyticalModels.Count != dictionary.Count)
             {
