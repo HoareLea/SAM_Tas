@@ -342,7 +342,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfOutputParam("CaseDescriptions");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, dictionary?.Keys.ToList().ConvertAll(x => x == null ? null : System.IO.Path.GetFileNameWithoutExtension(x)));
+                dataAccess.SetDataList(index, dictionary?.Keys);
             }
 
             index = Params.IndexOfOutputParam("Directories");
