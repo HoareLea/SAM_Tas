@@ -141,7 +141,7 @@ namespace SAM.Analytical.Grasshopper.Tas.Obsolete
                 }
             }
 
-            if(indexes == null)
+            if(indexes == null || indexes.IsEmpty || indexes.DataCount == 0)
             {
                 indexes = new GH_Structure<GH_Integer>();
                 GH_Path path_Temp = new GH_Path(0);

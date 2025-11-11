@@ -7,12 +7,18 @@ namespace SAM.Analytical.Tas
         public static bool[] Combine(IEnumerable<bool[]> values)
         {
             if (values == null)
+            {
                 return null;
+            }
 
             int count = 0;
             foreach (bool[] bools in values)
+            {
                 if (bools.Length > count)
+                {
                     count = bools.Length;
+                }
+            }
 
             bool[] result = new bool[count];
 
@@ -22,12 +28,15 @@ namespace SAM.Analytical.Tas
                 foreach(bool[] bools in values)
                 {
                     if (bools.Length <= i)
+                    {
                         continue;
+                    }
 
                     if (!bools[i])
+                    {
                         result[i] = false;
-
-                    break;
+                        break;
+                    }
                 }
             }
 

@@ -210,12 +210,12 @@ namespace SAM.Analytical.Grasshopper.Tas
                 AnalyticalModelSimulationResult analyticalModelSimulationResult = Analytical.Tas.Convert.ToSAM_AnalyticalModelSimulationResult(path_TSD, analyticalModel);
                 analyticalModel.AddResult(analyticalModelSimulationResult);
 
-                consumpltionHeating = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating);
-                peakHeatingLoad = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakHeatingLoad);
+                consumpltionHeating = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating) / 1000;
+                peakHeatingLoad = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakHeatingLoad) / 1000;
                 peakHeatingHour = analyticalModelSimulationResult.GetValue<int>(AnalyticalModelSimulationResultParameter.PeakHeatingHour);
 
-                consumpltionCooling = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionCooling);
-                peakCoolingLoad = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakCoolingLoad);
+                consumpltionCooling = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionCooling) / 1000;
+                peakCoolingLoad = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakCoolingLoad) / 1000;
                 peakCoolingHour = analyticalModelSimulationResult.GetValue<int>(AnalyticalModelSimulationResultParameter.PeakCoolingHour);
 
                 results.Add(analyticalModelSimulationResult);
