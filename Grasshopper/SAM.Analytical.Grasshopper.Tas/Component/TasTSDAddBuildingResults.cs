@@ -208,7 +208,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 adjacencyCluster = new AdjacencyCluster(adjacencyCluster, true);
 
                 AnalyticalModelSimulationResult analyticalModelSimulationResult = Analytical.Tas.Convert.ToSAM_AnalyticalModelSimulationResult(path_TSD, analyticalModel);
-                analyticalModel.AddResult(analyticalModelSimulationResult);
+                adjacencyCluster.AddObject(analyticalModelSimulationResult);
 
                 consumpltionHeating = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating) / 1000;
                 peakHeatingLoad = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakHeatingLoad) / 1000;
