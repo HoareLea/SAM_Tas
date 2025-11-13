@@ -48,6 +48,19 @@ namespace SAM.Analytical.Tas
                 result.SetValue(Analytical.AnalyticalModelSimulationResultParameter.ConsumptionCooling, consumptionCooling);
                 result.SetValue(Analytical.AnalyticalModelSimulationResultParameter.PeakCoolingLoad, peakCoolingLoad);
                 result.SetValue(Analytical.AnalyticalModelSimulationResultParameter.PeakCoolingHour, peakCoolingHour);
+
+                double volume = Core.Tas.Query.Volume(buildingData);
+                if(!double.IsNaN(volume))
+                {
+                    result.SetValue(Analytical.AnalyticalModelSimulationResultParameter.Volume, volume);
+                }
+
+
+                double floorArea = Core.Tas.Query.FloorArea(buildingData);
+                if (!double.IsNaN(floorArea))
+                {
+                    result.SetValue(Analytical.AnalyticalModelSimulationResultParameter.FloorArea, floorArea);
+                }
             }
 
             return result;
