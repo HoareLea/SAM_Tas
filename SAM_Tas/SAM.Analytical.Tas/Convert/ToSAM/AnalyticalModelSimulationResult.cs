@@ -18,9 +18,9 @@ namespace SAM.Analytical.Tas
 
             AnalyticalModelSimulationResult result = null;
 
-            using (SAMTSDDocument sAMTBDDocument = new SAMTSDDocument(path_TSD, true))
+            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
             {
-                BuildingData buildingData = sAMTBDDocument.TSDDocument?.SimulationData?.GetBuildingData();
+                BuildingData buildingData = sAMTSDDocument.TSDDocument?.SimulationData?.GetBuildingData();
                 if (buildingData == null)
                 {
                     return null;

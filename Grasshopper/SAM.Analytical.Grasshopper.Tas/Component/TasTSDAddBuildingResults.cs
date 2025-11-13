@@ -189,11 +189,11 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             AdjacencyCluster adjacencyCluster = analyticalModel.AdjacencyCluster;
 
-            double consumpltionHeating = double.NaN;
+            double consumptionHeating = double.NaN;
             double peakHeatingLoad = double.NaN;
             int peakHeatingHour = -1;
             
-            double consumpltionCooling = double.NaN;
+            double consumptionCooling = double.NaN;
             double peakCoolingLoad = double.NaN;
             int peakCoolingHour = -1;
 
@@ -210,12 +210,20 @@ namespace SAM.Analytical.Grasshopper.Tas
                 AnalyticalModelSimulationResult analyticalModelSimulationResult = Analytical.Tas.Convert.ToSAM_AnalyticalModelSimulationResult(path_TSD, analyticalModel);
                 adjacencyCluster.AddObject(analyticalModelSimulationResult);
 
-                consumpltionHeating = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating) / 1000;
+                consumptionHeating = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating) / 1000;
+                //consumptionHeatingPerArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating) / 1000;
+                //consumptionHeatingPerVolume = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating) / 1000;
                 peakHeatingLoad = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakHeatingLoad) / 1000;
+                //peakHeatingLoadPerArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakHeatingLoad) / 1000;
+                //peakHeatingLoadPerVolume = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakHeatingLoad) / 1000;
                 peakHeatingHour = analyticalModelSimulationResult.GetValue<int>(AnalyticalModelSimulationResultParameter.PeakHeatingHour);
 
-                consumpltionCooling = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionCooling) / 1000;
+                consumptionCooling = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionCooling) / 1000;
+                //consumptionCoolinggPerArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionCooling) / 1000;
+                //consumptionCoolingPerVolume = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionCooling) / 1000;
                 peakCoolingLoad = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakCoolingLoad) / 1000;
+                //peakCoolingLoadPerArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakCoolingLoad) / 1000;
+                //peakCoolingLoadPerVolume = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakCoolingLoad) / 1000;
                 peakCoolingHour = analyticalModelSimulationResult.GetValue<int>(AnalyticalModelSimulationResultParameter.PeakCoolingHour);
 
                 results.Add(analyticalModelSimulationResult);
@@ -290,7 +298,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfOutputParam("ConsumptionHeating");
             if (index != -1)
             {
-                dataAccess.SetData(index, consumpltionHeating);
+                dataAccess.SetData(index, consumptionHeating);
             }
 
             index = Params.IndexOfOutputParam("PeakHeatingLoad");
@@ -308,7 +316,7 @@ namespace SAM.Analytical.Grasshopper.Tas
             index = Params.IndexOfOutputParam("ConsumptionCooling");
             if (index != -1)
             {
-                dataAccess.SetData(index, consumpltionCooling);
+                dataAccess.SetData(index, consumptionCooling);
             }
 
             index = Params.IndexOfOutputParam("PeakCoolingLoad");
@@ -343,7 +351,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             if (index_Successful != -1)
             {
-                dataAccess.SetData(index_Successful, !double.IsNaN(consumpltionCooling) || !double.IsNaN(consumpltionHeating));
+                dataAccess.SetData(index_Successful, !double.IsNaN(consumptionCooling) || !double.IsNaN(consumptionHeating));
             }
         }
 
