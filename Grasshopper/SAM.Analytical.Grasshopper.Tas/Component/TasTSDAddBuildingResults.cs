@@ -245,7 +245,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if(!double.IsNaN(peakHeatingLoad))
                     {
-                        peakHeatingLoadPerVolume = volume == 0 ? 0 : peakHeatingLoad / volume;
+                        peakHeatingLoadPerVolume = volume == 0 ? 0 : peakHeatingLoad / volume * 1000;
                         peakHeatingLoadPerVolume = Core.Query.Round(peakHeatingLoadPerVolume, 0.01);
                     }
 
@@ -257,7 +257,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if (!double.IsNaN(peakCoolingLoad))
                     {
-                        peakCoolingLoadPerVolume = volume == 0 ? 0 : peakCoolingLoad / volume;
+                        peakCoolingLoadPerVolume = volume == 0 ? 0 : peakCoolingLoad / volume * 1000;
                         peakCoolingLoadPerVolume = Core.Query.Round(peakCoolingLoadPerVolume, 0.01);
                     }
                 }
@@ -273,7 +273,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if (!double.IsNaN(peakHeatingLoad))
                     {
-                        peakHeatingLoadPerArea = floorArea == 0 ? 0 : peakHeatingLoad / floorArea;
+                        peakHeatingLoadPerArea = floorArea == 0 ? 0 : peakHeatingLoad / floorArea * 1000;
                         peakHeatingLoadPerArea = Core.Query.Round(peakHeatingLoadPerArea, 0.01);
                     }
 
@@ -285,20 +285,10 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if (!double.IsNaN(peakCoolingLoad))
                     {
-                        peakCoolingLoadPerArea = floorArea == 0 ? 0 : peakCoolingLoad / floorArea;
+                        peakCoolingLoadPerArea = floorArea == 0 ? 0 : peakCoolingLoad / floorArea * 1000;
                         peakCoolingLoadPerArea = Core.Query.Round(peakCoolingLoadPerArea, 0.01);
                     }
                 }
-                //consumptionHeatingPerArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating) / 1000;
-                //consumptionHeatingPerVolume = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionHeating) / 1000;
-                //peakHeatingLoadPerArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakHeatingLoad) / 1000;
-                //peakHeatingLoadPerVolume = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakHeatingLoad) / 1000;
-                //consumptionCoolinggPerArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionCooling) / 1000;
-                //consumptionCoolingPerVolume = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.ConsumptionCooling) / 1000;
-                //peakCoolingLoadPerArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakCoolingLoad) / 1000;
-                //peakCoolingLoadPerVolume = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.PeakCoolingLoad) / 1000;
-
-                //double floorArea = analyticalModelSimulationResult.GetValue<double>(AnalyticalModelSimulationResultParameter.FloorArea);
 
                 results.Add(analyticalModelSimulationResult);
 
