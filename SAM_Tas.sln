@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34316.72
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11217.181 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SAM_Tas", "SAM_Tas", "{24011B5A-B3AF-4632-AB18-E8DB0F450C24}"
 EndProject
@@ -35,6 +35,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Grasshopper.Tas.GenOpt", "Grasshopper\SAM.Analytical.Grasshopper.Tas.GenOpt\SAM.Analytical.Grasshopper.Tas.GenOpt.csproj", "{FFF18B3E-2C47-4557-9BD9-9E888AA82180}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAM.Analytical.Grasshopper.Tas.TPD", "Grasshopper\SAM.Analytical.Grasshopper.Tas.TPD\SAM.Analytical.Grasshopper.Tas.TPD.csproj", "{83EE9A11-1D2A-470C-BE4C-4416952720AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD7CE742-7F52-437D-9835-9421716F6F5E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
