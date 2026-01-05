@@ -6,40 +6,50 @@ on:
 jobs:
   spdx:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check header in changed .cs files
+      - name: Check headers in changed .cs files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          set -e
-          BASE="${{ github.event.pull_request.base.sha }}"
-          HEAD="${{ github.event.pull_request.head.sha }}"
+          set -euo pipefail
 
-          FILES=$(git diff --name-only "$BASE" "$HEAD" -- '*.cs' || true)
+          # Get changed .cs files in this PR
+          files=$(gh api "repos/$REPO/pulls/$PR/files" --paginate \
+            --jq '.[] | select(.filename | endswith(".cs")) | .filename')
 
-          if [ -z "$FILES" ]; then
+          if [ -z "${files:-}" ]; then
             echo "No C# files changed."
             exit 0
           fi
 
-          MISSING=""
-          for f in $FILES; do
-            HEADBLOCK=$(head -n 6 "$f")
+          spdx_re='SPDX-License-Identifier:[[:space:]]*LGPL-3\.0-or-later'
+          cr_re='Copyright[[:space:]]*\(c\)[[:space:]]*2020[[:space:]]*[-–—][[:space:]]*2026[[:space:]]*Michal[[:space:]]+Dengusiak[[:space:]]*&[[:space:]]*Jakub[[:space:]]+Ziolkowski[[:space:]]+and[[:space:]]+contributors'
 
-            echo "$HEADBLOCK" | grep -q "// SPDX-License-Identifier: LGPL-3.0-or-later" || MISSING="$MISSING $f"
-            echo "$HEADBLOCK" | grep -q "// Copyright (c) 2020–2025 Michal Dengusiak & Jakub Ziolkowski and contributors" || MISSING="$MISSING $f"
-          done
+          fail=0
+          while IFS= read -r f; do
+            echo "Checking: $f"
 
-          if [ -n "$MISSING" ]; then
-            echo "❌ Missing required header in:"
-            for f in $MISSING; do echo " - $f"; done
+            # Fetch file content at PR head SHA
+            headblock=$(gh api "repos/$REPO/contents/$f?ref=$HEAD_SHA" --jq '.content' \
+              | base64 -d | head -n 80 | tr -d '\r')
+
+            echo "$headblock" | grep -Eiq "$spdx_re" || { echo "  ❌ Missing SPDX line"; fail=1; continue; }
+            echo "$headblock" | grep -Eiq "$cr_re"   || { echo "  ❌ Missing copyright line"; fail=1; continue; }
+
+          done <<< "$files"
+
+          if [ "$fail" -ne 0 ]; then
             echo ""
-            echo "Each changed .cs file must start with:"
+            echo "Expected somewhere in first 80 lines:"
             echo "// SPDX-License-Identifier: LGPL-3.0-or-later"
-            echo "// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors"
+            echo "// Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors"
             exit 1
           fi
 
-          echo "✅ SPDX + copyright headers OK."
+          echo "✅ Headers OK."
