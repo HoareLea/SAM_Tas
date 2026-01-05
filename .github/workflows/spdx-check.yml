@@ -25,7 +25,6 @@ jobs:
           echo "Head SHA: $HEAD_SHA"
           echo ""
 
-          # List changed files in the PR (full paths) and keep only .cs.
           mapfile -t files < <(
             gh api "repos/$REPO/pulls/$PR/files" --paginate \
               --jq '.[] | .filename | select(endswith(".cs"))'
@@ -40,10 +39,7 @@ jobs:
           printf ' - %s\n' "${files[@]}"
           echo ""
 
-          # Regexes:
-          # - SPDX: tolerant whitespace
           spdx_re='SPDX-License-Identifier:[[:space:]]*LGPL-3\.0-or-later'
-          # - Copyright: allow dash variants, whitespace variants, (c) case-insensitive
           cr_re='Copyright[[:space:]]*\(c\)[[:space:]]*2020[[:space:]]*[-–—][[:space:]]*2026[[:space:]]*Michal[[:space:]]+Dengusiak[[:space:]]*&[[:space:]]*Jakub[[:space:]]+Ziolkowski[[:space:]]+and[[:space:]]+contributors'
 
           missing=()
@@ -51,8 +47,6 @@ jobs:
           for f in "${files[@]}"; do
             echo "Checking: $f"
 
-            # Fetch file content at PR head SHA via GitHub Contents API.
-            # (This avoids rename/copy/submodule/diff edge cases.)
             content_b64=$(gh api "repos/$REPO/contents/$f?ref=$HEAD_SHA" --jq '.content' 2>/dev/null || true)
             if [ -z "$content_b64" ]; then
               echo "  ❌ Could not fetch file content (deleted? submodule? path issue)"
@@ -60,16 +54,18 @@ jobs:
               continue
             fi
 
-            # Decode, normalize CRLF, look in first 80 lines (more forgiving than 30).
-            headblock=$(printf '%s' "$content_b64" | base64 -d | head -n 80 | tr -d '\r')
+            # Decode fully first (avoids SIGPIPE/broken pipe with pipefail),
+            # normalize CRLF, then take first 80 lines.
+            decoded=$(printf '%s' "$content_b64" | base64 -d)
+            headblock=$(printf '%s' "$decoded" | tr -d '\r' | head -n 80)
 
-            if ! echo "$headblock" | grep -Eiq "$spdx_re"; then
+            if ! printf '%s' "$headblock" | grep -Eiq "$spdx_re"; then
               echo "  ❌ Missing SPDX line in first 80 lines"
               missing+=("$f (SPDX)")
               continue
             fi
 
-            if ! echo "$headblock" | grep -Eiq "$cr_re"; then
+            if ! printf '%s' "$headblock" | grep -Eiq "$cr_re"; then
               echo "  ❌ Missing copyright line in first 80 lines"
               missing+=("$f (Copyright)")
               continue
