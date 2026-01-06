@@ -1,4 +1,7 @@
-﻿using Grasshopper.Kernel;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.Properties;
 using SAM.Analytical.Tas;
@@ -329,7 +332,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            Dictionary<string, AnalyticalModel> dictionary = Modify.RunWorkflow(analyticalModels, workflowSettings, directory, parallel);
+            Dictionary<string, AnalyticalModel> dictionary = Analytical.Tas.Modify.RunWorkflow(analyticalModels, workflowSettings, directory, parallel);
 
             if(analyticalModels.Count != dictionary.Count)
             {

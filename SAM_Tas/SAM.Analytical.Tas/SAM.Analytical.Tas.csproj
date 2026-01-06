@@ -18,6 +18,9 @@
     <OutputPath>..\..\build\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="gbXMLSerializer">
+      <HintPath>..\..\..\SAM_gbXML\references\gbXMLSerializer.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>
     </Reference>
@@ -45,6 +48,9 @@
     <Reference Include="SAM.Analytical">
       <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Analytical.gbXML">
+      <HintPath>..\..\..\SAM_gbXML\build\SAM.Analytical.gbXML.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Architectural, Version=1.0.7811.22436, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Architectural.dll</HintPath>
@@ -52,6 +58,9 @@
     <Reference Include="SAM.Core, Version=1.0.7488.22264, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core.gbXML">
+      <HintPath>..\..\..\SAM_gbXML\build\SAM.Core.gbXML.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Core.SolarCalculator">
       <HintPath>..\..\..\SAM_SolarCalculator\build\SAM.Core.SolarCalculator.dll</HintPath>
