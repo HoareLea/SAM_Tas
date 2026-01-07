@@ -1,5 +1,5 @@
-# .github/workflows/cleanup.yml
 name: Cleanup old failed runs
+
 on:
   schedule:
     - cron: '0 3 * * 0'   # weekly
@@ -8,13 +8,16 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+
     steps:
       - uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          delete_run_by_conclusion: failed,cancelled
-          retain_days: 14            # only delete if older than 14 days
-          keep_minimum_runs: 0       # it's safe to set 0 since successes aren't targeted
-          head_branch: master        # optional: limit to master
-          # workflow_id: build.yml  # optional: limit to a single workflow
+          delete_run_by_conclusion_pattern: failed|cancelled
+          retain_days: 14
+          keep_minimum_runs: 0
+
