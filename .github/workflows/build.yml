@@ -9,15 +9,20 @@ on:
 
 jobs:
   build:
-    # Guard so if this file ever gets merged upstream (HoareLea), it won't run there.
+    # Guard: if this ever gets merged upstream, it will "skip" there.
     if: github.repository_owner == 'SAM-BIM'
     runs-on: windows-2022
 
+    env:
+      MSBUILDDISABLENODEREUSE: "1"
+
     steps:
-      - name: Checkout (this repo)
+      # Checkout THIS repo into a folder so we can clone sibling repos next to it.
+      - name: Checkout SAM_Tas
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          path: SAM_Tas
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -27,77 +32,73 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Prepare gitcache + clone dependencies
+      - name: Clone dependency repos (siblings)
         shell: pwsh
-        env:
-          SAM_BIM_PAT: ${{ secrets.SUBMODULES_PAT }} # optional (only needed if any deps are private)
         run: |
           $ErrorActionPreference = 'Stop'
 
-          $cache = Join-Path $env:GITHUB_WORKSPACE 'gitcache'
-          New-Item -ItemType Directory -Force -Path $cache | Out-Null
+          $deps = @(
+            'SAM',
+            'SAM_Systems',
+            'SAM_Psychrometrics',
+            'SAM_Mollier',
+            'SAM_Windows',
+            'SAM_gbXML',
+            'SAM_SolarCalculator'
+          )
 
-          # Use authenticated URLs only if PAT is provided
-          $org  = 'SAM-BIM'
-          $base = "https://github.com/$org"
-          if ($env:SAM_BIM_PAT) {
-            $base = "https://x-access-token:$env:SAM_BIM_PAT@github.com/$org"
+          foreach ($r in $deps) {
+            if (Test-Path $r) { continue }
+            git clone --depth 1 "https://github.com/SAM-BIM/$r.git" $r
           }
 
-          function Clone-Repo([string]$repo, [string]$dest, [string]$branch = 'master') {
-            if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
-            $url = "$base/$repo.git"
+          # Ensure the reference path folder exists even before SAM_Windows builds
+          New-Item -ItemType Directory -Force -Path "SAM_Windows\build" | Out-Null
 
-            git clone --depth 1 --single-branch -b $branch $url $dest
-            if ($LASTEXITCODE -ne 0) {
-              Write-Host "WARN: clone $repo on '$branch' failed; trying 'main'..."
-              git clone --depth 1 --single-branch -b 'main' $url $dest
-              if ($LASTEXITCODE -ne 0) { throw "Failed to clone $repo (tried master + main)." }
-            }
-          }
-
-          # Dependencies (order matters)
-          Clone-Repo 'SAM'               (Join-Path $cache 'SAM')
-          Clone-Repo 'SAM_gbXML'         (Join-Path $cache 'SAM_gbXML')
-          Clone-Repo 'SAM_SolarCalculator' (Join-Path $cache 'SAM_SolarCalculator')
-          Clone-Repo 'SAM_Windows'       (Join-Path $cache 'SAM_Windows')
-
-          # Put *this* repo into gitcache too so sibling-relative references work the same way as the old Azure pipeline.
-          $tasDest = Join-Path $cache 'SAM_Tas'
-          if (Test-Path $tasDest) { Remove-Item $tasDest -Recurse -Force }
-          git clone $env:GITHUB_WORKSPACE $tasDest | Out-Null
-          Push-Location $tasDest
-          git checkout $env:GITHUB_SHA | Out-Null
-          Pop-Location
-
-      - name: Restore + Rebuild (MSBuild)
+      - name: Restore + Rebuild in order (CI props like SAM_Deploy)
         shell: pwsh
-        env:
-          MSBUILDDISABLENODEREUSE: "1"
         run: |
           $ErrorActionPreference = 'Stop'
 
-          function Build-Sln([string]$slnPath) {
-            if (-not (Test-Path $slnPath)) { throw "Missing solution: $slnPath" }
+          $windowsRef = Join-Path (Get-Location) 'SAM_Windows\build'
 
-            Write-Host "== Restore: $slnPath"
-            msbuild $slnPath `
-              /t:Restore `
-              /m:1 /nr:false /v:m `
-              /p:Configuration=Release `
-              /p:UseSharedCompilation=false `
-              /p:RestorePackagesConfig=true
+          $common = @(
+            '/m:1',
+            '/nr:false',
+            '/v:m',
+            '/p:Configuration=Release',
+            '/p:Platform=Any CPU',
+            '/p:UseSharedCompilation=false',
+            '/p:RunPostBuildEvent=OnOutputUpdated',
+            "/p:ReferencePath=$windowsRef"
+          ) -join ' '
 
-            Write-Host "== Rebuild: $slnPath"
-            msbuild $slnPath `
-              /t:Rebuild `
-              /m:1 /nr:false /v:m `
-              /p:Configuration=Release `
-              /p:UseSharedCompilation=false
+          $solutions = @(
+            'SAM\SAM.sln',
+            'SAM_Systems\SAM_Systems.sln',
+            'SAM_Psychrometrics\SAM_Psychrometrics.sln',
+            'SAM_Mollier\SAM_Mollier.sln',
+            'SAM_Windows\SAM_Windows.sln',
+            'SAM_gbXML\SAM_gbXML.sln',
+            'SAM_SolarCalculator\SAM_SolarCalculator.sln',
+            'SAM_Tas\SAM_Tas.sln'
+          )
+
+          foreach ($sln in $solutions) {
+            if (-not (Test-Path $sln)) { throw "Missing solution: $sln" }
+            Write-Host "==> Restore: $sln"
+            msbuild $sln /t:Restore $common
           }
 
-          Build-Sln ".\gitcache\SAM\SAM.sln"
-          Build-Sln ".\gitcache\SAM_gbXML\SAM_gbXML.sln"
-          Build-Sln ".\gitcache\SAM_SolarCalculator\SAM_SolarCalculator.sln"
-          Build-Sln ".\gitcache\SAM_Windows\SAM_Windows.sln"
-          Build-Sln ".\gitcache\SAM_Tas\SAM_Tas.sln"
+          foreach ($sln in $solutions) {
+            Write-Host "==> Rebuild: $sln"
+            msbuild $sln /t:Rebuild $common
+          }
+
+      - name: Upload build folders (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: SAM_Tas-build-folders
+          path: |
+            **\build\*
+          if-no-files-found: warn
