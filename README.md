@@ -1,4 +1,5 @@
-[![Build Status](https://hldigitalinnovation.visualstudio.com/HLApps/_apis/build/status/SAM/SAM-deploy-SAM_Tas?branchName=master)](https://hldigitalinnovation.visualstudio.com/HLApps/_build/latest?definitionId=28&branchName=master)
+[![Build (Windows)](https://github.com/SAM-BIM/SAM_Tas/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/SAM-BIM/SAM_Tas/actions/workflows/build.yml)
+[![Installer (latest)](https://img.shields.io/github/v/release/SAM-BIM/SAM_Deploy?label=installer)](https://github.com/SAM-BIM/SAM_Deploy/releases/latest)
 
 # SAM_Tas
 

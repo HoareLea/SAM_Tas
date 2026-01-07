@@ -1,0 +1,81 @@
+name: Build (Windows)
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Runs only on SAM-BIM repos (won't break upstream if merged elsewhere)
+    if: github.repository_owner == 'SAM-BIM'
+    runs-on: windows-2022
+
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [ "Release" ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Set to "recursive" only if THIS repo actually uses submodules otherwise "false"
+          submodules: false
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.x"
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Pick build target (.sln or .csproj)
+        id: pick
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $sln = Get-ChildItem -Path . -Filter *.sln -File | Select-Object -First 1
+          if ($sln) {
+            "target=$($sln.Name)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            Write-Host "Selected solution: $($sln.Name)"
+            exit 0
+          }
+
+          $csproj = Get-ChildItem -Path . -Filter *.csproj -File | Select-Object -First 1
+          if ($csproj) {
+            "target=$($csproj.Name)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            Write-Host "Selected project: $($csproj.Name)"
+            exit 0
+          }
+
+          throw "No root .sln or root .csproj found to build."
+
+      - name: Restore
+        shell: pwsh
+        env:
+          MSBUILDDISABLENODEREUSE: "1"
+        run: |
+          $ErrorActionPreference = 'Stop'
+          msbuild '${{ steps.pick.outputs.target }}' `
+            /t:Restore `
+            /m:1 /nr:false /v:m `
+            /p:Configuration=${{ matrix.configuration }} `
+            /p:UseSharedCompilation=false
+
+      - name: Build
+        shell: pwsh
+        env:
+          MSBUILDDISABLENODEREUSE: "1"
+        run: |
+          $ErrorActionPreference = 'Stop'
+          msbuild '${{ steps.pick.outputs.target }}' `
+            /t:Rebuild `
+            /m:1 /nr:false /v:m `
+            /p:Configuration=${{ matrix.configuration }} `
+            /p:UseSharedCompilation=false
