@@ -62,38 +62,42 @@ jobs:
 
           $windowsRef = Join-Path (Get-Location) 'SAM_Windows\build'
 
+          # IMPORTANT: keep these as an ARRAY of args (do NOT join into one string)
           $common = @(
-            '/m:1',
-            '/nr:false',
-            '/v:m',
-            '/p:Configuration=Release',
-            '/p:Platform=Any CPU',
-            '/p:UseSharedCompilation=false',
-            '/p:RunPostBuildEvent=OnOutputUpdated',
+            '/m:1'
+            '/nr:false'
+            '/v:m'
+            '/p:Configuration=Release'
+            '/p:UseSharedCompilation=false'
+            '/p:RunPostBuildEvent=OnOutputUpdated'
             "/p:ReferencePath=$windowsRef"
-          ) -join ' '
+          )
+
+          # If you really want Platform, use this (quoted) line:
+          # $common += '/p:Platform="Any CPU"'
 
           $solutions = @(
-            'SAM\SAM.sln',
-            'SAM_Systems\SAM_Systems.sln',
-            'SAM_Psychrometrics\SAM_Psychrometrics.sln',
-            'SAM_Mollier\SAM_Mollier.sln',
-            'SAM_Windows\SAM_Windows.sln',
-            'SAM_gbXML\SAM_gbXML.sln',
-            'SAM_SolarCalculator\SAM_SolarCalculator.sln',
+            'SAM\SAM.sln'
+            'SAM_Systems\SAM_Systems.sln'
+            'SAM_Psychrometrics\SAM_Psychrometrics.sln'
+            'SAM_Mollier\SAM_Mollier.sln'
+            'SAM_Windows\SAM_Windows.sln'
+            'SAM_gbXML\SAM_gbXML.sln'
+            'SAM_SolarCalculator\SAM_SolarCalculator.sln'
             'SAM_Tas\SAM_Tas.sln'
           )
 
           foreach ($sln in $solutions) {
             if (-not (Test-Path $sln)) { throw "Missing solution: $sln" }
             Write-Host "==> Restore: $sln"
-            msbuild $sln /t:Restore $common
+            & msbuild $sln /t:Restore @common
           }
 
           foreach ($sln in $solutions) {
             Write-Host "==> Rebuild: $sln"
-            msbuild $sln /t:Rebuild $common
+            & msbuild $sln /t:Rebuild @common
           }
+
 
       - name: Upload build folders (optional)
         uses: actions/upload-artifact@v4
