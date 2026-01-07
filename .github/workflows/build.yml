@@ -7,67 +7,18 @@ on:
     branches: [ "master", "main" ]
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   build:
-    # Guard: if this workflow is ever merged upstream (e.g. HoareLea),
-    # it will show as "skipped" and won't break their CI/branch protections.
+    # Guard so if this file ever gets merged upstream (HoareLea), it won't run there.
     if: github.repository_owner == 'SAM-BIM'
     runs-on: windows-2022
 
-    env:
-      BUILD_CONFIG: Release
-      # Reuse your existing secret name if you already use it elsewhere.
-      # Falls back to GITHUB_TOKEN automatically.
-      CHECKOUT_TOKEN: ${{ secrets.SUBMODULES_PAT || secrets.GITHUB_TOKEN }}
-
     steps:
-      # -----------------------------------------------------------------------
-      # CHECKOUT: put everything side-by-side (like your Azure "gitcache")
-      # -----------------------------------------------------------------------
-      - name: Checkout SAM_Tas (this repo)
+      - name: Checkout (this repo)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          path: gitcache/SAM_Tas
 
-      - name: Checkout dependency - SAM
-        uses: actions/checkout@v4
-        with:
-          repository: SAM-BIM/SAM
-          token: ${{ env.CHECKOUT_TOKEN }}
-          fetch-depth: 0
-          path: gitcache/SAM
-
-      - name: Checkout dependency - SAM_SolarCalculator
-        uses: actions/checkout@v4
-        with:
-          repository: SAM-BIM/SAM_SolarCalculator
-          token: ${{ env.CHECKOUT_TOKEN }}
-          fetch-depth: 0
-          path: gitcache/SAM_SolarCalculator
-
-      - name: Checkout dependency - SAM_Windows
-        uses: actions/checkout@v4
-        with:
-          repository: SAM-BIM/SAM_Windows
-          token: ${{ env.CHECKOUT_TOKEN }}
-          fetch-depth: 0
-          path: gitcache/SAM_Windows
-
-      - name: Checkout dependency - SAM_gbXML
-        uses: actions/checkout@v4
-        with:
-          repository: SAM-BIM/SAM_gbXML
-          token: ${{ env.CHECKOUT_TOKEN }}
-          fetch-depth: 0
-          path: gitcache/SAM_gbXML
-
-      # -----------------------------------------------------------------------
-      # TOOLING
-      # -----------------------------------------------------------------------
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
@@ -76,76 +27,77 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Setup NuGet (matches old Azure pipeline)
-        uses: nuget/setup-nuget@v2
-        with:
-          nuget-version: "4.4.1"
-
-      # Some SAM projects copy GH stuff into %APPDATA% during build
-      - name: Create Grasshopper Libraries folder
+      - name: Prepare gitcache + clone dependencies
         shell: pwsh
+        env:
+          SAM_BIM_PAT: ${{ secrets.SUBMODULES_PAT }} # optional (only needed if any deps are private)
         run: |
           $ErrorActionPreference = 'Stop'
-          New-Item -ItemType Directory -Force -Path "$env:APPDATA\Grasshopper\Libraries" | Out-Null
 
-      # -----------------------------------------------------------------------
-      # RESTORE (NuGet packages.config compatible)
-      # -----------------------------------------------------------------------
-      - name: NuGet restore (all solutions)
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $solutions = Get-ChildItem -Path "gitcache" -Recurse -File -Filter *.sln | Select-Object -ExpandProperty FullName
-          if (-not $solutions -or $solutions.Count -eq 0) {
-            throw "No .sln files found under gitcache."
-          }
-          foreach ($s in $solutions) {
-            Write-Host "nuget restore $s"
-            nuget restore $s -Verbosity detailed
+          $cache = Join-Path $env:GITHUB_WORKSPACE 'gitcache'
+          New-Item -ItemType Directory -Force -Path $cache | Out-Null
+
+          # Use authenticated URLs only if PAT is provided
+          $org  = 'SAM-BIM'
+          $base = "https://github.com/$org"
+          if ($env:SAM_BIM_PAT) {
+            $base = "https://x-access-token:$env:SAM_BIM_PAT@github.com/$org"
           }
 
-      # -----------------------------------------------------------------------
-      # BUILD in dependency order (SAM -> SolarCalculator -> Windows -> gbXML -> Tas)
-      # -----------------------------------------------------------------------
-      - name: Build (dependency chain)
+          function Clone-Repo([string]$repo, [string]$dest, [string]$branch = 'master') {
+            if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
+            $url = "$base/$repo.git"
+
+            git clone --depth 1 --single-branch -b $branch $url $dest
+            if ($LASTEXITCODE -ne 0) {
+              Write-Host "WARN: clone $repo on '$branch' failed; trying 'main'..."
+              git clone --depth 1 --single-branch -b 'main' $url $dest
+              if ($LASTEXITCODE -ne 0) { throw "Failed to clone $repo (tried master + main)." }
+            }
+          }
+
+          # Dependencies (order matters)
+          Clone-Repo 'SAM'               (Join-Path $cache 'SAM')
+          Clone-Repo 'SAM_gbXML'         (Join-Path $cache 'SAM_gbXML')
+          Clone-Repo 'SAM_SolarCalculator' (Join-Path $cache 'SAM_SolarCalculator')
+          Clone-Repo 'SAM_Windows'       (Join-Path $cache 'SAM_Windows')
+
+          # Put *this* repo into gitcache too so sibling-relative references work the same way as the old Azure pipeline.
+          $tasDest = Join-Path $cache 'SAM_Tas'
+          if (Test-Path $tasDest) { Remove-Item $tasDest -Recurse -Force }
+          git clone $env:GITHUB_WORKSPACE $tasDest | Out-Null
+          Push-Location $tasDest
+          git checkout $env:GITHUB_SHA | Out-Null
+          Pop-Location
+
+      - name: Restore + Rebuild (MSBuild)
         shell: pwsh
         env:
           MSBUILDDISABLENODEREUSE: "1"
         run: |
           $ErrorActionPreference = 'Stop'
 
-          function Find-BuildTarget([string]$repoRoot) {
-            $buildAll = Join-Path $repoRoot 'BuildAll_Release_net.csproj'
-            if (Test-Path $buildAll) { return $buildAll }
+          function Build-Sln([string]$slnPath) {
+            if (-not (Test-Path $slnPath)) { throw "Missing solution: $slnPath" }
 
-            $sln = Get-ChildItem -Path $repoRoot -Recurse -File -Filter *.sln -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($sln) { return $sln.FullName }
+            Write-Host "== Restore: $slnPath"
+            msbuild $slnPath `
+              /t:Restore `
+              /m:1 /nr:false /v:m `
+              /p:Configuration=Release `
+              /p:UseSharedCompilation=false `
+              /p:RestorePackagesConfig=true
 
-            $csproj = Get-ChildItem -Path $repoRoot -Recurse -File -Filter *.csproj -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($csproj) { return $csproj.FullName }
-
-            throw "No build target found in $repoRoot"
-          }
-
-          function Build-Repo([string]$repoName) {
-            $root = Join-Path (Get-Location) ("gitcache\" + $repoName)
-            if (-not (Test-Path $root)) { throw "Repo folder missing: $root" }
-
-            $target = Find-BuildTarget $root
-            Write-Host "------------------------------------------------------------"
-            Write-Host "BUILD $repoName"
-            Write-Host "Target: $target"
-            Write-Host "------------------------------------------------------------"
-
-            msbuild $target `
+            Write-Host "== Rebuild: $slnPath"
+            msbuild $slnPath `
               /t:Rebuild `
               /m:1 /nr:false /v:m `
-              /p:Configuration=$env:BUILD_CONFIG `
+              /p:Configuration=Release `
               /p:UseSharedCompilation=false
           }
 
-          Build-Repo "SAM"
-          Build-Repo "SAM_SolarCalculator"
-          Build-Repo "SAM_Windows"
-          Build-Repo "SAM_gbXML"
-          Build-Repo "SAM_Tas"
+          Build-Sln ".\gitcache\SAM\SAM.sln"
+          Build-Sln ".\gitcache\SAM_gbXML\SAM_gbXML.sln"
+          Build-Sln ".\gitcache\SAM_SolarCalculator\SAM_SolarCalculator.sln"
+          Build-Sln ".\gitcache\SAM_Windows\SAM_Windows.sln"
+          Build-Sln ".\gitcache\SAM_Tas\SAM_Tas.sln"
