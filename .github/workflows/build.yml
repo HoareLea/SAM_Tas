@@ -9,22 +9,32 @@ on:
 
 jobs:
   build:
-    # Runs only on SAM-BIM repos (won't break upstream if merged elsewhere)
+    # Guard: if this workflow is ever merged upstream (e.g. HoareLea),
+    # it will show as "skipped" and won't break their CI/branch protections.
     if: github.repository_owner == 'SAM-BIM'
     runs-on: windows-2022
 
-    strategy:
-      fail-fast: false
-      matrix:
-        configuration: [ "Release" ]
-
     steps:
-      - name: Checkout
+      # Clone repos as siblings (matches HintPath patterns like ..\..\..\SAM\build)
+      - name: Checkout SAM_Tas (this repo)
         uses: actions/checkout@v4
         with:
+          path: SAM_Tas
           fetch-depth: 0
-          # Set to "recursive" only if THIS repo actually uses submodules otherwise "false"
-          submodules: false
+
+      - name: Checkout SAM
+        uses: actions/checkout@v4
+        with:
+          repository: SAM-BIM/SAM
+          path: SAM
+          fetch-depth: 0
+
+      - name: Checkout SAM_gbXML
+        uses: actions/checkout@v4
+        with:
+          repository: SAM-BIM/SAM_gbXML
+          path: SAM_gbXML
+          fetch-depth: 0
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -34,48 +44,37 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Pick build target (.sln or .csproj)
-        id: pick
+      - name: Build SAM (Release)
         shell: pwsh
+        working-directory: SAM
+        env:
+          MSBUILDDISABLENODEREUSE: "1"
         run: |
-          $ErrorActionPreference = 'Stop'
+          $ErrorActionPreference = "Stop"
+          msbuild ".\SAM.sln" /t:Restore /m:1 /nr:false /v:m /p:Configuration=Release /p:UseSharedCompilation=false
+          msbuild ".\SAM.sln" /t:Rebuild  /m:1 /nr:false /v:m /p:Configuration=Release /p:UseSharedCompilation=false
+          if (-not (Test-Path ".\build")) { throw "SAM build folder not found: SAM\build" }
 
+      - name: Build SAM_gbXML (Release)
+        shell: pwsh
+        working-directory: SAM_gbXML
+        env:
+          MSBUILDDISABLENODEREUSE: "1"
+        run: |
+          $ErrorActionPreference = "Stop"
           $sln = Get-ChildItem -Path . -Filter *.sln -File | Select-Object -First 1
-          if ($sln) {
-            "target=$($sln.Name)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-            Write-Host "Selected solution: $($sln.Name)"
-            exit 0
-          }
+          if (-not $sln) { throw "No .sln found in SAM_gbXML repo root." }
 
-          $csproj = Get-ChildItem -Path . -Filter *.csproj -File | Select-Object -First 1
-          if ($csproj) {
-            "target=$($csproj.Name)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-            Write-Host "Selected project: $($csproj.Name)"
-            exit 0
-          }
+          msbuild $sln.FullName /t:Restore /m:1 /nr:false /v:m /p:Configuration=Release /p:UseSharedCompilation=false
+          msbuild $sln.FullName /t:Rebuild  /m:1 /nr:false /v:m /p:Configuration=Release /p:UseSharedCompilation=false
+          if (-not (Test-Path ".\build")) { throw "SAM_gbXML build folder not found: SAM_gbXML\build" }
 
-          throw "No root .sln or root .csproj found to build."
-
-      - name: Restore
+      - name: Build SAM_Tas (Release)
         shell: pwsh
+        working-directory: SAM_Tas
         env:
           MSBUILDDISABLENODEREUSE: "1"
         run: |
-          $ErrorActionPreference = 'Stop'
-          msbuild '${{ steps.pick.outputs.target }}' `
-            /t:Restore `
-            /m:1 /nr:false /v:m `
-            /p:Configuration=${{ matrix.configuration }} `
-            /p:UseSharedCompilation=false
-
-      - name: Build
-        shell: pwsh
-        env:
-          MSBUILDDISABLENODEREUSE: "1"
-        run: |
-          $ErrorActionPreference = 'Stop'
-          msbuild '${{ steps.pick.outputs.target }}' `
-            /t:Rebuild `
-            /m:1 /nr:false /v:m `
-            /p:Configuration=${{ matrix.configuration }} `
-            /p:UseSharedCompilation=false
+          $ErrorActionPreference = "Stop"
+          msbuild ".\SAM_Tas.sln" /t:Restore /m:1 /nr:false /v:m /p:Configuration=Release /p:UseSharedCompilation=false
+          msbuild ".\SAM_Tas.sln" /t:Rebuild  /m:1 /nr:false /v:m /p:Configuration=Release /p:UseSharedCompilation=false
