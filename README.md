@@ -3,27 +3,62 @@
 
 # SAM_Tas
 
+<a href="https://github.com/SAM-BIM/SAM">
+  <img src="https://github.com/SAM-BIM/SAM/blob/master/Grasshopper/SAM.Core.Grasshopper/Resources/SAM_Small.png"
+       align="left" hspace="10" vspace="6">
+</a>
 
-<a href="https://github.com/HoareLea/SAM_Tas"><img src="https://github.com/HoareLea/SAM_Tas/blob/master/Grasshopper/SAM.Analytical.Grasshopper.Tas/Resources/SAM_TasTSD.png" align="left" hspace="10" vspace="6"></a>
-<a href="https://github.com/HoareLea/SAM_Tas"><img src="https://github.com/HoareLea/SAM_Tas/blob/master/Grasshopper/SAM.Analytical.Grasshopper.Tas/Resources/SAM_TasTBD.png" align="left" hspace="10" vspace="6"></a>
-<a href="https://github.com/HoareLea/SAM_Tas"><img src="https://github.com/HoareLea/SAM_Tas/blob/master/Grasshopper/SAM.Analytical.Grasshopper.Tas/Resources/SAM_TasT3D.png" align="left" hspace="10" vspace="6"></a>
+**SAM_Tas** is part of the **SAM (Sustainable Analytical Model) Toolkit** —  
+an open-source collection of tools designed to help engineers create, manage,
+and process analytical building models for energy and environmental analysis.
 
-**SAM_Tas** is part of SAM Toolkit that is designed to help run siulation using [Tas EDSL](https://www.edsl.net/) from SAM Analytical Model. Welcome and let's make the opensource journey continue. :handshake:
+This repository provides **integration between SAM analytical models and the Tas EDSL simulation engine**,
+enabling building performance simulations to be executed in Tas using data derived from SAM workflows.
+
+The integration supports the preparation, execution, and post-processing of Tas simulations
+based on SAM analytical models, and is intended to be used alongside the SAM core libraries
+and related SAM-BIM modules.
+
+Welcome — and let’s keep the open-source journey going. 🤝
+
+---
 
 ## Resources
-* [Wiki](https://github.com/HoareLea/SAM_Tas/wiki)
+- 📘 **SAM Wiki:** https://github.com/SAM-BIM/SAM/wiki  
+- 🧠 **SAM Core:** https://github.com/SAM-BIM/SAM  
+- 🧮 **Tas (EDSL):** https://www.edsl.net/  
+- 🧰 **Installers:** https://github.com/SAM-BIM/SAM_Deploy  
+
+---
 
 ## Installing
 
-To install **SAM** from .exe just download and run [latest installer](https://github.com/HoareLea/SAM_Deploy/releases) otherwise rebuild using VS [SAM](https://github.com/HoareLea/SAM) , [SAM_gbXML](https://github.com/HoareLea/SAM_gbXML) and  [SAM_Tas](https://github.com/HoareLea/SAM_Tas)
+To install **SAM** using the Windows installer, download and run the  
+[latest installer](https://github.com/SAM-BIM/SAM_Deploy/releases/latest).
 
-## Licence ##
+Alternatively, you can build the toolkit from source using Visual Studio.  
+See the main repository for details:  
+👉 https://github.com/SAM-BIM/SAM
 
-SAM is free software licenced under GNU Lesser General Public Licence - [https://www.gnu.org/licenses/lgpl-3.0.html](https://www.gnu.org/licenses/lgpl-3.0.html)  
-Each contributor holds copyright over their respective contributions.
-The project versioning (Git) records all such contribution source information.
-See [LICENSE](https://github.com/HoareLea/SAM_gbXML/blob/master/LICENSE) and [COPYRIGHT_HEADER](https://github.com/HoareLea/SAM/blob/master/COPYRIGHT_HEADER.txt).
+---
 
-To install SAM from .exe just download and run latest installer 
-https://github.com/HoareLea/SAM_Deploy/releases
+## Development notes
 
+- Target framework: **.NET / C#**
+- Integration follows SAM-BIM analytical modelling conventions
+- New or modified `.cs` files must include the SPDX header from `COPYRIGHT_HEADER.txt`
+
+---
+
+## Licence
+
+This repository is free software licensed under the  
+**GNU Lesser General Public License v3.0 or later (LGPL-3.0-or-later)**.
+
+Each contributor retains copyright to their respective contributions.  
+The project history (Git) records authorship and provenance of all changes.
+
+See:
+- `LICENSE`
+- `NOTICE`
+- `COPYRIGHT_HEADER.txt`
