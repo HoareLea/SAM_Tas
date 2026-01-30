@@ -31,7 +31,10 @@ namespace SAM.Analytical.Tas
 
             if (radiator)  //TODO: 2023-09-25 allow other Zone component as Under Floor Heating Floor etc...read from Zone Internal Condition Heating Emitter Name
             {
-                dynamic radiator_Group = systemZone.AddRadiator();
+                Radiator radiator_Temp = systemZone.AddRadiator();
+
+                //dynamic radiator_Group = systemZone.AddRadiator();
+                dynamic radiator_Group = radiator_Temp;
                 radiator_Group.Name = heatingSystem.Name;
                 radiator_Group.SetSchedule(plantSchedule_System);
                 radiator_Group.Description = heatingSystem.Type?.Description;
@@ -76,7 +79,7 @@ namespace SAM.Analytical.Tas
                 dynamic fanCoilUnit_Group = systemZone.AddFanCoilUnit();
                 fanCoilUnit_Group.SetSchedule(plantSchedule_System);
                 fanCoilUnit_Group.Name = "FanCoil Unit";
-                fanCoilUnit_Group.Description = "FCU";
+                fanCoilUnit_Group.Description = "FCU HTG CLG";
                 fanCoilUnit_Group.SetElectricalGroup1(electricalGroup_FanCoilUnits);
                 fanCoilUnit_Group.DesignFlowType = TPD.tpdFlowRateType.tpdFlowRateSized;
 
@@ -108,7 +111,7 @@ namespace SAM.Analytical.Tas
                 {
                     fanCoilUnit_Group.SetHeatingGroup(heatingGroup);
                     fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
-                    fanCoilUnit_Group.HeatingDuty.SizeFraction = 1.15;//per AHRAE
+                    fanCoilUnit_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
                     fanCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
                 }
                 else

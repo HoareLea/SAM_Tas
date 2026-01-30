@@ -19,7 +19,7 @@
 
             if (heatingSystem != null)
             {
-                if (heatingSystem.Name == "RAD" || heatingSystem.Name == "THR" || heatingSystem.Name == "UFH")
+                if (heatingSystem.Name == "RAD" || heatingSystem.Name == "TRH" || heatingSystem.Name == "UFH")
                 {
                     radiator = true;
                 }
