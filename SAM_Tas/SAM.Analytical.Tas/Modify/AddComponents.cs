@@ -31,10 +31,7 @@ namespace SAM.Analytical.Tas
 
             if (radiator)  //TODO: 2023-09-25 allow other Zone component as Under Floor Heating Floor etc...read from Zone Internal Condition Heating Emitter Name
             {
-                Radiator radiator_Temp = systemZone.AddRadiator();
-
-                //dynamic radiator_Group = systemZone.AddRadiator();
-                dynamic radiator_Group = radiator_Temp;
+                dynamic radiator_Group = systemZone.AddRadiator();
                 radiator_Group.Name = heatingSystem.Name;
                 radiator_Group.SetSchedule(plantSchedule_System);
                 radiator_Group.Description = heatingSystem.Type?.Description;
