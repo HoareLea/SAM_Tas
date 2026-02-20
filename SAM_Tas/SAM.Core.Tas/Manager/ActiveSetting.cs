@@ -9,7 +9,7 @@ namespace SAM.Core.Tas
             public const string ParameterMap = "Parameter Map";
         }
 
-        private static Setting setting = Load();
+        private static Setting setting = null;
 
         private static Setting Load()
         {
@@ -24,6 +24,11 @@ namespace SAM.Core.Tas
         {
             get
             {
+                if(setting == null)
+                {
+                    setting = Load();
+                }
+
                 return setting;
             }
         }
