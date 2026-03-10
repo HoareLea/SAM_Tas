@@ -12,6 +12,7 @@ using SAM.Weather;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -169,7 +170,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            if(weatherData != null)
+            if (weatherData != null)
             {
                 weatherData = new WeatherData(weatherData);
             }
@@ -189,7 +190,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 heatingDesignDays = null;
             }
 
-            if(heatingDesignDays != null)
+            if (heatingDesignDays != null)
             {
                 heatingDesignDays = heatingDesignDays.ConvertAll(x => x.Clone());
             }
@@ -223,7 +224,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
                     if (value is bool && ((bool)value))
                     {
-                        SurfaceOutputSpec surfaceOutputSpec = new ("Tas.Simulate");
+                        SurfaceOutputSpec surfaceOutputSpec = new("Tas.Simulate");
                         surfaceOutputSpec.SolarGain = true;
                         surfaceOutputSpec.Conduction = true;
                         surfaceOutputSpec.ApertureData = false;
@@ -236,7 +237,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                     }
                     else if (Core.Query.IsNumeric(value) && Core.Query.TryConvert(value, out double @double) && @double == 2.0)
                     {
-                        surfaceOutputSpecs = [new ("Tas.Simulate")];
+                        surfaceOutputSpecs = [new("Tas.Simulate")];
                         surfaceOutputSpecs[0].SolarGain = true;
                         surfaceOutputSpecs[0].Conduction = true;
                         surfaceOutputSpecs[0].ApertureData = true;
@@ -308,7 +309,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            WorkflowSettings workflowSettings = new ()
+            WorkflowSettings workflowSettings = new()
             {
                 Path_TBD = null,
                 Path_gbXML = null,
@@ -350,7 +351,7 @@ namespace SAM.Analytical.Grasshopper.Tas
 
             Dictionary<string, AnalyticalModel> dictionary = Analytical.Tas.Modify.RunWorkflow(analyticalModels, workflowSettings, directory, parallel, maxDegreeOfParallelism);
 
-            if(analyticalModels.Count != dictionary.Count)
+            if (analyticalModels.Count != dictionary.Count)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Some of the models could not be calculated.");
             }
@@ -389,22 +390,39 @@ namespace SAM.Analytical.Grasshopper.Tas
                 return;
             }
 
-            string path = null;
+            string directory = null;
 
             object @object = null;
 
             @object = Params.Input[index_Path].VolatileData.AllData(true)?.OfType<object>()?.ElementAt(0);
             if (@object is IGH_Goo)
             {
-                path = (@object as dynamic).Value?.ToString();
+                directory = (@object as dynamic).Value?.ToString();
             }
 
-            if (string.IsNullOrWhiteSpace(path) || !System.IO.Directory.Exists(path))
+            if (string.IsNullOrWhiteSpace(directory) || !System.IO.Directory.Exists(directory))
             {
                 return;
             }
 
-            Process.Start("explorer.exe", path);
+            if (Directory.Exists(directory))
+            {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                {
+                    FileName = directory,
+                    UseShellExecute = true,
+                    Verb = "open"
+                };
+
+                try
+                {
+                    Process.Start(processStartInfo);
+                }
+                catch
+                {
+
+                }
+            }
         }
     }
 }
