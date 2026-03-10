@@ -27,7 +27,7 @@ namespace SAM.Analytical.Grasshopper.Tas
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -100,6 +100,11 @@ namespace SAM.Analytical.Grasshopper.Tas
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_parallel_", NickName = "_parallel_", Description = "Parallel.", Optional = true, Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(true);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Voluntary));
+
+                global::Grasshopper.Kernel.Parameters.Param_Integer integer = null;
+
+                integer = new global::Grasshopper.Kernel.Parameters.Param_Integer() { Name = "_cPUs_", NickName = "_cPUs_", Description = "Number of logical processors (as shown in Task Manager) used for the calculation.\r\nIf not specified, defaults to maximum available − 1 (leaving one processor free). If only one logical processor is available, it uses 1.", Optional = true, Access = GH_ParamAccess.item };
+                result.Add(new GH_SAMParam(number, ParamVisibility.Voluntary));
 
                 @boolean = new global::Grasshopper.Kernel.Parameters.Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 @boolean.SetPersistentData(false);
@@ -332,7 +337,18 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            Dictionary<string, AnalyticalModel> dictionary = Analytical.Tas.Modify.RunWorkflow(analyticalModels, workflowSettings, directory, parallel);
+            int? maxDegreeOfParallelism = null;
+            index = Params.IndexOfInputParam("_cPUs_");
+            if (index != -1)
+            {
+                int maxDegreeOfParallelism_Temp = -1;
+                if (dataAccess.GetData(index, ref maxDegreeOfParallelism_Temp) && maxDegreeOfParallelism_Temp > 0)
+                {
+                    maxDegreeOfParallelism = maxDegreeOfParallelism_Temp;
+                }
+            }
+
+            Dictionary<string, AnalyticalModel> dictionary = Analytical.Tas.Modify.RunWorkflow(analyticalModels, workflowSettings, directory, parallel, maxDegreeOfParallelism);
 
             if(analyticalModels.Count != dictionary.Count)
             {
