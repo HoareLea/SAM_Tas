@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
+using SAM.Core.UI.WPF;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -99,36 +100,45 @@ namespace SAM.Analytical.Tas
                 tuples[i] = new(directory_AnalyticalModel, name, workflowCalculator.Calculate(analyticalModel));
             };
 
-            if (parallel)
-            {
-                Parallel.For(0, count, new ParallelOptions()
-                {
-                    MaxDegreeOfParallelism = maxDegreeOfParallelism ?? Environment.ProcessorCount - 1
-                },
-                action.Invoke);
-            }
-            else
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    action.Invoke(i);
-                }
-            }
-
             Dictionary<string, AnalyticalModel> result = [];
-            foreach (Tuple<string, string, AnalyticalModel> tuple in tuples)
+
+            using (ProgressBarWindowManager progressBarWindowManager = new ProgressBarWindowManager("Run", "Running"))
             {
-                if (tuple is null)
+                if (parallel)
                 {
-                    continue;
+                    Parallel.For(0, count, new ParallelOptions()
+                    {
+                        MaxDegreeOfParallelism = maxDegreeOfParallelism ?? Environment.ProcessorCount - 1
+                    },
+                    action.Invoke);
+                }
+                else
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        progressBarWindowManager.Text = $"Running (Model: {tuples[i]?.Item3?.Name ?? "???"})";
+                        action.Invoke(i);
+                    }
                 }
 
-                result[tuple.Item1] = tuple.Item3;
+                progressBarWindowManager.Text = "Converting to SAM";
 
-                if(saveAnalyticalModels)
+                foreach (Tuple<string, string, AnalyticalModel> tuple in tuples)
                 {
-                    string path_json = Path.Combine(tuple.Item1, tuple.Item2 + ".json");
-                    Core.Convert.ToFile(tuple.Item3, path_json);
+                    if (tuple is null)
+                    {
+                        continue;
+                    }
+
+                    result[tuple.Item1] = tuple.Item3;
+
+                    progressBarWindowManager.Text = $"Converting to SAM ({tuple.Item2})";
+
+                    if (saveAnalyticalModels)
+                    {
+                        string path_json = Path.Combine(tuple.Item1, tuple.Item2 + ".json");
+                        Core.Convert.ToFile(tuple.Item3, path_json);
+                    }
                 }
             }
 

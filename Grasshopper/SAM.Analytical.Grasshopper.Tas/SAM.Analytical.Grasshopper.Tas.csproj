@@ -93,6 +93,9 @@
     <Reference Include="SAM.Core.Grasshopper">
       <HintPath>..\..\..\SAM\build\SAM.Core.Grasshopper.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Core.UI.WPF">
+      <HintPath>..\..\..\SAM_UI\build\SAM.Core.UI.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Core.Windows">
       <HintPath>..\..\..\SAM_Windows\build\SAM.Core.Windows.dll</HintPath>
     </Reference>

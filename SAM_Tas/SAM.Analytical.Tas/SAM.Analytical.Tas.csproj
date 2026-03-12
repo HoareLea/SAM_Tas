@@ -65,6 +65,9 @@
     <Reference Include="SAM.Core.SolarCalculator">
       <HintPath>..\..\..\SAM_SolarCalculator\build\SAM.Core.SolarCalculator.dll</HintPath>
     </Reference>
+    <Reference Include="SAM.Core.UI.WPF">
+      <HintPath>..\..\..\SAM_UI\build\SAM.Core.UI.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="SAM.Geometry, Version=1.0.7503.29265, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
