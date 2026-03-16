@@ -1,7 +1,7 @@
 ﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
-using SAM.Core.UI.WPF;
+//using SAM.Core.UI.WPF;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -102,7 +102,7 @@ namespace SAM.Analytical.Tas
 
             Dictionary<string, AnalyticalModel> result = [];
 
-            using (ProgressBarWindowManager progressBarWindowManager = new ProgressBarWindowManager("Run", "Running"))
+            //using (ProgressBarWindowManager progressBarWindowManager = new ProgressBarWindowManager("Run", "Running"))
             {
                 if (parallel)
                 {
@@ -116,12 +116,12 @@ namespace SAM.Analytical.Tas
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        progressBarWindowManager.Text = $"Running (Model: {tuples[i]?.Item3?.Name ?? "???"})";
+                        //progressBarWindowManager.Text = $"Running (Model: {tuples[i]?.Item3?.Name ?? "???"})";
                         action.Invoke(i);
                     }
                 }
 
-                progressBarWindowManager.Text = "Converting to SAM";
+                //progressBarWindowManager.Text = "Converting to SAM";
 
                 foreach (Tuple<string, string, AnalyticalModel> tuple in tuples)
                 {
@@ -132,7 +132,7 @@ namespace SAM.Analytical.Tas
 
                     result[tuple.Item1] = tuple.Item3;
 
-                    progressBarWindowManager.Text = $"Converting to SAM ({tuple.Item2})";
+                    //progressBarWindowManager.Text = $"Converting to SAM ({tuple.Item2})";
 
                     if (saveAnalyticalModels)
                     {
