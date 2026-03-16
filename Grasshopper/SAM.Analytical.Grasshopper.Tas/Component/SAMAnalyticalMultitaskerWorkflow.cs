@@ -349,7 +349,7 @@ namespace SAM.Analytical.Grasshopper.Tas
                 }
             }
 
-            Dictionary<string, AnalyticalModel> dictionary = Analytical.Tas.Modify.RunWorkflow(analyticalModels, workflowSettings, directory, parallel, maxDegreeOfParallelism);
+            Dictionary<string, AnalyticalModel> dictionary = UI.WPF.Modify.RunWorkflow(analyticalModels, workflowSettings, directory, parallel, maxDegreeOfParallelism);
 
             if (analyticalModels.Count != dictionary.Count)
             {
