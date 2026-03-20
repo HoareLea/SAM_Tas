@@ -31,8 +31,12 @@ namespace SAM.Analytical.Tas.TPD
             result.VariableFlowCapacity = displayHeatingSystemCollection.VariableFlowCapacity.ToTPD();
             //result.PeakDemand = displayHeatingSystemCollection.PeakDemand;
             result.SizeFraction = displayHeatingSystemCollection.SizeFraction;
-            result.UseDistributionHeatLossProfile = displayHeatingSystemCollection.Distribution == null ? (false).ToTPD() : (!displayHeatingSystemCollection.Distribution.IsEfficiency).ToTPD();
-            result.DistributionHeatLossProfile?.Update(displayHeatingSystemCollection.Distribution, energyCentre);
+
+            bool isEfficiency = displayHeatingSystemCollection.Distribution?.IsEfficiency ?? false;
+            result.UseDistributionHeatLossProfile = (!isEfficiency).ToTPD();
+
+            ProfileData profileData = isEfficiency ? dynamic.DistributionEfficiency : dynamic.DistributionHeatLossProfile;
+            profileData?.Update(displayHeatingSystemCollection.Distribution, energyCentre);
 
             if(heatingGroup == null)
             {
