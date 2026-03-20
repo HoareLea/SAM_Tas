@@ -722,6 +722,9 @@ namespace SAM.Analytical.Tas.TPD
                                     if (systemComponents_TPD.Count > 0)
                                     {
                                         ComponentGroup componentGroup = system.AddGroup(systemComponents_TPD.ToArray(), controllers_TPD.ToArray());
+                                        ((dynamic)componentGroup).Name = airSystemGroup.Name;
+                                        ((dynamic)componentGroup).Description = airSystemGroup.Description;
+
                                         airSystemGroup.SetReference(componentGroup.Reference());
                                         systemPlantRoom.Add(airSystemGroup);
 
