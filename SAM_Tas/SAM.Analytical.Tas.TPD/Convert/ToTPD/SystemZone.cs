@@ -20,6 +20,10 @@ namespace SAM.Analytical.Tas.TPD
                 result = system.AddSystemZone();
             }
 
+            result.Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagDisplacementVent;
+            result.Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelInterzoneFlow;
+            result.Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+
             EnergyCentre energyCentre = system.GetPlantRoom()?.GetEnergyCentre();
 
             dynamic @dynamic = result;

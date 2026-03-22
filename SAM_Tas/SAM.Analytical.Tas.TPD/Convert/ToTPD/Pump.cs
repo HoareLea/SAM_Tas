@@ -26,7 +26,7 @@ namespace SAM.Analytical.Tas.TPD
 
             result.OverallEfficiency?.Update(displaySystemPump.OverallEfficiency, energyCentre);
             result.Pressure = displaySystemPump.Pressure;
-            result.DesignFlowRate = displaySystemPump.DesignFlowRate;
+            result.DesignFlowRate = 0; //displaySystemPump.DesignFlowRate; 20206-03-22 this force auto-size
             result.Capacity = displaySystemPump.Capacity;
             result.PartLoad?.Update(displaySystemPump.PartLoad, energyCentre);
 

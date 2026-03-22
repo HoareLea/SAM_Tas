@@ -336,6 +336,7 @@ namespace SAM.Analytical.Tas
                     if(multiBoiler_DHW == null)
                     {
                         multiBoiler_DHW = plantRoom.AddMultiBoiler();
+                        multiBoiler_DHW.Name = "DHW Circuit Boiler";
                         multiBoiler_DHW.DesignPressureDrop = 25;
                         multiBoiler_DHW.Setpoint.Value = 60;
                         multiBoiler_DHW.SetFuelSource(1, fuelSource_Gas);
@@ -343,6 +344,7 @@ namespace SAM.Analytical.Tas
                         multiBoiler_DHW.Duty.SizeFraction = 1.0;
                         multiBoiler_DHW.Duty.AddDesignCondition(energyCentre.GetDesignCondition(2));
                         multiBoiler_DHW.SetPosition(0, 140);
+                        multiBoiler_DHW.Flags = multiBoiler_DHW.Flags | (int)global::TPD.tpdMultiBoilerFlags.tpdMultiBoilerIsDHW;
                     }
 
                     //DHW Pump
