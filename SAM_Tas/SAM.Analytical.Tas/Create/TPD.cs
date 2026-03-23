@@ -144,6 +144,7 @@ namespace SAM.Analytical.Tas
                     {
                         dHWGroup = plantRoom.AddDHWGroup();
                         dHWGroup.Name = "DHW Circuit Group";
+                        dHWGroup.DesignDeltaT = 50;
                         dHWGroup.DesignPressureDrop = 17 + (circuitLength / 4);
                         dHWGroup.LoadDistribution = global::TPD.tpdLoadDistribution.tpdLoadDistributionEven;
                         dHWGroup.SetPosition(200, 140);
