@@ -145,6 +145,7 @@ namespace SAM.Analytical.Tas
                         dHWGroup = plantRoom.AddDHWGroup();
                         dHWGroup.Name = "DHW Circuit Group";
                         dHWGroup.DesignDeltaT = 50;
+                        dHWGroup.MinimumReturnTemp = 10;
                         dHWGroup.DesignPressureDrop = 17 + (circuitLength / 4);
                         dHWGroup.LoadDistribution = global::TPD.tpdLoadDistribution.tpdLoadDistributionEven;
                         dHWGroup.SetPosition(200, 140);
@@ -401,12 +402,12 @@ namespace SAM.Analytical.Tas
                     plantController_Temperature.SensorArc1 = plantSensorArc_Temperature;
 
                     dynamic plantController_Max = plantRoom.AddController();
-                    plantController_Max.Name = "DHW Max Controller";
+                    plantController_Max.Name = "DHW Min Controller";
                     plantController_Max.SetPosition(110, 210);
-                    plantController_Max.ControlType = global::TPD.tpdControlType.tpdControlMin;
                     plantController_Max.AddControlArc(pump_DHW);
                     plantController_Max.AddChainArc(plantController_Load);
                     plantController_Max.AddChainArc(plantController_Temperature);
+                    plantController_Max.ControlType = global::TPD.tpdControlType.tpdControlMin;
 
                     dynamic multiChiller = plantRoom.AddMultiChiller();
                     multiChiller.Name = "Cooling Circuit Chiller";
@@ -673,6 +674,8 @@ namespace SAM.Analytical.Tas
 
                 Modify.AddComponents(systemZone_Group as SystemZone, energyCentre, heatingSystem, coolingSystem);
 
+                (systemZone_Group as SystemZone).Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+
                 i += 3;
             }
 
@@ -738,6 +741,8 @@ namespace SAM.Analytical.Tas
                 }
 
                 Modify.AddComponents(systemZone_Group as SystemZone, energyCentre, heatingSystem, coolingSystem);
+
+                (systemZone_Group as SystemZone).Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
 
                 i++;
             }
@@ -814,16 +819,20 @@ namespace SAM.Analytical.Tas
             dynamic junction_Out = system.AddJunction();
             junction_Out.SetPosition(offset.X + 220, offset.Y + 10);
             junction_Out.SetDirection(global::TPD.tpdDirection.tpdLeftRight);
+            junction_Out.name = "junction_Out";
+            junction_Out.Description = "Extract";
 
-            dynamic junction_In = system.AddJunction();
-            junction_In.SetPosition(offset.X - 60, offset.Y + 20);
-            junction_In.SetDirection(global::TPD.tpdDirection.tpdLeftRight);
+            //dynamic junction_In = system.AddJunction();
+            //junction_In.SetPosition(offset.X - 60, offset.Y + 20);
+            //junction_In.SetDirection(global::TPD.tpdDirection.tpdLeftRight);
+            //junction_In.name = "junction_In";
+            //junction_In.Description = "Supply";
 
             dynamic damper = system.AddDamper();
             damper.SetPosition(offset.X + 80, offset.Y + 10);
             damper.DesignFlowType = global::TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
 
-            system.AddDuct(junction_In, 1, zone, 1);
+            //system.AddDuct(junction_In, 1, zone, 1);
             system.AddDuct(zone, 1, damper, 1);
             system.AddDuct(damper, 1, fan, 1);
             system.AddDuct(fan, 1, junction_Out, 1);
@@ -841,7 +850,7 @@ namespace SAM.Analytical.Tas
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
 
-            List<string> names = new List<string>();
+            List<string> names = new List<string>() { null };
             for(int k=1; k < componentGroup.GetComponentCount(); k ++)
             {
                 SystemComponent systemComponent = componentGroup.GetComponent(k);
@@ -851,7 +860,8 @@ namespace SAM.Analytical.Tas
             int i = 1;
             foreach (ZoneLoad zoneLoad in zoneLoads)
             {
-                SystemZone systemZone_Group = componentGroup.GetComponent(i * 3) as SystemZone;
+                SystemZone systemZone_Group = componentGroup.GetComponent((i * 3) -1) as SystemZone;
+                //SystemZone systemZone_Group = componentGroup.GetComponent(i * 3) as SystemZone;
                 (systemZone_Group as dynamic).AddZoneLoad(zoneLoad);
                 systemZone_Group.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FlowRate.Method = global::TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
@@ -879,10 +889,13 @@ namespace SAM.Analytical.Tas
                     systemZone_Group.FlowRate.AddDesignCondition(energyCentre.GetDesignCondition(j));
                 }
 
-                Damper damper_Zone = componentGroup.GetComponent((i * 3) + 1) as Damper;
+                //Damper damper_Zone = componentGroup.GetComponent((i * 3) + 1) as Damper;
+                Damper damper_Zone = componentGroup.GetComponent(i * 3) as Damper;
                 damper_Zone.DesignFlowType = global::TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
                 Modify.AddComponents(systemZone_Group, energyCentre, heatingSystem, coolingSystem);
+
+                (systemZone_Group as SystemZone).Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
 
                 i++;
             }
@@ -1017,6 +1030,8 @@ namespace SAM.Analytical.Tas
                 damper_Zone.DesignFlowType = global::TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
 
                 Modify.AddComponents(systemZone_Group, energyCentre, heatingSystem, coolingSystem);
+
+                (systemZone_Group as SystemZone).Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
 
                 i += 2;
             }

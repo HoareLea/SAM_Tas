@@ -37,6 +37,7 @@ namespace SAM.Analytical.Tas
                 radiator_Group.Description = heatingSystem.Type?.Description;
                 radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(3));
                 radiator_Group.Duty.SizeFraction = 1.25;//per AHRAE
                 radiator_Group.SetHeatingGroup(heatingGroup);
             }
@@ -57,6 +58,7 @@ namespace SAM.Analytical.Tas
                     chilledBeam_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     chilledBeam_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
                     chilledBeam_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    chilledBeam_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(3));
                 }
 
                 if (chilledBeam_Heating)
@@ -68,6 +70,7 @@ namespace SAM.Analytical.Tas
                     chilledBeam_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     chilledBeam_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
                     chilledBeam_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                    chilledBeam_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(3));
                 }
             }
 
@@ -88,6 +91,7 @@ namespace SAM.Analytical.Tas
                 for (int i = 1; i <= energyCentre.GetDesignConditionCount(); i++)
                 {
                     fanCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    fanCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(3));
                 }
 
                 if (fanCoil_Cooling)
@@ -97,6 +101,7 @@ namespace SAM.Analytical.Tas
                     fanCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     fanCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
                     fanCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    fanCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(3));
                 }
                 else
                 {
@@ -110,6 +115,7 @@ namespace SAM.Analytical.Tas
                     fanCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     fanCoilUnit_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
                     fanCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                    fanCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(3));
                 }
                 else
                 {
@@ -136,6 +142,7 @@ namespace SAM.Analytical.Tas
                 dXCoilUnit_Group.DesignFlowRate.SizeFraction = 1.15;//per AHRAE
                 dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(1));
                 dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                dXCoilUnit_Group.DesignFlowRate.AddDesignCondition(energyCentre.GetDesignCondition(3));
 
                 if (dXCoil_Cooling)
                 {
@@ -144,6 +151,7 @@ namespace SAM.Analytical.Tas
                     dXCoilUnit_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     dXCoilUnit_Group.CoolingDuty.SizeFraction = 1.15;//per AHRAE
                     dXCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(2));
+                    dXCoilUnit_Group.CoolingDuty.AddDesignCondition(energyCentre.GetDesignCondition(3));
                 }
                 else
                 {
@@ -157,6 +165,7 @@ namespace SAM.Analytical.Tas
                     dXCoilUnit_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                     dXCoilUnit_Group.HeatingDuty.SizeFraction = 1.25;//per AHRAE
                     dXCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(1));
+                    dXCoilUnit_Group.HeatingDuty.AddDesignCondition(energyCentre.GetDesignCondition(3));
                 }
                 else
                 {
