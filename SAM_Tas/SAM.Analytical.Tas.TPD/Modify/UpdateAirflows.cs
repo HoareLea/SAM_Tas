@@ -53,14 +53,37 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
+                    List<ZoneComponent> zoneComponents = new List<ZoneComponent>();
+
                     for (int j = 1; j <= system.GetComponentCount(); j++)
                     {
                         ZoneComponent zoneComponent = system.GetComponent(j) as ZoneComponent;
                         if (zoneComponent is null)
                         {
-                            continue;
-                        }
+                            ComponentGroup componentGroup = system.GetComponent(j) as ComponentGroup;
+                            if(!(componentGroup is null))
+                            {
+                                for (int k = 1; k <= componentGroup.GetComponentCount(); k++)
+                                {
+                                    zoneComponent = system.GetComponent(k) as ZoneComponent;
+                                    if(zoneComponent is null)
+                                    {
+                                        continue;
+                                    }
 
+                                    zoneComponents.Add(zoneComponent);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            zoneComponents.Add(zoneComponent);
+                        }
+                    }
+
+
+                    foreach (ZoneComponent zoneComponent in zoneComponents)
+                    {
                         SystemZone systemZone = zoneComponent.GetZone();
                         if (systemZone == null)
                         {
@@ -73,7 +96,14 @@ namespace SAM.Analytical.Tas.TPD
 
                         if (!airflows.TryGetValue(name, out double airFlow))
                         {
-                            continue;
+                            @dynamic = zoneComponent;
+
+                            name = dynamic.Name;
+
+                            if (!airflows.TryGetValue(name, out airFlow))
+                            {
+                                continue;
+                            }
                         }
 
                         systemZone.FlowRate.Type = tpdSizedVariable.tpdSizedVariableValue;
