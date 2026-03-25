@@ -789,10 +789,7 @@ namespace SAM.Analytical.Tas
             system.Name = name;
             system.Multiplicity = 1;//zoneLoads.Count();
 
-            dynamic plantSchedule = energyCentre.AddSchedule(global::TPD.tpdScheduleType.tpdScheduleFunction);
-            plantSchedule.Name = "System Schedule";
-            plantSchedule.FunctionType = global::TPD.tpdScheduleFunctionType.tpdScheduleFunctionAllZonesLoad;
-            plantSchedule.FunctionLoads = 4 + 8 + 1024; // heating, cooling, occupant sensible
+            dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
 
             dynamic zone = system.AddSystemZone();
             zone.SetPosition(offset.X + 0, offset.Y + 0);
@@ -813,7 +810,7 @@ namespace SAM.Analytical.Tas
             fan.SetElectricalGroup1(electricalGroup_Fans);
             fan.PartLoad.Value = 0;
             fan.PartLoad.ClearModifiers();
-            fan.SetSchedule(plantSchedule);
+            fan.SetSchedule(plantSchedule_System);
             fan.SetPosition(offset.X + 140, offset.Y + 10);
             fan.SetDirection(global::TPD.tpdDirection.tpdLeftRight);
             fan.DesignFlowType = global::TPD.tpdFlowRateType.tpdFlowRateNearestZoneFlowRate;
@@ -1920,7 +1917,7 @@ namespace SAM.Analytical.Tas
                 return false;
             }
 
-            dynamic plantSchedule_Occupancy = energyCentre.PlantSchedule("Occupancy Schedule");
+            dynamic plantSchedule_System = energyCentre.PlantSchedule("System Schedule");
 
             dynamic electricalGroup_Fans = plantRoom.ElectricalGroup("Electrical Group - Fans");
             dynamic electricalGroup_Lighting = plantRoom.ElectricalGroup("Electrical Group - Lighting");
@@ -1971,7 +1968,7 @@ namespace SAM.Analytical.Tas
             fan_FreashAir.SetElectricalGroup1(electricalGroup_Fans);
             fan_FreashAir.PartLoad.Value = 0;
             fan_FreashAir.PartLoad.ClearModifiers();
-            fan_FreashAir.SetSchedule(plantSchedule_Occupancy);
+            fan_FreashAir.SetSchedule(plantSchedule_System);
             fan_FreashAir.DesignFlowType = global::TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
             fan_FreashAir.SetPosition(390, 100);
 
@@ -2002,7 +1999,7 @@ namespace SAM.Analytical.Tas
             fan_Return.SetElectricalGroup1(electricalGroup_Fans);
             fan_Return.PartLoad.Value = 0;
             fan_Return.PartLoad.ClearModifiers();
-            fan_Return.SetSchedule(plantSchedule_Occupancy);
+            fan_Return.SetSchedule(plantSchedule_System);
             fan_Return.SetDirection(global::TPD.tpdDirection.tpdRightLeft);
             fan_Return.DesignFlowType = global::TPD.tpdFlowRateType.tpdFlowRateAllAttachedZonesFlowRate;
             fan_Return.SetPosition(600, 240);
