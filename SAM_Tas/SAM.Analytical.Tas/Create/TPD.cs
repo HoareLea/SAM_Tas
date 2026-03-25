@@ -1,4 +1,5 @@
-﻿using SAM.Core.Tas;
+﻿using SAM.Core;
+using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -676,6 +677,9 @@ namespace SAM.Analytical.Tas
 
                 (systemZone_Group as SystemZone).Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
 
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
+
                 i += 3;
             }
 
@@ -743,6 +747,9 @@ namespace SAM.Analytical.Tas
                 Modify.AddComponents(systemZone_Group as SystemZone, energyCentre, heatingSystem, coolingSystem);
 
                 (systemZone_Group as SystemZone).Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
 
                 i++;
             }
@@ -850,17 +857,17 @@ namespace SAM.Analytical.Tas
             dynamic heatingGroup = plantRoom.HeatingGroup("Heating Circuit Group");
 
 
-            List<string> names = new List<string>() { null };
-            for(int k=1; k < componentGroup.GetComponentCount(); k ++)
-            {
-                SystemComponent systemComponent = componentGroup.GetComponent(k);
-                names.Add((systemComponent as dynamic)?.name);
-            }
+            //List<string> names = new List<string>() { null };
+            //for(int k=1; k < componentGroup.GetComponentCount(); k ++)
+            //{
+            //    SystemComponent systemComponent = componentGroup.GetComponent(k);
+            //    names.Add((systemComponent as dynamic)?.name);
+            //}
 
             int i = 1;
             foreach (ZoneLoad zoneLoad in zoneLoads)
             {
-                SystemZone systemZone_Group = componentGroup.GetComponent((i * 3) -1) as SystemZone;
+                dynamic systemZone_Group = componentGroup.GetComponent((i * 3) - 1); //as SystemZone;
                 //SystemZone systemZone_Group = componentGroup.GetComponent(i * 3) as SystemZone;
                 (systemZone_Group as dynamic).AddZoneLoad(zoneLoad);
                 systemZone_Group.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableSize;
@@ -896,6 +903,9 @@ namespace SAM.Analytical.Tas
                 Modify.AddComponents(systemZone_Group, energyCentre, heatingSystem, coolingSystem);
 
                 (systemZone_Group as SystemZone).Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
 
                 i++;
             }
@@ -998,7 +1008,7 @@ namespace SAM.Analytical.Tas
             int i = 1;
             foreach (ZoneLoad zoneLoad in zoneLoads)
             {
-                SystemZone systemZone_Group = componentGroup.GetComponent(i + 2) as SystemZone;
+                dynamic systemZone_Group = componentGroup.GetComponent(i + 2) as dynamic;
                 (systemZone_Group as dynamic).AddZoneLoad(zoneLoad);
                 systemZone_Group.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableSize;
                 systemZone_Group.FlowRate.Method = global::TPD.tpdSizeFlowMethod.tpdSizeFlowACH;
@@ -1032,6 +1042,9 @@ namespace SAM.Analytical.Tas
                 Modify.AddComponents(systemZone_Group, energyCentre, heatingSystem, coolingSystem);
 
                 (systemZone_Group as SystemZone).Flags &= ~(int)tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
+
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
 
                 i += 2;
             }
@@ -1327,6 +1340,9 @@ namespace SAM.Analytical.Tas
 
                 Modify.AddComponents(systemZone_Group as SystemZone, energyCentre, heatingSystem, coolingSystem);
 
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
+
                 index++;
             }
 
@@ -1601,6 +1617,9 @@ namespace SAM.Analytical.Tas
 
                 Modify.AddComponents(systemZone_Group as SystemZone, energyCentre, heatingSystem, coolingSystem);
 
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
+
                 index++;
             }
 
@@ -1872,6 +1891,9 @@ namespace SAM.Analytical.Tas
 
                 Modify.AddComponents(systemZone_Group as SystemZone, energyCentre, heatingSystem, coolingSystem);
 
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
+
                 index++;
             }
 
@@ -2065,6 +2087,9 @@ namespace SAM.Analytical.Tas
                 }
 
                 Modify.AddComponents(systemZone_Group as SystemZone, energyCentre, heatingSystem, coolingSystem);
+                
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
 
                 index++;
             }
@@ -2257,6 +2282,9 @@ namespace SAM.Analytical.Tas
                 systemZone_Group.Flags = systemZone_Group.Flags | (int)global::TPD.tpdSystemZoneFlags.tpdSystemZoneFlagModelVentFlow;
 
                 Modify.AddComponents(systemZone_Group as SystemZone, energyCentre, heatingSystem, coolingSystem);
+
+                systemZone_Group.name = zoneLoad.Name;
+                systemZone_Group.Description = zoneLoad.Description;
 
                 index++;
             }

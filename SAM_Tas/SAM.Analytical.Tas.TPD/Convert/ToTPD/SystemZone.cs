@@ -28,6 +28,9 @@ namespace SAM.Analytical.Tas.TPD
 
             dynamic @dynamic = result;
 
+            dynamic.name = displaySystemSpace.Name;
+            dynamic.Description = displaySystemSpace.Description;
+
             result.TemperatureSetpoint.Update(displaySystemSpace.TemperatureSetpoint, energyCentre);
             result.RHSetpoint.Update(displaySystemSpace.RelativeHumiditySetpoint, energyCentre);
             result.PollutantSetpoint.Update(displaySystemSpace.PollutantSetpoint, energyCentre);

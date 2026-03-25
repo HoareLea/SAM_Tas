@@ -53,65 +53,39 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-                    List<ZoneComponent> zoneComponents = new List<ZoneComponent>();
-
-                    for (int j = 1; j <= system.GetComponentCount(); j++)
+                    List<SystemZone> systemZones = system.SystemZones();
+                    if(systemZones is null)
                     {
-                        ZoneComponent zoneComponent = system.GetComponent(j) as ZoneComponent;
-                        if (zoneComponent is null)
-                        {
-                            ComponentGroup componentGroup = system.GetComponent(j) as ComponentGroup;
-                            if(!(componentGroup is null))
-                            {
-                                for (int k = 1; k <= componentGroup.GetComponentCount(); k++)
-                                {
-                                    zoneComponent = system.GetComponent(k) as ZoneComponent;
-                                    if(zoneComponent is null)
-                                    {
-                                        continue;
-                                    }
-
-                                    zoneComponents.Add(zoneComponent);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            zoneComponents.Add(zoneComponent);
-                        }
+                        continue;
                     }
 
-
-                    foreach (ZoneComponent zoneComponent in zoneComponents)
+                    foreach (SystemZone systemZone in systemZones)
                     {
-                        SystemZone systemZone = zoneComponent.GetZone();
-                        if (systemZone == null)
-                        {
-                            continue;
-                        }
-
                         dynamic @dynamic = systemZone;
 
                         string name = dynamic.Name;
 
                         if (!airflows.TryGetValue(name, out double airFlow))
                         {
-                            @dynamic = zoneComponent;
-
-                            name = dynamic.Name;
-
-                            if (!airflows.TryGetValue(name, out airFlow))
-                            {
-                                continue;
-                            }
+                            continue;
                         }
 
-                        systemZone.FlowRate.Type = tpdSizedVariable.tpdSizedVariableValue;
-                        systemZone.FlowRate.Value = airFlow;
+                        //systemZone.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableNone;
+                        //systemZone.FreshAir.Type = global::TPD.tpdSizedVariable.tpdSizedVariableNone;
+
+                        @dynamic.FlowRate.Type = tpdSizedVariable.tpdSizedVariableValue;
+                        @dynamic.FlowRate.Value = airFlow;
+
+                        @dynamic.FreshAir.Type = tpdSizedVariable.tpdSizedVariableNone;
 
                         result.Add(name);
                     }
                 }
+            }
+
+            if(result != null && result.Count > 0)
+            {
+                tPDDoc.Save();
             }
 
             return result;
