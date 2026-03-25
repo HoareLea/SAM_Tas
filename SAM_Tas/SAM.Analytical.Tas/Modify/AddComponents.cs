@@ -1,10 +1,11 @@
-﻿using TPD;
+﻿using System.Collections.Generic;
+using TPD;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Modify
     {
-        public static void AddComponents(this SystemZone systemZone, EnergyCentre energyCentre, HeatingSystem heatingSystem, CoolingSystem coolingSystem)
+        public static void AddComponents(this SystemZone systemZone, EnergyCentre energyCentre, IEnumerable<HeatingSystem> heatingSystems, IEnumerable<CoolingSystem> coolingSystems)
         {
             if (systemZone == null || energyCentre == null)
             {
@@ -27,14 +28,14 @@ namespace SAM.Analytical.Tas
 
             RefrigerantGroup refrigerantGroup = plantRoom.RefrigerantGroup("DXCoil Units Refrigerant Group");
 
-            Query.ComponentTypes(heatingSystem, coolingSystem, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil_Heating, out bool dXCoil_Cooling, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
+            Query.ComponentTypes(heatingSystems, coolingSystems, out bool radiator, out bool fanCoil_Heating, out bool fanCoil_Cooling, out bool dXCoil_Heating, out bool dXCoil_Cooling, out bool chilledBeam_Heating, out bool chilledBeam_Cooling);
 
             if (radiator)  //TODO: 2023-09-25 allow other Zone component as Under Floor Heating Floor etc...read from Zone Internal Condition Heating Emitter Name
             {
                 dynamic radiator_Group = systemZone.AddRadiator();
-                radiator_Group.Name = heatingSystem.Name;
+                radiator_Group.Name = "RAD";
                 radiator_Group.SetSchedule(plantSchedule_System);
-                radiator_Group.Description = heatingSystem.Type?.Description;
+                radiator_Group.Description = "Radiator";
                 radiator_Group.Duty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
                 radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(1));
                 radiator_Group.Duty.AddDesignCondition(energyCentre.GetDesignCondition(3));
@@ -51,8 +52,8 @@ namespace SAM.Analytical.Tas
 
                 if (chilledBeam_Cooling)
                 {
-                    chilledBeam_Group.Name = coolingSystem.Name;
-                    chilledBeam_Group.Description = coolingSystem.Type?.Description;
+                    chilledBeam_Group.Name = "CHB";
+                    chilledBeam_Group.Description = "Chilled Beam";
 
                     chilledBeam_Group.SetCoolingGroup(coolingGroup);
                     chilledBeam_Group.CoolingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
@@ -63,8 +64,8 @@ namespace SAM.Analytical.Tas
 
                 if (chilledBeam_Heating)
                 {
-                    chilledBeam_Group.Name = heatingSystem.Name;
-                    chilledBeam_Group.Description = heatingSystem.Type?.Description;
+                    chilledBeam_Group.Name = "CHB";
+                    chilledBeam_Group.Description = "Chilled Beam";
 
                     chilledBeam_Group.SetHeatingGroup(heatingGroup);
                     chilledBeam_Group.HeatingDuty.Type = TPD.tpdSizedVariable.tpdSizedVariableSize;
