@@ -143,7 +143,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             index = Params.IndexOfOutputParam("path_TPD");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, path);
+                dataAccess.SetData(index, path);
             }
 
             index = Params.IndexOfOutputParam("spaceNames");

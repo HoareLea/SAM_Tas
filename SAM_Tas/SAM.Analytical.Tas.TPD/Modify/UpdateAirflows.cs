@@ -1,10 +1,4 @@
-﻿using SAM.Analytical.Systems;
-using SAM.Core;
-using SAM.Core.Systems;
-using SAM.Core.Tas;
-using SAM.Geometry.Planar;
-using SAM.Geometry.Systems;
-using System;
+﻿using SAM.Core.Tas;
 using System.Collections.Generic;
 using TPD;
 
@@ -46,29 +40,38 @@ namespace SAM.Analytical.Tas.TPD
             List<PlantRoom> plantRooms = tPDDoc.EnergyCentre?.PlantRooms();
             if(plantRooms is null || plantRooms.Count == 0)
             {
-                foreach(PlantRoom plantRoom in plantRooms)
+                return result;
+            }
+
+            foreach (PlantRoom plantRoom in plantRooms)
+            {
+                for (int i = 1; i <= plantRoom.GetSystemCount(); i++)
                 {
-                    for (int i = 1; i <= plantRoom.GetComponentCount(); i++)
+                    global::TPD.System system = plantRoom.GetSystem(i);
+                    if(system is null)
                     {
-                        PlantComponent plantComponent = plantRoom.GetComponent(i);
-                        if (!(plantComponent is ZoneComponent))
+                        continue;
+                    }
+
+                    for (int j = 1; j <= system.GetComponentCount(); j++)
+                    {
+                        ZoneComponent zoneComponent = system.GetComponent(j) as ZoneComponent;
+                        if (zoneComponent is null)
                         {
                             continue;
                         }
-
-                        ZoneComponent zoneComponent = (ZoneComponent)plantComponent;
 
                         SystemZone systemZone = zoneComponent.GetZone();
-                        if(systemZone == null)
+                        if (systemZone == null)
                         {
                             continue;
                         }
 
-                        dynamic @dynamic = systemZone as dynamic;
+                        dynamic @dynamic = systemZone;
 
                         string name = dynamic.Name;
 
-                        if(!airflows.TryGetValue(name, out double airFlow))
+                        if (!airflows.TryGetValue(name, out double airFlow))
                         {
                             continue;
                         }
