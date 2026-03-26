@@ -4,7 +4,6 @@ using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
 using SAM.Core.Grasshopper;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -117,7 +116,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            Dictionary<string, Tuple<double, double>> dictionary = [];
+            Dictionary<string, Tuple<double?, double?>> dictionary = [];
             foreach(Space space in spaces)
             {
                 string name= space?.Name;
@@ -137,7 +136,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     continue;
                 }
 
-                dictionary[space.Name] = new Tuple<double, double>(partFSpaceData.CalculatedFlowRate_Lps.Value, double.NaN);
+                dictionary[space.Name] = new Tuple<double?, double?>(partFSpaceData.CalculatedFlowRate_Lps.Value, double.NaN);
             }
 
             List<string> spaceNames_Updated = Analytical.Tas.TPD.Modify.UpdateAirflows(path, dictionary);

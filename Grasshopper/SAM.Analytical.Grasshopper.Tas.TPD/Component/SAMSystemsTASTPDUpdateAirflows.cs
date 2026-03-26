@@ -51,7 +51,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     new GH_SAMParam(new Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_String() { Name = "_spaceNames", NickName = "_spaceNames", Description = "Space Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_Number() { Name = "_airflowFlowRates", NickName = "_airflowFlowRates", Description = "Airflow flow rates [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
+                    new GH_SAMParam(new Param_Integer() { Name = "_airflowModifies", NickName = "_airflowModifies", Description = "Airflow Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_Number() { Name = "_airflowFreshAirRates", NickName = "_airflowFreshAirRates", Description = "Airflow fresh air rate [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
+                    new GH_SAMParam(new Param_Integer() { Name = "_airflowFreshAirModifies", NickName = "_airflowFreshAirModifies", Description = "Airflow Fresh air Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
                 ];
             }
         }
@@ -138,11 +140,31 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 }
             }
 
+            List<int> airflows_Code = [];
+            index = Params.IndexOfInputParam("_airflowModifies");
+            if (index != -1)
+            {
+                if (!dataAccess.GetDataList(index, airflows_Code) || airflows_Code is null)
+                {
+                    airflows_Code = [];
+                }
+            }
+
+            List<int> freshAirs_Code = [];
+            index = Params.IndexOfInputParam("_airflowFreshAirModifies");
+            if (index != -1)
+            {
+                if (!dataAccess.GetDataList(index, freshAirs_Code) || freshAirs_Code is null)
+                {
+                    freshAirs_Code = [];
+                }
+            }
+
             List<string> spaceNames_Updated = [];
 
             if (!((airflows is null || airflows.Count == 0) && (freshAirs is null || freshAirs.Count == 0)))
             {
-                Dictionary<string, Tuple<double, double>> dictionary = [];
+                Dictionary<string, Tuple<double?, double?>> dictionary = [];
                 for (int i = 0; i < spacesNames.Count; i++)
                 {
                     string name = spacesNames[i];
@@ -151,20 +173,43 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                         continue;
                     }
 
-                    double airflow = double.NaN;
-                    double freshAir = double.NaN;
+                    int code;
 
-                    if(airflows is not null && airflows.Count != 0)
+                    //Air Flow
+                    code = 0;
+                    if(airflows_Code.Count != 0)
+                    {
+                        code = airflows_Code[Core.Query.Clamp(i, 0, airflows_Code.Count - 1)];
+                    }
+
+                    double? airflow = null;
+                    if (code == 1)
                     {
                         airflow = airflows[Core.Query.Clamp(i, 0, airflows.Count - 1)];
                     }
+                    else if(code  == 2)
+                    {
+                        airflow = double.NaN;
+                    }
 
-                    if (freshAirs is not null && freshAirs.Count != 0)
+                    //Fresh Air
+                    code = 0;
+                    if (freshAirs_Code.Count != 0)
+                    {
+                        code = freshAirs_Code[Core.Query.Clamp(i, 0, freshAirs_Code.Count - 1)];
+                    }
+
+                    double? freshAir = null;
+                    if (code == 1)
                     {
                         freshAir = freshAirs[Core.Query.Clamp(i, 0, freshAirs.Count - 1)];
                     }
+                    else if (code == 2)
+                    {
+                        freshAir = double.NaN;
+                    }
 
-                    dictionary[spacesNames[i]] = new Tuple<double, double>(airflow, freshAir);
+                    dictionary[spacesNames[i]] = new Tuple<double?, double?>(airflow, freshAir);
                 }
 
                 spaceNames_Updated = Analytical.Tas.TPD.Modify.UpdateAirflows(path, dictionary);
