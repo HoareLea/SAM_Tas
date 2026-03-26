@@ -61,14 +61,37 @@ namespace SAM.Analytical.Tas.TPD
 
                     foreach (SystemZone systemZone in systemZones)
                     {
-                        dynamic @dynamic = systemZone;
-
-                        string name = dynamic.Name;
-
-                        if (!airflows.TryGetValue(name, out double airFlow))
+                        List<ZoneLoad> zoneLoads = systemZone.ZoneLoads();
+                        if(zoneLoads is null)
                         {
                             continue;
                         }
+
+                        double airFlow = double.NaN;
+                        string name = null;
+                        foreach (ZoneLoad zoneLoad in systemZone.ZoneLoads())
+                        {
+                            name = zoneLoad.Name;
+
+                            if (!airflows.TryGetValue(name, out airFlow))
+                            {
+                                airFlow = double.NaN;
+                                continue;
+                            }
+
+                            if(!double.IsNaN(airFlow))
+                            {
+                                break;
+                            }
+                        }
+
+                        if(double.IsNaN(airFlow))
+                        {
+                            continue;
+                        }
+
+
+                        dynamic @dynamic = systemZone;
 
                         //systemZone.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableNone;
                         //systemZone.FreshAir.Type = global::TPD.tpdSizedVariable.tpdSizedVariableNone;
