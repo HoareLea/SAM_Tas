@@ -2,7 +2,6 @@
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
-using SAM.Analytical.Tas.TPD;
 using SAM.Core.Grasshopper;
 using System;
 using System.Collections.Generic;
@@ -33,7 +32,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.0";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -51,7 +50,8 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 [
                     new GH_SAMParam(new Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_String() { Name = "_spaceNames", NickName = "_spaceNames", Description = "Space Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_Number() { Name = "_airflows", NickName = "_airflows", Description = "Airflows [l/s]", Access = GH_ParamAccess.list }, ParamVisibility.Binding),
+                    new GH_SAMParam(new Param_Number() { Name = "_airflowFlowRates", NickName = "_airflowFlowRates", Description = "Airflow flow rates [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
+                    new GH_SAMParam(new Param_Number() { Name = "_airflowFreshAirRates", NickName = "_airflowFreshAirRates", Description = "Airflow fresh air rate [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
                 ];
             }
         }
@@ -119,26 +119,56 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             }
 
             List<double> airflows = [];
-            index = Params.IndexOfInputParam("_airflows");
-            if (index == -1 || !dataAccess.GetDataList(index, airflows) || airflows is null)
+            index = Params.IndexOfInputParam("_airflowFlowRates");
+            if (index != -1)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
-                return;
+                if(!dataAccess.GetDataList(index, airflows) || airflows is null)
+                {
+                    airflows = [];
+                }
             }
 
-            Dictionary<string, double> dictionary = [];
-            for(int i=0; i < spacesNames.Count; i++)
+            List<double> freashAirs = [];
+            index = Params.IndexOfInputParam("_airflowFreshAirRates");
+            if (index == -1)
             {
-                string name = spacesNames[i];
-                if(name == null)
+                if(!dataAccess.GetDataList(index, freashAirs) || freashAirs is null)
                 {
-                    continue;
+                    freashAirs = [];
+                }
+            }
+
+            List<string> spaceNames_Updated = [];
+
+            if (!((airflows is null || airflows.Count == 0) && (freashAirs is null || freashAirs.Count == 0)))
+            {
+                Dictionary<string, Tuple<double, double>> dictionary = [];
+                for (int i = 0; i < spacesNames.Count; i++)
+                {
+                    string name = spacesNames[i];
+                    if (name == null)
+                    {
+                        continue;
+                    }
+
+                    double airflow = double.NaN;
+                    double freshAir = double.NaN;
+
+                    if(airflows is not null && airflows.Count != 0)
+                    {
+                        airflow = airflows[Core.Query.Clamp(i, 0, airflows.Count - 1)];
+                    }
+
+                    if (freashAirs is not null && freashAirs.Count != 0)
+                    {
+                        freshAir = freashAirs[Core.Query.Clamp(i, 0, freashAirs.Count - 1)];
+                    }
+
+                    dictionary[spacesNames[i]] = new Tuple<double, double>(airflow, freshAir);
                 }
 
-                dictionary[spacesNames[i]] = airflows[Core.Query.Clamp(i, 0, airflows.Count - 1)];
+                spaceNames_Updated = Analytical.Tas.TPD.Modify.UpdateAirflows(path, dictionary);
             }
-
-            List<string> spaceNames_Updated = Analytical.Tas.TPD.Modify.UpdateAirflows(path, dictionary);
 
             index = Params.IndexOfOutputParam("path_TPD");
             if (index != -1)

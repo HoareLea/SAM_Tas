@@ -1,4 +1,5 @@
 ﻿using SAM.Core.Tas;
+using System;
 using System.Collections.Generic;
 using TPD;
 
@@ -6,7 +7,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Modify
     {
-        public static List<string> UpdateAirflows(this string path_TPD, Dictionary<string, double> airflows)
+        public static List<string> UpdateAirflows(this string path_TPD, Dictionary<string, Tuple<double, double>> airflows)
         {
             if (airflows == null || airflows.Count == 0 || string.IsNullOrWhiteSpace(path_TPD) || !System.IO.File.Exists(path_TPD))
             {
@@ -23,12 +24,12 @@ namespace SAM.Analytical.Tas.TPD
             return result;
         }
 
-        public static List<string> UpdateAirflows(this SAMTPDDocument sAMTPDDocument, Dictionary<string, double> airflows)
+        public static List<string> UpdateAirflows(this SAMTPDDocument sAMTPDDocument, Dictionary<string, Tuple<double, double>> airflows)
         {
             return UpdateAirflows(sAMTPDDocument.TPDDocument, airflows);
         }
 
-        public static List<string> UpdateAirflows(this TPDDoc tPDDoc, Dictionary<string, double> airflows)
+        public static List<string> UpdateAirflows(this TPDDoc tPDDoc, Dictionary<string, Tuple<double, double>> airflows)
         {
             if(tPDDoc is null || airflows is null)
             {
@@ -68,38 +69,50 @@ namespace SAM.Analytical.Tas.TPD
                         }
 
                         double airFlow = double.NaN;
+                        double freshAirFlow = double.NaN;
+
                         string name = null;
                         foreach (ZoneLoad zoneLoad in systemZone.ZoneLoads())
                         {
                             name = zoneLoad.Name;
 
-                            if (!airflows.TryGetValue(name, out airFlow))
+                            if (!airflows.TryGetValue(name, out Tuple<double, double> tuple))
                             {
                                 airFlow = double.NaN;
+                                freshAirFlow = double.NaN;
                                 continue;
                             }
 
-                            if(!double.IsNaN(airFlow))
+                            if(!double.IsNaN(airFlow) || !double.IsNaN(freshAirFlow))
                             {
                                 break;
                             }
                         }
 
-                        if(double.IsNaN(airFlow))
+                        if(double.IsNaN(airFlow) && double.IsNaN(freshAirFlow))
                         {
                             continue;
                         }
 
-
-                        dynamic @dynamic = systemZone;
-
                         //systemZone.FlowRate.Type = global::TPD.tpdSizedVariable.tpdSizedVariableNone;
                         //systemZone.FreshAir.Type = global::TPD.tpdSizedVariable.tpdSizedVariableNone;
 
-                        @dynamic.FlowRate.Type = tpdSizedVariable.tpdSizedVariableValue;
-                        @dynamic.FlowRate.Value = airFlow;
+                        dynamic @dynamic = systemZone;
 
                         @dynamic.FreshAir.Type = tpdSizedVariable.tpdSizedVariableNone;
+                        @dynamic.FlowRate.Type = tpdSizedVariable.tpdSizedVariableNone;
+
+                        if(!double.IsNaN(airFlow))
+                        {
+                            @dynamic.FlowRate.Type = tpdSizedVariable.tpdSizedVariableValue;
+                            @dynamic.FlowRate.Value = airFlow;
+                        }
+
+                        if (!double.IsNaN(freshAirFlow))
+                        {
+                            @dynamic.FreshAir.Type = tpdSizedVariable.tpdSizedVariableValue;
+                            @dynamic.FreshAir.Value = freshAirFlow;
+                        }
 
                         result.Add(name);
                     }
