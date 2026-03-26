@@ -128,19 +128,19 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 }
             }
 
-            List<double> freashAirs = [];
+            List<double> freshAirs = [];
             index = Params.IndexOfInputParam("_airflowFreshAirRates");
-            if (index == -1)
+            if (index != -1)
             {
-                if(!dataAccess.GetDataList(index, freashAirs) || freashAirs is null)
+                if(!dataAccess.GetDataList(index, freshAirs) || freshAirs is null)
                 {
-                    freashAirs = [];
+                    freshAirs = [];
                 }
             }
 
             List<string> spaceNames_Updated = [];
 
-            if (!((airflows is null || airflows.Count == 0) && (freashAirs is null || freashAirs.Count == 0)))
+            if (!((airflows is null || airflows.Count == 0) && (freshAirs is null || freshAirs.Count == 0)))
             {
                 Dictionary<string, Tuple<double, double>> dictionary = [];
                 for (int i = 0; i < spacesNames.Count; i++)
@@ -159,9 +159,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                         airflow = airflows[Core.Query.Clamp(i, 0, airflows.Count - 1)];
                     }
 
-                    if (freashAirs is not null && freashAirs.Count != 0)
+                    if (freshAirs is not null && freshAirs.Count != 0)
                     {
-                        freshAir = freashAirs[Core.Query.Clamp(i, 0, freashAirs.Count - 1)];
+                        freshAir = freshAirs[Core.Query.Clamp(i, 0, freshAirs.Count - 1)];
                     }
 
                     dictionary[spacesNames[i]] = new Tuple<double, double>(airflow, freshAir);

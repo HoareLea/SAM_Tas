@@ -82,8 +82,13 @@ namespace SAM.Analytical.Tas.TPD
                                 freshAirFlow = double.NaN;
                                 continue;
                             }
+                            else 
+                            {
+                                airFlow = tuple.Item1;
+                                freshAirFlow = tuple.Item2;
+                            }
 
-                            if(!double.IsNaN(airFlow) || !double.IsNaN(freshAirFlow))
+                            if (!double.IsNaN(airFlow) || !double.IsNaN(freshAirFlow))
                             {
                                 break;
                             }
