@@ -26,14 +26,14 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("38802d30-dc1e-4cd0-b4cb-4731d536f0cf");
+        public override Guid ComponentGuid => new Guid("69b0df94-84b4-40e2-abee-3adb0dc3b5df");
 
         public override GH_Exposure Exposure => GH_Exposure.quinary;
 
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.0";
 
         /// <summary>
         /// Provides an Icon for the component.
