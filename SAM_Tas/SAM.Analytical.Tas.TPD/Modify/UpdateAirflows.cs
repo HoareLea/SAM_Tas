@@ -123,10 +123,10 @@ namespace SAM.Analytical.Tas.TPD
                         {
                             @dynamic.FreshAir.Type = tpdSizedVariable.tpdSizedVariableNone;
 
-                            if (!double.IsNaN(airFlow.Value))
+                            if (!double.IsNaN(freshAirFlow.Value))
                             {
                                 @dynamic.FreshAir.Type = tpdSizedVariable.tpdSizedVariableValue;
-                                @dynamic.FreshAir.Value = airFlow.Value;
+                                @dynamic.FreshAir.Value = freshAirFlow.Value;
                             }
                             else
                             {

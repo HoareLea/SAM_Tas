@@ -51,9 +51,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     new GH_SAMParam(new Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_String() { Name = "_spaceNames", NickName = "_spaceNames", Description = "Space Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_Number() { Name = "_airflowFlowRates", NickName = "_airflowFlowRates", Description = "Airflow flow rates [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_Integer() { Name = "_airflowModifies", NickName = "_airflowModifies", Description = "Airflow Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
+                    new GH_SAMParam(new Param_Number() { Name = "_airflowModifies", NickName = "_airflowModifies", Description = "Airflow Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_Number() { Name = "_airflowFreshAirRates", NickName = "_airflowFreshAirRates", Description = "Airflow fresh air rate [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_Integer() { Name = "_airflowFreshAirModifies", NickName = "_airflowFreshAirModifies", Description = "Airflow Fresh air Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
+                    new GH_SAMParam(new Param_Number() { Name = "_airflowFreshAirModifies", NickName = "_airflowFreshAirModifies", Description = "Airflow Fresh air Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
                 ];
             }
         }
@@ -140,7 +140,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 }
             }
 
-            List<int> airflows_Code = [];
+            List<double> airflows_Code = [];
             index = Params.IndexOfInputParam("_airflowModifies");
             if (index != -1)
             {
@@ -150,7 +150,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 }
             }
 
-            List<int> freshAirs_Code = [];
+            List<double> freshAirs_Code = [];
             index = Params.IndexOfInputParam("_airflowFreshAirModifies");
             if (index != -1)
             {
@@ -179,7 +179,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     code = 0;
                     if(airflows_Code.Count != 0)
                     {
-                        code = airflows_Code[Core.Query.Clamp(i, 0, airflows_Code.Count - 1)];
+                        code = System.Convert.ToInt32(airflows_Code[Core.Query.Clamp(i, 0, airflows_Code.Count - 1)]);
                     }
 
                     double? airflow = null;
@@ -196,7 +196,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     code = 0;
                     if (freshAirs_Code.Count != 0)
                     {
-                        code = freshAirs_Code[Core.Query.Clamp(i, 0, freshAirs_Code.Count - 1)];
+                        code = System.Convert.ToInt32(freshAirs_Code[Core.Query.Clamp(i, 0, freshAirs_Code.Count - 1)]);
                     }
 
                     double? freshAir = null;
