@@ -46,6 +46,10 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         {
             get
             {
+                Param_Boolean param_Boolean = new Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
+                param_Boolean.SetPersistentData(false);
+                
+
                 return
                 [
                     new GH_SAMParam(new Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding),
@@ -54,6 +58,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     new GH_SAMParam(new Param_Number() { Name = "_airflowModifies", NickName = "_airflowModifies", Description = "Airflow Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_Number() { Name = "_airflowFreshAirRates", NickName = "_airflowFreshAirRates", Description = "Airflow fresh air rate [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_Number() { Name = "_airflowFreshAirModifies", NickName = "_airflowFreshAirModifies", Description = "Airflow Fresh air Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
+                    new GH_SAMParam(param_Boolean)
                 ];
             }
         }
@@ -69,6 +74,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 [
                     new GH_SAMParam(new Param_FilePath() { Name = "path_TPD", NickName = "path_TPD", Description = "Path TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding),
                     new GH_SAMParam(new Param_String() { Name = "spaceNames", NickName = "spaceNames", Description = "Space Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding),
+                    new GH_SAMParam(new Param_Boolean() { Name = "Successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding)
                 ];
             }
         }
@@ -102,7 +108,25 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
+            int index_successful = Params.IndexOfOutputParam("Successful");
+            if (index_successful != -1)
+            {
+                dataAccess.SetData(index_successful, false);
+            }
+
             int index;
+
+            bool run = false;
+            index = Params.IndexOfInputParam("_run");
+            if (index == -1 || !dataAccess.GetData(index, ref run))
+            {
+                run = false;
+            }
+
+            if (!run)
+            {
+                return;
+            }
 
             string path = null;
             index = Params.IndexOfInputParam("_path_TPD");
@@ -225,6 +249,11 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             if (index != -1)
             {
                 dataAccess.SetDataList(index, spaceNames_Updated);
+            }
+
+            if (index_successful != -1)
+            {
+                dataAccess.SetData(index_successful, spaceNames_Updated != null && spaceNames_Updated.Count != 0);
             }
 
         }
