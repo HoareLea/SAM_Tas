@@ -19,9 +19,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public SAMSystemsTASTPDModifyTPDFanByAirflows()
-      : base("TasTPD.ModifyTPDFanByAirflows", "TasTPD.ModifyTPDFanByAirflows",
-          "",
-          "SAM", "Tas")
+          : base("TasTPD.ModifyTPDFanByAirflows", "TasTPD.ModifyTPDFanByAirflows",
+              "Updates design flow settings for selected fans in a Tas TPD file.\n\nUse this component to modify the design flow source and design flow rate for selected system fans.\n\nThe design flow source can be set using the enum name or an integer value from 0 to 7. The component runs only when _run is true and returns the updated fans.",
+              "SAM", "Tas")
         {
         }
 
@@ -35,7 +35,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
+        public override string LatestComponentVersion => "1.0.2";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -72,7 +72,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 Name = "_displaySystemFans",
                 NickName = "_displaySystemFans",
-                Description = "",
+                Description = "System fans to update in the TPD file.",
                 Access = GH_ParamAccess.list
             }, ParamVisibility.Binding),
 
@@ -80,7 +80,8 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 Name = "_designFlowSources",
                 NickName = "_designFlowSources",
-                Description = "",
+                //Description = "Design flow source for each fan.\nYou can use the enum name or integer value.\n0 = None\n1 = Value\n2 = All Attached Zones Flow Rate\n3 = All Attached Zones Fresh Air\n4 = Nearest Zone Flow Rate\n5 = Nearest Zone Fresh Air\n6 = Sized\n7 = All Attached Zones Sized",
+                Description = "Defines the design flow source for each fan.\nYou can use the enum name or integer value.\n0 = None\n1 = Value\n2 = All Attached Zones Flow Rate\n3 = All Attached Zones Fresh Air\n4 = Nearest Zone Flow Rate\n5 = Nearest Zone Fresh Air\n6 = Sized\n7 = All Attached Zones Sized",
                 Access = GH_ParamAccess.list,
                 Optional = true
             }, ParamVisibility.Binding),
@@ -89,7 +90,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 Name = "_designFlowRates",
                 NickName = "_designFlowRates",
-                Description = "",
+                Description = "Design flow rates for the listed fans.\nUsed to update the fan design flow value.",
                 Access = GH_ParamAccess.list,
                 Optional = true
             }, ParamVisibility.Binding),
@@ -120,7 +121,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 Name = "displaySystemFans",
                 NickName = "displaySystemFans",
-                Description = "",
+                Description = "Updated system fans returned from the TPD file.",
                 Access = GH_ParamAccess.list
             }, ParamVisibility.Binding),
 
@@ -128,7 +129,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 Name = "successful",
                 NickName = "successful",
-                Description = "True if one or more spaces were successfully updated; otherwise false.",
+                Description = "True if one or more fans were successfully updated; otherwise false.",
                 Access = GH_ParamAccess.item
             }, ParamVisibility.Binding)
                 ];
@@ -164,7 +165,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <param name="dataAccess">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess dataAccess)
         {
-            int index_successful = Params.IndexOfOutputParam("Successful");
+            int index_successful = Params.IndexOfOutputParam("successful");
             if (index_successful != -1)
             {
                 dataAccess.SetData(index_successful, false);
@@ -241,17 +242,17 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                         {
                             systemFan.DesignFlowType = flowRateType;
                         }
+                        else if(Core.Query.TryConvert(designFlowSourceName, out int id))
+                        {
+                            systemFan.DesignFlowType = (FlowRateType)id;
+                        }
                     }
 
                     if(designFlowRates.Count != 0)
                     {
                         double designFlowRate = designFlowRates[Core.Query.Clamp(i, 0, designFlowRates.Count - 1)];
 
-                        if(systemFan.DesignFlowRate is SizedFlowValue sizedFlowValue)
-                        {
-                            systemFan.DesignFlowRate = new SizedFlowValue(designFlowRate, sizedFlowValue.SizeFranction);
-                        }
-                        else if(systemFan.DesignFlowRate is DesignConditionSizedFlowValue designConditionSizedFlowValue)
+                        if(systemFan.DesignFlowRate is DesignConditionSizedFlowValue designConditionSizedFlowValue)
                         {
                             systemFan.DesignFlowRate = new DesignConditionSizedFlowValue(
                                 designFlowRate, 
@@ -261,6 +262,10 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                                 designConditionSizedFlowValue.SizeValue2,
                                 designConditionSizedFlowValue.SizedFlowMethod,
                                 designConditionSizedFlowValue.DesignConditionNames);
+                        }
+                        else if (systemFan.DesignFlowRate is SizedFlowValue sizedFlowValue)
+                        {
+                            systemFan.DesignFlowRate = new SizedFlowValue(designFlowRate, sizedFlowValue.SizeFranction);
                         }
                     }
 

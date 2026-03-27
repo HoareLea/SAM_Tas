@@ -57,7 +57,7 @@ namespace SAM.Analytical.Tas.TPD
                         continue;
                     }
 
-                    for(int j = systemFans_Temp.Count - 1; j == 0; i--)
+                    for(int j = systemFans_Temp.Count - 1; j >= 0; j--)
                     {
                         SystemFan systemFan = systemFans_Temp[j];
 
@@ -73,10 +73,12 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
-                        Convert.ToTPD(systemFan, system, fan);
-
-                        result.Add(systemFan);
-                        systemFans_Temp.RemoveAt(j);
+                        global::TPD.Fan fan_TPD = Convert.ToTPD(systemFan, system, fan);
+                        if(fan_TPD != null)
+                        {
+                            result.Add(systemFan);
+                            systemFans_Temp.RemoveAt(j);
+                        }
                     }
 
                     if(systemFans_Temp.Count == 0)
