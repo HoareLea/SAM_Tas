@@ -16,9 +16,9 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public SAMSystemsTASTPDUpdateAirflows()
-          : base("TasTPD.ModifyTPDByAirflows", "TasTPD.ModifyTPDByAirflows",
-              "Modifies TPD By Airflows.",
-              "SAM", "Tas")
+      : base("TasTPD.ModifyTPDByAirflows", "TasTPD.ModifyTPDByAirflows",
+          "Updates airflow and/or fresh air settings for selected spaces in a Tas TPD file.\n\nUse this component to modify space airflow values by name. For each space, you can keep the current value, apply a new value, or reset it.\n\nThe component runs only when _run is true and returns the names of spaces that were successfully updated.",
+          "SAM", "Tas")
         {
         }
 
@@ -32,13 +32,13 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.2";
+        public override string LatestComponentVersion => "1.0.3";
 
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
         protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTPD3;
-        
+
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
@@ -46,19 +46,70 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         {
             get
             {
-                Param_Boolean param_Boolean = new Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
+                Param_Boolean param_Boolean = new Param_Boolean()
+                {
+                    Name = "_run",
+                    NickName = "_run",
+                    Description = "Set to true to run the update. If false, the component does nothing.",
+                    Access = GH_ParamAccess.item
+                };
                 param_Boolean.SetPersistentData(false);
-                
 
                 return
                 [
-                    new GH_SAMParam(new Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_String() { Name = "_spaceNames", NickName = "_spaceNames", Description = "Space Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_Number() { Name = "_airflowFlowRates", NickName = "_airflowFlowRates", Description = "Airflow flow rates [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_Number() { Name = "_airflowModifies", NickName = "_airflowModifies", Description = "Airflow Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_Number() { Name = "_airflowFreshAirRates", NickName = "_airflowFreshAirRates", Description = "Airflow fresh air rate [l/s]", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_Number() { Name = "_airflowFreshAirModifies", NickName = "_airflowFreshAirModifies", Description = "Airflow Fresh air Modifies (0 - do not change, 1 - change, 2 - reset)", Access = GH_ParamAccess.list, Optional = true }, ParamVisibility.Binding),
-                    new GH_SAMParam(param_Boolean)
+                    new GH_SAMParam(new Param_FilePath()
+            {
+                Name = "_path_TPD",
+                NickName = "_path_TPD",
+                Description = "Full file path to the Tas TPD file to update.",
+                Access = GH_ParamAccess.item
+            }, ParamVisibility.Binding),
+
+            new GH_SAMParam(new Param_String()
+            {
+                Name = "_spaceNames",
+                NickName = "_spaceNames",
+                Description = "Names of the spaces to update in the TPD file.",
+                Access = GH_ParamAccess.list
+            }, ParamVisibility.Binding),
+
+            new GH_SAMParam(new Param_Number()
+            {
+                Name = "_airflowFlowRates",
+                NickName = "_airflowFlowRates",
+                Description = "Airflow flow rates for the listed spaces [l/s]. Used when _airflowModifies = 1.",
+                Access = GH_ParamAccess.list,
+                Optional = true
+            }, ParamVisibility.Binding),
+
+            new GH_SAMParam(new Param_Number()
+            {
+                Name = "_airflowModifies",
+                NickName = "_airflowModifies",
+                Description = "Airflow update mode for each space: 0 = do not change, 1 = set value, 2 = reset.\nDefault is 0.",
+                Access = GH_ParamAccess.list,
+                Optional = true
+            }, ParamVisibility.Binding),
+
+            new GH_SAMParam(new Param_Number()
+            {
+                Name = "_airflowFreshAirRates",
+                NickName = "_airflowFreshAirRates",
+                Description = "Fresh air flow rates for the listed spaces [l/s]. Used when _airflowFreshAirModifies = 1.",
+                Access = GH_ParamAccess.list,
+                Optional = true
+            }, ParamVisibility.Binding),
+
+            new GH_SAMParam(new Param_Number()
+            {
+                Name = "_airflowFreshAirModifies",
+                NickName = "_airflowFreshAirModifies",
+                Description = "Fresh air update mode for each space: 0 = do not change, 1 = set value, 2 = reset.\nDefault is 0.",
+                Access = GH_ParamAccess.list,
+                Optional = true
+            }, ParamVisibility.Binding),
+
+            new GH_SAMParam(param_Boolean)
                 ];
             }
         }
@@ -72,9 +123,29 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             {
                 return
                 [
-                    new GH_SAMParam(new Param_FilePath() { Name = "path_TPD", NickName = "path_TPD", Description = "Path TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_String() { Name = "spaceNames", NickName = "spaceNames", Description = "Space Names", Access = GH_ParamAccess.list }, ParamVisibility.Binding),
-                    new GH_SAMParam(new Param_Boolean() { Name = "Successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding)
+                    new GH_SAMParam(new Param_FilePath()
+            {
+                Name = "path_TPD",
+                NickName = "path_TPD",
+                Description = "File path to the processed Tas TPD file.",
+                Access = GH_ParamAccess.item
+            }, ParamVisibility.Binding),
+
+            new GH_SAMParam(new Param_String()
+            {
+                Name = "spaceNames",
+                NickName = "spaceNames",
+                Description = "Names of the spaces that were successfully updated.",
+                Access = GH_ParamAccess.list
+            }, ParamVisibility.Binding),
+
+            new GH_SAMParam(new Param_Boolean()
+            {
+                Name = "Successful",
+                NickName = "successful",
+                Description = "True if one or more spaces were successfully updated; otherwise false.",
+                Access = GH_ParamAccess.item
+            }, ParamVisibility.Binding)
                 ];
             }
         }
