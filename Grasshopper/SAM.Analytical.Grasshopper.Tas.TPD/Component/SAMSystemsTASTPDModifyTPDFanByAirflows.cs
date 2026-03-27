@@ -2,7 +2,10 @@
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
+using SAM.Analytical.Systems;
+using SAM.Core;
 using SAM.Core.Grasshopper;
+using SAM.Core.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +13,14 @@ using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
-    public class SAMSystemsTASTPDUpdateAirflows : GH_SAMVariableOutputParameterComponent
+    public class SAMSystemsTASTPDModifyTPDFanByAirflows : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMSystemsTASTPDUpdateAirflows()
-      : base("TasTPD.ModifyTPDByAirflows", "TasTPD.ModifyTPDByAirflows",
-          "Updates airflow and/or fresh air settings for selected spaces in a Tas TPD file.\n\nUse this component to modify space airflow values by name. For each space, you can keep the current value, apply a new value, or reset it.\n\nThe component runs only when _run is true and returns the names of spaces that were successfully updated.",
+        public SAMSystemsTASTPDModifyTPDFanByAirflows()
+      : base("TasTPD.ModifyTPDFanByAirflows", "TasTPD.ModifyTPDFanByAirflows",
+          "",
           "SAM", "Tas")
         {
         }
@@ -25,14 +28,14 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("38802d30-dc1e-4cd0-b4cb-4731d536f0cf");
+        public override Guid ComponentGuid => new Guid("a6879fb3-7877-4f5e-b6c8-edd5db181358");
 
         public override GH_Exposure Exposure => GH_Exposure.quinary;
 
         /// <summary>
         /// The latest version of this component
         /// </summary>
-        public override string LatestComponentVersion => "1.0.3";
+        public override string LatestComponentVersion => "1.0.1";
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -65,46 +68,28 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 Access = GH_ParamAccess.item
             }, ParamVisibility.Binding),
 
-            new GH_SAMParam(new Param_String()
+            new GH_SAMParam(new Systems.GooSystemComponentParam()
             {
-                Name = "_spaceNames",
-                NickName = "_spaceNames",
-                Description = "Names of the spaces to update in the TPD file.",
+                Name = "_displaySystemFans",
+                NickName = "_displaySystemFans",
+                Description = "",
                 Access = GH_ParamAccess.list
             }, ParamVisibility.Binding),
 
-            new GH_SAMParam(new Param_Number()
+            new GH_SAMParam(new Param_String()
             {
-                Name = "_airflowFlowRates",
-                NickName = "_airflowFlowRates",
-                Description = "Airflow flow rates for the listed spaces [l/s]. Used when _airflowModifies = 1.",
+                Name = "_designFlowSources",
+                NickName = "_designFlowSources",
+                Description = "",
                 Access = GH_ParamAccess.list,
                 Optional = true
             }, ParamVisibility.Binding),
 
             new GH_SAMParam(new Param_Number()
             {
-                Name = "_airflowModifies",
-                NickName = "_airflowModifies",
-                Description = "Airflow update mode for each space: 0 = do not change, 1 = set value, 2 = reset.\nDefault is 0.",
-                Access = GH_ParamAccess.list,
-                Optional = true
-            }, ParamVisibility.Binding),
-
-            new GH_SAMParam(new Param_Number()
-            {
-                Name = "_airflowFreshAirRates",
-                NickName = "_airflowFreshAirRates",
-                Description = "Fresh air flow rates for the listed spaces [l/s]. Used when _airflowFreshAirModifies = 1.",
-                Access = GH_ParamAccess.list,
-                Optional = true
-            }, ParamVisibility.Binding),
-
-            new GH_SAMParam(new Param_Number()
-            {
-                Name = "_airflowFreshAirModifies",
-                NickName = "_airflowFreshAirModifies",
-                Description = "Fresh air update mode for each space: 0 = do not change, 1 = set value, 2 = reset.\nDefault is 0.",
+                Name = "_designFlowRates",
+                NickName = "_designFlowRates",
+                Description = "",
                 Access = GH_ParamAccess.list,
                 Optional = true
             }, ParamVisibility.Binding),
@@ -131,17 +116,17 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 Access = GH_ParamAccess.item
             }, ParamVisibility.Binding),
 
-            new GH_SAMParam(new Param_String()
+            new GH_SAMParam(new Systems.GooSystemComponentParam()
             {
-                Name = "spaceNames",
-                NickName = "spaceNames",
-                Description = "Names of the spaces that were successfully updated.",
+                Name = "displaySystemFans",
+                NickName = "displaySystemFans",
+                Description = "",
                 Access = GH_ParamAccess.list
             }, ParamVisibility.Binding),
 
             new GH_SAMParam(new Param_Boolean()
             {
-                Name = "Successful",
+                Name = "successful",
                 NickName = "successful",
                 Description = "True if one or more spaces were successfully updated; otherwise false.",
                 Access = GH_ParamAccess.item
@@ -207,107 +192,82 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            List<string> spacesNames = [];
-            index = Params.IndexOfInputParam("_spaceNames");
-            if (index == -1 || !dataAccess.GetDataList(index, spacesNames) || spacesNames is null)
+            List<ISystemComponent> systemComponents = [];
+            index = Params.IndexOfInputParam("_displaySystemFans");
+            if (index == -1 || !dataAccess.GetDataList(index, systemComponents) || systemComponents is null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid data");
                 return;
             }
 
-            List<double> airflows = [];
-            index = Params.IndexOfInputParam("_airflowFlowRates");
+            List<SystemFan> systemFans = [.. systemComponents.FindAll(x => x is SystemFan).Cast<SystemFan>()];
+
+            List<string> designFlowSourceNames = [];
+            index = Params.IndexOfInputParam("_designFlowSources");
             if (index != -1)
             {
-                if(!dataAccess.GetDataList(index, airflows) || airflows is null)
+                if(!dataAccess.GetDataList(index, designFlowSourceNames) || designFlowSourceNames is null)
                 {
-                    airflows = [];
+                    designFlowSourceNames = [];
                 }
             }
 
-            List<double> freshAirs = [];
-            index = Params.IndexOfInputParam("_airflowFreshAirRates");
+            List<double> designFlowRates = [];
+            index = Params.IndexOfInputParam("_designFlowRates");
             if (index != -1)
             {
-                if(!dataAccess.GetDataList(index, freshAirs) || freshAirs is null)
+                if (!dataAccess.GetDataList(index, designFlowRates) || designFlowRates is null)
                 {
-                    freshAirs = [];
+                    designFlowRates = [];
                 }
             }
 
-            List<double> airflows_Code = [];
-            index = Params.IndexOfInputParam("_airflowModifies");
-            if (index != -1)
+            if(systemFans != null && systemFans.Count > 0)
             {
-                if (!dataAccess.GetDataList(index, airflows_Code) || airflows_Code is null)
+                for (int i = 0; i < systemFans.Count; i++)
                 {
-                    airflows_Code = [];
-                }
-            }
-
-            List<double> freshAirs_Code = [];
-            index = Params.IndexOfInputParam("_airflowFreshAirModifies");
-            if (index != -1)
-            {
-                if (!dataAccess.GetDataList(index, freshAirs_Code) || freshAirs_Code is null)
-                {
-                    freshAirs_Code = [];
-                }
-            }
-
-            List<string> spaceNames_Updated = [];
-
-            if (!((airflows is null || airflows.Count == 0) && (freshAirs is null || freshAirs.Count == 0)))
-            {
-                Dictionary<string, Tuple<double?, double?>> dictionary = [];
-                for (int i = 0; i < spacesNames.Count; i++)
-                {
-                    string name = spacesNames[i];
-                    if (name == null)
+                    SystemFan systemFan = systemFans[i];
+                    if(systemFan is null)
                     {
                         continue;
                     }
 
-                    int code;
+                    systemFan = systemFan.Clone();
 
-                    //Air Flow
-                    code = 0;
-                    if(airflows_Code.Count != 0)
+                    if(designFlowSourceNames.Count != 0)
                     {
-                        code = System.Convert.ToInt32(airflows_Code[Core.Query.Clamp(i, 0, airflows_Code.Count - 1)]);
-                    }
-
-                    double? airflow = null;
-                    if (code == 1)
-                    {
-                        airflow = airflows[Core.Query.Clamp(i, 0, airflows.Count - 1)];
-                    }
-                    else if(code  == 2)
-                    {
-                        airflow = double.NaN;
+                        string designFlowSourceName = designFlowSourceNames[Core.Query.Clamp(i, 0, designFlowSourceNames.Count - 1)];
+                        if(Core.Query.TryGetEnum(designFlowSourceName, out FlowRateType flowRateType))
+                        {
+                            systemFan.DesignFlowType = flowRateType;
+                        }
                     }
 
-                    //Fresh Air
-                    code = 0;
-                    if (freshAirs_Code.Count != 0)
+                    if(designFlowRates.Count != 0)
                     {
-                        code = System.Convert.ToInt32(freshAirs_Code[Core.Query.Clamp(i, 0, freshAirs_Code.Count - 1)]);
+                        double designFlowRate = designFlowRates[Core.Query.Clamp(i, 0, designFlowRates.Count - 1)];
+
+                        if(systemFan.DesignFlowRate is SizedFlowValue sizedFlowValue)
+                        {
+                            systemFan.DesignFlowRate = new SizedFlowValue(designFlowRate, sizedFlowValue.SizeFranction);
+                        }
+                        else if(systemFan.DesignFlowRate is DesignConditionSizedFlowValue designConditionSizedFlowValue)
+                        {
+                            systemFan.DesignFlowRate = new DesignConditionSizedFlowValue(
+                                designFlowRate, 
+                                designConditionSizedFlowValue.SizeFranction,
+                                designConditionSizedFlowValue.SizingType,
+                                designConditionSizedFlowValue.SizeValue1,
+                                designConditionSizedFlowValue.SizeValue2,
+                                designConditionSizedFlowValue.SizedFlowMethod,
+                                designConditionSizedFlowValue.DesignConditionNames);
+                        }
                     }
 
-                    double? freshAir = null;
-                    if (code == 1)
-                    {
-                        freshAir = freshAirs[Core.Query.Clamp(i, 0, freshAirs.Count - 1)];
-                    }
-                    else if (code == 2)
-                    {
-                        freshAir = double.NaN;
-                    }
-
-                    dictionary[spacesNames[i]] = new Tuple<double?, double?>(airflow, freshAir);
+                    systemFans[i] = systemFan;
                 }
 
-                spaceNames_Updated = Analytical.Tas.TPD.Modify.UpdateAirflows(path, dictionary);
+                systemFans = Analytical.Tas.TPD.Modify.UpdateFanAirflows(path, systemFans);
             }
 
             index = Params.IndexOfOutputParam("path_TPD");
@@ -316,15 +276,15 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 dataAccess.SetData(index, path);
             }
 
-            index = Params.IndexOfOutputParam("spaceNames");
+            index = Params.IndexOfOutputParam("displaySystemFans");
             if (index != -1)
             {
-                dataAccess.SetDataList(index, spaceNames_Updated);
+                dataAccess.SetDataList(index, systemFans);
             }
 
             if (index_successful != -1)
             {
-                dataAccess.SetData(index_successful, spaceNames_Updated != null && spaceNames_Updated.Count != 0);
+                dataAccess.SetData(index_successful, systemFans != null && systemFans.Count != 0);
             }
 
         }

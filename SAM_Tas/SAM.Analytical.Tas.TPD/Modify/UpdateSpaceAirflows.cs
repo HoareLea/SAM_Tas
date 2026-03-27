@@ -7,7 +7,7 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Modify
     {
-        public static List<string> UpdateAirflows(this string path_TPD, Dictionary<string, Tuple<double?, double?>> airflows)
+        public static List<string> UpdateSpaceAirflows(this string path_TPD, Dictionary<string, Tuple<double?, double?>> airflows)
         {
             if (airflows == null || airflows.Count == 0 || string.IsNullOrWhiteSpace(path_TPD) || !System.IO.File.Exists(path_TPD))
             {
@@ -18,18 +18,18 @@ namespace SAM.Analytical.Tas.TPD
             using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
             {
 
-                result = UpdateAirflows(sAMTPDDocument, airflows);
+                result = UpdateSpaceAirflows(sAMTPDDocument, airflows);
             }
 
             return result;
         }
 
-        public static List<string> UpdateAirflows(this SAMTPDDocument sAMTPDDocument, Dictionary<string, Tuple<double?, double?>> airflows)
+        public static List<string> UpdateSpaceAirflows(this SAMTPDDocument sAMTPDDocument, Dictionary<string, Tuple<double?, double?>> airflows)
         {
-            return UpdateAirflows(sAMTPDDocument.TPDDocument, airflows);
+            return UpdateSpaceAirflows(sAMTPDDocument.TPDDocument, airflows);
         }
 
-        public static List<string> UpdateAirflows(this TPDDoc tPDDoc, Dictionary<string, Tuple<double?, double?>> airflows)
+        public static List<string> UpdateSpaceAirflows(this TPDDoc tPDDoc, Dictionary<string, Tuple<double?, double?>> airflows)
         {
             if(tPDDoc is null || airflows is null)
             {

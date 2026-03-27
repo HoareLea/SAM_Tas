@@ -10,12 +10,12 @@ using System.Windows.Forms;
 
 namespace SAM.Analytical.Grasshopper.Tas.TPD
 {
-    public class SAMSystemsTASTPDUpdateAirflowsBySpaces : GH_SAMVariableOutputParameterComponent
+    public class SAMSystemsTASTPDModifyTPDByAirflowsBySpaces : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
-        public SAMSystemsTASTPDUpdateAirflowsBySpaces()
+        public SAMSystemsTASTPDModifyTPDByAirflowsBySpaces()
           : base("TasTPD.ModifyTPDByAirflowsBySpaces", "TasTPD.ModifyTPDByAirflowsBySpaces",
               "Modifies TPD By Airflows.",
               "SAM", "Tas")
@@ -162,7 +162,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 dictionary[space.Name] = new Tuple<double?, double?>(partFSpaceData.CalculatedFlowRate_Lps.Value, double.NaN);
             }
 
-            List<string> spaceNames_Updated = Analytical.Tas.TPD.Modify.UpdateAirflows(path, dictionary);
+            List<string> spaceNames_Updated = Analytical.Tas.TPD.Modify.UpdateSpaceAirflows(path, dictionary);
 
             index = Params.IndexOfOutputParam("path_TPD");
             if (index != -1)

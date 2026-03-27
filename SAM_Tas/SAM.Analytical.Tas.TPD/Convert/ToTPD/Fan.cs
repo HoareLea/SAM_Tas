@@ -5,9 +5,9 @@ namespace SAM.Analytical.Tas.TPD
 {
     public static partial class Convert
     {
-        public static global::TPD.Fan ToTPD(this DisplaySystemFan displaySystemFan, global::TPD.System system, global::TPD.Fan fan = null)
+        public static global::TPD.Fan ToTPD(this SystemFan systemFan, global::TPD.System system, global::TPD.Fan fan = null)
         {
-            if(displaySystemFan == null || system == null)
+            if(systemFan == null || system == null)
             {
                 return null;
             }
@@ -19,26 +19,26 @@ namespace SAM.Analytical.Tas.TPD
             }
             
             dynamic @dynamic = result;
-            @dynamic.name = displaySystemFan.Name;
-            @dynamic.Description = displaySystemFan.Description;
+            @dynamic.name = systemFan.Name;
+            @dynamic.Description = systemFan.Description;
 
             PlantRoom plantRoom = system.GetPlantRoom();
 
             EnergyCentre energyCentre = plantRoom.GetEnergyCentre();
 
-            result.OverallEfficiency?.Update(displaySystemFan.OverallEfficiency, energyCentre);
-            result.HeatGainFactor = displaySystemFan.HeatGainFactor;
-            result.Pressure = displaySystemFan.Pressure;
-            result.DesignFlowRate?.Update(displaySystemFan.DesignFlowRate, energyCentre);
-            result.DesignFlowType = displaySystemFan.DesignFlowType.ToTPD();
-            result.MinimumFlowRate?.Update(displaySystemFan.MinimumFlowRate, energyCentre);
-            result.MinimumFlowType = displaySystemFan.MinimumFlowType.ToTPD();
-            result.MinimumFlowFraction = displaySystemFan.MinimumFlowFraction;
-            result.Capacity = displaySystemFan.Capacity;
-            result.ControlType = displaySystemFan.FanControlType.ToTPD();
-            result.PartLoad?.Update(displaySystemFan.PartLoad, energyCentre);
+            result.OverallEfficiency?.Update(systemFan.OverallEfficiency, energyCentre);
+            result.HeatGainFactor = systemFan.HeatGainFactor;
+            result.Pressure = systemFan.Pressure;
+            result.DesignFlowRate?.Update(systemFan.DesignFlowRate, energyCentre);
+            result.DesignFlowType = systemFan.DesignFlowType.ToTPD();
+            result.MinimumFlowRate?.Update(systemFan.MinimumFlowRate, energyCentre);
+            result.MinimumFlowType = systemFan.MinimumFlowType.ToTPD();
+            result.MinimumFlowFraction = systemFan.MinimumFlowFraction;
+            result.Capacity = systemFan.Capacity;
+            result.ControlType = systemFan.FanControlType.ToTPD();
+            result.PartLoad?.Update(systemFan.PartLoad, energyCentre);
 
-            Modify.SetSchedule((SystemComponent)result, displaySystemFan.ScheduleName);
+            Modify.SetSchedule((SystemComponent)result, systemFan.ScheduleName);
 
             // result.DesignFlowRate.Value = displaySystemFan.DesignFlowRate;
             // result.OverallEfficiency.Value = displaySystemFan.OverallEfficiency;
@@ -51,9 +51,9 @@ namespace SAM.Analytical.Tas.TPD
 
 
 
-            Modify.SetSchedule((SystemComponent)result, displaySystemFan.ScheduleName);
+            Modify.SetSchedule((SystemComponent)result, systemFan.ScheduleName);
 
-            CollectionLink collectionLink = displaySystemFan.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
+            CollectionLink collectionLink = systemFan.GetValue<CollectionLink>(AirSystemComponentParameter.ElectricalCollection);
             if (collectionLink != null)
             {
                 ElectricalGroup electricalGroup = system.GetPlantRoom()?.ElectricalGroups()?.Find(x => ((dynamic)x).Name == collectionLink.Name);
@@ -80,7 +80,7 @@ namespace SAM.Analytical.Tas.TPD
             //profileDataModifierTable.AddPoint(90, 83);
             //profileDataModifierTable.AddPoint(100, 100);
 
-            if(fan == null)
+            if(fan == null && systemFan is DisplaySystemFan displaySystemFan)
             {
                 displaySystemFan.SetLocation(result as SystemComponent);
             }
