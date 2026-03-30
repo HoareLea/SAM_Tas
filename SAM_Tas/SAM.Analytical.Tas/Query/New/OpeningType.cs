@@ -7,8 +7,6 @@ namespace SAM.Analytical.Tas
         public static int OpeningType(this IOpening opening)
         {
             throw new NotImplementedException();
-            
-            return 1;
         }
     }
 }
