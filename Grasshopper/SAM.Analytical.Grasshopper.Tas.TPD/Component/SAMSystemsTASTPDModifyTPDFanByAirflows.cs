@@ -1,4 +1,7 @@
-﻿using Grasshopper.Kernel;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
@@ -28,7 +31,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("a6879fb3-7877-4f5e-b6c8-edd5db181358");
+        public override Guid ComponentGuid => new ("a6879fb3-7877-4f5e-b6c8-edd5db181358");
 
         public override GH_Exposure Exposure => GH_Exposure.quinary;
 
@@ -49,7 +52,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         {
             get
             {
-                Param_Boolean param_Boolean = new Param_Boolean()
+                Param_Boolean param_Boolean = new ()
                 {
                     Name = "_run",
                     NickName = "_run",
@@ -145,7 +148,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
         public ToolStripMenuItem AppendOpenTPDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
         {
-            if (!(gH_SAMComponent is GH_Component gH_Component))
+            if (gH_SAMComponent is not GH_Component gH_Component)
             {
                 return null;
             }
@@ -302,7 +305,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             }
 
             IEnumerable<object> paths =  Params.Input[0]?.VolatileData?.AllData(true);
-            if(paths == null || paths.Count() == 0)
+            if(paths == null || !paths.Any())
             {
                 return;
             }

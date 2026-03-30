@@ -1,4 +1,7 @@
-﻿using SAM.Analytical.Systems;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using SAM.Analytical.Systems;
 using SAM.Core;
 using SAM.Core.Systems;
 using SAM.Core.Tas;
@@ -655,7 +658,7 @@ namespace SAM.Analytical.Tas.TPD
 
                                                 int groupIndex = -1;
 
-                                                if (!systemController_SAM_Temp.TryGetValue(SAM.Analytical.Systems.SystemControllerParameter.GroupIndex, out groupIndex))
+                                                if (!systemController_SAM_Temp.TryGetValue(Systems.SystemControllerParameter.GroupIndex, out groupIndex))
                                                 {
                                                     continue;
                                                 }

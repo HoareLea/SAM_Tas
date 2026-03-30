@@ -1,4 +1,7 @@
-﻿using Grasshopper.Kernel;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
@@ -16,7 +19,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public SAMSystemsTASTPDModifyTPDByAirflows()
-      : base("TasTPD.ModifyTPDByAirflows", "TasTPD.ModifyTPDByAirflows",
+            : base("TasTPD.ModifyTPDByAirflows", "TasTPD.ModifyTPDByAirflows",
           "Updates airflow and/or fresh air settings for selected spaces in a Tas TPD file.\n\nUse this component to modify space airflow values by name. For each space, you can keep the current value, apply a new value, or reset it.\n\nThe component runs only when _run is true and returns the names of spaces that were successfully updated.",
           "SAM", "Tas")
         {
@@ -25,7 +28,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("38802d30-dc1e-4cd0-b4cb-4731d536f0cf");
+        public override Guid ComponentGuid => new ("38802d30-dc1e-4cd0-b4cb-4731d536f0cf");
 
         public override GH_Exposure Exposure => GH_Exposure.quinary;
 
@@ -46,7 +49,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         {
             get
             {
-                Param_Boolean param_Boolean = new Param_Boolean()
+                Param_Boolean param_Boolean = new ()
                 {
                     Name = "_run",
                     NickName = "_run",

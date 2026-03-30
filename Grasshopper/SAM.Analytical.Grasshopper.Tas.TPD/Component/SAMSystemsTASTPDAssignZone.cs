@@ -1,4 +1,7 @@
-﻿using Grasshopper.Kernel;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
@@ -20,23 +23,6 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
     public class SAMSystemsTASTPDAssignZone : GH_SAMVariableOutputParameterComponent
     {
         /// <summary>
-        /// Gets the unique ID for this component. Do not change this ID after release.
-        /// </summary>
-        public override Guid ComponentGuid => new Guid("0d4e8c4d-bef6-4204-b48c-acbae657407c");
-
-        /// <summary>
-        /// The latest version of this component
-        /// </summary>
-        public override string LatestComponentVersion => "1.0.1";
-
-        /// <summary>
-        /// Provides an Icon for the component.
-        /// </summary>
-        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTPD3;
-
-        public override GH_Exposure Exposure => GH_Exposure.quinary;
-
-        /// <summary>
         /// Initializes a new instance of the SAM_point3D class.
         /// </summary>
         public SAMSystemsTASTPDAssignZone()
@@ -47,13 +33,31 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         }
 
         /// <summary>
+        /// Gets the unique ID for this component. Do not change this ID after release.
+        /// </summary>
+        public override Guid ComponentGuid => new ("0d4e8c4d-bef6-4204-b48c-acbae657407c");
+
+        public override GH_Exposure Exposure => GH_Exposure.quinary;
+
+        /// <summary>
+        /// The latest version of this component
+        /// </summary>
+        public override string LatestComponentVersion => "1.0.1";
+
+        /// <summary>
+        /// Provides an Icon for the component.
+        /// </summary>
+        
+        protected override System.Drawing.Bitmap Icon => Resources.SAM_TasTPD3;
+        
+        /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
         protected override GH_SAMParam[] Inputs
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                List<GH_SAMParam> result = [];
                 result.Add(new GH_SAMParam(new Param_FilePath() { Name = "_path_TPD", NickName = "_path_TPD", Description = "A file path to TAS TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new Param_FilePath() { Name = "_path_TSD", NickName = "_path_TSD", Description = "A file path to TAS TSD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
 
@@ -91,7 +95,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 @boolean.SetPersistentData(false);
                 result.Add(new GH_SAMParam(@boolean, ParamVisibility.Binding));
 
-                return result.ToArray();
+                return [.. result];
             }
         }
 
@@ -102,12 +106,56 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         {
             get
             {
-                List<GH_SAMParam> result = new List<GH_SAMParam>();
+                List<GH_SAMParam> result = [];
                 result.Add(new GH_SAMParam(new Param_FilePath() { Name = "path_TPD", NickName = "path_TPD", Description = "Path TPD", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new GooSystemEnergyCentreParam() { Name = "systemEnergyCentre", NickName = "systemEnergyCentre", Description = "SAM Core Systems SystemEnergyCentre", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
                 result.Add(new GH_SAMParam(new Param_Boolean() { Name = "successful", NickName = "successful", Description = "Correctly imported?", Access = GH_ParamAccess.item }, ParamVisibility.Binding));
-                return result.ToArray();
+                return [.. result];
             }
+        }
+
+        public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+        {
+            base.AppendAdditionalMenuItems(menu);
+            Menu_AppendSeparator(menu);
+            AppendOpenTPDAdditionalMenuItem(this, menu);
+            AppendOpenTSDAdditionalMenuItem(this, menu);
+        }
+
+        public ToolStripMenuItem AppendOpenTPDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
+        {
+            if (gH_SAMComponent is not GH_Component gH_Component)
+            {
+                return null;
+            }
+
+            ToolStripMenuItem toolStripMenuItem = null;
+
+            toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_TasTPD3);
+            if (toolStripMenuItem != null)
+            {
+                toolStripMenuItem.Tag = gH_Component.InstanceGuid;
+            }
+
+            return toolStripMenuItem;
+        }
+
+        public ToolStripMenuItem AppendOpenTSDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
+        {
+            if (!(gH_SAMComponent is GH_Component gH_Component))
+            {
+                return null;
+            }
+
+            ToolStripMenuItem toolStripMenuItem = null;
+
+            toolStripMenuItem = Menu_AppendItem(menu, "Open TSD", OnOpenTSDComponentClick, Resources.SAM_TasTSD3);
+            if (toolStripMenuItem != null)
+            {
+                toolStripMenuItem.Tag = gH_Component.InstanceGuid;
+            }
+
+            return toolStripMenuItem;
         }
 
         /// <summary>
@@ -156,7 +204,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 return;
             }
 
-            List<ISystemGroup> systemGroups = new List<ISystemGroup>();
+            List<ISystemGroup> systemGroups = [];
             index = Params.IndexOfInputParam("_airSystemGroup");
             if (index == -1 || !dataAccess.GetDataList(index, systemGroups) || systemGroups == null)
             {
@@ -196,11 +244,10 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             //    return;
             //}
 
-            List<Tuple<AirSystemGroup, List<Space>>> tuples = new List<Tuple<AirSystemGroup, List<Space>>>();
+            List<Tuple<AirSystemGroup, List<Space>>> tuples = [];
             for (int i = 0; i < systemGroups.Count; i++)
             {
-                AirSystemGroup airSystemGroup = systemGroups[i] as AirSystemGroup;
-                if (airSystemGroup == null)
+                if (systemGroups[i] is not AirSystemGroup airSystemGroup)
                 {
                     continue;
                 }
@@ -211,7 +258,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     continue;
                 }
 
-                List<Space> spaces = new List<Space>();
+                List<Space> spaces = [];
 
                 foreach (GooAnalyticalObject gooAnalyticalObject in gooAnalyticalObjects)
                 {
@@ -237,7 +284,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
             if (tuples != null && tuples.Count != 0)
             {
-                using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
+                using (SAMTPDDocument sAMTPDDocument = new (path_TPD))
                 {
                     TPDDoc tPDDoc = sAMTPDDocument.TPDDocument;
                     if (tPDDoc != null)
@@ -321,7 +368,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
             if (System.IO.File.Exists(path_TPD))
             {
-                SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new SystemEnergyCentreConversionSettings();
+                SystemEnergyCentreConversionSettings systemEnergyCentreConversionSettings = new ();
 
 
                 bool includeResults = systemEnergyCentreConversionSettings.IncludeComponentResults;
@@ -365,61 +412,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                 dataAccess.SetData(index_successful, succedded);
             }
         }
-
-        public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
-        {
-            base.AppendAdditionalMenuItems(menu);
-            Menu_AppendSeparator(menu);
-            AppendOpenTPDAdditionalMenuItem(this, menu);
-            AppendOpenTSDAdditionalMenuItem(this, menu);
-        }
-
-        public ToolStripMenuItem AppendOpenTPDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
-        {
-            if (!(gH_SAMComponent is GH_Component gH_Component))
-            {
-                return null;
-            }
-
-            ToolStripMenuItem toolStripMenuItem = null;
-
-            toolStripMenuItem = Menu_AppendItem(menu, "Open TPD", OnOpenTPDComponentClick, Resources.SAM_TasTPD3);
-            if (toolStripMenuItem != null)
-            {
-                toolStripMenuItem.Tag = gH_Component.InstanceGuid;
-            }
-
-            return toolStripMenuItem;
-        }
-
-        public ToolStripMenuItem AppendOpenTSDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
-        {
-            if (!(gH_SAMComponent is GH_Component gH_Component))
-            {
-                return null;
-            }
-
-            ToolStripMenuItem toolStripMenuItem = null;
-
-            toolStripMenuItem = Menu_AppendItem(menu, "Open TSD", OnOpenTSDComponentClick, Resources.SAM_TasTSD3);
-            if (toolStripMenuItem != null)
-            {
-                toolStripMenuItem.Tag = gH_Component.InstanceGuid;
-            }
-
-            return toolStripMenuItem;
-        }
-
-        private void OnOpenTPDComponentClick(object sender, EventArgs e)
-        {
-            OnOpen(0);
-        }
-
-        private void OnOpenTSDComponentClick(object sender, EventArgs e)
-        {
-            OnOpen(1);
-        }
-
+        
         private void OnOpen(int inputIndex)
         {
             if (Params.Input == null || Params.Input.Count == 0)
@@ -458,6 +451,16 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
             }
 
             Core.Query.StartProcess(path);
+        }
+
+        private void OnOpenTPDComponentClick(object sender, EventArgs e)
+        {
+            OnOpen(0);
+        }
+
+        private void OnOpenTSDComponentClick(object sender, EventArgs e)
+        {
+            OnOpen(1);
         }
     }
 }

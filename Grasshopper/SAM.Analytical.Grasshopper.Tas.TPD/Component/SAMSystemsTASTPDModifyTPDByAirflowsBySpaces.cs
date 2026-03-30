@@ -1,4 +1,7 @@
-﻿using Grasshopper.Kernel;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using SAM.Analytical.Grasshopper.Tas.TPD.Properties;
@@ -25,7 +28,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
-        public override Guid ComponentGuid => new Guid("69b0df94-84b4-40e2-abee-3adb0dc3b5df");
+        public override Guid ComponentGuid => new ("69b0df94-84b4-40e2-abee-3adb0dc3b5df");
 
         public override GH_Exposure Exposure => GH_Exposure.quinary;
 
@@ -46,7 +49,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
         {
             get
             {
-                Param_Boolean param_Boolean = new Param_Boolean() { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
+                Param_Boolean param_Boolean = new () { Name = "_run", NickName = "_run", Description = "Connect a boolean toggle to run.", Access = GH_ParamAccess.item };
                 param_Boolean.SetPersistentData(false);
 
                 return
@@ -83,7 +86,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
 
         public ToolStripMenuItem AppendOpenTPDAdditionalMenuItem(IGH_SAMComponent gH_SAMComponent, ToolStripDropDown menu)
         {
-            if (!(gH_SAMComponent is GH_Component gH_Component))
+            if (gH_SAMComponent is not GH_Component gH_Component)
             {
                 return null;
             }
