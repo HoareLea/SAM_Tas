@@ -22,44 +22,50 @@ namespace SAM.Analytical.Tas
                 return;
             }
 
-            foreach(HeatingSystem heatingSystem in heatingSystems)
+            if(heatingSystems is not null)
             {
-                if (heatingSystem != null)
+                foreach (HeatingSystem heatingSystem in heatingSystems)
                 {
-                    if (heatingSystem.Name == "RAD" || heatingSystem.Name == "TRH" || heatingSystem.Name == "UFH")
+                    if (heatingSystem != null)
                     {
-                        radiator = true;
-                    }
-                    else if (heatingSystem.Name == "FCU")
-                    {
-                        fanCoil_Heating = true;
-                    }
-                    else if (heatingSystem.Name == "RP" || heatingSystem.Name == "CHB")
-                    {
-                        chilledBeam_Heating = true;
-                    }
-                    else if (heatingSystem.Name == "VRV")
-                    {
-                        dXCoil_Heating = true;
+                        if (heatingSystem.Name == "RAD" || heatingSystem.Name == "TRH" || heatingSystem.Name == "UFH")
+                        {
+                            radiator = true;
+                        }
+                        else if (heatingSystem.Name == "FCU")
+                        {
+                            fanCoil_Heating = true;
+                        }
+                        else if (heatingSystem.Name == "RP" || heatingSystem.Name == "CHB")
+                        {
+                            chilledBeam_Heating = true;
+                        }
+                        else if (heatingSystem.Name == "VRV")
+                        {
+                            dXCoil_Heating = true;
+                        }
                     }
                 }
             }
 
-            foreach(CoolingSystem coolingSystem in coolingSystems)
+            if(coolingSystems is not null)
             {
-                if (coolingSystem != null)
+                foreach (CoolingSystem coolingSystem in coolingSystems)
                 {
-                    if (coolingSystem.Name == "RP" || coolingSystem.Name == "CHB" || coolingSystem.Name == "UFC")
+                    if (coolingSystem != null)
                     {
-                        chilledBeam_Cooling = true;
-                    }
-                    else if (coolingSystem.Name == "TRC" || coolingSystem.Name == "FCU")
-                    {
-                        fanCoil_Cooling = true;
-                    }
-                    else if (coolingSystem.Name == "VRV")
-                    {
-                        dXCoil_Cooling = true;
+                        if (coolingSystem.Name == "RP" || coolingSystem.Name == "CHB" || coolingSystem.Name == "UFC")
+                        {
+                            chilledBeam_Cooling = true;
+                        }
+                        else if (coolingSystem.Name == "TRC" || coolingSystem.Name == "FCU")
+                        {
+                            fanCoil_Cooling = true;
+                        }
+                        else if (coolingSystem.Name == "VRV")
+                        {
+                            dXCoil_Cooling = true;
+                        }
                     }
                 }
             }
