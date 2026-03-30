@@ -281,7 +281,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     }
 
                     double? airflow = null;
-                    if (code == 1 && airflows_Code.Count != 0)
+                    if (code == 1 && airflows.Count != 0)
                     {
                         airflow = airflows[Core.Query.Clamp(i, 0, airflows.Count - 1)];
                     }
@@ -298,7 +298,7 @@ namespace SAM.Analytical.Grasshopper.Tas.TPD
                     }
 
                     double? freshAir = null;
-                    if (code == 1)
+                    if (code == 1 && freshAirs.Count != 0)
                     {
                         freshAir = freshAirs[Core.Query.Clamp(i, 0, freshAirs.Count - 1)];
                     }
