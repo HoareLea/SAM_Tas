@@ -326,7 +326,7 @@ namespace SAM.Analytical.Tas
                     {
                         pump_Heating = plantRoom.AddPump();
                         pump_Heating.Name = "Heating Circuit Pump";
-                        pump_Heating.DesignFlowRate = 0;
+                        //pump_Heating.DesignFlowRate = 0;
                         pump_Heating.Capacity = 1;
                         pump_Heating.OverallEfficiency.Value = 1;
                         pump_Heating.SetFuelSource(1, fuelSource_Electrical);
@@ -369,7 +369,7 @@ namespace SAM.Analytical.Tas
                         pump_DHW = plantRoom.AddPump();
                         pump_DHW.Name = "DHW Circuit Pump";
                         pump_DHW.Description = "DHW Circuit Pump";
-                        pump_DHW.DesignFlowRate = 1;
+                        //pump_DHW.DesignFlowRate = 1;
                         pump_DHW.Capacity = 1;
                         pump_DHW.OverallEfficiency.Value = 1;
                         pump_DHW.SetFuelSource(1, fuelSource_Electrical);
@@ -435,7 +435,7 @@ namespace SAM.Analytical.Tas
 
                     dynamic pump_Cooling = plantRoom.AddPump();
                     pump_Cooling.Name = "Cooling Circuit Pump";
-                    pump_Cooling.DesignFlowRate = 0;
+                    //pump_Cooling.DesignFlowRate = 0;
                     pump_Cooling.Capacity = 1;
                     pump_Cooling.OverallEfficiency.Value = 1;
                     pump_Cooling.SetFuelSource(1, fuelSource_Electrical);
@@ -480,7 +480,7 @@ namespace SAM.Analytical.Tas
                         TPD(energyCentre, keyValuePair.Key, keyValuePair.Value.Item1, keyValuePair.Value.Item4, keyValuePair.Value.Item3, keyValuePair.Value.Item2);
                     }
 
-                    plantRoom.SimulateEx(1, 8760, 0, energyCentre.ExternalPollutant.Value, 10.0, (int)global::TPD.tpdSimulationData.tpdSimulationDataLoad + (int)global::TPD.tpdSimulationData.tpdSimulationDataPipe + (int)global::TPD.tpdSimulationData.tpdSimulationDataDuct + (int)global::TPD.tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
+                    plantRoom.SimulateEx(1, 8760, 15, energyCentre.ExternalPollutant.Value, 10.0, (int)global::TPD.tpdSimulationData.tpdSimulationDataLoad + (int)global::TPD.tpdSimulationData.tpdSimulationDataPipe + (int)global::TPD.tpdSimulationData.tpdSimulationDataDuct + (int)global::TPD.tpdSimulationData.tpdSimulationDataSimEvents + (int)tpdSimulationData.tpdSimulationDataCont, 1, 0);
 
                     if(analyticalModel != null)
                     {

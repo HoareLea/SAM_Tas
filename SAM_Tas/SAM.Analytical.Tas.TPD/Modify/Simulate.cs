@@ -37,7 +37,7 @@ namespace SAM.Analytical.Tas.TPD
                                 1,
                                 0);
 
-                            //string result = plantRoom.SimulateEx(1, 8760, 0, tPDDoc.EnergyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad, 1, 0);
+                            //string result = plantRoom.SimulateEx(1, 8760, 15, tPDDoc.EnergyCentre.ExternalPollutant.Value, 10.0, (int)tpdSimulationData.tpdSimulationDataLoad, 1, 0);
                         }
                     }
                     else
