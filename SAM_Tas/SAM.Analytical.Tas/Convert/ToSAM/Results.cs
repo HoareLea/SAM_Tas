@@ -1,4 +1,4 @@
-﻿using SAM.Core.Tas;
+using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +32,13 @@ namespace SAM.Analytical.Tas
         }
 
         //Pull/Convert data for Spaces (in Tas they call them Zones) but not for SAM Zones (in Tas ZoneGroups)
+        //
+        //Per space and load type the TSD holds two peaks: the design-day run's and the full-year simulation's. Both
+        //are persisted, separately and never merged, as Analytical.SpaceSimulationResultParameter.DesignDayPeak and
+        //AnnualPeak (SpaceLoadPeak: 0-based time, no sentinels, Tas-signed heat-balance terms). The legacy values
+        //(Load, LoadIndex, SizingMethod, room state, gains, DesignDayTemperature/RelativeHumidity) stay a projection
+        //of the GOVERNING peak, as before: the design day unless the annual peak is strictly larger. LoadIndex keeps
+        //the raw 1-based Tas index, and a zero governing peak keeps the -1 values Tas returns for index 0.
         public static List<Core.Result> ToSAM_Results(SimulationData simulationData)
         {
             //buildingData is is yearly dynamic simulation data
@@ -53,134 +60,45 @@ namespace SAM.Analytical.Tas
             Dictionary<string, Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int>> designDataDictionary = Query.DesignDataDictionary(simulationData);
 
             List<List<Core.Result>> results = Enumerable.Repeat<List<Core.Result>>(null, zoneDatas.Count).ToList();
-            foreach (KeyValuePair<string, Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int>> keyValuePair in designDataDictionary)
+            for (int index = 0; index < zoneDatas.Count; index++)
             {
-                int index = zoneDatas.FindIndex(x => x.zoneGUID == keyValuePair.Key);
-                if(index == -1)
-                {
-                    continue;
-                }
-                
                 ZoneData zoneData_BuildingData = zoneDatas[index];
                 if(zoneData_BuildingData == null)
                 {
                     continue;
                 }
 
-                double designDayTemperature;
-                double designDayRelativeHumidity;
+                string zoneGuid = zoneData_BuildingData.zoneGUID;
 
-                SizingMethod sizingMethod;
-
-                //COOLING START
+                Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int> tuple_DesignData = null;
+                if (designDataDictionary == null || zoneGuid == null || !designDataDictionary.TryGetValue(zoneGuid, out tuple_DesignData))
+                {
+                    tuple_DesignData = null;
+                }
 
                 Tuple<double, int> tuple_Cooling = null;
-                if (dictionary_Cooling == null || !dictionary_Cooling.TryGetValue(keyValuePair.Key, out tuple_Cooling))
+                if (dictionary_Cooling == null || zoneGuid == null || !dictionary_Cooling.TryGetValue(zoneGuid, out tuple_Cooling))
                 {
                     tuple_Cooling = null;
                 }
 
-                sizingMethod = SizingMethod.Undefined;
-                ZoneData zoneData_Cooling = null;
-                double coolingLoad = double.NaN;
-                int coolingIndex = -1;
-                designDayTemperature = double.NaN;
-                designDayRelativeHumidity = double.NaN;
-
-                CoolingDesignData coolingDesignData = keyValuePair.Value.Item1;
-                if (coolingDesignData != null)
-                {
-                    sizingMethod = SizingMethod.CDD;
-                    zoneData_Cooling = coolingDesignData.GetZoneData(zoneData_BuildingData.zoneNumber);
-                    coolingLoad = keyValuePair.Value.Item2;
-                    coolingIndex = keyValuePair.Value.Item3;
-
-                    //TODO: Add Design Day Temperature and Design Day Relative Humidity for CDD sizing method
-                }
-
-                if (tuple_Cooling != null && tuple_Cooling.Item1 > coolingLoad)
-                {
-                    sizingMethod = SizingMethod.Simulation;
-                    zoneData_Cooling = zoneData_BuildingData;
-                    coolingLoad = tuple_Cooling.Item1;
-                    coolingIndex = tuple_Cooling.Item2;
-                    designDayTemperature = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalTemperature);
-                    designDayRelativeHumidity = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalHumidity);
-                }
-
-                SpaceSimulationResult spaceSimulationResult_Cooling = Create.SpaceSimulationResult(zoneData_Cooling, coolingIndex, LoadType.Cooling, sizingMethod);
-                if(spaceSimulationResult_Cooling != null && coolingDesignData != null)
-                {
-                    string designDayName = coolingDesignData.name;
-                    spaceSimulationResult_Cooling.SetValue(SpaceSimulationResultParameter.DesignDayName, designDayName);
-                }
-
-                if(!double.IsNaN(designDayTemperature))
-                {
-                    spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayTemperature, designDayTemperature);
-                }
-
-                if (!double.IsNaN(designDayRelativeHumidity))
-                {
-                    spaceSimulationResult_Cooling.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayRelativeHumidity, designDayRelativeHumidity);
-                }
-
-                //COOLING END
-
-                //HEATING START
-
                 Tuple<double, int> tuple_Heating = null;
-                if (dictionary_Heating == null || !dictionary_Heating.TryGetValue(keyValuePair.Key, out tuple_Heating))
+                if (dictionary_Heating == null || zoneGuid == null || !dictionary_Heating.TryGetValue(zoneGuid, out tuple_Heating))
                 {
                     tuple_Heating = null;
                 }
 
-                sizingMethod = SizingMethod.Undefined;
-                ZoneData zoneData_Heating = null;
-                double heatingLoad = double.NaN;
-                int heatingIndex = -1;
-                designDayTemperature = double.NaN;
-                designDayRelativeHumidity = double.NaN;
+                //COOLING
+                CoolingDesignData coolingDesignData = tuple_DesignData?.Item1;
+                SpaceSimulationResult spaceSimulationResult_Cooling = ToSAM_SpaceSimulationResult(LoadType.Cooling, buildingData, zoneData_BuildingData, tuple_Cooling,
+                    coolingDesignData?.GetZoneData(zoneData_BuildingData.zoneNumber), coolingDesignData?.name, tuple_DesignData?.Item2 ?? double.NaN, tuple_DesignData?.Item3 ?? -1,
+                    out ZoneData zoneData_Cooling);
 
-                HeatingDesignData heatingDesignData = keyValuePair.Value.Item4;
-                if(heatingDesignData != null)
-                {
-                    sizingMethod = SizingMethod.HDD;
-                    zoneData_Heating = heatingDesignData.GetZoneData(zoneData_BuildingData.zoneNumber);
-                    heatingLoad = keyValuePair.Value.Item5;
-                    heatingIndex = keyValuePair.Value.Item6;
-
-                    //TODO: Add Design Day Temperature and Design Day Relative Humidity for CDD sizing method
-                }
-
-                if (tuple_Heating != null && tuple_Heating.Item1 > heatingLoad)
-                {
-                    sizingMethod = SizingMethod.Simulation;
-                    zoneData_Cooling = zoneData_BuildingData;
-                    coolingLoad = tuple_Heating.Item1;
-                    coolingIndex = tuple_Heating.Item2;
-                    designDayTemperature = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalTemperature);
-                    designDayRelativeHumidity = buildingData.GetHourlyBuildingResult(coolingIndex, (int)tsdBuildingArray.externalHumidity);
-                }
-
-                SpaceSimulationResult spaceSimulationResult_Heating = Create.SpaceSimulationResult(zoneData_Heating, heatingIndex, LoadType.Heating, sizingMethod);
-                if (spaceSimulationResult_Heating != null && heatingDesignData != null)
-                {
-                    string designDayName = heatingDesignData.name;
-                    spaceSimulationResult_Heating.SetValue(SpaceSimulationResultParameter.DesignDayName, designDayName);
-                }
-
-                if (!double.IsNaN(designDayTemperature))
-                {
-                    spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayTemperature, designDayTemperature);
-                }
-
-                if (!double.IsNaN(designDayRelativeHumidity))
-                {
-                    spaceSimulationResult_Heating.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayRelativeHumidity, designDayRelativeHumidity);
-                }
-
-                //HEATING END
+                //HEATING
+                HeatingDesignData heatingDesignData = tuple_DesignData?.Item4;
+                SpaceSimulationResult spaceSimulationResult_Heating = ToSAM_SpaceSimulationResult(LoadType.Heating, buildingData, zoneData_BuildingData, tuple_Heating,
+                    heatingDesignData?.GetZoneData(zoneData_BuildingData.zoneNumber), heatingDesignData?.name, tuple_DesignData?.Item5 ?? double.NaN, tuple_DesignData?.Item6 ?? -1,
+                    out ZoneData zoneData_Heating);
 
                 if (spaceSimulationResult_Cooling != null || spaceSimulationResult_Heating != null)
                 {
@@ -253,6 +171,78 @@ namespace SAM.Analytical.Tas
                 {
                     result.AddRange(spaceSimulationResults_Temp);
                 }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// One space's heating or cooling result from its two TSD peaks, or <c>null</c> when it has neither.
+        /// </summary>
+        /// <param name="tuple_Annual">The building (annual) data's <c>GetPeakZoneGains</c> peak and 1-based index; null when absent.</param>
+        /// <param name="zoneData_DesignDay">The zone in the governing design day's data; null when there is no design day.</param>
+        /// <param name="load_DesignDay">The design day's <c>GetPeakZoneGains</c> peak, W.</param>
+        /// <param name="index_DesignDay">The design day's 1-based <c>GetPeakZoneGains</c> index.</param>
+        /// <param name="zoneData_Governing">The zone data the legacy values (and the surface results) were read from.</param>
+        private static SpaceSimulationResult ToSAM_SpaceSimulationResult(LoadType loadType, BuildingData buildingData, ZoneData zoneData_BuildingData, Tuple<double, int> tuple_Annual,
+            ZoneData zoneData_DesignDay, string designDayName, double load_DesignDay, int index_DesignDay, out ZoneData zoneData_Governing)
+        {
+            zoneData_Governing = null;
+
+            bool designDay = zoneData_DesignDay != null;
+            bool annual = tuple_Annual != null && zoneData_BuildingData != null;
+
+            //The governing peak, as before: the design day, unless the annual peak is strictly larger. With only one of
+            //them, that one. (Before: a missing design day left the space with no result for that load type, and an
+            //annual heating winner was written into the cooling variables - audit B1.)
+            SizingMethod sizingMethod;
+            int index_Governing;
+            if (designDay && (!annual || !(tuple_Annual.Item1 > load_DesignDay)))
+            {
+                sizingMethod = loadType == LoadType.Cooling ? SizingMethod.CDD : SizingMethod.HDD;
+                zoneData_Governing = zoneData_DesignDay;
+                index_Governing = index_DesignDay;
+            }
+            else if (annual)
+            {
+                sizingMethod = SizingMethod.Simulation;
+                zoneData_Governing = zoneData_BuildingData;
+                index_Governing = tuple_Annual.Item2;
+            }
+            else
+            {
+                return null;
+            }
+
+            SpaceSimulationResult result = Create.SpaceSimulationResult(zoneData_Governing, index_Governing, loadType, sizingMethod);
+            if (result == null)
+            {
+                return null;
+            }
+
+            if (designDay)
+            {
+                result.SetValue(SpaceSimulationResultParameter.DesignDayName, designDayName);
+            }
+
+            //Legacy: the outdoor state at the governing peak, recorded only when the annual peak governs, because the
+            //design-day data sets have no building (weather) results.
+            if (sizingMethod == SizingMethod.Simulation)
+            {
+                result.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayTemperature, (double)buildingData.GetHourlyBuildingResult(index_Governing, (int)tsdBuildingArray.externalTemperature));
+                result.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayRelativeHumidity, (double)buildingData.GetHourlyBuildingResult(index_Governing, (int)tsdBuildingArray.externalHumidity));
+            }
+
+            SpaceLoadPeak spaceLoadPeak_DesignDay = designDay ? Create.SpaceLoadPeak(zoneData_DesignDay, LoadPeakBasis.DesignDay, load_DesignDay, index_DesignDay, null, designDayName) : null;
+            if (spaceLoadPeak_DesignDay != null)
+            {
+                result.SetValue(Analytical.SpaceSimulationResultParameter.DesignDayPeak, spaceLoadPeak_DesignDay);
+            }
+
+            SpaceLoadPeak spaceLoadPeak_Annual = annual ? Create.SpaceLoadPeak(zoneData_BuildingData, LoadPeakBasis.AnnualSimulation, tuple_Annual.Item1, tuple_Annual.Item2, buildingData) : null;
+            if (spaceLoadPeak_Annual != null)
+            {
+                result.SetValue(Analytical.SpaceSimulationResultParameter.AnnualPeak, spaceLoadPeak_Annual);
             }
 
             return result;
