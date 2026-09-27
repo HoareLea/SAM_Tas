@@ -1,6 +1,24 @@
 # Project Progress
 
-## Current: PR2A-2 - Tas result authority: design-day and annual peaks kept separately (27 Sep 2026) - OPEN, not merged
+## Current: PR2A closeout - Phase 2 result authority COMPLETE (27 Sep 2026)
+
+```text
+Phase 2 result authority: COMPLETE
+PR2A: COMPLETE
+Ready for PR2B: YES
+```
+
+- SAM#153 (PR2A-1, `SpaceLoadPeak`) merged into SAM `sow/2026-Q3` as `8a22c82b`.
+- SAM_Tas#69 (PR2A-2, this repo) merged into `sow/2026-Q3` as `46dacf22` (2026-09-27, by the user).
+- Reconciled: both local `sow/2026-Q3` fast-forwarded to those tips; both clean; no other merges landed after them.
+- Final validation: SAM Release build 0 errors; SAM.Tests 2544/2544; SAM_Tas build 0 errors; TM59 963/963;
+  Benchmark 16/16; SAM#153 CI green; SAM_Tas#69 CI green.
+- Follow-up filed, not fixed: [SAM#154](https://github.com/SAM-BIM/SAM/issues/154) - in `Convert.ToSAM_Results` a
+  cooling result without `LoadIndex` `continue`s past the heating **surface** results of the same space.
+- **Next step.** PR2B (typed Space Design Load reporting data + collector) is SAM-only, from SAM `sow/2026-Q3`. It
+  reads only `DesignDayPeak`/`AnnualPeak` and must not reference SAM_Tas. Nothing to do in this repo for PR2B.
+
+## Previous: PR2A-2 - Tas result authority: design-day and annual peaks kept separately (27 Sep 2026) - MERGED as SAM_Tas#69 (`46dacf22`)
 
 **Status.** Branch `fix/pr2a2-tas-peak-authority-2026-09-27` from `sow/2026-Q3` `aa00ff91`. It **depends on SAM PR2A-1**
 (`feature/pr2a1-space-load-peak-2026-09-27`: `SpaceLoadPeak`, `SpaceSimulationResultParameter.DesignDayPeak` /
@@ -59,8 +77,7 @@ evidence are in SAM `documentation/Reporting-Phase2-ResultAuthority.md` §3.2 an
 - The Tas COM trap: open a TSD by **absolute** path. A relative path hangs the COM server with a hidden dialog, and the
   stuck server then makes later opens time out. Use a fresh copy per open.
 
-**Next step.** Review both PRs, then merge in order: SAM PR2A-1, then this. Then rebuild SAM → SAM_Tas and start PR2B
-(reporting typed data + collector) in a fresh session from SAM `sow/2026-Q3`. Do not start PR2B before both merges.
+**Next step.** Superseded by the closeout above (both PRs merged).
 
 ## Previous: replace per-run records instead of appending (26 Sep 2026) - MERGED as SAM_Tas#67 (`b32c0808`)
 
