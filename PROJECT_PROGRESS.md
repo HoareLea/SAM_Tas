@@ -1,6 +1,68 @@
 # Project Progress
 
-## Current: replace per-run records instead of appending (26 Sep 2026) - MERGED as SAM_Tas#67 (`b32c0808`)
+## Current: PR2A-2 - Tas result authority: design-day and annual peaks kept separately (27 Sep 2026) - OPEN, not merged
+
+**Status.** Branch `fix/pr2a2-tas-peak-authority-2026-09-27` from `sow/2026-Q3` `aa00ff91`. It **depends on SAM PR2A-1**
+(`feature/pr2a1-space-load-peak-2026-09-27`: `SpaceLoadPeak`, `SpaceSimulationResultParameter.DesignDayPeak` /
+`AnnualPeak`). This repo builds against `..\SAM\build`, so merge and build SAM first. The full record, contract and
+evidence are in SAM `documentation/Reporting-Phase2-ResultAuthority.md` §3.2 and
+`documentation/evidence/reporting-phase2-gate/pr2a/`.
+
+**Fixed in `Convert.ToSAM_Results(SimulationData)` (audit B1–B5).**
+- B1: an annual heating peak larger than the HDD peak was written into the cooling variables, leaving the heating
+  result "Simulation" with the HDD load/state. It now governs the heating result with the annual zone data and index. A
+  load type with no design day now gets its annual result (before: none).
+- B2/B3: both peaks are persisted as typed `SpaceLoadPeak`s:
+  - never merged;
+  - a zero peak is `Load 0` with no time, state or components;
+  - no −1 sentinel reaches them.
+- B4: the 1-based TSD hour is converted once, in `Query.ZeroBasedHourOfYear/OfDay` (new `Query/ZeroBasedHour.cs`). A
+  design-day peak gets no hour of the year.
+- B5: `Create.SpaceLoadPeak` (new) reads the full set at the peak:
+  - the room state: DB, resultant, RH, humidity ratio;
+  - all sensible and latent gain channels, AHUGain included, heating included;
+  - the outdoor DB/RH from the TSD building results, for annual peaks only (design-day data has no weather results).
+  - Aperture flows and IZAM channels are excluded: Tas returns −1 for them at valid hours.
+- The loop now runs over every zone of the building data, not only the zones with design data. It is unchanged for
+  normal runs.
+
+**Compatibility.**
+- The legacy `Load`/`LoadIndex`/`SizingMethod`/gains/`DesignDayTemperature` still project the governing peak:
+  - DD unless annual is strictly larger;
+  - raw 1-based `LoadIndex`;
+  - the unchanged −1 values and `LoadIndex 0` for a zero peak.
+- The only change is the B1 case (and a load type with no design day).
+- The compatibility tests pass on both the old and the new code.
+
+**Validation.**
+- New `TsdResultFakes.cs`: managed TSD fakes. `ZoneData`, `BuildingData`, `Heating/CoolingDesignData` and
+  `SimulationData` are plain interfaces, so the real conversion runs in `dotnet test`.
+- New `TsdPeakAuthorityTests.cs`, 16 tests.
+  - **Red → green:** against the old `Results.cs`, 9 failed. B1 read 50 W instead of 104.01 W. The 7
+    compatibility/helper tests passed.
+  - The B6 test uses Bedroom 2_3's real cooling values.
+- `SAM_Tas.sln` Release (Framework MSBuild): exit 0.
+- TM59 **963/963** (947 + 16). Benchmark **16/16**. SAM.Tests 2494/2494 on the SAM branch.
+- Real fixtures (production `AddResults` → new `.sam` copy → reopen; the sources' SHA-256 were unchanged):
+  - Bathroom_2 (`final1b\open.tsd`): heating DD 1139.796 W at design-day hour 23, no date. Annual 104.010 W at hour
+    8553 = 23 Dec 09:00, outdoor −2.3 °C / 100 %. Both close to 0.0002 W.
+  - B6: the TSD scan found real cooling in the TPD-bridge TSDs. `pr3\final\bridge.tsd` Bedroom 2_3 is CDD 2070.833 W
+    and annual 1369.404 W (2 Aug 04:00). Studio 1_0 is CDD 1973.468 W and annual 1972.137 W. Cooling `Load = +Σ
+    sensible terms` within 0.006 W; latent is outside the load.
+- No licensed simulation was run: only read-only TSD opens of copies.
+
+**Open / risks.**
+- AHUGain was 0 everywhere, so its closure role when non-zero is unverified.
+- Latent removal load is not persisted.
+- The bridge fixture's set points are imposed (a thermostat bridge), not a designer's cooled model.
+- Result freshness is unchanged (non-Part-O = Unknown).
+- The Tas COM trap: open a TSD by **absolute** path. A relative path hangs the COM server with a hidden dialog, and the
+  stuck server then makes later opens time out. Use a fresh copy per open.
+
+**Next step.** Review both PRs, then merge in order: SAM PR2A-1, then this. Then rebuild SAM → SAM_Tas and start PR2B
+(reporting typed data + collector) in a fresh session from SAM `sow/2026-Q3`. Do not start PR2B before both merges.
+
+## Previous: replace per-run records instead of appending (26 Sep 2026) - MERGED as SAM_Tas#67 (`b32c0808`)
 
 **Status.** Branch `fix/parto-replace-run-records-2026-09-26` from `sow/2026-Q3` `39828c6`; commits `bf0daba`, `63df74d`.
 Second of three coordinated PRs: merge SAM `fix/deepclone-guidless-objects-2026-09-26` first (this repo builds against
