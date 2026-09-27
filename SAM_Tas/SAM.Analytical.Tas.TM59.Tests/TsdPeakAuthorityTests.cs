@@ -357,32 +357,63 @@ namespace SAM.Analytical.Tas.TM59.Tests
             Assert.That(heating.TryGetValue(Analytical.SpaceSimulationResultParameter.RelativeHumidity, out double _), Is.False);
         }
 
-        // ---- Cooling: structure only (B6 needs real evidence) ---------------------------------------------------
+        // ---- B6: cooling, on real Tas values -----------------------------------------------------------------
 
         /// <summary>
-        /// The cooling path goes through the same code, so its peaks get the same availability and time semantics.
-        /// This does NOT verify cooling's sign or closure: that needs a real cooled TSD (audit B6).
+        /// Real cooling peaks: Bedroom 2_3 in C:\TasOut\pr3\final\bridge.tsd (Leeds TRY; the PR3 resultant-temperature
+        /// thermostat bridge run, which gives its zones genuine thermostat cooling loads). CDD 2070.833 W at TSD hour
+        /// 5089; annual 1369.404 W at 5117 (2 Aug 04:00-05:00), outdoor 15.2 °C / 94 %. Tas's cooling load is the
+        /// SENSIBLE balance, load = +(sum of sensible gains), and excludes latent: the occupancy latent gain (77 W) is
+        /// recorded but is not part of it.
         /// </summary>
         [Test]
-        public void Cooling_BothPeaksKept_WithTheSameTimeSemantics()
+        public void B6_CoolingPeaks_KeepBothBases_AndCloseAsLoadEqualsPlusSensibleGains()
         {
             FakeSimulationData simulationData = Simulation(out FakeZoneData zone_Annual, out _, out FakeZoneData zone_Cdd);
-            zone_Cdd.Set(5100, tsdZoneArray.coolingLoad, 800f).Set(5100, tsdZoneArray.dryBulbTemp, 24f);
-            zone_Annual.Set(4800, tsdZoneArray.coolingLoad, 650f).Set(4800, tsdZoneArray.dryBulbTemp, 24.5f);
-            simulationData.Building.Set(4800, tsdBuildingArray.externalTemperature, 29.4f);
+            zone_Cdd.Set(5089, tsdZoneArray.coolingLoad, 2070.833252f)
+                .Set(5089, tsdZoneArray.dryBulbTemp, 19.294514f)
+                .Set(5089, tsdZoneArray.relativeHumidity, 100f)
+                .Set(5089, tsdZoneArray.occupantSensibleGain, 105f)
+                .Set(5089, tsdZoneArray.equipmentSensibleGain, 10f)
+                .Set(5089, tsdZoneArray.infVentGain, -2.025321f)
+                .Set(5089, tsdZoneArray.buildingHeatTransfer, 1393.599976f)
+                .Set(5089, tsdZoneArray.externalConductionOpaque, 601.931396f)
+                .Set(5089, tsdZoneArray.externalConductionGlazing, -37.675072f)
+                .Set(5089, tsdZoneArray.occupancyLatentGain, 77f);
+            zone_Annual.Set(5117, tsdZoneArray.coolingLoad, 1369.404419f)
+                .Set(5117, tsdZoneArray.dryBulbTemp, 17.196497f)
+                .Set(5117, tsdZoneArray.solarGain, 11.129734f)
+                .Set(5117, tsdZoneArray.occupantSensibleGain, 105f)
+                .Set(5117, tsdZoneArray.equipmentSensibleGain, 10f)
+                .Set(5117, tsdZoneArray.infVentGain, -42.78714f)
+                .Set(5117, tsdZoneArray.buildingHeatTransfer, 1049.807251f)
+                .Set(5117, tsdZoneArray.externalConductionOpaque, 295.914124f)
+                .Set(5117, tsdZoneArray.externalConductionGlazing, -59.657181f)
+                .Set(5117, tsdZoneArray.occupancyLatentGain, 77f);
+            simulationData.Building.Set(5117, tsdBuildingArray.externalTemperature, 15.2f).Set(5117, tsdBuildingArray.externalHumidity, 94f);
 
             SpaceSimulationResult cooling = Result(Convert(simulationData), LoadType.Cooling);
             SpaceLoadPeak designDay = Peak(cooling, Analytical.SpaceSimulationResultParameter.DesignDayPeak);
             SpaceLoadPeak annual = Peak(cooling, Analytical.SpaceSimulationResultParameter.AnnualPeak);
 
             Assert.That(cooling.SizingMethod(), Is.EqualTo(SizingMethod.CDD));
-            Assert.That(designDay.Load, Is.EqualTo(800));
-            Assert.That(designDay.HourOfDay, Is.EqualTo((5100 - 1) % 24));
+            Assert.That(designDay.Load, Is.EqualTo(2070.833).Within(0.001));
+            Assert.That(designDay.HourOfDay, Is.EqualTo(0));
             Assert.That(designDay.HourOfYear, Is.Null);
             Assert.That(designDay.DesignDayName, Is.EqualTo(CoolingDesignDayName));
-            Assert.That(annual.Load, Is.EqualTo(650));
-            Assert.That(annual.HourOfYear, Is.EqualTo(4799));
-            Assert.That(annual.OutdoorDryBulbTemperature, Is.EqualTo(29.4).Within(1e-5));
+            Assert.That(annual.Load, Is.EqualTo(1369.404).Within(0.001));
+            Assert.That(annual.HourOfYear, Is.EqualTo(5116));
+            Assert.That(annual.TryGetDateTime(2018, out DateTime dateTime), Is.True);
+            Assert.That(dateTime, Is.EqualTo(new DateTime(2018, 8, 2, 4, 0, 0)));
+            Assert.That(annual.OutdoorDryBulbTemperature, Is.EqualTo(15.2).Within(1e-5));
+
+            foreach (SpaceLoadPeak spaceLoadPeak in new[] { designDay, annual })
+            {
+                double sensible = spaceLoadPeak.Components.Where(x => x.Key != LoadPeakComponent.OccupancyLatent && x.Key != LoadPeakComponent.EquipmentLatent).Sum(x => x.Value);
+                Assert.That(sensible, Is.EqualTo(spaceLoadPeak.Load).Within(0.01));
+                Assert.That(spaceLoadPeak.TryGetComponent(LoadPeakComponent.OccupancyLatent, out double latent), Is.True);
+                Assert.That(latent, Is.EqualTo(77));
+            }
         }
     }
 }
