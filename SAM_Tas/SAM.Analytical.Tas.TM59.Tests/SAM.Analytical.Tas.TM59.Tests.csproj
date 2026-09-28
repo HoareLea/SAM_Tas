@@ -115,6 +115,12 @@
       <Link>Resources\MV.json</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- PR3B-3: the shipped manufacturer-guidance (MVRE) topology, linked the same way, for the mixed cooled and
+         uncooled document. -->
+    <None Include="..\..\..\SAM_Systems\files\resources\Analytical\Systems\SystemEnergyCentre\MVRE.json">
+      <Link>Resources\MVRE.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

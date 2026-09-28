@@ -116,6 +116,13 @@ namespace SAM.Analytical.Tas.TM59
 
         private const string ReasonNoTM59Result = "No TM59 result referenced this space's simulated guid.";
 
+        /// <summary>
+        /// The run record's <c>partOIteration</c> when its dwellings are assessed at more than one iteration - a
+        /// mixed building (PR1 mixed dwelling strategies, PR3B cooling), where no single iteration is true of the run.
+        /// Each space row still carries its own governing scenario's iteration.
+        /// </summary>
+        public const string MixedPartOIteration = "Mixed";
+
         // -----------------------------------------------------------------------------------------------
         // Build
         // -----------------------------------------------------------------------------------------------
@@ -164,7 +171,8 @@ namespace SAM.Analytical.Tas.TM59
             JsonObject run = NewRecord("run", runId, runTimestampUtc);
             SetString(run, "modelName", input.AnalyticalModel_Design?.Name);
             SetString(run, "modelGuid", input.AnalyticalModel_Design?.Guid.ToString());
-            SetString(run, "partOIteration", scenarios.Count == 0 ? null : scenarios[0].Iteration.ToString());
+            SetString(run, "partOIteration", RunPartOIteration(scenarios));
+            run["partOIterations"] = PartOIterations(scenarios);
             SetString(run, "tM52BuildingCategory", input.TM52BuildingCategory);
             SetString(run, "path_gbXML", input.Path_gbXML);
             SetString(run, "path_TBD", input.Path_TBD);
@@ -548,9 +556,53 @@ namespace SAM.Analytical.Tas.TM59
             }
         }
 
+        /// <summary>
+        /// The one Part O iteration a run is assessed at, read from its scenarios - never from whichever scenario
+        /// happens to be first. Dwellings state the run's iteration; a common space's <c>DwellingIndependent</c> is a
+        /// neutral identity, not an iteration of the run, so it is read only when there is no dwelling scenario at
+        /// all. One distinct iteration → its name; more than one → <see cref="MixedPartOIteration"/>; no scenario →
+        /// null.
+        /// </summary>
+        public static string RunPartOIteration(IEnumerable<OverheatingScenario> overheatingScenarios)
+        {
+            List<OverheatingScenario> scenarios = overheatingScenarios?.Where(x => x != null).ToList() ?? new List<OverheatingScenario>();
+
+            List<OverheatingScenario> scenarios_Dwelling = scenarios.FindAll(x => x.Scope != SAM.Analytical.Enums.PartOAssessmentScope.CommonSpace);
+            if (scenarios_Dwelling.Count != 0)
+            {
+                scenarios = scenarios_Dwelling;
+            }
+
+            List<SAM.Analytical.Enums.PartOIteration> iterations = scenarios.Select(x => x.Iteration).Distinct().ToList();
+
+            switch (iterations.Count)
+            {
+                case 0:
+                    return null;
+
+                case 1:
+                    return iterations[0].ToString();
+
+                default:
+                    return MixedPartOIteration;
+            }
+        }
+
         // -----------------------------------------------------------------------------------------------
         // Helpers
         // -----------------------------------------------------------------------------------------------
+
+        /// <summary>Every distinct iteration the scenarios state, common spaces included, ordinal-sorted by name.</summary>
+        private static JsonArray PartOIterations(List<OverheatingScenario> scenarios)
+        {
+            JsonArray result = new JsonArray();
+            foreach (string iteration in scenarios.Select(x => x.Iteration.ToString()).Distinct().OrderBy(x => x, StringComparer.Ordinal))
+            {
+                result.Add(iteration);
+            }
+
+            return result;
+        }
 
         private static string IdentityMode(SAM.Analytical.SimulationSpaceMap simulationSpaceMap, Space space_Simulation, Space space_Design)
         {

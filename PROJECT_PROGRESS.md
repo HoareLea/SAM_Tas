@@ -1,6 +1,38 @@
 # Project Progress
 
-## Current: PR2A closeout - Phase 2 result authority COMPLETE (27 Sep 2026)
+## Current: Mixed Part O PR3B-3 - mixed-scenario diagnostics + mixed TPD cooling regression (28 Sep 2026)
+
+**Status.** Branch `fix/parto-mixed-cooling-pr3b3-2026-09-27` from `sow/2026-Q3` `fedf34cd`. Third of three PR3B domain
+PRs (authoritative record: SAM `documentation/PartO-MixedDwellingStrategies-PR3B.md`). Depends on SAM#161 (merged
+`85a13ec3`) and SAM_Systems#31 (PR3B-2, `MechanicalVentilationSettings.GuidanceTemplate`): CI is green only once both are
+on their integration tips. **No production thermal/TPD change.**
+
+- `SAM.Analytical.Tas.TM59/Classes/PartODiagnosticLog.cs`: the run record's `partOIteration` took `scenarios[0]` - wrong
+  for a mixed building (and for a single-iteration run whose corridor scenario was listed first). New public
+  `RunPartOIteration(scenarios)`: the distinct iteration of the dwelling scenarios (a common space's
+  `DwellingIndependent` only when there is no dwelling), `Mixed` (`MixedPartOIteration`) when they differ, null for none.
+  New run field `partOIterations` (every distinct iteration, ordinal-sorted). Space rows unchanged (already per scenario).
+- `MixedGuidanceCoolingTests` (new, COM-free): the real SAM_Systems mixed materialisation (MV + MVRE for the one unit with
+  guidance, SAM's airflow rule 25 l/s design -> 80 l/s) through the production `SystemVentilationConversionContext` and
+  `Modify.GroundGuidanceCooling` (by reflection - its native parameters are embedded interop types): exactly one
+  `GuidanceCooling`, on the cooled unit's air system; the uncooled air system has none, no exchanger/coil, and the
+  grounding leaves it untouched; ventilation intent identical to the uncooled document.
+- Test csproj links SAM_Systems' shipped `MVRE.json` beside `MV.json`.
+
+**Red first** (`Documentation/evidence/parto-mixed-pr3b/pr3b3-red-first.txt`): diagnostic tests 2 fail on the
+`scenarios[0]` line ("BaseNaturalVentilation" / "DwellingIndependent" instead of "Mixed" / "BasePassive"). The TPD tests
+pass on unchanged production (PR3A's conclusion holds); a building-wide mutation of `GuidanceCooling(guid)` fails 2 of 4.
+
+**Validation.** `SAM_Tas.sln` Release (VS 18 MSBuild, `-m:1` - a parallel build raced and compiled the tests against a
+stale `build\SAM.Analytical.Systems.dll`): 0 errors. TM59 **970/970** (963 + 7), Benchmark 16/16. Built against SAM
+`2be58f1e` (= merged #161) and SAM_Systems #31 head `56fcb8a6`.
+
+**Follow-up.** SAM_Tas_Grasshopper `TasLogPartODiagnostics.cs:236` names the log file from `overheatingScenarios[0]` -
+switch to `PartODiagnosticLog.RunPartOIteration(...) ?? "Undefined"` after this merges (separate repo, small PR).
+
+**Next step.** Merge after SAM_Systems#31; then the licensed PR3B gate (SAM PR3B doc §4).
+
+## Previous: PR2A closeout - Phase 2 result authority COMPLETE (27 Sep 2026)
 
 ```text
 Phase 2 result authority: COMPLETE
