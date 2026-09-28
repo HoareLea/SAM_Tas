@@ -3,7 +3,7 @@
 
 # TSD result-read performance (post-PR4 investigation)
 
-**Status (28 Sep 2026): PLACEHOLDER_STATUS**
+**Status (28 Sep 2026): code + tests + licensed evidence complete; PR open, awaiting review. Case C: a SAM_Tas access-pattern fix (this PR, `AddResults`) plus a measured, not-yet-applied follow-up for the bridge and TM59; the remaining ceiling is TSD.exe's day cache.**
 Branch `perf/tsd-daymajor-reads-2026-09-28` from SAM_Tas `sow/2026-Q3` `5753ad2`. Isolated from the Part O mixed
 programme: PR4 (SAM_UI#137) is closed and not reopened; no Part O architecture or SAM_UI change.
 
@@ -73,16 +73,16 @@ So the ~51-minute `AddResults` stage is entirely generic enrichment on the Part 
 
 | # | Approach | Result | Correct? |
 |---|---|---|---|
-| A | Current production `AddResults` | ×10 27.7 s; ×30 PLACEHOLDER_A30 | reference |
+| A | Current production `AddResults` | ×10 27.7 s; ×30 **2,992 s** (production log 3,038 s) | reference |
 | B | One zone at a time, all its arrays together | no gain: `Overheating` already reads a zone's 3 arrays per day; a second array of the same zone right after the first still costs 8.1 s | - |
 | C | Building-wide calls | `GetPeakZoneGains` answers all 270 zones in one 8 s year-walk - cheap *per zone*; but no building-wide per-zone *series* call exists (`GetSumZoneResultForMultipleZones` sums; batched `GetPeakZoneGroupGains` returns one column) | yes |
 | D | Annual instead of 365 daily | ×10 4× faster (call overhead); ×30 identical (22.4 s per zone both): the cost is decoding, not calls | bit-identical |
 | E | Reuse one opened TSD/session | each stage opens once; the cache is evicted within one read and cleared on close - nothing to reuse | - |
 | F | In-memory cache in SAM_Tas | within `AddResults` no series is read twice; across bridge → TM59, 180 resultant series (~24 min) are; moot once reads are day-major | - |
-| G | Skip unused families | would remove all of `AddResults` on Part O, but changes what the persisted Part O model holds (and its provenance fingerprint) - an owner decision in SAM_UI; after the day-major fix the saving is PLACEHOLDER_G | - |
-| **DM** | **Day-major reads** (this PR, `AddResults`) | ×10 PLACEHOLDER_B10; ×30 PLACEHOLDER_B30 | PLACEHOLDER_AB |
-| DM | Day-major for TM59 + bridge series (not in this PR) | PLACEHOLDER_TM59 | PLACEHOLDER_TM59OK |
-| DM | Day-major weather (7 building arrays) | PLACEHOLDER_WX | PLACEHOLDER_WXOK |
+| G | Skip unused families | would remove all of `AddResults` on Part O, but changes what the persisted Part O model holds (and its provenance fingerprint) - an owner decision in SAM_UI; after the day-major fix at most the remaining ~85 s at ×30 - no longer worth a Part O change on performance grounds | - |
+| **DM** | **Day-major reads** (this PR, `AddResults`) | ×10 27.0 s (no cliff to remove); ×30 **85.4 s (35×)** | **bit-identical**: 7,260 / 2,420 results and every relation (§6) |
+| DM | Day-major for TM59 + bridge series (not in this PR) | ×30 bridge TSD, 270 zones × resultant, dry-bulb, occupant gain (everything TM59 and the bridge read): **28.1 s** vs ~126 min today (540 + 360 annual reads × 8.1 s) | bit-identical vs `GetAnnualZoneResult` (sampled) |
+| DM | Day-major weather (7 building arrays) | 46.1 s → 7.1 s (`GetDailyBuildingResult`) | bit-identical, all 7 × 8760 |
 | H | Parallel reads | not attempted: one shared TSD.exe COM server (reused across client processes, one core), one cache - no documented thread safety | - |
 
 ## 5. The change (SAM.Analytical.Tas)
@@ -106,8 +106,46 @@ Not changed: `GetPeakZoneGains` (two building calls), hourly peak reads, surface
 
 ## 6. Validation
 
-PLACEHOLDER_VALIDATION
+Licensed, production `Modify.AddResults` on the PR4 run model's `AdjacencyCluster` and read-only TSD copies; A = the
+`sow/2026-Q3` build, B = A with only `SAM.Analytical.Tas.dll` swapped (every other DLL hash-identical); runs serial
+(TSD.exe is one COM server shared by all clients). Full numbers: `tsd-read-performance/probe-results.txt`.
+
+| TSD | A | B | Results | A vs B |
+|---|---|---|---|---|
+| ×10 thermal source (90 spaces, 40 SAM zones) | 27.7 s (rerun 25.6 s) | 27.0 s | 2,420 | identical |
+| ×30 thermal source (270 spaces, 120 SAM zones) | **2,992.4 s** | **85.4 s** | 7,260 | identical |
+| ×10 bridge (20 of 40 SAM zone peaks positive, ~4.7 kW) | 26.2 s | 22.6 s | 2,420 | identical |
+
+"Identical": every result serialised guid-free is the same text apart from its creation `DateTime` (which also differs
+between two A runs - the noise floor), and every space / panel / zone has the same number of related results. Values
+covered: overheating hours, max/min dry-bulb, design-day and annual peaks, gains, surface results, zone peaks and
+their hour, zone identity (`Reference` = TSD zone guid).
+
+Tests: `TsdDayMajorReadTests` (8 new): day-major call order and values; partial-range layout; `Overheating` from the
+series equals the zone read and leaves the series alone; the group-peak rule (single-precision order dependence, first
+hour on a tie, 0 at 0, refusals); `AddResults` takes a full-year zone peak without calling TSD, and keeps the TSD call
+for a partial year. **Red first**: the full-year zone-peak test fails on the previous build (it asks TSD); the
+partial-year test passes on both. `SAM.Analytical.Tas.TM59.Tests` 978/978; `SAM.Analytical.Tas.Benchmark.Tests` 16/16.
+
+TM59 outcome, overheating metrics and cooled/uncooled reference results on the Part O route are **not** touched by this
+PR (TM59 and the bridge read their own series; `AddResults` output is not consumed there, §3). No TAS simulation was
+rerun.
 
 ## 7. Open items and next step
 
-PLACEHOLDER_NEXT
+- **Estimated ×30 run**: 4:33:29 → ~3:44 with this PR (−49 min, "Adding Results" 50.6 min → ~1.4 min). With the
+  follow-up below as well: ~1:40 (bridge reads ~52 min → <0.5 min, TM59 reads ~74 min → <1 min). What remains is TAS
+  itself: shading 708 s, building simulation 115 s, TPD conversion ~21 s per air system (1,226 s), TPD simulation
+  ~28 min, bridge TBD simulation ~29 min.
+- **Follow-up (not in this PR, needs an owner decision)**: read the bridge (`ReadThermostatBridge`) and TM59
+  (`Convert.ToSAM(TSD)` → `Space.ToSAM` → `GetAnnualZoneResult`) series through `Query.ZoneResultSeries`; weather
+  through `GetDailyBuildingResult`. Measured 28.1 s and 7.1 s, bit-identical on the real ×30 bridge TSD. Held back
+  because both routes' refusals ("a full year or the space is refused", incomplete bridge series) currently depend on
+  the LENGTH `GetAnnualZoneResult` returns; a day-major read always yields 8760 hours, and how TSD answers daily calls
+  for a damaged file is not measured. Decide the damaged-file semantics first (e.g. keep one annual call per file as a
+  length check - 8 s - or refuse on any daily-call failure).
+- Not measured: a TSD bigger than ×30 (the day-major cost is per day decoded, ~linear in file size, so ~5,000 spaces
+  would be minutes, not hours - but the cache cap, TAS simulation and TPD conversion then dominate).
+- EDSL questions: see the PR description.
+- **Next step**: review and merge this PR into `sow/2026-Q3`; then the `PROJECT_PROGRESS.md` closeout on the base branch;
+  then decide the bridge/TM59 follow-up.
