@@ -652,6 +652,80 @@ namespace SAM.Analytical.Tas.TM59.Tests
         }
 
         // -----------------------------------------------------------------------------------------------
+        // PR3B-3: a mixed building assesses its dwellings at different iterations (Natural, uncooled MVHR,
+        // cooled MVHR), so the run record cannot take its iteration from whichever scenario is first.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void MixedDwellingIterations_RunRecordStatesMixedAndEveryIteration_EachRowItsOwn()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design,
+                ("Flat 1", "NV", PartOIteration.BaseNaturalVentilation),
+                ("Flat 2", "MVRE", PartOIteration.BasePassive),
+                ("Flat 3", "MVRE", PartOIteration.ActiveTrimCooling),
+                ("Corridor", "UV", PartOIteration.DwellingIndependent));
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 2")), Result_Mechanical(Simulated(spaces_Simulated, "Flat 3")) },
+                natural: new List<TMResult> { Result_NaturalBedroom(Simulated(spaces_Simulated, "Flat 1")) },
+                corridor: new List<TMResult> { Result_Corridor(Simulated(spaces_Simulated, "Corridor")) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject run = RecordsOf(result, "run").Single();
+            Assert.That(run["partOIteration"]?.GetValue<string>(), Is.EqualTo(PartODiagnosticLog.MixedPartOIteration),
+                "A mixed building has no single iteration; the first scenario's (Flat 1, BaseNaturalVentilation) is not the run's.");
+
+            List<string> iterations = run["partOIterations"]?.AsArray().Select(x => x.GetValue<string>()).ToList();
+            Assert.That(iterations, Is.EqualTo(new[] { "ActiveTrimCooling", "BaseNaturalVentilation", "BasePassive", "DwellingIndependent" }));
+
+            List<JsonObject> spaceRows = RecordsOf(result, "space");
+            Assert.That(spaceRows.Count, Is.EqualTo(4));
+
+            foreach ((string name, string iteration) in new[] { ("Flat 1", "BaseNaturalVentilation"), ("Flat 2", "BasePassive"), ("Flat 3", "ActiveTrimCooling"), ("Corridor", "DwellingIndependent") })
+            {
+                JsonObject row = spaceRows.Find(x => x["simulatedSpaceGuid"]?.GetValue<string>() == Simulated(spaces_Simulated, name).Guid.ToString());
+                Assert.That(row, Is.Not.Null, name + " has no row.");
+                Assert.That(row["partOIteration"]?.GetValue<string>(), Is.EqualTo(iteration), name);
+            }
+        }
+
+        [Test]
+        public void SingleIterationRun_CorridorScenarioListedFirst_RunRecordStatesTheDwellingsIteration()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design,
+                ("Corridor", "UV", PartOIteration.DwellingIndependent),
+                ("Flat 1", "MVRE", PartOIteration.BasePassive),
+                ("Flat 2", "MVRE", PartOIteration.BasePassive),
+                ("Flat 3", "MVRE", PartOIteration.BasePassive));
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(Input(analyticalModel_Design, Spaces_Simulated(), scenarios), Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject run = RecordsOf(result, "run").Single();
+            Assert.That(run["partOIteration"]?.GetValue<string>(), Is.EqualTo("BasePassive"),
+                "The corridor's DwellingIndependent is a neutral identity, not the run's iteration.");
+            Assert.That(run["partOIterations"]?.AsArray().Select(x => x.GetValue<string>()), Is.EqualTo(new[] { "BasePassive", "DwellingIndependent" }));
+        }
+
+        [Test]
+        public void SingleIterationRun_KeepsItsIteration_AndNoScenarioStatesNone()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(Input(analyticalModel_Design, Spaces_Simulated(), Scenarios(analyticalModel_Design)), Guid.NewGuid(), DateTime.UtcNow, false);
+            Assert.That(RecordsOf(result, "run").Single()["partOIteration"]?.GetValue<string>(), Is.EqualTo("BasePassive"));
+
+            Assert.That(PartODiagnosticLog.RunPartOIteration(null), Is.Null);
+            Assert.That(PartODiagnosticLog.RunPartOIteration(new List<OverheatingScenario>()), Is.Null);
+
+            List<OverheatingScenario> corridorOnly = Scenarios(analyticalModel_Design, ("Corridor", "UV", PartOIteration.DwellingIndependent));
+            Assert.That(PartODiagnosticLog.RunPartOIteration(corridorOnly), Is.EqualTo("DwellingIndependent"));
+        }
+
+        // -----------------------------------------------------------------------------------------------
         // Fixture
         // -----------------------------------------------------------------------------------------------
 
@@ -784,6 +858,24 @@ namespace SAM.Analytical.Tas.TM59.Tests
                     zone.Guid,
                     PartOIteration.BasePassive,
                     new SystemTemplate(keyValuePair.Value, null, null, null, null, null)));
+            }
+
+            return result;
+        }
+
+        private static List<OverheatingScenario> Scenarios(AnalyticalModel analyticalModel_Design, params (string name, string ventilationStrategy, PartOIteration iteration)[] definitions)
+        {
+            List<OverheatingScenario> result = new List<OverheatingScenario>();
+
+            foreach ((string name, string ventilationStrategy, PartOIteration iteration) in definitions)
+            {
+                SAM.Analytical.Zone zone = analyticalModel_Design.GetZones().Find(x => x.Name == name);
+
+                result.Add(new OverheatingScenario(
+                    name == "Corridor" ? PartOAssessmentScope.CommonSpace : PartOAssessmentScope.Dwelling,
+                    zone.Guid,
+                    iteration,
+                    new SystemTemplate(ventilationStrategy, null, null, null, null, null)));
             }
 
             return result;

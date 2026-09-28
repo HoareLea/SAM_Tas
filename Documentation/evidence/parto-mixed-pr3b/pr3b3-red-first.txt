@@ -1,0 +1,23 @@
+PR3B-3 red-first - PartODiagnosticLog run record, 28 Sep 2026
+Setup: new PartODiagnosticLogTests on top of the fix, with only the run-record line reverted to
+  SetString(run, "partOIteration", scenarios.Count == 0 ? null : scenarios[0].Iteration.ToString());
+PartODiagnosticLogTests: Failed 2, Passed 18, Total 20
+  Failed MixedDwellingIterations_RunRecordStatesMixedAndEveryIteration_EachRowItsOwn
+    Expected: "Mixed"        But was: "BaseNaturalVentilation"   (Flat 1's, the first scenario)
+  Failed SingleIterationRun_CorridorScenarioListedFirst_RunRecordStatesTheDwellingsIteration
+    Expected: "BasePassive"  But was: "DwellingIndependent"      (the corridor's, listed first)
+With the fix: 20/20.
+
+PR3B-3 red-first - mixed TPD cooling (MixedGuidanceCoolingTests), 28 Sep 2026
+The production SAM_Tas grounding is already per air system (PR3A's conclusion), so the new tests pass on
+unchanged production code. To show they catch the defect they guard, production was mutated to a
+building-wide assumption - SystemVentilationConversionContext.GuidanceCooling(guid_AirSystem) returning the
+document's first guidance record for ANY air system - rebuilt, and run:
+MixedGuidanceCoolingTests: Failed 2, Passed 2, Total 4
+  Failed OneDocument_BindsGuidanceCoolingToTheCooledUnitsAirSystemOnly
+    Expected: null   But was: <MechanicalVentilationGuidanceCooling>   (the uncooled unit's air system)
+  Failed TheGuidanceCoolingGrounding_TakesTheCoolingPathForTheCooledAirSystemOnly
+    Expected: True   But was: False   (the uncooled air system entered the cooling grounding)
+Mutation reverted; production unchanged: 4/4.
+Against SAM_Systems before PR3B-2 the mixed call cannot be expressed (no MechanicalVentilationSettings.GuidanceTemplate;
+a partial guidance set refuses "only partly configured").
