@@ -1,0 +1,52 @@
+using System.Diagnostics;
+using TSD;
+
+internal static partial class Program
+{
+    static partial void ExtraImpl(string mode, SimulationData sd, BuildingData bd, List<ZoneData> zones, string[] a, ref bool handled)
+    {
+        if (mode == "weather") { handled = true; WeatherRead(sd, bd); return; }
+        if (mode == "addresults") { handled = true; AddRes(sd, bd, zones, a); return; }
+        if (mode != "peakcheck") return;
+        handled = true;
+        // coolingLoad series for every zone, day-major
+        int days = sd.lastDay - sd.firstDay + 1;
+        var cl = new float[zones.Count][];
+        for (int z = 0; z < zones.Count; z++) cl[z] = new float[days * 24];
+        var s = Stopwatch.StartNew();
+        for (int d = sd.firstDay; d <= sd.lastDay; d++)
+            for (int z = 0; z < zones.Count; z++) { float[] v = F(zones[z].GetDailyZoneResult(d, (short)tsdZoneArray.coolingLoad)); Array.Copy(v, 0, cl[z], (d - sd.firstDay) * 24, 24); }
+        Log(string.Format("coolingLoad day-major for {0} zones: {1:0.0} s", zones.Count, s.Elapsed.TotalSeconds));
+
+        // groups: TSD zone groups, singletons, consecutive triples
+        var groups = new List<(string, int[])>();
+        for (int g = 1; ; g++) { ZoneDataGroup zg = null; try { zg = sd.GetZoneDataGroup(g); } catch { } if (zg == null) break; var m = new List<int>(); for (int i = 1; ; i++) { ZoneData zd = zg.GetZoneData(i); if (zd == null) break; m.Add(zones.FindIndex(x => x.zoneGUID == zd.zoneGUID)); } groups.Add(("group " + zg.name, m.ToArray())); }
+        Log(groups.Count + " TSD zone groups");
+        int max = a.Length > 0 ? int.Parse(a[0]) : int.MaxValue;
+        for (int z = 0; z < zones.Count; z++) groups.Add(("single " + zones[z].name, new[] { z }));
+        for (int z = 0; z + 2 < zones.Count; z += 3) groups.Add(("triple " + z, new[] { z, z + 1, z + 2 }));
+        int n = 0, okF = 0, okD = 0, zeroGroups = 0; var tas = TimeSpan.Zero;
+        foreach (var (label, m) in groups.Take(max))
+        {
+            if (m.Length == 0 || m.Any(i => i < 0)) { Log("skip " + label); continue; }
+            s.Restart();
+            object[,] t = (object[,])bd.GetPeakZoneGroupGains(new[] { "Name:" + string.Join(":", m.Select(i => zones[i].zoneGUID)) }, new[] { (int)tsdZoneArray.coolingLoad });
+            tas += s.Elapsed;
+            double tv = System.Convert.ToDouble(t[1, 0]); int ti = System.Convert.ToInt32(t[2, 0]);
+            // candidate: float accumulation, first max, 1-based; all-non-positive -> ?
+            float bf = 0; int bfi = 0; double bdv = 0; int bdi = 0;
+            for (int h = 0; h < days * 24; h++)
+            {
+                float sf = 0; double sdv = 0; foreach (int i in m) { sf += cl[i][h]; sdv += cl[i][h]; }
+                if (sf > bf) { bf = sf; bfi = h + 1; }
+                if (sdv > bdv) { bdv = sdv; bdi = h + 1; }
+            }
+            bool isZero = bf <= 0; if (isZero) zeroGroups++;
+            bool f = (double)bf == tv && bfi == ti, dd = bdv == tv && bdi == ti;
+            if (f) okF++; if (dd) okD++; n++;
+            if ((!f && !dd) || n <= 3 || isZero && zeroGroups <= 2) Log(string.Format("{0}: TAS {1:R} @ {2} [{5}] | float {3:R} @ {4} | double {6:R} @ {7}", label, tv, ti, bf, bfi, t[0, 0], bdv, bdi));
+        }
+        OrderCheck(sd, bd, zones, cl, groups);
+        Log(string.Format("{0} groups: float-sum exact {1}, double-sum exact {2}; all-non-positive groups {3}; TAS calls {4:0.0} s ({5:0.0} ms each)", n, okF, okD, zeroGroups, tas.TotalSeconds, tas.TotalMilliseconds / Math.Max(n, 1)));
+    }
+}
