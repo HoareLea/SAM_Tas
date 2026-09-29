@@ -213,6 +213,35 @@ namespace SAM.Analytical.Tas.TPD
         /// </summary>
         public SystemVentilationFanHeatGainPolicy FanHeatGainPolicy { get; set; } = SystemVentilationFanHeatGainPolicy.ClearToZero;
 
+        /// <summary>
+        /// Optional coarse progress sink, set by <c>Create.SystemVentilationRoute</c> from its caller. Null
+        /// (the default) reports nothing and costs one null check per air system.
+        /// </summary>
+        internal Action<SystemVentilationRouteProgress> Progress { get; set; }
+
+        /// <summary>Reports one progress event. A throwing subscriber can never stop the conversion.</summary>
+        internal void ReportProgress(SystemVentilationRouteStage stage, int current, int total)
+        {
+            ReportProgress(Progress, stage, current, total);
+        }
+
+        internal static void ReportProgress(Action<SystemVentilationRouteProgress> progress, SystemVentilationRouteStage stage, int current, int total)
+        {
+            if (progress == null)
+            {
+                return;
+            }
+
+            try
+            {
+                progress(new SystemVentilationRouteProgress(stage, current, total));
+            }
+            catch (Exception)
+            {
+                //Progress is advisory.
+            }
+        }
+
         // ------------------------------------------------------------------------------- the intent
 
         /// <summary>Every intended room, ordered by <c>SystemSpace.Guid</c>.</summary>
