@@ -1,0 +1,98 @@
+// TSD read-performance probe (read-only). Usage: tsdperf <mode> <path.tsd> [args]
+using SAM.Core.Tas;
+using System.Collections;
+using System.Diagnostics;
+using TSD;
+
+internal static partial class Program
+{
+    internal static readonly Stopwatch Total = Stopwatch.StartNew();
+    internal static void Log(string text) => Console.WriteLine("{0,8:0.0} s  {1}", Total.Elapsed.TotalSeconds, text);
+    internal static float[] F(object o) => (o as IEnumerable).Cast<object>().Select(System.Convert.ToSingle).ToArray();
+    internal static double Ms(Action a) { var s = Stopwatch.StartNew(); a(); return s.Elapsed.TotalMilliseconds; }
+    internal static string TsdMem() { var p = Process.GetProcessesByName("TSD").FirstOrDefault(); return p == null ? "no TSD.exe" : string.Format("TSD.exe ws {0:0} MB, private {1:0} MB, cpu {2:0.0} s", p.WorkingSet64 / 1e6, p.PrivateMemorySize64 / 1e6, p.TotalProcessorTime.TotalSeconds); }
+
+    [STAThread]
+    private static void Main(string[] args)
+    {
+        string mode = args[0], path = args[1];
+        Stopwatch open = Stopwatch.StartNew();
+        using SAMTSDDocument doc = new(path, true);
+        SimulationData sd = doc.TSDDocument.SimulationData;
+        BuildingData bd = sd.GetBuildingData();
+        List<ZoneData> zones = new();
+        for (ZoneData z = bd.GetZoneData(1); z != null; z = bd.GetZoneData(zones.Count + 1)) zones.Add(z);
+        Log(string.Format("opened {0} ({1:0} MB) in {2:0.00} s: {3} zones, days {4}-{5}; {6}", Path.GetFileName(path), new FileInfo(path).Length / 1e6, open.Elapsed.TotalSeconds, zones.Count, sd.firstDay, sd.lastDay, TsdMem()));
+        switch (mode)
+        {
+            case "cost": Cost(sd, bd, zones); break;
+            case "daymajor": DayMajor(sd, bd, zones, args.Skip(2).ToArray()); break;
+            default: Extra(mode, sd, bd, zones, args.Skip(2).ToArray()); break;
+        }
+        Log(TsdMem());
+    }
+
+    static void Cost(SimulationData sd, BuildingData bd, List<ZoneData> zones)
+    {
+        short rt = (short)tsdZoneArray.resultantTemp, db = (short)tsdZoneArray.dryBulbTemp;
+        ZoneData z0 = zones[0], z1 = zones[1], zL = zones[^1];
+        void R(string l, Action a) => Log(string.Format("{0,-48} {1,10:0.0} ms", l, Ms(a)));
+        R("daily z0 d1 rt (first touch)", () => z0.GetDailyZoneResult(1, rt));
+        R("daily z0 d1 rt (repeat)", () => z0.GetDailyZoneResult(1, rt));
+        R("daily z0 d1 db (same day, other array)", () => z0.GetDailyZoneResult(1, db));
+        R("daily z1 d1 rt (same day, other zone)", () => z1.GetDailyZoneResult(1, rt));
+        R("daily zL d1 rt (same day, last zone)", () => zL.GetDailyZoneResult(1, rt));
+        R("daily z0 d2 rt (next day)", () => z0.GetDailyZoneResult(2, rt));
+        R("daily z0 d200 rt", () => z0.GetDailyZoneResult(200, rt));
+        R("daily z0 d200 rt (repeat)", () => z0.GetDailyZoneResult(200, rt));
+        R("daily z0 d1 rt (back to day 1)", () => z0.GetDailyZoneResult(1, rt));
+        R("hourly z0 h4000 rt", () => z0.GetHourlyZoneResult(4000, rt));
+        R("hourly z0 h4000 db", () => z0.GetHourlyZoneResult(4000, db));
+        R("hourly z1 h4000 rt", () => z1.GetHourlyZoneResult(4000, rt));
+        R("hourly z0 h4001 rt (same day)", () => z0.GetHourlyZoneResult(4001, rt));
+        R("hourly z0 h6000 rt (other day)", () => z0.GetHourlyZoneResult(6000, rt));
+        R("20 hourly arrays z1 h6000 (AddResults-like)", () => { for (short a = 0; a < 20; a++) z1.GetHourlyZoneResult(6000, a); });
+        R("annual z0 rt", () => z0.GetAnnualZoneResult(rt));
+        R("annual z0 rt (repeat)", () => z0.GetAnnualZoneResult(rt));
+        R("annual z0 db", () => z0.GetAnnualZoneResult(db));
+        R("annual zL rt", () => zL.GetAnnualZoneResult(rt));
+        R("GetAnnualPeakZoneResult z1 coolingLoad", () => z1.GetAnnualPeakZoneResult(tsdZoneArray.coolingLoad, 1, 365, tsdResultsPeriod.tsdResultsPeriodAnnual, false));
+        R("GetAnnualSumZoneResult z1 coolingLoad", () => z1.GetAnnualSumZoneResult(tsdZoneArray.coolingLoad, 1, 365, tsdResultsPeriod.tsdResultsPeriodAnnual, false));
+        R("GetPeakZoneGains coolingLoad (all zones)", () => bd.GetPeakZoneGains(new short[] { (short)tsdZoneArray.coolingLoad }));
+        R("GetPeakZoneGroupGains 1 zone", () => bd.GetPeakZoneGroupGains(new[] { "Name:" + zones[2].zoneGUID }, new[] { (int)tsdZoneArray.coolingLoad }));
+        R("GetAnnualBuildingResult externalTemp", () => bd.GetAnnualBuildingResult((int)tsdBuildingArray.externalTemperature));
+    }
+
+    // Day-major: for each day, every zone and array for that day, then the next day.
+    static void DayMajor(SimulationData sd, BuildingData bd, List<ZoneData> zones, string[] a)
+    {
+        short[] arrays = (a.Length > 0 ? a[0] : "resultantTemp,dryBulbTemp,occupantSensibleGain").Split(',').Select(n => (short)Enum.Parse<tsdZoneArray>(n)).ToArray();
+        int n = a.Length > 1 ? Math.Min(int.Parse(a[1]), zones.Count) : zones.Count;
+        int f = sd.firstDay, l = sd.lastDay, days = l - f + 1;
+        float[][,] data = new float[n][,];
+        for (int z = 0; z < n; z++) data[z] = new float[arrays.Length, days * 24];
+        var s = Stopwatch.StartNew(); long calls = 0;
+        for (int d = f; d <= l; d++)
+        {
+            for (int z = 0; z < n; z++)
+                for (int k = 0; k < arrays.Length; k++)
+                {
+                    float[] v = F(zones[z].GetDailyZoneResult(d, arrays[k])); calls++;
+                    for (int h = 0; h < 24; h++) data[z][k, (d - f) * 24 + h] = v[h];
+                }
+            if (d == f || d % 73 == 0) Log(string.Format("  day {0}: {1:0.0} s", d, s.Elapsed.TotalSeconds));
+        }
+        Log(string.Format("DAY-MAJOR: {0} zones x {1} arrays x {2} days = {3} calls in {4:0.0} s ({5:0.0} ms/zone-array)", n, arrays.Length, days, calls, s.Elapsed.TotalSeconds, s.Elapsed.TotalMilliseconds / (n * arrays.Length)));
+        int[] check = new[] { 0, n / 2, n - 1 }.Distinct().ToArray(); int bad = 0; var c = Stopwatch.StartNew();
+        foreach (int z in check)
+            for (int k = 0; k < arrays.Length; k++)
+            {
+                float[] ann = F(zones[z].GetAnnualZoneResult(arrays[k]));
+                for (int h = 0; h < days * 24; h++) if (BitConverter.SingleToInt32Bits(ann[h]) != BitConverter.SingleToInt32Bits(data[z][k, h])) { bad++; break; }
+            }
+        Log(string.Format("check vs GetAnnualZoneResult on zones [{0}] x {1} arrays: {2} series differ; annual reads took {3:0.0} ms each", string.Join(",", check), arrays.Length, bad, c.Elapsed.TotalMilliseconds / (check.Length * arrays.Length)));
+    }
+
+    static partial void ExtraImpl(string mode, SimulationData sd, BuildingData bd, List<ZoneData> zones, string[] a, ref bool handled);
+    static void Extra(string mode, SimulationData sd, BuildingData bd, List<ZoneData> zones, string[] a) { bool h = false; ExtraImpl(mode, sd, bd, zones, a, ref h); if (!h) Log("unknown mode " + mode); }
+}

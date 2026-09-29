@@ -42,6 +42,10 @@ namespace SAM.Analytical.Tas
         //(Load, LoadIndex, SizingMethod, room state, gains, DesignDayTemperature/RelativeHumidity) stay a projection
         //of the GOVERNING peak, as before: the design day unless the annual peak is strictly larger. LoadIndex keeps
         //the raw 1-based Tas index, and a zero governing peak keeps the -1 values Tas returns for index 0.
+        //
+        //The overheating series of every zone are read in one day-by-day pass (Query.ZoneResultSeries) rather than
+        //zone by zone: the same values, but on a large TSD the zone-by-zone order made TSD.exe decode the whole year
+        //again for every zone.
         public static List<Core.Result> ToSAM_Results(SimulationData simulationData)
         {
             //buildingData is is yearly dynamic simulation data
@@ -57,6 +61,15 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
+            return ToSAM_Results(simulationData, buildingData, zoneDatas, zoneDatas.ZoneResultSeries(simulationData.firstDay, simulationData.lastDay, Query.OverheatingZoneArrays));
+        }
+
+        /// <param name="zoneResultSeries">
+        /// <paramref name="zoneDatas"/>' series from <see cref="Query.ZoneResultSeries"/>, over the simulation's days and
+        /// holding at least <see cref="Query.OverheatingZoneArrays"/>.
+        /// </param>
+        internal static List<Core.Result> ToSAM_Results(SimulationData simulationData, BuildingData buildingData, List<ZoneData> zoneDatas, List<Dictionary<tsdZoneArray, float[]>> zoneResultSeries)
+        {
             Dictionary<string, Tuple<double, int>> dictionary_Cooling = Query.ValueDictionary(buildingData, tsdZoneArray.coolingLoad);
             Dictionary<string, Tuple<double, int>> dictionary_Heating = Query.ValueDictionary(buildingData, tsdZoneArray.heatingLoad);
 
@@ -105,7 +118,8 @@ namespace SAM.Analytical.Tas
 
                 if (spaceSimulationResult_Cooling != null || spaceSimulationResult_Heating != null)
                 {
-                    Dictionary<Analytical.SpaceSimulationResultParameter, object> dictionary = Query.Overheating(zoneData_BuildingData, simulationData.firstDay, simulationData.lastDay);
+                    Dictionary<tsdZoneArray, float[]> zoneResultSeries_Zone = zoneResultSeries[index];
+                    Dictionary<Analytical.SpaceSimulationResultParameter, object> dictionary = Query.Overheating(zoneResultSeries_Zone[tsdZoneArray.occupantSensibleGain], zoneResultSeries_Zone[tsdZoneArray.resultantTemp], zoneResultSeries_Zone[tsdZoneArray.dryBulbTemp]);
 
                     results[index] = new List<Core.Result>();
 

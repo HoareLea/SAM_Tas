@@ -1,0 +1,37 @@
+using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using SAM.Analytical;
+using TSD;
+using Panel = SAM.Analytical.Panel;
+
+internal static partial class Program
+{
+    static readonly Regex GuidField = new(@"""Guid""\s*:\s*""[0-9a-fA-F-]{36}""\s*,?");
+    static string Norm(SAM.Core.IJSAMObject o) => GuidField.Replace(SAM.Core.Convert.ToString(o), "");
+    static string Sha(string s) => System.Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(s)))[..16];
+
+    // Production Modify.AddResults on the run model's cluster; timing + a guid-free dump of what it produced.
+    internal static void AddRes(SimulationData sd, BuildingData bd, List<ZoneData> zones, string[] a)
+    {
+        AnalyticalModel model = SAM.Core.Convert.ToSAM<AnalyticalModel>(a[0])[0];
+        AdjacencyCluster ac = new AdjacencyCluster(model.AdjacencyCluster);
+        var names = new HashSet<string>(zones.Select(z => z.name));
+        int zonesQueried = ac.GetZones().Count(z => ac.GetSpaces(z)?.Any(s => s?.Name != null && names.Contains(s.Name)) == true);
+        Log(string.Format("{0}: {1} spaces, {2} SAM zones, ~{3} zone-group peak queries; assembly {4}", Path.GetFileName(a[0]), ac.GetSpaces().Count, ac.GetZones().Count, zonesQueried, typeof(SAM.Analytical.Tas.Modify).Assembly.Location));
+        var s = Stopwatch.StartNew();
+        List<SAM.Core.Result> results = SAM.Analytical.Tas.Modify.AddResults(sd, ac);
+        Log(string.Format("ADDRESULTS: {0} results in {1:0.0} s", results?.Count, s.Elapsed.TotalSeconds));
+        var sb = new StringBuilder();
+        foreach (var r in results) sb.Append(r.GetType().Name).Append(' ').Append(Norm(r)).Append('\n');
+        foreach (Space sp in ac.GetSpaces().OrderBy(x => x.Name, StringComparer.Ordinal))
+            sb.Append("space ").Append(sp.Name).Append(" -> ").Append(string.Join(",", (ac.GetRelatedObjects<SAM.Core.Result>(sp) ?? new()).Select(Norm).OrderBy(x => x, StringComparer.Ordinal).Select(Sha))).Append('\n');
+        foreach (Panel p in ac.GetPanels().OrderBy(x => x.Guid))
+        { var rel = ac.GetRelatedObjects<SurfaceSimulationResult>(p); if (rel?.Count > 0) sb.Append("panel ").Append(p.Guid).Append(" -> ").Append(string.Join(",", rel.Select(Norm).OrderBy(x => x, StringComparer.Ordinal).Select(Sha))).Append('\n'); }
+        foreach (Zone z in ac.GetZones().OrderBy(x => x.Guid))
+            sb.Append("zone ").Append(z.Name).Append(" -> ").Append(string.Join(",", (ac.GetRelatedObjects<ZoneSimulationResult>(z) ?? new()).Select(Norm).Select(Sha))).Append('\n');
+        File.WriteAllText(a[1], sb.ToString());
+        Log(string.Format("dump {0}: {1} lines, sha {2}", a[1], sb.ToString().Count(c => c == '\n'), Sha(sb.ToString())));
+    }
+}

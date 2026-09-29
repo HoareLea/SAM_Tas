@@ -1,0 +1,37 @@
+TSD read-performance probe (probe-*.cs.txt; net8.0-windows x64; read-only copies of the PR4 TSDs; runs strictly serial -
+TSD.exe is one COM server shared by every client process). Machine: Intel Core Ultra 7 165H, 31.5 GB RAM, NVMe.
+TAS: TSD.exe 64-bit 2.0.0.1. 28 Sep 2026. SAM_Tas A = sow/2026-Q3 5753ad2 build; B = A with only
+SAM.Analytical.Tas.dll swapped (branch perf/tsd-daymajor-reads-2026-09-28); every other DLL hash-identical.
+
+== cost (single calls; ms) ===================================== x10 (161 MB, 90 zones) | x30 (483 MB, 270 zones)
+daily z0 d1 rt (first touch)                                            4.9 | 10.3
+daily z0 d1 rt (repeat) / other array / other zone / last zone    0.3/0.3/0.3/0.3 | 0.4/0.2/0.2/0.1
+daily z0 d2 / d200 / d200 repeat / back to d1                  6.6/8.8/0.4/7.3 | 8.1/17.9/0.3/8.6
+hourly h4000 first / same day other array / other zone               4.3/0.3/0.2 | 9.9/0.3/0.2
+20 hourly arrays, one zone, one hour                                      2.4 | 2.1
+annual z0 rt (first)                                                   2866.0 | 4394.3
+annual z0 rt (repeat) / z0 db / last zone rt                    35.9/36.4/35.5 | 8077.3/8126.8/7991.8
+GetAnnualPeakZoneResult / GetAnnualSumZoneResult                     36.8/36.7 | 7986.9/8182.3
+GetPeakZoneGains (all zones) / GetPeakZoneGroupGains (1 zone)        43.6/36.4 | 8172.9/8136.9
+GetAnnualBuildingResult externalTemp                                     35.5 | 8095.1
+TSD.exe private memory after                                           466 MB | 567 MB (cap)
+
+== daymajor (x30 thermal source, 270 zones x rt,db,osg) ==
+DAY-MAJOR: 295650 calls in 31.7 s (39.2 ms/zone-array); vs GetAnnualZoneResult on zones [0,135,269] x 3: 0 series differ; annual reads 8068 ms each
+== daymajor (x30 bridge, 489 MB, 270 zones x rt,db,osg) ==
+DAY-MAJOR: 295650 calls in 28.1 s (34.7 ms/zone-array); 0 series differ; annual reads 8138 ms each
+== weather (x30 bridge, 7 building arrays) ==
+annual calls 46.1 s, day-major daily calls 7.1 s; 0 arrays differ; length 8760
+
+== peakcheck (x10 bridge TSD, coolingLoad) ==
+163 groups (43 TSD zone groups incl. 90-zone "All", 90 singletons, 30 triples); 103 with a positive peak:
+float-sum-in-given-order exact 163/163; double-sum exact 122/163.
+106 reversed/shuffled multi-zone queries: given-order float sum exact 106/106; building-order sum 74/106.
+x10 thermal-source TSD: all 163 groups 0 @ 0 (no cooling load in a no-IZAM source); LHR_DSY1.tsd 21/21.
+
+== addresults (production Modify.AddResults on the run model's AdjacencyCluster) ==
+x10 thermal source (90 spaces, 40 SAM zones):  A 27.7 s | A rerun 25.6 s | B 27.0 s      2420 results
+x30 thermal source (270 spaces, 120 SAM zones): A 2992.4 s | B 85.4 s (35x)              7260 results
+x10 bridge TSD (20 of 40 zone peaks positive):  A 26.2 s | B 22.6 s                      2420 results
+Dumps (every result serialised, guid-free; relation owner -> count): A == B on all three, apart from each result's
+creation DateTime, which also differs A vs A-rerun (the noise floor). x30: 777,930 lines, 1,830 owners, 7,260 links.
