@@ -1,5 +1,29 @@
 # Project Progress
 
+## Current: Part O Iteration 3 TPD performance + guidance controller layout (29 Sep 2026) - MERGED as SAM_Tas#74 (`e706a13d`) and #75 (`a312426b`)
+
+**Status.** Both merged into `sow/2026-Q3`, final CI green, no unresolved review comments; #75 was refreshed onto the
+merged #74 and re-run before merging. Part of the Iteration 3 validation stream (SAM_Systems#33, SAM#167,
+SAM_UI#140-#142 - see their closeouts).
+
+- **#74 `perf(tpd)`** (head `5ca42009`, merge `e706a13d`). (1) Thermostat bridge: per-slot COM calls replaced by bulk
+  yearly-profile read/write. Licensed: bridge ~183.8 s -> ~4.3 s, write/read ~158.3 s -> ~0.14 s; all 32 profiles x
+  8760 slots identical, 9 resultant-temperature zone series identical (max diff 0); tests reject 0-based and shifted
+  bulk reads. (2) Exchanger modifier tables: zero-skip on fresh tables. A fresh table answers 2x0x0 and after `SetSize`
+  keeps two non-zero cells, so the `(1,1,1) == 0` probe had disabled the skip (564,810 of 564,810 cells written);
+  fixed - production-size writes 564,810 -> 241,074 (~57% fewer), full read-back verification retained. Files:
+  `SAM.Analytical.Tas.TPD` (`TPDProfiler`, `Convert/ToTPD/TPD.cs`, `Create/ThermostatBridge`, `Create/SystemVentilationRoute`,
+  `Modify/GroundGuidanceCooling`, `Modify/GuidanceCoolingResults`) and TM59 tests. Tests **998/998**.
+- **#75 `fix(tpd)`** (head `5130e9b8`, merge `a312426b`). The three manufacturer-guidance controllers, all at (0,0),
+  are placed deterministically below the AHU trunk (~(270,320), (400,320), (610,320)); layout only, no topology
+  change. Licensed TPD inspection confirmed all three air systems. Files: `Modify/PlaceGuidanceControllers.cs`,
+  `Query/GuidanceControllerLayout.cs`, `GroundGuidanceCooling.cs`, `GuidanceControllerLayoutTests.cs`. Tests **997/997**.
+- **Caveat.** Wall-clock on the licensed VM varies ~1.5x run to run; the reliable claims are call counts and exact
+  equality, not cross-run timings.
+- **Deferred (separate future tasks).** Larger exchanger representation optimisation, Part O progress UI, run
+  history/resume, Design Condition cleanup.
+- **Next step.** None for this entry.
+
 ## Current: Bridge / TM59 / weather day-major TSD reads + full-year guard (29 Sep 2026) - MERGED as SAM_Tas#73 (`7b84dd92`)
 
 **Status.** Merged into `sow/2026-Q3` (merge `7b84dd92`, PR head `436a617c`). Final PR CI green (build, SPDX), mergeable,
