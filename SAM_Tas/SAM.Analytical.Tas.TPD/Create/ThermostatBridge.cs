@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using SAM.Core.Tas;
@@ -43,6 +43,29 @@ namespace SAM.Analytical.Tas.TPD
             string path_TBD,
             double achievedAirTemperatureTolerance = TPD.ThermostatBridge.DefaultAchievedAirTemperatureTolerance)
         {
+            //Where the bridge's time goes, beside the bridge TBD as <name>.timing.csv. Observation only.
+            TPDProfiler profiler = new TPDProfiler();
+            IDisposable activation = profiler.Activate();
+
+            try
+            {
+                return ThermostatBridge(systemVentilationRoute, path_TBD, achievedAirTemperatureTolerance, profiler);
+            }
+            finally
+            {
+                activation.Dispose();
+                profiler.WriteCsv(path_TBD, ".timing.csv");
+            }
+        }
+
+        private static ThermostatBridge ThermostatBridge(
+            SystemVentilationRoute systemVentilationRoute,
+            string path_TBD,
+            double achievedAirTemperatureTolerance,
+            TPDProfiler profiler)
+        {
+            profiler.Step("Bridge: plan and guard");
+
             List<string> refusals = new List<string>();
             List<string> notes = new List<string>();
 
@@ -78,6 +101,8 @@ namespace SAM.Analytical.Tas.TPD
             //-------------------------------------------------------------------------------------------
             //3. The copy.
             //-------------------------------------------------------------------------------------------
+            profiler.Step("Bridge: hash source and copy TBD");
+
             result.Hash_TBD_Source_Before = Sha256(result.Path_TBD_Source);
             result.Hash_TSD_Source_Before = Sha256(result.Path_TSD_Source);
 
@@ -134,8 +159,12 @@ namespace SAM.Analytical.Tas.TPD
 
             try
             {
+                profiler.Step("Bridge: open TBD");
+
                 using (SAMTBDDocument sAMTBDDocument = new SAMTBDDocument(path_TBD))
                 {
+                    profiler.Step("Bridge: write thermostats (write + read back)");
+
                     TBD.TBDDocument tBDDocument = sAMTBDDocument.TBDDocument;
                     TBD.Building building = tBDDocument?.Building;
 
@@ -171,16 +200,26 @@ namespace SAM.Analytical.Tas.TPD
                                 thermostatBridgeRooms.Count,
                                 ThermostatBridgePlan.HoursPerYear));
 
+                            profiler.Step("Bridge: save TBD (before simulation)");
+
                             sAMTBDDocument.Save();
 
+                            profiler.Step("Bridge: TAS building simulation (full year)");
+
                             tBDDocument.simulate(ThermostatBridgePlan.FirstDay, ThermostatBridgePlan.LastDay, 0, 1, 0, 0, path_TSD, 1, 0);
+
+                            profiler.Step("Bridge: wait for TSD unlock");
 
                             //A wait, not a verdict: the evidence below decides.
                             Core.Query.WaitToUnlock(path_TSD);
 
                             simulationEvidence.RecordCallReturned();
 
+                            profiler.Step("Bridge: save TBD (after simulation)");
+
                             sAMTBDDocument.Save();
+
+                            profiler.Step("Bridge: close TBD");
                         }
                     }
                 }
@@ -211,6 +250,8 @@ namespace SAM.Analytical.Tas.TPD
             //-------------------------------------------------------------------------------------------
             //6. The results.
             //-------------------------------------------------------------------------------------------
+            profiler.Step("Bridge: read resultant temperature from TSD");
+
             List<ResultantTemperatureResult> resultantTemperatureResults = null;
 
             try
@@ -239,6 +280,8 @@ namespace SAM.Analytical.Tas.TPD
             //-------------------------------------------------------------------------------------------
             //7. The source, again, and the lineage.
             //-------------------------------------------------------------------------------------------
+            profiler.Step("Bridge: lineage hashes");
+
             result.Hash_TBD_Source_After = Sha256(result.Path_TBD_Source);
             result.Hash_TSD_Source_After = Sha256(result.Path_TSD_Source);
             result.Hash_TBD = Sha256(path_TBD);

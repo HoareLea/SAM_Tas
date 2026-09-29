@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using SAM.Analytical.Enums;
@@ -201,7 +201,12 @@ namespace SAM.Analytical.Tas.TPD
                 dynamic latentEfficiency = exchanger.LatentEfficiency;
                 latentEfficiency.ClearModifiers();
                 latentEfficiency.Value = 0.0;
-                WriteExchangerStateTable(sensibleEfficiency.AddModifierTable(), recipe);
+                using (TPDProfiler.Current?.Measure("Guidance: write exchanger state table"))
+                {
+                    WriteExchangerStateTable(sensibleEfficiency.AddModifierTable(), recipe);
+                }
+
+                TPDProfiler.Current?.Count("Guidance: exchanger state table cells", 2L * recipe.Intakes_C.Length * recipe.Extracts_C.Length);
 
                 //DX coil: finite duty, no gates, supply law on the off-coil floor.
                 dXCoil.ControlMethod = tpdCoolingControlMethod.tpdCoolingControlNormal;
@@ -221,7 +226,10 @@ namespace SAM.Analytical.Tas.TPD
                 dynamic minimumOffcoil = dXCoil.MinimumOffcoil;
                 minimumOffcoil.ClearModifiers();
                 minimumOffcoil.Value = 0.0;
-                WriteSupplyLawTable(minimumOffcoil.AddModifierTable(), recipe);
+                using (TPDProfiler.Current?.Measure("Guidance: write coil supply-law table"))
+                {
+                    WriteSupplyLawTable(minimumOffcoil.AddModifierTable(), recipe);
+                }
 
                 //Controllers, all on the stat room's zone, all day types.
                 List<PlantDayType> plantDayTypes = new List<PlantDayType>();
@@ -244,9 +252,12 @@ namespace SAM.Analytical.Tas.TPD
                     return false;
                 }
 
-                AddStatController(system, systemZone_Stat, recipe, 0.0, plantDayTypes, "Manufacturer guidance cooling-stat (room) - DX", new ISystemComponent[] { (ISystemComponent)dXCoil });
-                AddStatController(system, systemZone_Stat, recipe, FanSignal(recipe.DesignSupply_Lps, recipe.Elevated_Lps), plantDayTypes, "Manufacturer guidance elevated supply fan (room)", new ISystemComponent[] { (ISystemComponent)fan_Supply });
-                AddStatController(system, systemZone_Stat, recipe, FanSignal(recipe.DesignExtract_Lps, recipe.Elevated_Lps), plantDayTypes, "Manufacturer guidance elevated extract fan (room)", new ISystemComponent[] { (ISystemComponent)fan_Extract });
+                using (TPDProfiler.Current?.Measure("Guidance: add controllers"))
+                {
+                    AddStatController(system, systemZone_Stat, recipe, 0.0, plantDayTypes, "Manufacturer guidance cooling-stat (room) - DX", new ISystemComponent[] { (ISystemComponent)dXCoil });
+                    AddStatController(system, systemZone_Stat, recipe, FanSignal(recipe.DesignSupply_Lps, recipe.Elevated_Lps), plantDayTypes, "Manufacturer guidance elevated supply fan (room)", new ISystemComponent[] { (ISystemComponent)fan_Supply });
+                    AddStatController(system, systemZone_Stat, recipe, FanSignal(recipe.DesignExtract_Lps, recipe.Elevated_Lps), plantDayTypes, "Manufacturer guidance elevated extract fan (room)", new ISystemComponent[] { (ISystemComponent)fan_Extract });
+                }
             }
             catch (Exception exception)
             {
@@ -285,19 +296,31 @@ namespace SAM.Analytical.Tas.TPD
             {
                 disagreements.Add("the exchanger still states a setpoint");
             }
-            else if (!ReadBackExchangerStateTable(exchanger, recipe, out string exchangerDisagreement))
+            else
             {
-                disagreements.Add("the exchanger " + exchangerDisagreement);
+                using (TPDProfiler.Current?.Measure("Guidance: read back exchanger state table"))
+                {
+                    if (!ReadBackExchangerStateTable(exchanger, recipe, out string exchangerDisagreement))
+                    {
+                        disagreements.Add("the exchanger " + exchangerDisagreement);
+                    }
+                }
             }
 
-            if (!ReadBackCoil(dXCoil, recipe, out string coilDisagreement))
+            using (TPDProfiler.Current?.Measure("Guidance: read back coil"))
             {
-                disagreements.Add("the DX coil " + coilDisagreement);
+                if (!ReadBackCoil(dXCoil, recipe, out string coilDisagreement))
+                {
+                    disagreements.Add("the DX coil " + coilDisagreement);
+                }
             }
 
-            if (!ReadBackControllers(system, systemZone_Stat, recipe, dXCoil, fan_Supply, fan_Extract, dampers_Extract, damper_Supply, out string controllerDisagreement))
+            using (TPDProfiler.Current?.Measure("Guidance: read back controllers"))
             {
-                disagreements.Add(controllerDisagreement);
+                if (!ReadBackControllers(system, systemZone_Stat, recipe, dXCoil, fan_Supply, fan_Extract, dampers_Extract, damper_Supply, out string controllerDisagreement))
+                {
+                    disagreements.Add(controllerDisagreement);
+                }
             }
 
             if (disagreements.Count != 0)

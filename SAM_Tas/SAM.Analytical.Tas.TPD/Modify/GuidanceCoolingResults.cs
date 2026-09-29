@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using SAM.Analytical.Systems;
@@ -58,10 +58,17 @@ namespace SAM.Analytical.Tas.TPD
 
             try
             {
-                File.Copy(path_TPD, path_Copy, true);
+                using (TPDProfiler.Current?.Measure("Guidance evidence: copy TPD"))
+                {
+                    File.Copy(path_TPD, path_Copy, true);
+                }
+
+                IDisposable measure_Open = TPDProfiler.Current?.Measure("Guidance evidence: open TPD copy");
 
                 using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_Copy))
                 {
+                    measure_Open?.Dispose();
+
                     EnergyCentre energyCentre = sAMTPDDocument.TPDDocument?.EnergyCentre;
                     if (energyCentre == null)
                     {
@@ -80,7 +87,11 @@ namespace SAM.Analytical.Tas.TPD
                             continue;
                         }
 
-                        string diagnostic = (string)((dynamic)plantRoom).SimulateEx(startHour + 1, endHour + 1, 0, externalPollutant, 10.0, RecirculationCooling_SimulationData, 1, 0);
+                        string diagnostic;
+                        using (TPDProfiler.Current?.Measure("Guidance evidence: TAS plant-room SimulateEx (duct data)"))
+                        {
+                            diagnostic = (string)((dynamic)plantRoom).SimulateEx(startHour + 1, endHour + 1, 0, externalPollutant, 10.0, RecirculationCooling_SimulationData, 1, 0);
+                        }
                         result.Note(string.Format("Manufacturer-guidance evidence: plant room {0} answered \"{1}\".", i, (diagnostic ?? string.Empty).Trim()));
 
                         if (SimulationDiagnostic.IsFailure(diagnostic))
@@ -99,6 +110,8 @@ namespace SAM.Analytical.Tas.TPD
                             }
                         }
                     }
+
+                    IDisposable measure_Read = TPDProfiler.Current?.Measure("Guidance evidence: read hourly series (all units)");
 
                     foreach (MechanicalVentilationGuidanceCooling guidanceCooling in guidanceCoolings)
                     {
@@ -181,6 +194,8 @@ namespace SAM.Analytical.Tas.TPD
                         result.Add(guidanceCoolingResult);
                         result.Note(guidanceCoolingResult.Summary());
                     }
+
+                    measure_Read?.Dispose();
                 }
             }
             catch (Exception exception)

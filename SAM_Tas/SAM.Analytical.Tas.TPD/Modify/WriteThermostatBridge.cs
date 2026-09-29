@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using System;
@@ -238,9 +238,12 @@ namespace SAM.Analytical.Tas.TPD
             profile.type = TBD.ProfileTypes.ticYearlyProfile;
             profile.factor = 1;
 
-            for (int hour = 1; hour <= ThermostatBridgePlan.HoursPerYear; hour++)
+            using (TPDProfiler.Current?.Measure("Bridge: write one yearly profile"))
             {
-                profile.yearlyValues[hour] = thermostatBridgeTransfer.Value(hour - 1);
+                for (int hour = 1; hour <= ThermostatBridgePlan.HoursPerYear; hour++)
+                {
+                    profile.yearlyValues[hour] = thermostatBridgeTransfer.Value(hour - 1);
+                }
             }
 
             if (profile.type != TBD.ProfileTypes.ticYearlyProfile || profile.factor != 1)
@@ -249,6 +252,8 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             int hour_FirstMismatch = -1;
+
+            IDisposable measure_ReadBack = TPDProfiler.Current?.Measure("Bridge: read back one yearly profile");
 
             for (int hour = 1; hour <= ThermostatBridgePlan.HoursPerYear; hour++)
             {
@@ -269,6 +274,8 @@ namespace SAM.Analytical.Tas.TPD
                     maxTransferDelta = double.IsNaN(delta) ? double.PositiveInfinity : delta;
                 }
             }
+
+            measure_ReadBack?.Dispose();
 
             if (count_Matched != ThermostatBridgePlan.HoursPerYear)
             {
