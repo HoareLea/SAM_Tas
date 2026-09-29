@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using NUnit.Framework;
@@ -329,7 +329,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
         /// <summary>
         /// Heating AND cooling, on EVERY internal condition, hold the room's achieved series at exactly the hour
         /// it belongs to: TAS slot <c>h</c> is 0-based hour <c>h - 1</c>. The stand-in profile shifts a bulk
-        /// 0-based write by one hour exactly as licensed TAS was measured to, so a writer that took the bulk
+        /// 0-based write by one hour exactly as licensed TAS was measured to, so a writer that took the 0-based bulk
         /// shortcut would fail here.
         /// </summary>
         private static void AssertHoldsSeries(TbdZone zone, int room)
@@ -357,7 +357,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
         }
 
         [Test]
-        public void TheMeasuredBulkWriteWouldShiftEveryHour_WhichIsWhyTheWriterDoesNotUseIt()
+        public void TheMeasuredBulkWriteWouldShiftEveryHour_WhichIsWhyTheWriterWritesOneBasedSlots()
         {
             //Pins the stand-in to the licensed measurement, so the alignment test above means something.
             MeasuredYearlyProfile profile = new MeasuredYearlyProfile();
@@ -431,6 +431,62 @@ namespace SAM.Analytical.Tas.TM59.Tests
             Assert.That(refusals.Single(), Does.Contain("heating thermostat").And.Contain("hour 4000"));
             Assert.That(rooms.Single().Count_Heating, Is.EqualTo(Hours - 1));
             Assert.That(rooms.Single().Count_Cooling, Is.EqualTo(Hours));
+        }
+
+        /// <summary>
+        /// Performance regression (2026-09-29, real 3-dwelling project: the bridge took 2m11s). Each thermostat
+        /// profile is one bulk write, one bulk read and three slot cross-checks - a constant, not 17,520
+        /// cross-process calls - while every hour is still written and verified exactly (AssertHoldsSeries).
+        /// </summary>
+        [Test]
+        public void EachProfileCostsAConstantNumberOfCalls_AndStillHoldsEveryHour()
+        {
+            ThermostatBridgePlan thermostatBridgePlan = new ThermostatBridgePlan(Route(new[] { 1 }));
+
+            TbdZone zone = new TbdZone(Zone(1), "Studio", 1);
+
+            List<string> refusals = new List<string>();
+            List<ThermostatBridgeRoom> rooms = global::SAM.Analytical.Tas.TPD.Modify.WriteThermostatBridge(TbdBuilding.Create(zone), thermostatBridgePlan, refusals);
+
+            Assert.That(refusals, Is.Empty, string.Join(" | ", refusals));
+            Assert.That(rooms.Single().Count_Heating, Is.EqualTo(Hours));
+            Assert.That(rooms.Single().Count_Cooling, Is.EqualTo(Hours));
+
+            foreach (MeasuredYearlyProfile profile in new[] { zone.InternalConditions[0].Thermostat.UpperLimit, zone.InternalConditions[0].Thermostat.LowerLimit })
+            {
+                Assert.That(profile.BulkWrites, Is.EqualTo(1));
+                Assert.That(profile.Calls, Is.LessThanOrEqualTo(5), "one bulk write, one bulk read, three slot cross-checks");
+            }
+
+            AssertHoldsSeries(zone, 1);
+        }
+
+        [Test]
+        public void ABulkReadThatIsNotOneBasedIsRefused()
+        {
+            ThermostatBridgePlan thermostatBridgePlan = new ThermostatBridgePlan(Route(new[] { 1 }));
+
+            TbdZone zone = new TbdZone(Zone(1), "Studio", 1);
+            zone.InternalConditions[0].Thermostat.UpperLimit.ZeroBasedBulkRead = true;
+
+            List<string> refusals = new List<string>();
+            global::SAM.Analytical.Tas.TPD.Modify.WriteThermostatBridge(TbdBuilding.Create(zone), thermostatBridgePlan, refusals);
+
+            Assert.That(refusals.Single(), Does.Contain("cooling thermostat").And.Contain("slots 1..8760"));
+        }
+
+        [Test]
+        public void ABulkReadThatDisagreesWithTheSlotItselfIsRefused()
+        {
+            ThermostatBridgePlan thermostatBridgePlan = new ThermostatBridgePlan(Route(new[] { 1 }));
+
+            TbdZone zone = new TbdZone(Zone(1), "Studio", 1);
+            zone.InternalConditions[0].Thermostat.LowerLimit.ShiftedBulkRead = true;
+
+            List<string> refusals = new List<string>();
+            global::SAM.Analytical.Tas.TPD.Modify.WriteThermostatBridge(TbdBuilding.Create(zone), thermostatBridgePlan, refusals);
+
+            Assert.That(refusals.Single(), Does.Contain("heating thermostat").And.Contain("does not agree with the slot itself"));
         }
 
         // ================================================================================= the TSD reader
@@ -925,11 +981,23 @@ namespace SAM.Analytical.Tas.TM59.Tests
     {
         private readonly float[] slots = new float[ThermostatBridgePlan.HoursPerYear + 1];
 
-        /// <summary>Slots written one at a time.</summary>
+        /// <summary>Slots written, one at a time or in bulk.</summary>
         public int Written { get; private set; }
+
+        /// <summary>Cross-process calls a real profile would cost: one per slot accessor use, one per bulk call.</summary>
+        public int Calls { get; private set; }
+
+        /// <summary>Bulk <c>SetYearlyValues</c> calls.</summary>
+        public int BulkWrites { get; private set; }
 
         /// <summary>A slot TAS "loses" - to prove a read-back mismatch refuses. 0 for none.</summary>
         public int DroppedSlot { get; set; }
+
+        /// <summary>Answers <c>GetYearlyValues</c> 0-based, as a base-confused TAS would - to prove the writer refuses it.</summary>
+        public bool ZeroBasedBulkRead { get; set; }
+
+        /// <summary>Shifts <c>GetYearlyValues</c> by one slot while keeping its 1..8760 bounds - to prove the slot cross-check refuses it.</summary>
+        public bool ShiftedBulkRead { get; set; }
 
         public float factor { get; set; }
         public float value { get; set; }
@@ -949,11 +1017,14 @@ namespace SAM.Analytical.Tas.TM59.Tests
 
         public float get_yearlyValues(int index)
         {
+            Calls++;
+
             return index >= 1 && index <= ThermostatBridgePlan.HoursPerYear ? slots[index] : 0;
         }
 
         public void set_yearlyValues(int index, float value)
         {
+            Calls++;
             Written++;
 
             if (index >= 1 && index <= ThermostatBridgePlan.HoursPerYear && index != DroppedSlot)
@@ -964,10 +1035,17 @@ namespace SAM.Analytical.Tas.TM59.Tests
 
         public object GetYearlyValues()
         {
+            Calls++;
+
+            if (ZeroBasedBulkRead)
+            {
+                return slots.Skip(1).ToArray();
+            }
+
             Array result = Array.CreateInstance(typeof(float), new[] { ThermostatBridgePlan.HoursPerYear }, new[] { 1 });
             for (int i = 1; i <= ThermostatBridgePlan.HoursPerYear; i++)
             {
-                result.SetValue(slots[i], i);
+                result.SetValue(ShiftedBulkRead ? slots[i == 1 ? 1 : i - 1] : slots[i], i);
             }
 
             return result;
@@ -975,10 +1053,18 @@ namespace SAM.Analytical.Tas.TM59.Tests
 
         public void SetYearlyValues(object values)
         {
+            Calls++;
+            BulkWrites++;
+
             float[] array = (float[])values;
             for (int i = 1; i <= ThermostatBridgePlan.HoursPerYear; i++)
             {
-                slots[i] = i < array.Length ? array[i] : array[array.Length - 1];
+                Written++;
+
+                if (i != DroppedSlot)
+                {
+                    slots[i] = i < array.Length ? array[i] : array[array.Length - 1];
+                }
             }
         }
 

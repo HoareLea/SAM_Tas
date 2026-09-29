@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using SAM.Analytical.Systems;
@@ -56,6 +56,33 @@ namespace SAM.Analytical.Tas.TPD
             int endHour,
             SystemVentilationFanHeatGainPolicy fanHeatGainPolicy = SystemVentilationFanHeatGainPolicy.ClearToZero)
         {
+            //Where the route's time goes, beside the TPD as <name>.route.timing.csv: the conversion (itself
+            //broken down in <name>.timing.csv), each TAS call and each read. Observation only.
+            TPDProfiler profiler = new TPDProfiler();
+            IDisposable activation = profiler.Activate();
+
+            try
+            {
+                return SystemVentilationRoute(noIzamThermalSource, mechanicalVentilationMaterialisation, path_TPD, startHour, endHour, fanHeatGainPolicy, profiler);
+            }
+            finally
+            {
+                activation.Dispose();
+                profiler.WriteCsv(path_TPD, ".route.timing.csv");
+            }
+        }
+
+        private static SystemVentilationRoute SystemVentilationRoute(
+            NoIzamThermalSource noIzamThermalSource,
+            MechanicalVentilationMaterialisation mechanicalVentilationMaterialisation,
+            string path_TPD,
+            int startHour,
+            int endHour,
+            SystemVentilationFanHeatGainPolicy fanHeatGainPolicy,
+            TPDProfiler profiler)
+        {
+            profiler.Step("Route: guard and intent");
+
             List<string> refusals = new List<string>();
             List<string> notes = new List<string>();
 
@@ -82,6 +109,8 @@ namespace SAM.Analytical.Tas.TPD
             //   still holds it, and a route that mutated it would leave the design carrying PR2's
             //   plumbing.
             //-------------------------------------------------------------------------------------------
+            profiler.Step("Route: duty carriers (working copy)");
+
             Core.Systems.SystemEnergyCentre systemEnergyCentre_Working = new Core.Systems.SystemEnergyCentre(systemEnergyCentre);
 
             Modify.MaterialiseVentilationDutyCarriers(systemEnergyCentre_Working, systemVentilationConversionContext);
@@ -100,6 +129,8 @@ namespace SAM.Analytical.Tas.TPD
             };
 
             bool converted;
+
+            profiler.Step("Route: TPD generation (Convert.ToTPD - see .timing.csv)");
 
             try
             {
@@ -141,6 +172,8 @@ namespace SAM.Analytical.Tas.TPD
             //-------------------------------------------------------------------------------------------
             List<SystemVentilationBinding> systemVentilationBindings = systemVentilationConversionContext.Bindings;
 
+            profiler.Step("Route: TAS air-system simulation + ZoneTemperature");
+
             Modify.SimulateSystems(
                 path_TPD,
                 systemVentilationBindings,
@@ -161,6 +194,8 @@ namespace SAM.Analytical.Tas.TPD
             //-------------------------------------------------------------------------------------------
             //5. The results, and the gate.
             //-------------------------------------------------------------------------------------------
+            profiler.Step("Route: validating zone temperatures");
+
             systemZoneTemperatureResults.Validate(systemVentilationBindings);
 
             notes.AddRange(systemZoneTemperatureResults.Notes);
@@ -191,6 +226,8 @@ namespace SAM.Analytical.Tas.TPD
 
             if (systemVentilationConversionContext.RecirculationCoolings.Count != 0)
             {
+                profiler.Step("Route: recirculation cooling evidence");
+
                 recirculationCoolingResults = Modify.RecirculationCoolingResults(
                     path_TPD,
                     noIzamThermalSource.Path_TSD,
@@ -222,6 +259,8 @@ namespace SAM.Analytical.Tas.TPD
 
             if (systemVentilationConversionContext.GuidanceCoolings.Count != 0)
             {
+                profiler.Step("Route: manufacturer-guidance evidence");
+
                 guidanceCoolingResults = Modify.GuidanceCoolingResults(path_TPD, systemVentilationConversionContext, startHour, endHour);
 
                 notes.AddRange(guidanceCoolingResults.Notes);
