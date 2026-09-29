@@ -334,6 +334,9 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
+            //Presentation only, after everything is read back: never refuses.
+            PlaceGuidanceControllers(systemVentilationConversionContext, label, system, systemZone_Stat, new object[] { dXCoil, fan_Supply, fan_Extract }, dictionary_SystemComponent);
+
             systemVentilationConversionContext.Note(string.Format(
                 CultureInfo.InvariantCulture,
                 "{0} grounded (MANUFACTURER GUIDANCE, not certified performance): cooling-stat in zone {1} at {2:0.###} C (+{3:0.###} K band); supply {4:0.###} -> {5:0.###} l/s and extract {6:0.###} -> {5:0.###} l/s while cooling ({7} extract/transfer damper(s)); exchanger bypass (intake >= {11:0.###} C, extract > intake and >= {12:0.###} C) else recovery {8:0.###} at design / {13:0.####} at {5:0.###} l/s; DX supply = coil entering - {9:0.###} K{14}, whenever the stat calls (numerical duty {10:0} W, not a rating); read back.",
