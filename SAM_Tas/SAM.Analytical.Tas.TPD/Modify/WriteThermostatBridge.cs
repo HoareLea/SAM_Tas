@@ -208,13 +208,21 @@ namespace SAM.Analytical.Tas.TPD
         /// Writes one thermostat profile as a yearly profile holding the room's series, then reads every slot
         /// back.
         /// <para>
-        /// <b>One slot at a time, 1-based: measured, not assumed.</b> On licensed TAS the bulk
-        /// <c>SetYearlyValues(float[])</c> silently <b>ignores element 0</b> and stores element <c>i</c> in slot
-        /// <c>i</c>: a natural 0-based <c>float[8760]</c> shifts every hour by one and repeats the last value,
-        /// and nothing reports it. <c>yearlyValues[h]</c> for <c>h = 1..8760</c> is unambiguous, and
+        /// <b>1-based slots: measured, not assumed.</b> On licensed TAS the bulk <c>SetYearlyValues(float[])</c>
+        /// silently <b>ignores element 0</b> and stores element <c>i</c> in slot <c>i</c>: a natural 0-based
+        /// <c>float[8760]</c> shifts every hour by one and repeats the last value, and nothing reports it.
         /// <c>GetYearlyValues()</c> answers a <c>Single[*]</c> bounded 1..8760, confirming the base. Slot
         /// <c>h</c> therefore receives hour <c>h - 1</c>, and the licensed self-imposition control measured the
         /// simulated air temperature aligned at exactly that hour (PR3 evidence).
+        /// </para>
+        /// <para>
+        /// <b>One bulk write and one bulk read (2026-09-29).</b> The profile used to be written and read back one
+        /// slot at a time - 17,520 cross-process calls per profile, two profiles per internal condition - which
+        /// dominated the bridge. It is now written as a 1-based <c>float[8761]</c> with element 0 unused (the
+        /// shape <c>Modify.UpdateYearlyValues</c> has written since 2026-09-11) and read back with
+        /// <c>GetYearlyValues()</c>; every one of the 8760 slots is still compared exactly. So that a bulk read
+        /// that disagreed with the slot accessor about the base could not pass unnoticed, the first, a middle and
+        /// the last slot are also read through <c>yearlyValues[h]</c> and must agree with it.
         /// </para>
         /// </summary>
         /// <param name="count_Matched">Slots that read back exactly the single-precision value written.</param>
@@ -238,12 +246,16 @@ namespace SAM.Analytical.Tas.TPD
             profile.type = TBD.ProfileTypes.ticYearlyProfile;
             profile.factor = 1;
 
+            //Slot h = hour h - 1; element 0 is never read by TAS.
+            float[] slots = new float[ThermostatBridgePlan.HoursPerYear + 1];
+            for (int hour = 1; hour <= ThermostatBridgePlan.HoursPerYear; hour++)
+            {
+                slots[hour] = thermostatBridgeTransfer.Value(hour - 1);
+            }
+
             using (TPDProfiler.Current?.Measure("Bridge: write one yearly profile"))
             {
-                for (int hour = 1; hour <= ThermostatBridgePlan.HoursPerYear; hour++)
-                {
-                    profile.yearlyValues[hour] = thermostatBridgeTransfer.Value(hour - 1);
-                }
+                profile.SetYearlyValues(slots);
             }
 
             if (profile.type != TBD.ProfileTypes.ticYearlyProfile || profile.factor != 1)
@@ -251,13 +263,28 @@ namespace SAM.Analytical.Tas.TPD
                 return string.Format("TAS did not keep the profile as a yearly profile with factor 1 (type {0}, factor {1}).", profile.type, profile.factor);
             }
 
-            int hour_FirstMismatch = -1;
-
             IDisposable measure_ReadBack = TPDProfiler.Current?.Measure("Bridge: read back one yearly profile");
+
+            if (!(profile.GetYearlyValues() is Array values) || values.Rank != 1 || values.GetLowerBound(0) != 1 || values.GetUpperBound(0) != ThermostatBridgePlan.HoursPerYear)
+            {
+                measure_ReadBack?.Dispose();
+                return string.Format("TAS did not answer the profile's yearly values as slots 1..{0}.", ThermostatBridgePlan.HoursPerYear);
+            }
+
+            foreach (int hour in new[] { 1, ThermostatBridgePlan.HoursPerYear / 2, ThermostatBridgePlan.HoursPerYear })
+            {
+                if (!(values.GetValue(hour) is float bulk) || bulk != profile.yearlyValues[hour])
+                {
+                    measure_ReadBack?.Dispose();
+                    return string.Format("the bulk read-back of slot {0} does not agree with the slot itself, so its base cannot be trusted.", hour);
+                }
+            }
+
+            int hour_FirstMismatch = -1;
 
             for (int hour = 1; hour <= ThermostatBridgePlan.HoursPerYear; hour++)
             {
-                float value = profile.yearlyValues[hour];
+                float value = (float)values.GetValue(hour);
 
                 if (value == thermostatBridgeTransfer.Value(hour - 1))
                 {

@@ -657,14 +657,36 @@ namespace SAM.Analytical.Tas.TPD
             table.SetAxisValue(3, 1, recipe.DesignSupply_Lps);
             table.SetAxisValue(3, 2, recipe.Elevated_Lps);
 
+            //Every cell is one cross-process call (~0.2-0.35 ms measured, 2026-09-29), and the table is ~188,000 cells
+            //per unit - so a cell TAS already holds is not written again. A freshly sized table was observed to
+            //answer 0.0, and bypass cells ARE 0.0 (about half the grid); whether that holds is asked of TAS here, at
+            //two corners, rather than assumed, and the read-back that follows checks EVERY cell regardless - so a
+            //table that did not start at zero is refused, never simulated.
+            bool zeroInitialised = (double)table.GetDataValue(1, 1, 1) == 0.0 && (double)table.GetDataValue(recipe.Intakes_C.Length, recipe.Extracts_C.Length, 2) == 0.0;
+
+            long count_Written = 0;
+
             for (int i = 0; i < recipe.Intakes_C.Length; i++)
             {
                 for (int j = 0; j < recipe.Extracts_C.Length; j++)
                 {
-                    table.SetDataValue(i + 1, j + 1, 1, recipe.BackgroundEfficiency(recipe.Intakes_C[i], recipe.Extracts_C[j]));
-                    table.SetDataValue(i + 1, j + 1, 2, recipe.CoolingEfficiency(recipe.Intakes_C[i], recipe.Extracts_C[j]));
+                    double background = recipe.BackgroundEfficiency(recipe.Intakes_C[i], recipe.Extracts_C[j]);
+                    if (!zeroInitialised || background != 0.0)
+                    {
+                        table.SetDataValue(i + 1, j + 1, 1, background);
+                        count_Written++;
+                    }
+
+                    double cooling = recipe.CoolingEfficiency(recipe.Intakes_C[i], recipe.Extracts_C[j]);
+                    if (!zeroInitialised || cooling != 0.0)
+                    {
+                        table.SetDataValue(i + 1, j + 1, 2, cooling);
+                        count_Written++;
+                    }
                 }
             }
+
+            TPDProfiler.Current?.Count("Guidance: exchanger state table cells written", count_Written);
         }
 
         private static bool ReadBackExchangerStateTable(Exchanger exchanger, GuidanceRecipe recipe, out string disagreement)
@@ -678,7 +700,26 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
-            dynamic table = sensibleEfficiency.GetModifier(1);
+            if (!ReadBackExchangerStateTable((object)sensibleEfficiency.GetModifier(1), recipe, out disagreement))
+            {
+                return false;
+            }
+
+            dynamic latentEfficiency = exchanger.LatentEfficiency;
+            if (System.Math.Abs((double)latentEfficiency.Value) > 1e-12 || (int)latentEfficiency.GetModifierCount() != 0)
+            {
+                disagreement = "recovers latent heat, which the guidance rule does not state";
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>The state table's own read-back - size, axes and every cell - apart from the exchanger that holds it.</summary>
+        private static bool ReadBackExchangerStateTable(dynamic table, GuidanceRecipe recipe, out string disagreement)
+        {
+            disagreement = null;
+
             if ((bool)table.Extrapolate || (int)table.GetAxisSize(1) != recipe.Intakes_C.Length || (int)table.GetAxisSize(2) != recipe.Extracts_C.Length || (int)table.GetAxisSize(3) != 2)
             {
                 disagreement = "state table has the wrong size or extrapolates";
@@ -691,27 +732,43 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
-            for (int i = 0; i < recipe.Intakes_C.Length; i++)
+            //Each axis is read ONCE and checked against the recipe, then every cell's two values: the same checks as
+            //reading both axis values again for every cell, without ~94,000 repeated cross-process reads per unit.
+            double[] intakes_C = new double[recipe.Intakes_C.Length];
+            for (int i = 0; i < intakes_C.Length; i++)
             {
-                double intake_C = (double)table.GetAxisValue(1, i + 1);
-                for (int j = 0; j < recipe.Extracts_C.Length; j++)
+                intakes_C[i] = (double)table.GetAxisValue(1, i + 1);
+                if (System.Math.Abs(intakes_C[i] - recipe.Intakes_C[i]) > 1e-6)
                 {
-                    double extract_C = (double)table.GetAxisValue(2, j + 1);
-                    if (System.Math.Abs(intake_C - recipe.Intakes_C[i]) > 1e-6 || System.Math.Abs(extract_C - recipe.Extracts_C[j]) > 1e-6
-                        || System.Math.Abs((double)table.GetDataValue(i + 1, j + 1, 1) - recipe.BackgroundEfficiency(intake_C, extract_C)) > 1e-9
+                    disagreement = string.Format(CultureInfo.InvariantCulture, "state table intake axis value {0} is {1}, not {2}", i + 1, intakes_C[i], recipe.Intakes_C[i]);
+                    return false;
+                }
+            }
+
+            double[] extracts_C = new double[recipe.Extracts_C.Length];
+            for (int j = 0; j < extracts_C.Length; j++)
+            {
+                extracts_C[j] = (double)table.GetAxisValue(2, j + 1);
+                if (System.Math.Abs(extracts_C[j] - recipe.Extracts_C[j]) > 1e-6)
+                {
+                    disagreement = string.Format(CultureInfo.InvariantCulture, "state table extract axis value {0} is {1}, not {2}", j + 1, extracts_C[j], recipe.Extracts_C[j]);
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < intakes_C.Length; i++)
+            {
+                double intake_C = intakes_C[i];
+                for (int j = 0; j < extracts_C.Length; j++)
+                {
+                    double extract_C = extracts_C[j];
+                    if (System.Math.Abs((double)table.GetDataValue(i + 1, j + 1, 1) - recipe.BackgroundEfficiency(intake_C, extract_C)) > 1e-9
                         || System.Math.Abs((double)table.GetDataValue(i + 1, j + 1, 2) - recipe.CoolingEfficiency(intake_C, extract_C)) > 1e-9)
                     {
                         disagreement = string.Format(CultureInfo.InvariantCulture, "state table cell ({0}, {1}) is not the stated rule", intake_C, extract_C);
                         return false;
                     }
                 }
-            }
-
-            dynamic latentEfficiency = exchanger.LatentEfficiency;
-            if (System.Math.Abs((double)latentEfficiency.Value) > 1e-12 || (int)latentEfficiency.GetModifierCount() != 0)
-            {
-                disagreement = "recovers latent heat, which the guidance rule does not state";
-                return false;
             }
 
             return true;

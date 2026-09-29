@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using NUnit.Framework;
@@ -122,6 +122,14 @@ namespace SAM.Analytical.Tas.TM59.Tests
         // =====================================================================================================
 
         private const double DesignDuty_Lps = 25.0;
+
+        /// <summary>The real materialisation's guidance-cooling record for the cooled unit - for tests that need a production recipe.</summary>
+        internal static MechanicalVentilationGuidanceCooling GuidanceCoolingForTests()
+        {
+            AdjacencyCluster adjacencyCluster = TwoDwellings(out AirHandlingUnit airHandlingUnit_Cooled, out AirHandlingUnit _);
+
+            return Context(Mixed(adjacencyCluster, airHandlingUnit_Cooled), adjacencyCluster).GuidanceCoolings.Single();
+        }
 
         private static AdjacencyCluster TwoDwellings(out AirHandlingUnit airHandlingUnit_A, out AirHandlingUnit airHandlingUnit_B)
         {
