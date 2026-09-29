@@ -12,10 +12,22 @@ namespace SAM.Analytical.Tas
     {
         public static AnalyticalModel ToSAM(string path_TSD, TSDConversionSettings tSDConversionSettings)
         {
+            return ToSAM(path_TSD, tSDConversionSettings, out _);
+        }
+
+        /// <summary>
+        /// The model a TSD holds, opened READ-ONLY (the conversion never writes to it).
+        /// </summary>
+        /// <param name="refusal">
+        /// Why no model was returned when <see cref="TSDConversionSettings.RequireFullYear"/> refused the file,
+        /// otherwise null.
+        /// </param>
+        public static AnalyticalModel ToSAM(string path_TSD, TSDConversionSettings tSDConversionSettings, out string refusal)
+        {
             AnalyticalModel result = null;
-            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD))
+            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
             {
-                result = ToSAM(sAMTSDDocument, tSDConversionSettings);
+                result = ToSAM(sAMTSDDocument.TSDDocument, tSDConversionSettings, out refusal);
             }
 
             return result;
@@ -34,6 +46,17 @@ namespace SAM.Analytical.Tas
 
         public static AnalyticalModel ToSAM(this TSD.TSDDocument tSDDocument, TSDConversionSettings tSDConversionSettings)
         {
+            return ToSAM(tSDDocument, tSDConversionSettings, out _);
+        }
+
+        /// <param name="refusal">
+        /// Why no model was returned when <see cref="TSDConversionSettings.RequireFullYear"/> refused the file,
+        /// otherwise null.
+        /// </param>
+        public static AnalyticalModel ToSAM(this TSD.TSDDocument tSDDocument, TSDConversionSettings tSDConversionSettings, out string refusal)
+        {
+            refusal = null;
+
             TSD.BuildingData buildingData = tSDDocument?.SimulationData?.GetBuildingData();
             if (buildingData == null)
             {
@@ -43,6 +66,18 @@ namespace SAM.Analytical.Tas
             if(tSDConversionSettings == null)
             {
                 tSDConversionSettings = new TSDConversionSettings();
+            }
+
+            //Opt-in, for a caller whose assessment is defined over a whole year (Part O's TM59). Checked on the
+            //simulation's stated day range BEFORE any result is read, because nothing read afterwards can tell: TSD
+            //answers 8760 hours for any simulation and pads the days it did not simulate with -1.
+            if (tSDConversionSettings.RequireFullYear)
+            {
+                refusal = Query.FullYearRefusal(tSDDocument.SimulationData);
+                if (refusal != null)
+                {
+                    return null;
+                }
             }
 
             if(tSDConversionSettings.ZoneNames != null)

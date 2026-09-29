@@ -20,6 +20,14 @@ namespace SAM.Analytical.Tas
 
         public bool ConvertZones { get; set; } = false;
 
+        /// <summary>
+        /// Refuse - convert nothing - unless the TSD's simulation covers days 1..365
+        /// (<see cref="Query.FullYearRefusal(TSD.SimulationData)"/>). False, the default, keeps every part-year TSD
+        /// convertible as before; a caller whose assessment is defined over a whole year (Part O's TM59) sets it,
+        /// because the length of the series cannot show a part year: TSD pads the days it did not simulate with -1.
+        /// </summary>
+        public bool RequireFullYear { get; set; } = false;
+
         public TSDConversionSettings()
         {
 
@@ -40,6 +48,7 @@ namespace SAM.Analytical.Tas
                 ConvertZones = tSDConversionSettings.ConvertZones;
                 SpaceNames = tSDConversionSettings.SpaceNames == null ? null : new HashSet<string>(tSDConversionSettings.SpaceNames);
                 ZoneNames = tSDConversionSettings.ZoneNames == null ? null : new HashSet<string>(tSDConversionSettings.ZoneNames);
+                RequireFullYear = tSDConversionSettings.RequireFullYear;
             }
         }
 
@@ -118,6 +127,11 @@ namespace SAM.Analytical.Tas
                 ConvertZones = jObject["ConvertZones"]?.GetValue<bool>() ?? default(bool);
             }
 
+            if (jObject.ContainsKey("RequireFullYear"))
+            {
+                RequireFullYear = jObject["RequireFullYear"]?.GetValue<bool>() ?? default(bool);
+            }
+
             return true;
         }
 
@@ -183,6 +197,12 @@ namespace SAM.Analytical.Tas
             jObject.Add("ConvertWeaterData", ConvertWeaterData);
 
             jObject.Add("ConvertZones", ConvertZones);
+
+            //Written only when set, so every existing serialized setting is unchanged.
+            if (RequireFullYear)
+            {
+                jObject.Add("RequireFullYear", RequireFullYear);
+            }
 
             return jObject;
         }

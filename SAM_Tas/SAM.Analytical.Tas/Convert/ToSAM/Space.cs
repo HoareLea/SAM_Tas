@@ -23,13 +23,39 @@ namespace SAM.Analytical.Tas
 
         public static Space ToSAM(this TSD.ZoneData zoneData, IEnumerable<SpaceDataType> spaceDataTypes = null)
         {
+            return ToSAM(zoneData, spaceDataTypes, null);
+        }
+
+        /// <summary>
+        /// The space for one TSD zone, with its hourly series taken from <paramref name="zoneResultSeries"/> - this
+        /// zone's entry of a <see cref="Query.ZoneResultSeries"/> read over days 1..365 - where it holds the series,
+        /// and from <c>GetAnnualZoneResult</c> otherwise. The two are the same values: a float widened to double,
+        /// 8760 of them.
+        /// </summary>
+        internal static Space ToSAM(this TSD.ZoneData zoneData, IEnumerable<SpaceDataType> spaceDataTypes, Dictionary<TSD.tsdZoneArray, float[]> zoneResultSeries)
+        {
             ParameterSet parameterSet = Create.ParameterSet_Space(ActiveSetting.Setting, zoneData);
 
             if(spaceDataTypes != null)
             {
                 foreach(SpaceDataType spaceDataType in spaceDataTypes)
                 {
-                    List<double> values = zoneData.AnnualZoneResult<double>(spaceDataType);
+                    List<double> values = null;
+
+                    TSD.tsdZoneArray? tsdZoneArray = spaceDataType.TsdZoneArray();
+                    if (zoneResultSeries != null && tsdZoneArray != null && zoneResultSeries.TryGetValue(tsdZoneArray.Value, out float[] series))
+                    {
+                        values = new List<double>(series.Length);
+                        foreach (float value in series)
+                        {
+                            values.Add(value);
+                        }
+                    }
+                    else
+                    {
+                        values = zoneData.AnnualZoneResult<double>(spaceDataType);
+                    }
+
                     if (values == null)
                         continue;
 

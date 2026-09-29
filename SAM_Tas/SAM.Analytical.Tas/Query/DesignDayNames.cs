@@ -1,4 +1,7 @@
-﻿using SAM.Core.Tas;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
 using TSD;
@@ -15,7 +18,7 @@ namespace SAM.Analytical.Tas
             }
 
             List<Tuple<string, string, string>> result = null;
-            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD))
+            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
             {
                 Dictionary<string, Tuple<CoolingDesignData, double, int, HeatingDesignData, double, int>> dictionary = DesignDataDictionary(sAMTSDDocument);
                 if(dictionary != null)
