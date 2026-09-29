@@ -637,6 +637,11 @@ namespace SAM.Analytical.Tas.TPD
         private static void WriteExchangerStateTable(dynamic table, GuidanceRecipe recipe)
         {
             table.Name = "Manufacturer guidance exchanger state: bypass 0 at both airflows, else recovery at the design-airflow / elevated-airflow fraction";
+            //The extent the table had before it is sized - each axis at least 1 - whose cells survive SetSize.
+            int extent_Intake = System.Math.Max(1, (int)table.GetAxisSize(1));
+            int extent_Extract = System.Math.Max(1, (int)table.GetAxisSize(2));
+            int extent_Airflow = System.Math.Max(1, (int)table.GetAxisSize(3));
+
             table.SetVariable(1, tpdProfileDataVariableType.tpdProfileDataVariableODB);
             table.SetVariable(2, tpdProfileDataVariableType.tpdProfileDataVariableEDB2);
             table.SetVariable(3, tpdProfileDataVariableType.tpdProfileDataVariableEFlow);
@@ -658,11 +663,14 @@ namespace SAM.Analytical.Tas.TPD
             table.SetAxisValue(3, 2, recipe.Elevated_Lps);
 
             //Every cell is one cross-process call (~0.2-0.35 ms measured, 2026-09-29), and the table is ~188,000 cells
-            //per unit - so a cell TAS already holds is not written again. A freshly sized table was observed to
-            //answer 0.0, and bypass cells ARE 0.0 (about half the grid); whether that holds is asked of TAS here, at
-            //two corners, rather than assumed, and the read-back that follows checks EVERY cell regardless - so a
-            //table that did not start at zero is refused, never simulated.
-            bool zeroInitialised = (double)table.GetDataValue(1, 1, 1) == 0.0 && (double)table.GetDataValue(recipe.Intakes_C.Length, recipe.Extracts_C.Length, 2) == 0.0;
+            //per unit - so a new cell TAS already holds at 0.0 is not written again; bypass cells ARE 0.0 (about half
+            //the grid). Measured on licensed TAS (2026-09-29, the full 335 x 281 x 2 production grid read back): a
+            //fresh modifier table answers GetAxisSize 2 x 0 x 0 and, once sized, holds 1.0 at (1,1,1) and (2,1,1) and
+            //0.0 in every other cell - its old cells survive SetSize and every new cell is 0.0. So every cell inside
+            //the old extent is written whatever its value. That new cells start at 0.0 is still asked of TAS, at the
+            //far corner, rather than assumed; and the read-back that follows checks EVERY cell regardless - so a table
+            //that did not start as measured is refused, never simulated.
+            bool zeroInitialised = (double)table.GetDataValue(recipe.Intakes_C.Length, recipe.Extracts_C.Length, 2) == 0.0;
 
             long count_Written = 0;
 
@@ -670,15 +678,17 @@ namespace SAM.Analytical.Tas.TPD
             {
                 for (int j = 0; j < recipe.Extracts_C.Length; j++)
                 {
+                    bool old = i < extent_Intake && j < extent_Extract;
+
                     double background = recipe.BackgroundEfficiency(recipe.Intakes_C[i], recipe.Extracts_C[j]);
-                    if (!zeroInitialised || background != 0.0)
+                    if (!zeroInitialised || background != 0.0 || old)
                     {
                         table.SetDataValue(i + 1, j + 1, 1, background);
                         count_Written++;
                     }
 
                     double cooling = recipe.CoolingEfficiency(recipe.Intakes_C[i], recipe.Extracts_C[j]);
-                    if (!zeroInitialised || cooling != 0.0)
+                    if (!zeroInitialised || cooling != 0.0 || (old && extent_Airflow >= 2))
                     {
                         table.SetDataValue(i + 1, j + 1, 2, cooling);
                         count_Written++;

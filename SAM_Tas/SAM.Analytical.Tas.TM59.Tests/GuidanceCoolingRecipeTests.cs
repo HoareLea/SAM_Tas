@@ -206,7 +206,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
             return SupplyTemperatureRule.ExchangerThenCoil(new[] { 60.0, 80.0, 100.0, 120.0 }, new[] { 0.8796, 0.8576, 0.8356, 0.8136 }, new[] { 9.265, 8.745, 8.225, 7.705 }, new[] { 0.3, 0.5, 0.8, 1.1 }, minimum_C);
         }
 
-        private static MechanicalVentilationGuidanceCooling GuidanceCooling(Action<VentilationUnitOperatingStrategy> edit = null, bool withCapacity = true)
+        internal static MechanicalVentilationGuidanceCooling GuidanceCooling(Action<VentilationUnitOperatingStrategy> edit = null, bool withCapacity = true)
         {
             VentilationUnitOperatingStrategy strategy = new VentilationUnitOperatingStrategy
             {
