@@ -1,6 +1,25 @@
 # Project Progress
 
-## Current: Mixed Part O PR3B-3 - mixed-scenario diagnostics + mixed TPD cooling regression (28 Sep 2026)
+## Current: TSD result-read performance - day-major `AddResults` (29 Sep 2026) - MERGED as SAM_Tas#72 (`0f4eeadb`)
+
+**Status.** Merged into `sow/2026-Q3` (merge `0f4eeadb`, PR head `06423652`). Final PR CI green (build, SPDX), mergeable,
+no review comments (only a Codex quota notice). Full record: `Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md`.
+
+- `Modify.AddResults` / `Convert.ToSAM.Results` read the TSD series day-major (new `Query.ZoneResultSeries`) instead of
+  zone by zone, and take the SAM zones' cooling peaks from those series (new `Query.PeakZoneGroupGain`, the rule TSD's own
+  `GetPeakZoneGroupGains` was measured to follow) for a full-year simulation; part-year still asks TSD as before.
+  `Query.Overheating` gained a series overload.
+- **Validated (licensed A/B):** x30 `AddResults` **2,992 s -> 85.4 s (~35x)**; results identical apart from creation
+  timestamps. TM59 tests **978/978**, benchmark tests **16/16**.
+
+**Decisions / scope.** Access-pattern fix only; the remaining ceiling is TSD.exe's day cache. The bridge / TM59
+day-major optimisation was deliberately NOT included.
+
+**Follow-up (separate PR, only if wanted).** Apply the day-major read to the bridge and TM59 result queries. It needs a
+deliberate safeguard first: partial / damaged-TSD validity behaviour must still be refused rather than read as zeros.
+Measurements are in the evidence doc sections 4 and 7. No Part O work is implied.
+
+## Previous: Mixed Part O PR3B-3 - mixed-scenario diagnostics + mixed TPD cooling regression (28 Sep 2026)
 
 **Status.** Branch `fix/parto-mixed-cooling-pr3b3-2026-09-27` from `sow/2026-Q3` `fedf34cd`. Third of three PR3B domain
 PRs (authoritative record: SAM `documentation/PartO-MixedDwellingStrategies-PR3B.md`). Depends on SAM#161 (merged
