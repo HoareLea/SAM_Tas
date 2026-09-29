@@ -45,7 +45,14 @@ No TAS simulation was run for this PR.
   at ×30) with identical values, but it makes the access path depend on wall-clock timing and needs its own
   licensed validation, for a saving of < 30 s on runs that take tens of minutes. A file-size threshold was rejected
   for the same reason: the cliff is only bracketed (fits at 163 MB / 90 zones, thrashes at 489 MB / 270 zones).
-  Recorded as a possible follow-up (§6).
+  **Not planned** since EDSL's confirmation (next point).
+- **EDSL confirmation (29 Sep 2026, Duncan / EDSL, reported by the project owner).** Day-major `GetDailyZoneResult`
+  across all zones is EDSL's recommended access pattern. TSD stores results per day, and `GetAnnualZoneResult` reads
+  all 365 daily records again for every zone. This matches the measured cause (#72 record §1) and Duncan's
+  17 Apr 2018 advice, and it is the authoritative basis for the day-major direction here and in #72. The
+  implementation choices above (local `BridgeSeries` in TPD, `ZoneResultSeries` in SAM.Analytical.Tas, daily
+  building reads for weather) remain ours. The confirmation covers the ACCESS PATTERN only. It says nothing about
+  partial or damaged files, which stay a separate question (§6).
 - **Days 1..365 regardless of the simulated range** in the TM59 and weather conversions, so a part-year file converts
   to exactly what the annual getters gave (padding included) - identity, not a behaviour change.
 - Not changed (per scope): `UnmetHours`, recirculation-cooling reads, peak APIs, cross-stage caching, persistent TSD
@@ -130,11 +137,15 @@ exceeds TSD.exe's ~550 MB day cache.
 - **Activating the TM59 guard needs a one-line SAM_UI change** (`PartOTM59Assessment`: `RequireFullYear = true` and
   report the `out refusal`), in a separate SAM_UI PR. Until then Part O TM59 behaves as before. SAM_UI's comment on
   `HourCount_Expected` should also say the length check cannot detect a part-year TSD.
-- EDSL questions: (1) is there any supported multi-zone/multi-array series getter (none found; `OutputSelection`/
-  `ZoneFilter` coclasses fail to CoCreate); (2) can the day-cache cap be raised; (3) do surface results share the zone
-  day cache, i.e. is `GetDailySurfaceResult` day-major the right fix for surface reads; (4) is a status flag for an
-  incomplete / stopped simulation available beyond `firstDay/lastDay`.
-- Possible follow-up (only if the mid-size regression matters): the adaptive annual/day-major reader of §2.
+- EDSL: **answered** - day-major `GetDailyZoneResult` across all zones is the recommended access pattern (results are
+  stored per day; §2). Still open: (1) is there any supported multi-zone/multi-array series getter (none found;
+  `OutputSelection`/`ZoneFilter` coclasses fail to CoCreate); (2) can the day-cache cap be raised; (3) are surface
+  results stored per day too, i.e. is `GetDailySurfaceResult` day-major the right fix for surface reads (likely, given
+  the per-day storage, but not measured); (4) is a status flag for an incomplete / stopped simulation available beyond
+  `firstDay/lastDay`.
+- **Partial / damaged-file semantics stay separate from the access pattern.** This PR only refuses a part year
+  from the stated day range at the bridge boundary and, opt-in, at TM59. A file that states 1..365 but is damaged or
+  stopped part-way, and TSD.exe hanging on a damaged file, are separate EDSL / robustness questions, not addressed here.
 - Follow-up: day-major surface reads (`Panel.ToSAM` with panel types, `SetBlinds`) - needs a licensed probe of
   `GetDailySurfaceResult` cost and identity first (§5).
 - Not in scope: damaged-TSD timeout handling (a TAS/EDSL robustness issue, separate).
