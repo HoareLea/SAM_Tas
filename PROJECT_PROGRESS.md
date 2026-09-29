@@ -1,5 +1,26 @@
 # Project Progress
 
+## Current: Part O Iteration 3 exchanger representation (29 Sep 2026) - MERGED as SAM_Tas#76 (`3eee7a4a`)
+
+**Status.** Merged into `sow/2026-Q3` (merge `3eee7a4a`, PR head `8fe4b790`). Final CI green (build, SPDX), mergeable,
+no reviews or comments. Follows #74/#75 in the Iteration 3 stream. PR record:
+`Documentation/evidence/PARTO-IT3-EXCHANGER-REPRESENTATION.md` (with licensed probe/replay logs alongside).
+
+- **Change.** Guidance exchanger `SensibleEfficiency` was one 335x281x2 (intake, extract, airflow) Equal table per unit
+  (188,270 cells, each an out-of-process `TPD.exe` COM call). Now a pruned 2D (ODB, EDB2) state Equal table (265x266 =
+  70,490 cells, exact under per-axis linear interpolation) times a 1D EFlow Multiply airflow table (2 points). Read-back
+  verifies every cell, axes, variables, multiplier, extrapolation and both fractions (stricter than before).
+  Files: `SAM.Analytical.Tas.TPD/Modify/GroundGuidanceCooling.cs`, `SAM.Analytical.Tas.TM59.Tests/GuidanceExchangerTableCallsTests.cs`.
+- **Evidence (licensed).** Cell + axis COM calls ~809,600 -> ~321,100 (-60%). Iteration 3 total 296.6 s -> 198.9 s
+  (noisy, VM varies ~1.5x; the call count is the reliable claim). Generated TPDs re-simulated: 104/104 duct series x 8760 h
+  bit-identical; OperatingAirFlow.csv byte-identical; TM59 Pass/Pass; bridge profiles 32/32 and TSD temperatures 9/9 identical.
+- **Rejected alternatives.** No bulk table API, no in-process COM, no copy/share across units; Lua/Curve modifiers not
+  exact; a DeltaT axis on the exchanger makes `SimulateEx` fail ("Main PlantRoom Has Errors").
+- **Tests.** TM59 Release **1014/1014** (14 exchanger-table tests; equivalence over 15-17M points, worst 2.2e-16 only in
+  switching cells); Benchmark 16/16.
+- **Deferred.** Part O progress UI, run history/resume, Design Condition cleanup.
+- **Next step.** None for this entry.
+
 ## Current: Part O Iteration 3 TPD performance + guidance controller layout (29 Sep 2026) - MERGED as SAM_Tas#74 (`e706a13d`) and #75 (`a312426b`)
 
 **Status.** Both merged into `sow/2026-Q3`, final CI green, no unresolved review comments; #75 was refreshed onto the
