@@ -33,11 +33,12 @@ namespace SAM.Analytical.Tas.TPD
         /// proportions: controlling the dampers instead does not converge where a supplied room's only outlet is
         /// a transfer (Stage 11b).</description></item>
         /// <item><description><b>Exchanger.</b> Uncontrolled - a control arc would scale its efficiency by the
-        /// signal. Efficiency = an equality table over (intake, extract, own airflow): the unit's own bypass
-        /// decision at both airflows (0 where its conditions hold - independent of the cooling-stat), otherwise
-        /// the background recovery fraction at the design airflow and the cooling rule's fraction at the
-        /// elevated airflow. The exchanger's own airflow carries the controller signal because TAS refuses a
-        /// <c>ControlSignal</c> axis on <c>SensibleEfficiency</c>.</description></item>
+        /// signal. Efficiency = an equality table over (intake, extract) - the unit's own bypass decision, the same
+        /// at both airflows (0 where its conditions hold - independent of the cooling-stat), otherwise 1 - times a
+        /// table over its own airflow: the background recovery fraction at the design airflow and the cooling
+        /// rule's fraction at the elevated airflow. That product is exactly the (intake, extract, own airflow)
+        /// table it replaced (see <see cref="GuidanceRecipe.StateIntakes_C"/>). The exchanger's own airflow carries
+        /// the controller signal because TAS refuses a <c>ControlSignal</c> axis on <c>SensibleEfficiency</c>.</description></item>
         /// <item><description><b>DX coil.</b> No enable gates, and <c>MinimumOffcoil</c> = a table over the
         /// coil's own entering temperature: <c>max(minimum, entering - (coil drop - fan rise)(elevated))</c>,
         /// which a controlled coil holds as its leaving temperature. The fans' own heat stays cleared - the
@@ -193,7 +194,7 @@ namespace SAM.Analytical.Tas.TPD
                     WriteAbsoluteFlow(dampers_Extract[i], designs_Extract[i] * recipe.Elevated_Lps / recipe.DesignExtract_Lps);
                 }
 
-                //Exchanger: uncontrolled, efficiency x state table.
+                //Exchanger: uncontrolled, efficiency = state table (Equal) x airflow table (Multiply), in that order.
                 exchanger.SetpointMethod = tpdSetpointMethod.tpdSetpointNone;
                 dynamic sensibleEfficiency = exchanger.SensibleEfficiency;
                 sensibleEfficiency.ClearModifiers();
@@ -204,9 +205,10 @@ namespace SAM.Analytical.Tas.TPD
                 using (TPDProfiler.Current?.Measure("Guidance: write exchanger state table"))
                 {
                     WriteExchangerStateTable(sensibleEfficiency.AddModifierTable(), recipe);
+                    WriteExchangerAirflowTable(sensibleEfficiency.AddModifierTable(), recipe);
                 }
 
-                TPDProfiler.Current?.Count("Guidance: exchanger state table cells", 2L * recipe.Intakes_C.Length * recipe.Extracts_C.Length);
+                TPDProfiler.Current?.Count("Guidance: exchanger state table cells", (long)recipe.StateIntakes_C.Length * recipe.StateExtracts_C.Length);
 
                 //DX coil: finite duty, no gates, supply law on the off-coil floor.
                 dXCoil.ControlMethod = tpdCoolingControlMethod.tpdCoolingControlNormal;
@@ -395,8 +397,22 @@ namespace SAM.Analytical.Tas.TPD
             public double DesignSupply_Lps;
             public double DesignExtract_Lps;
             public double CoolingDuty_W;
+            /// <summary>The intake breakpoints the rule is resolved on (0.1 K through the thresholds, see <see cref="TryGetGuidanceRecipe"/>).</summary>
             public double[] Intakes_C;
+
+            /// <summary>The extract breakpoints the rule is resolved on.</summary>
             public double[] Extracts_C;
+
+            /// <summary>
+            /// The intake axis TAS is given: <see cref="Intakes_C"/> less every breakpoint whose whole line of states
+            /// equals both neighbouring lines. Interpolation between two equal lines answers that line wherever the
+            /// removed breakpoint sat, so the table TAS interpolates is the same function of (intake, extract) as on
+            /// the full grid - only its redundant lines are gone (335 x 281 -&gt; 265 x 266 for the real project).
+            /// </summary>
+            public double[] StateIntakes_C;
+
+            /// <summary>The extract axis TAS is given: <see cref="Extracts_C"/> pruned the same way.</summary>
+            public double[] StateExtracts_C;
 
             /// <summary>
             /// The unit's own bypass decision - the same at every airflow, independent of the cooling-stat, inclusive at
@@ -406,6 +422,16 @@ namespace SAM.Analytical.Tas.TPD
             public bool Bypass(double intake_C, double extract_C)
             {
                 return intake_C >= BypassMinimumIntake_C && extract_C > intake_C && extract_C >= BypassMinimumExtract_C;
+            }
+
+            /// <summary>
+            /// The exchanger state TAS's (intake, extract) table holds: 0 in bypass, 1 otherwise - the same at every
+            /// airflow. Times the airflow table's fraction it is <see cref="BackgroundEfficiency"/> at the design
+            /// airflow and <see cref="CoolingEfficiency"/> at the elevated airflow.
+            /// </summary>
+            public double State(double intake_C, double extract_C)
+            {
+                return Bypass(intake_C, extract_C) ? 0.0 : 1.0;
             }
 
             /// <summary>The background (design-airflow) exchanger state: 0 in bypass, the recovery fraction otherwise.</summary>
@@ -550,7 +576,54 @@ namespace SAM.Analytical.Tas.TPD
             recipe.Intakes_C = Axis(new double[] { -20, -5, 5 }, System.Math.Min(recipe.BypassMinimumIntake_C, 12.0), 45.0, new double[0], new double[] { recipe.BypassMinimumIntake_C - 0.01 });
             recipe.Extracts_C = Axis(new double[] { 5, 12 }, System.Math.Min(recipe.BypassMinimumExtract_C, 18.0) - 0.1, 45.0, new double[] { 45.1, 50, 60, 80, 100 }, new double[] { recipe.BypassMinimumExtract_C - 0.01, recipe.ActivationTemperature_C + 0.01 });
 
+            //Only the extract = intake diagonal needs the full 0.1 K lattice (it crosses every line in the square
+            //both minimums bound); every other run of identical lines keeps just its two ends.
+            GuidanceRecipe recipe_State = recipe;
+            recipe.StateIntakes_C = Prune(recipe.Intakes_C, recipe.Extracts_C, (intake, extract) => recipe_State.State(intake, extract));
+            recipe.StateExtracts_C = Prune(recipe.Extracts_C, recipe.Intakes_C, (extract, intake) => recipe_State.State(intake, extract));
+
             return true;
+        }
+
+        /// <summary>
+        /// The breakpoints of <paramref name="axis"/> without those whose line of states (over every
+        /// <paramref name="across"/> breakpoint) equals both neighbouring lines; the two ends are always kept.
+        /// </summary>
+        private static double[] Prune(double[] axis, double[] across, Func<double, double, double> state)
+        {
+            double[][] lines = new double[axis.Length][];
+            for (int i = 0; i < axis.Length; i++)
+            {
+                lines[i] = new double[across.Length];
+                for (int j = 0; j < across.Length; j++)
+                {
+                    lines[i][j] = state(axis[i], across[j]);
+                }
+            }
+
+            bool Same(int a, int b)
+            {
+                for (int j = 0; j < across.Length; j++)
+                {
+                    if (lines[a][j] != lines[b][j])
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            List<double> result = new List<double>();
+            for (int i = 0; i < axis.Length; i++)
+            {
+                if (i == 0 || i == axis.Length - 1 || !Same(i, i - 1) || !Same(i, i + 1))
+                {
+                    result.Add(axis[i]);
+                }
+            }
+
+            return result.ToArray();
         }
 
         private static double[] Axis(double[] low, double from, double to, double[] high, double[] extra)
@@ -639,61 +712,46 @@ namespace SAM.Analytical.Tas.TPD
 
         private static void WriteExchangerStateTable(dynamic table, GuidanceRecipe recipe)
         {
-            table.Name = "Manufacturer guidance exchanger state: bypass 0 at both airflows, else recovery at the design-airflow / elevated-airflow fraction";
+            table.Name = "Manufacturer guidance exchanger state: bypass 0, else 1 (times the airflow table's recovery fraction)";
             //The extent the table had before it is sized - each axis at least 1 - whose cells survive SetSize.
             int extent_Intake = System.Math.Max(1, (int)table.GetAxisSize(1));
             int extent_Extract = System.Math.Max(1, (int)table.GetAxisSize(2));
-            int extent_Airflow = System.Math.Max(1, (int)table.GetAxisSize(3));
 
             table.SetVariable(1, tpdProfileDataVariableType.tpdProfileDataVariableODB);
             table.SetVariable(2, tpdProfileDataVariableType.tpdProfileDataVariableEDB2);
-            table.SetVariable(3, tpdProfileDataVariableType.tpdProfileDataVariableEFlow);
-            table.SetSize(recipe.Intakes_C.Length, recipe.Extracts_C.Length, 2);
+            table.SetSize(recipe.StateIntakes_C.Length, recipe.StateExtracts_C.Length, 0);
             table.Extrapolate = false;
             table.Multiplier = tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
 
-            for (int i = 0; i < recipe.Intakes_C.Length; i++)
+            for (int i = 0; i < recipe.StateIntakes_C.Length; i++)
             {
-                table.SetAxisValue(1, i + 1, recipe.Intakes_C[i]);
+                table.SetAxisValue(1, i + 1, recipe.StateIntakes_C[i]);
             }
 
-            for (int j = 0; j < recipe.Extracts_C.Length; j++)
+            for (int j = 0; j < recipe.StateExtracts_C.Length; j++)
             {
-                table.SetAxisValue(2, j + 1, recipe.Extracts_C[j]);
+                table.SetAxisValue(2, j + 1, recipe.StateExtracts_C[j]);
             }
 
-            table.SetAxisValue(3, 1, recipe.DesignSupply_Lps);
-            table.SetAxisValue(3, 2, recipe.Elevated_Lps);
-
-            //Every cell is one cross-process call (~0.2-0.35 ms measured, 2026-09-29), and the table is ~188,000 cells
-            //per unit - so a new cell TAS already holds at 0.0 is not written again; bypass cells ARE 0.0 (about half
-            //the grid). Measured on licensed TAS (2026-09-29, the full 335 x 281 x 2 production grid read back): a
-            //fresh modifier table answers GetAxisSize 2 x 0 x 0 and, once sized, holds 1.0 at (1,1,1) and (2,1,1) and
-            //0.0 in every other cell - its old cells survive SetSize and every new cell is 0.0. So every cell inside
-            //the old extent is written whatever its value. That new cells start at 0.0 is still asked of TAS, at the
-            //far corner, rather than assumed; and the read-back that follows checks EVERY cell regardless - so a table
-            //that did not start as measured is refused, never simulated.
-            bool zeroInitialised = (double)table.GetDataValue(recipe.Intakes_C.Length, recipe.Extracts_C.Length, 2) == 0.0;
+            //Every cell is one cross-process call (~0.2-0.35 ms measured, 2026-09-29), so a new cell TAS already holds
+            //at 0.0 is not written again; bypass cells ARE 0.0. Measured on licensed TAS (2026-09-29): a fresh modifier
+            //table answers GetAxisSize 2 x 0 x 0 and, once sized, holds 1.0 at (1,1,1) and (2,1,1) and 0.0 in every
+            //other cell - its old cells survive SetSize and every new cell is 0.0. So every cell inside the old extent
+            //is written whatever its value. That new cells start at 0.0 is still asked of TAS, at the far corner,
+            //rather than assumed; and the read-back that follows checks EVERY cell regardless - so a table that did
+            //not start as measured is refused, never simulated.
+            bool zeroInitialised = (double)table.GetDataValue(recipe.StateIntakes_C.Length, recipe.StateExtracts_C.Length, 1) == 0.0;
 
             long count_Written = 0;
 
-            for (int i = 0; i < recipe.Intakes_C.Length; i++)
+            for (int i = 0; i < recipe.StateIntakes_C.Length; i++)
             {
-                for (int j = 0; j < recipe.Extracts_C.Length; j++)
+                for (int j = 0; j < recipe.StateExtracts_C.Length; j++)
                 {
-                    bool old = i < extent_Intake && j < extent_Extract;
-
-                    double background = recipe.BackgroundEfficiency(recipe.Intakes_C[i], recipe.Extracts_C[j]);
-                    if (!zeroInitialised || background != 0.0 || old)
+                    double state = recipe.State(recipe.StateIntakes_C[i], recipe.StateExtracts_C[j]);
+                    if (!zeroInitialised || state != 0.0 || (i < extent_Intake && j < extent_Extract))
                     {
-                        table.SetDataValue(i + 1, j + 1, 1, background);
-                        count_Written++;
-                    }
-
-                    double cooling = recipe.CoolingEfficiency(recipe.Intakes_C[i], recipe.Extracts_C[j]);
-                    if (!zeroInitialised || cooling != 0.0 || (old && extent_Airflow >= 2))
-                    {
-                        table.SetDataValue(i + 1, j + 1, 2, cooling);
+                        table.SetDataValue(i + 1, j + 1, 1, state);
                         count_Written++;
                     }
                 }
@@ -702,18 +760,39 @@ namespace SAM.Analytical.Tas.TPD
             TPDProfiler.Current?.Count("Guidance: exchanger state table cells written", count_Written);
         }
 
+        /// <summary>
+        /// The recovery fraction over the exchanger's own airflow, multiplying the state table: the background
+        /// fraction at the design airflow and the cooling rule's at the elevated airflow, linear between and held
+        /// beyond - exactly the airflow axis of the (intake, extract, airflow) table it replaced.
+        /// </summary>
+        private static void WriteExchangerAirflowTable(dynamic table, GuidanceRecipe recipe)
+        {
+            table.Name = "Manufacturer guidance exchanger recovery: design-airflow / elevated-airflow fraction";
+            table.SetVariable(1, tpdProfileDataVariableType.tpdProfileDataVariableEFlow);
+            table.SetSize(2, 0, 0);
+            table.Extrapolate = false;
+            table.Multiplier = tpdProfileDataModifierMultiplier.tpdProfileDataModifierMultiply;
+            table.SetAxisValue(1, 1, recipe.DesignSupply_Lps);
+            table.SetAxisValue(1, 2, recipe.Elevated_Lps);
+            table.SetDataValue(1, 1, 1, recipe.ExtractFraction);
+            table.SetDataValue(2, 1, 1, recipe.CoolingExtractFraction);
+        }
+
         private static bool ReadBackExchangerStateTable(Exchanger exchanger, GuidanceRecipe recipe, out string disagreement)
         {
             disagreement = null;
             dynamic sensibleEfficiency = exchanger.SensibleEfficiency;
 
-            if (System.Math.Abs((double)sensibleEfficiency.Value - recipe.ExtractFraction) > 1e-9 || (int)sensibleEfficiency.GetModifierCount() != 1)
+            if (System.Math.Abs((double)sensibleEfficiency.Value - recipe.ExtractFraction) > 1e-9 || (int)sensibleEfficiency.GetModifierCount() != 2
+                || (int)sensibleEfficiency.GetModifierType(1) != (int)tpdProfileDataModifierType.tpdProfileDataModifierTable
+                || (int)sensibleEfficiency.GetModifierType(2) != (int)tpdProfileDataModifierType.tpdProfileDataModifierTable)
             {
-                disagreement = "efficiency is not the blend fraction with exactly one table";
+                disagreement = "efficiency is not the blend fraction with exactly a state table and an airflow table";
                 return false;
             }
 
-            if (!ReadBackExchangerStateTable((object)sensibleEfficiency.GetModifier(1), recipe, out disagreement))
+            if (!ReadBackExchangerStateTable((object)sensibleEfficiency.GetModifier(1), recipe, out disagreement)
+                || !ReadBackExchangerAirflowTable((object)sensibleEfficiency.GetModifier(2), recipe, out disagreement))
             {
                 return false;
             }
@@ -728,43 +807,43 @@ namespace SAM.Analytical.Tas.TPD
             return true;
         }
 
-        /// <summary>The state table's own read-back - size, axes and every cell - apart from the exchanger that holds it.</summary>
+        /// <summary>The state table's own read-back - variables, combination, size, axes and every cell - apart from the exchanger that holds it.</summary>
         private static bool ReadBackExchangerStateTable(dynamic table, GuidanceRecipe recipe, out string disagreement)
         {
             disagreement = null;
 
-            if ((bool)table.Extrapolate || (int)table.GetAxisSize(1) != recipe.Intakes_C.Length || (int)table.GetAxisSize(2) != recipe.Extracts_C.Length || (int)table.GetAxisSize(3) != 2)
+            if ((bool)table.Extrapolate || (int)table.Multiplier != (int)tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual
+                || (int)table.GetAxisSize(1) != recipe.StateIntakes_C.Length || (int)table.GetAxisSize(2) != recipe.StateExtracts_C.Length || (int)table.GetAxisSize(3) != 0)
             {
-                disagreement = "state table has the wrong size or extrapolates";
+                disagreement = "state table has the wrong size or combination, or extrapolates";
                 return false;
             }
 
-            if (System.Math.Abs((double)table.GetAxisValue(3, 1) - recipe.DesignSupply_Lps) > 1e-6 || System.Math.Abs((double)table.GetAxisValue(3, 2) - recipe.Elevated_Lps) > 1e-6)
+            if ((int)table.GetVariable(1) != (int)tpdProfileDataVariableType.tpdProfileDataVariableODB || (int)table.GetVariable(2) != (int)tpdProfileDataVariableType.tpdProfileDataVariableEDB2)
             {
-                disagreement = "state table airflow axis is not design / elevated";
+                disagreement = "state table is not over intake and extract dry bulb";
                 return false;
             }
 
-            //Each axis is read ONCE and checked against the recipe, then every cell's two values: the same checks as
-            //reading both axis values again for every cell, without ~94,000 repeated cross-process reads per unit.
-            double[] intakes_C = new double[recipe.Intakes_C.Length];
+            //Each axis is read ONCE and checked against the recipe, then every cell.
+            double[] intakes_C = new double[recipe.StateIntakes_C.Length];
             for (int i = 0; i < intakes_C.Length; i++)
             {
                 intakes_C[i] = (double)table.GetAxisValue(1, i + 1);
-                if (System.Math.Abs(intakes_C[i] - recipe.Intakes_C[i]) > 1e-6)
+                if (System.Math.Abs(intakes_C[i] - recipe.StateIntakes_C[i]) > 1e-6)
                 {
-                    disagreement = string.Format(CultureInfo.InvariantCulture, "state table intake axis value {0} is {1}, not {2}", i + 1, intakes_C[i], recipe.Intakes_C[i]);
+                    disagreement = string.Format(CultureInfo.InvariantCulture, "state table intake axis value {0} is {1}, not {2}", i + 1, intakes_C[i], recipe.StateIntakes_C[i]);
                     return false;
                 }
             }
 
-            double[] extracts_C = new double[recipe.Extracts_C.Length];
+            double[] extracts_C = new double[recipe.StateExtracts_C.Length];
             for (int j = 0; j < extracts_C.Length; j++)
             {
                 extracts_C[j] = (double)table.GetAxisValue(2, j + 1);
-                if (System.Math.Abs(extracts_C[j] - recipe.Extracts_C[j]) > 1e-6)
+                if (System.Math.Abs(extracts_C[j] - recipe.StateExtracts_C[j]) > 1e-6)
                 {
-                    disagreement = string.Format(CultureInfo.InvariantCulture, "state table extract axis value {0} is {1}, not {2}", j + 1, extracts_C[j], recipe.Extracts_C[j]);
+                    disagreement = string.Format(CultureInfo.InvariantCulture, "state table extract axis value {0} is {1}, not {2}", j + 1, extracts_C[j], recipe.StateExtracts_C[j]);
                     return false;
                 }
             }
@@ -775,13 +854,39 @@ namespace SAM.Analytical.Tas.TPD
                 for (int j = 0; j < extracts_C.Length; j++)
                 {
                     double extract_C = extracts_C[j];
-                    if (System.Math.Abs((double)table.GetDataValue(i + 1, j + 1, 1) - recipe.BackgroundEfficiency(intake_C, extract_C)) > 1e-9
-                        || System.Math.Abs((double)table.GetDataValue(i + 1, j + 1, 2) - recipe.CoolingEfficiency(intake_C, extract_C)) > 1e-9)
+                    if ((double)table.GetDataValue(i + 1, j + 1, 1) != recipe.State(intake_C, extract_C))
                     {
                         disagreement = string.Format(CultureInfo.InvariantCulture, "state table cell ({0}, {1}) is not the stated rule", intake_C, extract_C);
                         return false;
                     }
                 }
+            }
+
+            return true;
+        }
+
+        /// <summary>The airflow table's own read-back - variable, combination, size, axis and both fractions.</summary>
+        private static bool ReadBackExchangerAirflowTable(dynamic table, GuidanceRecipe recipe, out string disagreement)
+        {
+            disagreement = null;
+
+            if ((bool)table.Extrapolate || (int)table.Multiplier != (int)tpdProfileDataModifierMultiplier.tpdProfileDataModifierMultiply
+                || (int)table.GetVariable(1) != (int)tpdProfileDataVariableType.tpdProfileDataVariableEFlow || (int)table.GetAxisSize(1) != 2)
+            {
+                disagreement = "airflow table is not a multiplying table over its own airflow with two breakpoints, or extrapolates";
+                return false;
+            }
+
+            if (System.Math.Abs((double)table.GetAxisValue(1, 1) - recipe.DesignSupply_Lps) > 1e-6 || System.Math.Abs((double)table.GetAxisValue(1, 2) - recipe.Elevated_Lps) > 1e-6)
+            {
+                disagreement = "airflow table axis is not design / elevated";
+                return false;
+            }
+
+            if ((double)table.GetDataValue(1, 1, 1) != recipe.ExtractFraction || (double)table.GetDataValue(2, 1, 1) != recipe.CoolingExtractFraction)
+            {
+                disagreement = "airflow table does not hold the design / elevated recovery fractions";
+                return false;
             }
 
             return true;
