@@ -1,0 +1,54 @@
+Imin,Emin,Act,EF,CEF=12.0,19.0,22.0,0.8,0.8576
+def axis(low,frm,to,high,extra):
+    s=set(v for v in low if v<frm-1e-9)
+    n=round((to-frm)/0.1)
+    s|={round(frm+0.1*i,4) for i in range(n+1)}
+    s|=set(high); s|={round(v,4) for v in extra}
+    return sorted(s)
+I=axis([-20,-5,5],min(Imin,12.0),45.0,[],[Imin-0.01])
+E=axis([5,12],min(Emin,18.0)-0.1,45.0,[45.1,50,60,80,100],[Emin-0.01,Act+0.01])
+byp=lambda i,e: i>=Imin and e>i and e>=Emin
+L1=[[0.0 if byp(i,e) else EF for e in E] for i in I]
+L2=[[0.0 if byp(i,e) else CEF for e in E] for i in I]
+print("axes",len(I),len(E),"cells",2*len(I)*len(E))
+print("distinct values L1",sorted({v for r in L1 for v in r}),"L2",sorted({v for r in L2 for v in r}))
+zero=sum(v==0 for r in L1 for v in r); print("bypass cells per layer",zero,"of",len(I)*len(E))
+# layer separability
+print("L2 == L1*(CEF/EF) pattern-wise:", all((a==0)==(b==0) for r1,r2 in zip(L1,L2) for a,b in zip(r1,r2)))
+rows=[tuple(r) for r in L1]; print("distinct intake rows",len(set(rows)))
+cols=[tuple(L1[i][j] for i in range(len(I))) for j in range(len(E))]; print("distinct extract cols",len(set(cols)))
+def keep(vecs):  # keep a breakpoint unless it equals both neighbours (constant => collinear) ; ends kept
+    k=[0]
+    for x in range(1,len(vecs)-1):
+        if not (vecs[x]==vecs[x-1]==vecs[x+1]): k.append(x)
+    k.append(len(vecs)-1); return k
+ki=keep(rows); kj=keep(cols)
+print("exactly-removable-pruned axes",len(ki),len(kj),"cells 2D",len(ki)*len(kj))
+# transitions: count sign changes along each row -> number of meaningful transitions
+tr=sum(1 for r in rows for a,b in zip(r,r[1:]) if a!=b); print("row transitions total",tr)
+# diagonal region size
+print("diagonal-band rows (intake>=Emin)",sum(1 for i in I if i>=Emin))
+print("I kept extremes", [I[x] for x in ki[:6]], [I[x] for x in ki[-3:]])
+print("E kept extremes", [E[x] for x in kj[:6]], [E[x] for x in kj[-4:]])
+print("CEF/EF", repr(CEF/EF), "EF*(CEF/EF)==CEF", EF*(CEF/EF)==CEF)
+import bisect, random
+def loc(ax,x):
+    if x<=ax[0]: return 0,0.0
+    if x>=ax[-1]: return len(ax)-2,1.0
+    k=bisect.bisect_right(ax,x)-1; return k,(x-ax[k])/(ax[k+1]-ax[k])
+def bil(ax1,ax2,G,x,y):
+    i,s=loc(ax1,x); j,t=loc(ax2,y)
+    return G[i][j]*(1-s)*(1-t)+G[i+1][j]*s*(1-t)+G[i][j+1]*(1-s)*t+G[i+1][j+1]*s*t
+PI=[I[x] for x in ki]; PE=[E[x] for x in kj]
+IND=[[0.0 if byp(i,e) else 1.0 for e in PE] for i in PI]
+def old(x,y,f,d,el):
+    u=min(max((f-d)/(el-d),0),1); return bil(I,E,L1,x,y)*(1-u)+bil(I,E,L2,x,y)*u
+def new(x,y,f,d,el):
+    u=min(max((f-d)/(el-d),0),1); return bil(PI,PE,IND,x,y)*(EF*(1-u)+CEF*u)
+random.seed(1); mx=0; n=0
+pts=[(x/100,y/100) for x in range(-2500,5000,7) for y in range(0,11000,9)]
+pts+=[(random.uniform(-30,110),random.uniform(-30,110)) for _ in range(200000)]
+for x,y in pts:
+    for f in (0,30,45,63,70,80,95):
+        mx=max(mx,abs(old(x,y,f,30,80)-new(x,y,f,30,80))); n+=1
+print("points",n,"max |old-new|",mx)

@@ -1,0 +1,50 @@
+[16:55:47] full axes 335 x 281; pruned 265 x 266 = 70490 cells
+[16:55:47] BASE "MVHR-03": value=0.8 modifiers=1 old table 335x281x2 flow 63/80
+[16:55:47] BASE "MVHR-02": value=0.8 modifiers=1 old table 335x281x2 flow 63/80
+[16:55:47] BASE "MVHR-01": value=0.8 modifiers=1 old table 335x281x2 flow 30/80
+[16:55:47] BASE: simulating
+[16:56:11]    plant room 1: "Done" (23.4 s)
+[16:56:12] BASE: 104 series read
+[16:56:12] V1 "MVHR-03": value=0.8 modifiers=1 old table 335x281x2 flow 63/80
+[16:56:12]    grid after SetSize(265,266,0): axis sizes 265 x 266 x 0
+[16:56:28]    wrote 71025 calls in 16.2 s
+[16:56:44]    read back 71021 calls in 16.0 s, 0 disagreements; modifier count 2, types 3/3, flow cells 0.8/0.8576
+[16:56:44] V1 "MVHR-02": value=0.8 modifiers=1 old table 335x281x2 flow 63/80
+[16:56:44]    grid after SetSize(265,266,0): axis sizes 265 x 266 x 0
+[16:57:00]    wrote 71025 calls in 16.2 s
+[16:57:16]    read back 71021 calls in 16.0 s, 0 disagreements; modifier count 2, types 3/3, flow cells 0.8/0.8576
+[16:57:16] V1 "MVHR-01": value=0.8 modifiers=1 old table 335x281x2 flow 30/80
+[16:57:16]    grid after SetSize(265,266,0): axis sizes 265 x 266 x 0
+[16:57:32]    wrote 71025 calls in 15.3 s
+[16:57:47]    read back 71021 calls in 15.5 s, 0 disagreements; modifier count 2, types 3/3, flow cells 0.8/0.8576
+[16:57:47] V1: simulating
+[16:58:11]    plant room 1: "Done" (23.8 s)
+[16:58:12] V1: 104 series read
+[16:58:12] V2 "MVHR-03": value=0.8 modifiers=1 old table 335x281x2 flow 63/80
+[16:58:12]    grid after SetSize(265,266,0): axis sizes 265 x 266 x 0
+[16:58:28]    wrote 71025 calls in 15.8 s
+[16:58:44]    read back 71021 calls in 15.7 s, 0 disagreements; modifier count 2, types 3/3, flow cells 0.8/0.8576
+[16:58:44] V2 "MVHR-02": value=0.8 modifiers=1 old table 335x281x2 flow 63/80
+[16:58:44]    grid after SetSize(265,266,0): axis sizes 265 x 266 x 0
+[16:59:00]    wrote 71025 calls in 16.0 s
+[16:59:15]    read back 71021 calls in 15.7 s, 0 disagreements; modifier count 2, types 3/3, flow cells 0.8/0.8576
+[16:59:15] V2 "MVHR-01": value=0.8 modifiers=1 old table 335x281x2 flow 30/80
+[16:59:15]    grid after SetSize(265,266,0): axis sizes 265 x 266 x 0
+[16:59:31]    wrote 71025 calls in 15.2 s
+[16:59:46]    read back 71021 calls in 15.4 s, 0 disagreements; modifier count 2, types 3/3, flow cells 0.8/0.8576
+[16:59:46] V2: simulating
+[17:00:11]    plant room 1: "Done" (24.8 s)
+[17:00:12] V2: 104 series read
+[17:00:12] DT "MVHR-03": value=0.8 modifiers=1 old table 335x281x2 flow 63/80
+[17:00:12] DT "MVHR-02": value=0.8 modifiers=1 old table 335x281x2 flow 63/80
+[17:00:12] DT "MVHR-01": value=0.8 modifiers=1 old table 335x281x2 flow 30/80
+[17:00:12] DT: simulating
+[17:00:12]    plant room 1: "Main PlantRoom Has Errors" (0.0 s)
+EXCEPTION System.NullReferenceException: Object reference not set to an instance of an object.
+   at Microsoft.CSharp.RuntimeBinder.ComInterop.ExcepInfo.GetException()
+   at Microsoft.CSharp.RuntimeBinder.ComInterop.ComRuntimeHelpers.CheckThrowException(Int32 hresult, ExcepInfo& excepInfo, UInt32 argErr, String message)
+   at CallSite.Target(Closure, CallSite, ComObject, tpdResultsPeriod, tpdCombinerType, Int32, Int32, Int32)
+   at System.Dynamic.UpdateDelegates.UpdateAndExecute6[T0,T1,T2,T3,T4,T5,TRet](CallSite site, T0 arg0, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+   at CallSite.Target(Closure, CallSite, ComObject, tpdResultsPeriod, tpdCombinerType, Int32, Int32, Int32)
+   at P0.Exch.Run(String[] args) in C:\TasOut\partoi-2026-09-29\h\Exch.cs:line 153
+   at P0.Program.Main(String[] args) in C:\TasOut\partoi-2026-09-29\h\Program.cs:line 81

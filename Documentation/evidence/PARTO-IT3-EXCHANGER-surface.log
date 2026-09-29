@@ -1,0 +1,13 @@
+axes 335 281 cells 188270
+distinct values L1 [0.0, 0.8] L2 [0.0, 0.8576]
+bypass cells per layer 53956 of 94135
+L2 == L1*(CEF/EF) pattern-wise: True
+distinct intake rows 263
+distinct extract cols 263
+exactly-removable-pruned axes 265 266 cells 2D 70490
+row transitions total 331
+diagonal-band rows (intake>=Emin) 261
+I kept extremes [-20, 11.99, 12.0, 18.9, 19.0, 19.1] [44.8, 44.9, 45.0]
+E kept extremes [5, 18.99, 19.0, 19.1, 19.2, 19.3] [44.9, 45.0, 45.1, 100]
+CEF/EF 1.072 EF*(CEF/EF)==CEF False
+points 10577392 max |old-new| 5.551115123125783e-16
