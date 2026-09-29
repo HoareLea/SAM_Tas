@@ -90,8 +90,27 @@ namespace SAM.Analytical.Tas.TM59.Tests
             return (peak, index);
         }
 
+        /// <summary>How many times <c>GetAnnualZoneResult</c> was asked - a day-major reader asks it never.</summary>
+        public int AnnualReads { get; set; }
+
+        /// <summary>
+        /// The whole-year series as TSD's annual getter returns it: ALWAYS 8760 values, -1 outside the simulated hours
+        /// (measured, TSD 2.0.0.1).
+        /// </summary>
+        public object GetAnnualZoneResult(int param)
+        {
+            AnnualReads++;
+
+            float[] result = new float[8760];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = GetHourlyZoneResult(i + 1, param);
+            }
+
+            return result;
+        }
+
         public SurfaceData GetSurfaceData(int index) => null;
-        public object GetAnnualZoneResult(int param) => throw new NotSupportedException();
         public object GetConvWeightingFactors() => throw new NotSupportedException();
         public object GetRadWeightingFactors() => throw new NotSupportedException();
         public float GetPeakZoneGain(object arrFromVals) => throw new NotSupportedException();
@@ -144,9 +163,18 @@ namespace SAM.Analytical.Tas.TM59.Tests
         public ZoneData GetZoneData(int index) => FakeTsd.Zone(Zones, index);
         public object GetPeakZoneGains(object arrFromVals) => FakeTsd.PeakZoneGains(Zones, arrFromVals);
 
+        /// <summary>Last simulated hour, 1-based; later hours answer TSD's -1 padding.</summary>
+        public int LastHour { get; set; } = 8760;
+
+        /// <summary>How many times <c>GetAnnualBuildingResult</c> was asked - a day-major reader asks it never.</summary>
+        public int AnnualReads { get; set; }
+
+        /// <summary>Every <c>GetDailyBuildingResult</c> call, in order.</summary>
+        public List<(int day, int param)> DailyReads { get; } = new();
+
         public float GetHourlyBuildingResult(int hour, int param)
         {
-            if (hour < 1 || hour > 8760)
+            if (hour < 1 || hour > LastHour)
             {
                 return -1;
             }
@@ -154,10 +182,35 @@ namespace SAM.Analytical.Tas.TM59.Tests
             return values.TryGetValue((hour, param), out float value) ? value : 0;
         }
 
-        public object GetAnnualBuildingResult(int param) => throw new NotSupportedException();
+        /// <summary>ALWAYS 8760 values, -1 past the simulated hours (measured, TSD 2.0.0.1).</summary>
+        public object GetAnnualBuildingResult(int param)
+        {
+            AnnualReads++;
+
+            float[] result = new float[8760];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = GetHourlyBuildingResult(i + 1, param);
+            }
+
+            return result;
+        }
+
+        public object GetDailyBuildingResult(int day, int param)
+        {
+            DailyReads.Add((day, param));
+
+            float[] result = new float[24];
+            for (int i = 0; i < 24; i++)
+            {
+                result[i] = GetHourlyBuildingResult(((day - 1) * 24) + i + 1, param);
+            }
+
+            return result;
+        }
+
         public float GetPeakZoneGroupGain(object arrZoneGUIDs, object arrFromVals) => throw new NotSupportedException();
         public object GetPeakZoneGroupGains(object arrZoneGUIDs, object arrFromVals) => throw new NotSupportedException();
-        public object GetDailyBuildingResult(int day, int param) => throw new NotSupportedException();
         public object GetSumZoneResultForMultipleZones(object arrFromVals, tsdZoneArray param, int startDay, int endDay, tsdResultsPeriod period, bool reportPerFloorArea) => throw new NotSupportedException();
         public ZoneData GetZoneDataByName(string zoneName) => Zones.Find(x => x.name == zoneName);
     }

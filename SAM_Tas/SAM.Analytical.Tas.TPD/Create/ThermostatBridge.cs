@@ -217,15 +217,17 @@ namespace SAM.Analytical.Tas.TPD
             {
                 using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
                 {
-                    TSD.BuildingData buildingData = sAMTSDDocument.TSDDocument?.SimulationData?.GetBuildingData();
+                    TSD.SimulationData simulationData = sAMTSDDocument.TSDDocument?.SimulationData;
 
-                    if (buildingData == null)
+                    if (simulationData?.GetBuildingData() == null)
                     {
                         refusals.Add(string.Concat("The second TSD could not be read: ", path_TSD));
                     }
                     else
                     {
-                        resultantTemperatureResults = buildingData.ReadThermostatBridge(thermostatBridgePlan, thermostatBridgeRooms, achievedAirTemperatureTolerance, refusals);
+                        //The SimulationData overload: it refuses a TSD that does not hold days 1..365 before
+                        //reading anything - which no length check on the series can detect.
+                        resultantTemperatureResults = simulationData.ReadThermostatBridge(thermostatBridgePlan, thermostatBridgeRooms, achievedAirTemperatureTolerance, refusals);
                     }
                 }
             }

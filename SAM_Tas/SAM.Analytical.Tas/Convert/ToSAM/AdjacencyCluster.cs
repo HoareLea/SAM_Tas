@@ -28,7 +28,8 @@ namespace SAM.Analytical.Tas
 
             AdjacencyCluster result = new AdjacencyCluster();
 
-            foreach(ZoneData zoneData in zoneDatas)
+            List<ZoneData> zoneDatas_Converted = new List<ZoneData>();
+            foreach (ZoneData zoneData in zoneDatas)
             {
                 if (zoneData == null)
                 {
@@ -40,7 +41,44 @@ namespace SAM.Analytical.Tas
                     continue;
                 }
 
-                Space space = zoneData.ToSAM(spaceDataTypes);
+                zoneDatas_Converted.Add(zoneData);
+            }
+
+            //Every requested hourly series of every converted zone, read in ONE day-by-day pass over calendar days
+            //1..365 (Query.ZoneResultSeries) instead of one GetAnnualZoneResult per zone and series: once a TSD's
+            //decoded year no longer fits TSD.exe's ~550 MB day cache, each annual read decodes the whole year again
+            //(~8 s per series on the x30 Part O TSD; this is the TM59 read, ~74 min there). The daily answers over
+            //1..365 are, bit for bit, what GetAnnualZoneResult returns - including the -1 TSD pads the days of a
+            //part-year simulation with - so this is the same data, part-year files included; see
+            //Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md.
+            List<tsdZoneArray> tsdZoneArrays = new List<tsdZoneArray>();
+            if (spaceDataTypes != null)
+            {
+                foreach (SpaceDataType spaceDataType in spaceDataTypes)
+                {
+                    tsdZoneArray? tsdZoneArray = spaceDataType.TsdZoneArray();
+                    if (tsdZoneArray != null && !tsdZoneArrays.Contains(tsdZoneArray.Value))
+                    {
+                        tsdZoneArrays.Add(tsdZoneArray.Value);
+                    }
+                }
+            }
+
+            List<Dictionary<tsdZoneArray, float[]>> zoneResultSeries = tsdZoneArrays.Count == 0 || zoneDatas_Converted.Count == 0
+                ? null
+                : zoneDatas_Converted.ZoneResultSeries(1, 365, tsdZoneArrays);
+
+            for (int i = 0; i < zoneDatas_Converted.Count; i++)
+            {
+                ZoneData zoneData = zoneDatas_Converted[i];
+
+                Space space = zoneData.ToSAM(spaceDataTypes, zoneResultSeries?[i]);
+
+                //Released as soon as the space holds its values.
+                if (zoneResultSeries != null)
+                {
+                    zoneResultSeries[i] = null;
+                }
                 if (space != null)
                 {
                     result.AddObject(space);
@@ -95,7 +133,7 @@ namespace SAM.Analytical.Tas
 
             AdjacencyCluster result = null;
 
-            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD))
+            using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path_TSD, true))
             {
                 result = sAMTSDDocument.ToSAM_AdjacencyCluster(spaceDataTypes, panelDataTypes);
             }

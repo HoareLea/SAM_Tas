@@ -1,0 +1,132 @@
+// Before/after identity probe for the bridge / TM59 / weather day-major reads (read-only TSD copy).
+// OLD = the annual getters the previous code called (GetAnnualZoneResult / GetAnnualBuildingResult), widened exactly
+// as it widened them. NEW = this branch's production code: TPD.Query.BridgeSeries (by reflection, private),
+// Analytical.Tas.Convert.ToSAM(path, settings, out refusal) (TM59 conversion), Weather.Tas.Query.WeatherYear.
+using SAM.Core.Tas;
+using System.Collections;
+using System.Diagnostics;
+using System.Reflection;
+using TSD;
+
+internal static class Program
+{
+    static readonly Stopwatch Total = Stopwatch.StartNew();
+    static void Log(string text) => Console.WriteLine("{0,8:0.00} s  {1}", Total.Elapsed.TotalSeconds, text);
+    static bool Same(double a, double b) => BitConverter.DoubleToInt64Bits(a) == BitConverter.DoubleToInt64Bits(b);
+
+    [STAThread]
+    static int Main(string[] args)
+    {
+        string path = Path.GetFullPath(args[0]);
+        int sample = args.Length > 1 ? int.Parse(args[1]) : 0; // 0 = every zone gets the OLD annual reference read
+        int failures = 0;
+
+        Dictionary<string, float[]> old_Resultant = new(), old_DryBulb = new(), old_Gain = new();
+        Dictionary<SAM.Weather.WeatherDataType, List<double>> old_Weather = new();
+        string newWeatherJson, oldWeatherJson;
+        List<List<double>[]> new_Bridge;
+        List<string> names = new();
+
+        using (SAMTSDDocument doc = new(path, true))
+        {
+            SimulationData sd = doc.TSDDocument.SimulationData;
+            BuildingData bd = sd.GetBuildingData();
+            List<ZoneData> zones = new();
+            for (ZoneData z = bd.GetZoneData(1); z != null; z = bd.GetZoneData(zones.Count + 1)) zones.Add(z);
+            Log(string.Format("opened {0} ({1:0.0} MB): {2} zones, days {3}-{4}", Path.GetFileName(path), new FileInfo(path).Length / 1e6, zones.Count, sd.firstDay, sd.lastDay));
+            Log("full-year guard (Analytical.Tas): " + (SAM.Analytical.Tas.Query.FullYearRefusal(sd) ?? "accepted") + " | bridge guard (TPD): " + (SAM.Analytical.Tas.TPD.Query.FullYearRefusal(sd.firstDay, sd.lastDay) ?? "accepted"));
+
+            foreach (ZoneData z in zones) names.Add(z.name);
+            HashSet<int> sampled = new(sample <= 0 || sample >= zones.Count ? Enumerable.Range(0, zones.Count) : Enumerable.Range(0, sample).Select(i => (int)((long)i * (zones.Count - 1) / Math.Max(1, sample - 1))));
+            Log(string.Format("OLD annual reference over {0} of {1} zones", sampled.Count, zones.Count));
+            Stopwatch s = Stopwatch.StartNew();
+            foreach (int i in sampled)
+            {
+                ZoneData z = zones[i];
+                old_Resultant[z.name] = F(z.GetAnnualZoneResult((int)tsdZoneArray.resultantTemp));
+                old_DryBulb[z.name] = F(z.GetAnnualZoneResult((int)tsdZoneArray.dryBulbTemp));
+            }
+            Log(string.Format("OLD bridge read (annual, zone by zone, resultant + dry bulb, {0} zones): {1:0.000} s", zones.Count, s.Elapsed.TotalSeconds));
+
+            s.Restart();
+            foreach (int i in sampled) old_Gain[zones[i].name] = F(zones[i].GetAnnualZoneResult((int)tsdZoneArray.occupantSensibleGain));
+            Log(string.Format("OLD extra TM59 array (annual occupant gain): {0:0.000} s", s.Elapsed.TotalSeconds));
+
+            MethodInfo bridgeSeries = typeof(SAM.Analytical.Tas.TPD.Query).GetMethod("BridgeSeries", BindingFlags.NonPublic | BindingFlags.Static);
+            s.Restart();
+            new_Bridge = (List<List<double>[]>)bridgeSeries.Invoke(null, new object[] { zones });
+            Log(string.Format("NEW bridge read (TPD.Query.BridgeSeries, day-major): {0:0.000} s", s.Elapsed.TotalSeconds));
+
+            s.Restart();
+            (SAM.Weather.WeatherDataType t, tsdBuildingArray a)[] weather =
+            {
+                (SAM.Weather.WeatherDataType.CloudCover, tsdBuildingArray.cloudCover), (SAM.Weather.WeatherDataType.DiffuseSolarRadiation, tsdBuildingArray.diffuseRadiation),
+                (SAM.Weather.WeatherDataType.RelativeHumidity, tsdBuildingArray.externalHumidity), (SAM.Weather.WeatherDataType.DryBulbTemperature, tsdBuildingArray.externalTemperature),
+                (SAM.Weather.WeatherDataType.GlobalSolarRadiation, tsdBuildingArray.globalRadiation), (SAM.Weather.WeatherDataType.WindDirection, tsdBuildingArray.windDirection),
+                (SAM.Weather.WeatherDataType.WindSpeed, tsdBuildingArray.windSpeed),
+            };
+            foreach (var w in weather) old_Weather[w.t] = SAM.Weather.Tas.Query.AnnualBuildingResult<double>(bd, w.a);
+            Log(string.Format("OLD weather (7 x GetAnnualBuildingResult): {0:0.000} s", s.Elapsed.TotalSeconds));
+            oldWeatherJson = SAM.Weather.Create.WeatherYear(2018, old_Weather).ToJsonObject().ToJsonString();
+
+            s.Restart();
+            newWeatherJson = SAM.Weather.Tas.Query.WeatherYear(bd, 2018).ToJsonObject().ToJsonString();
+            Log(string.Format("NEW weather (Weather.Tas.Query.WeatherYear, day-major): {0:0.000} s", s.Elapsed.TotalSeconds));
+        }
+
+        // ---- bridge identity
+        long compared = 0, differing = 0;
+        for (int j = 0; j < names.Count; j++)
+        {
+            if (!old_Resultant.ContainsKey(names[j])) continue;
+            foreach ((float[] oldSeries, List<double> newSeries) in new[] { (old_Resultant[names[j]], new_Bridge[j][0]), (old_DryBulb[names[j]], new_Bridge[j][1]) })
+            {
+                if (oldSeries.Length != newSeries.Count) { differing += 1; Log("LENGTH " + names[j]); continue; }
+                for (int h = 0; h < oldSeries.Length; h++) { compared++; if (!Same(System.Convert.ToDouble(oldSeries[h]), newSeries[h])) differing++; }
+            }
+        }
+        Log(string.Format("BRIDGE identity: {0} hourly values compared, {1} differing (float bits widened)", compared, differing));
+        failures += differing > 0 ? 1 : 0;
+
+        // ---- weather identity
+        bool weatherSame = string.Equals(oldWeatherJson, newWeatherJson, StringComparison.Ordinal);
+        Log(string.Format("WEATHER identity: WeatherYear JSON {0} ({1} chars; 7 x {2} values)", weatherSame ? "IDENTICAL" : "DIFFERENT", newWeatherJson.Length, old_Weather[SAM.Weather.WeatherDataType.CloudCover]?.Count));
+        failures += weatherSame ? 0 : 1;
+
+        // ---- TM59 conversion identity (production route, own read-only open)
+        Stopwatch t = Stopwatch.StartNew();
+        SAM.Analytical.Tas.TSDConversionSettings settings = new()
+        {
+            SpaceDataTypes = new HashSet<SAM.Analytical.Tas.SpaceDataType> { SAM.Analytical.Tas.SpaceDataType.ResultantTemperature, SAM.Analytical.Tas.SpaceDataType.OccupantSensibleGain },
+            ConvertWeaterData = true,
+            ConvertZones = true,
+            RequireFullYear = true,
+        };
+        SAM.Analytical.AnalyticalModel model = SAM.Analytical.Tas.Convert.ToSAM(path, settings, out string refusal);
+        Log(string.Format("NEW TM59 conversion (Convert.ToSAM, RequireFullYear, day-major, incl. open/close + weather): {0:0.000} s; refusal: {1}", t.Elapsed.TotalSeconds, refusal ?? "none"));
+
+        compared = 0; differing = 0; int spaces = 0;
+        foreach (SAM.Analytical.Space space in model.AdjacencyCluster.GetSpaces())
+        {
+            spaces++;
+            if (!old_Resultant.ContainsKey(space.Name)) continue;
+            foreach ((string key, float[] oldSeries) in new[] { ("Resultant Temperature", old_Resultant[space.Name]), ("Occupant Sensible Gain", old_Gain[space.Name]) })
+            {
+                string name = key;
+                SAM.Core.ParameterSet ps = space.GetParameterSets().FirstOrDefault(x => x.Names.Any(n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase)));
+                if (ps == null) { Log("MISSING " + space.Name + " " + key); differing++; continue; }
+                string realName = ps.Names.First(n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase));
+                double[] newSeries = ps.ToJsonArray(realName).Select(x => x.GetValue<double>()).ToArray();
+                if (newSeries.Length != oldSeries.Length) { Log("LENGTH " + space.Name); differing++; continue; }
+                for (int h = 0; h < oldSeries.Length; h++) { compared++; if (!Same(oldSeries[h], newSeries[h])) differing++; }
+            }
+        }
+        Log(string.Format("TM59 identity: {0} spaces, {1} hourly values compared, {2} differing", spaces, compared, differing));
+        failures += differing > 0 || spaces != names.Count ? 1 : 0;
+
+        Log(failures == 0 ? "RESULT: IDENTICAL" : "RESULT: " + failures + " FAILURE(S)");
+        return failures;
+    }
+
+    static float[] F(object o) => (o as IEnumerable).Cast<object>().Select(x => (float)x).ToArray();
+}

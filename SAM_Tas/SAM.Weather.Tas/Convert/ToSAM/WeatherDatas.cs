@@ -1,4 +1,7 @@
-﻿using SAM.Core.Tas;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using SAM.Core.Tas;
 using System.Collections.Generic;
 
 namespace SAM.Weather.Tas
@@ -26,7 +29,7 @@ namespace SAM.Weather.Tas
             }
             else if (extension.EndsWith("tsd"))
             {
-                using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path))
+                using (SAMTSDDocument sAMTSDDocument = new SAMTSDDocument(path, true))
                 {
                     WeatherData weatherData = ToSAM_WeatherData(sAMTSDDocument);
                     if (weatherData != null)

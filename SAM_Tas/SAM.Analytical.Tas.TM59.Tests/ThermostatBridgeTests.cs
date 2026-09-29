@@ -510,6 +510,127 @@ namespace SAM.Analytical.Tas.TM59.Tests
             }
         }
 
+        /// <summary>
+        /// SAM_Tas#72 follow-up: the bridge reads its two series DAY-MAJOR - every bridged zone's resultant and dry
+        /// bulb for day 1, then day 2 - and never zone by zone through <c>GetAnnualZoneResult</c> (the stand-in does
+        /// not answer it). The values are those of the whole-year series, in plan order, each zone read once.
+        /// </summary>
+        [Test]
+        public void TheSecondTsdIsReadDayMajor_AndGivesTheWholeYearSeries()
+        {
+            ThermostatBridgePlan thermostatBridgePlan = new ThermostatBridgePlan(Route(new[] { 1, 2 }));
+
+            List<(string guid, int day, int param)> calls = new List<(string, int, int)>();
+
+            //Room 2 first and an unbridged zone in the TSD: the reader asks only for bridged zones.
+            global::TSD.BuildingData buildingData = TsdBuilding(
+                TsdZone(Zone(2), "B", Air(2, 0), Resultant(2), calls),
+                TsdZone(Zone(7), "X", Constant(21.0), Constant(21.0), calls),
+                TsdZone(Zone(1), "A", Air(1, 0), Resultant(1), calls));
+
+            List<string> refusals = new List<string>();
+            List<ResultantTemperatureResult> results = global::SAM.Analytical.Tas.TPD.Query.ReadThermostatBridge(buildingData, thermostatBridgePlan, null, 0.5, refusals);
+
+            Assert.That(refusals, Is.Empty, string.Join(" | ", refusals));
+
+            //365 days x 2 bridged zones x 2 arrays, in day order; within a day, zone by zone in PLAN order
+            //(room 1, then room 2), resultant then dry bulb.
+            Assert.That(calls, Has.Count.EqualTo(365 * 2 * 2));
+            Assert.That(calls.Select(x => x.day), Is.Ordered);
+            Assert.That(calls.Any(x => x.guid == Zone(7)), Is.False);
+            Assert.That(calls.Take(4), Is.EqualTo(new[]
+            {
+                (Zone(1), 1, (int)global::TSD.tsdZoneArray.resultantTemp),
+                (Zone(1), 1, (int)global::TSD.tsdZoneArray.dryBulbTemp),
+                (Zone(2), 1, (int)global::TSD.tsdZoneArray.resultantTemp),
+                (Zone(2), 1, (int)global::TSD.tsdZoneArray.dryBulbTemp),
+            }));
+
+            //Every hour is the whole-year series' value, widened exactly from float as the annual read did.
+            foreach (ResultantTemperatureResult result in results)
+            {
+                int room = result.Guid_Space == G(1) ? 1 : 2;
+                float[] resultant = Resultant(room);
+
+                Assert.That(result.IsComplete, Is.True, result.Refusal());
+                for (int hour = 0; hour < Hours; hour++)
+                {
+                    Assert.That(result.TryGetValue(hour, out double value), Is.True);
+                    Assert.That(value, Is.EqualTo((double)resultant[hour]), "hour " + hour);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The bridge's full-year guard. TSD answers every day 1..365 for a part-year simulation too and pads the
+        /// days it did not simulate with -1 - so, read without the guard, a days 1..2 file passes every length check
+        /// the reader has and hands back 8712 hours of -1 degC as the room's resultant temperature. The
+        /// SimulationData overload (the one Create.ThermostatBridge calls) refuses it from the stated day range,
+        /// before building data is even asked for; 1..365 reads as before.
+        /// </summary>
+        [Test]
+        public void APartYearSecondTsdIsRefused_FromItsDayRange_BeforeAnythingIsRead()
+        {
+            ThermostatBridgePlan thermostatBridgePlan = new ThermostatBridgePlan(Route(new[] { 1 }));
+
+            //What TAS writes for a days 1..2 simulation: 48 real hours, then -1.
+            float[] padded(float[] series) => series.Select((x, h) => h < 48 ? x : -1f).ToArray();
+            Func<global::TSD.BuildingData> building = () => TsdBuilding(TsdZone(Zone(1), "A", padded(Air(1, 0)), padded(Resultant(1))));
+
+            //Without the guard the padding is not detectable by length: 8760 values, all finite.
+            List<string> refusals_Unguarded = new List<string>();
+            List<ResultantTemperatureResult> unguarded = global::SAM.Analytical.Tas.TPD.Query.ReadThermostatBridge(building(), thermostatBridgePlan, null, 1000, refusals_Unguarded);
+            Assert.That(refusals_Unguarded, Is.Empty, "the achieved-air tolerance is opened wide to isolate the length checks");
+            Assert.That(unguarded.Single().IsComplete, Is.True);
+            Assert.That(unguarded.Single().TryGetValue(Hours - 1, out double last) && last == -1.0, Is.True);
+
+            foreach ((int firstDay, int lastDay) in new[] { (1, 2), (1, 364), (2, 365), (0, 365), (1, 366) })
+            {
+                int count_GetBuildingData = 0;
+                List<string> refusals = new List<string>();
+                List<ResultantTemperatureResult> results = global::SAM.Analytical.Tas.TPD.Query.ReadThermostatBridge(
+                    TsdSimulation(firstDay, lastDay, building(), () => count_GetBuildingData++), thermostatBridgePlan, null, 1000, refusals);
+
+                string label = string.Format("days {0}..{1}", firstDay, lastDay);
+                Assert.That(results, Is.Empty, label);
+                Assert.That(refusals.Single(), Does.Contain(string.Format("days {0}..{1}", firstDay, lastDay)).And.Contain("not the full year 1..365"), label);
+                Assert.That(count_GetBuildingData, Is.EqualTo(0), label);
+
+                ResultantTemperatureResults resultantTemperatureResults = new ResultantTemperatureResults(TPD.ThermostatBridge.Method, 0, Hours - 1, new[] { G(1) }, results, null, null, refusals, null);
+                Assert.That(resultantTemperatureResults.IsComplete, Is.False, label);
+            }
+
+            //A full year through the same overload reads as the building-data one does.
+            List<string> refusals_Full = new List<string>();
+            List<ResultantTemperatureResult> full = global::SAM.Analytical.Tas.TPD.Query.ReadThermostatBridge(
+                TsdSimulation(1, 365, TsdBuilding(TsdZone(Zone(1), "A", Air(1, 0), Resultant(1)))), thermostatBridgePlan, null, 0.5, refusals_Full);
+            Assert.That(refusals_Full, Is.Empty, string.Join(" | ", refusals_Full));
+            Assert.That(full.Single().IsComplete, Is.True);
+
+            Assert.That(global::SAM.Analytical.Tas.TPD.Query.FullYearRefusal(1, 365), Is.Null);
+        }
+
+        /// <summary>A daily read that throws refuses every readable room - never a partial or zero series.</summary>
+        [Test]
+        public void ADailyReadThatFailsRefusesEveryReadableRoom()
+        {
+            ThermostatBridgePlan thermostatBridgePlan = new ThermostatBridgePlan(Route(new[] { 1, 2 }));
+
+            //Room 2's zone answers no series at all: its daily read throws.
+            List<string> refusals = new List<string>();
+            List<ResultantTemperatureResult> results = global::SAM.Analytical.Tas.TPD.Query.ReadThermostatBridge(
+                TsdBuilding(TsdZone(Zone(1), "A", Air(1, 0), Resultant(1)), TsdZone(Zone(2), "B", null, null)),
+                thermostatBridgePlan,
+                null,
+                0.5,
+                refusals);
+
+            Assert.That(results, Has.Count.EqualTo(2));
+            Assert.That(results.All(x => !x.IsComplete), Is.True);
+            Assert.That(refusals, Has.Count.EqualTo(2));
+            Assert.That(refusals, Has.All.Contain("could not be read"));
+        }
+
         [Test]
         public void AZoneMissingFromTheSecondTsdOrAnsweringTwiceIsRefused()
         {
@@ -694,7 +815,12 @@ namespace SAM.Analytical.Tas.TM59.Tests
             return Enumerable.Range(0, Hours).Select(h => (float)(Temperature(room, h) + 0.5)).ToArray();
         }
 
-        private static global::TSD.ZoneData TsdZone(string guid, string name, float[] dryBulb, float[] resultant)
+        /// <summary>
+        /// A TSD zone answering its series DAY BY DAY, as the reader asks: day <c>d</c> is the series' hours
+        /// <c>(d - 1) * 24</c> onwards, 24 of them or as many as the series still has (a short series gives a short
+        /// last day). <c>GetAnnualZoneResult</c> is not answered, so a reader that went back to it fails loudly.
+        /// </summary>
+        private static global::TSD.ZoneData TsdZone(string guid, string name, float[] dryBulb, float[] resultant, List<(string guid, int day, int param)> calls = null)
         {
             return ComProxy.Create<global::TSD.ZoneData>((methodInfo, args) =>
             {
@@ -704,14 +830,43 @@ namespace SAM.Analytical.Tas.TM59.Tests
                         return guid;
                     case "get_name":
                         return name;
-                    case "GetAnnualZoneResult":
-                        int param = (int)args[0];
-                        if (param == (int)global::TSD.tsdZoneArray.dryBulbTemp) return dryBulb;
-                        if (param == (int)global::TSD.tsdZoneArray.resultantTemp) return resultant;
-                        break;
+                    case "GetDailyZoneResult":
+                        int day = (int)args[0];
+                        int param = (int)args[1];
+                        calls?.Add((guid, day, param));
+
+                        float[] series = null;
+                        if (param == (int)global::TSD.tsdZoneArray.dryBulbTemp) series = dryBulb;
+                        if (param == (int)global::TSD.tsdZoneArray.resultantTemp) series = resultant;
+                        if (series == null) break;
+
+                        int start = (day - 1) * 24;
+                        float[] result = new float[Math.Max(0, Math.Min(24, series.Length - start))];
+                        Array.Copy(series, start, result, 0, result.Length);
+                        return result;
                 }
 
                 throw new NotSupportedException("ZoneData." + methodInfo.Name);
+            });
+        }
+
+        /// <summary>A second TSD's simulation data: its stated day range and its building.</summary>
+        private static global::TSD.SimulationData TsdSimulation(int firstDay, int lastDay, global::TSD.BuildingData buildingData, Action onGetBuildingData = null)
+        {
+            return ComProxy.Create<global::TSD.SimulationData>((methodInfo, args) =>
+            {
+                switch (methodInfo.Name)
+                {
+                    case "get_firstDay":
+                        return firstDay;
+                    case "get_lastDay":
+                        return lastDay;
+                    case "GetBuildingData":
+                        onGetBuildingData?.Invoke();
+                        return buildingData;
+                }
+
+                throw new NotSupportedException("SimulationData." + methodInfo.Name);
             });
         }
 

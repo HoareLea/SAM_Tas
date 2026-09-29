@@ -52,6 +52,19 @@
     <Reference Include="SAM.Core.Tas">
       <HintPath>..\..\build\SAM.Core.Tas.dll</HintPath>
     </Reference>
+    <!-- TsdFullYearReadTests: the day-major weather read (Query.WeatherYear over a managed TSD stand-in), and
+         the TSD conversion (Convert.ToSAM / ToSAM_AdjacencyCluster), whose overload set names TAS3D and
+         SAM.Architectural types - referenced for the compiler only; no test touches them. -->
+    <Reference Include="SAM.Weather.Tas">
+      <HintPath>..\..\build\SAM.Weather.Tas.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Architectural">
+      <HintPath>..\..\..\SAM\build\SAM.Architectural.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.TAS3D">
+      <HintPath>..\..\build\Interop.TAS3D.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
     <!-- MatchBinaryCompatibility_ keeps the pre-PR CLR signatures callable by already-compiled clients. -->
     <!-- InternalGainMagnitudeTests additionally IMPLEMENTS TBD.profile / TBD.InternalCondition etc. with
          managed stand-ins (TasProfileFakes.cs) so the real import/export can run without a TAS licence.

@@ -29,11 +29,65 @@ namespace SAM.Analytical.Tas.TPD
         /// <c>k + 1</c>: measured on licensed TAS, see the PR3 evidence.
         /// </para>
         /// </summary>
-        /// <param name="buildingData">The second TSD's building data.</param>
+        /// <param name="simulationData">The second TSD's simulation data.</param>
         /// <param name="thermostatBridgePlan">The plan the copy was written from.</param>
         /// <param name="thermostatBridgeRooms">The writer's measurements, completed here by room guid.</param>
         /// <param name="achievedAirTemperatureTolerance">Largest accepted |dry bulb - imposed| in any hour, K.</param>
         /// <param name="refusals">Receives every reason the results are not the bridge's answer.</param>
+        public static List<ResultantTemperatureResult> ReadThermostatBridge(
+            this TSD.SimulationData simulationData,
+            ThermostatBridgePlan thermostatBridgePlan,
+            IEnumerable<ThermostatBridgeRoom> thermostatBridgeRooms,
+            double achievedAirTemperatureTolerance,
+            List<string> refusals)
+        {
+            if (simulationData == null)
+            {
+                refusals.Add("No second TSD was given to the thermostat bridge reader.");
+                return new List<ResultantTemperatureResult>();
+            }
+
+            string refusal_Year = FullYearRefusal(simulationData.firstDay, simulationData.lastDay);
+            if (refusal_Year != null)
+            {
+                refusals.Add(string.Concat("The second TSD ", refusal_Year));
+                return new List<ResultantTemperatureResult>();
+            }
+
+            return ReadThermostatBridge(simulationData.GetBuildingData(), thermostatBridgePlan, thermostatBridgeRooms, achievedAirTemperatureTolerance, refusals);
+        }
+
+        /// <summary>
+        /// Why a TSD's simulated day range is not the bridge's whole year, or null when it is.
+        /// <para>
+        /// <b>The day range is the only signal.</b> TSD pads every day it did not simulate with -1 and still answers
+        /// 8760 hours - measured, SAM_Tas#72 follow-up record - so the length checks the reader applies cannot see a
+        /// part-year file: without this a days-1-to-2 simulation reads as 48 real hours followed by 8712 hours of
+        /// -1 degC. Part-year TSDs remain legitimate elsewhere; this is the bridge's own rule, because the bridge
+        /// imposes and compares a whole year.
+        /// </para>
+        /// </summary>
+        public static string FullYearRefusal(int firstDay, int lastDay)
+        {
+            if (firstDay == ThermostatBridgePlan.FirstDay && lastDay == ThermostatBridgePlan.LastDay)
+            {
+                return null;
+            }
+
+            return string.Format(
+                "holds days {0}..{1}, not the full year {2}..{3} the thermostat bridge imposes and compares, so its results are refused rather than read (TSD pads the days it did not simulate with -1).",
+                firstDay,
+                lastDay,
+                ThermostatBridgePlan.FirstDay,
+                ThermostatBridgePlan.LastDay);
+        }
+
+        /// <summary>
+        /// Reads the thermostat bridge's second TSD from its building data - with NO check of the simulated day
+        /// range, which building data does not carry. The bridge itself calls the
+        /// <see cref="ReadThermostatBridge(TSD.SimulationData, ThermostatBridgePlan, IEnumerable{ThermostatBridgeRoom}, double, List{string})"/>
+        /// overload, which refuses a part-year file first.
+        /// </summary>
         public static List<ResultantTemperatureResult> ReadThermostatBridge(
             this TSD.BuildingData buildingData,
             ThermostatBridgePlan thermostatBridgePlan,
@@ -87,6 +141,33 @@ namespace SAM.Analytical.Tas.TPD
                 zoneData_By_Key[key] = zoneData;
             }
 
+            //Every bridged zone's two series, read in ONE day-by-day pass over the TSD (BridgeSeries) before any
+            //room is judged. The zones are exactly the ones the loop below reads, in plan order, each once.
+            List<TSD.ZoneData> zoneDatas_Read = new List<TSD.ZoneData>();
+            Dictionary<string, int> index_By_Key = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (ThermostatBridgeTransfer thermostatBridgeTransfer in thermostatBridgePlan.Transfers)
+            {
+                if (keys_Duplicate.Contains(thermostatBridgeTransfer.Key) || index_By_Key.ContainsKey(thermostatBridgeTransfer.Key)
+                    || !zoneData_By_Key.TryGetValue(thermostatBridgeTransfer.Key, out zoneData))
+                {
+                    continue;
+                }
+
+                index_By_Key[thermostatBridgeTransfer.Key] = zoneDatas_Read.Count;
+                zoneDatas_Read.Add(zoneData);
+            }
+
+            List<List<double>[]> series = null;
+            string refusal_Read = null;
+            try
+            {
+                series = BridgeSeries(zoneDatas_Read);
+            }
+            catch (Exception exception)
+            {
+                refusal_Read = string.Format("the second TSD's hourly results could not be read ({0}: {1}).", exception.GetType().Name, exception.Message);
+            }
+
             foreach (ThermostatBridgeTransfer thermostatBridgeTransfer in thermostatBridgePlan.Transfers)
             {
                 room_By_Space.TryGetValue(thermostatBridgeTransfer.Guid_Space, out ThermostatBridgeRoom thermostatBridgeRoom);
@@ -103,8 +184,16 @@ namespace SAM.Analytical.Tas.TPD
                     continue;
                 }
 
-                List<double> resultantTemperatures = AnnualSeries(zoneData.GetAnnualZoneResult((int)TSD.tsdZoneArray.resultantTemp));
-                List<double> dryBulbTemperatures = AnnualSeries(zoneData.GetAnnualZoneResult((int)TSD.tsdZoneArray.dryBulbTemp));
+                if (refusal_Read != null)
+                {
+                    refusals.Add(string.Format("Room {0}: {1}", thermostatBridgeTransfer.Guid_Space, refusal_Read));
+                    result.Add(Refused(thermostatBridgeTransfer, refusal_Read));
+                    continue;
+                }
+
+                List<double>[] series_Zone = series[index_By_Key[thermostatBridgeTransfer.Key]];
+                List<double> resultantTemperatures = series_Zone[0];
+                List<double> dryBulbTemperatures = series_Zone[1];
 
                 IndexedDoubles indexedDoubles = new IndexedDoubles();
 
@@ -236,6 +325,60 @@ namespace SAM.Analytical.Tas.TPD
                 ThermostatBridgePlan.EndHour,
                 null,
                 diagnostic);
+        }
+
+        /// <summary>
+        /// The bridge's two series - [0] resultant temperature, [1] dry bulb - for every zone, read DAY BY DAY across
+        /// all of them over the bridge's whole year (<see cref="ThermostatBridgePlan.FirstDay"/>..<see cref="ThermostatBridgePlan.LastDay"/>):
+        /// every zone's two arrays for day 1, then day 2, and so on - the order of
+        /// <c>SAM.Analytical.Tas.Query.ZoneResultSeries</c>. Not that method itself: this assembly does not reference
+        /// SAM.Analytical.Tas, and referencing it would put that assembly's same-named <c>Create</c>, <c>Query</c>,
+        /// <c>SpaceParameter</c> and <c>AnalyticalModelParameter</c> in scope of every file here.
+        /// <para>
+        /// <b>Why not one <c>GetAnnualZoneResult</c> per zone and array.</b> TSD.exe decodes results a simulated day
+        /// at a time into a cache of roughly 550 MB; on a file whose decoded year does not fit, every zone-by-zone
+        /// annual read decodes the whole year again (~8 s per series on a 483 MB TSD, ~52 min for the x30 bridge),
+        /// while a day-major pass decodes each day once (SAM_Tas Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md).
+        /// The 365 daily answers joined in order are, bit for bit, the annual answer - measured on real TSDs - and
+        /// each value goes through the same <see cref="AnnualSeries"/> conversion as before, so a null or
+        /// unconvertible element is still NaN and a daily answer of the wrong length still changes the count the
+        /// completeness checks refuse on.
+        /// </para>
+        /// <para>
+        /// <b>Not a completeness check.</b> TSD answers every day 1..365 even for a part-year simulation, padding the
+        /// days it did not simulate with -1, so neither this read nor the annual one it replaced can tell a part year
+        /// from a full one by length. The simulation's stated day range does that, in
+        /// <see cref="ReadThermostatBridge(TSD.SimulationData, ThermostatBridgePlan, IEnumerable{ThermostatBridgeRoom}, double, List{string})"/>.
+        /// </para>
+        /// </summary>
+        private static List<List<double>[]> BridgeSeries(IList<TSD.ZoneData> zoneDatas)
+        {
+            short[] tsdZoneArrays = new short[] { (short)TSD.tsdZoneArray.resultantTemp, (short)TSD.tsdZoneArray.dryBulbTemp };
+
+            List<List<double>[]> result = new List<List<double>[]>(zoneDatas.Count);
+            foreach (TSD.ZoneData zoneData in zoneDatas)
+            {
+                List<double>[] series_Zone = new List<double>[tsdZoneArrays.Length];
+                for (int i = 0; i < tsdZoneArrays.Length; i++)
+                {
+                    series_Zone[i] = new List<double>(ThermostatBridgePlan.HoursPerYear);
+                }
+
+                result.Add(series_Zone);
+            }
+
+            for (int day = ThermostatBridgePlan.FirstDay; day <= ThermostatBridgePlan.LastDay; day++)
+            {
+                for (int j = 0; j < zoneDatas.Count; j++)
+                {
+                    for (int i = 0; i < tsdZoneArrays.Length; i++)
+                    {
+                        result[j][i].AddRange(AnnualSeries(zoneDatas[j].GetDailyZoneResult(day, tsdZoneArrays[i])));
+                    }
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
