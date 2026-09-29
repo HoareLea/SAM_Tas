@@ -1,5 +1,20 @@
 # Project Progress
 
+## Current: Part O progress UI - coarse route progress callback (29 Sep 2026) - MERGED as SAM_Tas#77 (`1fc97570`)
+
+**Status.** Merged into `sow/2026-Q3` (merge `1fc97570`, PR head `c9e8174d`). CI green (build, SPDX), mergeable, no reviews or
+comments. Companion of SAM_UI#143 (merge SAM_Tas first; done). Full record: the SAM_UI closeout of the same date.
+
+- **Change.** Optional, backwards-compatible, UI-independent progress callback: `SystemVentilationRouteStage` +
+  `SystemVentilationRouteProgress` (Stage, Current, Total, `HasCount`); new overloads `Create.SystemVentilationRoute(..., fanHeatGainPolicy,
+  Action<SystemVentilationRouteProgress>)` and `Modify.SimulateSystems(..., progress)`; old signatures delegate with null. Events are per
+  air system while converting and while running `ISystem.Simulate` (real n of m, total read before the first call), plus reconcile,
+  recirculation-cooling read-back and manufacturer-guidance (`SimulateEx`, one opaque call, no count). Subscriber exceptions are swallowed.
+  Files: `Enums/SystemVentilationRouteStage.cs`, `Classes/SystemVentilationRouteProgress.cs`, `Classes/SystemVentilationConversionContext.cs`,
+  `Convert/ToTPD/TPD.cs`, `Create/SystemVentilationRoute.cs`, `Modify/Simulate.cs`, `SystemVentilationRouteProgressTests.cs`.
+- **Tests.** SAM_Tas full suite 1023/1023 (9 new, COM-free).
+- **Next step.** None for this entry.
+
 ## Current: Part O Iteration 3 exchanger representation (29 Sep 2026) - MERGED as SAM_Tas#76 (`3eee7a4a`)
 
 **Status.** Merged into `sow/2026-Q3` (merge `3eee7a4a`, PR head `8fe4b790`). Final CI green (build, SPDX), mergeable,
