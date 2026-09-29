@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using SAM.Core.Tas;
@@ -160,8 +160,12 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
+            IDisposable measure_Open = TPDProfiler.Current?.Measure("Simulate: open TPD");
+
             using (SAMTPDDocument sAMTPDDocument = new SAMTPDDocument(path_TPD))
             {
+                measure_Open?.Dispose();
+
                 TPDDoc tPDDoc = sAMTPDDocument.TPDDocument;
 
                 if (tPDDoc == null)
@@ -210,7 +214,10 @@ namespace SAM.Analytical.Tas.TPD
 
                             // ISystem.Simulate returns a diagnostic string, exactly like the document-level
                             // call. "Done" is the measured success answer.
-                            diagnostic_Last = system.Simulate(startHour + 1, endHour + 1, 0);
+                            using (TPDProfiler.Current?.Measure("Simulate: TAS ISystem.Simulate (per air system)"))
+                            {
+                                diagnostic_Last = system.Simulate(startHour + 1, endHour + 1, 0);
+                            }
                             count_Simulated++;
                             diagnostics.Add(diagnostic_Last);
 
@@ -230,11 +237,15 @@ namespace SAM.Analytical.Tas.TPD
                                     //simulated keeps this linear in the rooms it serves. Going through
                                     //the document would re-index every air system once per system,
                                     //which is quadratic in the unit count.
-                                    SystemZoneTemperatureResults captured = Convert.ToSAM_SystemZoneTemperatureResults(
-                                        system,
-                                        bindings,
-                                        startHour,
-                                        endHour);
+                                    SystemZoneTemperatureResults captured;
+                                    using (TPDProfiler.Current?.Measure("Simulate: read ZoneTemperature (per air system)"))
+                                    {
+                                        captured = Convert.ToSAM_SystemZoneTemperatureResults(
+                                            system,
+                                            bindings,
+                                            startHour,
+                                            endHour);
+                                    }
 
                                     foreach (SystemZoneTemperatureResult result in captured.Results)
                                     {
@@ -245,7 +256,10 @@ namespace SAM.Analytical.Tas.TPD
                         }
                     }
 
-                    tPDDoc.Save();
+                    using (TPDProfiler.Current?.Measure("Simulate: save TPD"))
+                    {
+                        tPDDoc.Save();
+                    }
                 }
                 catch (Exception exception)
                 {

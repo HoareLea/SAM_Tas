@@ -56,6 +56,7 @@ namespace SAM.Analytical.Tas.TPD
             bool result = true;
 
             TPDProfiler profiler = new TPDProfiler();
+            IDisposable activation = profiler.Activate();
             try
             {
                 profiler.Step("Opening TPD file");
@@ -101,6 +102,7 @@ namespace SAM.Analytical.Tas.TPD
             }
             finally
             {
+                activation.Dispose();
                 profiler.WriteCsv(path_TPD);
             }
 
@@ -468,6 +470,10 @@ namespace SAM.Analytical.Tas.TPD
                     {
                         foreach (AirSystem airSystem in airSystems)
                         {
+                            //Re-entered per unit: without it, every unit after the first was booked under
+                            //whichever step the previous unit's grounding had left open.
+                            profiler?.Step("Plantroom: air systems");
+
                             Dictionary<Guid, HashSet<int>> dictionary_AirSystemGroup = new Dictionary<Guid, HashSet<int>>();
 
                             Dictionary<Guid, global::TPD.ISystemComponent> dictionary_SystemComponent = new Dictionary<Guid, global::TPD.ISystemComponent>();
@@ -1064,33 +1070,38 @@ namespace SAM.Analytical.Tas.TPD
                             {
                                 //Every leg of this unit, now that every component it could hang on has been
                                 //materialised and its native identity recorded.
-                                profiler?.Step("Plantroom: ventilation legs");
+                                profiler?.Step("Plantroom: ventilation legs (bind)");
                                 Modify.BindVentilationLegs(systemVentilationConversionContext, airSystem.Guid, system);
 
                                 //What each fan contributes and when it runs. The heat gain factor
                                 //follows systemVentilationConversionContext.FanHeatGainPolicy (PR5A,
                                 //SAM#111 plan §D) rather than being unconditionally cleared, and a fan
                                 //carrying an authored operating profile is refused.
+                                profiler?.Step("Plantroom: ventilation fans");
                                 Modify.GroundVentilationFans(systemVentilationConversionContext, system);
 
                                 //PR5A (SAM#111 plan §D): reads back the exchanger calculation method
                                 //Convert.ToTPD(DisplaySystemExchanger, …) now writes explicitly. A no-op
                                 //wherever no exchanger exists, which includes every B0 system.
+                                profiler?.Step("Plantroom: ventilation exchangers");
                                 Modify.GroundVentilationExchangers(systemVentilationConversionContext, system);
 
                                 //What the route left on the zone flags, declared once per unit and read
                                 //off the native zones - and refused if the building model would state
                                 //the same air a second time.
+                                profiler?.Step("Plantroom: ventilation zone flags");
                                 Modify.NoteVentilationZoneFlags(systemVentilationConversionContext, system);
 
                                 //PR5B (SAM#111): the unit's recirculation cooling branch, if it has one -
                                 //read back against the graph, then the controller that turns its law into
                                 //flow, on the native mixed-return duct no SAM connection names.
+                                profiler?.Step("Plantroom: recirculation cooling");
                                 Modify.GroundRecirculationCooling(systemVentilationConversionContext, airSystem.Guid, system, dictionary_SystemComponent);
 
                                 //SAM#123: the unit's manufacturer-guidance cooling, if it has one - the Stage 11
                                 //TAS recipe (room-stat DX, elevated supply and extract, exchanger cooling state,
                                 //to - X supply law), every value read back and refused on disagreement.
+                                profiler?.Step("Plantroom: manufacturer-guidance cooling");
                                 Modify.GroundGuidanceCooling(systemVentilationConversionContext, airSystem.Guid, system, dictionary_SystemComponent);
                             }
                         }
