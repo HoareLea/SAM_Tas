@@ -1,6 +1,43 @@
 # Project Progress
 
-## Current: TSD result-read performance - day-major `AddResults` (29 Sep 2026) - MERGED as SAM_Tas#72 (`0f4eeadb`)
+## Current: Bridge / TM59 / weather day-major TSD reads + full-year guard (29 Sep 2026) - MERGED as SAM_Tas#73 (`7b84dd92`)
+
+**Status.** Merged into `sow/2026-Q3` (merge `7b84dd92`, PR head `436a617c`). Final PR CI green (build, SPDX), mergeable,
+no review comments. Full record: `Documentation/evidence/TSD-BRIDGE-TM59-DAYMAJOR.md` (probe + logs in
+`Documentation/evidence/tsd-bridge-tm59-daymajor/`). No TAS simulation was run.
+
+- **Bridge** (`TPD.Query.ReadThermostatBridge`): one day-major pass over days 1..365 (private `BridgeSeries`, same
+  `AnnualSeries` conversion) replaces 2 x `GetAnnualZoneResult` per room. New `ReadThermostatBridge(SimulationData, ...)`
+  refuses unless `firstDay == 1 && lastDay == 365`; `Create.ThermostatBridge` calls it. The bridge stays all-or-nothing:
+  any refused room or read failure refuses the whole `ResultantTemperatureResults`.
+- **TM59** (`Convert.ToSAM_AdjacencyCluster`): one `Query.ZoneResultSeries(zones, 1, 365, arrays)` pass. **Weather**
+  (`Weather.Tas.Query.WeatherYear`): 7 arrays via daily reads.
+- **Full-year guard** at the boundaries, not in the readers: `Query.FullYearRefusal`; opt-in
+  `TSDConversionSettings.RequireFullYear` (default false) + `Convert.ToSAM(..., out refusal)`. The old 8760-length
+  checks never detected a part year: TSD pads the unsimulated hours with -1.
+- Read-only TSD opens for `Convert.ToSAM(path_TSD, settings)`, `ToSAM_AdjacencyCluster(path_TSD)`, `DesignDayNames`
+  and `ToSAM_WeatherDatas(*.tsd)`.
+- **EDSL (Duncan) confirmed** that day-major `GetDailyZoneResult` across all zones is the recommended access pattern,
+  because TSD stores results per day and `GetAnnualZoneResult` re-reads all 365 daily records per zone. For that reason
+  the adaptive annual/day-major reader is not planned.
+- **Validated:** TM59 tests **990/990** (12 new), benchmark tests **16/16**. Read-only identity against the annual
+  getters, IEEE bits: pr4h bridge TSD (9 zones) 0 of 157,680 bridge / 0 of 157,680 TM59 values differ; PR4 x10
+  (90 zones) 0 of 1,576,800 each; PR4 x30 (270 zones, old path sampled on 4 zones) 0 of 70,080 each; weather identical
+  on all three. On this laptop: x30 bridge read ~22 min (extrapolated) -> 48 s, weather 17.7 s -> 2.6 s. Cache-resident
+  files are slower (x10 bridge 2.7 s -> 15.9 s), which is accepted.
+
+**Decisions / scope.** The bridge has its own loop because TPD must not reference SAM.Analytical.Tas (namespace
+shadowing). `UnmetHours`, recirculation cooling, peak APIs and SAM_UI were not changed.
+
+**Open (separate items).** (1) SAM_UI `PartOTM59Assessment` must set `RequireFullYear = true` before the TM59 guard
+takes effect on Part O (small SAM_UI PR). (2) Damaged / incomplete-TSD robustness: a file that states 1..365 but is
+damaged or stopped, and TSD.exe hangs. (3) A surface-result day-major investigation (`Panel.ToSAM` with panel types,
+`SetBlinds`), which needs a licensed `GetDailySurfaceResult` probe. (4) Unanswered EDSL questions: a multi-zone
+getter, the day-cache cap, per-day surface storage and a completion flag.
+
+**Next step:** the SAM_UI `RequireFullYear` adoption PR.
+
+## Previous: TSD result-read performance - day-major `AddResults` (29 Sep 2026) - MERGED as SAM_Tas#72 (`0f4eeadb`)
 
 **Status.** Merged into `sow/2026-Q3` (merge `0f4eeadb`, PR head `06423652`). Final PR CI green (build, SPDX), mergeable,
 no review comments (only a Codex quota notice). Full record: `Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md`.
@@ -15,9 +52,7 @@ no review comments (only a Codex quota notice). Full record: `Documentation/evid
 **Decisions / scope.** Access-pattern fix only; the remaining ceiling is TSD.exe's day cache. The bridge / TM59
 day-major optimisation was deliberately NOT included.
 
-**Follow-up (separate PR, only if wanted).** Apply the day-major read to the bridge and TM59 result queries. It needs a
-deliberate safeguard first: partial / damaged-TSD validity behaviour must still be refused rather than read as zeros.
-Measurements are in the evidence doc sections 4 and 7. No Part O work is implied.
+**Follow-up.** Bridge / TM59 day-major done in SAM_Tas#73 (above).
 
 ## Previous: Mixed Part O PR3B-3 - mixed-scenario diagnostics + mixed TPD cooling regression (28 Sep 2026)
 
