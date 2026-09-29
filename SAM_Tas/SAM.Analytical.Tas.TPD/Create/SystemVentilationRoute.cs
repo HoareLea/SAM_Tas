@@ -56,6 +56,24 @@ namespace SAM.Analytical.Tas.TPD
             int endHour,
             SystemVentilationFanHeatGainPolicy fanHeatGainPolicy = SystemVentilationFanHeatGainPolicy.ClearToZero)
         {
+            return SystemVentilationRoute(noIzamThermalSource, mechanicalVentilationMaterialisation, path_TPD, startHour, endHour, fanHeatGainPolicy, (Action<SystemVentilationRouteProgress>)null);
+        }
+
+        /// <summary>
+        /// As above, reporting the route's coarse operations - the air systems being converted, reconciled and
+        /// simulated (with real counts), and the cooling / manufacturer-guidance read-backs - to
+        /// <paramref name="progress"/>. Optional: null reports nothing and changes nothing else. Called on the
+        /// calling thread, at operation boundaries only.
+        /// </summary>
+        public static SystemVentilationRoute SystemVentilationRoute(
+            NoIzamThermalSource noIzamThermalSource,
+            MechanicalVentilationMaterialisation mechanicalVentilationMaterialisation,
+            string path_TPD,
+            int startHour,
+            int endHour,
+            SystemVentilationFanHeatGainPolicy fanHeatGainPolicy,
+            Action<SystemVentilationRouteProgress> progress)
+        {
             //Where the route's time goes, beside the TPD as <name>.route.timing.csv: the conversion (itself
             //broken down in <name>.timing.csv), each TAS call and each read. Observation only.
             TPDProfiler profiler = new TPDProfiler();
@@ -63,7 +81,7 @@ namespace SAM.Analytical.Tas.TPD
 
             try
             {
-                return SystemVentilationRoute(noIzamThermalSource, mechanicalVentilationMaterialisation, path_TPD, startHour, endHour, fanHeatGainPolicy, profiler);
+                return SystemVentilationRoute(noIzamThermalSource, mechanicalVentilationMaterialisation, path_TPD, startHour, endHour, fanHeatGainPolicy, profiler, progress);
             }
             finally
             {
@@ -79,7 +97,8 @@ namespace SAM.Analytical.Tas.TPD
             int startHour,
             int endHour,
             SystemVentilationFanHeatGainPolicy fanHeatGainPolicy,
-            TPDProfiler profiler)
+            TPDProfiler profiler,
+            Action<SystemVentilationRouteProgress> progress)
         {
             profiler.Step("Route: guard and intent");
 
@@ -103,6 +122,8 @@ namespace SAM.Analytical.Tas.TPD
                 fanHeatGainPolicy,
                 mechanicalVentilationMaterialisation.RecirculationCoolings,
                 mechanicalVentilationMaterialisation.GuidanceCoolings);
+
+            systemVentilationConversionContext.Progress = progress;
 
             //-------------------------------------------------------------------------------------------
             //2. The duty carriers, in a working copy. PR1's graph is an input and stays one: the caller
@@ -180,7 +201,8 @@ namespace SAM.Analytical.Tas.TPD
                 startHour,
                 endHour,
                 out SimulationEvidence simulationEvidence,
-                out SystemZoneTemperatureResults systemZoneTemperatureResults);
+                out SystemZoneTemperatureResults systemZoneTemperatureResults,
+                progress);
 
             notes.AddRange(simulationEvidence.Notes);
 
@@ -228,6 +250,8 @@ namespace SAM.Analytical.Tas.TPD
             {
                 profiler.Step("Route: recirculation cooling evidence");
 
+                systemVentilationConversionContext.ReportProgress(SystemVentilationRouteStage.ReadingRecirculationCooling, 0, 0);
+
                 recirculationCoolingResults = Modify.RecirculationCoolingResults(
                     path_TPD,
                     noIzamThermalSource.Path_TSD,
@@ -260,6 +284,8 @@ namespace SAM.Analytical.Tas.TPD
             if (systemVentilationConversionContext.GuidanceCoolings.Count != 0)
             {
                 profiler.Step("Route: manufacturer-guidance evidence");
+
+                systemVentilationConversionContext.ReportProgress(SystemVentilationRouteStage.ReadingManufacturerGuidance, 0, 0);
 
                 guidanceCoolingResults = Modify.GuidanceCoolingResults(path_TPD, systemVentilationConversionContext, startHour, endHour);
 

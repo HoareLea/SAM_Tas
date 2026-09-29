@@ -108,6 +108,22 @@ namespace SAM.Analytical.Tas.TPD
             out SimulationEvidence simulationEvidence,
             out SystemZoneTemperatureResults systemZoneTemperatureResults)
         {
+            return SimulateSystems(path_TPD, systemVentilationBindings, startHour, endHour, out simulationEvidence, out systemZoneTemperatureResults, null);
+        }
+
+        /// <summary>
+        /// As above, reporting each air system's <c>ISystem.Simulate</c> to <paramref name="progress"/> as
+        /// <see cref="SystemVentilationRouteStage.SimulatingAirSystems"/> with a real count. Null reports nothing.
+        /// </summary>
+        public static bool SimulateSystems(
+            string path_TPD,
+            IEnumerable<SystemVentilationBinding> systemVentilationBindings,
+            int startHour,
+            int endHour,
+            out SimulationEvidence simulationEvidence,
+            out SystemZoneTemperatureResults systemZoneTemperatureResults,
+            Action<SystemVentilationRouteProgress> progress)
+        {
             simulationEvidence = new SimulationEvidence(SimulationOutputShape.InPlaceDocument, path_TPD, null);
             systemZoneTemperatureResults = systemVentilationBindings == null
                 ? null
@@ -186,6 +202,25 @@ namespace SAM.Analytical.Tas.TPD
                 int count_Simulated = 0;
                 string diagnostic_Last = null;
 
+                //Known before the first call, so "n of m" is a real count. Only asked for when someone listens.
+                int count_System_Total = 0;
+                int count_System_Started = 0;
+                if (progress != null)
+                {
+                    try
+                    {
+                        int count_PlantRoom_Total = energyCentre.GetPlantRoomCount();
+                        for (int i = 1; i <= count_PlantRoom_Total; i++)
+                        {
+                            count_System_Total += energyCentre.GetPlantRoom(i)?.GetSystemCount() ?? 0;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        count_System_Total = 0;
+                    }
+                }
+
                 // Every air system's answer, kept separately. With more than one system the document
                 // has more than one diagnostic, and reporting only the last would hide the others.
                 List<string> diagnostics = new List<string>();
@@ -211,6 +246,9 @@ namespace SAM.Analytical.Tas.TPD
                             {
                                 continue;
                             }
+
+                            count_System_Started++;
+                            SystemVentilationConversionContext.ReportProgress(progress, SystemVentilationRouteStage.SimulatingAirSystems, count_System_Started, count_System_Total);
 
                             // ISystem.Simulate returns a diagnostic string, exactly like the document-level
                             // call. "Done" is the measured success answer.

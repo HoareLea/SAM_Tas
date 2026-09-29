@@ -169,6 +169,18 @@ namespace SAM.Analytical.Tas.TPD
             }
 
             List<SystemPlantRoom> systemPlantRooms = systemEnergyCentre.GetSystemPlantRooms();
+
+            //Coarse progress only: one report per air system, for a caller that asked (the Part O route).
+            int count_AirSystem_Total = 0;
+            int count_AirSystem_Started = 0;
+            if (systemVentilationConversionContext?.Progress != null && systemPlantRooms != null)
+            {
+                foreach (SystemPlantRoom systemPlantRoom_Count in systemPlantRooms)
+                {
+                    count_AirSystem_Total += systemPlantRoom_Count.GetSystems<AirSystem>()?.Count ?? 0;
+                }
+            }
+
             if (systemPlantRooms != null && systemPlantRooms.Count != 0)
             {
                 foreach (SystemPlantRoom systemPlantRoom in systemPlantRooms)
@@ -473,6 +485,9 @@ namespace SAM.Analytical.Tas.TPD
                             //Re-entered per unit: without it, every unit after the first was booked under
                             //whichever step the previous unit's grounding had left open.
                             profiler?.Step("Plantroom: air systems");
+
+                            count_AirSystem_Started++;
+                            systemVentilationConversionContext?.ReportProgress(SystemVentilationRouteStage.ConvertingAirSystems, count_AirSystem_Started, count_AirSystem_Total);
 
                             Dictionary<Guid, HashSet<int>> dictionary_AirSystemGroup = new Dictionary<Guid, HashSet<int>>();
 
@@ -1122,6 +1137,8 @@ namespace SAM.Analytical.Tas.TPD
             //PR1 designed, and a mismatch is a refusal rather than a note - so no caller can be handed a
             //partial payload that nothing checked.
             //-----------------------------------------------------------------------------------------------
+            systemVentilationConversionContext.ReportProgress(SystemVentilationRouteStage.ReconcilingConversion, 0, 0);
+
             profiler?.Step("Reconciling the conversion");
 
             systemVentilationConversionContext.CompleteRoomBindings();
