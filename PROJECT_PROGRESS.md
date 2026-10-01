@@ -1,5 +1,26 @@
 # Project Progress
 
+## Current: U-value workflow PR1a - default layer picker never chooses gas or glass (1 Oct 2026) - MERGED as SAM_Tas#78 (`4b5e1c18`)
+
+**Status.** Merged into `sow/2026-Q3` (merge `4b5e1c18`, PR head `0a2c13d6`). CI green (build, SPDX), mergeable, no reviews or
+comments. First of two PRs for `Tools > U Value Calculator` working first time; companion SAM_UI PR1b (classified messages +
+real-app evidence) follows. Plan: SAM_UI `documentation/plans/UValue-Workflow-PLAN.md`. PR record:
+`Documentation/evidence/UVALUE-LAYER-PICKER-PR1A.md`.
+
+- **Root cause.** `Create.LayerThicknessCalculationData` picked the lowest-conductivity layer of >= 10 mm. The model's gas materials
+  have real positive conductivities (0.024, 0.01622 W/mK), below mineral wool's 0.025, so the air cavity won and the target U was
+  unreachable ("Could not calculate construction for given criteria."). NaN conductivity can never win (`NaN < min` is false). The
+  `layerIndex == -1` fallback in `ThermalTransmittanceCalculator` skipped only conductivity <= 0, had no 10 mm filter and would also pick gas.
+- **Change.** One rule by material TYPE: `Query.IsAdjustableLayer` / `Query.AdjustableLayerIndex` (new `Query/AdjustableLayerIndex.cs`; overloads for
+  `Construction` + `MaterialLibrary`, a (type, conductivity, thickness) list, and `TCD.material`): gas and transparent never qualify; thickness
+  < 10 mm (1e-6 m tolerance for TCD's float widths) and NaN / <= 0 conductivity do not; -1 when nothing qualifies. Used by the picker and by the
+  calculator fallback, which now returns the controlled `LayerIndex -1` / NaN result instead of indexing `materials[-1]`. An explicit
+  user-chosen `LayerIndex` is unchanged. `Tas.Modify.Run` and SAM core untouched.
+- **Tests.** `AdjustableLayerPickerTests` (15, COM-free, in `SAM.Analytical.Tas.TM59.Tests`); full suite 1038/1038. Real TCD probe
+  (SAM_UI evidence `probe/`): new picker chooses mineral wool (U 0.5 -> 33.8 mm, 0.25 s); forced `-1` fallback picks the same; old picker NaN after 1.5 s.
+- **Risks.** Installed-app acceptance needs an installer containing this DLL.
+- **Next step.** SAM_UI PR1b (`fix/uvalue-calculator-messages-2026-10-01`), then PR2 (new U-value window) per the plan.
+
 ## Current: Part O progress UI - coarse route progress callback (29 Sep 2026) - MERGED as SAM_Tas#77 (`1fc97570`)
 
 **Status.** Merged into `sow/2026-Q3` (merge `1fc97570`, PR head `c9e8174d`). CI green (build, SPDX), mergeable, no reviews or
