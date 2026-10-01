@@ -54,7 +54,7 @@ namespace SAM.Analytical.Tas.TPD
         /// supplied: a <c>tpdScheduleFunctionAllZonesLoad</c> function schedule that switches the fan with
         /// the attached zones' demand. The route used to accept it, and to refuse the frozen yearly
         /// schedule; that was a defect against the parity contract, measured and recorded in
-        /// <c>Documentation/evidence/PR2-FAN-OPERATION.md</c>.
+        /// the SAM_Tas PR record.
         /// </para>
         /// <para>
         /// Every damper and every zone of the produced system answers <c>GetSchedule() == null</c>, 23 of

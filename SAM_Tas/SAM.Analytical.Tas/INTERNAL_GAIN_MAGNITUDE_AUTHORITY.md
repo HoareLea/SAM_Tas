@@ -136,7 +136,7 @@ rewrite the authored schedule the model round-trips.
 
 ## The historical −28.9 % cooling drop — closed as non-reproducing
 
-The `−28.9 %` cooling-load drop logged in `PROJECT_PROGRESS.md` on 2026-08-24 was measured on an earlier
+The `−28.9 %` cooling-load drop logged in the SAM_Tas project record on 2026-08-24 was measured on an earlier
 branch state, before PR #41 (design-day weather authority) or this fix existed. Its signature was
 different from this defect — one step change between generation 1 and 2, then an exact fixed point, versus
 this decay's continuous geometric ×0.25 every generation — so it was never claimed to be the same bug.

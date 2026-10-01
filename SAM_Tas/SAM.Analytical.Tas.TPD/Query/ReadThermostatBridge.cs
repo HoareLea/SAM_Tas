@@ -338,7 +338,7 @@ namespace SAM.Analytical.Tas.TPD
         /// <b>Why not one <c>GetAnnualZoneResult</c> per zone and array.</b> TSD.exe decodes results a simulated day
         /// at a time into a cache of roughly 550 MB; on a file whose decoded year does not fit, every zone-by-zone
         /// annual read decodes the whole year again (~8 s per series on a 483 MB TSD, ~52 min for the x30 bridge),
-        /// while a day-major pass decodes each day once (SAM_Tas Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md).
+        /// while a day-major pass decodes each day once (the SAM_Tas PR record).
         /// The 365 daily answers joined in order are, bit for bit, the annual answer - measured on real TSDs - and
         /// each value goes through the same <see cref="AnnualSeries"/> conversion as before, so a null or
         /// unconvertible element is still NaN and a daily answer of the wrong length still changes the count the

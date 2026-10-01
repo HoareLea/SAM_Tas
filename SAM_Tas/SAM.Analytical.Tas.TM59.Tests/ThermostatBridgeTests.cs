@@ -25,7 +25,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
     /// </para>
     /// <para>
     /// That a real Systems route produces a complete bridged resultant temperature is the licensed acceptance,
-    /// recorded in <c>Documentation/evidence/PR3-RESULTANT-TEMPERATURE-BRIDGE.md</c>.
+    /// recorded in the SAM_Tas PR record.
     /// </para>
     /// </summary>
     [TestFixture]

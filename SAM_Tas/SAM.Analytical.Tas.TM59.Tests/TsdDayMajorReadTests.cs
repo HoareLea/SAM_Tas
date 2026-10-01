@@ -11,7 +11,7 @@ using TSD;
 namespace SAM.Analytical.Tas.TM59.Tests
 {
     /// <summary>
-    /// The day-by-day TSD read of Modify.AddResults (SAM_Tas Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md): the same
+    /// The day-by-day TSD read of Modify.AddResults (the SAM_Tas PR record): the same
     /// values as the zone-by-zone read, asked for day-major; and the SAM zones' cooling peaks taken from those series by
     /// the rule TSD's own GetPeakZoneGroupGains was measured to follow, without asking TSD.
     /// </summary>

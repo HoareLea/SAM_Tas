@@ -334,7 +334,3 @@ ASALocalRun/
 
 #Include build only references
 !references_buildonly/**.*
-
-# Licensed-run evidence. The blanket *.log above would silently drop the transcripts the
-# acceptance documents cite, which makes those documents unverifiable by a reviewer.
-!Documentation/evidence/*.log

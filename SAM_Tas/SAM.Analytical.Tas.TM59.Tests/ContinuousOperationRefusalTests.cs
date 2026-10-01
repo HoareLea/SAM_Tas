@@ -10,7 +10,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
     /// fan operation carriers the explicit ventilation route accepts as stating it.
     /// <para>
     /// The native facts behind each case were measured on licensed TAS and are recorded in
-    /// <c>Documentation/evidence/PR2-FAN-OPERATION.md</c>: a yearly table on in every hour answers
+    /// the SAM_Tas PR record: a yearly table on in every hour answers
     /// <c>GetNumOperableHours() == 8760</c>; the shipped template's occupancy function schedule throws
     /// <c>"Not a Yearly Schedule"</c> there and switches the fans with zone demand.
     /// </para>

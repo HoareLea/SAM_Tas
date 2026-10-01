@@ -57,7 +57,7 @@ namespace SAM.Weather.Tas
             //TSD's decoded year no longer fits TSD.exe's ~550 MB day cache every walk decodes it again (~8 s per
             //array on the x30 Part O TSD: 46.1 s -> 7.1 s measured). The daily answers joined in order are, bit for
             //bit, the annual ones - -1 padding of a part-year simulation included - and every value is converted
-            //exactly as AnnualBuildingResult converts it. SAM_Tas Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md.
+            //exactly as AnnualBuildingResult converts it. the SAM_Tas PR record.
             Dictionary<WeatherDataType, tsdBuildingArray> tsdBuildingArrays = new Dictionary<WeatherDataType, tsdBuildingArray>()
             {
                 { WeatherDataType.CloudCover, tsdBuildingArray.cloudCover },

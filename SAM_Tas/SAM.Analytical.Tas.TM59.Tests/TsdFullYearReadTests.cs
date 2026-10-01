@@ -12,7 +12,7 @@ using TSD;
 namespace SAM.Analytical.Tas.TM59.Tests
 {
     /// <summary>
-    /// The SAM_Tas#72 follow-up (Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md): the TM59 TSD conversion and the
+    /// The SAM_Tas#72 follow-up (the SAM_Tas PR record): the TM59 TSD conversion and the
     /// seven weather arrays read DAY-MAJOR, giving exactly what the zone-by-zone annual reads gave - -1 padding of a
     /// part-year simulation included - and the explicit, opt-in full-year guard a whole-year workflow applies from the
     /// simulation's stated day range, because no series length can show a part year.

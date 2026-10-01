@@ -221,7 +221,7 @@ Exactly ÷4 per generation, unbounded, on both the sensible and latent occupancy
 field), different slot and opposite direction. It does not move the sizing loads here because this model's
 kitchen zone sizes to zero, but it would move any cooling result that depends on occupancy gains.
 
-It is **not** the `-28.9%` cooling drop logged in `PROJECT_PROGRESS.md`: that one steps once at
+It is **not** the `-28.9%` cooling drop logged in the SAM_Tas project record: that one steps once at
 generation 1 -> 2 and is then a fixed point (`LC2 == LC3` exactly), whereas this decays again at every
 generation. They were tracked as two separate items; both are now resolved (this one by PR #41, the
 occupancy-gain decay by PR #42 - see `INTERNAL_GAIN_MAGNITUDE_AUTHORITY.md`), and re-running the historical

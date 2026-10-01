@@ -81,7 +81,7 @@ namespace SAM.Analytical.Tas.TPD
         /// data, not a conversion defect - this converts the zero faithfully - and it cannot reach a
         /// Candidate B number, which was verified by comparing every room's <c>ZoneTemperature</c> with
         /// and without the correction. See
-        /// <c>Documentation/evidence/PLANTROOM-SIZING-AND-DESIGN-CONDITIONS.md</c>.
+        /// the SAM_Tas PR record.
         /// </para>
         /// </summary>
         /// <param name="simulationEvidence">What the run left behind. Never null.</param>

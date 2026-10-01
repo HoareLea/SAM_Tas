@@ -20,7 +20,7 @@ namespace SAM.Analytical.Tas
         /// zones fits, a 483 MB TSD with 270 zones does not - any read that walks the whole year for ONE zone (365
         /// <c>GetDailyZoneResult</c> calls, or one <c>GetAnnualZoneResult</c>) evicts the days it needs next and
         /// decodes the whole year again: ~8 s per zone array on the 483 MB file, against ~40 ms per zone array read
-        /// day by day. (SAM_Tas PR record Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md.)
+        /// day by day. (the SAM_Tas PR record.)
         /// </para>
         /// </summary>
         /// <param name="zoneDatas">The zones to read.</param>

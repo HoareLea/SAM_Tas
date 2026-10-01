@@ -50,7 +50,7 @@ namespace SAM.Analytical.Tas
             //(~8 s per series on the x30 Part O TSD; this is the TM59 read, ~74 min there). The daily answers over
             //1..365 are, bit for bit, what GetAnnualZoneResult returns - including the -1 TSD pads the days of a
             //part-year simulation with - so this is the same data, part-year files included; see
-            //Documentation/evidence/TSD-RESULT-READ-PERFORMANCE.md.
+            //the SAM_Tas PR record.
             List<tsdZoneArray> tsdZoneArrays = new List<tsdZoneArray>();
             if (spaceDataTypes != null)
             {

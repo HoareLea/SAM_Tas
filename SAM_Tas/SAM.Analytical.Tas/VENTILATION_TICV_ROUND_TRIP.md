@@ -36,7 +36,7 @@ What TAS holds is narrower:
 
 That `freshAirRate` is not a supply path was **measured on this codebase**, independently and before this
 work: PR #37's licensed A/B set it to 40 vs 0 l/s/p on a real model and found **0 differences in 227,760
-simulated hourly values** (`PROJECT_PROGRESS.md`, "Zero-length ticV guard" entry). It is inert in a TBD
+simulated hourly values** (the SAM_Tas project record, "Zero-length ticV guard" entry). It is inert in a TBD
 simulation. That is why the per-person basis must reach `ticV` when a Ventilation profile is what realises
 the requirement — and why holding it in both fields is not a double count.
 

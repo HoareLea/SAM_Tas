@@ -250,7 +250,7 @@ any generated name.
 | one real shaded project | `UpdateShading`, `CopyResults` and aperture solar-result mapping unaffected | **PASS.** Kolobrzeg room with real shading context, 3 pane+frame apertures, aperture elements 6 → 2. Full chain `Simulate_Coverage` → `ToTBD` → `UpdateShading` → TAS 1–365 → `Create.SolarModel` → `CopyResults`: **114 compared fields, 0 differing** (shade-day calendar, 7200 shade-proportion reads over 12 shaded surfaces, 12 linked faces / 12 coverage results / 3096 coverage values, 3 apertures mapped with 5 pane + 5 frame + 62 panel results and identical per-aperture sums), plus **928,560 TSD values, 0 differing.** |
 
 Full evidence, the pre-simulation equivalence table and the per-variable breakdown are in
-`PROJECT_PROGRESS.md`, "5. A/B TAS/TSD simulation" and "6. Real shaded-project regression".
+the SAM_Tas project record, "5. A/B TAS/TSD simulation" and "6. Real shaded-project regression".
 
 **Confirmed on licensed TAS:** the value a freshly added `buildingElement` carries for `ground`,
 `markDelete` and `width` is `0` for all three, live and after save/reopen — exactly what the seed gate
@@ -282,7 +282,7 @@ and it does not: running the identical model and code path with only `SAM.Analyt
 the intended sharing effects (aperture building elements 4 → 3 over two windows, definition-derived names,
 and the `BuildingElementGuid` stamps that follow). Physical geometry is untouched: pane 0.99 m², frame
 0.21 m², exactly what `Aperture.GetFace3Ds` derives from the 1.2 m² source aperture, on both sides.
-Full field-by-field record in `PROJECT_PROGRESS.md`, "4. Round trip".
+Full field-by-field record in the SAM_Tas project record, "4. Round trip".
 
 `CopyResults` already matches apertures to solar surfaces by **geometry**, having recorded that the stamped
 building-element GUID "is actually the *construction* GUID (shared across all surfaces using the same

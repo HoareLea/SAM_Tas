@@ -383,7 +383,7 @@ surfaces matched no panel, `UpdateIds` stamped nothing, and every one of its 40 
 reusable building elements** - one shared frame (20 surfaces) and two distinct pane definitions (15 + 5
 surfaces; the model genuinely states two pane contents), with all 110 physical zoneSurfaces unchanged and
 20/20 pane/frame stamps written. A second workflow run reproduces every count, creates nothing new, and the
-TBD re-imports as 20 apertures. See `PROJECT_PROGRESS.md`.
+TBD re-imports as 20 apertures. See the SAM_Tas project record.
 
 Revalidated on the production file `SAM_zoningAM_v2zonesisDomestic.sam`: its all-panel, non-shade and
 space-related subsets give the same bbox on each side (TBD `[-30.5,-8,0]-[30.5,8,4]`, SAM
