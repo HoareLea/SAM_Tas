@@ -1,4 +1,7 @@
-﻿namespace SAM.Analytical.Tas
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+namespace SAM.Analytical.Tas
 {
     public static partial class Convert
     {
@@ -103,88 +106,7 @@
                 return null;
             }
 
-            Core.IMaterial result = null;
-            switch ((TBD.MaterialTypes)material.type)
-            {
-                case TBD.MaterialTypes.tcdGasLayer:
-                    result = Analytical.Create.GasMaterial(
-                        name == null ? material.name : name,
-                        string.Empty,
-                        material.name,
-                        material.description,
-                        material.conductivity,
-                        material.specificHeat,
-                        material.density,
-                        material.dynamicViscosity,
-                        material.width,
-                        material.vapourDiffusionFactor,
-                        double.NaN);
-                    result.SetValue(GasMaterialParameter.HeatTransferCoefficient, material.convectionCoefficient);
-                    break;
-
-                case TBD.MaterialTypes.tcdOpaqueLayer:
-                    result = Analytical.Create.OpaqueMaterial(
-                        name == null ? material.name : name,
-                        string.Empty,
-                        material.name,
-                        material.description,
-                        material.conductivity,
-                        material.specificHeat,
-                        material.density,
-                        material.width,
-                        material.vapourDiffusionFactor,
-                        material.externalSolarReflectance,
-                        material.internalSolarReflectance,
-                        material.externalLightReflectance,
-                        material.externalLightReflectance,
-                        material.externalEmissivity,
-                        material.internalEmissivity,
-                        material.isBlind);
-                    break;
-
-                case TBD.MaterialTypes.tcdOpaqueMaterial:
-                    result = Analytical.Create.OpaqueMaterial(
-                        name == null ? material.name : name,
-                        string.Empty,
-                        material.name,
-                        material.description,
-                        material.conductivity,
-                        material.specificHeat,
-                        material.density,
-                        material.width,
-                        material.vapourDiffusionFactor,
-                        material.externalSolarReflectance,
-                        material.internalSolarReflectance,
-                        material.externalLightReflectance,
-                        material.externalLightReflectance,
-                        material.externalEmissivity,
-                        material.internalEmissivity,
-                        false);
-                    break;
-
-                case TBD.MaterialTypes.tcdTransparentLayer:
-                    result = Analytical.Create.TransparentMaterial(
-                        name == null ? material.name : name,
-                        string.Empty,
-                        material.name,
-                        material.description,
-                        material.conductivity,
-                        material.width,
-                        material.vapourDiffusionFactor,
-                        material.solarTransmittance,
-                        material.lightTransmittance,
-                        material.externalSolarReflectance,
-                        material.internalSolarReflectance,
-                        material.externalLightReflectance,
-                        material.internalLightReflectance,
-                        material.externalEmissivity,
-                        material.internalEmissivity,
-                        material.isBlind);
-                    break;
-            }
-
-
-            return result;
+            return new TCDMaterialData(material).ToSAM(name);
         }
     }
 }
