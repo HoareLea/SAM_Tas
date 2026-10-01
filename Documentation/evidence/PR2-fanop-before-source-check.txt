@@ -1,9 +1,0 @@
-SOURCE-CHECK C:\TasOut\pr2z\before\acc.tbd
-zones                          9
-IZAM count                     0
-internal conditions            36
-  with a non-zero ticV         0
-  with ticI present            36
-  with a non-zero ticI         36
-distinct ticI (value, factor): value=0 factor=0.15; value=0.15 factor=1
-VERDICT PASS  no IZAM, zero mechanical ticV, infiltration term present on every internal condition

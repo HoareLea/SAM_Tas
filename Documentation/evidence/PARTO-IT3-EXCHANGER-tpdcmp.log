@@ -1,9 +1,0 @@
-[17:32:33] BEFORE "MVHR-03": efficiency 0.8, 1 modifier(s) [1: 335x281x2 mult=2 vars=0/13/12]
-[17:32:33] BEFORE "MVHR-02": efficiency 0.8, 1 modifier(s) [1: 335x281x2 mult=2 vars=0/13/12]
-[17:32:33] BEFORE "MVHR-01": efficiency 0.8, 1 modifier(s) [1: 335x281x2 mult=2 vars=0/13/12]
-[17:32:57]    plant room 1: "Done"
-[17:32:58] AFTER  "MVHR-03": efficiency 0.8, 2 modifier(s) [1: 265x266x0 mult=2 vars=0/13/-] [2: 2x0x0 mult=0 vars=12/-/-]
-[17:32:58] AFTER  "MVHR-02": efficiency 0.8, 2 modifier(s) [1: 265x266x0 mult=2 vars=0/13/-] [2: 2x0x0 mult=0 vars=12/-/-]
-[17:32:58] AFTER  "MVHR-01": efficiency 0.8, 2 modifier(s) [1: 265x266x0 mult=2 vars=0/13/-] [2: 2x0x0 mult=0 vars=12/-/-]
-[17:33:21]    plant room 1: "Done"
-[17:33:22] TPDCMP: 104 of 104 duct series bit-identical (AFTER has 104); max |diff| 0
