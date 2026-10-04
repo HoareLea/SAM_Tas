@@ -41,6 +41,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
 
             MechanicalVentilationGuidanceCooling guidanceCooling = context.GuidanceCoolings.Single();
             Assert.That(guidanceCooling.Guid_AirHandlingUnit, Is.EqualTo(airHandlingUnit_Cooled.Guid));
+            Assert.That(guidanceCooling.Guid_Space_Stat, Is.EqualTo(adjacencyCluster.GetSpaces().Single(x => x.Name == "Living A").Guid));
             Assert.That(context.GuidanceCooling(guid_AirSystem_Cooled), Is.SameAs(guidanceCooling));
             Assert.That(context.GuidanceCooling(guid_AirSystem_Uncooled), Is.Null, "Cooling elsewhere in the document does not cool this unit.");
 
@@ -134,6 +135,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
         {
             MechanicalVentilationGuidanceSettings guidanceSettings = Product().MechanicalVentilationGuidanceSettings(DesignDuty_Lps, DesignDuty_Lps, out string refusal);
             Assert.That(refusal, Is.Null);
+            guidanceSettings.CoolingStatSpaceGuid = adjacencyCluster.GetSpaces().Single(x => x.Name == "Living A").Guid;
 
             MechanicalVentilationMaterialisation result = adjacencyCluster.MechanicalVentilation(
                 SystemVentilationFixture.Template(),
