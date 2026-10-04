@@ -12,4 +12,4 @@ GroundGuidanceCooling and MixedGuidanceCoolingTests; this progress file.
 Focused GuidanceCooling and MixedGuidance suite: 18 passed, using updated local SAM_Systems build artifact.
 
 ## Next step
-Review final diff, commit and open PR. Native TAS COM execution was not part of this deterministic suite.
+PR opened: SAM-BIM/SAM_Tas#80. Wait for CI/review on SAM-BIM/SAM_Tas#80; merge after SAM#176, SAM_Systems#35 and SAM_UI#188, then update local base.
