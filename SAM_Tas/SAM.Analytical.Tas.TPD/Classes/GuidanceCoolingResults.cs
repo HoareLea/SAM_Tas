@@ -424,14 +424,14 @@ namespace SAM.Analytical.Tas.TPD
             int first = -1;
             for (int i = 0; i < Count; i++)
             {
-                if (OperatingState(i) == "COOLING")
+                if (Finite(ExchangerLeaving_C, i) && Finite(Supply_C, i) && IsCooling(i))
                 {
                     first = i;
                     break;
                 }
             }
             return summary + string.Format(CultureInfo.InvariantCulture,
-                " First observed cooling activation: {0}; operating and exchanger states are in the hourly read-back (UNAVAILABLE where evidence cannot distinguish them).",
+                " First observed DX cooling: {0}; operating and exchanger states are in the hourly read-back (UNAVAILABLE where evidence cannot distinguish them).",
                 first < 0 ? "UNAVAILABLE" : (StartHour + first).ToString(CultureInfo.InvariantCulture));
         }
     }
