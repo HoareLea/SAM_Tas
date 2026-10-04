@@ -68,7 +68,7 @@ namespace SAM.Analytical.Tas.TPD
         public string ToCsv()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("air_system,hour,intake_C,stat_room_C,extract_C,exchanger_leaving_C,supply_C,supply_Lps,extract_Lps,cooling_signal,dx_sensible_W,dx_latent_W,supply_target_C");
+            stringBuilder.AppendLine("air_system,hour,intake_C,stat_room_C,extract_C,exchanger_leaving_C,supply_C,supply_Lps,extract_Lps,cooling_signal,dx_sensible_W,dx_latent_W,supply_target_C,operating_state,exchanger_state");
 
             foreach (GuidanceCoolingResult result in results)
             {
@@ -87,7 +87,9 @@ namespace SAM.Analytical.Tas.TPD
                         F(result.CoolingSignal(i)),
                         F(result.DXSensible_W[i]),
                         F(result.DXLatent_W[i]),
-                        F(result.SupplyTarget_C(i))));
+                        F(result.SupplyTarget_C(i)),
+                        result.OperatingState(i),
+                        result.ExchangerState(i)));
                 }
             }
 
@@ -150,6 +152,8 @@ namespace SAM.Analytical.Tas.TPD
         }
 
         public Guid Guid_AirSystem { get; }
+
+        public int StartHour { get; set; }
 
         public string Name { get; }
 
@@ -231,6 +235,43 @@ namespace SAM.Analytical.Tas.TPD
         {
             return ExchangerLeaving_C[index] - Supply_C[index] > 0.05;
         }
+
+        /// <summary>Observed state only where both airflow and coil read-back are finite and agree.</summary>
+        public string OperatingState(int index)
+        {
+            if (!Finite(Supply_Lps, index) || !Finite(ExchangerLeaving_C, index) || !Finite(Supply_C, index)
+                || !IsFinite(DesignSupply_Lps) || !IsFinite(Elevated_Lps) || Elevated_Lps <= DesignSupply_Lps)
+            {
+                return "UNAVAILABLE";
+            }
+
+            double signal = CoolingSignal(index);
+            bool coilCooling = IsCooling(index);
+            if (signal <= 0.01 && !coilCooling) return "NORMAL";
+            if (signal > 0.01 && coilCooling) return "COOLING";
+            return "UNAVAILABLE";
+        }
+
+        /// <summary>Classifies exchanger read-back from observed temperatures, without assuming a recovery fraction.</summary>
+        public string ExchangerState(int index)
+        {
+            if (!Finite(Intake_C, index) || !Finite(Extract_C, index) || !Finite(ExchangerLeaving_C, index)) return "UNAVAILABLE";
+
+            double bypass = Intake_C[index];
+            double extract = Extract_C[index];
+            double leaving = ExchangerLeaving_C[index];
+            if (System.Math.Abs(bypass - extract) <= 0.1) return "UNAVAILABLE";
+            if (System.Math.Abs(leaving - bypass) <= 0.05) return "BYPASS";
+            double fraction = (leaving - bypass) / (extract - bypass);
+            return fraction >= 0.05 && fraction <= 1.05 ? "RECOVERY" : "UNAVAILABLE";
+        }
+
+        private static bool Finite(List<double> values, int index)
+        {
+            return values != null && index >= 0 && index < values.Count && IsFinite(values[index]);
+        }
+
+        private static bool IsFinite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
 
         public bool IsFullyElevated(int index)
         {
@@ -347,7 +388,7 @@ namespace SAM.Analytical.Tas.TPD
                 ? string.Empty
                 : string.Format(CultureInfo.InvariantCulture, "{0} cooling hour(s) at the limit; below the limit while the stat calls: {1} h cooled there by the coil, {2} h with the coil entering already below it; ", hours_AtMinimum, hours_BelowMinimumCoilCooling, hours_BelowMinimumEnteringCold);
 
-            return string.Format(
+            string summary = string.Format(
                 CultureInfo.InvariantCulture,
                 "{0}: design {1:0.###}/{2:0.###} l/s supply/extract, elevated {3:0.###} l/s; {4} h fully elevated, {5} h modulating; exchanger state (bypass / recovery {19:0.####}) within 0.05 K in {20} of {4} fully elevated hours; DX cooling {6} h ({7} h without a stat signal, {8} h signal without cooling); supply law {27} met within 0.05 K in {10} of {11} fully elevated cooling hours not capacity-limited (max error {12:0.###} K) and in {25} of {26} part-flow cooling hours; {28}{13} fully elevated hour(s) at the {14:0} W total duty bound; minimum supply {15:0.##} C; stat room max {16:0.##} C, above {17:0.##} C in {18} h.",
                 Name,
@@ -379,6 +420,19 @@ namespace SAM.Analytical.Tas.TPD
                 hours_Part,
                 law,
                 floor);
+
+            int first = -1;
+            for (int i = 0; i < Count; i++)
+            {
+                if (Finite(ExchangerLeaving_C, i) && Finite(Supply_C, i) && IsCooling(i))
+                {
+                    first = i;
+                    break;
+                }
+            }
+            return summary + string.Format(CultureInfo.InvariantCulture,
+                " First observed DX cooling: {0}; operating and exchanger states are in the hourly read-back (UNAVAILABLE where evidence cannot distinguish them).",
+                first < 0 ? "UNAVAILABLE" : (StartHour + first).ToString(CultureInfo.InvariantCulture));
         }
     }
 }

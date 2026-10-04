@@ -186,6 +186,29 @@ namespace SAM.Analytical.Tas.TM59.Tests
         }
 
         [Test]
+        public void OperatingDiagnostics_UseOnlyFiniteReadBack()
+        {
+            System.Collections.Generic.List<double> values(double a, double b, double c) => new System.Collections.Generic.List<double> { a, b, c };
+            TPD.GuidanceCoolingResult result = new TPD.GuidanceCoolingResult(Guid.NewGuid(), "U", 30, 30, 80, 0.8, 8, 13, 12, 19, 1000, 22,
+                values(20, 30, double.NaN), values(21, 23, 23), values(25, 25, 25),
+                values(24, 30, double.NaN), values(24, 20, 20), values(30, 80, 80), values(30, 80, 80), values(0, 500, 500), values(0, 0, 0)) { StartHour = 100 };
+
+            Assert.That(result.OperatingState(0), Is.EqualTo("NORMAL"));
+            Assert.That(result.OperatingState(1), Is.EqualTo("COOLING"));
+            Assert.That(result.OperatingState(2), Is.EqualTo("UNAVAILABLE"));
+            Assert.That(result.ExchangerState(0), Is.EqualTo("RECOVERY"));
+            Assert.That(result.ExchangerState(1), Is.EqualTo("BYPASS"));
+            Assert.That(result.ExchangerState(2), Is.EqualTo("UNAVAILABLE"));
+            Assert.That(result.Summary(), Does.Contain("101"));
+            TPD.GuidanceCoolingResults results = new TPD.GuidanceCoolingResults(100, 102, "read-back");
+            results.Add(result);
+            string csv = results.ToCsv();
+            Assert.That(csv, Does.Contain("operating_state,exchanger_state"));
+            Assert.That(csv, Does.Contain("101,30,23,25,30,20,80,80,1,500,0,22,COOLING,BYPASS"));
+            Assert.That(csv, Does.Contain("UNAVAILABLE,UNAVAILABLE"));
+        }
+
+        [Test]
         public void TheBypassDiagonal_IsOnTheGridUpTo45C()
         {
             TPD.Modify.TryGetGuidanceRecipe(GuidanceCooling(), out TPD.Modify.GuidanceRecipe recipe, out _);

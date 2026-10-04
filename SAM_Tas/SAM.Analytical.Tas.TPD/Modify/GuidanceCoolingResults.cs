@@ -189,7 +189,10 @@ namespace SAM.Analytical.Tas.TPD
                             recipe.BypassMinimumExtract_C,
                             recipe.CoolingDuty_W,
                             recipe.ActivationTemperature_C,
-                            series[0], series[1], series[2], series[3], series[4], series[5], series[6], series[7], series[8]);
+                            series[0], series[1], series[2], series[3], series[4], series[5], series[6], series[7], series[8])
+                        {
+                            StartHour = startHour,
+                        };
 
                         result.Add(guidanceCoolingResult);
                         result.Note(guidanceCoolingResult.Summary());
