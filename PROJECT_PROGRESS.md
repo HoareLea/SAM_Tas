@@ -1,15 +1,15 @@
-# SAM_Tas Part O PR1 progress
+# SAM_Tas Part O PR2 progress
 
-Base: `sow/2026-Q3`. PR1 merged as SAM-BIM/SAM_Tas#80 at `db89e0770baae2d0c70cd3d2854ba19eea11f943` on 2026-10-04. Local base updated.
+Base: `sow/2026-Q3` at `715d74d`. Working branch: `codex/part-o-pr2-diagnostics`.
 
 ## Completed
-TAS grounding already uses Guid_Space_Stat for DX and both fan controllers. Tightened read-back to reject any controller on those targets that senses a different room; fixture verifies selected room is carried through.
+Added observational NORMAL/COOLING and BYPASS/RECOVERY labels to the existing guidance cooling hourly read-back. Ambiguous or missing values are UNAVAILABLE. Summary states first observed cooling hour. No control or simulation physics changed.
 
 ## Files changed
-GroundGuidanceCooling, MixedGuidanceCoolingTests and GuidanceCoolingRecipeTests; this progress file.
+GuidanceCoolingResults class and read-back writer; GuidanceCoolingRecipeTests; this file.
 
 ## Validation
-Guidance and mixed cooling tests: 18 passed; PR Windows build and SPDX passed. Native TAS COM was not exercised by the deterministic suite.
+TPD project builds with VS MSBuild. Guidance and mixed cooling tests: 40 passed; focused recipe tests: 15 passed. Existing compiler warnings only. Diff review found no physics edits.
 
 ## Next step
-Native TAS COM controller read-back still needs licensed project validation when available. Stop after PR1; do not start PR2 without a new request.
+Commit, open PR, wait for CI/review, merge, then update local `sow/2026-Q3`. Native TAS COM remains unverified by deterministic tests.
