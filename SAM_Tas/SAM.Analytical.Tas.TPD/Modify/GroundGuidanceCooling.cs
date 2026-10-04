@@ -1049,11 +1049,6 @@ namespace SAM.Analytical.Tas.TPD
                 {
                 }
 
-                if (component_Sensed == null || Query.NativeReference(component_Sensed) != reference_Zone)
-                {
-                    continue;
-                }
-
                 for (int j = 1; j <= controller.GetControlArcCount(); j++)
                 {
                     string reference_Target = Query.NativeReference(controller.GetControlArc(j).GetComponent());
@@ -1066,6 +1061,12 @@ namespace SAM.Analytical.Tas.TPD
                     if (!minimum_By_Target.TryGetValue(reference_Target, out double minimum))
                     {
                         continue;
+                    }
+
+                    if (component_Sensed == null || Query.NativeReference(component_Sensed) != reference_Zone)
+                    {
+                        disagreement = string.Format("the controller on {0} does not sense the selected cooling control room", reference_Target);
+                        return false;
                     }
 
                     if (controller.ControlType != tpdControlType.tpdControlNormal

@@ -201,6 +201,19 @@ namespace SAM.Analytical.Tas.TM59.Tests
             }
         }
 
+        [Test]
+        public void SelectedRoomStat_KeepsThe22COffPointAndPointOneKelvinFullDemand()
+        {
+            Assert.That(TPD.Modify.TryGetGuidanceRecipe(GuidanceCooling(), out TPD.Modify.GuidanceRecipe recipe, out _), Is.True);
+            Assert.That(recipe.ActivationTemperature_C, Is.EqualTo(22.0));
+            Assert.That(TPD.Modify.GuidanceCoolingStatBand_K, Is.EqualTo(0.1));
+
+            //GroundGuidanceCooling writes TAS normal controllers at activation + half the band.
+            double setpoint = recipe.ActivationTemperature_C + TPD.Modify.GuidanceCoolingStatBand_K / 2.0;
+            Assert.That(setpoint - TPD.Modify.GuidanceCoolingStatBand_K / 2.0, Is.EqualTo(22.0).Within(1e-9));
+            Assert.That(setpoint + TPD.Modify.GuidanceCoolingStatBand_K / 2.0, Is.EqualTo(22.1).Within(1e-9));
+        }
+
         private static SupplyTemperatureRule CoolingRule(double minimum_C)
         {
             return SupplyTemperatureRule.ExchangerThenCoil(new[] { 60.0, 80.0, 100.0, 120.0 }, new[] { 0.8796, 0.8576, 0.8356, 0.8136 }, new[] { 9.265, 8.745, 8.225, 7.705 }, new[] { 0.3, 0.5, 0.8, 1.1 }, minimum_C);
