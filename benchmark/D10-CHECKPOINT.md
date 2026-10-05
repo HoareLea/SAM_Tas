@@ -30,7 +30,7 @@ model annual energy and non-zero space loads.
 | Non-zero space loads | ✅ e.g. `GF_07 LivingRoom` heating peak **1020.6 W** @ hour 1441, design **1059.9 W**, unmet **83 h** |
 | Conditioning pairing exercised | ✅ thermostats + IZAMs + TBD sizing produced per-space peak loads, design loads and unmet hours |
 
-Other observed correctness (validates the Codex-review fixes on real data):
+Other observed correctness (validates the review fixes on real data):
 
 - **Per-space matching by relation** — all conditioned spaces resolved their heating/cooling results even though a TAS result's `Reference` is the TAS zone GUID, not the SAM space GUID.
 - **Source filter / provenance** — `resultSources = ["SAM.Analytical.Tas"]` only.

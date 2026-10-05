@@ -41,7 +41,7 @@ namespace SAM.Analytical.Tas
     /// is exactly the case where adopting it would change what the model states.
     /// </para>
     /// <para><b>Instances are immutable.</b> A shared definition is never rewritten - see the
-    /// mutation-safety rule in the aperture-reuse handover notes.</para>
+    /// mutation-safety rule in the aperture-reuse design notes.</para>
     /// </summary>
     public sealed class ConstructionDefinition : IEquatable<ConstructionDefinition>
     {

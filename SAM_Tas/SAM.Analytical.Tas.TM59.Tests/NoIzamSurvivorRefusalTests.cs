@@ -7,7 +7,7 @@ using SAM.Analytical.Tas;
 namespace SAM.Analytical.Tas.TM59.Tests
 {
     /// <summary>
-    /// The no-IZAM fail-closed decision (Codex P2 on PR #50): when the IZAM sweep was requested and an
+    /// The no-IZAM fail-closed decision: when the IZAM sweep was requested and an
     /// IZAM survives it, the workflow must refuse, not note-and-continue.
     /// <para>
     /// <b>Why the helper is what is tested.</b> Asking whether an IZAM survived needs a live

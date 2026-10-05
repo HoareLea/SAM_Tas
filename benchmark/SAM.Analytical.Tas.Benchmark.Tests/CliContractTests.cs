@@ -149,7 +149,7 @@ namespace SAM.Analytical.Tas.Benchmark.Tests
             string outJson = Path.Combine(dir, "benchmark-out.json");
             string tbd = Path.Combine(dir, "house.tbd");
 
-            // --tbd is the model itself (RemoveExistingTBD would delete it) — the .sam case Codex flagged.
+            // --tbd is the model itself (RemoveExistingTBD would delete it) — the .sam case.
             Assert.That(Producer.FindInputOverwriteCollision(Path.Combine(dir, "house.sam"), Path.Combine(dir, "house.sam"), outJson), Is.Not.Null);
             // A stem sidecar the run writes lands on the model.
             Assert.That(Producer.FindInputOverwriteCollision(Path.Combine(dir, "house.json"), tbd, outJson), Is.Not.Null, ".json sidecar");

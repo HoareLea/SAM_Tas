@@ -189,7 +189,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
         [TestCase(1.0, 0.25)]
         public void ImportedFactor_RoundTripsThePeak_ForAnyProfileNormalisation(double factor_Source, double peak_Source)
         {
-            //Codex P2. GetExtremeValue(true) is factor * max(values), and Modify.Update re-applies the same
+            //GetExtremeValue(true) is factor * max(values), and Modify.Update re-applies the same
             //values on top of whatever basis it is given - so storing the PEAK scales the schedule twice
             //(factor * max^2) and only looks right when max == 1. Storing the FACTOR is exact for any shape.
             double[] values = new double[24];

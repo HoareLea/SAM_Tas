@@ -133,7 +133,7 @@ namespace SAM.Analytical.Tas
         /// so a caller already compiled against this six-argument signature (a Grasshopper/Revit plugin
         /// referencing this DLL as a binary, not recompiled on every SAM_Tas release) would throw
         /// <see cref="MissingMethodException"/> the moment it loaded a build that replaced this overload with a
-        /// seven-argument one, default value or not (Codex flagged this on PR #38). Forwards to the real
+        /// seven-argument one, default value or not. Forwards to the real
         /// implementation with the library-suppression option off, i.e. identical to this method's previous body.
         /// </remarks>
         public bool Register(string internalConditionName, int slot, string category, IEnumerable<double> values, string sourceName, string excludedName)

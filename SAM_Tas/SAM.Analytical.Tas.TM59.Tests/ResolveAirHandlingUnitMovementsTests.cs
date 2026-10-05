@@ -12,7 +12,7 @@ using AnalyticalCreate = SAM.Analytical.Create;
 namespace SAM.Analytical.Tas.TM59.Tests
 {
     /// <summary>
-    /// <b>The stale-exhaust regression from the second Codex review round on SAM_Tas#44.</b>
+    /// <b>The stale-exhaust regression found in the second review round.</b>
     /// <para>
     /// A TBD written by an earlier export can carry <c>"IZAM &lt;AHU&gt; TO OUTSIDE"</c> from a topology
     /// this run no longer builds - the unit's own exhaust, from before its extract was flattened to leave
@@ -58,7 +58,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
             Assert.That(ahuOutwardMovements.ContainsKey(airHandlingUnit), Is.False, "No current outward movement exists, so none should be (re)written.");
 
             Assert.That(izamNamesToReplace, Does.Contain(string.Format("IZAM {0} TO OUTSIDE", airHandlingUnit.Name)),
-                "A stale outward IZAM from an earlier export must be queued for removal even when this run builds no replacement - this is the defect Codex found.");
+                "A stale outward IZAM from an earlier export must be queued for removal even when this run builds no replacement - a regression found in review.");
         }
 
         [Test]

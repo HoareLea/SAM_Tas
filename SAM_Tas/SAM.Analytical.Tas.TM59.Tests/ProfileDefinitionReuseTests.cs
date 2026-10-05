@@ -782,7 +782,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
             //These tables now drive BOTH collectors - Query.ProfileReuseIndex's registration walk and the
             //legacy Convert.ToSAM_Profiles mirror both foreach over them, gated by the same
             //Query.IsCollectableSlot - so this assertion pins the emitted set on both sides at once. That
-            //closes the gap Copilot raised: while the mirror repeated the twelve slots by hand, a slot could
+            //closes the gap noted in review: while the mirror repeated the twelve slots by hand, a slot could
             //be emitted by one collector and not the other, which is a reference naming a definition the
             //library does not carry.
             IEnumerable<string> slots = ProductionSlotNames("ProfileSlots_InternalGain").Concat(ProductionSlotNames("ProfileSlots_Thermostat")).ToList();
@@ -825,7 +825,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
         [Test]
         public void ZeroLength_Ventilation_IsNotCollectable_SoItCannotBecomeAResolvableValueProfile()
         {
-            //Codex P2 on PR #38. Core.Tas.Query.Values has no case for ticFunctionProfile, so a TAS function
+            //Core.Tas.Query.Values has no case for ticFunctionProfile, so a TAS function
             //profile flattens to ZERO values. Collecting ticV would have given that zero-length profile a
             //ProfileLibrary entry under its legacy name - the very name the import writes as
             //VentilationProfileName - so the reference would resolve, the export would call the ordinary
@@ -886,7 +886,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
         [Test]
         public void ZeroLength_Ventilation_ReservesItsLegacyName_SoNoCanonicalDefinitionCanClaimIt()
         {
-            //Codex P2. Skipping the slot is not enough on its own: the dangling reference still HAS a name,
+            //Skipping the slot is not enough on its own: the dangling reference still HAS a name,
             //and if a canonical name were later assigned that same string in the same category the reference
             //would stop dangling and start resolving to an unrelated value profile - which the export would
             //then write over the function profile. Not theoretical: a round-tripped model's TAS profile names
@@ -927,7 +927,7 @@ namespace SAM.Analytical.Tas.TM59.Tests
         [Test]
         public void ZeroLength_Ventilation_SlotKeyCollision_WithOrdinaryTicVOnSameNamedCondition_StaysDangling()
         {
-            //Codex's follow-up P2 on this same guard. Two TBD internal conditions CAN share a name - a
+            //Follow-up on this same guard. Two TBD internal conditions CAN share a name - a
             //duplicate space name, a generic template - and still differ on ticV: one a genuine schedule, the
             //other a zero-length TAS function profile. Both then compete for the SAME slot key
             //(internalConditionName, ticV). Reserve() alone (the test above) protects only a coincidental

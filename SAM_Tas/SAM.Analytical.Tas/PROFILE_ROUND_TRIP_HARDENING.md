@@ -49,8 +49,7 @@ that **2 of 20** names grew on the feature model.
 `UpdateInternalCondition_HDD` names the flattened content after itself, via `Query.ProfileName_HDD` —
 `profile.Name + " - HDD"`, the same convention the HDD condition itself already carries
 (`space.Name + " - HDD"`). The rule lives in one shared helper rather than inline at the writer's two write
-sites so the COM-free naming test exercises the production rule instead of re-implementing it (Copilot
-raised the duplication on PR #38). The TBD then holds
+sites so the COM-free naming test exercises the production rule instead of re-implementing it. The TBD then holds
 `X` (full schedule) and `X - HDD` (flattened scalar): two names for two definitions. The import needs no
 change — its discrimination stays as the safety net for genuinely same-named TAS-authored input (pinned
 unchanged by `Naming_SameNameDifferentDefinitions_DiscriminatesDeterministically` and
@@ -170,7 +169,7 @@ found on the same line:
 `CalculatedSupplyAirFlow` itself is untouched: the rate is routed to the basis that already inverts
 correctly rather than compensated for downstream.
 
-**The second defect: the factor, not the peak.** Codex raised this after the unit fix, and it was real. The
+**The second defect: the factor, not the peak.** This was found in review after the unit fix, and it was real. The
 first correction stored `GetExtremeValue(true)` — `factor * max(values)` — on the ACH basis. But the imported
 `Profile` keeps the **raw** values, and `Modify.Update` writes the basis back as `profile_TBD.factor` and
 re-applies those same values, so the schedule is scaled **twice**: `factor * max^2`. It is invisible whenever
@@ -203,7 +202,7 @@ should feed a live SAM basis is a separate question, deliberately not answered h
 
 ## Zero-length ticV: collected only when it has a complete value representation
 
-Codex raised this as P2 on PR #38, and it was a real regression of this branch's own making.
+This was raised in review (P2), and it was a real regression of this branch's own making.
 
 **The path.** `Core.Tas.Query.Values` has no `case` for `ticFunctionProfile`, so a TAS function profile
 flattens to **zero values**. For a zero-length profile `ProfileDefinition.IsReusable` is false, and PR #37's
@@ -252,13 +251,13 @@ a definition the library does not carry. Both now `foreach` over the same
 behaviour-neutral under licence: 0 differences across every field on both real models and the authored
 sources, and byte-identical SAM-side import dumps.
 
-**A second collision, from Codex's follow-up review.** Reserving the name closes a coincidental STRING
+**A second collision, from a follow-up review.** Reserving the name closes a coincidental STRING
 collision between two DIFFERENT internal conditions, but not a slot-KEY collision: two TBD internal
 conditions can share the exact same NAME (a duplicate space name, a generic template) while disagreeing on
 `ticV` — one a genuine schedule, the other a zero-length function profile. Both then register under the
 identical `SlotKey(internalConditionName, ticV)`, and `Reserve` never touches that dictionary, so the
 skipped condition's own slot-key lookup could still answer with the ordinary condition's canonical name.
-`Register` gained an overload that adds `bool suppressLibraryEntry`, kept as a SEPARATE seven-argument method rather than an optional parameter on the existing one - Codex caught that an optional-parameter default is compile-time only, so it would not have preserved the original six-argument CLR method a pre-compiled plugin (Grasshopper/Revit, referencing this DLL as a binary) had already linked against, and that plugin would throw `MissingMethodException` the moment it loaded an upgraded SAM_Tas build. The six-argument overload now forwards to the seven-argument one with the suppression off, identical to its previous body. A skipped `ticV` still calls the SAME logic every other excluded slot uses - running the SAME ambiguity tracking - and only the final library-emission step is skipped. Verified by first reverting to the Reserve-only behaviour and confirming the new test
+`Register` gained an overload that adds `bool suppressLibraryEntry`, kept as a SEPARATE seven-argument method rather than an optional parameter on the existing one - an optional-parameter default is compile-time only, so it would not have preserved the original six-argument CLR method a pre-compiled plugin (Grasshopper/Revit, referencing this DLL as a binary) had already linked against, and that plugin would throw `MissingMethodException` the moment it loaded an upgraded SAM_Tas build. The six-argument overload now forwards to the seven-argument one with the suppression off, identical to its previous body. A skipped `ticV` still calls the SAME logic every other excluded slot uses - running the SAME ambiguity tracking - and only the final library-emission step is skipped. Verified by first reverting to the Reserve-only behaviour and confirming the new test
 fails exactly as predicted (`GetProfileName("Duplicate", ticV)` answered the ordinary profile's name
 instead of null), then restoring the fix and confirming it passes.
 

@@ -55,7 +55,7 @@ namespace SAM.Analytical.Tas.TPD
     /// <c>ToSAM_SpaceSystemResult</c> onto <c>zoneLoad.GUID</c> is therefore the probable fix, but it is <b>not a
     /// drive-by</b>: <c>Reference</c> is how a <c>SystemSpaceResult</c> is correlated to its
     /// <c>SystemSpace</c>/<c>SystemZone</c> elsewhere in the energy-centre model and is persisted in JSON, so it
-    /// needs checking against a real TPD first. <b>Verify on Michal's validation model before changing it.</b>
+    /// needs checking against a real TPD first. <b>Verify on a real validation model before changing it.</b>
     /// </para>
     /// <para>
     /// <b>Free of TAS COM types</b>, so the preparation can be tested without an installed TAS. The engine

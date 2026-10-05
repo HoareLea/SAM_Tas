@@ -38,7 +38,7 @@ namespace SAM.Analytical.Tas
     /// the same control.
     /// </para>
     /// <para><b>Instances are immutable.</b> A shared definition is never rewritten - see the mutation-safety
-    /// rule in the aperture-reuse handover notes.</para>
+    /// rule in the aperture-reuse design notes.</para>
     /// </summary>
     public sealed class ApertureTypeDefinition : IEquatable<ApertureTypeDefinition>
     {

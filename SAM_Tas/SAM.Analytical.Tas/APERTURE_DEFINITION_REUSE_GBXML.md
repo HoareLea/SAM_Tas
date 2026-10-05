@@ -146,8 +146,7 @@ the default (see `SAM_UI`'s `Query.DefaultWorkflowSettings`) is `false`, so a ro
 calls `ExportNew` against whatever `.tbd` is already on disk rather than a freshly emptied one. Whether
 `ExportNew` **replaces** that file's building elements or **merges** the T3D into them was not something the
 original design traced — it stated the "no foreign element to protect" conclusion without having measured it
-against `RemoveExistingTBD=false` specifically. A PR review ([Codex,
-2026-08-22](https://github.com/SAM-BIM/SAM_Tas/pull/34#discussion_r3837021889)) correctly flagged this gap.
+against `RemoveExistingTBD=false` specifically. A PR review ([2026-08-22](https://github.com/SAM-BIM/SAM_Tas/pull/34#discussion_r3837021889)) correctly flagged this gap.
 
 **The question, put narrowly:** with `RemoveExistingTBD=false` and a `.tbd` already on disk, does
 `T3DDocument.ExportNew` replace the file's building elements from scratch, or can it preserve one that the
@@ -183,7 +182,7 @@ The one surviving GUID in both runs is TAS's own universal placeholder — `name
 regardless of what the file held before. It is not a preserved user object, and there is no other overlap.
 
 **Outcome: `ExportNew` replaces a `.tbd`'s building elements from scratch, independent of
-`RemoveExistingTBD`.** The Codex finding is **not valid** for the production path: nothing survives from a
+`RemoveExistingTBD`.** The review finding is **not valid** for the production path: nothing survives from a
 prior state of the file for the sweep to endanger, so `Query.UnusedApertureBuildingElementGuids` needs no
 provenance check beyond the three gates it already has. No production code changed as a result of this
 verification — only the doc comment that previously stated the conclusion without having measured it against
