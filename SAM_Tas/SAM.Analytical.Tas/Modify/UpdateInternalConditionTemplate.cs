@@ -16,7 +16,7 @@ namespace SAM.Analytical.Tas
         /// has no space, so the gains are taken straight from the condition's own stored per-area
         /// parameters instead — the same values the import read off the TBD profiles. This is what
         /// lets unused internal conditions (imported via
-        /// <see cref="AddUnusedInternalConditions(AdjacencyCluster, TBD.Building)"/>) round-trip back
+        /// <see cref="AddUnusedInternalConditions(AdjacencyCluster, TBD.Building, ProfileReuseIndex)"/>) round-trip back
         /// out on export.
         /// <para/>
         /// FIDELITY NOTE: <c>personGain</c> (metabolic rate, W/p) is not stored on the SAM condition —
@@ -128,7 +128,18 @@ namespace SAM.Analytical.Tas
                 UpdateProfile(internalGain, (int)TBD.Profiles.ticESG, internalCondition, ProfileType.EquipmentSensible, profileLibrary, InternalConditionParameter.EquipmentSensibleGainPerArea);
                 UpdateProfile(internalGain, (int)TBD.Profiles.ticELG, internalCondition, ProfileType.EquipmentLatent, profileLibrary, InternalConditionParameter.EquipmentLatentGainPerArea);
                 UpdateProfile(internalGain, (int)TBD.Profiles.ticCOG, internalCondition, ProfileType.Pollutant, profileLibrary, InternalConditionParameter.PollutantGenerationPerArea);
-                UpdateProfile(internalGain, (int)TBD.Profiles.ticV, internalCondition, ProfileType.Ventilation, profileLibrary, InternalConditionParameter.SupplyAirFlow);
+                // ticV is an ACH rate, and a template has no space, so there is no volume to convert
+                // through: whatever parameter is read here becomes the factor verbatim. Prefer the ACH
+                // basis - that is what the TBD import now writes, and it is the only one dimensionally
+                // meaningful without a volume. Fall back to SupplyAirFlow so a SAM-authored template that
+                // only carries the legacy m3/s parameter keeps the factor it has always been given.
+                InternalConditionParameter internalConditionParameter_Ventilation = InternalConditionParameter.SupplyAirFlow;
+                if (internalCondition.TryGetValue(InternalConditionParameter.SupplyAirChangesPerHour, out double airChangesPerHour) && !double.IsNaN(airChangesPerHour))
+                {
+                    internalConditionParameter_Ventilation = InternalConditionParameter.SupplyAirChangesPerHour;
+                }
+
+                UpdateProfile(internalGain, (int)TBD.Profiles.ticV, internalCondition, ProfileType.Ventilation, profileLibrary, internalConditionParameter_Ventilation);
             }
 
             TBD.Thermostat thermostat = internalCondition_TBD.GetThermostat();
@@ -201,13 +212,13 @@ namespace SAM.Analytical.Tas
         /// Writes the unused (library) internal conditions held in <paramref name="adjacencyCluster"/>
         /// into <paramref name="building"/>, skipping any name already present (a space's condition or
         /// a pre-existing one). The export-side counterpart to
-        /// <see cref="AddUnusedInternalConditions(AdjacencyCluster, TBD.Building)"/>.
+        /// <see cref="AddUnusedInternalConditions(AdjacencyCluster, TBD.Building, ProfileReuseIndex)"/>.
         /// <para/>
         /// Only conditions with <b>no space relation</b> are written. The import stores a zone's
         /// HDD/CDD companion conditions as cluster objects too, but those are related to a space and
         /// handled by the per-space export (<see cref="UpdateZone_HDD(TBD.Building, TBD.zone, Space, ProfileLibrary)"/>);
         /// writing them here would duplicate them. A genuine library condition (the kind
-        /// <see cref="AddUnusedInternalConditions(AdjacencyCluster, TBD.Building)"/> adds on import)
+        /// <see cref="AddUnusedInternalConditions(AdjacencyCluster, TBD.Building, ProfileReuseIndex)"/> adds on import)
         /// has no space relation, so this stays a no-op unless unused conditions were imported.
         /// </summary>
         public static List<TBD.InternalCondition> AddUnusedInternalConditions(this TBD.Building building, AdjacencyCluster adjacencyCluster, ProfileLibrary profileLibrary, IEnumerable<TBD.dayType> dayTypes_NonHDD = null)

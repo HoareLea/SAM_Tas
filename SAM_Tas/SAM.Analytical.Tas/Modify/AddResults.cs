@@ -4,6 +4,7 @@
 using SAM.Core.Tas;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using TSD;
 
@@ -46,10 +47,49 @@ namespace SAM.Analytical.Tas
             if (simulationData == null || adjacencyCluster == null)
                 return null;
 
-            List<Core.Result> result = null; 
+            List<Core.Result> result = null;
+
+            BuildingData buildingData_Series = simulationData.GetBuildingData();
+            List<ZoneData> zoneDatas_BuildingData = buildingData_Series == null ? null : Query.ZoneDatas(buildingData_Series);
+            if (zoneDatas_BuildingData == null || zoneDatas_BuildingData.Count == 0)
+                return result;
+
+            //Every series this method needs, read in ONE day-by-day pass over the TSD (Query.ZoneResultSeries): the
+            //overheating arrays and, for a full-year simulation, each zone's cooling load - from which the SAM zones'
+            //peaks below are taken instead of asking TSD once per zone, which on a large TSD walks the whole year
+            //again every time.
+            bool fullYear = simulationData.firstDay == 1 && simulationData.lastDay == 365;
+            List<tsdZoneArray> tsdZoneArrays = new List<tsdZoneArray>(Query.OverheatingZoneArrays);
+            if (fullYear)
+            {
+                tsdZoneArrays.Add(tsdZoneArray.coolingLoad);
+            }
+
+            List<Dictionary<tsdZoneArray, float[]>> zoneResultSeries = zoneDatas_BuildingData.ZoneResultSeries(simulationData.firstDay, simulationData.lastDay, tsdZoneArrays);
+
+            Dictionary<string, float[]> coolingLoads = null;
+            if (fullYear)
+            {
+                coolingLoads = new Dictionary<string, float[]>();
+                for (int i = 0; i < zoneDatas_BuildingData.Count; i++)
+                {
+                    string zoneGuid = zoneDatas_BuildingData[i]?.zoneGUID;
+                    if (zoneGuid == null)
+                        continue;
+
+                    //Two TSD zones answering one guid: which one TSD would sum is not ours to guess, so ask TSD.
+                    if (coolingLoads.ContainsKey(zoneGuid))
+                    {
+                        coolingLoads = null;
+                        break;
+                    }
+
+                    coolingLoads[zoneGuid] = zoneResultSeries[i][tsdZoneArray.coolingLoad];
+                }
+            }
 
             //get simulaton data from Tas for individal SAM Space
-            List<Core.Result> results = Convert.ToSAM_Results(simulationData);
+            List<Core.Result> results = Convert.ToSAM_Results(simulationData, buildingData_Series, zoneDatas_BuildingData, zoneResultSeries);
             if (results == null)
                 return result;
 
@@ -212,8 +252,30 @@ namespace SAM.Analytical.Tas
                     double max;
 
                     //Cooling
+                    List<string> references = zoneDatas.ConvertAll(x => x.zoneGUID);
+
+                    List<float[]> coolingLoads_Zone = null;
+                    if (coolingLoads != null && references.Distinct().Count() == references.Count)
+                    {
+                        coolingLoads_Zone = new List<float[]>();
+                        foreach (string reference in references)
+                        {
+                            if (reference == null || !coolingLoads.TryGetValue(reference, out float[] coolingLoads_Reference))
+                            {
+                                coolingLoads_Zone = null;
+                                break;
+                            }
+
+                            coolingLoads_Zone.Add(coolingLoads_Reference);
+                        }
+                    }
+
+                    bool peak = coolingLoads_Zone != null
+                        ? coolingLoads_Zone.TryGetPeakZoneGroupGain(out index, out max)
+                        : buildingData.TryGetMax(references, tsdZoneArray.coolingLoad, out index, out max);
+
                     ZoneSimulationResult zoneSimulationResult_Cooling = null;
-                    if (buildingData.TryGetMax(zoneDatas.ConvertAll(x => x.zoneGUID), tsdZoneArray.coolingLoad, out index, out max) && index != -1 && !double.IsNaN(max))
+                    if (peak && index != -1 && !double.IsNaN(max))
                     {
                         zoneSimulationResult_Cooling = new ZoneSimulationResult(zone.Name, Assembly.GetExecutingAssembly().GetName()?.Name, zone.Guid.ToString());
                         zoneSimulationResult_Cooling.SetValue(ZoneSimulationResultParameter.MaxSensibleLoad, max);
@@ -282,6 +344,15 @@ namespace SAM.Analytical.Tas
 
                     if(zoneSimulationResult_Cooling != null)
                     {
+                        //Replaced, as the space and surface results above are: a zone result from an earlier
+                        //run of the same model is stale once this run's exists, and keeping it left a re-run
+                        //model with one more per zone per run and no way to tell which was current.
+                        List<ZoneSimulationResult> zoneSimulationResults_Existing = adjacencyCluster.GetResults<ZoneSimulationResult>(zone, Query.Source())?.FindAll(x => x.LoadType() == LoadType.Cooling);
+                        if (zoneSimulationResults_Existing != null && zoneSimulationResults_Existing.Count != 0)
+                        {
+                            adjacencyCluster.Remove(zoneSimulationResults_Existing);
+                        }
+
                         adjacencyCluster.AddObject(zoneSimulationResult_Cooling);
                         adjacencyCluster.AddRelation(zone, zoneSimulationResult_Cooling);
                         result.Add(zoneSimulationResult_Cooling);

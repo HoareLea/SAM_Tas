@@ -1,4 +1,7 @@
-﻿using SAM.Analytical.Systems;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using SAM.Analytical.Systems;
 using SAM.Core;
 using System.Collections.Generic;
 using System.Linq;
@@ -177,14 +180,37 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            HashSet<string> names = new HashSet<string>();
+            List<string> names = new List<string>();
+            HashSet<tpdProfileDataVariableType> variableTypes = new HashSet<tpdProfileDataVariableType>();
             List<int> counts = new List<int>();
-            int i = 1;
-            while(profileDataModifierTable.GetAxisSize(i) > 0)
+            bool axisEnded = false;
+            for (int axis = 1; axis <= 3; axis++)
             {
-                names.Add(profileDataModifierTable.GetVariable(i).ToString());
-                counts.Add(profileDataModifierTable.GetAxisSize(i));
-                i++;
+                int count = profileDataModifierTable.GetAxisSize(axis);
+                if (count <= 0)
+                {
+                    axisEnded = true;
+                    continue;
+                }
+
+                if (axisEnded)
+                {
+                    return null;
+                }
+
+                tpdProfileDataVariableType variableType = profileDataModifierTable.GetVariable(axis);
+                if (variableType == tpdProfileDataVariableType.tpdProfileDataVariableLAST || !variableTypes.Add(variableType))
+                {
+                    return null;
+                }
+
+                names.Add(variableType.ToString());
+                counts.Add(count);
+            }
+
+            if (names.Count == 0)
+            {
+                return null;
             }
 
             while (counts.Count < 3)
@@ -192,11 +218,17 @@ namespace SAM.Analytical.Tas.TPD
                 counts.Add(1);
             }
 
+            ArithmeticOperator? arithmeticOperator = profileDataModifierTable.Multiplier.ArithmeticOperator();
+            if (!arithmeticOperator.HasValue)
+            {
+                return null;
+            }
+
             List<string> headers = new List<string>(names);
             headers.Add("value");
 
-            TableModifier result = new TableModifier(profileDataModifierTable.Multiplier.ArithmeticOperator().Value, headers);
-            result.Extrapolate = profileDataModifierTable.Extrapolate == 1;
+            TableModifier result = new TableModifier(arithmeticOperator.Value, headers);
+            result.Extrapolate = profileDataModifierTable.Extrapolate != 0;
 
             if (counts[0] > 0 && names.Count > 0)
             {

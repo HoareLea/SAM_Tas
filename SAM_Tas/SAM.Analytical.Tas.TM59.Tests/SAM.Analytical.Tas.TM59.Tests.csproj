@@ -1,0 +1,139 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <IsPackable>false</IsPackable>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="NUnit" Version="4.2.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- No ProjectReference to SAM.Analytical.Tas.TM59.csproj: it (transitively) pulls in
+         SAM.Analytical.Tas / SAM.Core.Tas, which use <COMReference> and require the
+         .NET Framework MSBuild (ResolveComReference isn't supported on .NET Core MSBuild).
+         Reference the already-built TM59 assembly instead, same pattern as
+         SAM.Analytical.Tas.Benchmark.Tests uses for SAM.Analytical.Benchmark.
+
+         This means the solution/library MUST be built before `dotnet test` here - see
+         TESTING.md for the exact build order and what happens if it's skipped. -->
+    <Reference Include="SAM.Analytical.Tas.TM59">
+      <HintPath>..\..\build\SAM.Analytical.Tas.TM59.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core">
+      <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Analytical">
+      <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Weather">
+      <HintPath>..\..\..\SAM\build\SAM.Weather.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Geometry">
+      <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
+    </Reference>
+    <!-- For OverheatingCalculatorEquivalenceTests: the compatibility wrapper. Referenced as a built DLL
+         for the same reason as SAM.Analytical.Tas.TM59 above - a ProjectReference would drag in the
+         <COMReference> projects and force .NET Framework MSBuild. The wrapper itself touches no COM type,
+         so the CLR never needs to load the TAS interop to run these tests. -->
+    <Reference Include="SAM.Analytical.Tas">
+      <HintPath>..\..\build\SAM.Analytical.Tas.dll</HintPath>
+    </Reference>
+    <!-- InstanceIdentityTests needs the plain SAM.Core.Tas.ZoneSurfaceReference value type. Referenced as a
+         built DLL for the same COM-avoidance reason as SAM.Analytical.Tas above - ZoneSurfaceReference
+         itself touches no COM type, so this pulls in no TAS interop either. -->
+    <Reference Include="SAM.Core.Tas">
+      <HintPath>..\..\build\SAM.Core.Tas.dll</HintPath>
+    </Reference>
+    <!-- TsdFullYearReadTests: the day-major weather read (Query.WeatherYear over a managed TSD stand-in), and
+         the TSD conversion (Convert.ToSAM / ToSAM_AdjacencyCluster), whose overload set names TAS3D and
+         SAM.Architectural types - referenced for the compiler only; no test touches them. -->
+    <Reference Include="SAM.Weather.Tas">
+      <HintPath>..\..\build\SAM.Weather.Tas.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Architectural">
+      <HintPath>..\..\..\SAM\build\SAM.Architectural.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.TAS3D">
+      <HintPath>..\..\build\Interop.TAS3D.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <!-- MatchBinaryCompatibility_ keeps the pre-PR CLR signatures callable by already-compiled clients. -->
+    <!-- InternalGainMagnitudeTests additionally IMPLEMENTS TBD.profile / TBD.InternalCondition etc. with
+         managed stand-ins (TasProfileFakes.cs) so the real import/export can run without a TAS licence.
+         The TCD/TIC/TSD interops are needed only so the C# compiler can see every type mentioned in the
+         SAM.Analytical.Tas Modify/Convert/Query overload sets; no test touches them and no COM object of
+         any kind is created. -->
+    <Reference Include="Interop.TBD">
+      <HintPath>..\..\build\Interop.TBD.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.TCD">
+      <HintPath>..\..\build\Interop.TCD.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.TIC">
+      <HintPath>..\..\build\Interop.TIC.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.TSD">
+      <HintPath>..\..\build\Interop.TSD.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <!-- For the step 9 boundary tests: the TPD-full preparation (ResultantTemperaturePreparation) and the
+         legacy approximate TPD preparation (ApproximateResultantTemperatureMap). Both types are deliberately
+         free of TAS COM types, so exercising them never forces the CLR to load Interop.TBD / Interop.TPD -
+         which is what makes the preparation boundary testable without an installed TAS. Referenced as a built
+         DLL for the same reason as the assemblies above. -->
+    <Reference Include="SAM.Analytical.Tas.TPD">
+      <HintPath>..\..\build\SAM.Analytical.Tas.TPD.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.TPD">
+      <HintPath>..\..\build\Interop.TPD.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SAM.Analytical.Systems">
+      <HintPath>..\..\build\SAM.Analytical.Systems.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Core.Systems">
+      <HintPath>..\..\build\SAM.Core.Systems.dll</HintPath>
+    </Reference>
+    <!-- The PR2 ventilation tests run the REAL PR1 materialisation and then the real PR2 conversion
+         helpers over its output, so they name DisplaySystemSpace and DisplaySystemDamper - whose display
+         geometry lives here. No COM type is involved and no TAS licence is needed. -->
+    <Reference Include="SAM.Geometry.Systems">
+      <HintPath>..\..\build\SAM.Geometry.Systems.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Same TM59 TextMap resource the production code loads (SAM.Analytical.Query.
+         DefaultInternalConditionTextMap_TM59), copied locally so the test doesn't depend
+         on ActiveSetting or a %APPDATA%\SAM install being present on the build machine. -->
+    <None Include="..\..\..\SAM\files\resources\Analytical\SAM_InternalConditionTextMap_TM59.JSON">
+      <Link>Resources\SAM_InternalConditionTextMap_TM59.JSON</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- The SHIPPED Part O mechanical ventilation topology template, taken from SAM_Systems' own
+         resources rather than copied into this repository, so the PR2 tests convert the same template a
+         real run does. SAM_Systems is read-only here: the file is linked, never written. -->
+    <None Include="..\..\..\SAM_Systems\files\resources\Analytical\Systems\SystemEnergyCentre\MV.json">
+      <Link>Resources\MV.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- PR3B-3: the shipped manufacturer-guidance (MVRE) topology, linked the same way, for the mixed cooled and
+         uncooled document. -->
+    <None Include="..\..\..\SAM_Systems\files\resources\Analytical\Systems\SystemEnergyCentre\MVRE.json">
+      <Link>Resources\MVRE.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

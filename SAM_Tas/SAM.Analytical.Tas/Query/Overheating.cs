@@ -1,41 +1,35 @@
-﻿using System.Collections;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
     public static partial class Query
     {
+        /// <summary>The zone arrays <see cref="Overheating(float[], float[], float[], double)"/> is calculated from.</summary>
+        public static readonly TSD.tsdZoneArray[] OverheatingZoneArrays = new TSD.tsdZoneArray[] { TSD.tsdZoneArray.occupantSensibleGain, TSD.tsdZoneArray.resultantTemp, TSD.tsdZoneArray.dryBulbTemp };
+
         public static Dictionary<Analytical.SpaceSimulationResultParameter, object> Overheating(TSD.ZoneData zoneData, int index_Start, int index_End, double tolerance = 0.01)
         {
             if (zoneData == null)
                 return null;
 
-            Dictionary<TSD.tsdZoneArray, float[]> dictionary = new Dictionary<TSD.tsdZoneArray, float[]>();
-            dictionary[TSD.tsdZoneArray.occupantSensibleGain] = new float[8760];
-            dictionary[TSD.tsdZoneArray.resultantTemp] = new float[8760];
-            dictionary[TSD.tsdZoneArray.dryBulbTemp] = new float[8760];
+            Dictionary<TSD.tsdZoneArray, float[]> dictionary = ZoneResultSeries(new TSD.ZoneData[] { zoneData }, index_Start, index_End, OverheatingZoneArrays)[0];
 
-            for (int i = index_Start; i <= index_End; i++)
-            {
-                foreach (TSD.tsdZoneArray tsdZoneArray in dictionary.Keys)
-                {
-                    float[] yearlyValues = dictionary[tsdZoneArray];
-                    float[] dailyValues = (zoneData.GetDailyZoneResult(i, (short)tsdZoneArray) as IEnumerable).Cast<float>().ToArray();
-                    int startHour = (i * 24) - 24;
-                    int counter = 0;
-                    for (int n = startHour; n <= startHour + 23; n++)
-                    {
-                        yearlyValues[n] = dailyValues[counter];
-                        counter += 1;
-                    }
-                    //dictionary[tsdZoneArray] = yearlyValues;
-                }
-            }
+            return Overheating(dictionary[TSD.tsdZoneArray.occupantSensibleGain], dictionary[TSD.tsdZoneArray.resultantTemp], dictionary[TSD.tsdZoneArray.dryBulbTemp], tolerance);
+        }
 
-            float[] occupancySensibleGains = dictionary[TSD.tsdZoneArray.occupantSensibleGain];
-            float[] resultantTemperatures = dictionary[TSD.tsdZoneArray.resultantTemp];
-            float[] dryBulbTemperatures = dictionary[TSD.tsdZoneArray.dryBulbTemp];
+        /// <summary>
+        /// The overheating values from a zone's 8760-hour series, laid out as <see cref="ZoneResultSeries"/> returns them.
+        /// The series are not modified.
+        /// </summary>
+        public static Dictionary<Analytical.SpaceSimulationResultParameter, object> Overheating(float[] occupancySensibleGains, float[] resultantTemperatures, float[] dryBulbTemperatures, double tolerance = 0.01)
+        {
+            if (occupancySensibleGains == null || resultantTemperatures == null || dryBulbTemperatures == null)
+                return null;
+
+            dryBulbTemperatures = (float[])dryBulbTemperatures.Clone();
             for(int i =0; i < dryBulbTemperatures.Length; i++)
             {
                 dryBulbTemperatures[i] = Core.Query.Round(dryBulbTemperatures[i], (float)tolerance);

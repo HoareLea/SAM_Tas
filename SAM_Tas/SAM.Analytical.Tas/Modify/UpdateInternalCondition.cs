@@ -274,14 +274,22 @@ namespace SAM.Analytical.Tas
             profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticV);
             if (profile_TBD != null)
             {
-                double value_Temp = Analytical.Query.CalculatedSupplyAirFlow(space);
-                if (!double.IsNaN(value_Temp))
-                {
-                    if (space.TryGetValue(Analytical.SpaceParameter.Volume, out double volume) && !double.IsNaN(volume) && volume > 0)
-                    {
-                        value_Temp = value_Temp / volume * 3600;
-                    }
-                }
+                //The FULL calculated supply-air requirement, in ACH - every basis, per-person included.
+                //
+                //REQUIREMENT vs REALISATION. The four SAM airflow parameters state an engineering requirement;
+                //they do not by themselves prescribe how TAS delivers it (a TBD Ventilation profile, an IZAM,
+                //Tas Systems). The "profile != null" gate below is that choice, and it is deliberately the only
+                //thing that activates Building Simulator mechanical ventilation here: the presence of airflow
+                //data must never switch it on by itself. Where a profile IS assigned, the rate written must be
+                //the whole requirement - internalGain.freshAirRate above holds the per-person rate too, but as
+                //TAS's Outside Air field, which does not itself supply the zone in the simulation, so this is
+                //not a double count.
+                //
+                //This total is not what stopped the ticV factor growing on every round trip: the import used to
+                //read it back as the single SupplyAirChangesPerHour basis, so the next export summed the other
+                //bases on top of it again. SAMZoneMetadata now carries the authored decomposition across the
+                //seam instead. See Query.VentilationAirChangesPerHour and Modify.RestoreVentilationRequirement.
+                double value_Temp = Query.VentilationAirChangesPerHour(space);
 
                 if (double.IsNaN(value_Temp))
                 {

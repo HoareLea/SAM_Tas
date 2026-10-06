@@ -56,7 +56,12 @@ namespace SAM.Analytical.Tas
                     TBD.profile profile_TBD = internalGain.GetProfile((int)TBD.Profiles.ticI);
                     if (profile_TBD != null)
                     {
-                        profile_TBD.name = profile.Name;
+                        //The flattened single-value profile written here is a DIFFERENT definition from the one
+                        //profile.Name names (the full schedule the normal condition carries). Sharing that name
+                        //is what forced the next import to discriminate a same-name/different-values pair,
+                        //accreting one hash suffix per SAM -> TAS -> SAM generation. The flattened HDD profile
+                        //gets a name of its own, exactly as the HDD condition itself does (" - HDD" above).
+                        profile_TBD.name = Query.ProfileName_HDD(profile.Name);
                         profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
                         profile_TBD.factor = 1;
                         profile_TBD.value = System.Convert.ToSingle(value);
@@ -81,7 +86,10 @@ namespace SAM.Analytical.Tas
                         value = profile.MaxValue;
                         if (!double.IsNaN(value))
                         {
-                            profile_TBD.name = profile.Name;
+                            //Same rule as the infiltration slot above: this flattened setpoint is a different
+                            //definition from the full schedule profile.Name names, so it is named after itself
+                            //(" - HDD"), never after the definition it was derived from.
+                            profile_TBD.name = Query.ProfileName_HDD(profile.Name);
                             profile_TBD.type = TBD.ProfileTypes.ticValueProfile;
                             profile_TBD.factor = 1;
                             profile_TBD.value = System.Convert.ToSingle(value);

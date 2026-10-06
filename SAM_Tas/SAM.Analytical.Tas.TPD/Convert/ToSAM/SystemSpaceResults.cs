@@ -102,6 +102,15 @@ namespace SAM.Analytical.Tas.TPD
             foreach (SystemZone systemZone in systemZones)
             {
                 SystemSpaceResult spaceSystemCalculationResults = systemZone?.ToSAM_SpaceSystemResult(null, start, end);
+
+                // A zone that produced no result used to be added as a null element, so every caller had
+                // to remember that a list of results might contain nothing at some positions - and the
+                // count of the list stopped meaning the number of rooms with results.
+                if (spaceSystemCalculationResults == null)
+                {
+                    continue;
+                }
+
                 result.Add(spaceSystemCalculationResults);
             }
 

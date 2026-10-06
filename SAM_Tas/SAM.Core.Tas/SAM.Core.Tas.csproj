@@ -3,8 +3,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
@@ -69,4 +67,34 @@
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
+  <!--
+    SAM_Tas is the canonical, independent owner of files\resources\Analytical\Tas (the engine itself
+    reads these by name - see SAM.Analytical.Tas\Manager\ActiveSetting.cs and
+    SAM.Analytical.Tas.GenOpt\Create\Files.cs). Historically this was only ever deployed as a side
+    effect of the six Grasshopper Tas projects' post-build xcopy, so an engine-only build (a Revit
+    consumer, a benchmark run, this project on its own) never deployed it. This target makes
+    SAM.Core.Tas - the foundational engine project on which the resource-consuming TAS engine
+    projects depend directly or transitively - the single canonical, idempotent producer of that
+    deployment, independent of whether any Grasshopper project is ever built. It is deliberately
+    NOT a guarantee that this runs
+    exactly once per session: SkipUnchangedFiles makes repeat evaluations (e.g. a second project in
+    the same build depending on this one) a cheap no-op, not a duplicate/racing copy.
+  -->
+  <Target Name="DeploySamTasResources"
+          AfterTargets="Build"
+          Condition="'$(DesignTimeBuild)' != 'true' And Exists('$(MSBuildThisFileDirectory)..\..\files\resources\Analytical\Tas')">
+    <ItemGroup>
+      <TasResourceFiles Include="$(MSBuildThisFileDirectory)..\..\files\resources\Analytical\Tas\**\*.*" />
+    </ItemGroup>
+    <MakeDir Directories="$(APPDATA)\SAM\resources\Analytical\Tas"
+             Condition="!Exists('$(APPDATA)\SAM\resources\Analytical\Tas')" />
+    <MakeDir Directories="$(USERPROFILE)\Documents\SAM\resources\Analytical\Tas"
+             Condition="!Exists('$(USERPROFILE)\Documents\SAM\resources\Analytical\Tas')" />
+    <Copy SourceFiles="@(TasResourceFiles)"
+          DestinationFiles="@(TasResourceFiles->'$(APPDATA)\SAM\resources\Analytical\Tas\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(TasResourceFiles)"
+          DestinationFiles="@(TasResourceFiles->'$(USERPROFILE)\Documents\SAM\resources\Analytical\Tas\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
 </Project>

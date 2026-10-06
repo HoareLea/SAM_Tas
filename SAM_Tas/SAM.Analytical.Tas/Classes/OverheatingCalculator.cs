@@ -1,33 +1,77 @@
-﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
-using System.Text.Json.Nodes;
 using SAM.Core;
-using SAM.Weather;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SAM.Analytical.Tas
 {
+    /// <summary>
+    /// The TM52 / TM59 overheating assessment over TAS-simulated space data.
+    /// <para>
+    /// <b>A compatibility wrapper.</b> The calculation itself moved to
+    /// <see cref="TMOverheatingCalculator"/> in <c>SAM.Analytical</c>, because it never called TAS - it read
+    /// two named hourly series off each space and produced <c>TM5x</c> results - and living here meant its
+    /// tests needed a licensed TAS install for no architectural reason. This class stays so that every
+    /// existing Grasshopper and user-interface caller keeps compiling and behaving identically; it adds the
+    /// two things that really are TAS's:
+    /// </para>
+    /// <list type="number">
+    /// <item>the <b>series keys TAS actually writes</b> - notably "Occupant Sensible Gain", which is not
+    /// what the analytical vocabulary calls that quantity ("Occupancy Sensible Gain"). Reading the wrong one
+    /// is silent: the space simply produces no assessment. Reconciling the two is deliberately left as
+    /// separate work, so the wrapper pins TAS's spelling here;</item>
+    /// <item>the <b>provenance</b> stamped on a result when the model is unnamed - this assembly's name, as
+    /// before. Provenance only: it takes no part in any scenario, equipment or result identity.</item>
+    /// </list>
+    /// </summary>
     public class OverheatingCalculator
     {
-        private TextMap textMap = Analytical.Query.DefaultInternalConditionTextMap_TM59();
+        private readonly TMOverheatingCalculator tMOverheatingCalculator;
 
-        public TM52BuildingCategory TM52BuildingCategory { get; set; } = TM52BuildingCategory.CategoryII;
-        
-        public AnalyticalModel AnalyticalModel { get; set; } = null;
+        public OverheatingCalculator(AnalyticalModel analyticalModel)
+        {
+            tMOverheatingCalculator = new TMOverheatingCalculator(analyticalModel)
+            {
+                //The keys TAS wrote, which are not what the analytical vocabulary would have called them.
+                ResultantTemperatureSeriesKey = SpaceDataType.ResultantTemperature.Text(),
+                OccupancySensibleGainSeriesKey = SpaceDataType.OccupantSensibleGain.Text(),
+
+                SourceFallback = Query.Source(),
+            };
+        }
+
+        public TM52BuildingCategory TM52BuildingCategory
+        {
+            get
+            {
+                return tMOverheatingCalculator.TM52BuildingCategory;
+            }
+
+            set
+            {
+                tMOverheatingCalculator.TM52BuildingCategory = value;
+            }
+        }
+
+        public AnalyticalModel AnalyticalModel
+        {
+            get
+            {
+                return tMOverheatingCalculator.AnalyticalModel;
+            }
+
+            set
+            {
+                tMOverheatingCalculator.AnalyticalModel = value;
+            }
+        }
 
         public string Source
         {
             get
             {
-                string result = AnalyticalModel?.Name;
-                if (string.IsNullOrWhiteSpace(result))
-                {
-                    result = Query.Source();
-                }
-
-                return result;
+                return tMOverheatingCalculator.Source;
             }
         }
 
@@ -35,327 +79,43 @@ namespace SAM.Analytical.Tas
         {
             get
             {
-                return textMap;
+                return tMOverheatingCalculator.TextMap;
             }
 
             set
             {
-                textMap = value;
+                tMOverheatingCalculator.TextMap = value;
             }
-        }
-
-        public OverheatingCalculator(AnalyticalModel analyticalModel)
-        {
-            AnalyticalModel = analyticalModel;
         }
 
         public List<TM52ExtendedResult> Calculate_TM52(IEnumerable<Space> spaces, int startHourOfYear = 2880, int endHourOfYear = 6528)
         {
-            if (AnalyticalModel == null || spaces == null)
-            {
-                return null;
-            }
-
-            IndexedDoubles maxIndoorComfortTemperatures = GetMaxIndoorComfortTemperatures();
-            IndexedDoubles minIndoorComfortTemperatures = GetMinIndoorComfortTemperatures();
-
-            List<TM52ExtendedResult> result = new List<TM52ExtendedResult>();
-            foreach (Space space in spaces)
-            {
-                Space space_Temp = AnalyticalModel.GetSpaces()?.Find(x => x.Guid == space.Guid);
-                if (space_Temp == null)
-                {
-                    continue;
-                }
-
-                if (!Core.Query.TryGetValue(space_Temp, SpaceDataType.OccupantSensibleGain.Text(), out JsonArray jArray_OccupantSensibleGain) || jArray_OccupantSensibleGain == null)
-                {
-                    continue;
-                }
-
-                if (!Core.Query.TryGetValue(space_Temp, SpaceDataType.ResultantTemperature.Text(), out JsonArray jArray_ResultantTemperature) || jArray_ResultantTemperature == null)
-                {
-                    continue;
-                }
-
-                HashSet<int> occupiedHourIndices = new HashSet<int>();
-                IndexedDoubles maxAcceptableTemperatures = new IndexedDoubles();
-                IndexedDoubles minAcceptableTemperatures = new IndexedDoubles();
-                IndexedDoubles operativeTemperatures = new IndexedDoubles();
-
-                for (int i = 0; i < jArray_OccupantSensibleGain.Count; i++)
-                {
-                    if(i < startHourOfYear || i > endHourOfYear)
-                    {
-                        continue;
-                    }
-
-                    if (!Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
-                    {
-                        continue;
-                    }
-
-                    maxAcceptableTemperatures.Add(i, maxIndoorComfortTemperatures[i]);
-                    minAcceptableTemperatures.Add(i, minIndoorComfortTemperatures[i]);
-                    operativeTemperatures.Add(i, resultantTemperature);
-
-
-                    if (!Core.Query.TryConvert(jArray_OccupantSensibleGain[i], out double occupantSensibleGain) || double.IsNaN(occupantSensibleGain))
-                    {
-                        continue;
-                    }
-
-                    if(occupantSensibleGain <= 0)
-                    {
-                        continue;
-                    }
-
-                    occupiedHourIndices.Add(i);
-                }
-
-                TM52ExtendedResult tM52ExtendedResult = new TM52ExtendedResult(space_Temp.Name, Source, space.Guid.ToString(), TM52BuildingCategory,occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
-                result.Add(tM52ExtendedResult);
-            }
-
-            return result;
+            return tMOverheatingCalculator.Calculate_TM52(spaces, startHourOfYear, endHourOfYear);
         }
 
         public List<TM59ExtendedResult> Calculate_TM59(IEnumerable<Space> spaces)
         {
-            if (AnalyticalModel == null || spaces == null || textMap == null)
-            {
-                return null;
-            }
-
-            TM59Manager TM59Manager = new TM59Manager(textMap);
-
-            IndexedDoubles maxIndoorComfortTemperatures = GetMaxIndoorComfortTemperatures();
-            IndexedDoubles minIndoorComfortTemperatures = GetMinIndoorComfortTemperatures();
-
-            AdjacencyCluster adjacencyCluster = AnalyticalModel.AdjacencyCluster;
-
-            List<TM59ExtendedResult> result = new List<TM59ExtendedResult>();
-            foreach (Space space in spaces)
-            {
-                Space space_Temp = adjacencyCluster?.GetSpaces()?.Find(x => x.Guid == space.Guid);
-                if (space_Temp == null)
-                {
-                    continue;
-                }
-
-                string systemTypeName = space_Temp?.InternalCondition?.GetSystemTypeName<VentilationSystemType>()?.ToUpper();
-                if(string.IsNullOrWhiteSpace(systemTypeName))
-                {
-                    SystemTypeLibrary systemTypeLibrary = Analytical.Query.DefaultSystemTypeLibrary();
-                    
-                    List<Zone> zones = adjacencyCluster.GetRelatedObjects<Zone>(space_Temp);
-                    if(zones != null)
-                    {
-                        foreach(Zone zone_Temp in zones)
-                        {
-                            VentilationSystemType ventilationSystemType = systemTypeLibrary.GetSystemTypes<VentilationSystemType>(zone_Temp.Name, TextComparisonType.Equals, true)?.FirstOrDefault();
-                            if(ventilationSystemType != null)
-                            {
-                                systemTypeName = ventilationSystemType.Name.ToUpper().Trim();
-                                break;
-                            }
-                        }
-
-                        if (string.IsNullOrWhiteSpace(systemTypeName))
-                        {
-                            foreach (Zone zone_Temp in zones)
-                            {
-                                VentilationSystemType ventilationSystemType = systemTypeLibrary.GetSystemTypes<VentilationSystemType>(zone_Temp.Name, TextComparisonType.StartsWith, false)?.FirstOrDefault();
-                                if (ventilationSystemType != null)
-                                {
-                                    systemTypeName = ventilationSystemType.Name.ToUpper().Trim();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if(string.IsNullOrWhiteSpace(systemTypeName))
-                {
-                    systemTypeName = "NV";
-                }
-
-                List<TM59SpaceApplication> tM59SpaceApplications = TM59Manager.TM59SpaceApplications(space?.InternalCondition);
-                if (tM59SpaceApplications == null || tM59SpaceApplications.Count == 0)
-                {
-                    tM59SpaceApplications = TM59Manager.TM59SpaceApplications(space);
-                }
-
-                if (!Core.Query.TryGetValue(space_Temp, SpaceDataType.OccupantSensibleGain.Text(), out JsonArray jArray_OccupantSensibleGain) || jArray_OccupantSensibleGain == null)
-                {
-                    continue;
-                }
-
-                if (!Core.Query.TryGetValue(space_Temp, SpaceDataType.ResultantTemperature.Text(), out JsonArray jArray_ResultantTemperature) || jArray_ResultantTemperature == null)
-                {
-                    continue;
-                }
-
-                HashSet<int> occupiedHourIndices = new HashSet<int>();
-                IndexedDoubles maxAcceptableTemperatures = new IndexedDoubles();
-                IndexedDoubles minAcceptableTemperatures = new IndexedDoubles();
-                IndexedDoubles operativeTemperatures = new IndexedDoubles();
-
-                for (int i = 0; i < jArray_OccupantSensibleGain.Count; i++)
-                {
-                    if (!Core.Query.TryConvert(jArray_ResultantTemperature[i], out double resultantTemperature) || double.IsNaN(resultantTemperature))
-                    {
-                        continue;
-                    }
-
-                    maxAcceptableTemperatures.Add(i, maxIndoorComfortTemperatures[i]);
-                    minAcceptableTemperatures.Add(i, minIndoorComfortTemperatures[i]);
-                    operativeTemperatures.Add(i, resultantTemperature);
-
-
-                    if (!Core.Query.TryConvert(jArray_OccupantSensibleGain[i], out double occupantSensibleGain) || double.IsNaN(occupantSensibleGain))
-                    {
-                        continue;
-                    }
-
-                    if (occupantSensibleGain <= 0)
-                    {
-                        continue;
-                    }
-
-                    occupiedHourIndices.Add(i);
-                }
-
-                TM59ExtendedResult tM59ExtendedResult = null;
-                if (tM59SpaceApplications == null || tM59SpaceApplications.Count == 0 || (!string.IsNullOrWhiteSpace(systemTypeName) && systemTypeName.Equals("UV")))
-                {
-                    tM59ExtendedResult = new TM59CorridorExtendedResult(space_Temp.Name, Source, space.Guid.ToString(), TM52BuildingCategory, occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
-                }
-                else
-                {
-                    if (!string.IsNullOrWhiteSpace(systemTypeName) && systemTypeName.Equals("NV"))
-                    {
-                        if (tM59SpaceApplications.Contains(TM59SpaceApplication.Sleeping))
-                        {
-                            tM59ExtendedResult = new TM59NaturalVentilationBedroomExtendedResult(space_Temp.Name, Source, space.Guid.ToString(), TM52BuildingCategory, occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
-                        }
-                        else
-                        {
-                            tM59ExtendedResult = new TM59NaturalVentilationExtendedResult(space_Temp.Name, Source, space.Guid.ToString(), TM52BuildingCategory, occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, tM59SpaceApplications?.ToArray());
-                        }
-                    }
-                    else
-                    {
-                        tM59ExtendedResult = new TM59MechanicalVentilationExtendedResult(space_Temp.Name, Source, space.Guid.ToString(), TM52BuildingCategory, occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, tM59SpaceApplications?.ToArray());
-                    }
-                }
-
-                if(tM59ExtendedResult == null)
-                {
-                    continue;
-                }
-
-                result.Add(tM59ExtendedResult);
-            }
-
-            return result;
+            return tMOverheatingCalculator.Calculate_TM59(spaces);
         }
 
         public IndexedDoubles GetMaxIndoorComfortTemperatures(Period period = Period.Hourly)
         {
-            if (!AnalyticalModel.TryGetValue(Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
-            {
-                return null;
-            }
-
-            WeatherYear weatherYear = weatherData?.WeatherYears?.FirstOrDefault();
-            if (weatherYear == null)
-            {
-                return null;
-            }
-
-            List<double> values = Analytical.Query.MaxIndoorComfortTemperatures(weatherYear, TM52BuildingCategory);
-            if (values == null || values.Count == 0)
-            {
-                return null;
-            }
-
-            IndexedDoubles result = new IndexedDoubles(values);
-
-            return result.Repeat(period, Period.Daily);
+            return tMOverheatingCalculator.GetMaxIndoorComfortTemperatures(period);
         }
 
         public IndexedDoubles GetMaxIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
         {
-            if (!AnalyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
-            {
-                return null;
-            }
-
-            WeatherYear weatherYear = weatherData?.WeatherYears?.FirstOrDefault();
-            if (weatherYear == null)
-            {
-                return null;
-            }
-
-            List<double> values = Analytical.Query.MaxIndoorComfortTemperatures(weatherYear, TM52BuildingCategory, startDayIndex, endDayIndex);
-            if (values == null || values.Count == 0)
-            {
-                return null;
-            }
-
-            IndexedDoubles result = new IndexedDoubles(values, startDayIndex);
-
-            return result.Repeat(period, Period.Daily);
+            return tMOverheatingCalculator.GetMaxIndoorComfortTemperatures(startDayIndex, endDayIndex, period);
         }
 
         public IndexedDoubles GetMinIndoorComfortTemperatures(Period period = Period.Hourly)
         {
-            if (!AnalyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
-            {
-                return null;
-            }
-
-            WeatherYear weatherYear = weatherData?.WeatherYears?.FirstOrDefault();
-            if (weatherYear == null)
-            {
-                return null;
-            }
-
-            List<double> values = Analytical.Query.MinIndoorComfortTemperatures(weatherYear, TM52BuildingCategory);
-            if (values == null || values.Count == 0)
-            {
-                return null;
-            }
-
-            IndexedDoubles result = new IndexedDoubles(values);
-
-            return result.Repeat(period, Period.Daily);
+            return tMOverheatingCalculator.GetMinIndoorComfortTemperatures(period);
         }
 
         public IndexedDoubles GetMinIndoorComfortTemperatures(int startDayIndex, int endDayIndex, Period period = Period.Hourly)
         {
-            if (!AnalyticalModel.TryGetValue(SAM.Analytical.AnalyticalModelParameter.WeatherData, out WeatherData weatherData) || weatherData == null)
-            {
-                return null;
-            }
-
-            WeatherYear weatherYear = weatherData?.WeatherYears?.FirstOrDefault();
-            if (weatherYear == null)
-            {
-                return null;
-            }
-
-            List<double> values = Analytical.Query.MinIndoorComfortTemperatures(weatherYear, TM52BuildingCategory, startDayIndex, endDayIndex);
-            if (values == null || values.Count == 0)
-            {
-                return null;
-            }
-
-            IndexedDoubles result = new IndexedDoubles(values, startDayIndex);
-
-            return result.Repeat(period, Period.Daily);
+            return tMOverheatingCalculator.GetMinIndoorComfortTemperatures(startDayIndex, endDayIndex, period);
         }
     }
 }

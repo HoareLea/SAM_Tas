@@ -1,4 +1,7 @@
-﻿using SAM.Analytical.Systems;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using SAM.Analytical.Systems;
 using System.Collections.Generic;
 using TPD;
 
@@ -23,16 +26,22 @@ namespace SAM.Analytical.Tas.TPD
                 return null;
             }
 
-            int index = 1;
-
             dynamic @dynamic = systemComponent;
 
             List<ZoneLoad> result = new List<ZoneLoad>();
 
+            // 1-based, and the index must advance: reading GetZoneLoad(1) on every pass returned the first
+            // load N times for a zone carrying N of them. Nulls are skipped, matching the two TSDData
+            // overloads below, so a hole in the collection is not handed to the caller as a null element.
             int count = @dynamic.GetZoneLoadCount();
             for (int i = 1; i <= count; i++)
             {
-                ZoneLoad zoneLoad = @dynamic.GetZoneLoad(index);
+                ZoneLoad zoneLoad = @dynamic.GetZoneLoad(i);
+                if (zoneLoad == null)
+                {
+                    continue;
+                }
+
                 result.Add(zoneLoad);
             }
 

@@ -319,20 +319,11 @@ namespace SAM.Analytical.Tas
             int layerIndex = layerThicknessCalculationData.LayerIndex;
             if(layerIndex == -1)
             {
-                double conductivity = double.MaxValue;
-                for (int i = 0; i < materials.Count; i++)
+                layerIndex = Query.AdjustableLayerIndex(materials);
+                if(layerIndex == -1)
                 {
-                    double conductivity_Temp = materials[i].conductivity;
-                    if(conductivity_Temp <= 0)
-                    {
-                        continue;
-                    }
-
-                    if (conductivity_Temp < conductivity)
-                    {
-                        layerIndex = i;
-                        conductivity = conductivity_Temp;
-                    }
+                    // No layer that may be adjusted (all gas, glass, too thin or without conductivity).
+                    return new LayerThicknessCalculationResult(Query.Source(), layerThicknessCalculationData.ConstructionName, -1, double.NaN, initialThermalTransmittance, thermalTransmittance, double.NaN);
                 }
             }
 

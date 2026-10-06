@@ -68,6 +68,7 @@ namespace SAM.Analytical.Tas
             double factor = 1;
             string function = null;
             Profile profile_SAM = null;
+            DailyAvailabilitySchedule dailyAvailabilitySchedule = null;
 
             try
             {
@@ -82,22 +83,37 @@ namespace SAM.Analytical.Tas
                     }
 
                     TBD.schedule schedule = profile.schedule;
-                    if (schedule != null)
+                    int[] values_Schedule = schedule.HourlyValues();
+                    if (values_Schedule != null)
                     {
-                        List<double> values = new List<double>(24);
-                        for (int i = 0; i < 24; i++)
+                        string name_Schedule = string.IsNullOrWhiteSpace(schedule.name) ? apertureType.name : schedule.name;
+
+                        //A binary TAS schedule is an availability schedule and is read back as one, so a
+                        //re-export goes through the first-class path and reuses the very schedule it came
+                        //from instead of creating a second one.
+                        dailyAvailabilitySchedule = schedule.DailyAvailabilitySchedule();
+                        if (dailyAvailabilitySchedule != null && string.IsNullOrWhiteSpace(dailyAvailabilitySchedule.Name))
                         {
-                            values.Add(System.Convert.ToDouble(schedule.get_values(i)));
+                            dailyAvailabilitySchedule = new DailyAvailabilitySchedule(name_Schedule, dailyAvailabilitySchedule);
                         }
 
-                        string profileName = string.IsNullOrWhiteSpace(schedule.name) ? apertureType.name : schedule.name;
-                        profile_SAM = new Profile(profileName, values);
+                        //The general-valued Profile is kept as well, and is the ONLY carrier when the TAS
+                        //schedule is not binary - a user-authored general curve must survive the round trip
+                        //unchanged rather than be coerced into an availability mask. Where both are present
+                        //the explicit Schedule governs the re-export; see ProfileOpeningProperties.
+                        List<double> values = new List<double>(24);
+                        for (int i = 0; i < values_Schedule.Length; i++)
+                        {
+                            values.Add(System.Convert.ToDouble(values_Schedule[i]));
+                        }
+
+                        profile_SAM = new Profile(name_Schedule, values);
                     }
                 }
             }
             catch { }
 
-            ProfileOpeningProperties openingProperties = new ProfileOpeningProperties(dischargeCoefficient, profile_SAM)
+            ProfileOpeningProperties openingProperties = new ProfileOpeningProperties(dischargeCoefficient, profile_SAM, dailyAvailabilitySchedule)
             {
                 Factor = factor
             };

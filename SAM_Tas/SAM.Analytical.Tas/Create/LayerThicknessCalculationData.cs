@@ -1,5 +1,7 @@
-﻿using SAM.Core;
-using System.Collections.Generic;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using SAM.Core;
 
 namespace SAM.Analytical.Tas
 {
@@ -20,36 +22,7 @@ namespace SAM.Analytical.Tas
 
             constructionName = construction.Name;
 
-            List<ConstructionLayer> constructionLayers = construction.ConstructionLayers;
-            if (constructionLayers != null && constructionLayers.Count != 0)
-            {
-                double min = double.MaxValue;
-                int index_Temp = -1;
-                for (int i = 0; i < constructionLayers.Count; i++)
-                {
-                    Material material = materialLibrary?.GetMaterial(constructionLayers[i]?.Name) as Material;
-                    if (material == null)
-                    {
-                        continue;
-                    }
-
-                    if (constructionLayers[i].Thickness < 0.01)
-                    {
-                        continue;
-                    }
-
-                    if (material.ThermalConductivity < min)
-                    {
-                        index_Temp = i;
-                        min = material.ThermalConductivity;
-                    }
-                }
-
-                if (index_Temp != -1)
-                {
-                    layerIndex = index_Temp;
-                }
-            }
+            layerIndex = Query.AdjustableLayerIndex(construction, materialLibrary);
 
             PanelType panelType = PanelType.Undefined;
             if (construction.TryGetValue(Analytical.ConstructionParameter.DefaultPanelType, out string string_PanelType))

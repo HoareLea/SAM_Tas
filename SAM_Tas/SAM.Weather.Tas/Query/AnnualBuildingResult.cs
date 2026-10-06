@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using System.Collections;
 using System.Collections.Generic;
 using TSD;
 
@@ -11,7 +14,16 @@ namespace SAM.Weather.Tas
             if (buildingData == null)
                 return null;
 
-            IEnumerable enumerable = buildingData.GetAnnualBuildingResult((int)tsdBuildingArray) as IEnumerable;
+            return BuildingResultValues<T>(buildingData.GetAnnualBuildingResult((int)tsdBuildingArray));
+        }
+
+        /// <summary>
+        /// A TSD building result - annual or daily - as a list of <typeparamref name="T"/>, in the order TSD returned
+        /// it; null when TSD answered nothing enumerable.
+        /// </summary>
+        internal static List<T> BuildingResultValues<T>(object result_TSD)
+        {
+            IEnumerable enumerable = result_TSD as IEnumerable;
             if (enumerable == null)
                 return null;
 

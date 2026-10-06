@@ -131,25 +131,20 @@ namespace SAM.Analytical.Tas
 
                 Modify.UpdateZones(tBDDocument.Building, analyticalModel, true);
 
-                if(coolingDesignDays == null)
-                {
-                    if(analyticalModel.TryGetValue(Analytical.AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> designDays, true))
-                    {
-                        coolingDesignDays = designDays;
-                    }
-                }
+                // Same rule as WorkflowCalculator: a caller who states a weather makes that weather
+                // authoritative over the design days it did not state outright, so a re-export with a new
+                // weather cannot size on the design days the model brought back from the old one.
+                Query.DesignDays_Authoritative(
+                    analyticalModel,
+                    weatherData,
+                    coolingDesignDays,
+                    heatingDesignDays,
+                    out List<DesignDay> coolingDesignDays_Authoritative,
+                    out List<DesignDay> heatingDesignDays_Authoritative);
 
-                if (heatingDesignDays == null)
+                if (coolingDesignDays_Authoritative != null || heatingDesignDays_Authoritative != null)
                 {
-                    if (analyticalModel.TryGetValue(Analytical.AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> designDays, true))
-                    {
-                        heatingDesignDays = designDays;
-                    }
-                }
-
-                if (coolingDesignDays != null || heatingDesignDays != null)
-                {
-                    Modify.AddDesignDays(tBDDocument, coolingDesignDays, heatingDesignDays, 30);
+                    Modify.AddDesignDays(tBDDocument, coolingDesignDays_Authoritative, heatingDesignDays_Authoritative, 30);
                 }
 
                 Modify.UpdateShading(tBDDocument.Building, analyticalModel);

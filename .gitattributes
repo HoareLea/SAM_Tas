@@ -1,0 +1,4 @@
+# The benchmark producer golden fixtures are asserted byte-for-byte against the serializer
+# output, which is UTF-8 without BOM and uses LF newlines. Pin them to LF so Git's autocrlf
+# setting cannot rewrite them to CRLF on checkout and break the byte-stability comparison.
+benchmark/**/*.json text eol=lf

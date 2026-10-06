@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
 
 using SAM.Core;
@@ -43,20 +43,40 @@ namespace SAM.Analytical.Tas
             profile_TBD.type = ProfileTypes.ticYearlyProfile;
             profile_TBD.factor = System.Convert.ToSingle(factor);
 
-            //object yearlyValues_TBD = profile_TBD.GetYearlyValues();
-
-            //float[] array = Query.Array<float>(yearlyValues_TBD);
-
             double[] yearlyValues =  profile.GetYearlyValues();
             float[] yearlyValues_float = new float[yearlyValues.Length];
             for (int i = 0; i < yearlyValues_float.Length; i++)
                 yearlyValues_float[i] = System.Convert.ToSingle(yearlyValues[i]);
 
-            profile_TBD.SetYearlyValues(yearlyValues_float);
+            return UpdateYearlyValues(profile_TBD, yearlyValues_float);
+        }
 
-            //for (int i = 0; i < 8759; i++)
-            //    profile_TBD.yearlyValues[i] = System.Convert.ToSingle(profile[i]);
+        /// <summary>
+        /// Writes one year of hourly values onto a TBD yearly profile: 0-based hour <c>k</c> of
+        /// <paramref name="values"/> lands in the profile's 1-based slot <c>k + 1</c>.
+        /// <para>
+        /// <b>Never hand <c>profile.SetYearlyValues</c> a 0-based array directly.</b> Measured on licensed
+        /// TAS (2026-09-10/11): <c>SetYearlyValues(float[])</c> ignores element 0, stores element <c>i</c> in
+        /// slot <c>i</c> and repeats the last element into any slot the array does not reach. A 0-based
+        /// <c>float[8760]</c> is therefore written one hour early with hour 8760 duplicated - silently, with
+        /// no error - and since the import (<c>Core.Tas.Query.Values</c>) reads slot <c>k + 1</c> back as hour
+        /// <c>k</c>, every export/import generation moved a yearly profile one more hour earlier. Here the
+        /// array is 8761 long with element 0 unused, which TAS maps exactly; one COM call, as before.
+        /// </para>
+        /// </summary>
+        /// <returns>False where nothing was written - <paramref name="values"/> must hold exactly 8760 hours.</returns>
+        public static bool UpdateYearlyValues(this profile profile_TBD, IList<float> values)
+        {
+            const int hoursPerYear = 8760;
 
+            if (profile_TBD == null || values == null || values.Count != hoursPerYear)
+                return false;
+
+            float[] slots = new float[hoursPerYear + 1];
+            for (int k = 0; k < hoursPerYear; k++)
+                slots[k + 1] = values[k];
+
+            profile_TBD.SetYearlyValues(slots);
             return true;
         }
 
@@ -535,7 +555,11 @@ namespace SAM.Analytical.Tas
             Plane plane = Plane.WorldXY;
 
             Dictionary<Guid, List<Tuple<zoneSurface, bool>>> dictionary_Panel = new Dictionary<Guid, List<Tuple<zoneSurface, bool>>>();
-            Dictionary<Guid, List<Tuple<AperturePart, zoneSurface, bool>>> dictionary_Aperture = new Dictionary<Guid, List<Tuple<AperturePart, zoneSurface, bool>>>();
+            //Every physical surface each aperture contributed, with the ZONE it is in and the PANEL it came
+            //from. The zone is what makes a surface number an identity - numbers are scoped to their zone - and
+            //the two together are what gets stamped back, ONCE, after every surface of every aperture exists.
+            //See the canonical stamping pass at the end of this method.
+            Dictionary<Guid, List<ApertureZoneSurfaceRecord>> dictionary_Aperture = new Dictionary<Guid, List<ApertureZoneSurfaceRecord>>();
 
             // Hoist these out of the per-space loop. They were being refetched via COM PER SPACE and then
             // linear-scanned per panel (lines below) — O(spaces * panels * existingElements).
@@ -554,6 +578,12 @@ namespace SAM.Analytical.Tas
                 if (!string.IsNullOrEmpty(c?.name))
                     constructionsByName[c.name] = c;
             }
+
+            // The building's reusable definitions - schedules and aperture types - read once for the whole
+            // export. A TBD aperture type is shared by every element stating the same opening control, so
+            // this is what lets 200 identical windows resolve to one type and 200 assignments instead of
+            // one type each. Its lifetime is this one open document.
+            BuildingReuseCache buildingReuseCache = new BuildingReuseCache(building);
 
             foreach (Space space in spaces)
             {
@@ -854,15 +884,11 @@ namespace SAM.Analytical.Tas
                                     continue;
                                 }
 
-                                string name = Query.Name(aperture.UniqueName(), false, true, true, false);
-
-                                // Tas stores window/door building elements with a leading
-                                // "Windows: " / "Doors: " prefix (see native .tbd naming). Mirror
-                                // that here so exported -pane/-frame elements match the convention.
-                                string prefix = aperture.ApertureType == ApertureType.Door ? "Doors: " : "Windows: ";
-                                name = string.Concat(prefix, name);
-
-                                Dictionary<string, Tuple<AperturePart, List<zoneSurface>>> dictionary = new Dictionary<string, Tuple<AperturePart, List<zoneSurface>>>();
+                                // The physical surfaces this aperture contributes, frame first then pane -
+                                // one entry per PART, at most two. Keyed by part rather than by the element
+                                // name it used to be keyed by: a building element is now shared between
+                                // equivalent apertures, so its name is no longer this aperture's own.
+                                List<Tuple<AperturePart, List<zoneSurface>>> apertureParts = new List<Tuple<AperturePart, List<zoneSurface>>>();
 
                                 double thickness = double.NaN;
 
@@ -875,8 +901,8 @@ namespace SAM.Analytical.Tas
                                     List<Face3D> face3Ds_Frame = aperture.GetFace3Ds(AperturePart.Frame);
                                     if (face3Ds_Frame != null)
                                     {
-                                        string apertureName_Frame = string.Format("{0} {1}", name, AperturePart.Frame.Sufix());
-                                        dictionary[apertureName_Frame] = new Tuple<AperturePart, List<zoneSurface>>(AperturePart.Frame, new List<zoneSurface>());
+                                        Tuple<AperturePart, List<zoneSurface>> aperturePart_Frame = new Tuple<AperturePart, List<zoneSurface>>(AperturePart.Frame, new List<zoneSurface>());
+                                        apertureParts.Add(aperturePart_Frame);
                                         foreach (Face3D face3D_Frame in face3Ds_Frame)
                                         {
                                             // here we added fix so Pane/Frame on secnd side will be correctyl shaded...
@@ -890,16 +916,10 @@ namespace SAM.Analytical.Tas
                                             if (zoneSurface != null)
                                             {
                                                 //zoneSurface.reversed = 1;
-                                                dictionary[apertureName_Frame].Item2.Add(zoneSurface);
+                                                aperturePart_Frame.Item2.Add(zoneSurface);
 
-                                                if (updateGuids)
-                                                {
-                                                    Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
-                                                    ApertureParameter apertureParameter = aperture_Temp.HasValue(ApertureParameter.FrameZoneSurfaceReference_1) ? ApertureParameter.FrameZoneSurfaceReference_2 : ApertureParameter.FrameZoneSurfaceReference_1;
-                                                    aperture_Temp.SetValue(apertureParameter, new Core.Tas.ZoneSurfaceReference(zoneSurface.number, zone.GUID));
-                                                    panel_Temp.RemoveAperture(aperture_Temp.Guid);
-                                                    panel_Temp.AddAperture(aperture_Temp);
-                                                }
+                                                //The stamp is deferred to the canonical pass at the end of
+                                                //this method, which can see both sides of the aperture at once.
                                             }
                                         }
                                     }
@@ -911,8 +931,8 @@ namespace SAM.Analytical.Tas
                                     List<Face3D> face3Ds_Pane = aperture.GetFace3Ds(AperturePart.Pane);
                                     if (face3Ds_Pane != null)
                                     {
-                                        string apertureName_Pane = string.Format("{0} {1}", name, AperturePart.Pane.Sufix());
-                                        dictionary[apertureName_Pane] = new Tuple<AperturePart, List<zoneSurface>>(AperturePart.Pane, new List<zoneSurface>());
+                                        Tuple<AperturePart, List<zoneSurface>> aperturePart_Pane = new Tuple<AperturePart, List<zoneSurface>>(AperturePart.Pane, new List<zoneSurface>());
+                                        apertureParts.Add(aperturePart_Pane);
                                         foreach (Face3D face3D_Pane in face3Ds_Pane)
                                         {
                                             // here we added fix so Pane/Frame on secnd side will be correctyl shaded...
@@ -925,102 +945,70 @@ namespace SAM.Analytical.Tas
                                             zoneSurface zoneSurface = func.Invoke(face3D_Pane);
                                             if (zoneSurface != null)
                                             {
-                                                dictionary[apertureName_Pane].Item2.Add(zoneSurface);
+                                                aperturePart_Pane.Item2.Add(zoneSurface);
 
-                                                if (updateGuids)
-                                                {
-                                                    Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
-                                                    ApertureParameter apertureParameter = aperture_Temp.HasValue(ApertureParameter.PaneZoneSurfaceReference_1) ? ApertureParameter.PaneZoneSurfaceReference_2 : ApertureParameter.PaneZoneSurfaceReference_1;
-                                                    aperture_Temp.SetValue(apertureParameter, new Core.Tas.ZoneSurfaceReference(zoneSurface.number, zone.GUID));
-                                                    panel_Temp.RemoveAperture(aperture_Temp.Guid);
-                                                    panel_Temp.AddAperture(aperture_Temp);
-                                                }
+                                                //Stamped by the canonical pass at the end of this method.
                                             }
                                         }
                                     }
                                 }
 
-                                foreach (KeyValuePair<string, Tuple<AperturePart, List<zoneSurface>>> keyValuePair in dictionary)
+                                foreach (Tuple<AperturePart, List<zoneSurface>> tuple_AperturePart in apertureParts)
                                 {
-                                    buildingElementsByName.TryGetValue(keyValuePair.Key, out buildingElement buildingElement_Aperture);
-                                    if (buildingElement_Aperture == null)
-                                    {
+                                    AperturePart aperturePart = tuple_AperturePart.Item1;
 
-                                        AperturePart aperturePart = keyValuePair.Value.Item1;
+                                    // ---------------------------------------------------------------------
+                                    // A TBD Construction and an aperture buildingElement are both REUSABLE
+                                    // DEFINITIONS, shared by every element and every surface that states the
+                                    // same thing - the same relationship a TBD ApertureType has, one level
+                                    // up. The physical windows are the zoneSurfaces created above, and they
+                                    // stay one per window whatever happens here; what is resolved below is
+                                    // how many DEFINITIONS those surfaces point at.
+                                    //
+                                    // Identity is the DEFINITION and never the name. The previous code looked
+                                    // both objects up BY NAME, which was safe only because the name carried
+                                    // the aperture's own GUID and so matched nothing but itself; with names
+                                    // derived from the reusable SAM ApertureConstruction, a by-name lookup
+                                    // would hand one window another window's glazing. So: full content
+                                    // equality decides reuse, and a name taken by different content gets a
+                                    // deterministic collision suffix rather than being adopted.
+                                    //
+                                    // A shared definition is IMMUTABLE. On a hit nothing whatever is written
+                                    // to it - not even rewritten to the same value - because every other
+                                    // aperture referencing it would see the write.
+                                    // ---------------------------------------------------------------------
 
-                                        TBD.Construction construction_TBD = null;
+                                    //The refusals below are deliberately discarded: this entry point has no notes
+                                    //channel, and adding one would change Modify.Update's signature and every caller
+                                    //of it. What a refusal costs is diagnosability, not correctness - the outcome is
+                                    //always the conservative one, an extra definition or none. Stage 3 owns reporting.
+                                    //
+                                    //The resolve-or-create itself lives in Modify.ResolveApertureDefinition, so the
+                                    //gbXML/T3D route resolves definitions through the SAME code rather than a second
+                                    //copy of these rules. The dictionaries carry the panel names this export has
+                                    //already created, so an aperture name can never collide with a panel one.
+                                    building.ResolveApertureDefinition(
+                                        buildingReuseCache,
+                                        aperture,
+                                        aperturePart,
+                                        materialLibrary,
+                                        constructionsByName,
+                                        buildingElementsByName,
+                                        out TBD.Construction _,
+                                        out buildingElement buildingElement_Aperture,
+                                        out ConstructionDefinition _,
+                                        out BuildingElementDefinition _,
+                                        out bool _,
+                                        out bool _,
+                                        out string _);
 
-                                        ApertureConstruction apertureConstruction = aperture.ApertureConstruction;
-                                        if (apertureConstruction != null)
-                                        {
-                                            string constructionName = string.Format("{0} {1}", Query.Name(aperture.UniqueName(), false, true, false, false), aperturePart.Sufix());
-
-                                            constructionsByName.TryGetValue(constructionName ?? string.Empty, out construction_TBD);
-                                            if (construction_TBD == null)
-                                            {
-                                                construction_TBD = building.AddConstruction(null);
-                                                construction_TBD.name = constructionName;
-
-                                                if (apertureConstruction.Transparent(materialLibrary, keyValuePair.Value.Item1))
-                                                {
-                                                    construction_TBD.type = TBD.ConstructionTypes.tcdTransparentConstruction;
-                                                }
-
-                                                List<ConstructionLayer> constructionLayers = apertureConstruction.GetConstructionLayers(aperturePart);
-                                                if (constructionLayers != null && constructionLayers.Count != 0)
-                                                {
-                                                    int index = 1;
-                                                    foreach (ConstructionLayer constructionLayer in constructionLayers)
-                                                    {
-                                                        Material material = materialLibrary?.GetMaterial(constructionLayer.Name) as Material;
-                                                        if (material == null)
-                                                        {
-                                                            continue;
-                                                        }
-
-                                                        TBD.material material_TBD = construction_TBD.AddMaterial(material);
-                                                        if (material_TBD != null)
-                                                        {
-                                                            material_TBD.width = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                            construction_TBD.materialWidth[index] = System.Convert.ToSingle(constructionLayer.Thickness);
-                                                            index++;
-                                                        }
-                                                    }
-                                                }
-
-                                                constructions.Add(construction_TBD);
-                                                if (!string.IsNullOrEmpty(construction_TBD.name))
-                                                    constructionsByName[construction_TBD.name] = construction_TBD;
-                                            }
-                                        }
-
-                                        if (construction_TBD != null)
-                                        {
-                                            ApertureType apertureType = aperture.ApertureType;
-
-                                            buildingElement_Aperture = building.AddBuildingElement();
-                                            buildingElement_Aperture.name = keyValuePair.Key;
-
-                                            buildingElement_Aperture.SetColor(aperture, aperturePart);
-
-                                            buildingElement_Aperture.BEType = Query.BEType(keyValuePair.Value.Item1);
-                                            buildingElement_Aperture.AssignConstruction(construction_TBD);
-                                            buildingElements.Add(buildingElement_Aperture);
-                                            if (!string.IsNullOrEmpty(buildingElement_Aperture.name))
-                                                buildingElementsByName[buildingElement_Aperture.name] = buildingElement_Aperture;
-                                        }
-
-
-
-                                        if (aperturePart == AperturePart.Pane && aperture.TryGetValue(Analytical.ApertureParameter.OpeningProperties, out IOpeningProperties openingProperties))
-                                        {
-                                            List<TBD.ApertureType> apertureTypes = SetApertureTypes(building, buildingElement_Aperture, openingProperties);
-                                        }
-                                    }
-
+                                    //Identity stamps are per PHYSICAL aperture and are unchanged. After
+                                    //sharing, many apertures legitimately stamp the same BuildingElementGuid;
+                                    //the ZoneSurfaceReferences written above stay one per physical surface,
+                                    //which is what the TSD result mapping and the import both key on.
                                     if (updateGuids && buildingElement_Aperture != null)
                                     {
-                                        ApertureParameter apertureParameter = keyValuePair.Value.Item1 == AperturePart.Frame ? ApertureParameter.FrameBuildingElementGuid : ApertureParameter.PaneBuildingElementGuid;
+                                        ApertureParameter apertureParameter = aperturePart == AperturePart.Frame ? ApertureParameter.FrameBuildingElementGuid : ApertureParameter.PaneBuildingElementGuid;
 
                                         Aperture aperture_Temp = panel_Temp.GetAperture(aperture.Guid);
                                         aperture_Temp.SetValue(apertureParameter, buildingElement_Aperture.GUID);
@@ -1028,20 +1016,27 @@ namespace SAM.Analytical.Tas
                                         panel_Temp.AddAperture(aperture_Temp);
                                     }
 
-                                    foreach (zoneSurface zoneSurface in keyValuePair.Value.Item2)
+                                    foreach (zoneSurface zoneSurface in tuple_AperturePart.Item2)
                                     {
                                         if (buildingElement_Aperture != null)
                                         {
                                             zoneSurface.buildingElement = buildingElement_Aperture;
                                         }
 
-                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<Tuple<AperturePart, zoneSurface, bool>> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
+                                        if (!dictionary_Aperture.TryGetValue(aperture.Guid, out List<ApertureZoneSurfaceRecord> zoneSurfaces_Aperture) || zoneSurfaces_Aperture == null)
                                         {
-                                            zoneSurfaces_Aperture = new List<Tuple<AperturePart, zoneSurface, bool>>();
+                                            zoneSurfaces_Aperture = new List<ApertureZoneSurfaceRecord>();
                                             dictionary_Aperture[aperture.Guid] = zoneSurfaces_Aperture;
                                         }
 
-                                        zoneSurfaces_Aperture.Add(new Tuple<AperturePart, zoneSurface, bool>(keyValuePair.Value.Item1, zoneSurface, dictionary_Panel.ContainsKey(panel.Guid)));
+                                        zoneSurfaces_Aperture.Add(new ApertureZoneSurfaceRecord
+                                        {
+                                            AperturePart = aperturePart,
+                                            ZoneSurface = zoneSurface,
+                                            Reverse = dictionary_Panel.ContainsKey(panel.Guid),
+                                            ZoneGuid = zone.GUID,
+                                            PanelGuid = panel.Guid
+                                        });
                                     }
                                 }
                             }
@@ -1148,7 +1143,7 @@ namespace SAM.Analytical.Tas
                 }
             }
 
-            foreach (KeyValuePair<Guid, List<Tuple<AperturePart, zoneSurface, bool>>> keyValuePair in dictionary_Aperture)
+            foreach (KeyValuePair<Guid, List<ApertureZoneSurfaceRecord>> keyValuePair in dictionary_Aperture)
             {
                 if (keyValuePair.Value == null || keyValuePair.Value.Count <= 1)
                 {
@@ -1157,7 +1152,7 @@ namespace SAM.Analytical.Tas
 
                 List<zoneSurface> zoneSurfaces = null;
 
-                zoneSurfaces = keyValuePair.Value.FindAll(x => x.Item1 == AperturePart.Frame).ConvertAll(x => x.Item2);
+                zoneSurfaces = keyValuePair.Value.FindAll(x => x.AperturePart == AperturePart.Frame).ConvertAll(x => x.ZoneSurface);
                 if (zoneSurfaces.Count == 2)
                 {
                     zoneSurfaces[1].linkSurface = zoneSurfaces[0];
@@ -1165,31 +1160,102 @@ namespace SAM.Analytical.Tas
                 }
 
 
-                zoneSurfaces = keyValuePair.Value.FindAll(x => x.Item1 == AperturePart.Pane).ConvertAll(x => x.Item2);
+                zoneSurfaces = keyValuePair.Value.FindAll(x => x.AperturePart == AperturePart.Pane).ConvertAll(x => x.ZoneSurface);
                 if (zoneSurfaces.Count == 2)
                 {
                     zoneSurfaces[1].linkSurface = zoneSurfaces[0];
                     zoneSurfaces[0].linkSurface = zoneSurfaces[1];
                 }
 
-                foreach (Tuple<AperturePart, zoneSurface, bool> tuple in keyValuePair.Value)
+                foreach (ApertureZoneSurfaceRecord record in keyValuePair.Value)
                 {
-                    if (!tuple.Item3)
+                    if (!record.Reverse)
                     {
                         continue;
                     }
 
-                    float orientation = tuple.Item2.orientation;
+                    float orientation = record.ZoneSurface.orientation;
                     orientation += 180;
                     if (orientation >= 360)
                     {
                         orientation -= 360;
                     }
-                    tuple.Item2.orientation = orientation;
+                    record.ZoneSurface.orientation = orientation;
 
-                    tuple.Item2.reversed = 1;  // only second panel window does not workk internla
+                    record.ZoneSurface.reversed = 1;  // only second panel window does not work internally
                 }
             }
+
+            // -----------------------------------------------------------------------------------------------
+            // THE PHYSICAL IDENTITY STAMPS, written once, now that every surface of every aperture exists.
+            //
+            // Deferred deliberately. A slot is a SIDE, and both sides of an internal aperture are only known
+            // after both zones have been walked. The inline write this replaces filled _1 then _2 in creation
+            // order and only where the slot was EMPTY, which gave two defects:
+            //
+            //   * re-exporting a model that was already stamped left the previous run's _1 in place - pointing
+            //     at whatever surface number TAS has since assigned to something else - and overwrote _2;
+            //   * an aperture whose pane is split into several faces filled BOTH slots from ONE side, so the
+            //     other side had no stamp at all.
+            //
+            // Both slots are therefore CLEARED and refilled from Query.ApertureZoneSurfaceSides: one slot per
+            // ZONE, ordered by zone GUID. That makes the answer a property of the model rather than of an
+            // enumeration order, so the same aperture lands the same way round on every run, and the export,
+            // the import and UpdateIds all agree.
+            //
+            // The BuildingElementGuid stamps stay where they are written above: they are definition BINDINGS,
+            // not physical identity, and after Stage 2 many apertures legitimately carry the same one.
+            // -----------------------------------------------------------------------------------------------
+            if (updateGuids)
+            {
+                foreach (KeyValuePair<Guid, List<ApertureZoneSurfaceRecord>> keyValuePair in dictionary_Aperture)
+                {
+                    List<ApertureZoneSurfaceRecord> records = keyValuePair.Value;
+                    if (records == null || records.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    Panel panel = adjacencyCluster.GetObject<Panel>(records[0].PanelGuid);
+                    Aperture aperture = panel?.GetAperture(keyValuePair.Key);
+                    if (aperture == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (AperturePart aperturePart in new AperturePart[] { AperturePart.Pane, AperturePart.Frame })
+                    {
+                        //Modify.SetApertureZoneSurfaceReferences owns the whole rule - clear both slots, order
+                        //by zone, preserve the caller's spelling of the GUID - and the import and UpdateIds
+                        //call the same one, which is what keeps the three paths from disagreeing.
+                        aperture.SetApertureZoneSurfaceReferences(aperturePart, records.FindAll(x => x.AperturePart == aperturePart).ConvertAll(x => new Core.Tas.ZoneSurfaceReference(x.ZoneSurface.number, x.ZoneGuid)), out string _);
+                    }
+
+                    panel.RemoveAperture(aperture.Guid);
+                    panel.AddAperture(aperture);
+                    adjacencyCluster.AddObject(panel);
+                }
+            }
+        }
+
+        /// <summary>
+        /// One physical aperture surface the export created, with the zone it lives in and the panel it came
+        /// from - everything the deferred identity stamp needs. The zone is the half of physical identity a
+        /// surface number does not carry: numbers are scoped to their zone, so a number alone names a surface in
+        /// every zone in the building.
+        /// </summary>
+        private sealed class ApertureZoneSurfaceRecord
+        {
+            public AperturePart AperturePart;
+
+            public zoneSurface ZoneSurface;
+
+            /// <summary>Whether this is the second side of a panel already exported, which is what reverses it.</summary>
+            public bool Reverse;
+
+            public string ZoneGuid;
+
+            public Guid PanelGuid;
         }
     }
 }

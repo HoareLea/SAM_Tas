@@ -12,6 +12,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\build\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\build\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.TBD">
       <HintPath>..\..\references_buildonly\Interop.TBD.dll</HintPath>
@@ -19,6 +22,11 @@
     <Reference Include="Interop.TPD">
       <HintPath>..\..\references_buildonly\Interop.TPD.dll</HintPath>
 		<EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <!-- The ResultantTemperature thermostat bridge reads its second TSD by zone guid. Not embedded, exactly
+         like Interop.TBD above, so the bridge's TSD reader can be driven by managed fakes in the tests. -->
+    <Reference Include="Interop.TSD">
+      <HintPath>..\..\references_buildonly\Interop.TSD.dll</HintPath>
     </Reference>
     <Reference Include="SAM.Analytical, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

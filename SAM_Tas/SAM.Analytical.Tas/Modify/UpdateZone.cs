@@ -24,24 +24,21 @@ namespace SAM.Analytical.Tas
 
             zone.AssignIC(internalCondition_TBD, true);
 
-            List<string> values = new List<string>();
+            if (!space.TryGetValue("Element Id", out string id))
+                id = null;
 
-            //TODO: Update [Id] to [Element Id]
-            if (space.TryGetValue("Element Id", out string id))
-            {
-                if (!string.IsNullOrWhiteSpace(id))
-                    values.Add(string.Format("[Id]={0}", id));
-            }
+            if (!space.TryGetValue(Analytical.SpaceParameter.LevelName, out string levelName))
+                levelName = null;
 
-            //TODO: Update [LevelName] to [Level Name]
-            if(space.TryGetValue(Analytical.SpaceParameter.LevelName, out string levelName))
-            {
-                if (!string.IsNullOrWhiteSpace(levelName))
-                    values.Add(string.Format("[LevelName]={0}", levelName));
-            }
-
-            if (values != null && values.Count > 0)
-                zone.description = string.Join("; ", values);
+            //The zone description is the SAM-only channel: [Id] and [LevelName] as before, and now the SAM
+            //airflow REQUIREMENT the four authored bases state, which TAS has no field for. SAMZoneMetadata
+            //owns the whole string - it rewrites what it manages, preserves anything it does not (a TAS user's
+            //own note now survives an export, which the previous unconditional overwrite did not allow) and
+            //appends its own section last. The metadata is built AFTER AddInternalCondition so it can
+            //fingerprint the native TAS fields as that call actually left them.
+            string description = SAMZoneMetadata.Compose(zone.description, id, levelName, Create.ZoneMetadata(space, internalCondition_TBD, profileLibrary));
+            if (!string.IsNullOrEmpty(description))
+                zone.description = description;
 
             return zone;
         }

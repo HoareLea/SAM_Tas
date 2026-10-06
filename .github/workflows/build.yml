@@ -61,9 +61,9 @@ jobs:
 
           $deps = @(
             'SAM',
-            'SAM_Systems',
             'SAM_Psychrometrics',
             'SAM_Mollier',
+            'SAM_Systems',
             'SAM_Windows',
             'SAM_gbXML',
             'SAM_SolarCalculator'
@@ -79,6 +79,9 @@ jobs:
             # Current sow branch: base_ref on PR events, ref_name on push events.
             $sowRef = if ($baseRef -match '^sow/') { $baseRef } elseif ($refName -match '^sow/') { $refName } else { '' }
             if ($sowRef -and $sowRef -ne $headRef) { $candidates += $sowRef }
+            # A sow FEATURE branch (sow/2026-Q3-foo) has no counterpart in dependency repos, but its
+            # quarter branch does. On push events base_ref is empty, so derive the quarter from ref_name.
+            if ($refName -match '^(sow/\d{4}-Q\d)' -and $Matches[1] -ne $sowRef -and $Matches[1] -ne $headRef) { $candidates += $Matches[1] }
             $candidates += 'sow/2026-Q2'
             $cloned = $false
             foreach ($cand in $candidates) {
@@ -100,12 +103,64 @@ jobs:
           # Ensure the reference path folder exists even before SAM_Windows builds
           New-Item -ItemType Directory -Force -Path "SAM_Windows\build" | Out-Null
 
+      - name: Build benchmark schema (SAM_Validation)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $org = 'SAM-BIM'
+          $r   = 'SAM_Validation'
+
+          # Clone SAM_Validation as a sibling (same branch-candidate fallback as the deps step),
+          # then build ONLY the engine-neutral benchmark schema (B1a) into its build\ folder. The
+          # B2 producer/library/tests reference it by HintPath
+          # (..\..\..\SAM_Validation\build\SAM.Analytical.Benchmark.dll), so it must exist before
+          # SAM_Tas is built below. The schema project is standalone (netstandard2.0,
+          # System.Text.Json only) — no other SAM_Validation project is built.
+          if (-not (Test-Path $r)) {
+            $headRef = '${{ github.head_ref }}'
+            $baseRef = '${{ github.base_ref }}'
+            $refName = '${{ github.ref_name }}'
+            $candidates = @()
+            if ($headRef) { $candidates += $headRef }
+            $sowRef = if ($baseRef -match '^sow/') { $baseRef } elseif ($refName -match '^sow/') { $refName } else { '' }
+            if ($sowRef -and $sowRef -ne $headRef) { $candidates += $sowRef }
+            # A sow FEATURE branch (sow/2026-Q3-foo) has no counterpart in dependency repos, but its
+            # quarter branch does. On push events base_ref is empty, so derive the quarter from ref_name.
+            if ($refName -match '^(sow/\d{4}-Q\d)' -and $Matches[1] -ne $sowRef -and $Matches[1] -ne $headRef) { $candidates += $Matches[1] }
+            $candidates += 'sow/2026-Q2'
+            $cloned = $false
+            foreach ($cand in $candidates) {
+              $has = (git ls-remote --heads "https://github.com/$org/$r.git" $cand 2>$null | Out-String).Trim()
+              if ($has) {
+                Write-Host "Cloning $org/$r @ $cand"
+                git clone --depth 1 --branch $cand "https://github.com/$org/$r.git" $r
+                $cloned = $true
+                break
+              }
+            }
+            if (-not $cloned) {
+              Write-Host "Cloning $org/$r @ default branch"
+              git clone --depth 1 "https://github.com/$org/$r.git" $r
+            }
+          }
+
+          $csproj = Join-Path $r 'SAM.Analytical.Benchmark/SAM.Analytical.Benchmark.csproj'
+          Write-Host "==> Building benchmark schema: $csproj"
+          & dotnet build $csproj -c Release '/p:SAMVersion=${{ steps.ver.outputs.samversion }}'
+          if ($LASTEXITCODE -ne 0) { throw "Benchmark schema build failed" }
+
+          $dll = Join-Path $r 'build/SAM.Analytical.Benchmark.dll'
+          if (-not (Test-Path $dll)) { throw "Expected schema DLL missing after build: $dll" }
+          Write-Host "Schema DLL present: $dll"
+
       - name: Restore + Rebuild in order (CI props like SAM_Deploy)
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
 
           $windowsRef = Join-Path (Get-Location) 'SAM_Windows\build'
+          Write-Host "ReferencePath=$windowsRef"
 
           # IMPORTANT: keep these as an ARRAY of args (do NOT join into one string)
           $common = @(
@@ -124,13 +179,12 @@ jobs:
 
           $solutions = @(
             'SAM\SAM.sln'
-            'SAM_Systems\SAM_Systems.sln'
             'SAM_Psychrometrics\SAM_Psychrometrics.sln'
             'SAM_Mollier\SAM_Mollier.sln'
+            'SAM_Systems\SAM_Systems.sln'
             'SAM_Windows\SAM_Windows.sln'
             'SAM_gbXML\SAM_gbXML.sln'
             'SAM_SolarCalculator\SAM_SolarCalculator.sln'
-            'SAM_Tas\SAM_Tas.sln'
           )
 
           foreach ($sln in $solutions) {
@@ -144,6 +198,47 @@ jobs:
             & msbuild $sln /t:Rebuild @common
           }
 
+          Write-Host "==> Restore: SAM_Tas\SAM_Tas.sln"
+          & msbuild 'SAM_Tas\SAM_Tas.sln' /t:Restore @common
+          Write-Host "==> Rebuild: SAM_Tas\SAM_Tas.sln"
+          & msbuild 'SAM_Tas\SAM_Tas.sln' /t:Rebuild @common
+
+
+      - name: Run benchmark producer tests (offline)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          # The portable B2 producer tests: the TAS SAM-results -> B1a mapping (incl. the Wh->kWh /
+          # W->kW conversion), the committed golden JSON byte-stability check and the CLI-contract
+          # exit codes. They reference only the COM-free producer library, so `dotnet test` builds
+          # and runs them without the TAS COM interop (no .NET Framework MSBuild needed). Any live
+          # end-to-end TAS test would be [Category("Simulation")] and is excluded here.
+          $testProject = 'SAM_Tas/benchmark/SAM.Analytical.Tas.Benchmark.Tests/SAM.Analytical.Tas.Benchmark.Tests.csproj'
+          Write-Host "==> Testing (excluding Simulation): $testProject"
+          & dotnet test $testProject `
+            -c Release `
+            '/p:SAMVersion=${{ steps.ver.outputs.samversion }}' `
+            --filter 'TestCategory!=Simulation' `
+            --logger 'console;verbosity=normal'
+          if ($LASTEXITCODE -ne 0) { throw "Benchmark producer tests failed" }
+
+      - name: Run TM59 room-use regression tests
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          # SAM.Analytical.Tas.TM59.Tests references the already-built TM59/SAM assemblies via
+          # HintPath rather than ProjectReference, to avoid the COM-referencing SAM.Analytical.Tas /
+          # SAM.Core.Tas chain that `dotnet test` (.NET Core MSBuild) cannot build - see TESTING.md.
+          # The SAM_Tas.sln Rebuild above already produced SAM_Tas/build/SAM.Analytical.Tas.TM59.dll
+          # and SAM/build/SAM.Core.dll / SAM.Analytical.dll, so this runs standalone here.
+          $testProject = 'SAM_Tas/SAM_Tas/SAM.Analytical.Tas.TM59.Tests/SAM.Analytical.Tas.TM59.Tests.csproj'
+          Write-Host "==> Testing: $testProject"
+          & dotnet test $testProject `
+            -c Release `
+            --logger 'console;verbosity=normal'
+          if ($LASTEXITCODE -ne 0) { throw "TM59 room-use regression tests failed" }
 
       - name: Upload build folders (optional)
         uses: actions/upload-artifact@v4

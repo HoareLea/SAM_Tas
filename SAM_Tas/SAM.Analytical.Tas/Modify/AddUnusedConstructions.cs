@@ -13,7 +13,7 @@ namespace SAM.Analytical.Tas
         /// not attached to any imported surface — into <paramref name="adjacencyCluster"/> as
         /// standalone template objects.
         /// <para/>
-        /// The geometry-driven import (<see cref="Convert.ToSAM(TBD.Building, System.Collections.Generic.Dictionary{string, SAM.Geometry.Spatial.Polygon3D})"/>)
+        /// The geometry-driven import (<see cref="Convert.ToSAM(TBD.Building, System.Collections.Generic.Dictionary{string, SAM.Geometry.Spatial.Polygon3D}, ProfileReuseIndex)"/>)
         /// only reaches constructions referenced by a zone surface, so unused entries — e.g. the
         /// transparent <c>Air_Glass</c> placeholder created during HDD sizing, or the Null building
         /// element's construction — are silently dropped on round-trip. This restores them so the

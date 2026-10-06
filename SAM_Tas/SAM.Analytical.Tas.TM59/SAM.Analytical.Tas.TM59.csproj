@@ -13,6 +13,9 @@
     <OutputPath>..\..\build\</OutputPath>
     <DocumentationFile>..\..\build\SAM.Analytical.Tas.TM59.xml</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\build\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.TAS3D">
       <HintPath>..\..\references_buildonly\Interop.TAS3D.dll</HintPath>

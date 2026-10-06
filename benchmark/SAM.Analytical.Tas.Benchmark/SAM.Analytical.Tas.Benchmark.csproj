@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>SAM.Analytical.Tas.Benchmark</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--
+    The COM-free core of the B2 producer: the C5 -> B1a mapping (ToBenchmark), the run context and
+    the validate/write/exit-code decision (Producer). It references only the B1a schema and SAM core
+    (no SAM.Analytical.Tas, no TAS COM interop), so it builds and unit-tests with the .NET CLI. The
+    TAS orchestration that drives the COM engine lives in the sibling CLI project.
+  -->
+
+  <ItemGroup>
+    <!-- The offline producer tests drive ToBenchmark and the exit-code decision (Emit) directly. -->
+    <InternalsVisibleTo Include="SAM.Analytical.Tas.Benchmark.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Benchmark schema (B1a). Flat HintPath matches the repo's existing SAM\build convention;
+         built into SAM_Validation\build by CI before this repo (see build.yml). -->
+    <Reference Include="SAM.Analytical.Benchmark">
+      <HintPath>..\..\..\SAM_Validation\build\SAM.Analytical.Benchmark.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="SAM.Core">
+      <HintPath>..\..\..\SAM\build\SAM.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Geometry">
+      <HintPath>..\..\..\SAM\build\SAM.Geometry.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Analytical">
+      <HintPath>..\..\..\SAM\build\SAM.Analytical.dll</HintPath>
+    </Reference>
+    <Reference Include="SAM.Architectural">
+      <HintPath>..\..\..\SAM\build\SAM.Architectural.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,902 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020–2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using NUnit.Framework;
+using SAM.Analytical;
+using SAM.Analytical.Enums;
+using SAM.Core;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json.Nodes;
+
+namespace SAM.Analytical.Tas.TM59.Tests
+{
+    /// <summary>
+    /// <b>Diagnostic-only.</b> These tests build the objects a Part O run already produces - design spaces,
+    /// simulated spaces, scenarios, TM59 results - by hand, the same way <c>GbXMLRouteIdentityAcceptanceTests</c>
+    /// and <c>PreparationBoundaryTests</c> do, so nothing here needs a live TAS install.
+    /// <para>
+    /// Types are qualified throughout where <c>SAM.Analytical.Tas.TM59</c> or its parent <c>SAM.Analytical.Tas</c>
+    /// declares its own version of a name (<c>Zone</c>, <c>SpaceParameter</c>) - the same nested-namespace trap
+    /// documented on <c>PartODiagnosticLog</c> itself.
+    /// </para>
+    /// </summary>
+    [TestFixture]
+    public class PartODiagnosticLogTests
+    {
+        private static readonly string[] flats = { "Flat 1", "Flat 2", "Flat 3" };
+
+        // -----------------------------------------------------------------------------------------------
+        // 1. Three flats each with a room called exactly "Bedroom 2", plus a communal corridor - the
+        //    canonical identity trap. Each bedroom's row carries its own flat's scenario key and its own
+        //    result; no row borrows another's. Also exercises the resolved one-model architecture: every
+        //    Part F / applied-rate field comes off the single AnalyticalModel_Design input.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void ThreeFlatsWithBedroom2_EachRowCarriesItsOwnFlatsScenarioAndResult()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 1")), Result_Mechanical(Simulated(spaces_Simulated, "Flat 3")) },
+                natural: new List<TMResult> { Result_NaturalBedroom(Simulated(spaces_Simulated, "Flat 2")) },
+                corridor: new List<TMResult> { Result_Corridor(Simulated(spaces_Simulated, "Corridor")) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            List<JsonObject> spaceRows = RecordsOf(result, "space");
+            Assert.That(spaceRows.Count, Is.EqualTo(4));
+
+            foreach (string flat in flats)
+            {
+                Guid zoneGuid_Design = analyticalModel_Design.GetZones().Find(x => x.Name == flat).Guid;
+                Guid guid_SimulatedSpace = Simulated(spaces_Simulated, flat).Guid;
+
+                JsonObject row = spaceRows.Find(x => x["simulatedSpaceGuid"]?.GetValue<string>() == guid_SimulatedSpace.ToString());
+
+                Assert.That(row, Is.Not.Null, flat + " has no row.");
+                Assert.That(row["designSpaceName"]?.GetValue<string>(), Is.EqualTo("Bedroom 2"));
+                Assert.That(row["identityMode"]?.GetValue<string>(), Is.EqualTo("zoneGuid"));
+
+                //Each flat's own Part F rate, not a neighbour's - the whole point of identity-based association.
+                JsonObject partFSpaceData = row["partFSpaceData"]?.AsObject();
+                Assert.That(partFSpaceData, Is.Not.Null);
+                Assert.That(partFSpaceData["Name"]?.GetValue<string>(), Is.EqualTo(flat + " PartF"));
+
+                Assert.That(row["tM59Result"], Is.Not.Null, flat + " has no TM59 result.");
+                Assert.That(row["tM59ResultAbsentReason"], Is.Null);
+            }
+
+            JsonObject corridorRow = spaceRows.Find(x => x["designSpaceName"]?.GetValue<string>() == "Corridor");
+            Assert.That(corridorRow["criterion"]?.GetValue<string>(), Is.EqualTo("corridor"));
+
+            JsonObject flat2Row = spaceRows.Find(x => x["ventilationStrategy"]?.GetValue<string>() == "NV");
+            Assert.That(flat2Row["criterion"]?.GetValue<string>(), Is.EqualTo("naturalBedroom"));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 2. identityMode reports zoneGuid when the key is stamped on both sides, and uniqueName when it is
+        //    blank (a uniqueName fallback is diagnostic information and must remain visible, not hidden).
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void IdentityMode_IsZoneGuidWhenStamped()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios);
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            List<JsonObject> spaceRows = RecordsOf(result, "space");
+            Assert.That(spaceRows, Is.Not.Empty);
+            Assert.That(spaceRows.All(x => x["identityMode"]?.GetValue<string>() == "zoneGuid"), Is.True);
+        }
+
+        [Test]
+        public void IdentityMode_FallsBackToUniqueNameWhenTheKeyIsBlankOnAnUnambiguousSingleSpaceModel()
+        {
+            AnalyticalModel analyticalModel_Design = SingleSpaceModel("Kitchen", stampZoneGuid: false);
+            List<Space> spaces_Simulated = new List<Space> { new Space("Kitchen") };
+
+            SAM.Analytical.Zone zone = analyticalModel_Design.GetZones().Find(x => x.Name == "Kitchen");
+            List<OverheatingScenario> scenarios = new List<OverheatingScenario>
+            {
+                new OverheatingScenario(PartOAssessmentScope.Dwelling, zone.Guid, PartOIteration.BasePassive, new SystemTemplate("MVRE", null, null, null, null, null)),
+            };
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(spaces_Simulated[0]) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            List<JsonObject> spaceRows = RecordsOf(result, "space");
+            Assert.That(spaceRows.Count, Is.EqualTo(1));
+            Assert.That(spaceRows[0]["identityMode"]?.GetValue<string>(), Is.EqualTo("uniqueName"));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 3. A result that ties to no scenario produces an unassociated record and is absent from space rows.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void ResultWithNoGoverningScenario_IsUnassociatedAndAbsentFromSpaceRows()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+
+            //Only Flat 1 and Flat 3 get a scenario - Flat 2's result therefore ties to nothing.
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design).FindAll(x => x.VentilationStrategy == "MVRE");
+
+            Space space_Flat2 = Simulated(spaces_Simulated, "Flat 2");
+            TMResult result_Stray = Result_NaturalBedroom(space_Flat2);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 1")), Result_Mechanical(Simulated(spaces_Simulated, "Flat 3")) },
+                natural: new List<TMResult> { result_Stray });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            List<JsonObject> spaceRows = RecordsOf(result, "space");
+            Assert.That(spaceRows.Count, Is.EqualTo(2), "Only the two scenario-governed flats should have a row.");
+            Assert.That(spaceRows.Any(x => x["simulatedSpaceGuid"]?.GetValue<string>() == space_Flat2.Guid.ToString()), Is.False);
+
+            List<JsonObject> unassociated = RecordsOf(result, "unassociated");
+            JsonObject unassociatedResult = unassociated.Find(x => x["kind"]?.GetValue<string>() == "result" && x["reference"]?.GetValue<string>() == space_Flat2.Guid.ToString());
+            Assert.That(unassociatedResult, Is.Not.Null);
+            Assert.That(unassociatedResult["criterion"]?.GetValue<string>(), Is.EqualTo("naturalBedroom"));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 4. A space with no PartFSpaceData logs null Part F fields, not 0.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void SpaceWithNoPartFSpaceData_LogsNullNotZero()
+        {
+            //Model_Design() deliberately leaves the corridor without PartFSpaceData - circulation space is
+            //legitimately unsized, exactly as ApplyPartFVentilationRates treats it.
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                corridor: new List<TMResult> { Result_Corridor(Simulated(spaces_Simulated, "Corridor")) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject corridorRow = RecordsOf(result, "space").Find(x => x["designSpaceName"]?.GetValue<string>() == "Corridor");
+
+            Assert.That(corridorRow, Is.Not.Null);
+            Assert.That(corridorRow.ContainsKey("continuousDesignFlowRate_Lps"), Is.True, "The key must still be present.");
+            Assert.That(corridorRow["continuousDesignFlowRate_Lps"], Is.Null, "Absent Part F data must be JSON null, never 0.");
+            Assert.That(corridorRow["setbackFlowRate_Lps"], Is.Null);
+            Assert.That(corridorRow["partFSpaceData"], Is.Null);
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 5. Refusal sentences are carried through verbatim, with the right origin.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void RefusalText_IsPreservedVerbatimWithItsOrigin()
+        {
+            const string refusalSentence = "Space 'Flat 1' carries Part F data but no ContinuousDesign rate on either direction, so nothing was applied to it.";
+
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios);
+            input.Refusals = new List<string> { refusalSentence };
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            List<JsonObject> refusals = RecordsOf(result, "refusal");
+            JsonObject refusalRecord = refusals.Find(x => x["origin"]?.GetValue<string>() == "partOIteration");
+
+            Assert.That(refusalRecord, Is.Not.Null);
+            Assert.That(refusalRecord["text"]?.GetValue<string>(), Is.EqualTo(refusalSentence));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 6. Record order is deterministic across two builds of the same inputs (diff-clean).
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void RecordOrder_IsDeterministicAcrossTwoBuildsOfTheSameInput()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 1")), Result_Mechanical(Simulated(spaces_Simulated, "Flat 3")) },
+                natural: new List<TMResult> { Result_NaturalBedroom(Simulated(spaces_Simulated, "Flat 2")) },
+                corridor: new List<TMResult> { Result_Corridor(Simulated(spaces_Simulated, "Corridor")) });
+
+            Guid runId_1 = Guid.NewGuid();
+            Guid runId_2 = Guid.NewGuid();
+
+            PartODiagnosticLogBuildResult result_1 = PartODiagnosticLog.Build(input, runId_1, new DateTime(2026, 8, 17, 17, 15, 0, DateTimeKind.Utc), false);
+            PartODiagnosticLogBuildResult result_2 = PartODiagnosticLog.Build(input, runId_2, new DateTime(2026, 8, 17, 18, 0, 0, DateTimeKind.Utc), false);
+
+            Assert.That(result_1.Records.Count, Is.EqualTo(result_2.Records.Count));
+
+            for (int i = 0; i < result_1.Records.Count; i++)
+            {
+                Assert.That(Stripped(result_1.Records[i]), Is.EqualTo(Stripped(result_2.Records[i])), "Record " + i + " diverged.");
+            }
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 7. Every emitted line is valid JSON and parses back (round-trip one line at a time).
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void EveryWrittenLine_RoundTripsAsValidJson()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 1")) });
+            input.Notes = new List<string> { "A note." };
+            input.Refusals = new List<string> { "A refusal." };
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            string path = Path.Combine(Path.GetTempPath(), "SAM-PartODiagnosticLog-" + Guid.NewGuid().ToString("N") + ".jsonl");
+
+            try
+            {
+                Assert.That(PartODiagnosticLog.TryWriteJsonLines(result.Records, path, out string error), Is.True, error);
+
+                string[] lines = File.ReadAllLines(path);
+                Assert.That(lines.Length, Is.EqualTo(result.Records.Count));
+
+                foreach (string line in lines)
+                {
+                    JsonNode node = JsonNode.Parse(line);
+                    Assert.That(node, Is.Not.Null);
+                    Assert.That(node["schema"]?.GetValue<string>(), Is.EqualTo(PartODiagnosticLog.Schema));
+                }
+            }
+            finally
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 8. A non-zero-start / gapped hourly series is represented safely - explicit indices, never wrapped
+        //    or stretched into a plausible-looking full year.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void GappedNonZeroStartHourlySeries_IsRepresentedSafelyWithExplicitIndices()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design).FindAll(x => x.VentilationStrategy == "MVRE");
+
+            Space space_Flat1 = Simulated(spaces_Simulated, "Flat 1");
+
+            IndexedDoubles series = new IndexedDoubles();
+            series.Add(100, 20.0);
+            series.Add(101, 20.5);
+            series.Add(200, 21.0); //A gap between 101 and 200 - a bounded/unbounded read must not fabricate 102-199.
+
+            TM59MechanicalVentilationExtendedResult extended = new TM59MechanicalVentilationExtendedResult(
+                space_Flat1.Name, "Test", space_Flat1.Guid.ToString(), TM52BuildingCategory.CategoryII,
+                new HashSet<int> { 100, 101, 200 }, series, series, series);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { extended });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, includeHourly: true);
+
+            List<JsonObject> hourly = result.HourlyRecords.Where(x => x["record"]?.GetValue<string>() == "hourly").ToList();
+            Assert.That(hourly.Count, Is.EqualTo(3), "operativeTemperature, minAcceptable, maxAcceptable.");
+
+            JsonObject operativeTemperature = hourly.Find(x => x["series"]?.GetValue<string>() == "operativeTemperature");
+            Assert.That(operativeTemperature["minIndex"]?.GetValue<int>(), Is.EqualTo(100));
+            Assert.That(operativeTemperature["maxIndex"]?.GetValue<int>(), Is.EqualTo(200));
+            Assert.That(operativeTemperature["count"]?.GetValue<int>(), Is.EqualTo(3), "Populated-key count, not (max - min + 1) - the gap must be visible as a short count.");
+
+            JsonObject indexedDoubles = operativeTemperature["indexedDoubles"]?.AsObject();
+            Assert.That(indexedDoubles, Is.Not.Null);
+
+            JsonArray values = indexedDoubles["Values"]?.AsArray();
+            Assert.That(values, Is.Not.Null);
+            Assert.That(values.Count, Is.EqualTo(3), "Exactly the three populated indices - nothing fabricated for 102-199.");
+
+            HashSet<int> indices = new HashSet<int>();
+            foreach (JsonNode entry in values)
+            {
+                indices.Add(entry[0].GetValue<int>());
+            }
+
+            Assert.That(indices, Is.EquivalentTo(new[] { 100, 101, 200 }));
+        }
+
+        [Test]
+        public void ResultWithNoExtendedSeries_RefusesTheHourlyRowsInsteadOfLoggingNothing()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design).FindAll(x => x.VentilationStrategy == "MVRE");
+
+            //A plain (non-extended) result - Tas.TSDQueryTM59Results was not run with _extended_ = true.
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 1")) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, includeHourly: true);
+
+            Assert.That(result.HourlyRecords.Count, Is.EqualTo(3));
+            Assert.That(result.HourlyRecords.All(x => x["record"]?.GetValue<string>() == "refusal"), Is.True);
+            Assert.That(result.HourlyRecords.All(x => x["origin"]?.GetValue<string>() == "hourly"), Is.True);
+
+            //A refusal must still be attributable to its space - duplicate room names are exactly what this
+            //log exists to diagnose, and an unattributed refusal row is the one that cannot be tied to a flat.
+            string guid_Simulated = Simulated(spaces_Simulated, "Flat 1").Guid.ToString();
+            Assert.That(result.HourlyRecords.All(x => x["simulatedSpaceGuid"]?.GetValue<string>() == guid_Simulated), Is.True, "Every hourly refusal row carries its simulated space identity.");
+            Assert.That(result.HourlyRecords.All(x => x["identityMode"]?.GetValue<string>() == "zoneGuid"), Is.True);
+            Assert.That(result.HourlyRecords.All(x => x["series"] != null), Is.True);
+            Assert.That(result.HourlyRecords.All(x => x["designSpaceGuid"] != null), Is.True);
+            Assert.That(result.HourlyRecords.All(x => x["designZoneGuidRaw"]?.GetValue<string>() == StableKey("Flat 1")), Is.True);
+            Assert.That(result.HourlyRecords.All(x => x["simulatedZoneGuidRaw"]?.GetValue<string>() == StableKey("Flat 1")), Is.True);
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 9. Resolved architecture: one AnalyticalModel input, taken from the post-workflow design side. No
+        //    separate pre-workflow model is accepted - the class exposes exactly one AnalyticalModel property.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void Input_ExposesExactlyOneAnalyticalModelProperty()
+        {
+            System.Reflection.PropertyInfo[] properties = typeof(PartODiagnosticLogInput).GetProperties()
+                .Where(x => x.PropertyType == typeof(AnalyticalModel))
+                .ToArray();
+
+            Assert.That(properties.Length, Is.EqualTo(1), "RunWorkflow carries PartFSpaceData and the applied InternalCondition through unchanged, so a second (pre-workflow) model input would be redundant - see PartODiagnosticLog's class summary.");
+            Assert.That(properties[0].Name, Is.EqualTo(nameof(PartODiagnosticLogInput.AnalyticalModel_Design)));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 10. Zone guid identity is logged separately for each side, never coalesced into one value. A
+        //     coalesced field cannot be told apart from a genuine match - the whole point of splitting it.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void ZoneGuid_IsLoggedSeparatelyForDesignAndSimulatedSides()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 1")) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject row = RecordsOf(result, "space").Find(x => x["simulatedSpaceGuid"]?.GetValue<string>() == Simulated(spaces_Simulated, "Flat 1").Guid.ToString());
+
+            Assert.That(row, Is.Not.Null);
+            Assert.That(row.ContainsKey("zoneGuid"), Is.False, "The old coalesced field must be gone, not merely unused.");
+            Assert.That(row["designZoneGuidRaw"]?.GetValue<string>(), Is.EqualTo(StableKey("Flat 1")));
+            Assert.That(row["simulatedZoneGuidRaw"]?.GetValue<string>(), Is.EqualTo(StableKey("Flat 1")));
+        }
+
+        [Test]
+        public void ZoneGuid_ReportsWhichSideWasBlankWhenTheMatchFallsBackToName()
+        {
+            // Reproduces the real shape seen on a live run: the design side carries a real key, the
+            // simulated side does not. SimulationSpaceMap's name-fallback branch is reached ONLY when the
+            // simulated side's key is blank - a STATED key that simply disagrees with every design space is
+            // refused as Unresolved instead, never silently matched by name (see SimulationSpaceMap.cs,
+            // "A STATED key that matches no design space is not the same thing as no key at all"). So a
+            // uniqueName identityMode with a real-looking guid on screen is possible ONLY because one side
+            // was blank - the old coalesced field could not distinguish that from a genuine two-sided match;
+            // these two fields can.
+            AnalyticalModel analyticalModel_Design = SingleSpaceModel("Kitchen", stampZoneGuid: true);
+            Space space_Simulated = new Space("Kitchen"); // No ZoneGuid stamped - blank key.
+
+            SAM.Analytical.Zone zone = analyticalModel_Design.GetZones().Find(x => x.Name == "Kitchen");
+            List<OverheatingScenario> scenarios = new List<OverheatingScenario>
+            {
+                new OverheatingScenario(PartOAssessmentScope.Dwelling, zone.Guid, PartOIteration.BasePassive, new SystemTemplate("MVRE", null, null, null, null, null)),
+            };
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, new List<Space> { space_Simulated }, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(space_Simulated) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            List<JsonObject> spaceRows = RecordsOf(result, "space");
+            Assert.That(spaceRows.Count, Is.EqualTo(1));
+
+            JsonObject row = spaceRows[0];
+            Assert.That(row["designZoneGuidRaw"]?.GetValue<string>(), Is.EqualTo("tas-zone-Kitchen"));
+            Assert.That(row["simulatedZoneGuidRaw"], Is.Null, "The simulated side genuinely has no key - this must read null, not silently borrow the design side's value.");
+            Assert.That(row["identityMode"]?.GetValue<string>(), Is.EqualTo("uniqueName"));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 11. Per-terminal-role headline fields mirror SAM_UI's Part F Conformance Assessment SUP/EX/KEX
+        //     tags. The legacy continuousDesignFlowRate_Lps field only ever carries PartFSpaceData's PRIMARY
+        //     terminal - a multi-terminal space (a studio with its own supply and local kitchen extract
+        //     terminals, Approved Document F Appendix A) must not have its secondary terminal hidden behind
+        //     that single figure the way it previously was.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void MultiTerminalSpace_LogsSupplyAndLocalKitchenExtractSeparately()
+        {
+            // Built directly, matching Model_Design()'s proven set-then-add-once shape, rather than mutating a
+            // space fetched back out of an already-built cluster (GetSpaces() is not guaranteed to hand back a
+            // reference AddObject will overwrite in place).
+            AdjacencyCluster adjacencyCluster = new AdjacencyCluster();
+
+            Space space_Design = new Space("Studio");
+            space_Design.SetValue(Tas.SpaceParameter.ZoneGuid, "tas-zone-Studio");
+
+            PartFSpaceData partFSpaceData = new PartFSpaceData(
+                "Studio PartF", PartFType.Habitable, PartFVentilationType.supply, false, null, false, true, false, false,
+                "Area", 30.0, false, SpaceUse.Undefined, null);
+
+            partFSpaceData.Terminals.Add(new PartFVentilationTerminalRequirement("Supply", space_Design.Guid, PartFTerminalRole.Supply) { ContinuousDesignFlowRate_Lps = 30.0 });
+            partFSpaceData.Terminals.Add(new PartFVentilationTerminalRequirement("KEX", space_Design.Guid, PartFTerminalRole.LocalKitchenExtract) { ContinuousDesignFlowRate_Lps = 22.0, IsLocalExtract = true });
+
+            space_Design.SetValue(SAM.Analytical.SpaceParameter.PartFSpaceData, partFSpaceData);
+
+            SAM.Analytical.Zone zone = new SAM.Analytical.Zone("Studio");
+
+            adjacencyCluster.AddObject(space_Design);
+            adjacencyCluster.AddObject(zone);
+            adjacencyCluster.AddRelation(zone, space_Design);
+
+            AnalyticalModel analyticalModel_Design = new AnalyticalModel("Studio Model", null, null, null, adjacencyCluster);
+
+            Space space_Simulated = new Space("Studio");
+            space_Simulated.SetValue(Tas.SpaceParameter.ZoneGuid, "tas-zone-Studio");
+
+            List<OverheatingScenario> scenarios = new List<OverheatingScenario>
+            {
+                new OverheatingScenario(PartOAssessmentScope.Dwelling, zone.Guid, PartOIteration.BasePassive, new SystemTemplate("MVRE", null, null, null, null, null)),
+            };
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, new List<Space> { space_Simulated }, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(space_Simulated) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject row = RecordsOf(result, "space").Single();
+
+            // The legacy single-figure field only ever shows the PRIMARY terminal (the supply terminal of a
+            // habitable room) - this is exactly the gap SAM_UI's separate SUP/KEX tags exposed.
+            Assert.That(row["continuousDesignFlowRate_Lps"]?.GetValue<double>(), Is.EqualTo(30.0).Within(1e-9));
+            Assert.That(row["supplyFlowRate_Lps"]?.GetValue<double>(), Is.EqualTo(30.0).Within(1e-9));
+            Assert.That(row["extractFlowRate_Lps"]?.GetValue<double>(), Is.EqualTo(22.0).Within(1e-9));
+            Assert.That(row["localKitchenExtractFlowRate_Lps"]?.GetValue<double>(), Is.EqualTo(22.0).Within(1e-9));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // 12. TAS's own TM59 report states the natural-ventilation day criterion against "Occupied Summer
+        //     Hours" / "Max. Exceedable Hours" - a smaller, different basis than the whole-year
+        //     occupiedHours/maxExceedableHours this log already carried. Found comparing this log against a
+        //     real TAS report: a natural-bedroom row showed occupiedHours=8760/maxExceedableHours=262
+        //     (the annual pair) while TAS's report showed 3672/110 for the same room - the correct pair was
+        //     on the result object all along (SummerOccupiedHours/MaxExceedableSummerHours) but this log
+        //     never read it. Mechanical and corridor rows carry no such basis and must stay null.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void NaturalBedroomResult_LogsSummerOccupiedHoursAndMaxExceedableSummerHours()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 1")) },
+                natural: new List<TMResult> { Result_NaturalBedroom(Simulated(spaces_Simulated, "Flat 2")) },
+                corridor: new List<TMResult> { Result_Corridor(Simulated(spaces_Simulated, "Corridor")) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            List<JsonObject> spaceRows = RecordsOf(result, "space");
+
+            JsonObject row_NaturalBedroom = spaceRows.Find(x => x["simulatedSpaceGuid"]?.GetValue<string>() == Simulated(spaces_Simulated, "Flat 2").Guid.ToString());
+            Assert.That(row_NaturalBedroom["criterion"]?.GetValue<string>(), Is.EqualTo("naturalBedroom"));
+            Assert.That(row_NaturalBedroom["summerOccupiedHours"]?.GetValue<int>(), Is.EqualTo(100), "Result_NaturalBedroom's summerOccupiedHours, not the annual occupiedHours also on the row.");
+            Assert.That(row_NaturalBedroom["maxExceedableSummerHours"]?.GetValue<int>(), Is.EqualTo(3));
+
+            JsonObject row_Mechanical = spaceRows.Find(x => x["simulatedSpaceGuid"]?.GetValue<string>() == Simulated(spaces_Simulated, "Flat 1").Guid.ToString());
+            Assert.That(row_Mechanical["criterion"]?.GetValue<string>(), Is.EqualTo("mechanical"));
+            Assert.That(row_Mechanical["summerOccupiedHours"], Is.Null, "Mechanical has no summer-hours basis - must not silently show one.");
+            Assert.That(row_Mechanical["maxExceedableSummerHours"], Is.Null);
+
+            JsonObject row_Corridor = spaceRows.Find(x => x["simulatedSpaceGuid"]?.GetValue<string>() == Simulated(spaces_Simulated, "Corridor").Guid.ToString());
+            Assert.That(row_Corridor["criterion"]?.GetValue<string>(), Is.EqualTo("corridor"));
+            Assert.That(row_Corridor["summerOccupiedHours"], Is.Null, "Corridor has no summer-hours basis - must not silently show one.");
+            Assert.That(row_Corridor["maxExceedableSummerHours"], Is.Null);
+        }
+
+        [Test]
+        public void ExtendedNaturalResult_DerivesSummerOccupiedHoursFromTheHourlySeriesInsteadOfTheAnnualBasis()
+        {
+            // Deliberately built with occupiedHourIndices split across HourOfYear's summer window
+            // (2880-6551 inclusive) and outside it, so a bug that summed ALL occupied hours instead of
+            // filtering to summer would be caught rather than coincidentally matching. One non-summer hour
+            // (index 0) and one summer hour (index 3000) are made to exceed the comfort range, so the annual
+            // exceedance count (2) and the summer-only exceedance count (1) can never be confused for one
+            // another - see SAM#120 (SAM.Analytical.Tas.TM59.PartODiagnosticLog.SetCriterionSpecificFields):
+            // this record's "hoursExceedingComfortRange" must be the summer-only figure, matching the already
+            // summer-scoped "summerOccupiedHours"/"maxExceedableSummerHours" fields beside it, not the annual
+            // GetOccupiedHoursExceedingComfortRange().
+            HashSet<int> occupiedHourIndices = new HashSet<int> { 0, 1, 2, 3, 4, 3000, 3100, 3200, 3300 };
+            IndexedDoubles minAcceptableTemperatures = ComfortRangeFixture(occupiedHourIndices, out IndexedDoubles maxAcceptableTemperatures, out IndexedDoubles operativeTemperatures, 0, 3000);
+
+            TM59NaturalVentilationBedroomExtendedResult tM59NaturalVentilationBedroomExtendedResult = new TM59NaturalVentilationBedroomExtendedResult(
+                "Studio", "Test", Guid.NewGuid().ToString(), TM52BuildingCategory.CategoryII,
+                occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
+
+            int summerOccupiedHours_Expected = tM59NaturalVentilationBedroomExtendedResult.GetSummerOccupiedHours();
+            int maxExceedableSummerHours_Expected = tM59NaturalVentilationBedroomExtendedResult.GetSummerMaxExceedableHours();
+            int hoursExceedingComfortRange_Expected = tM59NaturalVentilationBedroomExtendedResult.GetSummerOccupiedHoursExceedingComfortRange();
+
+            Assert.That(summerOccupiedHours_Expected, Is.EqualTo(4), "4 of the 9 occupied hours fall inside the summer window - a pre-condition of this test, not the thing under test.");
+            Assert.That(tM59NaturalVentilationBedroomExtendedResult.GetOccupiedHoursExceedingComfortRange(), Is.EqualTo(2), "Precondition: the annual figure this fix moves away from - both exceeding hours, summer and non-summer alike.");
+            Assert.That(hoursExceedingComfortRange_Expected, Is.EqualTo(1), "Precondition: only the summer hour (index 3000) counts on the summer-restricted basis.");
+
+            AnalyticalModel analyticalModel_Design = SingleSpaceModel("Studio", stampZoneGuid: true);
+            Space space_Simulated = new Space("Studio");
+            space_Simulated.SetValue(SAM.Analytical.Tas.SpaceParameter.ZoneGuid, "tas-zone-Studio");
+
+            SAM.Analytical.Zone zone = analyticalModel_Design.GetZones().Find(x => x.Name == "Studio");
+            List<OverheatingScenario> scenarios = new List<OverheatingScenario>
+            {
+                new OverheatingScenario(PartOAssessmentScope.Dwelling, zone.Guid, PartOIteration.BasePassive, new SystemTemplate("NV", null, null, null, null, null)),
+            };
+
+            tM59NaturalVentilationBedroomExtendedResult = new TM59NaturalVentilationBedroomExtendedResult(
+                "Studio", "Test", space_Simulated.Guid.ToString(), TM52BuildingCategory.CategoryII,
+                occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures);
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, new List<Space> { space_Simulated }, scenarios,
+                natural: new List<TMResult> { tM59NaturalVentilationBedroomExtendedResult });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject row = RecordsOf(result, "space").Single();
+            Assert.That(row["criterion"]?.GetValue<string>(), Is.EqualTo("naturalBedroom"));
+            Assert.That(row["summerOccupiedHours"]?.GetValue<int>(), Is.EqualTo(summerOccupiedHours_Expected));
+            Assert.That(row["maxExceedableSummerHours"]?.GetValue<int>(), Is.EqualTo(maxExceedableSummerHours_Expected));
+            Assert.That(row["hoursExceedingComfortRange"]?.GetValue<int>(), Is.EqualTo(hoursExceedingComfortRange_Expected), "Must be the summer-only exceedance count, not the annual GetOccupiedHoursExceedingComfortRange() this fix moves away from.");
+        }
+
+        /// <summary>
+        /// Same discriminating shape as the bedroom test above, on the plain (non-bedroom) natural-ventilation
+        /// branch (<c>TM59NaturalVentilationExtendedResult</c>, "natural" criterion) - the diagnostic log's
+        /// other affected call site (<c>PartODiagnosticLog.SetCriterionSpecificFields</c>).
+        /// </summary>
+        [Test]
+        public void ExtendedNaturalResult_NonBedroom_LogsSummerHoursExceedingComfortRangeNotAnnual()
+        {
+            HashSet<int> occupiedHourIndices = new HashSet<int> { 0, 1, 2, 3, 4, 3000, 3100, 3200, 3300 };
+            IndexedDoubles minAcceptableTemperatures = ComfortRangeFixture(occupiedHourIndices, out IndexedDoubles maxAcceptableTemperatures, out IndexedDoubles operativeTemperatures, 0, 3000);
+
+            AnalyticalModel analyticalModel_Design = SingleSpaceModel("Living Room", stampZoneGuid: true);
+            Space space_Simulated = new Space("Living Room");
+            space_Simulated.SetValue(SAM.Analytical.Tas.SpaceParameter.ZoneGuid, "tas-zone-Living Room");
+
+            SAM.Analytical.Zone zone = analyticalModel_Design.GetZones().Find(x => x.Name == "Living Room");
+            List<OverheatingScenario> scenarios = new List<OverheatingScenario>
+            {
+                new OverheatingScenario(PartOAssessmentScope.Dwelling, zone.Guid, PartOIteration.BasePassive, new SystemTemplate("NV", null, null, null, null, null)),
+            };
+
+            TM59NaturalVentilationExtendedResult tM59NaturalVentilationExtendedResult = new TM59NaturalVentilationExtendedResult(
+                "Living Room", "Test", space_Simulated.Guid.ToString(), TM52BuildingCategory.CategoryII,
+                occupiedHourIndices, minAcceptableTemperatures, maxAcceptableTemperatures, operativeTemperatures, TM59SpaceApplication.Living);
+
+            int hoursExceedingComfortRange_Expected = tM59NaturalVentilationExtendedResult.GetSummerOccupiedHoursExceedingComfortRange();
+            Assert.That(tM59NaturalVentilationExtendedResult.GetOccupiedHoursExceedingComfortRange(), Is.EqualTo(2), "Precondition: the annual figure this fix moves away from.");
+            Assert.That(hoursExceedingComfortRange_Expected, Is.EqualTo(1), "Precondition: only the summer hour (index 3000) counts on the summer-restricted basis.");
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, new List<Space> { space_Simulated }, scenarios,
+                natural: new List<TMResult> { tM59NaturalVentilationExtendedResult });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject row = RecordsOf(result, "space").Single();
+            Assert.That(row["criterion"]?.GetValue<string>(), Is.EqualTo("natural"));
+            Assert.That(row["hoursExceedingComfortRange"]?.GetValue<int>(), Is.EqualTo(hoursExceedingComfortRange_Expected), "Must be the summer-only exceedance count, not the annual GetOccupiedHoursExceedingComfortRange() this fix moves away from.");
+        }
+
+        /// <summary>
+        /// Builds a comfort-range series for exactly the given occupied hours: min/max acceptable at 23/25
+        /// throughout, operative at 26 (a difference of exactly 1, the implementation's own exceedance
+        /// threshold) for <paramref name="exceedingIndices"/> and 25 (the boundary, not counted) everywhere
+        /// else - mirroring <c>SAM.Tests.TM59NaturalVentilationCriterion1SeasonalBasisTests</c>'s fixture.
+        /// </summary>
+        private static IndexedDoubles ComfortRangeFixture(HashSet<int> occupiedHourIndices, out IndexedDoubles maxAcceptableTemperatures, out IndexedDoubles operativeTemperatures, params int[] exceedingIndices)
+        {
+            IndexedDoubles minAcceptableTemperatures = new IndexedDoubles();
+            maxAcceptableTemperatures = new IndexedDoubles();
+            operativeTemperatures = new IndexedDoubles();
+
+            HashSet<int> exceeding = new HashSet<int>(exceedingIndices);
+            foreach (int index in occupiedHourIndices)
+            {
+                minAcceptableTemperatures.Add(index, 23);
+                maxAcceptableTemperatures.Add(index, 25);
+                operativeTemperatures.Add(index, exceeding.Contains(index) ? 26 : 25);
+            }
+
+            return minAcceptableTemperatures;
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // PR3B-3: a mixed building assesses its dwellings at different iterations (Natural, uncooled MVHR,
+        // cooled MVHR), so the run record cannot take its iteration from whichever scenario is first.
+        // -----------------------------------------------------------------------------------------------
+
+        [Test]
+        public void MixedDwellingIterations_RunRecordStatesMixedAndEveryIteration_EachRowItsOwn()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<Space> spaces_Simulated = Spaces_Simulated();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design,
+                ("Flat 1", "NV", PartOIteration.BaseNaturalVentilation),
+                ("Flat 2", "MVRE", PartOIteration.BasePassive),
+                ("Flat 3", "MVRE", PartOIteration.ActiveTrimCooling),
+                ("Corridor", "UV", PartOIteration.DwellingIndependent));
+
+            PartODiagnosticLogInput input = Input(analyticalModel_Design, spaces_Simulated, scenarios,
+                mechanical: new List<TMResult> { Result_Mechanical(Simulated(spaces_Simulated, "Flat 2")), Result_Mechanical(Simulated(spaces_Simulated, "Flat 3")) },
+                natural: new List<TMResult> { Result_NaturalBedroom(Simulated(spaces_Simulated, "Flat 1")) },
+                corridor: new List<TMResult> { Result_Corridor(Simulated(spaces_Simulated, "Corridor")) });
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(input, Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject run = RecordsOf(result, "run").Single();
+            Assert.That(run["partOIteration"]?.GetValue<string>(), Is.EqualTo(PartODiagnosticLog.MixedPartOIteration),
+                "A mixed building has no single iteration; the first scenario's (Flat 1, BaseNaturalVentilation) is not the run's.");
+
+            List<string> iterations = run["partOIterations"]?.AsArray().Select(x => x.GetValue<string>()).ToList();
+            Assert.That(iterations, Is.EqualTo(new[] { "ActiveTrimCooling", "BaseNaturalVentilation", "BasePassive", "DwellingIndependent" }));
+
+            List<JsonObject> spaceRows = RecordsOf(result, "space");
+            Assert.That(spaceRows.Count, Is.EqualTo(4));
+
+            foreach ((string name, string iteration) in new[] { ("Flat 1", "BaseNaturalVentilation"), ("Flat 2", "BasePassive"), ("Flat 3", "ActiveTrimCooling"), ("Corridor", "DwellingIndependent") })
+            {
+                JsonObject row = spaceRows.Find(x => x["simulatedSpaceGuid"]?.GetValue<string>() == Simulated(spaces_Simulated, name).Guid.ToString());
+                Assert.That(row, Is.Not.Null, name + " has no row.");
+                Assert.That(row["partOIteration"]?.GetValue<string>(), Is.EqualTo(iteration), name);
+            }
+        }
+
+        [Test]
+        public void SingleIterationRun_CorridorScenarioListedFirst_RunRecordStatesTheDwellingsIteration()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+            List<OverheatingScenario> scenarios = Scenarios(analyticalModel_Design,
+                ("Corridor", "UV", PartOIteration.DwellingIndependent),
+                ("Flat 1", "MVRE", PartOIteration.BasePassive),
+                ("Flat 2", "MVRE", PartOIteration.BasePassive),
+                ("Flat 3", "MVRE", PartOIteration.BasePassive));
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(Input(analyticalModel_Design, Spaces_Simulated(), scenarios), Guid.NewGuid(), DateTime.UtcNow, false);
+
+            JsonObject run = RecordsOf(result, "run").Single();
+            Assert.That(run["partOIteration"]?.GetValue<string>(), Is.EqualTo("BasePassive"),
+                "The corridor's DwellingIndependent is a neutral identity, not the run's iteration.");
+            Assert.That(run["partOIterations"]?.AsArray().Select(x => x.GetValue<string>()), Is.EqualTo(new[] { "BasePassive", "DwellingIndependent" }));
+        }
+
+        [Test]
+        public void SingleIterationRun_KeepsItsIteration_AndNoScenarioStatesNone()
+        {
+            AnalyticalModel analyticalModel_Design = Model_Design();
+
+            PartODiagnosticLogBuildResult result = PartODiagnosticLog.Build(Input(analyticalModel_Design, Spaces_Simulated(), Scenarios(analyticalModel_Design)), Guid.NewGuid(), DateTime.UtcNow, false);
+            Assert.That(RecordsOf(result, "run").Single()["partOIteration"]?.GetValue<string>(), Is.EqualTo("BasePassive"));
+
+            Assert.That(PartODiagnosticLog.RunPartOIteration(null), Is.Null);
+            Assert.That(PartODiagnosticLog.RunPartOIteration(new List<OverheatingScenario>()), Is.Null);
+
+            List<OverheatingScenario> corridorOnly = Scenarios(analyticalModel_Design, ("Corridor", "UV", PartOIteration.DwellingIndependent));
+            Assert.That(PartODiagnosticLog.RunPartOIteration(corridorOnly), Is.EqualTo("DwellingIndependent"));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // Fixture
+        // -----------------------------------------------------------------------------------------------
+
+        private static PartODiagnosticLogInput Input(
+            AnalyticalModel analyticalModel_Design,
+            List<Space> spaces_Simulated,
+            List<OverheatingScenario> scenarios,
+            List<TMResult> mechanical = null,
+            List<TMResult> natural = null,
+            List<TMResult> corridor = null)
+        {
+            return new PartODiagnosticLogInput
+            {
+                AnalyticalModel_Design = analyticalModel_Design,
+                Spaces_Simulated = spaces_Simulated,
+                OverheatingScenarios = scenarios,
+                MechanicalVentilationResults = mechanical ?? new List<TMResult>(),
+                NaturalVentilationResults = natural ?? new List<TMResult>(),
+                CorridorResults = corridor ?? new List<TMResult>(),
+                TM59Successful = true,
+                WorkflowSuccessful = true,
+                TM52BuildingCategory = TM52BuildingCategory.CategoryII.ToString(),
+            };
+        }
+
+        private static Space Simulated(List<Space> spaces_Simulated, string flat)
+        {
+            return spaces_Simulated.Find(x => Tas.Query.SimulationSpaceKey(x) == StableKey(flat));
+        }
+
+        private static string StableKey(string name)
+        {
+            int index = Array.IndexOf(flats, name);
+            return index == -1 ? (name == "Corridor" ? "tas-zone-corridor" : null) : "tas-zone-" + index;
+        }
+
+        private static List<JsonObject> RecordsOf(PartODiagnosticLogBuildResult result, string record)
+        {
+            return result.Records.Where(x => x["record"]?.GetValue<string>() == record).ToList();
+        }
+
+        /// <summary>The record with runId/runTimestampUtc removed, re-serialized - used to compare two builds' content while ignoring the two fields that are expected to differ per run.</summary>
+        private static string Stripped(JsonObject jsonObject)
+        {
+            JsonObject clone = (JsonObject)jsonObject.DeepClone();
+            clone.Remove("runId");
+            clone.Remove("runTimestampUtc");
+            return clone.ToJsonString();
+        }
+
+        private static TMResult Result_Mechanical(Space space_Simulated, bool pass = true)
+        {
+            return new TM59MechanicalVentilationResult(space_Simulated.Name, "Test", space_Simulated.Guid.ToString(), TM52BuildingCategory.CategoryII, 100, 3, 1, pass, TM59SpaceApplication.Sleeping);
+        }
+
+        private static TMResult Result_Corridor(Space space_Simulated, bool pass = true)
+        {
+            return new TM59CorridorResult(space_Simulated.Name, "Test", space_Simulated.Guid.ToString(), TM52BuildingCategory.CategoryII, 100, 3, 1, pass);
+        }
+
+        private static TMResult Result_NaturalBedroom(Space space_Simulated, bool pass = true)
+        {
+            return new TM59NaturalVentilationBedroomResult(
+                space_Simulated.Name, "Test", space_Simulated.Guid.ToString(), TM52BuildingCategory.CategoryII,
+                occupiedHours: 100, maxExceedableHours: 3, hoursExceedingComfortRange: 1,
+                annualNightOccupiedHours: 50, summerOccupiedHours: 100, maxExceedableSummerHours: 3,
+                maxExceedableNightHours: 3, nightHoursNumberExceeding26: 1, pass: pass);
+        }
+
+        /// <summary>Three flats each with a room called exactly "Bedroom 2", plus a corridor - the canonical identity trap. Every flat but the corridor carries its own Part F data.</summary>
+        private static AnalyticalModel Model_Design()
+        {
+            AdjacencyCluster adjacencyCluster = new AdjacencyCluster();
+
+            foreach (string name in new[] { "Flat 1", "Flat 2", "Flat 3", "Corridor" })
+            {
+                Space space = new Space(name == "Corridor" ? "Corridor" : "Bedroom 2");
+
+                space.SetValue(SAM.Analytical.Tas.SpaceParameter.ZoneGuid, StableKey(name));
+
+                InternalCondition internalCondition = new InternalCondition(name + " IC");
+                internalCondition.SetValue(InternalConditionParameter.SupplyAirFlow, 0.05);
+                internalCondition.SetValue(InternalConditionParameter.ExhaustAirFlow, 0.03);
+                space.InternalCondition = internalCondition;
+
+                if (name != "Corridor")
+                {
+                    PartFSpaceData partFSpaceData = new PartFSpaceData(
+                        name + " PartF", PartFType.Habitable, PartFVentilationType.supply, true, null, false, true, false, false,
+                        "Area", 15.0, false, SpaceUse.Undefined, 4.5);
+
+                    space.SetValue(SAM.Analytical.SpaceParameter.PartFSpaceData, partFSpaceData);
+                }
+
+                SAM.Analytical.Zone zone = new SAM.Analytical.Zone(name);
+
+                adjacencyCluster.AddObject(space);
+                adjacencyCluster.AddObject(zone);
+                adjacencyCluster.AddRelation(zone, space);
+            }
+
+            return new AnalyticalModel("Three Flats", null, null, null, adjacencyCluster);
+        }
+
+        /// <summary>The simulated spaces, exactly as Tas.TSDQueryTM59Results reports them - fresh guids, the zone guid stamped, no internal condition or Part F data (those live on the design side).</summary>
+        private static List<Space> Spaces_Simulated()
+        {
+            List<Space> result = new List<Space>();
+
+            foreach (string name in new[] { "Flat 1", "Flat 2", "Flat 3", "Corridor" })
+            {
+                Space space = new Space(name == "Corridor" ? "Corridor" : "Bedroom 2");
+                space.SetValue(SAM.Analytical.Tas.SpaceParameter.ZoneGuid, StableKey(name));
+                result.Add(space);
+            }
+
+            return result;
+        }
+
+        private static List<OverheatingScenario> Scenarios(AnalyticalModel analyticalModel_Design)
+        {
+            List<OverheatingScenario> result = new List<OverheatingScenario>();
+
+            foreach (KeyValuePair<string, string> keyValuePair in new Dictionary<string, string> { { "Flat 1", "MVRE" }, { "Flat 2", "NV" }, { "Flat 3", "MVRE" }, { "Corridor", "UV" } })
+            {
+                SAM.Analytical.Zone zone = analyticalModel_Design.GetZones().Find(x => x.Name == keyValuePair.Key);
+
+                result.Add(new OverheatingScenario(
+                    keyValuePair.Key == "Corridor" ? PartOAssessmentScope.CommonSpace : PartOAssessmentScope.Dwelling,
+                    zone.Guid,
+                    PartOIteration.BasePassive,
+                    new SystemTemplate(keyValuePair.Value, null, null, null, null, null)));
+            }
+
+            return result;
+        }
+
+        private static List<OverheatingScenario> Scenarios(AnalyticalModel analyticalModel_Design, params (string name, string ventilationStrategy, PartOIteration iteration)[] definitions)
+        {
+            List<OverheatingScenario> result = new List<OverheatingScenario>();
+
+            foreach ((string name, string ventilationStrategy, PartOIteration iteration) in definitions)
+            {
+                SAM.Analytical.Zone zone = analyticalModel_Design.GetZones().Find(x => x.Name == name);
+
+                result.Add(new OverheatingScenario(
+                    name == "Corridor" ? PartOAssessmentScope.CommonSpace : PartOAssessmentScope.Dwelling,
+                    zone.Guid,
+                    iteration,
+                    new SystemTemplate(ventilationStrategy, null, null, null, null, null)));
+            }
+
+            return result;
+        }
+
+        private static AnalyticalModel SingleSpaceModel(string name, bool stampZoneGuid)
+        {
+            AdjacencyCluster adjacencyCluster = new AdjacencyCluster();
+
+            Space space = new Space(name);
+            if (stampZoneGuid)
+            {
+                space.SetValue(SAM.Analytical.Tas.SpaceParameter.ZoneGuid, "tas-zone-" + name);
+            }
+
+            SAM.Analytical.Zone zone = new SAM.Analytical.Zone(name);
+
+            adjacencyCluster.AddObject(space);
+            adjacencyCluster.AddObject(zone);
+            adjacencyCluster.AddRelation(zone, space);
+
+            return new AnalyticalModel(name + " Model", null, null, null, adjacencyCluster);
+        }
+    }
+}

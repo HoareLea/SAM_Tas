@@ -130,21 +130,24 @@ namespace SAM.Analytical.Tas
                 // dominated runtime (user-observed ~60 s for 14 spaces).
                 //
                 // `TBD.profileClass` exposes a bulk `SetYearlyValues(Object)` method that takes
-                // a `float[]` in a SINGLE COM call — the same pattern already used in
-                // SAM.Analytical.Tas/Modify/Update.cs:55. Switching cuts the work to 2 COM
-                // round-trips per IC (or 4 in the rare splice path), which is the same shape as
-                // GetYearlyValues elsewhere in the codebase.
+                // a `float[]` in a SINGLE COM call. It goes through Modify.UpdateYearlyValues,
+                // which owns the slot base: TAS ignores element 0 of that array, so passing these
+                // 0-based hour arrays straight in wrote every limit one hour early (licensed
+                // measurement, 2026-09-11: before the fix every slot matched the weather range of
+                // the NEXT hour; after it, every slot matches its own hour). 2 COM round-trips per
+                // IC (or 4 in the rare splice path).
                 if (allHoursHaveRange)
                 {
                     // Fast path: every weather hour mapped to a valid range. Write directly.
-                    profile_UpperLimit.SetYearlyValues(upperLimitYear);
-                    profile_LowerLimit.SetYearlyValues(lowerLimitYear);
+                    profile_UpperLimit.UpdateYearlyValues(upperLimitYear);
+                    profile_LowerLimit.UpdateYearlyValues(lowerLimitYear);
                 }
                 else
                 {
                     // Sparse path: some hours had no range (DryBulbTemperatureRange returned null).
                     // Preserve the previous per-hour `continue` semantics by reading the existing
-                    // array, splicing only the valid hours, and writing back.
+                    // array, splicing only the valid hours, and writing back. ToFloatArray answers
+                    // 0-based hours (slot k + 1 -> hour k), the same base UpdateYearlyValues takes.
                     float[] upperArray = ToFloatArray(profile_UpperLimit.GetYearlyValues());
                     float[] lowerArray = ToFloatArray(profile_LowerLimit.GetYearlyValues());
                     for (int h = 0; h < 8760; h++)
@@ -157,8 +160,8 @@ namespace SAM.Analytical.Tas
                         upperArray[h] = upperLimitYear[h];
                         lowerArray[h] = lowerLimitYear[h];
                     }
-                    profile_UpperLimit.SetYearlyValues(upperArray);
-                    profile_LowerLimit.SetYearlyValues(lowerArray);
+                    profile_UpperLimit.UpdateYearlyValues(upperArray);
+                    profile_LowerLimit.UpdateYearlyValues(lowerArray);
                 }
 
                 result = true;
@@ -167,10 +170,9 @@ namespace SAM.Analytical.Tas
             return result;
         }
 
-        // Coerce the boxed SAFEARRAY returned by TBD.profile.GetYearlyValues() into a float[].
-        // The interop typically marshals to System.Single[] (a zero-based managed float[]); cast
-        // first, fall back to bound-aware element-wise copy if a different numeric array type
-        // or a non-zero-lower-bound SAFEARRAY comes back.
+        // Coerce the boxed SAFEARRAY returned by TBD.profile.GetYearlyValues() into a 0-based
+        // float[] of hours. Licensed TAS answers a Single[*] bounded 1..8760 (not a float[]), so
+        // the bound-aware copy below is the path that actually runs: slot k + 1 -> hour k.
         private static float[] ToFloatArray(object yearlyValues)
         {
             if (yearlyValues == null)

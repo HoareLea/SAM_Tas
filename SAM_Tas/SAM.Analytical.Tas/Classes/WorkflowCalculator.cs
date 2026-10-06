@@ -36,17 +36,63 @@ namespace SAM.Analytical.Tas
         private readonly Stopwatch stepStopwatch = new Stopwatch();
         private string currentStepName;
         private readonly List<KeyValuePair<string, double>> timings = new List<KeyValuePair<string, double>>();
+        private readonly List<string> notes = new List<string>();
 
         public IReadOnlyList<KeyValuePair<string, double>> Timings => timings;
 
+        /// <summary>
+        /// What the workflow wants the caller to know, one sentence each - refusals, skips and
+        /// identifications the previous implementation dropped silently. The aperture-type step in
+        /// particular reports, per TBD aperture, which SAM aperture it matched (or which gate stopped it)
+        /// and any schedule refusal, which is what makes a Part O schedule that failed to reach the TBD
+        /// diagnosable instead of invisible. Callers surface this from Grasshopper (runtime warnings) or
+        /// their own progress UI.
+        /// </summary>
+        public IReadOnlyList<string> Notes => notes;
+
         public WorkflowSettings WorkflowSettings { get; set; }
+
+        /// <summary>
+        /// Optional cooperative cancellation. Defaults to <see cref="System.Threading.CancellationToken.None"/>
+        /// so existing callers (e.g. the benchmark CLI) are unaffected. It is observed once per stage in
+        /// <see cref="Step"/>, so a cancel aborts before the next step begins; it does NOT interrupt the
+        /// in-flight, uninterruptible TAS COM simulate/sizing call within a step.
+        /// </summary>
+        public System.Threading.CancellationToken CancellationToken { get; set; } = System.Threading.CancellationToken.None;
 
         private void Step(string description)
         {
+            // Finalize first so the stage that just completed keeps its timing.
             FinalizeCurrentStep();
+
+            // Already cancelled: stop without announcing a stage that will not run.
+            CancellationToken.ThrowIfCancellationRequested();
+
+            // Raise Updating BEFORE deciding to proceed. A WinForms listener pumps the message queue here
+            // (ProgressForm.Update -> Application.DoEvents), so this is where a queued Cancel click is actually
+            // delivered. Checking the token only before this call would observe a stale state and let this
+            // stage - potentially an expensive or file-writing one - start anyway.
+            Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs(description));
+
+            // Observe a cancel delivered by that pump, before this stage does any work. Cancelling can still
+            // leave partially written .t3d/.tbd/.tsd files behind - a later clean rerun should set
+            // _removeTBD_ true.
+            CancellationToken.ThrowIfCancellationRequested();
+
             currentStepName = description;
             stepStopwatch.Restart();
-            Updating?.Invoke(this, new WorkflowCalculatorUpdatingEventArgs(description));
+        }
+
+        /// <summary>
+        /// The second cancellation choke point, observed before every normal return from
+        /// <see cref="Calculate"/>. <see cref="Step"/> only covers cancels seen before a stage starts, so a
+        /// Cancel clicked during a terminal stage - "Saving Model", or the last stage on the no-weather and
+        /// no-simulation paths - would otherwise be recorded by the progress dialog and never seen here,
+        /// letting Calculate return normally and the caller report success.
+        /// </summary>
+        private void ThrowIfCancelledBeforeReturning()
+        {
+            CancellationToken.ThrowIfCancellationRequested();
         }
 
         private void FinalizeCurrentStep()
@@ -85,8 +131,64 @@ namespace SAM.Analytical.Tas
             }
         }
         
+        /// <summary>
+        /// Runs the workflow over a model this calculator does <b>not</b> own, and hands back what it
+        /// produced. The caller's instance is untouched: a working copy is taken here.
+        /// <para>
+        /// This is the entry point for every caller that has not thought about ownership - the Grasshopper
+        /// components, the benchmark CLI, anything reaching <c>Modify.RunWorkflow</c> without saying
+        /// otherwise - and it is deliberately the safe one. See
+        /// <see cref="Calculate(AnalyticalModel, bool)"/> for the caller that already owns its model.
+        /// </para>
+        /// </summary>
         public AnalyticalModel Calculate(AnalyticalModel analyticalModel)
         {
+            return Calculate(analyticalModel, false);
+        }
+
+        /// <summary>
+        /// Runs the workflow, stating whether the model handed over is already the caller's own working
+        /// copy.
+        ///
+        /// <para><b>The ownership seam</b></para>
+        /// <para>
+        /// Everything below mutates the model IN PLACE - <see cref="Modify.UpdateIds"/> stamps
+        /// <c>SpaceParameter.ZoneGuid</c>, <c>PanelParameter.ZoneSurfaceReference_1</c>/<c>_2</c>,
+        /// <c>PanelParameter.BuildingElementGuid</c> and the aperture identity parameters straight onto the
+        /// live objects' parameter sets, and <c>UpdateAdiabatic</c>, <c>UpdateBuildingElements</c>,
+        /// <c>UpdateThermalParameters</c> and <c>UpdateApertureDefinitions</c> do the same. So a model the
+        /// workflow is given has to be one somebody is entitled to mutate.
+        /// </para>
+        /// <para>
+        /// <b>false</b> - the default, and every public caller - takes that working copy here, through
+        /// <c>new AnalyticalModel(analyticalModel, true)</c>. That is what guarantees a failed or cancelled
+        /// run leaves the caller's model exactly as it was.
+        /// </para>
+        /// <para>
+        /// <b>true</b> says the caller has already taken one and this run may mutate it directly. It is a
+        /// promise about the argument, not a request to skip protection: pass it only from a boundary that
+        /// itself cloned, and whose clone no other holder shares. <c>Modify.RunPartOSimulation</c> is that
+        /// boundary for Approved Document O - it clones once, at the point it renames and re-materials the
+        /// model, and everything from there to here works on that one copy. Without this the normal Part O
+        /// run cloned the whole model three times over for one isolation guarantee, which on a five
+        /// thousand space project is most of a second and half a gigabyte of allocation to no end.
+        /// </para>
+        /// <para>
+        /// Getting it wrong in the unsafe direction - passing true from a caller that did not clone - puts
+        /// this run's TAS identities on somebody else's model, which is precisely the defect the copy
+        /// exists to prevent. When in doubt, pass false: the cost is one clone.
+        /// </para>
+        /// </summary>
+        /// <param name="analyticalModel">The model to run the workflow over.</param>
+        /// <param name="analyticalModel_Owned">
+        /// True only where the caller has already taken a deep working copy that nothing else holds.
+        /// </param>
+        public AnalyticalModel Calculate(AnalyticalModel analyticalModel, bool analyticalModel_Owned)
+        {
+            //A calculator instance can be re-run; each run reports only its own notes. Cleared ahead of the
+            //validation gate below, so a run rejected there leaves no previous run's notes visible either.
+            notes.Clear();
+
             Started?.Invoke(this, new System.EventArgs());
 
             if (analyticalModel == null || WorkflowSettings == null)
@@ -94,7 +196,47 @@ namespace SAM.Analytical.Tas
                 return null;
             }
 
-            AnalyticalModel result = new AnalyticalModel(analyticalModel);
+            // Before anything else: the setup below unconditionally deletes an existing .t3d, and the .tbd
+            // too when RemoveExistingTBD is set, all of it ahead of the first Step. A caller handing in an
+            // already-cancelled token (the WorkflowTBD pre-step shares one) must not lose those files.
+            CancellationToken.ThrowIfCancellationRequested();
+
+            // "Convert the geometry" and "the geometry is already converted" are contradictory
+            // instructions, and choosing between them here would be this class deciding something the
+            // caller has to. Refused BEFORE any file is touched.
+            if (!string.IsNullOrWhiteSpace(WorkflowSettings.Path_TBD_Canonical) && !string.IsNullOrWhiteSpace(WorkflowSettings.Path_gbXML))
+            {
+                notes.Add("This run was given both a gbXML to convert and a canonical TBD to start from, which are contradictory instructions - one says the geometry must be converted, the other that it already is. Nothing was run. Supply one or the other.");
+
+                Ended?.Invoke(this, new System.EventArgs());
+
+                return null;
+            }
+
+            // THE working model, and the reason a copy has to be DEEP when this run takes one itself.
+            //
+            // Everything below works on `result` and the model is handed back at the end, so the intent has
+            // always been that the caller's instance is untouched until it chooses to adopt what comes back.
+            // The ordinary copy constructor does not deliver that: it rebuilds the cluster's dictionaries
+            // but stores the SAME Space, Panel and Aperture instances, which is safe only for an operation
+            // that writes by same-guid replacement. This one does not - see the summary on this method for
+            // the list of steps that mutate in place. Against a shallow copy every one of those writes was
+            // visible through the caller's model.
+            //
+            // Converting each of those steps to replacement semantics would be a redesign of the conversion
+            // for an isolation guarantee one copy already gives, so the copy is where it is fixed. It is on
+            // no read path: the shallow copy stays the default everywhere else precisely so a getter never
+            // pays for this.
+            //
+            // Skipped where the caller already owns the model, which is the whole point of the overload -
+            // otherwise the normal Approved Document O run took three copies of the same model to establish
+            // one guarantee. The clone is then the caller's, taken once, and `result` mutates it directly.
+            //
+            // See AnalyticalModel(AnalyticalModel, bool) for the rule, and the Part O optimiser for what
+            // depended on it: its caller is the retained last-valid design, and a round that stamped new
+            // TAS identities onto that model left it disagreeing with its own persisted
+            // SimulationResultProvenance after a later round failed or was cancelled.
+            AnalyticalModel result = analyticalModel_Owned ? analyticalModel : new AnalyticalModel(analyticalModel, true);
 
             string directory = System.IO.Path.GetDirectoryName(WorkflowSettings.Path_TBD);
             string fileName = System.IO.Path.GetFileNameWithoutExtension(WorkflowSettings.Path_TBD);
@@ -107,22 +249,31 @@ namespace SAM.Analytical.Tas
                 weatherData = WorkflowSettings.WeatherData;
             }
 
-            analyticalModel.TryGetValue(Analytical.AnalyticalModelParameter.HeatingDesignDays, out SAMCollection<DesignDay> heatingDesignDays);
-            if (WorkflowSettings?.DesignDays_Heating != null)
-            {
-                heatingDesignDays = new SAMCollection<DesignDay>(WorkflowSettings.DesignDays_Heating);
-            }
-
-            analyticalModel.TryGetValue(Analytical.AnalyticalModelParameter.CoolingDesignDays, out SAMCollection<DesignDay> coolingDesignDays);
-            if (WorkflowSettings?.DesignDays_Cooling != null)
-            {
-                coolingDesignDays = new SAMCollection<DesignDay>(WorkflowSettings.DesignDays_Cooling);
-            }
+            // WorkflowSettings.WeatherData - not the resolved weatherData above - is what decides here: it is
+            // the only case where the weather this run installs can DIFFER from the one the model's design
+            // days were derived from. Reading the design days straight off the model would then size the
+            // first TBD of the new weather on the previous weather's design days. See
+            // Query.DesignDays_Authoritative for the full rule.
+            Query.DesignDays_Authoritative(
+                analyticalModel,
+                WorkflowSettings?.WeatherData,
+                WorkflowSettings?.DesignDays_Cooling,
+                WorkflowSettings?.DesignDays_Heating,
+                out List<DesignDay> coolingDesignDays,
+                out List<DesignDay> heatingDesignDays);
 
             int count = 6;
             if (!string.IsNullOrWhiteSpace(WorkflowSettings.Path_gbXML))
             {
-                count = count + 9;
+                //Nine gbXML-only steps, plus "Reusing Aperture Definitions".
+                count = count + 10;
+            }
+
+            //One step for the clone, so a warm-started run's progress reports what it actually does rather
+            //than counting a conversion it is deliberately not performing.
+            if (!string.IsNullOrWhiteSpace(WorkflowSettings.Path_TBD_Canonical))
+            {
+                count++;
             }
 
             if (WorkflowSettings.UpdateZones)
@@ -135,7 +286,20 @@ namespace SAM.Analytical.Tas
                 count++;
             }
 
-            if (WorkflowSettings.DesignDays_Cooling != null || WorkflowSettings.DesignDays_Heating != null)
+            if (WorkflowSettings.RemoveIZAMs)
+            {
+                count++;
+            }
+
+            if (WorkflowSettings.RemoveMechanicalVentilationGains)
+            {
+                count++;
+            }
+
+            //Count the step that actually runs: "Adding Design Days" is gated on the RESOLVED design days,
+            //not on the settings, so a run whose design days came from the weather or the model counted one
+            //step short of what it reported.
+            if (coolingDesignDays != null || heatingDesignDays != null)
             {
                 count++;
             }
@@ -167,6 +331,57 @@ namespace SAM.Analytical.Tas
             bool hasWeatherData = false;
 
             Core.Tas.Modify.SetProjectDirectory(directory);
+
+            // ---- The warm start: this round's TBD is a COPY of the canonical one -------------------------
+            //
+            // A file copy, and deliberately nothing cleverer. The canonical TBD is opened only by the
+            // framework's own copy, never by this process, so it cannot be mutated by a round however that
+            // round then fails - which is what lets every round start from the same known state instead of
+            // from its predecessor's leftovers.
+            //
+            // The conversion block below is skipped because a canonical TBD already carries every product
+            // of it, and everything AFTER it still runs on the copy - see
+            // WorkflowSettings.Path_TBD_Canonical.
+            if (!string.IsNullOrWhiteSpace(WorkflowSettings.Path_TBD_Canonical))
+            {
+                if (!System.IO.File.Exists(WorkflowSettings.Path_TBD_Canonical))
+                {
+                    notes.Add(string.Format("The canonical TBD '{0}' this run was to start from does not exist, so there is nothing to warm start from and nothing was run. Convert the model in full instead.", WorkflowSettings.Path_TBD_Canonical));
+
+                    Ended?.Invoke(this, new System.EventArgs());
+
+                    return null;
+                }
+
+                //Refused rather than resolved: a canonical path that IS the target would have the copy
+                //below overwrite its own source, and every later round would then start from whatever the
+                //last one left behind - the cumulative mutation the canonical baseline exists to prevent.
+                if (string.Equals(System.IO.Path.GetFullPath(WorkflowSettings.Path_TBD_Canonical), System.IO.Path.GetFullPath(WorkflowSettings.Path_TBD), System.StringComparison.OrdinalIgnoreCase))
+                {
+                    notes.Add(string.Format("The canonical TBD and this run's TBD are the same file ('{0}'), so warm starting would write to the baseline every later run depends on. Nothing was run - give the run its own TBD path.", WorkflowSettings.Path_TBD));
+
+                    Ended?.Invoke(this, new System.EventArgs());
+
+                    return null;
+                }
+
+                Step("Copying Canonical TBD");
+
+                try
+                {
+                    System.IO.File.Copy(WorkflowSettings.Path_TBD_Canonical, WorkflowSettings.Path_TBD, true);
+                }
+                catch (System.Exception exception)
+                {
+                    notes.Add(string.Format("The canonical TBD '{0}' could not be copied to '{1}', so this run has no TBD to work on and nothing was run: {2}", WorkflowSettings.Path_TBD_Canonical, WorkflowSettings.Path_TBD, exception.Message));
+
+                    Ended?.Invoke(this, new System.EventArgs());
+
+                    return null;
+                }
+
+                notes.Add(string.Format("This run started from the canonical TBD '{0}', copied to '{1}'. The geometry, constructions, apertures and shading calculation it carries were not recomputed; the ventilation state, the zone identities and the full-year simulation were.", WorkflowSettings.Path_TBD_Canonical, WorkflowSettings.Path_TBD));
+            }
 
             if (!string.IsNullOrWhiteSpace(WorkflowSettings.Path_gbXML))
             {
@@ -286,11 +501,29 @@ namespace SAM.Analytical.Tas
                 Modify.UpdateAdiabatic(tBDDocument, result, Tolerance.MacroDistance);
 
                 Step("Updating Building Elements");
-                Modify.UpdateBuildingElements(tBDDocument, result);
+                Modify.UpdateBuildingElements(tBDDocument, result, out List<string> notes_BuildingElements);
+                notes.AddRange(notes_BuildingElements);
 
                 adjacencyCluster = result.AdjacencyCluster;
                 Step("Updating Ids");
                 Modify.UpdateIds(adjacencyCluster, tBDDocument.Building);
+
+                if (!string.IsNullOrWhiteSpace(WorkflowSettings.Path_gbXML))
+                {
+                    // On this route TAS's own T3D -> TBD conversion created one aperture building element and
+                    // one construction PER APERTURE PER PART, named after the aperture, because the gbXML
+                    // opening name has to carry the aperture GUID for Query.UpdateT3D to decode. This step
+                    // rebinds each physical surface onto the shared DEFINITION its aperture states - the same
+                    // resolver the direct SAMAnalytical.TBD export runs - and sweeps up what TAS left over.
+                    //
+                    // It runs AFTER Updating Ids on purpose: that step has just stamped every aperture's
+                    // physical surfaces and its current building element, which is exactly what the rebind
+                    // reads instead of re-deriving either from geometry. The direct route needs none of this,
+                    // so the step is gated on the gbXML route that does.
+                    Step("Reusing Aperture Definitions");
+                    Modify.UpdateApertureDefinitions(tBDDocument.Building, adjacencyCluster, result.MaterialLibrary, out List<string> notes_ApertureDefinitions);
+                    notes.AddRange(notes_ApertureDefinitions);
+                }
 
                 Step("Updating Thermal Parameters");
                 Modify.UpdateThermalParameters(adjacencyCluster, tBDDocument.Building);
@@ -314,13 +547,69 @@ namespace SAM.Analytical.Tas
                 if (!string.IsNullOrWhiteSpace(WorkflowSettings.Path_gbXML))
                 {
                     Step("Updating Aperture Types");
-                    Modify.SetApertureTypes(tBDDocument.Building, adjacencyCluster, Tolerance.MacroDistance);
+                    Modify.SetApertureTypes(tBDDocument.Building, adjacencyCluster, out List<string> notes_ApertureTypes, Tolerance.MacroDistance);
+                    notes.AddRange(notes_ApertureTypes);
                 }
 
                 if (WorkflowSettings.AddIZAMs)
                 {
                     Step("Add IZAMs");
                     Modify.UpdateIZAMs(tBDDocument, adjacencyCluster);
+                }
+
+                //----------------------------------------------------------------------------------------
+                //The no-IZAM thermal source. Both steps are default-off, so no existing caller moves.
+                //
+                //They run HERE, inside the document session that is already open, and not as a separate
+                //pass: that adds no COM document cycle (SAMTBDDocument.Dispose tears down the shared Tas
+                //session after a handful of them), it is after "Updating Zones" - which is what writes the
+                //ticV profile in the first place - and it is before the save, the sizing and the
+                //simulation, so what those see is the cleaned building.
+                //----------------------------------------------------------------------------------------
+
+                if (WorkflowSettings.RemoveIZAMs)
+                {
+                    Step("Removing IZAMs");
+
+                    Modify.RemoveIZAMs(tBDDocument.Building);
+
+                    //Verified, not trusted: the sweep walks GetIZAM(0)/RemoveIZAM(0) to exhaustion, so an
+                    //IZAM surviving it means the building did not accept the removal. A survivor breaks the
+                    //no-IZAM contract, so the run fails CLOSED - refusal, no save, no sizing, no
+                    //simulation - rather than reporting success on a building that still carries its own
+                    //mechanical ventilation. The decision is Query.IzamSurvivorRefusal; the return-null
+                    //convention is the same one the other refusals above use, and NoIzamThermalSource
+                    //already records a null return as a failed call, so the source cannot come back
+                    //accepted. The refusal happens BEFORE the save below on purpose: the surviving-IZAM
+                    //state is never persisted as this run's output.
+                    string refusal_IzamSurvivor = Query.IzamSurvivorRefusal(true, tBDDocument.Building?.GetIZAM(0) != null);
+                    if (refusal_IzamSurvivor != null)
+                    {
+                        notes.Add(refusal_IzamSurvivor);
+
+                        Ended?.Invoke(this, new System.EventArgs());
+
+                        return null;
+                    }
+
+                    notes.Add("Removing IZAMs: none remain.");
+                }
+
+                if (WorkflowSettings.RemoveMechanicalVentilationGains)
+                {
+                    Step("Removing Mechanical Ventilation Gains");
+
+                    List<string> internalConditionNames = Modify.RemoveVentilationGains(tBDDocument, adjacencyCluster);
+
+                    notes.Add(
+                        string.Format(
+                            "Removing Mechanical Ventilation Gains: ticV zeroed on {0} internal condition(s){1}. "
+                            + "Infiltration (ticI) and natural ventilation (aperture types and opening schedules) "
+                            + "are untouched - they are separate carriers.",
+                            internalConditionNames == null ? 0 : internalConditionNames.Count,
+                            internalConditionNames == null || internalConditionNames.Count == 0
+                                ? string.Empty
+                                : string.Concat(": ", string.Join(", ", internalConditionNames))));
                 }
 
                 sAMTBDDocument.Save();
@@ -335,21 +624,7 @@ namespace SAM.Analytical.Tas
 
                 if (adjacencyCluster != null)
                 {
-                    if (coolingDesignDays != null)
-                    {
-                        for (int i = 0; i < coolingDesignDays.Count; i++)
-                        {
-                            adjacencyCluster.AddObject(new DesignDay(coolingDesignDays[i], LoadType.Cooling));
-                        }
-                    }
-
-                    if (heatingDesignDays != null)
-                    {
-                        for (int i = 0; i < heatingDesignDays.Count; i++)
-                        {
-                            adjacencyCluster.AddObject(new DesignDay(heatingDesignDays[i], LoadType.Heating));
-                        }
-                    }
+                    Modify.ReplaceDesignDays(adjacencyCluster, coolingDesignDays, heatingDesignDays);
                 }
             }
 
@@ -358,6 +633,7 @@ namespace SAM.Analytical.Tas
             if (!hasWeatherData)
             {
                 WriteTimingsCsv(directory, fileName);
+                ThrowIfCancelledBeforeReturning();
                 return result;
             }
 
@@ -392,6 +668,7 @@ namespace SAM.Analytical.Tas
             if (!WorkflowSettings.Simulate)
             {
                 WriteTimingsCsv(directory, fileName);
+                ThrowIfCancelledBeforeReturning();
                 return result;
             }
 
@@ -439,6 +716,8 @@ namespace SAM.Analytical.Tas
             }
 
             WriteTimingsCsv(directory, fileName);
+
+            ThrowIfCancelledBeforeReturning();
 
             Ended?.Invoke(this, new System.EventArgs());
 

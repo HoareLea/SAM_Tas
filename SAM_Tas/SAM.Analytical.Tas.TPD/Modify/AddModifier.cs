@@ -1,5 +1,9 @@
-﻿using SAM.Analytical.Systems;
+﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (c) 2020-2026 Michal Dengusiak & Jakub Ziolkowski and contributors
+
+using SAM.Analytical.Systems;
 using SAM.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TPD;
@@ -122,108 +126,177 @@ namespace SAM.Analytical.Tas.TPD
                 return false;
             }
 
+            if (!TryGetTableData(tableModifier, out TableData tableData))
+            {
+                return false;
+            }
+
             ProfileDataModifierTable profileDataModifierTable = profileData.AddModifierTable();
+            if (profileDataModifierTable == null)
+            {
+                return false;
+            }
+
             profileDataModifierTable.Multiplier = tableModifier.ArithmeticOperator.ToTPD();
             profileDataModifierTable.Clear();
+            profileDataModifierTable.Extrapolate = tableModifier.Extrapolate ? -1 : 0;
 
-            IEnumerable<string> headers = tableModifier.Headers;
-
-            if (headers.Count() == 2)
+            if (tableData.VariableTypes.Count == 1)
             {
-                //profileDataModifierTable.Multiplier = tpdProfileDataModifierMultiplier.tpdProfileDataModifierEqual;
-
-                if (System.Enum.TryParse(headers.ElementAt(0), true, out tpdProfileDataVariableType tpdProfileDataVariableType))
+                profileDataModifierTable.SetVariable(1, tableData.VariableTypes[0]);
+                foreach (Dictionary<int, double> row in tableData.Rows)
                 {
-                    profileDataModifierTable.SetVariable(1, tpdProfileDataVariableType);
+                    profileDataModifierTable.AddPoint(row[0], row[1]);
                 }
 
-                for (int i = 0; i < tableModifier.RowCount; i++)
-                {
-                    Dictionary<int, double> values = tableModifier.GetDictionary(i);
-                    if(values == null || !values.ContainsKey(0) || !values.ContainsKey(1))
-                    {
-                        continue;
-                    }
-
-                    profileDataModifierTable.AddPoint(values[0], values[1]);
-                }
+                return true;
             }
-            else
+
+            int count_X = tableData.AxisValues[0].Count;
+            int count_Y = tableData.AxisValues[1].Count;
+            int count_Z = tableData.VariableTypes.Count == 3 ? tableData.AxisValues[2].Count : 0;
+            profileDataModifierTable.SetSize(count_X, count_Y, count_Z);
+
+            for (int axis = 0; axis < tableData.VariableTypes.Count; axis++)
             {
-                //TODO: Check and validate
-
-                int count_x = tableModifier.RowCount;
-                if (count_x == -1)
+                profileDataModifierTable.SetVariable(axis + 1, tableData.VariableTypes[axis]);
+                for (int index = 0; index < tableData.AxisValues[axis].Count; index++)
                 {
-                    count_x = 0;
-                }
-
-                List<double> columnValues = null;
-
-                columnValues = tableModifier.GetColumnValues(1)?.Distinct()?.ToList();
-                int count_y = columnValues == null ? 0 : columnValues.Count;
-
-                columnValues = tableModifier.GetColumnValues(2)?.Distinct()?.ToList();
-                int count_z = columnValues == null ? 0 : columnValues.Count;
-
-                profileDataModifierTable.SetSize(count_x, count_y, count_z);
-
-                int columnCount = -1;
-
-                if (headers != null)
-                {
-                    columnCount = headers.Count();
-
-                    for (int i = 0; i < columnCount - 1; i++)
-                    {
-                        string text = headers.ElementAt(i);
-                        if (System.Enum.TryParse(text, true, out tpdProfileDataVariableType tpdProfileDataVariableType))
-                        {
-                            profileDataModifierTable.SetVariable(i + 1, tpdProfileDataVariableType);
-                        }
-                    }
-                }
-
-                if (count_x == 0)
-                {
-                    count_x++;
-                }
-
-                if (count_y == 0)
-                {
-                    count_y++;
-                }
-
-                if (count_z == 0)
-                {
-                    count_z++;
-                }
-
-                for (int i = 0; i < tableModifier.RowCount; i++)
-                {
-                    Dictionary<int, double> values = tableModifier.GetDictionary(i);
-
-                    int x = i + 1;
-                    int y = 1;
-                    int z = 1;
-
-                    if (columnCount > 1)
-                    {
-                        profileDataModifierTable.SetAxisValue(1, i + 1, values[0]);
-                        if (columnCount > 2)
-                        {
-                            profileDataModifierTable.SetAxisValue(2, i + 1, values[1]);
-                            if (columnCount > 3)
-                            {
-                                profileDataModifierTable.SetAxisValue(3, i + 1, values[2]);
-                            }
-                        }
-                    }
-
-                    profileDataModifierTable.SetDataValue(x, y, z, values[values.Keys.Max()]);
+                    profileDataModifierTable.SetAxisValue(axis + 1, index + 1, tableData.AxisValues[axis][index]);
                 }
             }
 
+            foreach (Dictionary<int, double> row in tableData.Rows)
+            {
+                int x = tableData.AxisIndexes[0][row[0]] + 1;
+                int y = tableData.AxisIndexes[1][row[1]] + 1;
+                int z = tableData.VariableTypes.Count == 3 ? tableData.AxisIndexes[2][row[2]] + 1 : 1;
+                profileDataModifierTable.SetDataValue(x, y, z, row[tableData.VariableTypes.Count]);
+            }
+
+            return true;
+        }
+
+        private sealed class TableData
+        {
+            public List<tpdProfileDataVariableType> VariableTypes { get; } = new List<tpdProfileDataVariableType>();
+            public List<List<double>> AxisValues { get; } = new List<List<double>>();
+            public List<Dictionary<double, int>> AxisIndexes { get; } = new List<Dictionary<double, int>>();
+            public List<Dictionary<int, double>> Rows { get; } = new List<Dictionary<int, double>>();
+        }
+
+        /// <summary>
+        /// A table axis header as a TAS profile variable: either the TAS name itself - what
+        /// <c>Convert.ToSAM(ProfileDataModifier)</c> writes on a round trip - or SAM's own
+        /// <see cref="CurveModifierVariableType"/> name, which is how a SAM_Systems graph states a variable
+        /// without naming anything of TAS's (PR5B, SAM#111).
+        /// </summary>
+        private static bool TryGetVariableType(string header, out tpdProfileDataVariableType variableType)
+        {
+            if (Enum.TryParse(header, true, out variableType) && Enum.IsDefined(typeof(tpdProfileDataVariableType), variableType))
+            {
+                return true;
+            }
+
+            if (Enum.TryParse(header, false, out CurveModifierVariableType curveModifierVariableType) && Enum.IsDefined(typeof(CurveModifierVariableType), curveModifierVariableType))
+            {
+                try
+                {
+                    variableType = curveModifierVariableType.ToTPD();
+                    return true;
+                }
+                catch (NotImplementedException)
+                {
+                    //A SAM variable TAS has no counterpart for: not a table TAS can be given.
+                }
+            }
+
+            variableType = default;
+            return false;
+        }
+
+        private static bool TryGetTableData(TableModifier tableModifier, out TableData tableData)
+        {
+            tableData = null;
+
+            List<string> headers = tableModifier?.Headers?.ToList();
+            if (headers == null || headers.Count < 2 || headers.Count > 4 || tableModifier.RowCount <= 0)
+            {
+                return false;
+            }
+
+            TableData result = new TableData();
+            HashSet<tpdProfileDataVariableType> variableTypes = new HashSet<tpdProfileDataVariableType>();
+            int axisCount = headers.Count - 1;
+            for (int axis = 0; axis < axisCount; axis++)
+            {
+                if (string.IsNullOrWhiteSpace(headers[axis])
+                    || !TryGetVariableType(headers[axis], out tpdProfileDataVariableType variableType)
+                    || variableType == tpdProfileDataVariableType.tpdProfileDataVariableLAST
+                    || !variableTypes.Add(variableType))
+                {
+                    return false;
+                }
+
+                result.VariableTypes.Add(variableType);
+                result.AxisValues.Add(new List<double>());
+                result.AxisIndexes.Add(new Dictionary<double, int>());
+            }
+
+            for (int rowIndex = 0; rowIndex < tableModifier.RowCount; rowIndex++)
+            {
+                Dictionary<int, double> row = tableModifier.GetDictionary(rowIndex);
+                if (row == null)
+                {
+                    return false;
+                }
+
+                for (int column = 0; column <= axisCount; column++)
+                {
+                    if (!row.TryGetValue(column, out double value) || double.IsNaN(value) || double.IsInfinity(value))
+                    {
+                        return false;
+                    }
+
+                    if (column < axisCount && !result.AxisIndexes[column].ContainsKey(value))
+                    {
+                        result.AxisIndexes[column][value] = result.AxisValues[column].Count;
+                        result.AxisValues[column].Add(value);
+                    }
+                }
+
+                result.Rows.Add(row);
+            }
+
+            int expectedRowCount = 1;
+            foreach (List<double> axisValues in result.AxisValues)
+            {
+                if (axisValues.Count == 0)
+                {
+                    return false;
+                }
+
+                expectedRowCount *= axisValues.Count;
+            }
+
+            if (expectedRowCount != result.Rows.Count)
+            {
+                return false;
+            }
+
+            HashSet<Tuple<int, int, int>> coordinates = new HashSet<Tuple<int, int, int>>();
+            foreach (Dictionary<int, double> row in result.Rows)
+            {
+                int x = result.AxisIndexes[0][row[0]];
+                int y = axisCount > 1 ? result.AxisIndexes[1][row[1]] : 0;
+                int z = axisCount > 2 ? result.AxisIndexes[2][row[2]] : 0;
+                if (!coordinates.Add(Tuple.Create(x, y, z)))
+                {
+                    return false;
+                }
+            }
+
+            tableData = result;
             return true;
         }
 

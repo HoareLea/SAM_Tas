@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "1.0.0",
+  "provenance": {
+    "sourceModelName": "Single Box Model",
+    "sourceModelGuid": "cccccccc000000000000000000000009",
+    "sourceFileHash": "sha256:9f64a747e1b97f131fabb6b447296c9b6f0201e79fb3c5356e6c77e89b6a806a",
+    "canonicalModelHash": "sha256:2c1250ded6a34fad90bcd4a698075a5768489e086d4056e1bd6166c5c8c96fb9",
+    "canonicalizationVersion": "1.0.0",
+    "samCommit": "0123456789abcdef",
+    "runnerCommit": "fedcba9876543210",
+    "engine": {
+      "kind": "TAS",
+      "name": "Tas",
+      "version": "9.5.3",
+      "sdkVersion": null
+    },
+    "route": "Native-TAS",
+    "weather": {
+      "identity": "USA_TEST_Weather",
+      "hash": "sha256:55e5509f8052998294266ee5b50cb592938191fb5d67f73cac2e60b0276b1bdd"
+    },
+    "designDaySource": "EmbeddedModel",
+    "runTimestampUtc": "2026-07-21T12:00:00Z",
+    "durationSeconds": 42,
+    "state": "Success",
+    "resultSources": [
+      "SAM.Analytical.Tas"
+    ],
+    "warnings": [],
+    "notes": []
+  },
+  "model": {
+    "consumptionHeating": {
+      "value": 1234.5,
+      "unit": "kWh",
+      "available": true
+    },
+    "consumptionCooling": {
+      "value": 678.25,
+      "unit": "kWh",
+      "available": true
+    },
+    "peakHeatingLoad": {
+      "value": 3.6,
+      "unit": "kW",
+      "available": true
+    },
+    "peakHeatingHour": {
+      "value": 205,
+      "unit": "hourOfYear",
+      "available": true
+    },
+    "peakCoolingLoad": {
+      "value": 2.4,
+      "unit": "kW",
+      "available": true
+    },
+    "peakCoolingHour": {
+      "value": 4602,
+      "unit": "hourOfYear",
+      "available": true
+    },
+    "floorArea": {
+      "value": 20,
+      "unit": "m2",
+      "available": true
+    },
+    "volume": {
+      "value": 60,
+      "unit": "m3",
+      "available": true
+    }
+  },
+  "spaces": [
+    {
+      "guid": "cccccccc000000000000000000000001",
+      "name": "Space Single",
+      "area": {
+        "value": 20,
+        "unit": "m2",
+        "available": true
+      },
+      "volume": {
+        "value": 60,
+        "unit": "m3",
+        "available": true
+      },
+      "heating": {
+        "designLoad": {
+          "value": 4200,
+          "unit": "W",
+          "available": true
+        },
+        "peakLoad": {
+          "value": 3600,
+          "unit": "W",
+          "available": true
+        },
+        "peakHour": {
+          "value": 205,
+          "unit": "hourOfYear",
+          "available": true
+        },
+        "unmetHours": {
+          "value": 3,
+          "unit": "h",
+          "available": true
+        }
+      },
+      "cooling": {
+        "designLoad": {
+          "value": 2800,
+          "unit": "W",
+          "available": true
+        },
+        "peakLoad": {
+          "value": 2400,
+          "unit": "W",
+          "available": true
+        },
+        "peakHour": {
+          "value": 4602,
+          "unit": "hourOfYear",
+          "available": true
+        },
+        "unmetHours": {
+          "value": 0,
+          "unit": "h",
+          "available": true
+        }
+      }
+    }
+  ]
+}
